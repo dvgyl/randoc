@@ -180,6 +180,24 @@ class CompareTests(unittest.TestCase):
         self.assertEqual(run.status(a, b, "html"), "fail output")
         self.assertEqual(run.status(a, outcome(stdout=b"not json"), "json"), "fail output")
 
+    def test_json_output_rejects_nested_duplicate_keys(self):
+        valid = outcome(stdout=b'{"info":{"id":2}}')
+        duplicate = outcome(stdout=b'{"info":{"id":1,"id":2}}')
+        self.assertEqual(run.status(valid, duplicate, "json"), "fail output")
+        self.assertEqual(run.status(duplicate, valid, "json"), "fail output")
+        self.assertEqual(run.status(duplicate, duplicate, "json"), "fail output")
+
+    def test_json_output_rejects_invalid_bytes_and_keeps_decimal_values(self):
+        for data in (b"no document", b"NaN", b"Infinity"):
+            with self.subTest(data=data):
+                invalid = outcome(stdout=data)
+                self.assertEqual(run.status(invalid, invalid, "json"), "fail output")
+        left = outcome(stdout=b"9007199254740992.0")
+        right = outcome(stdout=b"9007199254740993.0")
+        self.assertEqual(run.status(left, right, "json"), "fail output")
+        error = outcome(64, b"", b"Invalid input")
+        self.assertEqual(run.status(error, error, "json"), "pass")
+
     def test_exit_code_and_stderr_are_part_of_the_status(self):
         expected = outcome(0, b"o", b"warn")
         self.assertEqual(run.status(expected, outcome(1, b"o", b"warn"), "html"), "fail exit")
@@ -253,9 +271,22 @@ class RunTests(unittest.TestCase):
         out = self.dir / "report.json"
         argv = ["--pandoc", str(program), "--oracle", str(oracle), "--out", str(out),
                 "--manifest", str(self.manifest), "--corpus", str(self.corpus), "--jobs", "2", *extra]
-        with contextlib.redirect_stdout(io.StringIO()):
+        with (mock.patch.object(run, "pinned_oracle_sha256", return_value=run.fingerprint(oracle)),
+              contextlib.redirect_stdout(io.StringIO())):
             code = run.main(argv)
         return code, json.loads(out.read_text())
+
+    def test_a_wrong_oracle_does_not_open_the_cache_or_write_a_report(self):
+        oracle = self.program("pandoc")
+        report = self.dir / "report.json"
+        with contextlib.redirect_stderr(io.StringIO()) as err:
+            code = run.main(["--pandoc", str(oracle), "--oracle", str(oracle), "--out", str(report),
+                             "--manifest", str(self.manifest), "--corpus", str(self.corpus)])
+        self.assertEqual(code, 2)
+        self.assertIn("The oracle SHA-256 differs", err.getvalue())
+        self.assertFalse(report.exists())
+        self.assertFalse((self.corpus / run.CACHE_NAME).exists())
+        self.assertFalse((self.dir / "pandoc.log").exists())
 
     def test_the_oracle_against_itself_passes_and_fills_the_cache(self):
         oracle = self.program("pandoc")
@@ -282,6 +313,67 @@ class RunTests(unittest.TestCase):
         self.assertEqual(report["results"]["one:html"], "fail output")
         self.assertEqual(report["results"]["one:json"], "pass")
         self.assertEqual(report["by_target"]["html"], {"units": 2, "pass": 0, "fail": 2})
+
+    def test_a_unit_that_passes_in_the_baseline_and_fails_now_is_a_regression(self):
+        oracle = self.program("pandoc")
+        code, report = self.main(oracle, oracle)
+        self.assertEqual(code, 0)
+        baseline = self.dir / "baseline.json"
+        baseline.write_text(json.dumps(report))
+        code, _ = self.main(self.program("randoc", "<x>"), oracle, "--baseline", str(baseline))
+        self.assertEqual(code, 1)
+        code, _ = self.main(self.program("randoc", "<x>"), oracle, "--baseline", str(baseline),
+                            "--target", "json")
+        self.assertEqual(code, 0)
+        self.assertEqual(run.lost_units({"gone:json": "pass", "one:json": "pass"}, [], ("json",), []),
+                         ["gone:json", "one:json"])
+        self.assertEqual(run.lost_units({"one:json": "pass"}, [], ("json",), ["two"]), [])
+
+    def test_the_report_file_can_be_its_own_baseline(self):
+        oracle = self.program("pandoc")
+        selection = ("--only", "one", "--target", "html")
+        code, report = self.main(oracle, oracle, *selection)
+        self.assertEqual(code, 0)
+        self.assertEqual(report["results"], {"one:html": "pass"})
+        out = self.dir / "report.json"
+        before = out.read_bytes()
+        randoc = self.program("randoc", "<x>")
+        for _ in range(2):
+            code, _ = self.main(randoc, oracle, "--baseline", str(out), *selection)
+            self.assertEqual(code, 1)
+            self.assertEqual(out.read_bytes(), before)
+
+    def test_a_filtered_run_keeps_unselected_units_in_the_baseline(self):
+        oracle = self.program("pandoc")
+        code, baseline = self.main(oracle, oracle)
+        self.assertEqual(code, 0)
+        self.assertEqual(baseline["totals"]["pass"], 6)
+        out = self.dir / "report.json"
+        code, report = self.main(oracle, oracle, "--baseline", str(out), "--target", "html")
+        self.assertEqual(code, 0)
+        self.assertEqual(report, baseline)
+
+    def test_only_the_oracle_gets_the_heap_limit_and_its_exit_251_is_no_result(self):
+        script = 'echo "[$GHCRTS]"; exit 251'
+        with tempfile.TemporaryDirectory() as home:
+            oracle = run.execute("/bin/sh", ["-c", script], home, home, 10, ghcrts=run.ORACLE_GHCRTS)
+            program = run.execute("/bin/sh", ["-c", script], home, home, 10)
+        self.assertEqual((program.exit, program.stdout), (251, b"[]\n"))
+        self.assertEqual((oracle.exit, oracle.stdout), (-1, b"[-M3g]\n"))
+        self.assertIn(b"heap limit", oracle.stderr)
+        self.assertEqual(run.status(oracle, program, "json"), "error oracle")
+
+    def test_each_run_of_the_oracle_program_gets_the_heap_limit(self):
+        oracle = self.program("pandoc")
+        script = oracle.read_text().replace("#!/bin/sh\n", '#!/bin/sh\necho "[$GHCRTS]" >> "$0.rts"\n')
+        oracle.write_text(script)
+        other = self.dir / "randoc"
+        other.write_text(script)
+        other.chmod(0o755)
+        self.main(oracle, oracle)
+        self.main(other, oracle)
+        self.assertEqual(set(Path(f"{oracle}.rts").read_text().splitlines()), {"[-M3g]"})
+        self.assertEqual(set(Path(f"{other}.rts").read_text().splitlines()), {"[]"})
 
     def test_target_and_only_select_units_and_missing_documents_stop_the_run(self):
         oracle = self.program("pandoc")
@@ -439,7 +531,8 @@ class SecondReviewTests(unittest.TestCase):
         out = self.dir / "report.json"
         argv = ["--pandoc", str(program), "--oracle", str(oracle), "--out", str(out),
                 "--manifest", str(self.manifest), "--corpus", str(self.corpus), *extra]
-        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+        with (mock.patch.object(run, "pinned_oracle_sha256", return_value=run.fingerprint(oracle)),
+              contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO())):
             code = run.main(argv)
         return code, (json.loads(out.read_text()) if out.exists() else None)
 
@@ -504,9 +597,13 @@ class SecondReviewTests(unittest.TestCase):
         self.manifest.write_text(corpuslib.format_manifest([slow, self.docs[1]]))
         self.assertIn("timeout = 3\n", self.manifest.read_text())
         self.assertEqual(corpuslib.parse_manifest(self.manifest.read_text())[0].timeout, 3)
-        program = self.script("pandoc", 'sleep 2\ncat "$5"\n')
-        _, report = self.main(program, program, "--timeout", "1", "--target", "json")
-        self.assertEqual(report["results"], {"one:json": "pass", "two:json": "timeout"})
+        program = self.script("pandoc", "exit 0\n")
+        with mock.patch.object(run, "execute", return_value=run.Outcome(0, b"{}", b"")) as execute:
+            _, report = self.main(program, program, "--timeout", "1", "--target", "json")
+        limits = [(call.args[1][-1], call.args[4]) for call in execute.call_args_list
+                  if call.args[1] != ["--version"]]
+        self.assertCountEqual(limits, [("one.md", 3), ("two.org", 1)] * 2)
+        self.assertEqual(report["results"], {"one:json": "pass", "two:json": "pass"})
         self.assertEqual(report["timeout_seconds"], 1)
         for value in ("-1", "0", "true", "1.5", '"9"'):
             entry = corpuslib.format_manifest([document("x")]) + f"timeout = {value}\n"
@@ -583,7 +680,8 @@ class ThirdReviewTests(unittest.TestCase):
         program.write_text("x")
         program.chmod(0o644)
         out = self.dir / "report.json"
-        with contextlib.redirect_stdout(io.StringIO()):
+        with (mock.patch.object(run, "pinned_oracle_sha256", return_value=run.fingerprint(program)),
+              contextlib.redirect_stdout(io.StringIO())):
             code = run.main(["--pandoc", str(program), "--oracle", str(program), "--manifest", str(manifest),
                              "--corpus", str(corpus), "--out", str(out), "--expect-all-pass"])
         self.assertEqual(code, 1)

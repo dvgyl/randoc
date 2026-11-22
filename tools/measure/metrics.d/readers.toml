@@ -1,0 +1,431 @@
+[[metric]]
+key = "caps.readers"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "readers with every measured input and each harness conversion passing"
+total = "input formats in spec/inventory/input-formats.json (52)"
+
+[[metric]]
+key = "fmt.read"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "sum of the passing units of the 52 reader metrics"
+total = "sum of the totals of the 52 reader metrics"
+
+[[metric]]
+key = "fmt.read.asciidoc"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the asciidoc reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.biblatex"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the biblatex reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.bibtex"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the bibtex reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.bits"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the bits reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.commonmark"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the commonmark reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.commonmark_x"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the commonmark_x reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.creole"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the creole reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.csljson"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the csljson reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.csv"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the csv reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.djot"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the djot reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.docbook"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the docbook reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.docx"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the docx reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.dokuwiki"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the dokuwiki reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.endnotexml"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the endnotexml reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.epub"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the epub reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.fb2"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the fb2 reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.fodt"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the fodt reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.gfm"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the gfm reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.haddock"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the haddock reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.html"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the html reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.ipynb"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the ipynb reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.jats"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the jats reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.jira"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the jira reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.json"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the json reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.latex"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the latex reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.man"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the man reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.markdown"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the markdown reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.markdown_github"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the markdown_github reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.markdown_mmd"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the markdown_mmd reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.markdown_phpextra"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the markdown_phpextra reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.markdown_strict"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the markdown_strict reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.mdoc"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the mdoc reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.mediawiki"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the mediawiki reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.muse"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the muse reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.native"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the native reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.odt"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the odt reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.opml"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the opml reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.org"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the org reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.pod"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the pod reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.pptx"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the pptx reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.ris"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the ris reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.rst"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the rst reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.rtf"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the rtf reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.t2t"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the t2t reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.textile"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the textile reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.tikiwiki"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the tikiwiki reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.tsv"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the tsv reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.twiki"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the twiki reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.typst"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the typst reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.vimwiki"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the vimwiki reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.xlsx"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the xlsx reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"
+
+[[metric]]
+key = "fmt.read.xml"
+suite = "readers"
+status = "active"
+command = "{python} -B tools/readers/readers.py --oracle {oracle} --randoc {randoc} --harness {harness} --corpus {corpus} --evidence {evidence}"
+pass = "inputs that the xml reader converts with the oracle result"
+total = "successful oracle pivot outputs, distinct harness inputs and visible documents, minus oracle exclusions"

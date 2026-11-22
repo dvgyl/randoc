@@ -1,0 +1,7 @@
+[[metric]]
+key = "custom.writers"
+suite = "custom"
+status = "active"
+command = "{python} tools/custom-writers/run.py --oracle {oracle} --randoc {randoc} --evidence {evidence}"
+pass = "custom writer and document tree pairs with the oracle result"
+total = "the ten custom writers on each of the 400 pivot trees, less recorded oracle exclusions"

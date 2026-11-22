@@ -24,6 +24,8 @@ def verdicts(path):
             name for name in ("exit_ok", "stderr_ok", "bytes_ok", "content_ok")
             if verdict and not verdict[name]
         )
+        if verdict.get("files_ok") is False:
+            kind = f"{kind},files_ok" if kind else "files_ok"
         result[unit["id"]] = (unit["status"], kind)
     return result
 

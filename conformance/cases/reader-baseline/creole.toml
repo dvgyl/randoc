@@ -1,0 +1,305 @@
+from = "creole"
+
+[[case]]
+id = "headings-pump"
+input = '''
+= Pump inspection =
+== Parts ==
+Open the cover.
+'''
+
+[[case]]
+id = "emphasis-pump"
+input = '''
+Fit the **Pump**. Turn it //slowly//.
+'''
+
+[[case]]
+id = "unordered-list-pump"
+input = '''
+* Pump
+** Seal
+** Cover
+* Tool
+'''
+
+[[case]]
+id = "ordered-list-pump"
+input = '''
+# Check the Pump.
+## Check the clamp.
+# Record the result.
+'''
+
+[[case]]
+id = "links-pump"
+input = '''
+[[Service/Pump|Service instructions]] and [[https://example.org/parts]]
+'''
+
+[[case]]
+id = "image-pump"
+input = '''
+{{pump.png|View of the Pump}}
+'''
+
+[[case]]
+id = "literal-pump"
+input = '''
+Inspect the Pump.
+{{{
+a ** b // c
+}}}
+'''
+
+[[case]]
+id = "table-pump"
+input = '''
+|= Part |= Count |
+| Pump | 2 |
+| Seal | 4 |
+'''
+
+[[case]]
+id = "line-breaks-pump"
+input = '''
+Pump check\\
+Next line.
+
+----
+Install the cover.
+'''
+
+[[case]]
+id = "escaped-markup-pump"
+input = '''
+Use ~**Pump~** as the label. Close the cover.
+'''
+
+[[case]]
+id = "headings-valve"
+input = '''
+= Valve inspection =
+== Parts ==
+Open the cover.
+'''
+
+[[case]]
+id = "emphasis-valve"
+input = '''
+Fit the **Valve**. Turn it //slowly//.
+'''
+
+[[case]]
+id = "unordered-list-valve"
+input = '''
+* Valve
+** Seal
+** Cover
+* Tool
+'''
+
+[[case]]
+id = "ordered-list-valve"
+input = '''
+# Check the Valve.
+## Check the clamp.
+# Record the result.
+'''
+
+[[case]]
+id = "links-valve"
+input = '''
+[[Service/Valve|Service instructions]] and [[https://example.org/parts]]
+'''
+
+[[case]]
+id = "image-valve"
+input = '''
+{{valve.png|View of the Valve}}
+'''
+
+[[case]]
+id = "literal-valve"
+input = '''
+Inspect the Valve.
+{{{
+a ** b // c
+}}}
+'''
+
+[[case]]
+id = "table-valve"
+input = '''
+|= Part |= Count |
+| Valve | 2 |
+| Seal | 4 |
+'''
+
+[[case]]
+id = "line-breaks-valve"
+input = '''
+Valve check\\
+Next line.
+
+----
+Install the cover.
+'''
+
+[[case]]
+id = "escaped-markup-valve"
+input = '''
+Use ~**Valve~** as the label. Close the cover.
+'''
+
+[[case]]
+id = "headings-filter"
+input = '''
+= Filter inspection =
+== Parts ==
+Open the cover.
+'''
+
+[[case]]
+id = "emphasis-filter"
+input = '''
+Fit the **Filter**. Turn it //slowly//.
+'''
+
+[[case]]
+id = "unordered-list-filter"
+input = '''
+* Filter
+** Seal
+** Cover
+* Tool
+'''
+
+[[case]]
+id = "ordered-list-filter"
+input = '''
+# Check the Filter.
+## Check the clamp.
+# Record the result.
+'''
+
+[[case]]
+id = "links-filter"
+input = '''
+[[Service/Filter|Service instructions]] and [[https://example.org/parts]]
+'''
+
+[[case]]
+id = "image-filter"
+input = '''
+{{filter.png|View of the Filter}}
+'''
+
+[[case]]
+id = "literal-filter"
+input = '''
+Inspect the Filter.
+{{{
+a ** b // c
+}}}
+'''
+
+[[case]]
+id = "table-filter"
+input = '''
+|= Part |= Count |
+| Filter | 2 |
+| Seal | 4 |
+'''
+
+[[case]]
+id = "line-breaks-filter"
+input = '''
+Filter check\\
+Next line.
+
+----
+Install the cover.
+'''
+
+[[case]]
+id = "escaped-markup-filter"
+input = '''
+Use ~**Filter~** as the label. Close the cover.
+'''
+
+[[case]]
+id = "headings-gauge"
+input = '''
+= Gauge inspection =
+== Parts ==
+Open the cover.
+'''
+
+[[case]]
+id = "emphasis-gauge"
+input = '''
+Fit the **Gauge**. Turn it //slowly//.
+'''
+
+[[case]]
+id = "unordered-list-gauge"
+input = '''
+* Gauge
+** Seal
+** Cover
+* Tool
+'''
+
+[[case]]
+id = "ordered-list-gauge"
+input = '''
+# Check the Gauge.
+## Check the clamp.
+# Record the result.
+'''
+
+[[case]]
+id = "links-gauge"
+input = '''
+[[Service/Gauge|Service instructions]] and [[https://example.org/parts]]
+'''
+
+[[case]]
+id = "image-gauge"
+input = '''
+{{gauge.png|View of the Gauge}}
+'''
+
+[[case]]
+id = "literal-gauge"
+input = '''
+Inspect the Gauge.
+{{{
+a ** b // c
+}}}
+'''
+
+[[case]]
+id = "table-gauge"
+input = '''
+|= Part |= Count |
+| Gauge | 2 |
+| Seal | 4 |
+'''
+
+[[case]]
+id = "line-breaks-gauge"
+input = '''
+Gauge check\\
+Next line.
+
+----
+Install the cover.
+'''
+
+[[case]]
+id = "escaped-markup-gauge"
+input = '''
+Use ~**Gauge~** as the label. Close the cover.
+'''

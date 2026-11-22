@@ -5,10 +5,12 @@ use std::fs;
 use std::io::{Read, Write};
 use std::path::{Component, Path};
 use std::process::{Child, Command, Stdio};
+use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::mpsc;
 use std::time::{Duration, Instant};
 
-use crate::cases::Outcome;
+use crate::cases::{Outcome, Unit};
+use crate::files::{CaptureFiles, Snapshot};
 
 /// The time that both programs see as the current time, so that dates in the output are equal.
 pub const SOURCE_DATE_EPOCH: &str = "1700000000";
@@ -16,13 +18,36 @@ pub const SOURCE_DATE_EPOCH: &str = "1700000000";
 /// The time that the harness gives the output pipes to close after the program ends.
 const PIPE_GRACE: Duration = Duration::from_secs(2);
 
+pub const DEFAULT_WALL_SECONDS: u64 = 600;
+
+#[cfg(unix)]
+const EXEC_WITH_LIMIT: &str = r#"
+ulimit -t 60 && PERL_BADLANG=0 exec /usr/bin/perl -e '
+    my $program = shift @ARGV;
+    delete @ENV{qw(PWD OLDPWD SHLVL _ PERL_BADLANG)};
+    exec {$program} "pandoc", @ARGV;
+    kill "KILL", $$;
+' -- "$@"
+kill -KILL "$$"
+"#;
+
+/// The heap limit of the oracle, a Haskell program. On 2026-11-10 one oracle
+/// run used 22 GB and filled the swap space of the machine.
+pub const ORACLE_GHCRTS: &str = "-M3g";
+
+/// The exit code of a Haskell program whose heap reached the `-M` limit.
+const HEAP_EXHAUSTED: i32 = 251;
+
 /// A program to run and the limits for one run.
 #[derive(Debug, Clone)]
 pub struct Program {
     /// The path of the executable file.
     pub binary: std::path::PathBuf,
-    /// The time after which the harness stops the program.
+    /// The wall time after which the harness stops the program.
     pub timeout: Duration,
+    /// The GHC runtime options (`GHCRTS`) of the oracle, `None` for Randoc.
+    /// An oracle run that reaches the heap limit has no result.
+    pub ghcrts: Option<&'static str>,
 }
 
 /// Makes `dir` an empty directory.
@@ -114,7 +139,49 @@ impl Program {
         files: &BTreeMap<String, Vec<u8>>,
         work_dir: &Path,
     ) -> Result<Outcome, String> {
-        clear_dir(work_dir).map_err(|e| format!("{}: {e}", work_dir.display()))?;
+        self.run_captured(args, stdin, files, work_dir, None)
+    }
+
+    pub(crate) fn run_unit(
+        &self,
+        unit: &Unit,
+        stdin: &[u8],
+        work_dir: &Path,
+    ) -> Result<Outcome, String> {
+        self.run_captured(
+            &unit.args,
+            stdin,
+            &unit.files,
+            work_dir,
+            unit.capture_files.as_ref(),
+        )
+    }
+
+    fn run_captured(
+        &self,
+        args: &[String],
+        stdin: &[u8],
+        files: &BTreeMap<String, Vec<u8>>,
+        work_dir: &Path,
+        capture: Option<&CaptureFiles>,
+    ) -> Result<Outcome, String> {
+        let isolated = capture.map(|_| {
+            static RUN: AtomicUsize = AtomicUsize::new(0);
+            work_dir.with_extension(format!("files-{}", RUN.fetch_add(1, Ordering::Relaxed)))
+        });
+        let work_dir = match isolated.as_deref() {
+            Some(dir) => {
+                if let Some(parent) = dir.parent().filter(|path| !path.as_os_str().is_empty()) {
+                    fs::create_dir_all(parent).map_err(|e| format!("{}: {e}", parent.display()))?;
+                }
+                fs::create_dir(dir).map_err(|e| format!("{}: {e}", dir.display()))?;
+                dir
+            }
+            None => {
+                clear_dir(work_dir).map_err(|e| format!("{}: {e}", work_dir.display()))?;
+                work_dir
+            }
+        };
         for (name, contents) in files {
             if !is_safe_relative(name) {
                 return Err(format!(
@@ -127,13 +194,23 @@ impl Program {
             }
             fs::write(&path, contents).map_err(|e| format!("{}: {e}", path.display()))?;
         }
+        let before = capture
+            .map(|_| Snapshot::read(work_dir, None))
+            .transpose()?;
 
-        let mut command = Command::new(&self.binary);
         #[cfg(unix)]
-        {
+        let mut command = {
             use std::os::unix::process::CommandExt;
-            command.arg0("pandoc").process_group(0);
-        }
+            let mut shell = Command::new("/bin/sh");
+            // Perl preserves argv[0] and removes the variables that the shell adds.
+            shell
+                .args(["-c", EXEC_WITH_LIMIT, "randoc-harness"])
+                .arg(&self.binary)
+                .process_group(0);
+            shell
+        };
+        #[cfg(not(unix))]
+        let mut command = Command::new(&self.binary);
         command
             .args(args)
             .current_dir(work_dir)
@@ -147,6 +224,9 @@ impl Program {
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped());
+        if let Some(options) = self.ghcrts {
+            command.env("GHCRTS", options);
+        }
         let mut child = command
             .spawn()
             .map_err(|e| format!("{}: {e}", self.binary.display()))?;
@@ -162,11 +242,11 @@ impl Program {
         let stdout = read_in_thread(child.stdout.take());
         let stderr = read_in_thread(child.stderr.take());
 
-        let deadline = Instant::now() + self.timeout;
+        let started = Instant::now();
         let status = loop {
             match child.try_wait() {
                 Ok(Some(status)) => break status,
-                Ok(None) if Instant::now() >= deadline => {
+                Ok(None) if started.elapsed() >= self.timeout => {
                     kill_tree(&mut child);
                     return Err(format!("no result after {} s", self.timeout.as_secs()));
                 }
@@ -191,8 +271,18 @@ impl Program {
         let stderr = receive(&stderr)?;
         let exit = status
             .code()
-            .ok_or("the program ended without an exit code")?;
-        Ok(Outcome::new(exit, stdout, stderr))
+            .ok_or_else(|| format!("{} ended without an exit code", self.binary.display()))?;
+        if let Some(options) = self.ghcrts.filter(|_| exit == HEAP_EXHAUSTED) {
+            return Err(format!(
+                "the oracle reached its heap limit (GHCRTS={options})"
+            ));
+        }
+        let mut outcome = Outcome::new(exit, stdout, stderr);
+        if let Some((capture, before)) = capture.zip(before) {
+            outcome.file_changes =
+                Some(before.changes(Snapshot::read(work_dir, Some(&capture.zip))?));
+        }
+        Ok(outcome)
     }
 }
 
@@ -208,6 +298,7 @@ mod tests {
         Program {
             binary: "/bin/sh".into(),
             timeout: Duration::from_millis(timeout_ms),
+            ghcrts: None,
         }
     }
 
@@ -233,6 +324,23 @@ mod tests {
     }
 
     #[test]
+    fn the_child_has_a_cpu_limit_and_keeps_its_arguments_and_exit_code() {
+        let dir = work_dir("cpu");
+        let args = [
+            "-c",
+            "ulimit -t; printf '%s\\n' \"$1\"; exit 127",
+            "pandoc",
+            "a $b ' c",
+        ];
+        let outcome = shell(20_000)
+            .run(&args.map(str::to_owned), b"", &BTreeMap::new(), &dir)
+            .unwrap();
+        assert_eq!(outcome.stdout_bytes(), b"60\na $b ' c\n");
+        assert_eq!(outcome.exit, 127);
+        fs::remove_dir_all(&dir).unwrap();
+    }
+
+    #[test]
     fn the_environment_is_fixed_and_the_work_directory_starts_clean() {
         let dir = work_dir("env");
         fs::create_dir_all(dir.join("old")).unwrap();
@@ -249,14 +357,54 @@ mod tests {
         fs::remove_dir_all(&dir).unwrap();
     }
 
+    #[test]
+    fn the_launcher_adds_no_variables_to_the_child_environment() {
+        let dir = work_dir("fixed-env");
+        let program = Program {
+            binary: "/usr/bin/env".into(),
+            ..shell(20_000)
+        };
+        let outcome = program.run(&[], b"", &BTreeMap::new(), &dir).unwrap();
+        let stdout = String::from_utf8(outcome.stdout_bytes()).unwrap();
+        let mut variables: Vec<_> = stdout.lines().collect();
+        variables.sort_unstable();
+        assert_eq!(
+            variables,
+            [
+                format!("HOME={}", dir.join(".home").display()),
+                "LANG=en_US.UTF-8".to_owned(),
+                "LC_ALL=en_US.UTF-8".to_owned(),
+                "PATH=/usr/bin:/bin:/usr/sbin:/sbin".to_owned(),
+                "SOURCE_DATE_EPOCH=1700000000".to_owned(),
+                "TZ=UTC".to_owned(),
+            ]
+        );
+        assert!(outcome.stderr_bytes().is_empty());
+        fs::remove_dir_all(&dir).unwrap();
+    }
+
     /// A folder with mode 0700 and a name that `mktemp` chooses. `Drop` removes it.
     struct PrivateDir(std::path::PathBuf);
 
     impl PrivateDir {
         fn new() -> std::io::Result<PrivateDir> {
             // Not `temp_dir()`: it can be on an exFAT volume, which has no named pipes.
+            // On macOS the folder of the user, not `/tmp`: the build sandbox can write only that one.
+            let base = Command::new("/usr/bin/getconf")
+                .arg("DARWIN_USER_TEMP_DIR")
+                .output()
+                .ok()
+                .filter(|output| output.status.success())
+                .map(|output| {
+                    String::from_utf8_lossy(&output.stdout)
+                        .trim_end()
+                        .to_owned()
+                })
+                .filter(|path| !path.is_empty())
+                .unwrap_or_else(|| "/tmp".to_owned());
+            let template = format!("{}/randoc-harness.XXXXXX", base.trim_end_matches('/'));
             let output = Command::new("/usr/bin/mktemp")
-                .args(["-d", "/tmp/randoc-harness.XXXXXX"])
+                .args(["-d", &template])
                 .output()?;
             assert!(output.status.success());
             let path = String::from_utf8_lossy(&output.stdout);
@@ -345,6 +493,7 @@ mod tests {
         let missing = Program {
             binary: "/nonexistent/program".into(),
             timeout: Duration::from_secs(1),
+            ghcrts: None,
         };
         let error = missing.run(&[], b"", &BTreeMap::new(), &dir).unwrap_err();
         assert!(error.contains("/nonexistent/program"));
@@ -359,6 +508,38 @@ mod tests {
             .run(&sh("exit 0"), &input, &BTreeMap::new(), &dir)
             .unwrap();
         assert_eq!(outcome.exit, 0);
+        fs::remove_dir_all(&dir).unwrap();
+    }
+
+    #[test]
+    fn only_the_oracle_gets_the_heap_limit_and_its_exit_251_is_no_result() {
+        let dir = work_dir("heap");
+        let oracle = Program {
+            ghcrts: Some(ORACLE_GHCRTS),
+            ..shell(20_000)
+        };
+        let outcome = oracle
+            .run(&sh("echo \"[$GHCRTS]\""), b"", &BTreeMap::new(), &dir)
+            .unwrap();
+        assert_eq!(outcome.stdout_bytes(), b"[-M3g]\n");
+        let error = oracle
+            .run(&sh("exit 251"), b"", &BTreeMap::new(), &dir)
+            .unwrap_err();
+        assert!(error.contains("heap limit"), "{error}");
+
+        let randoc = shell(20_000);
+        let outcome = randoc
+            .run(
+                &sh("echo \"[$GHCRTS]\"; exit 251"),
+                b"",
+                &BTreeMap::new(),
+                &dir,
+            )
+            .unwrap();
+        assert_eq!(
+            (outcome.exit, outcome.stdout_bytes()),
+            (251, b"[]\n".to_vec())
+        );
         fs::remove_dir_all(&dir).unwrap();
     }
 

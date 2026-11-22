@@ -1,0 +1,245 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "code-filter#read": {
+      "key": "39a901f5c626f90a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"\",[\"numberLines\"],[[\"caption\",\">Filter\"]]],\"start --check\\nstop\"]}]}\n",
+      "stderr": ""
+    },
+    "code-gauge#read": {
+      "key": "6e0888d66bd06806",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"\",[\"numberLines\"],[[\"caption\",\">Gauge\"]]],\"start --check\\nstop\"]}]}\n",
+      "stderr": ""
+    },
+    "code-pump#read": {
+      "key": "8fb0cd2f12917024",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"\",[\"numberLines\"],[[\"caption\",\">Pump\"]]],\"start --check\\nstop\"]}]}\n",
+      "stderr": ""
+    },
+    "code-valve#read": {
+      "key": "11700db0047347ad",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"\",[\"numberLines\"],[[\"caption\",\">Valve\"]]],\"start --check\\nstop\"]}]}\n",
+      "stderr": ""
+    },
+    "emphasis-filter#read": {
+      "key": "6664d5b1d0788a88",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Fit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"Filter\"}]},{\"t\":\"Str\",\"c\":\".\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Turn\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"it\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"slowly\"}]},{\"t\":\"Str\",\"c\":\".\"}]}]}\n",
+      "stderr": ""
+    },
+    "emphasis-gauge#read": {
+      "key": "de77b0f024bf8008",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Fit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"Gauge\"}]},{\"t\":\"Str\",\"c\":\".\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Turn\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"it\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"slowly\"}]},{\"t\":\"Str\",\"c\":\".\"}]}]}\n",
+      "stderr": ""
+    },
+    "emphasis-pump#read": {
+      "key": "6120debca7372526",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Fit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"Pump\"}]},{\"t\":\"Str\",\"c\":\".\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Turn\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"it\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"slowly\"}]},{\"t\":\"Str\",\"c\":\".\"}]}]}\n",
+      "stderr": ""
+    },
+    "emphasis-valve#read": {
+      "key": "7487058e1f0e48dd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Fit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"Valve\"}]},{\"t\":\"Str\",\"c\":\".\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Turn\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"it\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"slowly\"}]},{\"t\":\"Str\",\"c\":\".\"}]}]}\n",
+      "stderr": ""
+    },
+    "external-link-filter#read": {
+      "key": "2c5270fa04662281",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Filter\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"parts\"}],[\"https://example.org/parts\",\"\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "external-link-gauge#read": {
+      "key": "34f9ed276aa4582d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Gauge\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"parts\"}],[\"https://example.org/parts\",\"\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "external-link-pump#read": {
+      "key": "a6baa7e43739d8cb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Pump\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"parts\"}],[\"https://example.org/parts\",\"\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "external-link-valve#read": {
+      "key": "2f6d6fdc4677bc24",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Valve\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"parts\"}],[\"https://example.org/parts\",\"\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "headings-filter#read": {
+      "key": "438f4873593bd712",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"filter-inspection\",[],[]],[{\"t\":\"Str\",\"c\":\"Filter\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"inspection\"}]]},{\"t\":\"Header\",\"c\":[2,[\"parts\",[],[]],[{\"t\":\"Str\",\"c\":\"Parts\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Open\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cover.\"}]}]}\n",
+      "stderr": ""
+    },
+    "headings-gauge#read": {
+      "key": "5fab741fa13cce68",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"gauge-inspection\",[],[]],[{\"t\":\"Str\",\"c\":\"Gauge\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"inspection\"}]]},{\"t\":\"Header\",\"c\":[2,[\"parts\",[],[]],[{\"t\":\"Str\",\"c\":\"Parts\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Open\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cover.\"}]}]}\n",
+      "stderr": ""
+    },
+    "headings-pump#read": {
+      "key": "7d5976ffb0edaa44",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"pump-inspection\",[],[]],[{\"t\":\"Str\",\"c\":\"Pump\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"inspection\"}]]},{\"t\":\"Header\",\"c\":[2,[\"parts\",[],[]],[{\"t\":\"Str\",\"c\":\"Parts\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Open\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cover.\"}]}]}\n",
+      "stderr": ""
+    },
+    "headings-valve#read": {
+      "key": "097904e082a2818b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"valve-inspection\",[],[]],[{\"t\":\"Str\",\"c\":\"Valve\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"inspection\"}]]},{\"t\":\"Header\",\"c\":[2,[\"parts\",[],[]],[{\"t\":\"Str\",\"c\":\"Parts\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Open\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cover.\"}]}]}\n",
+      "stderr": ""
+    },
+    "image-filter#read": {
+      "key": "f974b6023eacc4ae",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[[\"src\",\"filter.png\"],[\"alt\",\"Filter diagram\"]]],[{\"t\":\"Str\",\"c\":\"Filter diagram\"}],[\"filter.png\",\"filter.png\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "image-gauge#read": {
+      "key": "513d832867af449a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[[\"src\",\"gauge.png\"],[\"alt\",\"Gauge diagram\"]]],[{\"t\":\"Str\",\"c\":\"Gauge diagram\"}],[\"gauge.png\",\"gauge.png\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "image-pump#read": {
+      "key": "54113afbcdbb5e2e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[[\"src\",\"pump.png\"],[\"alt\",\"Pump diagram\"]]],[{\"t\":\"Str\",\"c\":\"Pump diagram\"}],[\"pump.png\",\"pump.png\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "image-valve#read": {
+      "key": "1881317e3ade1e96",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[[\"src\",\"valve.png\"],[\"alt\",\"Valve diagram\"]]],[{\"t\":\"Str\",\"c\":\"Valve diagram\"}],[\"valve.png\",\"valve.png\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "ordered-list-filter#read": {
+      "key": "f9e40aa179737701",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"DefaultStyle\"},{\"t\":\"DefaultDelim\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Filter.\"}]},{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"DefaultStyle\"},{\"t\":\"DefaultDelim\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"clamp.\"}]}]]]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Record\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"result.\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "ordered-list-gauge#read": {
+      "key": "77832152f4836cb1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"DefaultStyle\"},{\"t\":\"DefaultDelim\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Gauge.\"}]},{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"DefaultStyle\"},{\"t\":\"DefaultDelim\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"clamp.\"}]}]]]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Record\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"result.\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "ordered-list-pump#read": {
+      "key": "619e6fcd6fcfc93f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"DefaultStyle\"},{\"t\":\"DefaultDelim\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Pump.\"}]},{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"DefaultStyle\"},{\"t\":\"DefaultDelim\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"clamp.\"}]}]]]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Record\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"result.\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "ordered-list-valve#read": {
+      "key": "0c61181353f4c012",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"DefaultStyle\"},{\"t\":\"DefaultDelim\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Valve.\"}]},{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"DefaultStyle\"},{\"t\":\"DefaultDelim\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"clamp.\"}]}]]]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Record\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"result.\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "special-blocks-filter#read": {
+      "key": "9af739459d00c641",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\" NOT SUPPORTED: :: (centered) BEGIN: ::Filter inspection:: :END \"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"---\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"-=Parts=-\"}]}]}\n",
+      "stderr": ""
+    },
+    "special-blocks-gauge#read": {
+      "key": "d98cf0b97ab3b6d1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\" NOT SUPPORTED: :: (centered) BEGIN: ::Gauge inspection:: :END \"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"---\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"-=Parts=-\"}]}]}\n",
+      "stderr": ""
+    },
+    "special-blocks-pump#read": {
+      "key": "f60601947f2d27d3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\" NOT SUPPORTED: :: (centered) BEGIN: ::Pump inspection:: :END \"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"---\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"-=Parts=-\"}]}]}\n",
+      "stderr": ""
+    },
+    "special-blocks-valve#read": {
+      "key": "c1ac3459a2f86528",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\" NOT SUPPORTED: :: (centered) BEGIN: ::Valve inspection:: :END \"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"---\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"-=Parts=-\"}]}]}\n",
+      "stderr": ""
+    },
+    "table-filter#read": {
+      "key": "dd8e747138358386",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Part\"},{\"t\":\"Space\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Count\"}]}]]]],[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Filter\"},{\"t\":\"Space\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"2\"}]}]]]],[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Seal\"},{\"t\":\"Space\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"4\"},{\"t\":\"Space\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-gauge#read": {
+      "key": "dfa35326f1841c9a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Part\"},{\"t\":\"Space\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Count\"}]}]]]],[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Gauge\"},{\"t\":\"Space\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"2\"}]}]]]],[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Seal\"},{\"t\":\"Space\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"4\"},{\"t\":\"Space\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-pump#read": {
+      "key": "86aecc9e792f5a0c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Part\"},{\"t\":\"Space\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Count\"}]}]]]],[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Pump\"},{\"t\":\"Space\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"2\"}]}]]]],[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Seal\"},{\"t\":\"Space\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"4\"},{\"t\":\"Space\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "table-valve#read": {
+      "key": "bb26bfafe48d76b5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Part\"},{\"t\":\"Space\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Count\"}]}]]]],[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Valve\"},{\"t\":\"Space\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"2\"}]}]]]],[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Seal\"},{\"t\":\"Space\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"4\"},{\"t\":\"Space\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "unordered-list-filter#read": {
+      "key": "322a4dcf85e4b4fd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Filter\"}]},{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Seal\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cover\"}]}]]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Tool\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "unordered-list-gauge#read": {
+      "key": "1367f5bda676ed35",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Gauge\"}]},{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Seal\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cover\"}]}]]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Tool\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "unordered-list-pump#read": {
+      "key": "700f365170a8aebb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Pump\"}]},{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Seal\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cover\"}]}]]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Tool\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "unordered-list-valve#read": {
+      "key": "391e138e873bff26",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Valve\"}]},{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Seal\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cover\"}]}]]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Tool\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "wiki-link-filter#read": {
+      "key": "e09fd933dadbe9f8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"service\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"instructions\"}],[\"FilterService\",\"\"]]},{\"t\":\"Str\",\"c\":\".\"}]}]}\n",
+      "stderr": ""
+    },
+    "wiki-link-gauge#read": {
+      "key": "fc73f022848e61fa",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"service\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"instructions\"}],[\"GaugeService\",\"\"]]},{\"t\":\"Str\",\"c\":\".\"}]}]}\n",
+      "stderr": ""
+    },
+    "wiki-link-pump#read": {
+      "key": "bde3e35b2c41f6ca",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"service\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"instructions\"}],[\"PumpService\",\"\"]]},{\"t\":\"Str\",\"c\":\".\"}]}]}\n",
+      "stderr": ""
+    },
+    "wiki-link-valve#read": {
+      "key": "a0fa84c14b9f10b3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"service\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"instructions\"}],[\"ValveService\",\"\"]]},{\"t\":\"Str\",\"c\":\".\"}]}]}\n",
+      "stderr": ""
+    }
+  }
+}

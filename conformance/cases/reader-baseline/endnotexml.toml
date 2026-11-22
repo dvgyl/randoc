@@ -1,0 +1,397 @@
+from = "endnotexml"
+
+[[case]]
+id = "one-author-jour"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Journal Article">17</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<contributors><authors><author>Lane, Mira</author></authors></contributors>
+</record></records></xml>
+'''
+
+[[case]]
+id = "two-authors-jour"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Journal Article">17</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<contributors><authors><author>Lane, Mira</author><author>Reed, Evan J.</author></authors></contributors>
+</record></records></xml>
+'''
+
+[[case]]
+id = "dates-jour"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Journal Article">17</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<dates><year>2026</year><pub-dates><date>November 18</date></pub-dates></dates>
+</record></records></xml>
+'''
+
+[[case]]
+id = "publication-jour"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Journal Article">17</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<periodical><full-title>Field Records</full-title><abbr-1>FR</abbr-1></periodical><volume>12</volume><number>4</number><pages>37-49</pages>
+</record></records></xml>
+'''
+
+[[case]]
+id = "identifiers-jour"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Journal Article">17</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<electronic-resource-num>10.1234/field.42</electronic-resource-num><isbn>9780000000002</isbn>
+</record></records></xml>
+'''
+
+[[case]]
+id = "publisher-jour"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Journal Article">17</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<publisher>North Workshop Press</publisher><pub-location>Mill Bay</pub-location><edition>2</edition>
+</record></records></xml>
+'''
+
+[[case]]
+id = "abstract-and-keywords-jour"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Journal Article">17</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<abstract>Check the seal before operation.</abstract><keywords><keyword>seal</keyword><keyword>inspection</keyword></keywords>
+</record></records></xml>
+'''
+
+[[case]]
+id = "urls-jour"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Journal Article">17</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<urls><related-urls><url>https://example.org/service</url></related-urls></urls>
+</record></records></xml>
+'''
+
+[[case]]
+id = "styled-text-jour"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Journal Article">17</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<notes>Use the <style face="italic">slow</style> setting. Record Å and 漢字.</notes>
+</record></records></xml>
+'''
+
+[[case]]
+id = "translated-title-jour"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Journal Article">17</ref-type>
+<titles><title>Inspection of the test assembly</title><secondary-title>Equipment Notes</secondary-title><translated-title>Le guide du matériel</translated-title></titles><language>fr</language>
+</record></records></xml>
+'''
+
+[[case]]
+id = "one-author-book"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Book">6</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<contributors><authors><author>Lane, Mira</author></authors></contributors>
+</record></records></xml>
+'''
+
+[[case]]
+id = "two-authors-book"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Book">6</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<contributors><authors><author>Lane, Mira</author><author>Reed, Evan J.</author></authors></contributors>
+</record></records></xml>
+'''
+
+[[case]]
+id = "dates-book"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Book">6</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<dates><year>2026</year><pub-dates><date>November 18</date></pub-dates></dates>
+</record></records></xml>
+'''
+
+[[case]]
+id = "publication-book"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Book">6</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<periodical><full-title>Field Records</full-title><abbr-1>FR</abbr-1></periodical><volume>12</volume><number>4</number><pages>37-49</pages>
+</record></records></xml>
+'''
+
+[[case]]
+id = "identifiers-book"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Book">6</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<electronic-resource-num>10.1234/field.42</electronic-resource-num><isbn>9780000000002</isbn>
+</record></records></xml>
+'''
+
+[[case]]
+id = "publisher-book"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Book">6</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<publisher>North Workshop Press</publisher><pub-location>Mill Bay</pub-location><edition>2</edition>
+</record></records></xml>
+'''
+
+[[case]]
+id = "abstract-and-keywords-book"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Book">6</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<abstract>Check the seal before operation.</abstract><keywords><keyword>seal</keyword><keyword>inspection</keyword></keywords>
+</record></records></xml>
+'''
+
+[[case]]
+id = "urls-book"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Book">6</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<urls><related-urls><url>https://example.org/service</url></related-urls></urls>
+</record></records></xml>
+'''
+
+[[case]]
+id = "styled-text-book"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Book">6</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<notes>Use the <style face="italic">slow</style> setting. Record Å and 漢字.</notes>
+</record></records></xml>
+'''
+
+[[case]]
+id = "translated-title-book"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Book">6</ref-type>
+<titles><title>Inspection of the test assembly</title><secondary-title>Equipment Notes</secondary-title><translated-title>Le guide du matériel</translated-title></titles><language>fr</language>
+</record></records></xml>
+'''
+
+[[case]]
+id = "one-author-chap"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Book Section">5</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<contributors><authors><author>Lane, Mira</author></authors></contributors>
+</record></records></xml>
+'''
+
+[[case]]
+id = "two-authors-chap"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Book Section">5</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<contributors><authors><author>Lane, Mira</author><author>Reed, Evan J.</author></authors></contributors>
+</record></records></xml>
+'''
+
+[[case]]
+id = "dates-chap"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Book Section">5</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<dates><year>2026</year><pub-dates><date>November 18</date></pub-dates></dates>
+</record></records></xml>
+'''
+
+[[case]]
+id = "publication-chap"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Book Section">5</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<periodical><full-title>Field Records</full-title><abbr-1>FR</abbr-1></periodical><volume>12</volume><number>4</number><pages>37-49</pages>
+</record></records></xml>
+'''
+
+[[case]]
+id = "identifiers-chap"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Book Section">5</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<electronic-resource-num>10.1234/field.42</electronic-resource-num><isbn>9780000000002</isbn>
+</record></records></xml>
+'''
+
+[[case]]
+id = "publisher-chap"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Book Section">5</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<publisher>North Workshop Press</publisher><pub-location>Mill Bay</pub-location><edition>2</edition>
+</record></records></xml>
+'''
+
+[[case]]
+id = "abstract-and-keywords-chap"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Book Section">5</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<abstract>Check the seal before operation.</abstract><keywords><keyword>seal</keyword><keyword>inspection</keyword></keywords>
+</record></records></xml>
+'''
+
+[[case]]
+id = "urls-chap"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Book Section">5</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<urls><related-urls><url>https://example.org/service</url></related-urls></urls>
+</record></records></xml>
+'''
+
+[[case]]
+id = "styled-text-chap"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Book Section">5</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<notes>Use the <style face="italic">slow</style> setting. Record Å and 漢字.</notes>
+</record></records></xml>
+'''
+
+[[case]]
+id = "translated-title-chap"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Book Section">5</ref-type>
+<titles><title>Inspection of the test assembly</title><secondary-title>Equipment Notes</secondary-title><translated-title>Le guide du matériel</translated-title></titles><language>fr</language>
+</record></records></xml>
+'''
+
+[[case]]
+id = "one-author-conf"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Conference Proceedings">10</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<contributors><authors><author>Lane, Mira</author></authors></contributors>
+</record></records></xml>
+'''
+
+[[case]]
+id = "two-authors-conf"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Conference Proceedings">10</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<contributors><authors><author>Lane, Mira</author><author>Reed, Evan J.</author></authors></contributors>
+</record></records></xml>
+'''
+
+[[case]]
+id = "dates-conf"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Conference Proceedings">10</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<dates><year>2026</year><pub-dates><date>November 18</date></pub-dates></dates>
+</record></records></xml>
+'''
+
+[[case]]
+id = "publication-conf"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Conference Proceedings">10</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<periodical><full-title>Field Records</full-title><abbr-1>FR</abbr-1></periodical><volume>12</volume><number>4</number><pages>37-49</pages>
+</record></records></xml>
+'''
+
+[[case]]
+id = "identifiers-conf"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Conference Proceedings">10</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<electronic-resource-num>10.1234/field.42</electronic-resource-num><isbn>9780000000002</isbn>
+</record></records></xml>
+'''
+
+[[case]]
+id = "publisher-conf"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Conference Proceedings">10</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<publisher>North Workshop Press</publisher><pub-location>Mill Bay</pub-location><edition>2</edition>
+</record></records></xml>
+'''
+
+[[case]]
+id = "abstract-and-keywords-conf"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Conference Proceedings">10</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<abstract>Check the seal before operation.</abstract><keywords><keyword>seal</keyword><keyword>inspection</keyword></keywords>
+</record></records></xml>
+'''
+
+[[case]]
+id = "urls-conf"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Conference Proceedings">10</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<urls><related-urls><url>https://example.org/service</url></related-urls></urls>
+</record></records></xml>
+'''
+
+[[case]]
+id = "styled-text-conf"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Conference Proceedings">10</ref-type>
+<titles><title>Inspection of the test assembly</title></titles>
+<notes>Use the <style face="italic">slow</style> setting. Record Å and 漢字.</notes>
+</record></records></xml>
+'''
+
+[[case]]
+id = "translated-title-conf"
+input = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<xml><records><record><rec-number>42</rec-number><ref-type name="Conference Proceedings">10</ref-type>
+<titles><title>Inspection of the test assembly</title><secondary-title>Equipment Notes</secondary-title><translated-title>Le guide du matériel</translated-title></titles><language>fr</language>
+</record></records></xml>
+'''

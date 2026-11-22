@@ -1,0 +1,7 @@
+[[metric]]
+key = "lua.api"
+suite = "lua"
+status = "active"
+command = "{python} -IB tools/measure/suites/lua.py --oracle {oracle} --randoc {randoc} --evidence {evidence}"
+pass = "names whose kinds and probe results match in filter and standalone Lua mode"
+total = "names listed in MODULES.md and additional names found in the oracle filter"

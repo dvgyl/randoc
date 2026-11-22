@@ -1,0 +1,388 @@
+capture_files = {}
+
+[[case]]
+id = "ansi"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "ansi", "-o", "result.out"]
+
+[[case]]
+id = "asciidoc"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "asciidoc", "-o", "result.out"]
+
+[[case]]
+id = "asciidoc_legacy"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "asciidoc_legacy", "-o", "result.out"]
+
+[[case]]
+id = "asciidoctor"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "asciidoctor", "-o", "result.out"]
+
+[[case]]
+id = "bbcode"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "bbcode", "-o", "result.out"]
+
+[[case]]
+id = "bbcode_fluxbb"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "bbcode_fluxbb", "-o", "result.out"]
+
+[[case]]
+id = "bbcode_hubzilla"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "bbcode_hubzilla", "-o", "result.out"]
+
+[[case]]
+id = "bbcode_phpbb"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "bbcode_phpbb", "-o", "result.out"]
+
+[[case]]
+id = "bbcode_steam"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "bbcode_steam", "-o", "result.out"]
+
+[[case]]
+id = "bbcode_xenforo"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "bbcode_xenforo", "-o", "result.out"]
+
+[[case]]
+id = "beamer"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "beamer", "-o", "result.out"]
+
+[[case]]
+id = "biblatex"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "biblatex", "-o", "result.out"]
+
+[[case]]
+id = "bibtex"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "bibtex", "-o", "result.out"]
+
+[[case]]
+id = "chunkedhtml"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "chunkedhtml", "-o", "result.zip"]
+capture_files = { zip = ["result.zip"] }
+
+[[case]]
+id = "commonmark"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "commonmark", "-o", "result.out"]
+
+[[case]]
+id = "commonmark_x"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "commonmark_x", "-o", "result.out"]
+
+[[case]]
+id = "context"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "context", "-o", "result.out"]
+
+[[case]]
+id = "csljson"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "csljson", "-o", "result.out"]
+
+[[case]]
+id = "djot"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "djot", "-o", "result.out"]
+
+[[case]]
+id = "docbook"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "docbook", "-o", "result.out"]
+
+[[case]]
+id = "docbook4"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "docbook4", "-o", "result.out"]
+
+[[case]]
+id = "docbook5"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "docbook5", "-o", "result.out"]
+
+[[case]]
+id = "docx"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "docx", "-o", "result.docx"]
+capture_files = { zip = ["result.docx"] }
+
+[[case]]
+id = "dokuwiki"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "dokuwiki", "-o", "result.out"]
+
+[[case]]
+id = "dzslides"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "dzslides", "-o", "result.out"]
+
+[[case]]
+id = "epub"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "epub", "-o", "result.epub"]
+capture_files = { zip = ["result.epub"] }
+
+[[case]]
+id = "epub2"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "epub2", "-o", "result.epub"]
+capture_files = { zip = ["result.epub"] }
+
+[[case]]
+id = "epub3"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "epub3", "-o", "result.epub"]
+capture_files = { zip = ["result.epub"] }
+
+[[case]]
+id = "fb2"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "fb2", "-o", "result.out"]
+
+[[case]]
+id = "fodt"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "fodt", "-o", "result.out"]
+
+[[case]]
+id = "gfm"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "gfm", "-o", "result.out"]
+
+[[case]]
+id = "haddock"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "haddock", "-o", "result.out"]
+
+[[case]]
+id = "html"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "html", "-o", "result.out"]
+
+[[case]]
+id = "html4"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "html4", "-o", "result.out"]
+
+[[case]]
+id = "html5"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "html5", "-o", "result.out"]
+
+[[case]]
+id = "icml"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "icml", "-o", "result.out"]
+
+[[case]]
+id = "ipynb"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "ipynb", "-o", "result.out"]
+
+[[case]]
+id = "jats"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "jats", "-o", "result.out"]
+
+[[case]]
+id = "jats_archiving"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "jats_archiving", "-o", "result.out"]
+
+[[case]]
+id = "jats_articleauthoring"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "jats_articleauthoring", "-o", "result.out"]
+
+[[case]]
+id = "jats_publishing"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "jats_publishing", "-o", "result.out"]
+
+[[case]]
+id = "jira"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "jira", "-o", "result.out"]
+
+[[case]]
+id = "json"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "json", "-o", "result.out"]
+
+[[case]]
+id = "latex"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "latex", "-o", "result.out"]
+
+[[case]]
+id = "man"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "man", "-o", "result.out"]
+
+[[case]]
+id = "markdown"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "markdown", "-o", "result.out"]
+
+[[case]]
+id = "markdown_github"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "markdown_github", "-o", "result.out"]
+
+[[case]]
+id = "markdown_mmd"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "markdown_mmd", "-o", "result.out"]
+
+[[case]]
+id = "markdown_phpextra"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "markdown_phpextra", "-o", "result.out"]
+
+[[case]]
+id = "markdown_strict"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "markdown_strict", "-o", "result.out"]
+
+[[case]]
+id = "markua"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "markua", "-o", "result.out"]
+
+[[case]]
+id = "mediawiki"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "mediawiki", "-o", "result.out"]
+
+[[case]]
+id = "ms"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "ms", "-o", "result.out"]
+
+[[case]]
+id = "muse"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "muse", "-o", "result.out"]
+
+[[case]]
+id = "native"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "native", "-o", "result.out"]
+
+[[case]]
+id = "odt"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "odt", "-o", "result.odt"]
+capture_files = { zip = ["result.odt"] }
+
+[[case]]
+id = "opendocument"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "opendocument", "-o", "result.out"]
+
+[[case]]
+id = "opml"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "opml", "-o", "result.out"]
+
+[[case]]
+id = "org"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "org", "-o", "result.out"]
+
+[[case]]
+id = "plain"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "plain", "-o", "result.out"]
+
+[[case]]
+id = "pptx"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "pptx", "-o", "result.pptx"]
+capture_files = { zip = ["result.pptx"] }
+
+[[case]]
+id = "revealjs"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "revealjs", "-o", "result.out"]
+
+[[case]]
+id = "rst"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "rst", "-o", "result.out"]
+
+[[case]]
+id = "rtf"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "rtf", "-o", "result.out"]
+
+[[case]]
+id = "s5"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "s5", "-o", "result.out"]
+
+[[case]]
+id = "slideous"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "slideous", "-o", "result.out"]
+
+[[case]]
+id = "slidy"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "slidy", "-o", "result.out"]
+
+[[case]]
+id = "t2t"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "t2t", "-o", "result.out"]
+
+[[case]]
+id = "tei"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "tei", "-o", "result.out"]
+
+[[case]]
+id = "texinfo"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "texinfo", "-o", "result.out"]
+
+[[case]]
+id = "textile"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "textile", "-o", "result.out"]
+
+[[case]]
+id = "typst"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "typst", "-o", "result.out"]
+
+[[case]]
+id = "vimdoc"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "vimdoc", "-o", "result.out"]
+
+[[case]]
+id = "xml"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "xml", "-o", "result.out"]
+
+[[case]]
+id = "xwiki"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "xwiki", "-o", "result.out"]
+
+[[case]]
+id = "zimwiki"
+input_file = "files/sample-cell.json"
+cmd = ["-f", "json", "-t", "zimwiki", "-o", "result.out"]

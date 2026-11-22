@@ -6,6 +6,7 @@ use std::io::{Cursor, Read};
 use serde::Serialize;
 
 use crate::cases::{Outcome, Unit, UnitKind};
+use crate::files::{FileChanges, FileState};
 
 /// The output formats that are ZIP archives.
 const ZIP_FORMATS: [&str; 7] = [
@@ -35,6 +36,8 @@ pub struct Verdict {
     pub bytes_ok: bool,
     /// The standard outputs have the same content after normalization.
     pub content_ok: bool,
+    /// The changes to the work folder are equal.
+    pub files_ok: bool,
     /// The unit passes.
     pub pass: bool,
 }
@@ -103,6 +106,33 @@ fn same_content(unit: &Unit, expected: &[u8], actual: &[u8]) -> bool {
     false
 }
 
+fn same_file_changes(expected: &FileChanges, actual: &FileChanges) -> bool {
+    expected.len() == actual.len()
+        && expected
+            .iter()
+            .zip(actual)
+            .all(|((name, expected), (path, actual))| {
+                name == path && same_file_state(expected, actual)
+            })
+}
+
+fn same_file_state(expected: &Option<FileState>, actual: &Option<FileState>) -> bool {
+    match (expected, actual) {
+        (Some(FileState::InvalidZip { .. }), _) => false,
+        (
+            Some(FileState::Zip {
+                sha256: expected_hash,
+                first_stored_mimetype: expected_mimetype,
+            }),
+            Some(FileState::Zip {
+                sha256: actual_hash,
+                first_stored_mimetype: actual_mimetype,
+            }),
+        ) => expected_hash == actual_hash && (!expected_mimetype || *actual_mimetype),
+        _ => expected == actual,
+    }
+}
+
 /// Compares the outcome of Randoc with the outcome of the oracle.
 pub fn compare(unit: &Unit, expected: &Outcome, actual: &Outcome) -> Verdict {
     let expected_out = expected.stdout_bytes();
@@ -111,6 +141,11 @@ pub fn compare(unit: &Unit, expected: &Outcome, actual: &Outcome) -> Verdict {
     let stderr_ok = expected.stderr_bytes() == actual.stderr_bytes();
     let bytes_ok = expected_out == actual_out;
     let content_ok = same_content(unit, &expected_out, &actual_out);
+    let files_ok = unit.capture_files.is_none()
+        || matches!(
+            (&expected.file_changes, &actual.file_changes),
+            (Some(expected), Some(actual)) if same_file_changes(expected, actual)
+        );
     let output_ok = if content_is_enough(unit) {
         content_ok
     } else {
@@ -121,7 +156,8 @@ pub fn compare(unit: &Unit, expected: &Outcome, actual: &Outcome) -> Verdict {
         stderr_ok,
         bytes_ok,
         content_ok,
-        pass: exit_ok && stderr_ok && output_ok,
+        files_ok,
+        pass: exit_ok && stderr_ok && output_ok && files_ok,
     }
 }
 
@@ -141,6 +177,7 @@ mod tests {
             args: Vec::new(),
             stdin: Stdin::Bytes(Vec::new()),
             files: BTreeMap::new(),
+            capture_files: None,
             from: None,
             to: to.map(str::to_owned),
             covers: Vec::new(),
@@ -149,6 +186,46 @@ mod tests {
 
     fn outcome(exit: i32, stdout: &[u8], stderr: &[u8]) -> Outcome {
         Outcome::new(exit, stdout.to_vec(), stderr.to_vec())
+    }
+
+    #[test]
+    fn identical_invalid_zip_files_do_not_pass() {
+        let mut unit = unit(UnitKind::Command, None);
+        unit.capture_files = Some(crate::files::CaptureFiles {
+            zip: ["out.zip".to_owned()].into(),
+        });
+        let mut result = outcome(0, b"", b"");
+        result.file_changes = Some(BTreeMap::from([(
+            "out.zip".to_owned(),
+            Some(FileState::InvalidZip {
+                sha256: "same".to_owned(),
+            }),
+        )]));
+        assert!(!compare(&unit, &result, &result).pass);
+    }
+
+    #[test]
+    fn written_zip_needs_a_first_stored_mimetype_when_the_oracle_has_one() {
+        let mut unit = unit(UnitKind::Command, None);
+        unit.capture_files = Some(crate::files::CaptureFiles {
+            zip: ["out.epub".to_owned()].into(),
+        });
+        let with_mimetype = |first_stored_mimetype| {
+            let mut result = outcome(0, b"", b"");
+            result.file_changes = Some(BTreeMap::from([(
+                "out.epub".to_owned(),
+                Some(FileState::Zip {
+                    sha256: "same".to_owned(),
+                    first_stored_mimetype,
+                }),
+            )]));
+            result
+        };
+        let stored_first = with_mimetype(true);
+        let repacked = with_mimetype(false);
+        assert!(compare(&unit, &stored_first, &stored_first).pass);
+        assert!(!compare(&unit, &stored_first, &repacked).pass);
+        assert!(compare(&unit, &repacked, &stored_first).pass);
     }
 
     fn zip_bytes(entries: &[(&str, &[u8])], stored: bool) -> Vec<u8> {
@@ -181,6 +258,7 @@ mod tests {
                 stderr_ok: true,
                 bytes_ok: true,
                 content_ok: true,
+                files_ok: true,
                 pass: true
             }
         );

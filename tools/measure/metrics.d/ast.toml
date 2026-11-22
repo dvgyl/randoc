@@ -1,0 +1,7 @@
+[[metric]]
+key = "ast.roundtrip"
+suite = "ast_roundtrip"
+status = "active"
+command = "{python} -B tools/ast/roundtrip.py --oracle {oracle} --randoc {randoc} --corpus {corpus} --pandoc-tests {pandoc_src}/test --evidence {evidence}"
+pass = "trees for which all three commands match the oracle"
+total = "pivot trees, distinct visible oracle JSON trees and ten API version cases, minus oracle exclusions"

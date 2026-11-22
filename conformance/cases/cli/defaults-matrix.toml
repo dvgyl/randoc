@@ -422,61 +422,73 @@ files = { "sub/d.yaml" = "from: json\nto: json\ndefaults: sub/../nosuch.txt\n", 
 
 [[case]]
 id = "path-output-file-dot"
+capture_files = {}
 cmd = ["-d", "sub/d.yaml", "a.json"]
 files = { "sub/d.yaml" = "from: json\nto: json\noutput-file: ${.}/F\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
 
 [[case]]
 id = "path-output-file-dot-dot-part"
+capture_files = {}
 cmd = ["-d", "sub/d.yaml", "a.json"]
 files = { "sub/d.yaml" = "from: json\nto: json\noutput-file: ${.}/./F\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
 
 [[case]]
 id = "path-output-file-dot-double-slash"
+capture_files = {}
 cmd = ["-d", "sub/d.yaml", "a.json"]
 files = { "sub/d.yaml" = "from: json\nto: json\noutput-file: ${.}//F\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
 
 [[case]]
 id = "path-output-file-dot-parent"
+capture_files = {}
 cmd = ["-d", "sub/d.yaml", "a.json"]
 files = { "sub/d.yaml" = "from: json\nto: json\noutput-file: ${.}/../sub/F\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
 
 [[case]]
 id = "path-output-file-undefined-variable"
+capture_files = {}
 cmd = ["-d", "sub/d.yaml", "a.json"]
 files = { "sub/d.yaml" = "from: json\nto: json\noutput-file: ${NOSUCHVAR}F\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
 
 [[case]]
 id = "path-output-file-relative"
+capture_files = {}
 cmd = ["-d", "sub/d.yaml", "a.json"]
 files = { "sub/d.yaml" = "from: json\nto: json\noutput-file: F\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
 
 [[case]]
 id = "path-output-file-relative-dot"
+capture_files = {}
 cmd = ["-d", "sub/d.yaml", "a.json"]
 files = { "sub/d.yaml" = "from: json\nto: json\noutput-file: ./F\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
 
 [[case]]
 id = "path-output-file-relative-parent"
+capture_files = {}
 cmd = ["-d", "sub/d.yaml", "a.json"]
 files = { "sub/d.yaml" = "from: json\nto: json\noutput-file: sub/../F\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
 
 [[case]]
 id = "path-output-file-relative-double-slash"
+capture_files = {}
 cmd = ["-d", "sub/d.yaml", "a.json"]
 files = { "sub/d.yaml" = "from: json\nto: json\noutput-file: sub//F\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
 
 [[case]]
 id = "path-output-file-missing"
+capture_files = {}
 cmd = ["-d", "sub/d.yaml", "a.json"]
 files = { "sub/d.yaml" = "from: json\nto: json\noutput-file: nosuch.txt\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
 
 [[case]]
 id = "path-output-file-missing-dot-part"
+capture_files = {}
 cmd = ["-d", "sub/d.yaml", "a.json"]
 files = { "sub/d.yaml" = "from: json\nto: json\noutput-file: sub/./nosuch.txt\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
 
 [[case]]
 id = "path-output-file-missing-parent"
+capture_files = {}
 cmd = ["-d", "sub/d.yaml", "a.json"]
 files = { "sub/d.yaml" = "from: json\nto: json\noutput-file: sub/../nosuch.txt\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
 
@@ -927,15 +939,18 @@ files = { "m1.yaml" = "x: 1\n", "m2.yaml" = "y: 2\n", "i1.txt" = "x\n", "t1.json
 
 [[case]]
 id = "combination-output-two-files-reverse"
+capture_files = {}
 cmd = ["-d", "q.yaml", "-d", "p.yaml", "a.json"]
 files = { "m1.yaml" = "x: 1\n", "m2.yaml" = "y: 2\n", "i1.txt" = "x\n", "t1.json" = "T\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}", "p.yaml" = "from: json\nto: json\noutput-file: o1.json\n", "q.yaml" = "output-file: ~\n" }
 
 [[case]]
 id = "combination-output-cli-first"
+capture_files = {}
 cmd = ["-o", "o2.json", "-d", "p.yaml", "a.json"]
 files = { "m1.yaml" = "x: 1\n", "m2.yaml" = "y: 2\n", "i1.txt" = "x\n", "t1.json" = "T\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}", "p.yaml" = "from: json\nto: json\noutput-file: o1.json\n", "q.yaml" = "output-file: ~\n" }
 
 [[case]]
 id = "combination-output-cli-last"
+capture_files = {}
 cmd = ["-d", "p.yaml", "-o", "o2.json", "a.json"]
 files = { "m1.yaml" = "x: 1\n", "m2.yaml" = "y: 2\n", "i1.txt" = "x\n", "t1.json" = "T\n", "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"a\\tb\"}]]}]}", "p.yaml" = "from: json\nto: json\noutput-file: o1.json\n", "q.yaml" = "output-file: ~\n" }

@@ -6,6 +6,8 @@ use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
 
+use crate::files::{CaptureFiles, FileChanges, FileState};
+
 /// One case file: defaults and a list of cases.
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -14,6 +16,7 @@ struct CaseFile {
     to: Option<Vec<String>>,
     #[serde(default)]
     args: Vec<String>,
+    capture_files: Option<CaptureFiles>,
     #[serde(default, rename = "case")]
     cases: Vec<CaseDef>,
 }
@@ -30,6 +33,7 @@ struct CaseDef {
     cmd: Option<Vec<String>>,
     #[serde(default)]
     files: BTreeMap<String, String>,
+    capture_files: Option<CaptureFiles>,
     #[serde(default)]
     covers: Vec<String>,
 }
@@ -73,6 +77,7 @@ pub struct Unit {
     pub stdin: Stdin,
     /// Additional files for the working directory.
     pub files: BTreeMap<String, Vec<u8>>,
+    pub(crate) capture_files: Option<CaptureFiles>,
     /// The input format without extension changes, when the case names one.
     pub from: Option<String>,
     /// The output format without extension changes, when the case names one.
@@ -95,6 +100,12 @@ impl Unit {
         for (name, contents) in &self.files {
             hash.field(name.as_bytes());
             hash.field(contents);
+        }
+        if let Some(capture) = &self.capture_files {
+            hash.field(b"\0capture-files");
+            for path in &capture.zip {
+                hash.field(path.as_bytes());
+            }
         }
         format!("{:016x}", hash.0)
     }
@@ -229,6 +240,19 @@ fn expand_case(
         .map(|(name, text)| (name.clone(), text.clone().into_bytes()))
         .collect();
     let extra_args: Vec<String> = case.args.clone().unwrap_or_else(|| file.args.clone());
+    let capture_files = case.capture_files.as_ref().or(file.capture_files.as_ref());
+    if let Some(capture) = capture_files {
+        for path in &capture.zip {
+            if path.contains('\\')
+                || path.split('/').any(|part| matches!(part, "" | "." | ".."))
+                || !Path::new(path)
+                    .components()
+                    .all(|part| matches!(part, std::path::Component::Normal(_)))
+            {
+                return Err(format!("ZIP output '{path}' is not a work-folder path"));
+            }
+        }
+    }
 
     let make = |unit: &str,
                 kind: UnitKind,
@@ -255,6 +279,7 @@ fn expand_case(
             args,
             stdin,
             files: files.clone(),
+            capture_files: capture_files.cloned(),
             from: from.map(base_format),
             to: to.map(base_format),
             covers,
@@ -386,6 +411,8 @@ pub struct Outcome {
     stdout: Captured,
     #[serde(default)]
     stderr: Captured,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) file_changes: Option<FileChanges>,
 }
 
 impl Outcome {
@@ -396,6 +423,7 @@ impl Outcome {
             exit,
             stdout: Captured::new(stdout),
             stderr: Captured::new(stderr),
+            file_changes: None,
         }
     }
 
@@ -409,6 +437,21 @@ impl Outcome {
         self.stderr.bytes()
     }
 
+    pub(crate) fn writes_file(&self) -> Option<bool> {
+        self.file_changes.as_ref().map(|changes| {
+            changes.values().any(|state| {
+                matches!(
+                    state,
+                    Some(
+                        FileState::File { .. }
+                            | FileState::Zip { .. }
+                            | FileState::InvalidZip { .. }
+                    )
+                )
+            })
+        })
+    }
+
     /// Returns a hash of the oracle version, the input fingerprint and the result.
     ///
     /// `verify-oracle` stores it for each result that the oracle confirmed, and
@@ -420,12 +463,45 @@ impl Outcome {
         hash.field(&self.exit.to_le_bytes());
         hash.field(&self.stdout_bytes());
         hash.field(&self.stderr_bytes());
+        if let Some(files) = &self.file_changes {
+            hash.field(b"\0file-changes");
+            for (path, state) in files {
+                hash.field(path.as_bytes());
+                match state {
+                    None => hash.field(b"removed"),
+                    Some(FileState::Directory) => hash.field(b"directory"),
+                    Some(FileState::File { sha256 }) => {
+                        hash.field(b"file");
+                        hash.field(sha256.as_bytes());
+                    }
+                    Some(FileState::Zip {
+                        sha256,
+                        first_stored_mimetype,
+                    }) => {
+                        hash.field(b"zip");
+                        hash.field(sha256.as_bytes());
+                        hash.field(&[u8::from(*first_stored_mimetype)]);
+                    }
+                    Some(FileState::InvalidZip { sha256 }) => {
+                        hash.field(b"invalid-zip");
+                        hash.field(sha256.as_bytes());
+                    }
+                    Some(FileState::Link { sha256 }) => {
+                        hash.field(b"link");
+                        hash.field(sha256.as_bytes());
+                    }
+                }
+            }
+        }
         format!("{:016x}", hash.0)
     }
 
-    /// Returns `true` when the exit code and both outputs are equal. The fingerprint does not count.
+    /// Compares the exit code, both outputs and file changes. Ignores the fingerprint.
     pub fn same_result(&self, other: &Outcome) -> bool {
-        self.exit == other.exit && self.stdout == other.stdout && self.stderr == other.stderr
+        self.exit == other.exit
+            && self.stdout == other.stdout
+            && self.stderr == other.stderr
+            && self.file_changes == other.file_changes
     }
 }
 
@@ -639,6 +715,7 @@ cmd = ["--version"]
                 .iter()
                 .map(|(k, v)| ((*k).to_owned(), v.as_bytes().to_vec()))
                 .collect(),
+            capture_files: None,
             from: None,
             to: None,
             covers: Vec::new(),

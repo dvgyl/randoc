@@ -1,0 +1,7 @@
+[[metric]]
+key = "errors.units"
+suite = "errors"
+status = "active"
+command = "{python} tools/errors/errors.py --oracle {oracle} --randoc {randoc} --corpus {corpus} --evidence {evidence}"
+pass = "confirmed exit code and conversion log units with the same result as the oracle"
+total = "one trigger per confirmed manual exit code, 230 corpus logs, and 400 pivot logs per target"

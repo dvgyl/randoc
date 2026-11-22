@@ -1,6 +1,7 @@
 //! Time of inputs that repeat one construct (standing order 21c): the
 //! minimum of 5 runs at two sizes, with a wide margin for a loaded machine.
 
+#![cfg(unix)]
 #![allow(clippy::unwrap_used, clippy::panic)]
 
 use std::time::Duration;
@@ -9,19 +10,12 @@ use randoc_core::Context;
 
 const NS: &str = "xmlns=\"http://purl.org/net/xbiblio/csl\"";
 
-/// The CPU time of this process, from `ps` (in steps of 10 ms). CPU time does
-/// not grow when other programs load the machine, unlike wall time.
+/// The CPU time of this process. CPU time does not grow when other programs
+/// load the machine, unlike wall time.
 fn cpu_time() -> Duration {
-    let output = std::process::Command::new("ps")
-        .args(["-o", "time=", "-p", &std::process::id().to_string()])
-        .output()
-        .unwrap();
-    let text = String::from_utf8(output.stdout).unwrap();
-    let mut seconds = 0.0;
-    for part in text.trim().split(':') {
-        seconds = seconds * 60.0 + part.parse::<f64>().unwrap();
-    }
-    Duration::from_secs_f64(seconds)
+    nix::time::clock_gettime(nix::time::ClockId::CLOCK_PROCESS_CPUTIME_ID)
+        .unwrap()
+        .into()
 }
 
 /// The CPU time of three runs. Only one test of this file runs at a time,

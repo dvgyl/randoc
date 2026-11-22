@@ -1,0 +1,7 @@
+[[metric]]
+key = "server.units"
+suite = "server"
+status = "active"
+command = "{python} tools/server/server.py --oracle {oracle} --randoc {randoc} --evidence {evidence}"
+pass = "same HTTP status, Content-Type and body bytes, or the same command result for a server option"
+total = "conversion, batch, version, error and timeout requests through HTTP and CGI, plus server help and version options"

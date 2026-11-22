@@ -1,0 +1,11 @@
+{
+  "units": [
+    {
+      "suite": "ast",
+      "id": "fe5a14ba29f4998754b5fd1b11ed3ce1e29ddcd0f7c77a64524cd185a523e059",
+      "status": "oracle_limit",
+      "reason": "Pandoc reaches the 3000 MiB memory limit during native-to-JSON conversion of 9,000 nested block quotes.",
+      "evidence": "$RANDOC_RUNS/measure/20261119T111812Z-563d8c438932/ast-report.json and $RANDOC_RUNS/measure/20261119T170030Z-2a653138c802/ast-report.json"
+    }
+  ]
+}

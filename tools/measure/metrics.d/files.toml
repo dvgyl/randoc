@@ -1,0 +1,7 @@
+[[metric]]
+key = "files.units"
+suite = "files"
+status = "active"
+command = "{python} tools/measure/suites/files.py --harness {harness} --oracle {oracle} --randoc {randoc} --evidence {evidence}"
+pass = "units that match the oracle exit code, output, errors, and file changes"
+total = "units for which the oracle creates or changes a file"

@@ -1,0 +1,7 @@
+[[metric]]
+key = "caps.extensions"
+suite = "extension_caps"
+status = "active"
+command = "{python} -B tools/extension-caps/check.py --oracle {oracle} --randoc {randoc} --corpus {corpus} --evidence {evidence}"
+pass = "extension pairs with matching sensitive probes or a complete matching inert check"
+total = "771 reader pairs and 948 writer pairs in spec/inventory/extensions.json"

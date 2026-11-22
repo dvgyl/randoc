@@ -1,0 +1,309 @@
+from = "vimwiki"
+
+[[case]]
+id = "headings-pump"
+input = '''
+= Pump inspection =
+== Parts ==
+Open the cover.
+'''
+
+[[case]]
+id = "emphasis-pump"
+input = '''
+Fit the *Pump*. Turn it _slowly_. Use `check`.
+'''
+
+[[case]]
+id = "unordered-list-pump"
+input = '''
+* Pump
+  * Seal
+  * Cover
+* Tool
+'''
+
+[[case]]
+id = "checkboxes-pump"
+input = '''
+* [ ] Check the Pump.
+* [X] Check the clamp.
+* [.] Record the result.
+'''
+
+[[case]]
+id = "wiki-link-pump"
+input = '''
+Read [[PumpService|service instructions]].
+'''
+
+[[case]]
+id = "image-pump"
+input = '''
+{{pump.png|View of the Pump}}
+'''
+
+[[case]]
+id = "code-pump"
+input = '''
+{{{class="text"
+check Pump
+status
+}}}
+'''
+
+[[case]]
+id = "table-pump"
+input = '''
+| Part | Count |
+|------+-------|
+| Pump | 2 |
+| Seal | 4 |
+'''
+
+[[case]]
+id = "definitions-pump"
+input = '''
+Pump:: A part of the test assembly.
+Seal:: A part under the cover.
+'''
+
+[[case]]
+id = "page-directives-pump"
+input = '''
+%title Pump inspection
+%toc
+= Steps =
+Close the cover.
+'''
+
+[[case]]
+id = "headings-valve"
+input = '''
+= Valve inspection =
+== Parts ==
+Open the cover.
+'''
+
+[[case]]
+id = "emphasis-valve"
+input = '''
+Fit the *Valve*. Turn it _slowly_. Use `check`.
+'''
+
+[[case]]
+id = "unordered-list-valve"
+input = '''
+* Valve
+  * Seal
+  * Cover
+* Tool
+'''
+
+[[case]]
+id = "checkboxes-valve"
+input = '''
+* [ ] Check the Valve.
+* [X] Check the clamp.
+* [.] Record the result.
+'''
+
+[[case]]
+id = "wiki-link-valve"
+input = '''
+Read [[ValveService|service instructions]].
+'''
+
+[[case]]
+id = "image-valve"
+input = '''
+{{valve.png|View of the Valve}}
+'''
+
+[[case]]
+id = "code-valve"
+input = '''
+{{{class="text"
+check Valve
+status
+}}}
+'''
+
+[[case]]
+id = "table-valve"
+input = '''
+| Part | Count |
+|------+-------|
+| Valve | 2 |
+| Seal | 4 |
+'''
+
+[[case]]
+id = "definitions-valve"
+input = '''
+Valve:: A part of the test assembly.
+Seal:: A part under the cover.
+'''
+
+[[case]]
+id = "page-directives-valve"
+input = '''
+%title Valve inspection
+%toc
+= Steps =
+Close the cover.
+'''
+
+[[case]]
+id = "headings-filter"
+input = '''
+= Filter inspection =
+== Parts ==
+Open the cover.
+'''
+
+[[case]]
+id = "emphasis-filter"
+input = '''
+Fit the *Filter*. Turn it _slowly_. Use `check`.
+'''
+
+[[case]]
+id = "unordered-list-filter"
+input = '''
+* Filter
+  * Seal
+  * Cover
+* Tool
+'''
+
+[[case]]
+id = "checkboxes-filter"
+input = '''
+* [ ] Check the Filter.
+* [X] Check the clamp.
+* [.] Record the result.
+'''
+
+[[case]]
+id = "wiki-link-filter"
+input = '''
+Read [[FilterService|service instructions]].
+'''
+
+[[case]]
+id = "image-filter"
+input = '''
+{{filter.png|View of the Filter}}
+'''
+
+[[case]]
+id = "code-filter"
+input = '''
+{{{class="text"
+check Filter
+status
+}}}
+'''
+
+[[case]]
+id = "table-filter"
+input = '''
+| Part | Count |
+|------+-------|
+| Filter | 2 |
+| Seal | 4 |
+'''
+
+[[case]]
+id = "definitions-filter"
+input = '''
+Filter:: A part of the test assembly.
+Seal:: A part under the cover.
+'''
+
+[[case]]
+id = "page-directives-filter"
+input = '''
+%title Filter inspection
+%toc
+= Steps =
+Close the cover.
+'''
+
+[[case]]
+id = "headings-gauge"
+input = '''
+= Gauge inspection =
+== Parts ==
+Open the cover.
+'''
+
+[[case]]
+id = "emphasis-gauge"
+input = '''
+Fit the *Gauge*. Turn it _slowly_. Use `check`.
+'''
+
+[[case]]
+id = "unordered-list-gauge"
+input = '''
+* Gauge
+  * Seal
+  * Cover
+* Tool
+'''
+
+[[case]]
+id = "checkboxes-gauge"
+input = '''
+* [ ] Check the Gauge.
+* [X] Check the clamp.
+* [.] Record the result.
+'''
+
+[[case]]
+id = "wiki-link-gauge"
+input = '''
+Read [[GaugeService|service instructions]].
+'''
+
+[[case]]
+id = "image-gauge"
+input = '''
+{{gauge.png|View of the Gauge}}
+'''
+
+[[case]]
+id = "code-gauge"
+input = '''
+{{{class="text"
+check Gauge
+status
+}}}
+'''
+
+[[case]]
+id = "table-gauge"
+input = '''
+| Part | Count |
+|------+-------|
+| Gauge | 2 |
+| Seal | 4 |
+'''
+
+[[case]]
+id = "definitions-gauge"
+input = '''
+Gauge:: A part of the test assembly.
+Seal:: A part under the cover.
+'''
+
+[[case]]
+id = "page-directives-gauge"
+input = '''
+%title Gauge inspection
+%toc
+= Steps =
+Close the cover.
+'''

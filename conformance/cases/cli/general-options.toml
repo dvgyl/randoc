@@ -152,6 +152,7 @@ files = { "up.lua" = "function Str(el)\n  el.text = el.text:upper()\n  return el
 
 [[case]]
 id = "log-file"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "--log=log.json"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 covers = ["opt:log"]
@@ -189,12 +190,14 @@ covers = ["opt:output"]
 
 [[case]]
 id = "output-file"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-o", "out.json"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
 covers = ["opt:output"]
 
 [[case]]
 id = "output-long"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "--output=out.json"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"intro\",[],[]],[{\"t\":\"Str\",\"c\":\"Intro\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Hello\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"world.\"}]},{\"t\":\"Header\",\"c\":[2,[\"sub\",[],[]],[{\"t\":\"Str\",\"c\":\"Sub\"}]]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"a\\tb\"]}]}"
 covers = ["opt:output"]
@@ -212,6 +215,7 @@ input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Hea
 
 [[case]]
 id = "output-to-missing-directory"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "-o", "nosuchdir/out.json"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
@@ -261,11 +265,13 @@ input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 
 [[case]]
 id = "log-names-input"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "--log=a.json", "a.json"]
 files = { "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}" }
 
 [[case]]
 id = "log-names-metadata-file"
+capture_files = {}
 cmd = ["-f", "json", "-t", "json", "--log=m.yaml", "--metadata-file=m.yaml", "a.json"]
 files = { "a.json" = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}", "m.yaml" = "a: 1\n" }
 

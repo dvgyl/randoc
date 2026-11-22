@@ -1,0 +1,305 @@
+from = "twiki"
+
+[[case]]
+id = "headings-pump"
+input = '''
+---+ Pump inspection
+---++ Parts
+Open the cover.
+'''
+
+[[case]]
+id = "emphasis-pump"
+input = '''
+Fit the *Pump*. Turn it _slowly_. Use =check=.
+'''
+
+[[case]]
+id = "unordered-list-pump"
+input = '''
+   * Pump
+      * Seal
+      * Cover
+   * Tool
+'''
+
+[[case]]
+id = "ordered-list-pump"
+input = '''
+   1 Check the Pump.
+      1 Check the clamp.
+   1 Record the result.
+'''
+
+[[case]]
+id = "wiki-link-pump"
+input = '''
+Read [[Main.PumpService][service instructions]].
+'''
+
+[[case]]
+id = "external-link-pump"
+input = '''
+[[https://example.org/parts][Pump parts]]
+'''
+
+[[case]]
+id = "verbatim-pump"
+input = '''
+<verbatim>
+check Pump
+status *
+</verbatim>
+'''
+
+[[case]]
+id = "table-pump"
+input = '''
+| *Part* | *Count* |
+| Pump | 2 |
+| Seal | 4 |
+'''
+
+[[case]]
+id = "definition-pump"
+input = '''
+   $ Pump: A part of the test assembly.
+   $ Seal: A part under the cover.
+'''
+
+[[case]]
+id = "literal-names-pump"
+input = '''
+<noautolink>
+PumpService is a label.
+</noautolink>
+%BR% End.
+'''
+
+[[case]]
+id = "headings-valve"
+input = '''
+---+ Valve inspection
+---++ Parts
+Open the cover.
+'''
+
+[[case]]
+id = "emphasis-valve"
+input = '''
+Fit the *Valve*. Turn it _slowly_. Use =check=.
+'''
+
+[[case]]
+id = "unordered-list-valve"
+input = '''
+   * Valve
+      * Seal
+      * Cover
+   * Tool
+'''
+
+[[case]]
+id = "ordered-list-valve"
+input = '''
+   1 Check the Valve.
+      1 Check the clamp.
+   1 Record the result.
+'''
+
+[[case]]
+id = "wiki-link-valve"
+input = '''
+Read [[Main.ValveService][service instructions]].
+'''
+
+[[case]]
+id = "external-link-valve"
+input = '''
+[[https://example.org/parts][Valve parts]]
+'''
+
+[[case]]
+id = "verbatim-valve"
+input = '''
+<verbatim>
+check Valve
+status *
+</verbatim>
+'''
+
+[[case]]
+id = "table-valve"
+input = '''
+| *Part* | *Count* |
+| Valve | 2 |
+| Seal | 4 |
+'''
+
+[[case]]
+id = "definition-valve"
+input = '''
+   $ Valve: A part of the test assembly.
+   $ Seal: A part under the cover.
+'''
+
+[[case]]
+id = "literal-names-valve"
+input = '''
+<noautolink>
+ValveService is a label.
+</noautolink>
+%BR% End.
+'''
+
+[[case]]
+id = "headings-filter"
+input = '''
+---+ Filter inspection
+---++ Parts
+Open the cover.
+'''
+
+[[case]]
+id = "emphasis-filter"
+input = '''
+Fit the *Filter*. Turn it _slowly_. Use =check=.
+'''
+
+[[case]]
+id = "unordered-list-filter"
+input = '''
+   * Filter
+      * Seal
+      * Cover
+   * Tool
+'''
+
+[[case]]
+id = "ordered-list-filter"
+input = '''
+   1 Check the Filter.
+      1 Check the clamp.
+   1 Record the result.
+'''
+
+[[case]]
+id = "wiki-link-filter"
+input = '''
+Read [[Main.FilterService][service instructions]].
+'''
+
+[[case]]
+id = "external-link-filter"
+input = '''
+[[https://example.org/parts][Filter parts]]
+'''
+
+[[case]]
+id = "verbatim-filter"
+input = '''
+<verbatim>
+check Filter
+status *
+</verbatim>
+'''
+
+[[case]]
+id = "table-filter"
+input = '''
+| *Part* | *Count* |
+| Filter | 2 |
+| Seal | 4 |
+'''
+
+[[case]]
+id = "definition-filter"
+input = '''
+   $ Filter: A part of the test assembly.
+   $ Seal: A part under the cover.
+'''
+
+[[case]]
+id = "literal-names-filter"
+input = '''
+<noautolink>
+FilterService is a label.
+</noautolink>
+%BR% End.
+'''
+
+[[case]]
+id = "headings-gauge"
+input = '''
+---+ Gauge inspection
+---++ Parts
+Open the cover.
+'''
+
+[[case]]
+id = "emphasis-gauge"
+input = '''
+Fit the *Gauge*. Turn it _slowly_. Use =check=.
+'''
+
+[[case]]
+id = "unordered-list-gauge"
+input = '''
+   * Gauge
+      * Seal
+      * Cover
+   * Tool
+'''
+
+[[case]]
+id = "ordered-list-gauge"
+input = '''
+   1 Check the Gauge.
+      1 Check the clamp.
+   1 Record the result.
+'''
+
+[[case]]
+id = "wiki-link-gauge"
+input = '''
+Read [[Main.GaugeService][service instructions]].
+'''
+
+[[case]]
+id = "external-link-gauge"
+input = '''
+[[https://example.org/parts][Gauge parts]]
+'''
+
+[[case]]
+id = "verbatim-gauge"
+input = '''
+<verbatim>
+check Gauge
+status *
+</verbatim>
+'''
+
+[[case]]
+id = "table-gauge"
+input = '''
+| *Part* | *Count* |
+| Gauge | 2 |
+| Seal | 4 |
+'''
+
+[[case]]
+id = "definition-gauge"
+input = '''
+   $ Gauge: A part of the test assembly.
+   $ Seal: A part under the cover.
+'''
+
+[[case]]
+id = "literal-names-gauge"
+input = '''
+<noautolink>
+GaugeService is a label.
+</noautolink>
+%BR% End.
+'''

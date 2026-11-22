@@ -86,10 +86,16 @@
       "stderr": "[INFO] Loaded t.json from t.json\n[INFO] Loaded inc.txt from inc.txt\n"
     },
     "log-file#cmd": {
-      "key": "2998989d23b41a92",
+      "key": "913512e86ab0d47c",
       "exit": 0,
       "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "log.json": {
+          "kind": "file",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        }
+      }
     },
     "log-file-empty-name#cmd": {
       "key": "ea0b940eca801420",
@@ -116,16 +122,28 @@
       "stderr": "pandoc: dir: withBinaryFile: inappropriate type (Is a directory)\nHasCallStack backtrace:\n  collectBacktraces, called at libraries/ghc-internal/src/GHC/Internal/Exception.hs:169:13 in ghc-internal:GHC.Internal.Exception\n  toExceptionWithBacktrace, called at libraries/ghc-internal/src/GHC/Internal/IO.hs:260:11 in ghc-internal:GHC.Internal.IO\n  throwIO, called at libraries/ghc-internal/src/GHC/Internal/IO/Exception.hs:315:19 in ghc-internal:GHC.Internal.IO.Exception\n  ioException, called at libraries/ghc-internal/src/GHC/Internal/IO/Exception.hs:319:20 in ghc-internal:GHC.Internal.IO.Exception\n\n\n"
     },
     "log-names-input#cmd": {
-      "key": "a69a7700784fd849",
+      "key": "55124b83d6e02ad3",
       "exit": 0,
       "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}\n",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "a.json": {
+          "kind": "file",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        }
+      }
     },
     "log-names-metadata-file#cmd": {
-      "key": "74a942d61fba52c4",
+      "key": "76525272b806e30a",
       "exit": 0,
       "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"a\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"1\"}]}},\"blocks\":[]}\n",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "m.yaml": {
+          "kind": "file",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        }
+      }
     },
     "log-not-written-template-missing#cmd": {
       "key": "2dbbfff4de44b488",
@@ -146,16 +164,28 @@
       "stderr": "[INFO] Loaded t.json from t.json\nno.theme: openBinaryFile: does not exist (No such file or directory)\n"
     },
     "output-file#cmd": {
-      "key": "07a7a171ef4103a5",
+      "key": "13604a0609596cbf",
       "exit": 0,
       "stdout": "",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "out.json": {
+          "kind": "file",
+          "sha256": "c0c763125d800362d0a549dc00ca08f9a2221903f4c6ce738835ce42fb391920"
+        }
+      }
     },
     "output-long#cmd": {
-      "key": "7a585a9c89e26cd0",
+      "key": "e7fef05e03fcfab6",
       "exit": 0,
       "stdout": "",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "out.json": {
+          "kind": "file",
+          "sha256": "c0c763125d800362d0a549dc00ca08f9a2221903f4c6ce738835ce42fb391920"
+        }
+      }
     },
     "output-missing-argument#cmd": {
       "key": "2cdc33e865bc8e79",
@@ -182,10 +212,19 @@
       "stderr": "pandoc: dir: withFile: inappropriate type (Is a directory)\nHasCallStack backtrace:\n  collectBacktraces, called at libraries/ghc-internal/src/GHC/Internal/Exception.hs:169:13 in ghc-internal:GHC.Internal.Exception\n  toExceptionWithBacktrace, called at libraries/ghc-internal/src/GHC/Internal/IO.hs:260:11 in ghc-internal:GHC.Internal.IO\n  throwIO, called at libraries/ghc-internal/src/GHC/Internal/IO/Exception.hs:315:19 in ghc-internal:GHC.Internal.IO.Exception\n  ioException, called at libraries/ghc-internal/src/GHC/Internal/IO/Exception.hs:319:20 in ghc-internal:GHC.Internal.IO.Exception\n\n\n"
     },
     "output-to-missing-directory#cmd": {
-      "key": "61a4aa969dd45b97",
+      "key": "1c057c37e715fe0d",
       "exit": 0,
       "stdout": "",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "nosuchdir": {
+          "kind": "directory"
+        },
+        "nosuchdir/out.json": {
+          "kind": "file",
+          "sha256": "a79a3343b7cd7b9971d80347c74a07dea94e1d0e380e95ceeaef74b878970de3"
+        }
+      }
     },
     "quiet#cmd": {
       "key": "c2c0ab111febc1e0",

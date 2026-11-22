@@ -26,14 +26,27 @@ import suite as testsuite  # noqa: E402
 HERE = os.path.dirname(os.path.abspath(__file__))
 EXCLUSIONS = os.path.join(HERE, "exclusions.json")
 CLEANUP_SECONDS = 5.0
+# The heap limit of the oracle (a Haskell program). On 2026-11-10 one oracle
+# run used 22 GB and filled the swap space of the machine.
+ORACLE_GHCRTS = "-M3g"
+HEAP_EXHAUSTED = 251
+
+
+class NoResult(Exception):
+    """The oracle reached its heap limit, so the run gives nothing to compare."""
 
 
 class Runner:
-    """Runs the program as `pandoc` in the suite directory with a fixed environment."""
+    """Runs the program as `pandoc` in the suite directory with a fixed environment.
 
-    def __init__(self, program: str, suite: str, timeout: float, bin_dir: str):
+    A runner with `ghcrts` runs the oracle: it gets that heap limit, and an
+    exit at the limit raises `NoResult` instead of giving an outcome.
+    """
+
+    def __init__(self, program: str, suite: str, timeout: float, bin_dir: str, ghcrts: str | None = None):
         self.suite = suite
         self.timeout = timeout
+        self.ghcrts = ghcrts
         self.pandoc = os.path.join(bin_dir, "pandoc")
         os.makedirs(bin_dir, exist_ok=True)
         os.symlink(os.path.abspath(program), self.pandoc)
@@ -48,6 +61,8 @@ class Runner:
             "LC_ALL": "en_US.UTF-8",
             "TZ": "UTC",
         }
+        if ghcrts:
+            self.env["GHCRTS"] = ghcrts
         self.reference: Runner | None = None
 
     def execute(self, command, stdin: bytes) -> testsuite.Outcome:
@@ -70,6 +85,8 @@ class Runner:
             out, err = process.communicate(stdin, timeout=self.timeout)
         except subprocess.TimeoutExpired:
             return self.stop(process)
+        if self.ghcrts and process.returncode == HEAP_EXHAUSTED:
+            raise NoResult(f"no result: the oracle reached its heap limit (GHCRTS={self.ghcrts})")
         return testsuite.Outcome(process.returncode, out, err)
 
     def stop(self, process) -> testsuite.Outcome:
@@ -91,6 +108,8 @@ class Runner:
         reference = self.reference.execute if self.reference else None
         try:
             return case.id, case.evaluate(self.execute, self.suite, reference)
+        except NoResult as error:
+            return case.id, str(error)
         except Exception as error:  # one test must not stop the run
             return case.id, f"[tool] {type(error).__name__}: {error}"
 
@@ -114,9 +133,13 @@ def load_exclusions(path: str) -> dict:
         return {item["id"]: item["reason"] for item in json.load(handle)["exclusions"]}
 
 
-def load_baseline(path: str) -> list:
+def load_baseline(path: str) -> list[str]:
     with open(path, encoding="utf-8") as handle:
-        return json.load(handle)["passing"]
+        saved = json.load(handle)
+    passing = saved.get("passing") if isinstance(saved, dict) else None
+    if not isinstance(passing, list) or any(not isinstance(unit, str) for unit in passing):
+        raise ValueError("The baseline file needs a list of passing unit identifiers")
+    return passing
 
 
 def summarize(found, results: dict, excluded: dict, program: str, text: str = "") -> dict:
@@ -213,14 +236,23 @@ def main(argv=None) -> int:
     else:
         unchecked = set()
     excluded = load_exclusions(args.exclusions)
+    # Read the baseline before the run: --write-baseline can name the same file.
+    try:
+        baseline = load_baseline(args.baseline) if args.baseline else None
+    except (OSError, ValueError) as error:
+        print(f"Cannot read the baseline file {args.baseline}\n{error}", file=sys.stderr)
+        return 2
     selected = [c for c in found.cases if args.filter in c.id and c.id not in excluded]
 
     bin_dir = tempfile.mkdtemp(prefix="pandoc-testsuite-")
     started = time.monotonic()
     try:
-        runner = Runner(args.pandoc, suite, args.timeout, os.path.join(bin_dir, "program"))
+        is_oracle = bool(args.oracle) and os.path.realpath(args.pandoc) == os.path.realpath(args.oracle)
+        runner = Runner(args.pandoc, suite, args.timeout, os.path.join(bin_dir, "program"),
+                        ghcrts=ORACLE_GHCRTS if is_oracle else None)
         if args.oracle:
-            runner.reference = Runner(args.oracle, suite, args.timeout, os.path.join(bin_dir, "oracle"))
+            runner.reference = Runner(args.oracle, suite, args.timeout, os.path.join(bin_dir, "oracle"),
+                                      ghcrts=ORACLE_GHCRTS)
         with ThreadPoolExecutor(max_workers=max(1, args.jobs)) as pool:
             results = dict(pool.map(runner.check, selected))
     finally:
@@ -242,7 +274,18 @@ def main(argv=None) -> int:
 
     if args.tables:
         print(markdown_tables(report))
-    if args.out:
+
+    keeps_passing = baseline is None or set(baseline).issubset(report["passing"])
+
+    def can_write(path: str | None, keeps_baseline: bool) -> bool:
+        if not path:
+            return False
+        if not keeps_baseline and args.baseline and os.path.exists(path) and os.path.samefile(path, args.baseline):
+            print(f"Kept the baseline file {path}")
+            return False
+        return True
+
+    if can_write(args.out, keeps_passing and args.label != "passing"):
         if args.label:
             stored = {}
             if os.path.exists(args.out):
@@ -252,11 +295,11 @@ def main(argv=None) -> int:
             write_json(args.out, dict(sorted(stored.items())))
         else:
             write_json(args.out, report)
-    if args.write_baseline:
+    if can_write(args.write_baseline, keeps_passing):
         write_json(args.write_baseline, {"program": report["program"], "passing": report["passing"]})
 
-    if args.baseline:
-        missing = [i for i in load_baseline(args.baseline) if args.filter in i and i not in excluded and results.get(i, "") is not None]
+    if baseline is not None:
+        missing = [i for i in baseline if args.filter in i and i not in excluded and results.get(i, "") is not None]
         for ident in missing:
             reason = " (not checked: no reference program)" if ident in unchecked else ""
             print(f"REGRESSION {ident}{reason}")

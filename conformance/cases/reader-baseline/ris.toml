@@ -1,0 +1,473 @@
+from = "ris"
+
+[[case]]
+id = "authors-jour"
+input = """
+TY  - JOUR
+ID  - field-42
+TI  - Inspection of the test assembly
+AU  - Lane, Mira
+AU  - Reed, Evan J.
+ER  -\u0020
+"""
+
+[[case]]
+id = "date-range-jour"
+input = """
+TY  - JOUR
+ID  - field-42
+TI  - Inspection of the test assembly
+PY  - 2026
+DA  - 2026/11/18
+Y2  - 2026/12/01
+ER  -\u0020
+"""
+
+[[case]]
+id = "journal-issue-jour"
+input = """
+TY  - JOUR
+ID  - field-42
+TI  - Inspection of the test assembly
+JO  - Field Records
+VL  - 12
+IS  - 4
+SP  - 37
+EP  - 49
+ER  -\u0020
+"""
+
+[[case]]
+id = "publisher-jour"
+input = """
+TY  - JOUR
+ID  - field-42
+TI  - Inspection of the test assembly
+PB  - North Workshop Press
+CY  - Mill Bay
+ET  - 2
+ER  -\u0020
+"""
+
+[[case]]
+id = "identifiers-jour"
+input = """
+TY  - JOUR
+ID  - field-42
+TI  - Inspection of the test assembly
+DO  - 10.1234/field.42
+SN  - 9780000000002
+ER  -\u0020
+"""
+
+[[case]]
+id = "keywords-jour"
+input = """
+TY  - JOUR
+ID  - field-42
+TI  - Inspection of the test assembly
+KW  - seal
+KW  - inspection
+AB  - Check the seal before operation.
+ER  -\u0020
+"""
+
+[[case]]
+id = "url-jour"
+input = """
+TY  - JOUR
+ID  - field-42
+TI  - Inspection of the test assembly
+UR  - https://example.org/parts
+L1  - https://example.org/parts/guide.pdf
+ER  -\u0020
+"""
+
+[[case]]
+id = "series-jour"
+input = """
+TY  - JOUR
+ID  - field-42
+TI  - Inspection of the test assembly
+T2  - Equipment Notes
+T3  - Repair Series
+LA  - fr
+ER  -\u0020
+"""
+
+[[case]]
+id = "multiline-jour"
+input = """
+TY  - JOUR
+ID  - field-42
+TI  - Inspection of the test assembly
+N1  - Check the seal.
+      Record the result.
+N2  - Install the new cover.
+ER  -\u0020
+"""
+
+[[case]]
+id = "unicode-jour"
+input = """
+TY  - JOUR
+ID  - field-42
+TI  - Inspection of the test assembly
+A2  - Åström, Léa
+N1  - Use the 漢字 mark on the label.
+ER  -\u0020
+"""
+
+[[case]]
+id = "authors-book"
+input = """
+TY  - BOOK
+ID  - field-42
+TI  - Inspection of the test assembly
+AU  - Lane, Mira
+AU  - Reed, Evan J.
+ER  -\u0020
+"""
+
+[[case]]
+id = "date-range-book"
+input = """
+TY  - BOOK
+ID  - field-42
+TI  - Inspection of the test assembly
+PY  - 2026
+DA  - 2026/11/18
+Y2  - 2026/12/01
+ER  -\u0020
+"""
+
+[[case]]
+id = "journal-issue-book"
+input = """
+TY  - BOOK
+ID  - field-42
+TI  - Inspection of the test assembly
+JO  - Field Records
+VL  - 12
+IS  - 4
+SP  - 37
+EP  - 49
+ER  -\u0020
+"""
+
+[[case]]
+id = "publisher-book"
+input = """
+TY  - BOOK
+ID  - field-42
+TI  - Inspection of the test assembly
+PB  - North Workshop Press
+CY  - Mill Bay
+ET  - 2
+ER  -\u0020
+"""
+
+[[case]]
+id = "identifiers-book"
+input = """
+TY  - BOOK
+ID  - field-42
+TI  - Inspection of the test assembly
+DO  - 10.1234/field.42
+SN  - 9780000000002
+ER  -\u0020
+"""
+
+[[case]]
+id = "keywords-book"
+input = """
+TY  - BOOK
+ID  - field-42
+TI  - Inspection of the test assembly
+KW  - seal
+KW  - inspection
+AB  - Check the seal before operation.
+ER  -\u0020
+"""
+
+[[case]]
+id = "url-book"
+input = """
+TY  - BOOK
+ID  - field-42
+TI  - Inspection of the test assembly
+UR  - https://example.org/parts
+L1  - https://example.org/parts/guide.pdf
+ER  -\u0020
+"""
+
+[[case]]
+id = "series-book"
+input = """
+TY  - BOOK
+ID  - field-42
+TI  - Inspection of the test assembly
+T2  - Equipment Notes
+T3  - Repair Series
+LA  - fr
+ER  -\u0020
+"""
+
+[[case]]
+id = "multiline-book"
+input = """
+TY  - BOOK
+ID  - field-42
+TI  - Inspection of the test assembly
+N1  - Check the seal.
+      Record the result.
+N2  - Install the new cover.
+ER  -\u0020
+"""
+
+[[case]]
+id = "unicode-book"
+input = """
+TY  - BOOK
+ID  - field-42
+TI  - Inspection of the test assembly
+A2  - Åström, Léa
+N1  - Use the 漢字 mark on the label.
+ER  -\u0020
+"""
+
+[[case]]
+id = "authors-chap"
+input = """
+TY  - CHAP
+ID  - field-42
+TI  - Inspection of the test assembly
+AU  - Lane, Mira
+AU  - Reed, Evan J.
+ER  -\u0020
+"""
+
+[[case]]
+id = "date-range-chap"
+input = """
+TY  - CHAP
+ID  - field-42
+TI  - Inspection of the test assembly
+PY  - 2026
+DA  - 2026/11/18
+Y2  - 2026/12/01
+ER  -\u0020
+"""
+
+[[case]]
+id = "journal-issue-chap"
+input = """
+TY  - CHAP
+ID  - field-42
+TI  - Inspection of the test assembly
+JO  - Field Records
+VL  - 12
+IS  - 4
+SP  - 37
+EP  - 49
+ER  -\u0020
+"""
+
+[[case]]
+id = "publisher-chap"
+input = """
+TY  - CHAP
+ID  - field-42
+TI  - Inspection of the test assembly
+PB  - North Workshop Press
+CY  - Mill Bay
+ET  - 2
+ER  -\u0020
+"""
+
+[[case]]
+id = "identifiers-chap"
+input = """
+TY  - CHAP
+ID  - field-42
+TI  - Inspection of the test assembly
+DO  - 10.1234/field.42
+SN  - 9780000000002
+ER  -\u0020
+"""
+
+[[case]]
+id = "keywords-chap"
+input = """
+TY  - CHAP
+ID  - field-42
+TI  - Inspection of the test assembly
+KW  - seal
+KW  - inspection
+AB  - Check the seal before operation.
+ER  -\u0020
+"""
+
+[[case]]
+id = "url-chap"
+input = """
+TY  - CHAP
+ID  - field-42
+TI  - Inspection of the test assembly
+UR  - https://example.org/parts
+L1  - https://example.org/parts/guide.pdf
+ER  -\u0020
+"""
+
+[[case]]
+id = "series-chap"
+input = """
+TY  - CHAP
+ID  - field-42
+TI  - Inspection of the test assembly
+T2  - Equipment Notes
+T3  - Repair Series
+LA  - fr
+ER  -\u0020
+"""
+
+[[case]]
+id = "multiline-chap"
+input = """
+TY  - CHAP
+ID  - field-42
+TI  - Inspection of the test assembly
+N1  - Check the seal.
+      Record the result.
+N2  - Install the new cover.
+ER  -\u0020
+"""
+
+[[case]]
+id = "unicode-chap"
+input = """
+TY  - CHAP
+ID  - field-42
+TI  - Inspection of the test assembly
+A2  - Åström, Léa
+N1  - Use the 漢字 mark on the label.
+ER  -\u0020
+"""
+
+[[case]]
+id = "authors-conf"
+input = """
+TY  - CONF
+ID  - field-42
+TI  - Inspection of the test assembly
+AU  - Lane, Mira
+AU  - Reed, Evan J.
+ER  -\u0020
+"""
+
+[[case]]
+id = "date-range-conf"
+input = """
+TY  - CONF
+ID  - field-42
+TI  - Inspection of the test assembly
+PY  - 2026
+DA  - 2026/11/18
+Y2  - 2026/12/01
+ER  -\u0020
+"""
+
+[[case]]
+id = "journal-issue-conf"
+input = """
+TY  - CONF
+ID  - field-42
+TI  - Inspection of the test assembly
+JO  - Field Records
+VL  - 12
+IS  - 4
+SP  - 37
+EP  - 49
+ER  -\u0020
+"""
+
+[[case]]
+id = "publisher-conf"
+input = """
+TY  - CONF
+ID  - field-42
+TI  - Inspection of the test assembly
+PB  - North Workshop Press
+CY  - Mill Bay
+ET  - 2
+ER  -\u0020
+"""
+
+[[case]]
+id = "identifiers-conf"
+input = """
+TY  - CONF
+ID  - field-42
+TI  - Inspection of the test assembly
+DO  - 10.1234/field.42
+SN  - 9780000000002
+ER  -\u0020
+"""
+
+[[case]]
+id = "keywords-conf"
+input = """
+TY  - CONF
+ID  - field-42
+TI  - Inspection of the test assembly
+KW  - seal
+KW  - inspection
+AB  - Check the seal before operation.
+ER  -\u0020
+"""
+
+[[case]]
+id = "url-conf"
+input = """
+TY  - CONF
+ID  - field-42
+TI  - Inspection of the test assembly
+UR  - https://example.org/parts
+L1  - https://example.org/parts/guide.pdf
+ER  -\u0020
+"""
+
+[[case]]
+id = "series-conf"
+input = """
+TY  - CONF
+ID  - field-42
+TI  - Inspection of the test assembly
+T2  - Equipment Notes
+T3  - Repair Series
+LA  - fr
+ER  -\u0020
+"""
+
+[[case]]
+id = "multiline-conf"
+input = """
+TY  - CONF
+ID  - field-42
+TI  - Inspection of the test assembly
+N1  - Check the seal.
+      Record the result.
+N2  - Install the new cover.
+ER  -\u0020
+"""
+
+[[case]]
+id = "unicode-conf"
+input = """
+TY  - CONF
+ID  - field-42
+TI  - Inspection of the test assembly
+A2  - Åström, Léa
+N1  - Use the 漢字 mark on the label.
+ER  -\u0020
+"""

@@ -403,6 +403,133 @@ class RunnerErrors(unittest.TestCase):
             self.assertEqual(names, ["out.json"])
 
 
+class OracleHeapLimit(unittest.TestCase):
+    def test_only_the_oracle_gets_the_limit_and_its_exit_251_is_no_result(self):
+        script = "import os,sys; print(os.environ.get('GHCRTS', '')); sys.exit(251)"
+        with tempfile.TemporaryDirectory() as directory:
+            oracle = run.Runner(sys.executable, directory, 10.0, os.path.join(directory, "o"),
+                                ghcrts=run.ORACLE_GHCRTS)
+            oracle.pandoc = sys.executable
+            program = run.Runner(sys.executable, directory, 10.0, os.path.join(directory, "p"))
+            program.pandoc = sys.executable
+            outcome = program.execute(("-c", script), b"")
+            self.assertEqual((outcome.code, outcome.stdout), (251, b"\n"))
+            with self.assertRaises(run.NoResult):
+                oracle.execute(("-c", script), b"")
+            self.assertEqual(oracle.execute(("-c", script.replace("251", "0")), b"").stdout, b"-M3g\n")
+
+            class NeedsOracle:
+                id = "readers/x/1"
+
+                def evaluate(self, execute, suite_dir, reference=None):
+                    return reference(("-c", script), b"")
+
+            program.reference = oracle
+            ident, failure = program.check(NeedsOracle())
+        self.assertEqual(ident, "readers/x/1")
+        self.assertTrue(failure.startswith("no result: the oracle reached its heap limit"), failure)
+
+
+class OracleSelfCheck(unittest.TestCase):
+    def test_the_oracle_as_the_tested_program_gets_the_heap_limit(self):
+        import contextlib
+        import io
+        from unittest import mock
+
+        case = suite.CommandCase("command/1.md#1", "command", 'echo "[$GHCRTS]"', "", "[-M3g]\n")
+        found = suite.Discovery([case], [])
+        codes = {}
+        with tempfile.TemporaryDirectory() as directory:
+            baseline = os.path.join(directory, "baseline.json")
+            with open(baseline, "w", encoding="utf-8") as handle:
+                json.dump({"passing": ["command/1.md#1"]}, handle)
+            for program in ("/usr/bin/true", "/usr/bin/false"):
+                with mock.patch.object(run.testsuite, "discover", return_value=found), \
+                        contextlib.redirect_stdout(io.StringIO()):
+                    codes[program] = run.main(["--pandoc", program, "--suite", directory,
+                                               "--oracle", "/usr/bin/true", "--baseline", baseline, "--jobs", "1"])
+        self.assertEqual(codes, {"/usr/bin/true": 0, "/usr/bin/false": 1})
+
+
+class Baseline(unittest.TestCase):
+    def test_a_lost_test_fails_when_the_baseline_and_the_new_baseline_are_one_file(self):
+        import contextlib
+        import io
+        from unittest import mock
+
+        found = suite.Discovery([suite.CommandCase("command/1.md#1", "command", "pandoc", "", "")], [])
+        with tempfile.TemporaryDirectory() as directory:
+            baseline = os.path.join(directory, "baseline.json")
+            args = ["--suite", directory, "--oracle", "", "--jobs", "1"]
+            out = io.StringIO()
+            with mock.patch.object(run.testsuite, "discover", return_value=found), \
+                    contextlib.redirect_stdout(out):
+                for output in ("--write-baseline", "--out"):
+                    with self.subTest(output=output):
+                        self.assertEqual(run.main(["--pandoc", "/usr/bin/true", output, baseline, *args]), 0)
+                        with open(baseline, "rb") as handle:
+                            before = handle.read()
+                        self.assertEqual(json.loads(before)["passing"], ["command/1.md#1"])
+                        wrong = ["--pandoc", "/usr/bin/false", "--baseline", baseline, output, baseline, *args]
+                        self.assertEqual([run.main(wrong), run.main(wrong)], [1, 1])
+                        with open(baseline, "rb") as handle:
+                            self.assertEqual(handle.read(), before)
+        self.assertIn("REGRESSION command/1.md#1", out.getvalue())
+
+    def test_a_filtered_run_keeps_unselected_units_in_the_baseline(self):
+        import contextlib
+        import io
+        from unittest import mock
+
+        found = suite.Discovery([suite.CommandCase(f"command/{name}.md#1", "command", "pandoc", "", "")
+                                 for name in ("one", "two")], [])
+        with tempfile.TemporaryDirectory() as directory:
+            baseline = os.path.join(directory, "baseline.json")
+            args = ["--suite", directory, "--oracle", "", "--jobs", "1", "--pandoc", "/usr/bin/true",
+                    "--write-baseline", baseline]
+            with mock.patch.object(run.testsuite, "discover", return_value=found), \
+                    contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(run.main(args), 0)
+                self.assertEqual(run.main([*args, "--baseline", baseline, "--filter", "one"]), 0)
+            with open(baseline, encoding="utf-8") as handle:
+                self.assertEqual(json.load(handle)["passing"], ["command/one.md#1", "command/two.md#1"])
+
+    def test_an_output_label_cannot_replace_the_saved_passing_list(self):
+        import contextlib
+        import io
+        from unittest import mock
+
+        found = suite.Discovery([suite.CommandCase("command/probe.md#1", "command", "pandoc", "", "")], [])
+        with tempfile.TemporaryDirectory() as directory:
+            baseline = os.path.join(directory, "baseline.json")
+            args = ["--suite", directory, "--oracle", "", "--jobs", "1"]
+            good = [*args, "--pandoc", "/usr/bin/true"]
+            wrong = [*args, "--pandoc", "/usr/bin/false", "--baseline", baseline, "--filter", "probe"]
+            with mock.patch.object(run.testsuite, "discover", return_value=found), \
+                    contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(run.main([*good, "--write-baseline", baseline]), 0)
+                self.assertEqual(run.main(wrong), 1)
+                self.assertEqual(run.main([*good, "--baseline", baseline, "--out", baseline, "--label", "passing"]), 0)
+                self.assertEqual(run.main(wrong), 1)
+            with open(baseline, encoding="utf-8") as handle:
+                self.assertEqual(json.load(handle)["passing"], ["command/probe.md#1"])
+
+    def test_an_invalid_saved_passing_list_stops_the_check(self):
+        import contextlib
+        import io
+        from unittest import mock
+
+        with tempfile.TemporaryDirectory() as directory:
+            baseline = os.path.join(directory, "baseline.json")
+            with open(baseline, "w", encoding="utf-8") as handle:
+                json.dump({"passing": {"groups": {}}}, handle)
+            args = ["--suite", directory, "--oracle", "", "--pandoc", "/usr/bin/true", "--baseline", baseline]
+            with mock.patch.object(run.testsuite, "discover", return_value=suite.Discovery([], [])), \
+                    contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()) as error:
+                self.assertEqual(run.main(args), 2)
+            self.assertIn("list of passing unit identifiers", error.getvalue())
+
+
 class Timeouts(unittest.TestCase):
     def runner(self, directory):
         runner = run.Runner(sys.executable, directory, 1.0, directory)

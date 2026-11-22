@@ -62,13 +62,27 @@ class CompareTests(unittest.TestCase):
             ("oracle", "d\n"): outcome(timed_out=True), ("randoc", "d\n"): outcome(),
         }
         summary = run.compare([(1, "a\n"), (2, "b\n"), (3, "c\n"), (4, "d\n")], "oracle", "randoc",
-                              1.0, 2, run=lambda binary, source, timeout: results[(binary, source)])
+                              1.0, 2, run=lambda binary, source, timeout, ghcrts=None: results[(binary, source)])
         self.assertEqual(summary["examples"], 4)
         self.assertEqual(summary["pass"], 1)
         self.assertEqual(summary["failing_examples"], [2])
         self.assertEqual(summary["timeout_examples"], [3])
         self.assertEqual(summary["oracle_problem_examples"], [4])
         self.assertNotIn("a\n", str(summary))
+
+
+class HeapLimitTests(unittest.TestCase):
+    def test_only_the_oracle_gets_the_limit_and_its_exit_251_is_an_oracle_problem(self):
+        with tempfile.TemporaryDirectory() as folder:
+            program = Path(folder) / "program"
+            program.write_text('#!/bin/sh\necho "[$GHCRTS]"\nexit 251\n')
+            program.chmod(0o755)
+            plain = run.execute(program, "", 10)
+            limited = run.execute(program, "", 10, run.ORACLE_GHCRTS)
+            summary = run.compare([(1, "")], program, program, 10, 1)
+        self.assertEqual((plain.exit, plain.stdout), (251, b"[]\n"))
+        self.assertEqual((limited.exit, limited.stdout), (-1, b"[-M3g]\n"))
+        self.assertEqual(summary["oracle_problem_examples"], [1])
 
 
 class FetchTests(unittest.TestCase):

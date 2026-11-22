@@ -1,0 +1,7 @@
+# path	part	sha256	reason (a reviewer checks each row; a changed file needs a new row)
+path	part	sha256	reason
+crates/randoc-highlight/NOTICE.md	pandoc-source	246b838352623d06622f7315d92609800eca6e302aaf6ef231a3a65d35f2c3c0	Standard BSD-3-Clause/MIT/WTFPL licence disclaimer boilerplate (audited 2026-11-22)
+crates/randoc-highlight/data/syntax-definitions.txt	pandoc-source	1ab00ce4ecb5f6c714c31b5f3a173ffd34ba0f9b246a209d412898bf88162a1e	63 permissively licensed KDE syntax definitions (MIT/BSD-3-Clause/NCSA/WTFPL); hits are standard disclaimer text (audited 2026-11-22)
+crates/randoc-highlight/src/xml.rs	pandoc-source	f3fd25f8a82f942ea936e7bddb7b5d45630b3d09b2e393d7461b350565e26389	Generic XML whitespace and name character comparisons (audited 2026-11-22)
+crates/randoc-highlight/tools/data.py	pandoc-source	4869993801adffb1311b5365d847bf6cd883676d8f794f8d28a977dd825d52b1	Standard BSD-3-Clause/MIT/WTFPL licence text templates emitted into NOTICE.md (audited 2026-11-22)
+third_party/licences/syntax-definitions.txt	pandoc-source	72fe0aa568e5c516d30ce83c41d83c87c0c915c02203bcfca44a0d04360d8047	Standard BSD-3-Clause/MIT/WTFPL licence disclaimer boilerplate for 63 permissive KDE syntax definitions (audited 2026-11-22)

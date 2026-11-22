@@ -122,16 +122,28 @@
       "stderr": ""
     },
     "combination-output-cli-first#cmd": {
-      "key": "7b01f226dd5f4503",
+      "key": "c9adfdba41956e39",
       "exit": 0,
       "stdout": "",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "o1.json": {
+          "kind": "file",
+          "sha256": "6ba51ef33d22582bee07ed83d2dc3a7445e8983cd69a434e73185fcd0665da81"
+        }
+      }
     },
     "combination-output-cli-last#cmd": {
-      "key": "0015001e72eab577",
+      "key": "e752f77b577886ad",
       "exit": 0,
       "stdout": "",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "o2.json": {
+          "kind": "file",
+          "sha256": "6ba51ef33d22582bee07ed83d2dc3a7445e8983cd69a434e73185fcd0665da81"
+        }
+      }
     },
     "combination-output-two-files#cmd": {
       "key": "6b249ff8956c9a68",
@@ -140,10 +152,16 @@
       "stderr": ""
     },
     "combination-output-two-files-reverse#cmd": {
-      "key": "9158c6e522330738",
+      "key": "e4dc2a2be517921e",
       "exit": 0,
       "stdout": "",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "o1.json": {
+          "kind": "file",
+          "sha256": "6ba51ef33d22582bee07ed83d2dc3a7445e8983cd69a434e73185fcd0665da81"
+        }
+      }
     },
     "combination-shift-cli-first#cmd": {
       "key": "6fad0e8faf609b74",
@@ -974,76 +992,148 @@
       "stderr": ""
     },
     "path-output-file-dot#cmd": {
-      "key": "3df24a18d8663eda",
+      "key": "a26a140ea9cbbe04",
       "exit": 0,
       "stdout": "",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "sub/F": {
+          "kind": "file",
+          "sha256": "a79a3343b7cd7b9971d80347c74a07dea94e1d0e380e95ceeaef74b878970de3"
+        }
+      }
     },
     "path-output-file-dot-dot-part#cmd": {
-      "key": "e82245e8f350988f",
+      "key": "12c631931cdee165",
       "exit": 0,
       "stdout": "",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "sub/F": {
+          "kind": "file",
+          "sha256": "a79a3343b7cd7b9971d80347c74a07dea94e1d0e380e95ceeaef74b878970de3"
+        }
+      }
     },
     "path-output-file-dot-double-slash#cmd": {
-      "key": "68e7779f3d8ea814",
+      "key": "2232db02503bbfba",
       "exit": 0,
       "stdout": "",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "sub/F": {
+          "kind": "file",
+          "sha256": "a79a3343b7cd7b9971d80347c74a07dea94e1d0e380e95ceeaef74b878970de3"
+        }
+      }
     },
     "path-output-file-dot-parent#cmd": {
-      "key": "dd76d1b43315cab9",
+      "key": "d4ef86e34764b6a3",
       "exit": 0,
       "stdout": "",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "sub/F": {
+          "kind": "file",
+          "sha256": "a79a3343b7cd7b9971d80347c74a07dea94e1d0e380e95ceeaef74b878970de3"
+        }
+      }
     },
     "path-output-file-missing#cmd": {
-      "key": "a8c319fef0d3ed8f",
+      "key": "d058126bf60e0e65",
       "exit": 0,
       "stdout": "",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "nosuch.txt": {
+          "kind": "file",
+          "sha256": "a79a3343b7cd7b9971d80347c74a07dea94e1d0e380e95ceeaef74b878970de3"
+        }
+      }
     },
     "path-output-file-missing-dot-part#cmd": {
-      "key": "f84913ea4fc7e8ad",
+      "key": "c747123998c7b5e7",
       "exit": 0,
       "stdout": "",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "sub/nosuch.txt": {
+          "kind": "file",
+          "sha256": "a79a3343b7cd7b9971d80347c74a07dea94e1d0e380e95ceeaef74b878970de3"
+        }
+      }
     },
     "path-output-file-missing-parent#cmd": {
-      "key": "dc21abb829584180",
+      "key": "e8d8dabbb435dd86",
       "exit": 0,
       "stdout": "",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "nosuch.txt": {
+          "kind": "file",
+          "sha256": "a79a3343b7cd7b9971d80347c74a07dea94e1d0e380e95ceeaef74b878970de3"
+        }
+      }
     },
     "path-output-file-relative#cmd": {
-      "key": "c9ba36a1107efaec",
+      "key": "3d5a9efa0bab2272",
       "exit": 0,
       "stdout": "",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "F": {
+          "kind": "file",
+          "sha256": "a79a3343b7cd7b9971d80347c74a07dea94e1d0e380e95ceeaef74b878970de3"
+        }
+      }
     },
     "path-output-file-relative-dot#cmd": {
-      "key": "7456e43a05dedc59",
+      "key": "9b31ee01a100ce03",
       "exit": 0,
       "stdout": "",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "F": {
+          "kind": "file",
+          "sha256": "a79a3343b7cd7b9971d80347c74a07dea94e1d0e380e95ceeaef74b878970de3"
+        }
+      }
     },
     "path-output-file-relative-double-slash#cmd": {
-      "key": "25e93887cf337653",
+      "key": "21d6cc4803b11aa9",
       "exit": 0,
       "stdout": "",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "sub/F": {
+          "kind": "file",
+          "sha256": "a79a3343b7cd7b9971d80347c74a07dea94e1d0e380e95ceeaef74b878970de3"
+        }
+      }
     },
     "path-output-file-relative-parent#cmd": {
-      "key": "ca145f48ca999ffd",
+      "key": "56ba76929627f617",
       "exit": 0,
       "stdout": "",
-      "stderr": ""
+      "stderr": "",
+      "file_changes": {
+        "F": {
+          "kind": "file",
+          "sha256": "a79a3343b7cd7b9971d80347c74a07dea94e1d0e380e95ceeaef74b878970de3"
+        }
+      }
     },
     "path-output-file-undefined-variable#cmd": {
-      "key": "be5a4702a794d3d9",
+      "key": "96be44ebd7ccc983",
       "exit": 0,
       "stdout": "",
-      "stderr": "[WARNING] Undefined environment variable NOSUCHVAR in defaults file.\n"
+      "stderr": "[WARNING] Undefined environment variable NOSUCHVAR in defaults file.\n",
+      "file_changes": {
+        "F": {
+          "kind": "file",
+          "sha256": "a79a3343b7cd7b9971d80347c74a07dea94e1d0e380e95ceeaef74b878970de3"
+        }
+      }
     },
     "path-template-dot#cmd": {
       "key": "5ef2e179f535a76e",
