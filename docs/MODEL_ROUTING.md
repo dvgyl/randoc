@@ -12,7 +12,7 @@ the two exceptions below applies.
 ## Repo-specific rule for Randoc
 
 **For the Randoc repository, only use Gemini 4 Neon (through various providers)
-or Opus 5.5 if needed.** Do not apply the broader multi-provider routing below
+or Opus 5.5 (through various providers) as the main agents.** Do not apply the broader multi-provider routing below
 on Randoc unless the user asks for it.
 
 ## General model routing (default across sessions)
