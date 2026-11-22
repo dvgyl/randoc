@@ -109,9 +109,31 @@ fn parse(tex: &str, max_depth: usize) -> Result<Vec<tree::Exp>, MathError> {
 /// );
 /// ```
 pub fn to_mathml(kind: MathType, tex: &str, max_depth: usize) -> Result<String, MathError> {
+    to_mathml_flavor(kind, tex, max_depth, MathMlFlavor::Html)
+}
+
+/// Selects the MathML markup for a document format.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum MathMlFlavor {
+    /// HTML MathML with a TeX annotation.
+    Html,
+    /// DocBook MathML with prefixed elements and attributes.
+    DocBook,
+    /// JATS MathML with prefixed elements and a namespace declaration.
+    Jats,
+}
+
+/// Converts TeX to the selected MathML dialect within the nesting limit.
+pub fn to_mathml_flavor(
+    kind: MathType,
+    tex: &str,
+    max_depth: usize,
+    flavor: MathMlFlavor,
+) -> Result<String, MathError> {
     let items = parse(tex, max_depth)?;
     let display = kind == MathType::DisplayMath;
-    Ok(render::mathml(&items, display, tex))
+    Ok(render::mathml(&items, display, tex, flavor))
 }
 
 /// Converts a formula to the inline list that Pandoc writes for a format with
@@ -182,6 +204,47 @@ mod tests {
             handle.is_ok_and(|h| h.join().is_ok()),
             "the conversion overflowed the stack"
         );
+    }
+
+    #[test]
+    fn mathml_flavors_match_pandoc_markup() -> Result<(), MathError> {
+        use MathMlFlavor::{DocBook, Html, Jats};
+        use MathType::{DisplayMath, InlineMath};
+
+        let html = to_mathml_flavor(InlineMath, "x^2", DEFAULT_DEPTH, Html)?;
+        assert_eq!(html, to_mathml(InlineMath, "x^2", DEFAULT_DEPTH)?);
+        assert_eq!(
+            html,
+            concat!(
+                r#"<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics>"#,
+                r#"<msup><mi>x</mi><mn>2</mn></msup>"#,
+                r#"<annotation encoding="application/x-tex">x^2</annotation></semantics></math>"#,
+            )
+        );
+        assert_eq!(
+            to_mathml_flavor(InlineMath, "x^2", DEFAULT_DEPTH, DocBook)?,
+            "<mml:math><mml:msup><mml:mi>x</mml:mi><mml:mn>2</mml:mn></mml:msup></mml:math>"
+        );
+        assert_eq!(
+            to_mathml_flavor(InlineMath, "x^2", DEFAULT_DEPTH, Jats)?,
+            concat!(
+                r#"<mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML">"#,
+                "<mml:msup><mml:mi>x</mml:mi><mml:mn>2</mml:mn></mml:msup></mml:math>",
+            )
+        );
+        let boxed = r"\boxed{x}";
+        assert_eq!(
+            to_mathml_flavor(DisplayMath, boxed, DEFAULT_DEPTH, DocBook)?,
+            r#"<mml:math><mml:menclose mml:notation="box"><mml:mi>x</mml:mi></mml:menclose></mml:math>"#
+        );
+        assert_eq!(
+            to_mathml_flavor(DisplayMath, boxed, DEFAULT_DEPTH, Jats)?,
+            concat!(
+                r#"<mml:math display="block" xmlns:mml="http://www.w3.org/1998/Math/MathML">"#,
+                r#"<mml:menclose notation="box"><mml:mi>x</mml:mi></mml:menclose></mml:math>"#,
+            )
+        );
+        Ok(())
     }
 
     #[test]

@@ -33,6 +33,8 @@ pub(crate) struct Token {
     pub(crate) line: u32,
     /// The 1-based column. A tab moves to the next multiple of 8, plus 1.
     pub(crate) column: u32,
+    /// Byte range of a markup token in the input.
+    pub(crate) bytes: std::ops::Range<usize>,
 }
 
 /// The kind of tag that the state machine reads.
@@ -79,11 +81,12 @@ enum TagEnd {
     Eof,
 }
 
-type Position = (u32, u32);
+type Position = (u32, u32, usize);
 
 struct Lexer<'a> {
     chars: &'a [char],
     index: usize,
+    byte: usize,
     line: u32,
     column: u32,
     tokens: Vec<Token>,
@@ -97,11 +100,12 @@ pub(crate) fn tokenize(input: &str) -> Vec<Token> {
     let mut lexer = Lexer {
         chars: &chars,
         index: 0,
+        byte: 0,
         line: 1,
         column: 1,
         tokens: Vec::new(),
         text: String::new(),
-        text_start: (1, 1),
+        text_start: (1, 1, 0),
     };
     lexer.data();
     lexer.tokens
@@ -122,7 +126,7 @@ impl Lexer<'_> {
     }
 
     fn position(&self) -> Position {
-        (self.line, self.column)
+        (self.line, self.column, self.byte)
     }
 
     fn advance(&mut self) {
@@ -130,6 +134,7 @@ impl Lexer<'_> {
             return;
         };
         self.index += 1;
+        self.byte += c.len_utf8();
         match c {
             '\n' => {
                 self.line = self.line.saturating_add(1);
@@ -179,17 +184,23 @@ impl Lexer<'_> {
         if self.text.is_empty() {
             return;
         }
-        let (line, column) = self.text_start;
+        let (line, column, start) = self.text_start;
         self.tokens.push(Token {
             kind: TokenKind::Text(std::mem::take(&mut self.text)),
             line,
             column,
+            bytes: start..self.byte,
         });
     }
 
-    fn push_token(&mut self, kind: TokenKind, (line, column): Position) {
+    fn push_token(&mut self, kind: TokenKind, (line, column, start): Position) {
         self.flush_text();
-        self.tokens.push(Token { kind, line, column });
+        self.tokens.push(Token {
+            kind,
+            line,
+            column,
+            bytes: start..self.byte,
+        });
     }
 
     /// The data state: text, character references and the start of markup.

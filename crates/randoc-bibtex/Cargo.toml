@@ -1,0 +1,23 @@
+[package]
+name = "randoc-bibtex"
+description = "BibTeX, BibLaTeX and RIS readers and writers for Randoc"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]
+randoc-ast = { workspace = true }
+randoc-citeproc = { workspace = true }
+randoc-core = { workspace = true }
+randoc-latex = { workspace = true }
+randoc-latex-reader = { workspace = true }
+randoc-layout = { workspace = true }
+
+[dev-dependencies]
+serde_json = { workspace = true }
+
+[lints]
+workspace = true

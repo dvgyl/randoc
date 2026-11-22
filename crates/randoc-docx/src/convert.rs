@@ -207,14 +207,7 @@ fn parse_xml_strict(bytes: &[u8], limits: &XmlLimits) -> Result<XmlDoc> {
         )),
         _ => Error::Some(DOC_ERROR.into()),
     })?;
-    xml::parse(
-        text,
-        limits,
-        XmlOptions {
-            html_entities: false,
-        },
-    )
-    .map_err(|err| match err {
+    xml::parse(text, limits, XmlOptions::default()).map_err(|err| match err {
         XmlError::Depth(limit) => {
             Error::Parse(format!("DOCX XML nesting exceeded limit of {limit} levels"))
         }
@@ -226,14 +219,7 @@ fn parse_xml_strict(bytes: &[u8], limits: &XmlLimits) -> Result<XmlDoc> {
 
 fn parse_xml_optional(bytes: &[u8], limits: &XmlLimits) -> Option<XmlDoc> {
     let text = xml::decode_utf8(bytes).ok()?;
-    xml::parse(
-        text,
-        limits,
-        XmlOptions {
-            html_entities: false,
-        },
-    )
-    .ok()
+    xml::parse(text, limits, XmlOptions::default()).ok()
 }
 
 type RelsMap = HashMap<Text, Relationship>;

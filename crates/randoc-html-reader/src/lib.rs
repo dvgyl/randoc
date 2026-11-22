@@ -6,9 +6,7 @@
 //! that Pandoc uses. The module `parse` builds the tree from the tokens with
 //! rules that were found with Pandoc as a black box.
 //!
-//! Not implemented: the conversion of MathML to TeX (it needs the math
-//! crate), and the content of an `iframe` element (it needs a fetch through
-//! the context). The reader reports each such element as skipped content.
+//! The reader reports `iframe` elements as skipped content.
 
 mod parse;
 mod table;
@@ -58,13 +56,7 @@ fn read_html(
     canonicalize(&mut tokens);
     let extensions = options.extensions;
     let limits = context.limits;
-    let mut parser = Parser::new(
-        &tokens,
-        extensions,
-        source.to_owned(),
-        limits.max_nesting_depth,
-        limits.max_table_cells,
-    );
+    let mut parser = Parser::new(input, &tokens, extensions, source.to_owned(), &limits);
     let mut blocks = parser.document().map_err(|stop| {
         Error::Parse(match stop {
             Stop::TooDeep => Text::from("the document is nested too deeply"),
@@ -590,7 +582,6 @@ mod tests {
     /// Each one has a row in `docs/ISSUES.md`.
     const KNOWN_DIFFERENCES: &[&str] = &[
         "blocks/blocks-028",
-        "blocks/blocks-029",
         "blocks/blocks-037",
         "extensions/extensions-016",
         "extensions/math-038",
@@ -789,13 +780,47 @@ mod tests {
         });
     }
 
+    #[test]
+    fn converts_mathml_to_tex() {
+        use randoc_ast::MathType;
+
+        let mathml = "<msup><mi>x</mi><mn>2</mn></msup>";
+        for (display, kind) in [
+            ("", MathType::InlineMath),
+            (" display=\"block\"", MathType::DisplayMath),
+        ] {
+            let mut context = Context::pure();
+            let document = read_html(
+                &format!("<p>é <math{display}>{mathml}</math></p>"),
+                SOURCE_NAME,
+                &ReaderOptions::default(),
+                &mut context,
+            )
+            .unwrap();
+            assert_eq!(
+                document.blocks,
+                [Block::Para(vec![
+                    Inline::Str("é".into()),
+                    Inline::Space,
+                    Inline::Math(kind, "x^{2}".into())
+                ])]
+            );
+        }
+    }
+
     /// Returns the parser steps for an input that repeats `unit` `count` times.
     fn steps(unit: &str, count: usize) -> u64 {
         let input = unit.repeat(count);
         let mut tokens = tokens::tokenize(&input);
         canonicalize(&mut tokens);
         let extensions = Extensions::from_list(&[Extension::NativeDivs, Extension::NativeSpans]);
-        let mut parser = Parser::new(&tokens, extensions, Text::new(), 128, 200_000);
+        let mut parser = Parser::new(
+            &input,
+            &tokens,
+            extensions,
+            Text::new(),
+            &randoc_core::Limits::default(),
+        );
         let result = parser.document();
         assert_ne!(result.err(), Some(Stop::Budget), "{unit}");
         parser.steps
@@ -835,13 +860,11 @@ mod tests {
         let input = format!("{}x{}", "<tt><b>".repeat(count), "</b></tt>".repeat(count));
         let mut tokens = tokens::tokenize(&input);
         canonicalize(&mut tokens);
-        let mut parser = Parser::new(
-            &tokens,
-            Extensions::empty(),
-            Text::new(),
-            4 * count,
-            200_000,
-        );
+        let limits = randoc_core::Limits {
+            max_nesting_depth: 4 * count,
+            ..Default::default()
+        };
+        let mut parser = Parser::new(&input, &tokens, Extensions::empty(), Text::new(), &limits);
         parse::CODIFY_VISITS.with(|visits| visits.set(0));
         let blocks = parser.document();
         assert!(blocks.is_ok_and(|blocks| !json::value_to_json(&blocks).contains("Cite")));

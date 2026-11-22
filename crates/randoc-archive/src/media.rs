@@ -96,7 +96,7 @@ fn sha1_block(
 ///
 /// Rejects empty paths, leading `/`, `\` separators, Windows drive letters
 /// (`C:`), NUL or control characters, empty segments (`//`), `.` and `..`
-/// traversal segments, and percent-encoded paths (`%`).
+/// traversal segments.
 pub fn is_safe_media_path(path: &str) -> bool {
     if path.is_empty() || path.starts_with('/') || path.ends_with('/') {
         return false;
@@ -122,17 +122,26 @@ pub fn is_safe_media_path(path: &str) -> bool {
 /// `<sha1_hex(contents)>.<ext>` (preserving a safe ASCII alphanumeric file
 /// extension if present).
 pub fn sanitize_media_path(path: &str, contents: &[u8]) -> Text {
+    media_key(path, None, contents)
+}
+
+/// Returns the original safe path or a content hash with a filename extension.
+pub fn media_key(path: &str, mime: Option<&str>, contents: &[u8]) -> Text {
     if is_safe_media_path(path) && !path.contains('%') {
         return Text::from(path);
     }
-    hashed_media_path(path, contents)
+    let extension = safe_extension(path).or_else(|| mime.and_then(extension_for_mime));
+    hash_with_extension(contents, extension)
 }
 
 /// Returns a content hash with the safe filename extension of `path`, if present.
 pub fn hashed_media_path(path: &str, contents: &[u8]) -> Text {
+    hash_with_extension(contents, safe_extension(path))
+}
+
+fn hash_with_extension(contents: &[u8], extension: Option<&str>) -> Text {
     let digest = sha1_hex(contents);
-    let ext = safe_extension(path);
-    match ext {
+    match extension {
         Some(ext) => format!("{digest}.{ext}"),
         None => digest,
     }
@@ -178,6 +187,54 @@ pub fn mime_from_extension(path: &str) -> Option<&'static str> {
         "xml" => Some("application/xml"),
         "xhtml" => Some("application/xhtml+xml"),
         "html" | "htm" => Some("text/html"),
+        _ => None,
+    }
+}
+
+/// Returns the preferred filename extension for a MIME type.
+pub fn extension_for_mime(mime: &str) -> Option<&'static str> {
+    match mime.split(';').next()?.trim().to_ascii_lowercase().as_str() {
+        "image/png" => Some("png"),
+        "image/jpeg" | "image/jpg" => Some("jpg"),
+        "image/gif" => Some("gif"),
+        "image/svg+xml" => Some("svg"),
+        "image/webp" => Some("webp"),
+        "image/bmp" => Some("bmp"),
+        "image/tiff" => Some("tif"),
+        "image/avif" => Some("avif"),
+        "image/x-icon" | "image/vnd.microsoft.icon" => Some("ico"),
+        "image/emf" | "image/x-emf" => Some("emf"),
+        "image/wmf" | "image/x-wmf" => Some("wmf"),
+        "application/postscript" => Some("eps"),
+        "audio/mpeg" => Some("mp3"),
+        "audio/mp4" => Some("m4a"),
+        "audio/ogg" => Some("ogg"),
+        "audio/wav" | "audio/x-wav" => Some("wav"),
+        "audio/webm" => Some("weba"),
+        "audio/flac" => Some("flac"),
+        "video/mp4" => Some("mp4"),
+        "video/mpeg" => Some("mpeg"),
+        "video/ogg" => Some("ogv"),
+        "video/webm" => Some("webm"),
+        "font/ttf" | "application/x-font-ttf" => Some("ttf"),
+        "font/otf" | "application/x-font-opentype" => Some("otf"),
+        "font/woff" | "application/font-woff" => Some("woff"),
+        "font/woff2" => Some("woff2"),
+        "text/plain" => Some("txt"),
+        "text/css" => Some("css"),
+        "text/html" => Some("html"),
+        "text/xml" | "application/xml" => Some("xml"),
+        "application/xhtml+xml" => Some("xhtml"),
+        "application/pdf" => Some("pdf"),
+        "application/epub+zip" => Some("epub"),
+        "application/rtf" | "text/rtf" => Some("rtf"),
+        "application/msword" => Some("doc"),
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document" => Some("docx"),
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" => Some("xlsx"),
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation" => Some("pptx"),
+        "application/vnd.oasis.opendocument.text" => Some("odt"),
+        "application/vnd.oasis.opendocument.spreadsheet" => Some("ods"),
+        "application/vnd.oasis.opendocument.presentation" => Some("odp"),
         _ => None,
     }
 }
@@ -398,22 +455,9 @@ pub fn decode_data_uri(url: &str, max_bytes: u64) -> Option<(String, Vec<u8>)> {
     };
     let max_usize = usize::try_from(max_bytes).unwrap_or(usize::MAX);
     if is_base64 {
-        let decoded;
-        let payload = if payload.contains('%') {
-            let encoded_limit = (max_usize.saturating_add(2) / 3).saturating_mul(4);
-            decoded = String::from_utf8(decode_percent_bytes(payload, encoded_limit)?).ok()?;
-            &decoded
-        } else {
-            payload
-        };
-        if (payload.len() / 4).saturating_mul(3) > max_usize.saturating_add(2) {
-            return None;
-        }
-        let bytes = base64_decode(payload)?;
-        if bytes.len() > max_usize {
-            return None;
-        }
-        Some((mime_type, bytes))
+        let mut raw = payload.as_bytes();
+        let decoded = std::iter::from_fn(|| next_percent_byte(&mut raw));
+        Some((mime_type, decode_base64_bytes(decoded, max_usize)?))
     } else {
         let bytes = decode_percent_bytes(payload, max_usize)?;
         Some((mime_type, bytes))
@@ -424,20 +468,55 @@ pub fn decode_data_uri(url: &str, max_bytes: u64) -> Option<(String, Vec<u8>)> {
 pub fn decode_percent_bytes(text: &str, limit: usize) -> Option<Vec<u8>> {
     let mut out = Vec::with_capacity(text.len().min(limit));
     let mut raw = text.as_bytes();
-    while let Some((&first, rest)) = raw.split_first() {
+    while let Some(byte) = next_percent_byte(&mut raw) {
         if out.len() == limit {
             return None;
         }
-        if first == b'%'
-            && let [hi, lo, after @ ..] = rest
-            && let (Some(hi), Some(lo)) =
-                (char::from(*hi).to_digit(16), char::from(*lo).to_digit(16))
-        {
-            out.push((hi * 16 + lo) as u8);
-            raw = after;
-        } else {
-            out.push(first);
-            raw = rest;
+        out.push(byte);
+    }
+    Some(out)
+}
+
+fn next_percent_byte(raw: &mut &[u8]) -> Option<u8> {
+    let (&first, rest) = raw.split_first()?;
+    if first == b'%'
+        && let [hi, lo, after @ ..] = rest
+        && let (Some(hi), Some(lo)) = (char::from(*hi).to_digit(16), char::from(*lo).to_digit(16))
+    {
+        *raw = after;
+        return Some((hi * 16 + lo) as u8);
+    }
+    *raw = rest;
+    Some(first)
+}
+
+fn base64_value(byte: u8) -> Option<u8> {
+    match byte {
+        b'A'..=b'Z' => Some(byte - b'A'),
+        b'a'..=b'z' => Some(byte - b'a' + 26),
+        b'0'..=b'9' => Some(byte - b'0' + 52),
+        b'+' => Some(62),
+        b'/' => Some(63),
+        _ => None,
+    }
+}
+
+/// Decodes Base64 and skips characters outside its alphabet.
+/// Returns `None` if the decoded data exceeds `max_bytes`.
+pub fn base64_decode_lenient(input: &str, max_bytes: usize) -> Option<Vec<u8>> {
+    let mut out = Vec::new();
+    let mut bits = 0;
+    let mut pending = 0u16;
+    for value in input.bytes().filter_map(base64_value) {
+        pending = (pending << 6) | u16::from(value);
+        bits += 6;
+        if bits >= 8 {
+            if out.len() == max_bytes {
+                return None;
+            }
+            bits -= 8;
+            out.push((pending >> bits) as u8);
+            pending &= (1 << bits) - 1;
         }
     }
     Some(out)
@@ -446,11 +525,15 @@ pub fn decode_percent_bytes(text: &str, limit: usize) -> Option<Vec<u8>> {
 /// Decodes standard Base64 (ignoring ASCII whitespace). Returns `None` on
 /// invalid characters or malformed padding.
 pub fn base64_decode(input: &str) -> Option<Vec<u8>> {
-    let mut out = Vec::with_capacity(input.len() * 3 / 4);
+    decode_base64_bytes(input.bytes(), usize::MAX)
+}
+
+fn decode_base64_bytes(input: impl Iterator<Item = u8>, limit: usize) -> Option<Vec<u8>> {
+    let mut out = Vec::new();
     let mut buf = [0u8; 4];
     let mut count = 0usize;
     let mut pad = 0usize;
-    for b in input.bytes() {
+    for b in input {
         if b.is_ascii_whitespace() {
             continue;
         }
@@ -462,18 +545,13 @@ pub fn base64_decode(input: &str) -> Option<Vec<u8>> {
             if pad > 0 {
                 return None;
             }
-            let val = match b {
-                b'A'..=b'Z' => b - b'A',
-                b'a'..=b'z' => b - b'a' + 26,
-                b'0'..=b'9' => b - b'0' + 52,
-                b'+' => 62,
-                b'/' => 63,
-                _ => return None,
-            };
-            buf[count] = val;
+            buf[count] = base64_value(b)?;
             count += 1;
         }
         if count == 4 {
+            if pad > 2 || 3 - pad > limit - out.len() {
+                return None;
+            }
             let triple = (u32::from(buf[0]) << 18)
                 | (u32::from(buf[1]) << 12)
                 | (u32::from(buf[2]) << 6)
@@ -484,9 +562,6 @@ pub fn base64_decode(input: &str) -> Option<Vec<u8>> {
             }
             if pad < 1 {
                 out.push((triple & 0xFF) as u8);
-            }
-            if pad > 2 {
-                return None;
             }
             count = 0;
             pad = 0;
@@ -501,6 +576,76 @@ pub fn base64_decode(input: &str) -> Option<Vec<u8>> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn decodes_lenient_base64_with_an_output_limit() {
+        for (input, expected) in [
+            ("!!aG???k=!!", &b"hi"[..]),
+            ("QQ", &b"A"[..]),
+            ("!!!", &b""[..]),
+            ("A", &b""[..]),
+        ] {
+            assert_eq!(
+                base64_decode_lenient(input, expected.len()).as_deref(),
+                Some(expected)
+            );
+        }
+        assert_eq!(base64_decode_lenient("!!aG???k=!!", 1), None);
+        assert_eq!(
+            base64_decode_lenient("YWJjZA", 4).as_deref(),
+            Some(&b"abcd"[..])
+        );
+    }
+
+    #[test]
+    fn data_uri_base64_limit_counts_decoded_bytes() {
+        for input in [
+            "data:image/gif;base64,Y%20WJj",
+            "data:image/gif;base64,%09Y%0AWJj%20",
+            "data:image/gif;base64,Y     WJj",
+        ] {
+            assert_eq!(
+                decode_data_uri(input, 3),
+                Some(("image/gif".into(), b"abc".to_vec()))
+            );
+            assert_eq!(decode_data_uri(input, 2), None);
+        }
+        assert_eq!(
+            decode_data_uri("data:;base64,QQ%3D%3D", 1),
+            Some(("text/plain".into(), b"A".to_vec()))
+        );
+        assert_eq!(decode_data_uri("data:;base64,QQ%FF%3D%3D", 1), None);
+    }
+
+    #[test]
+    fn media_keys_use_a_path_or_a_hash_with_the_preferred_extension() {
+        let empty_hash = "da39a3ee5e6b4b0d3255bfef95601890afd80709";
+        assert_eq!(
+            media_key("img/picture", Some("image/png"), b""),
+            "img/picture"
+        );
+        assert_eq!(
+            media_key("ref%201.png", Some("text/plain"), b""),
+            format!("{empty_hash}.png")
+        );
+        assert_eq!(
+            media_key("../i", Some("text/plain"), b""),
+            format!("{empty_hash}.txt")
+        );
+        assert_eq!(media_key("/i", None, b""), empty_hash);
+        for (mime, extension) in [
+            ("application/pdf", "pdf"),
+            ("image/png", "png"),
+            ("image/svg+xml", "svg"),
+            ("Text/Plain; charset=UTF-8", "txt"),
+            ("audio/mpeg", "mp3"),
+            ("video/mp4", "mp4"),
+            ("font/woff2", "woff2"),
+        ] {
+            assert_eq!(extension_for_mime(mime), Some(extension));
+        }
+        assert_eq!(extension_for_mime("application/x-unknown"), None);
+    }
 
     #[test]
     fn sha1_matches_rfc_vectors() {

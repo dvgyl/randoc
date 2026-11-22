@@ -1,0 +1,26 @@
+[package]
+name = "randoc-epub"
+description = "EPUB readers and writers for Randoc"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]
+randoc-archive = { workspace = true }
+randoc-ast = { workspace = true }
+randoc-core = { workspace = true }
+randoc-data = { workspace = true }
+randoc-highlight = { workspace = true }
+randoc-html = { workspace = true }
+randoc-html-reader = { workspace = true }
+randoc-layout = { workspace = true }
+randoc-templates = { workspace = true }
+
+[dev-dependencies]
+serde_json = { workspace = true }
+
+[lints]
+workspace = true

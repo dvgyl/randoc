@@ -4,7 +4,8 @@ use std::fmt::Write;
 use std::path::Path;
 
 use randoc_archive::media::{
-    base64_encode, decode_data_uri, image_size_and_mime, is_safe_media_path, mime_from_extension,
+    base64_encode, decode_data_uri, decode_percent_bytes, extension_for_mime, image_size_and_mime,
+    is_safe_media_path, mime_from_extension,
 };
 use randoc_archive::xml::{self, XmlDoc, XmlLimits, XmlNode, XmlOptions};
 use randoc_archive::zip::{Archive, ArchiveError, ArchiveLimits, ArchiveWriter};
@@ -262,7 +263,7 @@ fn parse_xml(value: &str, name: &str, context: &Context) -> Result<XmlDoc> {
     )
     .map_err(|error| Error::Xml {
         file: format!("'{name}'"),
-        message: error.format_conduit(),
+        message: error.format_pandoc(),
     })
 }
 
@@ -326,6 +327,22 @@ fn reference(
 }
 
 fn reference_path(name: &str, context: &mut Context) -> Result<String> {
+    if let Some(uri) = name.strip_prefix("file://") {
+        let path = uri
+            .strip_prefix("localhost")
+            .filter(|path| path.starts_with('/'))
+            .unwrap_or(uri);
+        let path = path.split(['?', '#']).next().unwrap_or_default();
+        if path.starts_with('/')
+            && valid_uri_component(path, b":@/")
+            && let Some(bytes) = decode_percent_bytes(path, path.len())
+            && !bytes.contains(&0)
+            && let Ok(path) = String::from_utf8(bytes)
+        {
+            return Ok(path);
+        }
+        return Err(Error::ResourceNotFound(name.to_owned()));
+    }
     if Path::new(name).is_absolute() {
         return Ok(name.to_owned());
     }
@@ -501,11 +518,9 @@ fn default_styles(lang: Option<&Lang>) -> String {
         ns::SVG
     );
     let language = lang.map_or_else(String::new, |lang| attribute("fo:language", &lang.language));
-    let mut locale = language.clone();
-    if let Some(region) = lang.and_then(|lang| lang.region.as_deref()) {
-        locale.push_str(&attribute("fo:country", region));
-    }
-    if lang.is_some() {
+    if let Some(lang) = lang {
+        let country = attribute("fo:country", lang.region.as_deref().unwrap_or(""));
+        let locale = format!("{language}{country}");
         let _ = write!(
             out,
             "<style:default-style style:family=\"paragraph\"><style:text-properties{locale} /></style:default-style>"
@@ -877,16 +892,7 @@ impl Renderer<'_> {
                             base64_encode(&bytes)
                         ));
                     } else if !self.options.link_images {
-                        let extension = match mime.as_str() {
-                            "image/png" => "png",
-                            "image/jpeg" => "jpg",
-                            "image/gif" => "gif",
-                            "image/bmp" => "bmp",
-                            "image/svg+xml" => "svg",
-                            "image/webp" => "webp",
-                            "image/tiff" => "tif",
-                            _ => "bin",
-                        };
+                        let extension = extension_for_mime(&mime).unwrap_or("bin");
                         loop {
                             let index = self.resources.next_index;
                             self.resources.next_index += 1;
@@ -928,7 +934,54 @@ impl Renderer<'_> {
 }
 
 fn valid_uri_reference(url: &str) -> bool {
-    let mut bytes = url.bytes();
+    let (url, fragment) = url.split_once('#').unwrap_or((url, ""));
+    let (path, query) = url.split_once('?').unwrap_or((url, ""));
+    let path = if let Some(rest) = path.strip_prefix("//") {
+        let (authority, path) = rest.split_once('/').unwrap_or((rest, ""));
+        if !valid_uri_authority(authority) {
+            return false;
+        }
+        path
+    } else {
+        path
+    };
+    valid_uri_component(path, b":@/")
+        && valid_uri_component(query, b":@/?")
+        && valid_uri_component(fragment, b":@/?")
+}
+
+fn valid_uri_authority(authority: &str) -> bool {
+    let (user, host) = authority.split_once('@').unwrap_or(("", authority));
+    if !valid_uri_component(user, b":") {
+        return false;
+    }
+    if let Some(literal) = host.strip_prefix('[') {
+        let Some((ip, port)) = literal.split_once(']') else {
+            return false;
+        };
+        let future = ip
+            .strip_prefix(['v', 'V'])
+            .and_then(|rest| rest.split_once('.'));
+        let valid_ip = ip.parse::<std::net::Ipv6Addr>().is_ok()
+            || future.is_some_and(|(version, address)| {
+                !version.is_empty()
+                    && version.bytes().all(|b| b.is_ascii_hexdigit())
+                    && !address.is_empty()
+                    && !address.contains('%')
+                    && valid_uri_component(address, b":")
+            });
+        return valid_ip && (port.is_empty() || port.strip_prefix(':').is_some_and(ascii_digits));
+    }
+    let (host, port) = host.split_once(':').unwrap_or((host, ""));
+    valid_uri_component(host, b"") && ascii_digits(port)
+}
+
+fn ascii_digits(text: &str) -> bool {
+    text.bytes().all(|b| b.is_ascii_digit())
+}
+
+fn valid_uri_component(value: &str, extra: &[u8]) -> bool {
+    let mut bytes = value.bytes();
     while let Some(byte) = bytes.next() {
         if byte == b'%' {
             if !bytes.next().is_some_and(|b| b.is_ascii_hexdigit())
@@ -936,7 +989,10 @@ fn valid_uri_reference(url: &str) -> bool {
             {
                 return false;
             }
-        } else if !byte.is_ascii_alphanumeric() && !b"-._~:/?#[]@!$&'()*+,;=".contains(&byte) {
+        } else if !byte.is_ascii_alphanumeric()
+            && !b"-._~!$&'()*+,;=".contains(&byte)
+            && !extra.contains(&byte)
+        {
             return false;
         }
     }
@@ -1154,6 +1210,10 @@ mod tests {
     fn odt_prefixes_relative_links_at_every_output_path() -> Result<()> {
         let links = [
             ("file.txt", "../file.txt"),
+            ("a[b].html", "a[b].html"),
+            ("a%5Bb%5D.html", "../a%5Bb%5D.html"),
+            ("a.html?x=[b]", "a.html?x=[b]"),
+            ("//[::1]/a.html", "//[::1]..//a.html"),
             ("./file.txt", ".././file.txt"),
             ("../file.txt", "../../file.txt"),
             ("/file.txt", "..//file.txt"),
@@ -1231,6 +1291,68 @@ mod tests {
         for xml in [content, fodt] {
             assert!(xml.contains("svg:width=\"20.0pt\" svg:height=\"10.0pt\""));
             assert!(!xml.contains("<svg:desc"));
+        }
+        Ok(())
+    }
+
+    #[test]
+    fn pdf_data_uri_has_a_pdf_entry() -> Result<()> {
+        let doc = Pandoc {
+            blocks: vec![Block::Para(vec![Inline::Image(
+                Attr::default(),
+                vec![Inline::Str("PDF".into())],
+                Target::new("data:application/pdf;base64,JVBERg==", ""),
+            )])],
+            ..Pandoc::default()
+        };
+        let odt = write_odt(&doc, &WriterOptions::default(), &mut Context::pure())?;
+        let mut zip = Archive::open(&odt, ArchiveLimits::default()).map_err(zip_error)?;
+        assert_eq!(
+            zip.read("Pictures/0.pdf").map_err(zip_error)?.as_deref(),
+            Some(&b"%PDF"[..])
+        );
+        assert!(xml_part(&mut zip, "content.xml")?.contains(r#"xlink:href="Pictures/0.pdf""#));
+        Ok(())
+    }
+
+    #[test]
+    fn language_without_a_region_adds_an_empty_country_to_default_styles() -> Result<()> {
+        let mut doc = Pandoc::default();
+        doc.meta
+            .0
+            .insert("lang".into(), MetaValue::MetaString("de".into()));
+        let odt = write_odt(&doc, &WriterOptions::default(), &mut Context::pure())?;
+        let mut zip = Archive::open(&odt, ArchiveLimits::default()).map_err(zip_error)?;
+        let styles = xml_part(&mut zip, "styles.xml")?;
+        assert!(styles.contains(concat!(
+            r#"<style:default-style style:family="paragraph">"#,
+            r#"<style:text-properties fo:language="de" fo:country="" />"#
+        )));
+        Ok(())
+    }
+
+    #[test]
+    fn reference_document_file_uri_reads_the_absolute_path() -> Result<()> {
+        let reference_styles = format!(
+            r#"<office:document-styles xmlns:office="{OFFICE}" xmlns:style="{STYLE}"><office:styles><style:style style:name="ReferenceStyle" style:family="paragraph"/></office:styles></office:document-styles>"#
+        );
+        let mut zip = ArchiveWriter::new();
+        zip.write_stored("styles.xml", reference_styles.as_bytes())
+            .map_err(zip_error)?;
+        let mut host = PureHost::default();
+        let reference = zip.finish().map_err(zip_error)?;
+        host.files.insert("/refs/ref.odt".into(), reference.clone());
+        host.files.insert("/refs/ref doc.odt".into(), reference);
+        let mut context = Context::new(Box::new(host));
+        let mut options = WriterOptions::default();
+        for uri in [
+            "file:///refs/ref.odt",
+            "file://localhost/refs/ref%20doc.odt",
+        ] {
+            options.reference_doc = Some(uri.into());
+            let odt = write_odt(&Pandoc::default(), &options, &mut context)?;
+            let mut zip = Archive::open(&odt, ArchiveLimits::default()).map_err(zip_error)?;
+            assert!(xml_part(&mut zip, "styles.xml")?.contains(r#"style:name="ReferenceStyle""#));
         }
         Ok(())
     }

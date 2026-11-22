@@ -28,6 +28,9 @@ const READERS: &[ReaderLookup] = &[
     randoc_org::reader,
     randoc_rtf::reader,
     randoc_wiki::reader,
+    randoc_xmlformats::reader,
+    randoc_epub::reader,
+    randoc_bibtex::reader,
 ];
 
 /// The writer lookup of each format crate. Add one line for a new crate.
@@ -44,6 +47,9 @@ const WRITERS: &[WriterLookup] = &[
     randoc_org::writer,
     randoc_rtf::writer,
     randoc_wiki::writer,
+    randoc_xmlformats::writer,
+    randoc_epub::writer,
+    randoc_bibtex::writer,
 ];
 
 /// Returns the reader for a format name without extension changes, for example `markdown`.

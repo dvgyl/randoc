@@ -5,6 +5,8 @@
 //! template in the options, the writer renders the template with the
 //! context of `standalone.rs`.
 
+#![forbid(unsafe_code)]
+
 mod beamer;
 mod blocks;
 mod escape;
@@ -20,7 +22,7 @@ mod table;
 use std::collections::HashSet;
 use std::sync::Arc;
 
-use randoc_ast::{Block, Pandoc, Text};
+use randoc_ast::{Block, Inline, Pandoc, Text};
 use randoc_core::{
     CiteMethod, Context, Error, Extension, LogMessage, Result, TemplateWriter, TopLevelDivision,
     WrapOption, Writer, WriterOptions,
@@ -43,6 +45,23 @@ pub fn write_latex(doc: &Pandoc, options: &WriterOptions, context: &mut Context)
     write(doc, options, context, false)
 }
 
+/// Returns the inline layout for `-t latex`.
+///
+/// BibTeX and BibLaTeX writers can indent continuation lines by four spaces
+/// before they render the layout.
+pub fn inlines_to_doc(
+    inlines: &[Inline],
+    options: &WriterOptions,
+    context: &mut Context,
+) -> Result<Doc> {
+    let mut writer = LatexWriter::new(options, context.limits.max_nesting_depth, false)?;
+    let doc = writer.inlines(inlines)?;
+    for warning in writer.warnings {
+        context.report(warning);
+    }
+    Ok(doc)
+}
+
 /// Renders a document as Beamer slides: a fragment, or the template of the options.
 pub fn write_beamer(doc: &Pandoc, options: &WriterOptions, context: &mut Context) -> Result<Text> {
     write(doc, options, context, true)
@@ -57,8 +76,7 @@ fn write(
     let max_depth = context.limits.max_nesting_depth;
     // The class lookup below reads the variables, also for a fragment.
     standalone::check_variable_depth(&options.variables, max_depth)?;
-    let mut writer = LatexWriter::new(options, max_depth, beamer);
-    writer.registry = load_registry(options)?;
+    let mut writer = LatexWriter::new(options, max_depth, beamer)?;
     writer.chapter_class = standalone::has_chapters(
         standalone::document_class(&doc.meta, &options.variables).as_deref(),
     );
@@ -242,8 +260,8 @@ pub(crate) struct LatexWriter<'a> {
 }
 
 impl<'a> LatexWriter<'a> {
-    fn new(options: &'a WriterOptions, max_depth: usize, beamer: bool) -> Self {
-        LatexWriter {
+    fn new(options: &'a WriterOptions, max_depth: usize, beamer: bool) -> Result<Self> {
+        Ok(LatexWriter {
             options,
             beamer,
             smart: options.extensions.contains(Extension::Smart),
@@ -279,10 +297,10 @@ impl<'a> LatexWriter<'a> {
             table_notes: Vec::new(),
             emphasis_seen: HashSet::new(),
             emphasis_split: HashSet::new(),
-            registry: None,
+            registry: load_registry(options)?,
             usage: standalone::Usage::default(),
             warnings: Vec::new(),
-        }
+        })
     }
 
     /// Enters one nesting level. Fails when the document is too deep.

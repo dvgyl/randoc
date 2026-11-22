@@ -59,6 +59,7 @@ fn run(
     let hooks = Hooks {
         find_resource: &mut find,
         yaml_references: &mut yaml,
+        bib_references: None,
     };
     process_citations(&mut context, &mut doc, hooks).map_err(|e| e.to_string())?;
     Ok(doc)
@@ -286,6 +287,7 @@ fn a_deep_document_gives_the_depth_error_on_a_small_stack() {
             let hooks = Hooks {
                 find_resource: &mut find,
                 yaml_references: &mut yaml,
+                bib_references: None,
             };
             let result =
                 process_citations(&mut context, &mut doc, hooks).map_err(|e| e.to_string());

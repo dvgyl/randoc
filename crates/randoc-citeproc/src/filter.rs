@@ -26,6 +26,21 @@ use crate::types::{ItemType, Locale, Style, TextCase};
 /// metadata maps of its `references`.
 pub type YamlReferences<'h> = &'h mut dyn FnMut(&mut Context, &str, &str) -> Result<Vec<MetaValue>>;
 
+/// Bibliography formats that use an external reader.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum BibFormat {
+    /// BibTeX.
+    BibTeX,
+    /// BibLaTeX.
+    BibLaTeX,
+    /// Research Information Systems (RIS) tag format.
+    Ris,
+}
+
+/// Reads bibliography text, its file name and format into reference metadata maps.
+pub type BibReferences<'h> =
+    &'h mut dyn FnMut(&mut Context, &str, &str, BibFormat) -> Result<Vec<MetaValue>>;
+
 /// The parts of the filter that depend on the program: the resource path
 /// and the Markdown reader of a CSL YAML bibliography.
 pub struct Hooks<'h> {
@@ -34,6 +49,8 @@ pub struct Hooks<'h> {
     pub find_resource: &'h mut dyn FnMut(&mut Context, &str) -> Option<String>,
     /// The `references` of a CSL YAML bibliography as metadata maps.
     pub yaml_references: YamlReferences<'h>,
+    /// Reads references from BibTeX, BibLaTeX or RIS when a reader is available.
+    pub bib_references: Option<BibReferences<'h>>,
 }
 
 fn too_deep(_: EvalError) -> Error {
@@ -369,8 +386,19 @@ fn read_bibliography(
                 out.push(to_inlines(reference, locale, max_depth)?);
             }
         }
-        Some(Format::Yaml) => {
-            for item in (hooks.yaml_references)(context, text, file)? {
+        format => {
+            let items = match format {
+                Some(Format::Yaml) => (hooks.yaml_references)(context, text, file)?,
+                Some(Format::Bib(kind)) => {
+                    let read = hooks
+                        .bib_references
+                        .as_mut()
+                        .ok_or_else(|| unsupported_bibliography(file))?;
+                    read(context, text, file, kind)?
+                }
+                _ => return Err(unknown_format(file)),
+            };
+            for item in items {
                 if let MetaValue::MetaMap(map) = item
                     && let Some(reference) = crate::csljson::meta_to_reference(&map, max_depth)?
                 {
@@ -378,14 +406,15 @@ fn read_bibliography(
                 }
             }
         }
-        Some(Format::Unsupported) => {
-            return Err(Error::App(format!(
-                "Randoc does not support the bibliography format of {file} yet (BibTeX, BibLaTeX and RIS)."
-            )));
-        }
-        None => return Err(unknown_format(file)),
     }
     Ok(out)
+}
+
+/// Returns the error for a bibliography format that has no reader.
+pub fn unsupported_bibliography(file: &str) -> Error {
+    Error::App(format!(
+        "Randoc does not support the bibliography format of {file} yet (BibTeX, BibLaTeX and RIS)."
+    ))
 }
 
 /// The bibliography formats by file extension.
@@ -393,7 +422,7 @@ enum Format {
     Json,
     Yaml,
     /// BibTeX, BibLaTeX and RIS (row I-CITE-18).
-    Unsupported,
+    Bib(BibFormat),
 }
 
 fn format_of(file: &str) -> Option<Format> {
@@ -406,7 +435,9 @@ fn format_of(file: &str) -> Option<Format> {
     match extension.as_str() {
         "json" => Some(Format::Json),
         "yaml" | "yml" => Some(Format::Yaml),
-        "bib" | "bibtex" | "ris" => Some(Format::Unsupported),
+        "bib" | "biblatex" => Some(Format::Bib(BibFormat::BibLaTeX)),
+        "bibtex" => Some(Format::Bib(BibFormat::BibTeX)),
+        "ris" => Some(Format::Bib(BibFormat::Ris)),
         _ => None,
     }
 }

@@ -204,6 +204,9 @@ pub fn variables(
             }
         }
     }
+    if let Some(path) = &settings.epub_cover_image {
+        vars.insert("epub-cover-image", Val::text(path.as_str()));
+    }
     let lists: [(&str, &Vec<String>); 4] = [
         ("css", &settings.css),
         ("header-includes", &includes.header),

@@ -8,12 +8,16 @@ Historical handoffs from sessions 1–6 are archived in
 
 ## Current state of `main`
 
-- **25 Rust crates** in the workspace, including `randoc-highlight` (extracted
-  from `ws/highlight` after full per-definition licence and shingle audit),
-  `randoc-archive` (shared bounded ZIP/OPC/media/XML container layer),
-  `randoc-docx` (Pandoc 3.13 DOCX reader), `randoc-odt` (Pandoc 3.13
-  `odt`/`fodt`/`opendocument` readers & writers), and `randoc-rst` (Pandoc 3.13
-  reStructuredText reader & writer).
+- **31 Rust crates** in the workspace. Wave 1 adds Org, Rich Text Format
+  (RTF), and four wiki readers. The command line and Lua share the format registry.
+- **Core conformance workstreams A–C** improve HTML highlighting layout,
+  Markdown parsing and writing, CommonMark source positions, citation
+  processing, and short-option clusters. Round 2 improves the LaTeX reader’s
+  command, macro, and environment handling. All 7,232 LaTeX reader units pass.
+- **Wave 2 preparation** adds the XML formats, EPUB, and BibTeX scaffold crates.
+  Shared code handles MathML conversion, archive and XML limits, bibliography
+  hooks, and section groups. The command line supplies the EPUB metadata text
+  and cover image path to writers.
 - **Consolidated verification & measurement suites** from the `gpt/build` and
   `M1-*` workstreams under `tools/measure/` and `tools/{casegen,pivot,readers,errors,ast,custom-writers,server,extension-caps}/`, with Codex-specific `ops`/`guard`/`plan` tooling removed.
 - **Upgraded `randoc-harness`** with work-folder file diffing, symlink hashing,
@@ -26,12 +30,13 @@ Historical handoffs from sessions 1–6 are archived in
   `markdown` (+ variants), `html`, `csljson`, `docx` (103/105 Pandoc `readers/docx`
   tests, 10/11 corpus `.docx` docs), `odt`, `fodt` (54/54 Pandoc `odt`/`fodt`/`opendocument`
   tests, 8/8 corpus `.odt` docs), `rst` (16/16 Pandoc `rst` tests, 14/16 corpus
-  read & write), `latex` (partial).
+  read & write), `latex`, `org`, `rtf`, `mediawiki`, `dokuwiki`, `jira`, and `creole`.
 - **Writers:** `json`, `native`, `html`, `html4`, `csljson`, `markdown`,
   `gfm`, `commonmark`, `commonmark_x`, `plain` (+ variants, with standalone
   templates), `latex`, `beamer` (fragments + standalone templates, `$highlighting-macros$`, `$pdf-trailer-id$`),
   `opendocument`, `odt`, `fodt` (fragment + standalone `default.opendocument`, `--reference-doc`, MathML),
-  `rst` (fragment + standalone `default.rst`, simple/grid/list tables, `+literate_haskell`).
+  `rst` (fragment + standalone `default.rst`, simple/grid/list tables, `+literate_haskell`),
+  `org`, `rtf`, `mediawiki`, `dokuwiki`, and `jira`.
 - **CLI & infrastructure:** command-line option parsing, defaults files,
   resource search, `--extract-media`, `--citeproc` / `-C` (full CSL 1.0.2
   engine with DUCET 13.0.0 collation, sorting, disambiguation, collapsing,
@@ -44,18 +49,19 @@ Historical handoffs from sessions 1–6 are archived in
 
 ### Latest recorded baseline metrics
 
-- **Conformance harness (`spec/baseline.json`):** 61,653 passing baseline units
-  out of 64,170 (+2,085 from `randoc-highlight` integration, +10 from
-  `randoc-markdown-writer` round-2 fixes, +14 from `randoc-latex` standalone &
-  `randoc-lua` CLI wiring, +2 from `--extract-media`, +4 from `randoc-odt`,
-  +25 from `randoc-rst`; 0 regressions).
-- **Capability matrix (`spec/capabilities.json`):**
-  - Input formats: 4 passing, 9 partial, 11 failing (new reader baselines) of 52
-  - Output formats: 7 passing, 11 partial of 77
-  - Extensions: 61 passing, 17 partial, 1 failing of 90
-  - Options: 93 passing, 15 partial, 1 not started of 109
-- **Pandoc 3.13 test suite (`tools/pandoc-testsuite`):** 646 of 2,231 tests pass.
-- **Real-document corpus (`tools/corpus`):** 162 of 690 units pass.
+- **Conformance harness (`spec/baseline.json`)** has 62,889 passing units
+  out of 64,191. The previous baseline had 61,653
+  passing units. This update adds 1,236 passes with zero regressions.
+- **Capability matrix (`spec/capabilities.json`)**
+  - Input formats have 10 passing, 5 partial, 10 failing, and 27 not started.
+  - Output formats have 12 passing, 7 partial, 0 failing, and 58 not started.
+  - Extensions have 72 passing, 7 partial, 0 failing, and 11 not started.
+  - Options have 94 passing, 14 partial, 0 failing, and 1 not started.
+- **Pandoc 3.13 test suite (`tools/pandoc-testsuite`):** The last suite-wide report counted 646 of 2,231 passing tests.
+- **Real-document corpus (`tools/corpus`):** The last corpus-wide report counted 162 of 690 passing units.
+- **Wave 1 oracle checks:** The wiki suite matches 97 of 100 cases. Both
+  MediaWiki figure fixtures match. Org and RTF checks run separately from
+  the full harness. See [known issues](docs/ISSUES.md) for details.
 
 ## Open priorities
 
@@ -66,10 +72,9 @@ Historical handoffs from sessions 1–6 are archived in
      `randoc-math`, `randoc-yaml`: remaining medium/low findings in `docs/ISSUES.md`.
    - `randoc-markdown-writer`: stack overflows and round-2 high findings fixed (`fd3d4e9`); remaining minor/cross-crate items tracked in `I-MDW-18`/`I-MDW-19`.
 2. **Harden & close open gaps on existing crates:**
-   - Land verified GPT 6.2 Sol review fixes for `randoc-archive`, `randoc-docx`, `--extract-media`, and Slices 1–3 follow-ups.
    - Add BibTeX / BibLaTeX / RIS bibliography readers for `--citeproc` (`I-CITE-18`) and connect `pandoc.utils.citeproc` (`I-LUA-04`).
 3. **Add next format families:**
-   - `epub` (`epub`/`epub2`/`epub3`), `typst`, `org`, `docx` writer, `pptx`/`xlsx`, `djot`, `man`/`mdoc`/`ms`, `docbook`/`jats`/XML formats, wiki formats, PDF engine driver, and `pandoc-server`.
+   - `epub` (`epub`/`epub2`/`epub3`), `typst`, `docx` writer, `pptx`/`xlsx`, `djot`, `man`/`mdoc`/`ms`, `docbook`/`jats`/XML formats, PDF engine driver, and `pandoc-server`.
 
 ## Oracle & licence decisions
 

@@ -32,9 +32,7 @@ pub fn read_odt(bytes: &[u8], options: &ReaderOptions, context: &mut Context) ->
     let styles_str = decode_part(&styles_bytes)?;
 
     let xml_limits = XmlLimits::from_limits(&context.limits);
-    let xml_opts = XmlOptions {
-        html_entities: false,
-    };
+    let xml_opts = XmlOptions::default();
 
     let styles_doc = parse_part("styles.xml", styles_str, &xml_limits, xml_opts)?;
     let content_doc = parse_part("content.xml", content_str, &xml_limits, xml_opts)?;
@@ -89,12 +87,10 @@ pub fn read_fodt(
         )));
     }
     let xml_limits = XmlLimits::from_limits(&context.limits);
-    let xml_opts = XmlOptions {
-        html_entities: false,
-    };
+    let xml_opts = XmlOptions::default();
     let doc = xml::parse(&sources.concat(), &xml_limits, xml_opts).map_err(|err| Error::Xml {
         file: String::new(),
-        message: err.format_conduit(),
+        message: err.format_pandoc(),
     })?;
 
     if !is_el(&doc.root, OFFICE, "document") {
@@ -120,15 +116,15 @@ pub fn read_fodt(
 
 fn decode_part(bytes: &[u8]) -> Result<&str> {
     xml::decode_utf8(bytes).map_err(|err| match err {
-        XmlError::NotUtf8 { .. } => Error::Fatal(err.format_conduit()),
-        other => Error::Parse(other.format_conduit()),
+        XmlError::NotUtf8 { .. } => Error::Fatal(err.format_pandoc()),
+        other => Error::Parse(other.format_pandoc()),
     })
 }
 
 fn parse_part(name: &str, text: &str, limits: &XmlLimits, opts: XmlOptions) -> Result<xml::XmlDoc> {
     xml::parse(text, limits, opts).map_err(|err| Error::Xml {
         file: format!("'{name}'"),
-        message: err.format_conduit(),
+        message: err.format_pandoc(),
     })
 }
 
@@ -152,6 +148,42 @@ mod tests {
             &ReaderOptions::default(),
             context,
         )
+    }
+
+    #[test]
+    fn fodt_reports_the_pandoc_span_for_an_unexpected_close_tag() {
+        assert_eq!(
+            read_fodt(
+                &Sources::from_text("<a><b></a>"),
+                &ReaderOptions::default(),
+                &mut Context::pure(),
+            ),
+            Err(Error::Xml {
+                file: String::new(),
+                message: "1:7 (6)-1:11 (10): Unexpected close tag a".into(),
+            })
+        );
+    }
+
+    #[test]
+    fn explicit_space_counts_follow_pandoc_number_parsing() -> Result<()> {
+        let doc = flat(
+            "",
+            r#"<text:p>A<text:s text:c="+3"/>B<text:s text:c="9223372036854775808"/>C<text:s text:c="18446744073709551618"/>D</text:p>"#,
+            &mut Context::pure(),
+        )?;
+        assert_eq!(
+            doc.blocks,
+            vec![Block::Para(vec![
+                Inline::Str("A".into()),
+                Inline::Space,
+                Inline::Str("BC".into()),
+                Inline::Space,
+                Inline::Space,
+                Inline::Str("D".into()),
+            ])]
+        );
+        Ok(())
     }
 
     #[test]

@@ -27,6 +27,7 @@ mod nfc;
 mod nfc_tables;
 #[rustfmt::skip]
 mod tables;
+pub mod sections;
 mod text;
 
 pub use abbreviations::default_abbreviations;

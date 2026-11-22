@@ -26,6 +26,9 @@ randoc-rst = { workspace = true }
 randoc-org = { workspace = true }
 randoc-rtf = { workspace = true }
 randoc-wiki = { workspace = true }
+randoc-xmlformats = { workspace = true }
+randoc-epub = { workspace = true }
+randoc-bibtex = { workspace = true }
 
 [lints]
 workspace = true

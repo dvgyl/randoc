@@ -4,6 +4,7 @@ use std::sync::OnceLock;
 
 use randoc_ast::{Attr, Inline};
 
+use crate::MathMlFlavor;
 use crate::symbols::{ACCENT_SYMBOLS, SYMBOLS, VARIANTS};
 use crate::tree::{Aligns, Alphabet, Class, Exp, Row, Wrap};
 use crate::unprintable::UNPRINTABLE;
@@ -124,28 +125,51 @@ pub(crate) fn variant_char(pairs: &[(char, char)], c: char) -> char {
 }
 
 /// Writes the full `<math>` element.
-pub(crate) fn mathml(items: &[Exp], display: bool, tex: &str) -> String {
-    let mut out = String::new();
-    out.push_str("<math display=\"");
-    out.push_str(if display { "block" } else { "inline" });
-    out.push_str("\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics>");
+pub(crate) fn mathml(items: &[Exp], display: bool, tex: &str, flavor: MathMlFlavor) -> String {
+    let prefix = if flavor == MathMlFlavor::Html {
+        ""
+    } else {
+        "mml:"
+    };
     let mut writer = MathMl {
-        out,
+        out: String::new(),
+        prefix,
+        attr_prefix: if flavor == MathMlFlavor::DocBook {
+            prefix
+        } else {
+            ""
+        },
         display,
         style: None,
     };
-    writer.list(items);
-    let mut out = writer.out;
-    out.push_str("<annotation encoding=\"application/x-tex\">");
-    for c in tex.chars() {
-        escape_char(c, &mut out);
+    const NS: &str = "http://www.w3.org/1998/Math/MathML";
+    let display_attr = ("display", if display { "block" } else { "inline" });
+    match flavor {
+        MathMlFlavor::Html => {
+            writer.open_with_attrs("math", &[display_attr, ("xmlns", NS)]);
+            writer.open("semantics");
+        }
+        MathMlFlavor::DocBook => writer.open("math"),
+        MathMlFlavor::Jats => writer.open_with_attrs("math", &[display_attr, ("xmlns:mml", NS)]),
     }
-    out.push_str("</annotation></semantics></math>");
-    out
+    writer.list(items);
+    if flavor == MathMlFlavor::Html {
+        writer.token(
+            "annotation",
+            &[("encoding", "application/x-tex")],
+            None,
+            tex,
+        );
+        writer.close("semantics");
+    }
+    writer.close("math");
+    writer.out
 }
 
 struct MathMl {
     out: String,
+    prefix: &'static str,
+    attr_prefix: &'static str,
     display: bool,
     /// The math alphabet around the item.
     style: Option<&'static Alphabet>,
@@ -153,26 +177,44 @@ struct MathMl {
 
 impl MathMl {
     fn open(&mut self, name: &str) {
-        self.out.push('<');
-        self.out.push_str(name);
+        self.open_with_attrs(name, &[]);
+    }
+
+    fn open_with_attrs(&mut self, name: &str, attrs: &[(&str, &str)]) {
+        self.start(name, attrs);
         self.out.push('>');
+    }
+
+    fn start(&mut self, name: &str, attrs: &[(&str, &str)]) {
+        self.out.push('<');
+        self.out.push_str(self.prefix);
+        self.out.push_str(name);
+        for (key, value) in attrs {
+            self.attribute(key, value);
+        }
+    }
+
+    fn attribute(&mut self, key: &str, value: &str) {
+        self.out.push(' ');
+        self.out.push_str(self.attr_prefix);
+        self.out.push_str(key);
+        self.out.push_str("=\"");
+        self.out.push_str(value);
+        self.out.push('"');
     }
 
     fn close(&mut self, name: &str) {
         self.out.push_str("</");
+        self.out.push_str(self.prefix);
         self.out.push_str(name);
         self.out.push('>');
     }
 
     /// Writes a token element. The text takes the characters of `variant`.
-    fn token(&mut self, name: &str, attrs: &str, variant: Option<&str>, text: &str) {
-        self.out.push('<');
-        self.out.push_str(name);
-        self.out.push_str(attrs);
+    fn token(&mut self, name: &str, attrs: &[(&str, &str)], variant: Option<&str>, text: &str) {
+        self.start(name, attrs);
         if let Some(variant) = variant {
-            self.out.push_str(" mathvariant=\"");
-            self.out.push_str(variant);
-            self.out.push('"');
+            self.attribute("mathvariant", variant);
         }
         self.out.push('>');
         let pairs = variant.map_or(&[][..], variant_chars);
@@ -212,7 +254,7 @@ impl MathMl {
 
     fn exp(&mut self, exp: &Exp, class: Class, last: bool) {
         match exp {
-            Exp::Num(n) => self.token("mn", "", self.other_variant(), n),
+            Exp::Num(n) => self.token("mn", &[], self.other_variant(), n),
             Exp::Sym(Class::Func | Class::FuncLimits, name) if !last => self.func(name),
             Exp::Sym(sym, text) => self.sym(*sym, class, text),
             Exp::Group(items) | Exp::PaddedText(items) => self.list(items),
@@ -223,16 +265,17 @@ impl MathMl {
                 limits,
             } => self.scripts(base, sub.as_deref(), sup.as_deref(), *limits),
             Exp::Frac { num, den, line } => {
-                self.out.push_str(if *line {
-                    "<mfrac>"
+                let attrs: &[_] = if *line {
+                    &[]
                 } else {
-                    "<mfrac linethickness=\"0\">"
-                });
+                    &[("linethickness", "0")]
+                };
+                self.open_with_attrs("mfrac", attrs);
                 self.arg(num);
                 self.arg(den);
                 self.close("mfrac");
             }
-            Exp::Sqrt(body) => self.wrapped("msqrt", "", body),
+            Exp::Sqrt(body) => self.wrapped("msqrt", &[], body),
             Exp::Root(body, index) => {
                 self.open("mroot");
                 self.arg(body);
@@ -258,7 +301,7 @@ impl MathMl {
                 let tag = if mark.under { "munder" } else { "mover" };
                 self.open(tag);
                 self.arg(body);
-                self.token("mo", " accent=\"true\"", None, mark.mathml);
+                self.token("mo", &[("accent", "true")], None, mark.mathml);
                 self.close(tag);
             }
             Exp::Stack { base, under, over } => {
@@ -275,9 +318,8 @@ impl MathMl {
                 self.close(tag);
             }
             Exp::Space(space) => {
-                self.out.push_str("<mspace width=\"");
-                self.out.push_str(space.width);
-                self.out.push_str("\"></mspace>");
+                self.open_with_attrs("mspace", &[("width", space.width)]);
+                self.close("mspace");
             }
             Exp::Text(style, text) => self.text(*style, text),
             Exp::Styled(alphabet, items) => {
@@ -288,21 +330,15 @@ impl MathMl {
             Exp::Limits(base) => self.exp(base, class, last),
             Exp::Sized(percent, delimiter) => self.sized(percent, delimiter),
             Exp::Display(on, body) => {
-                let attrs = if *on {
-                    " displaystyle=\"true\""
-                } else {
-                    " displaystyle=\"false\""
-                };
-                self.wrapped("mstyle", attrs, body);
+                let displaystyle = if *on { "true" } else { "false" };
+                self.wrapped("mstyle", &[("displaystyle", displaystyle)], body);
             }
             Exp::Enclose(notation, body) => {
-                self.out.push_str("<menclose notation=\"");
-                self.out.push_str(notation);
-                self.out.push_str("\">");
+                self.open_with_attrs("menclose", &[("notation", notation)]);
                 self.arg(body);
                 self.close("menclose");
             }
-            Exp::Phantom(body) => self.wrapped("mphantom", "", body),
+            Exp::Phantom(body) => self.wrapped("mphantom", &[], body),
             Exp::Table {
                 aligns,
                 rows,
@@ -311,11 +347,8 @@ impl MathMl {
         }
     }
 
-    fn wrapped(&mut self, name: &str, attrs: &str, body: &Exp) {
-        self.out.push('<');
-        self.out.push_str(name);
-        self.out.push_str(attrs);
-        self.out.push('>');
+    fn wrapped(&mut self, name: &str, attrs: &[(&str, &str)], body: &Exp) {
+        self.open_with_attrs(name, attrs);
         self.arg(body);
         self.close(name);
     }
@@ -323,7 +356,7 @@ impl MathMl {
     /// An argument of a construct. One binary operator stays an operator.
     fn arg(&mut self, exp: &Exp) {
         match exp {
-            Exp::Sym(Class::Bin, text) => self.token("mo", "", self.other_variant(), text),
+            Exp::Sym(Class::Bin, text) => self.token("mo", &[], self.other_variant(), text),
             other => self.list(std::slice::from_ref(other)),
         }
     }
@@ -343,45 +376,44 @@ impl MathMl {
                         | Class::Text
                 ) =>
             {
-                let attrs = if ACCENT_SYMBOLS.binary_search(&text.as_str()).is_ok() {
-                    " accent=\"true\""
+                let accent = if ACCENT_SYMBOLS.binary_search(&text.as_str()).is_ok() {
+                    "true"
                 } else {
-                    " accent=\"false\""
+                    "false"
                 };
-                self.token("mo", attrs, None, text);
+                self.token("mo", &[("accent", accent)], None, text);
             }
             other => self.arg(other),
         }
     }
 
     fn delimiter(&mut self, form: &str, text: &str) {
-        let attrs = format!(" stretchy=\"true\" form=\"{form}\"");
+        let attrs = [("stretchy", "true"), ("form", form)];
         self.token("mo", &attrs, self.other_variant(), text);
     }
 
     fn func(&mut self, name: &str) {
         self.open("mrow");
         self.func_name(name);
-        self.out.push_str("<mo");
+        self.start("mo", &[]);
         if let Some(variant) = self.other_variant() {
-            self.out.push_str(" mathvariant=\"");
-            self.out.push_str(variant);
-            self.out.push('"');
+            self.attribute("mathvariant", variant);
         }
-        self.out.push_str(">&#8289;</mo>");
+        self.out.push_str(">&#8289;");
+        self.close("mo");
         self.close("mrow");
     }
 
     fn func_name(&mut self, name: &str) {
         let variant = self.ident_variant().unwrap_or("normal");
-        self.token("mi", "", Some(variant), name);
+        self.token("mi", &[], Some(variant), name);
     }
 
     fn text(&mut self, style: Option<&'static Alphabet>, text: &str) {
         let variant = style
             .or(self.style)
             .map_or("normal", |alphabet| alphabet.other);
-        self.token("mtext", "", Some(variant), text);
+        self.token("mtext", &[], Some(variant), text);
     }
 
     fn sym(&mut self, sym: Class, class: Class, text: &str) {
@@ -389,19 +421,27 @@ impl MathMl {
         let other = self.other_variant();
         match (sym, class) {
             (Class::Bin, Class::Ord) | (Class::Ident | Class::Ord, _) => {
-                self.token("mi", "", ident, text);
+                self.token("mi", &[], ident, text);
             }
-            (Class::IdentUpright, _) => self.token("mi", "", other.or(Some("normal")), text),
+            (Class::IdentUpright, _) => self.token("mi", &[], other.or(Some("normal")), text),
             (Class::Func | Class::FuncLimits, _) => self.func_name(text),
             (Class::Text, _) => self.text(None, text),
-            (Class::Open, _) => {
-                self.token("mo", " stretchy=\"false\" form=\"prefix\"", other, text)
-            }
+            (Class::Open, _) => self.token(
+                "mo",
+                &[("stretchy", "false"), ("form", "prefix")],
+                other,
+                text,
+            ),
             (Class::Close, _) => {
-                self.token("mo", " stretchy=\"false\" form=\"postfix\"", other, text);
+                self.token(
+                    "mo",
+                    &[("stretchy", "false"), ("form", "postfix")],
+                    other,
+                    text,
+                );
             }
             (Class::Bin | Class::Rel | Class::Punct | Class::Op, _) => {
-                self.token("mo", "", other, text);
+                self.token("mo", &[], other, text);
             }
         }
     }
@@ -417,18 +457,21 @@ impl MathMl {
         } else {
             ("mo", self.other_variant())
         };
-        let size = format!(" minsize=\"{percent}\" maxsize=\"{percent}\"");
+        let mut attrs = vec![("minsize", percent), ("maxsize", percent)];
         let form = match class {
-            Class::Open => "prefix",
-            Class::Close => "postfix",
-            _ => {
-                let variant = variant.map_or(String::new(), |v| format!(" mathvariant=\"{v}\""));
-                let attrs = format!("{size}{variant} stretchy=\"true\"");
-                return self.token(name, &attrs, None, text);
-            }
+            Class::Open => Some("prefix"),
+            Class::Close => Some("postfix"),
+            _ => None,
         };
-        let attrs = format!("{size} stretchy=\"true\" form=\"{form}\"");
-        self.token(name, &attrs, variant, text);
+        let token_variant = if form.is_none() {
+            attrs.extend(variant.map(|v| ("mathvariant", v)));
+            None
+        } else {
+            variant
+        };
+        attrs.push(("stretchy", "true"));
+        attrs.extend(form.map(|form| ("form", form)));
+        self.token(name, &attrs, token_variant, text);
     }
 
     fn scripts(&mut self, base: &Exp, sub: Option<&Exp>, sup: Option<&Exp>, limits: Option<bool>) {
@@ -485,9 +528,8 @@ impl MathMl {
                 } else {
                     String::new()
                 };
-                self.out.push_str(&format!(
-                    "<mtd columnalign=\"{align}\" style=\"text-align: {align}{padding}\">"
-                ));
+                let style = format!("text-align: {align}{padding}");
+                self.open_with_attrs("mtd", &[("columnalign", align), ("style", &style)]);
                 if cells_in_mrow {
                     self.list(cell);
                 } else {

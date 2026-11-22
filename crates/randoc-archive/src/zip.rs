@@ -486,6 +486,7 @@ impl<'a> Archive<'a> {
 /// entries (such as ODF/EPUB `mimetype`) and `Deflated` entries.
 pub struct ArchiveWriter {
     zip: ZipWriter<Cursor<Vec<u8>>>,
+    remaining_input: u64,
 }
 
 impl Default for ArchiveWriter {
@@ -497,8 +498,14 @@ impl Default for ArchiveWriter {
 impl ArchiveWriter {
     /// Creates an empty in-memory ZIP writer.
     pub fn new() -> Self {
+        Self::with_input_limit(u64::MAX)
+    }
+
+    /// Creates a writer with a limit on the total uncompressed entry bytes.
+    pub fn with_input_limit(max: u64) -> Self {
         Self {
             zip: ZipWriter::new(Cursor::new(Vec::new())),
+            remaining_input: max,
         }
     }
 
@@ -540,6 +547,12 @@ impl ArchiveWriter {
         method: CompressionMethod,
         unix_seconds: Option<i64>,
     ) -> Result<(), ArchiveError> {
+        let remaining = self
+            .remaining_input
+            .checked_sub(bytes.len() as u64)
+            .ok_or_else(|| ArchiveError::Write {
+                detail: "ZIP input exceeds the uncompressed byte limit".into(),
+            })?;
         let dt = unix_seconds
             .map(unix_seconds_to_dos_datetime)
             .unwrap_or_default();
@@ -557,6 +570,7 @@ impl ArchiveWriter {
             .map_err(|err| ArchiveError::Write {
                 detail: err.to_string(),
             })?;
+        self.remaining_input = remaining;
         Ok(())
     }
 
@@ -613,6 +627,29 @@ mod tests {
             }
         }
         w.finish().unwrap_or_default()
+    }
+
+    #[test]
+    fn writer_checks_the_total_input_limit_before_adding_an_entry() {
+        let mut writer = ArchiveWriter::with_input_limit(5);
+        writer.write_stored("mimetype", b"abc").expect("stored");
+        assert!(matches!(
+            writer.write_deflated("rejected", b"def"),
+            Err(ArchiveError::Write { .. })
+        ));
+        writer
+            .write_deflated("content", b"de")
+            .expect("remaining bytes");
+        writer.write_stored("empty", b"").expect("empty entry");
+        assert!(matches!(
+            writer.write_stored("too-much", b"f"),
+            Err(ArchiveError::Write { .. })
+        ));
+        let bytes = writer.finish().expect("archive bytes");
+        let archive = Archive::open(&bytes, ArchiveLimits::default()).expect("open archive");
+        assert_eq!(archive.len(), 3);
+        assert!(!archive.contains("rejected"));
+        assert!(!archive.contains("too-much"));
     }
 
     #[test]

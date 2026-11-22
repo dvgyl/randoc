@@ -4,15 +4,145 @@
 //! output of `pandoc -f json -t FORMAT` with the same options.
 
 use randoc_ast::json::from_json;
+use randoc_ast::{Attr, Inline, MathType, QuoteType, Target};
 use randoc_core::{
-    CaptionPosition, CiteMethod, Context, TopLevelDivision, WrapOption, WriterOptions,
-    default_extensions,
+    CaptionPosition, CiteMethod, Context, Error, Extension, TopLevelDivision, WrapOption,
+    WriterOptions, default_extensions,
 };
+use randoc_layout::{hang, literal};
+
+use crate::inlines_to_doc;
 
 fn options() -> WriterOptions {
     let mut options = WriterOptions::default();
     options.extensions = default_extensions("latex");
     options
+}
+
+fn text(value: &str) -> Inline {
+    Inline::Str(value.into())
+}
+
+#[test]
+fn inline_layout_escapes_and_formats_text() {
+    let inlines = [
+        text("~"),
+        Inline::Space,
+        text("^"),
+        Inline::Space,
+        text("\u{a0}&"),
+        Inline::Space,
+        text("_"),
+        Inline::Space,
+        Inline::Emph(vec![text("It")]),
+        Inline::Space,
+        text("x"),
+        Inline::Superscript(vec![text("2")]),
+        Inline::Space,
+        Inline::Code(Attr::default(), "c".into()),
+        Inline::Space,
+        Inline::SmallCaps(vec![text("sc")]),
+    ];
+    let doc = inlines_to_doc(&inlines, &options(), &mut Context::pure()).unwrap();
+    assert_eq!(
+        doc.render(None),
+        r"\textasciitilde{} \^{} ~\& \_ \emph{It} x\textsuperscript{2} \texttt{c} \textsc{sc}"
+    );
+}
+
+#[test]
+fn inline_layout_formats_quotes_math_links_and_spans() {
+    let inlines = [
+        Inline::Quoted(QuoteType::DoubleQuote, vec![text("hi")]),
+        Inline::Space,
+        Inline::Quoted(QuoteType::SingleQuote, vec![text("ok")]),
+        Inline::Space,
+        Inline::Math(MathType::InlineMath, "x^{2}".into()),
+        Inline::Space,
+        Inline::Math(MathType::DisplayMath, "y=0".into()),
+        Inline::Space,
+        Inline::Link(
+            Attr::default(),
+            vec![text("site")],
+            Target::new("https://example.org/a_b#c", ""),
+        ),
+        Inline::Space,
+        Inline::Span(Attr::new("mark", vec![], vec![]), vec![text("span")]),
+        Inline::Space,
+        Inline::Span(Attr::default(), vec![text("simple")]),
+        Inline::Space,
+        Inline::Span(
+            Attr::new("", vec!["nocase".into()], vec![]),
+            vec![text("protected")],
+        ),
+        Inline::Space,
+        Inline::Span(
+            Attr::new("", vec![], vec![("lang".into(), "de".into())]),
+            vec![text("wort")],
+        ),
+    ];
+    let suffix = r"\(x^{2}\) \[y=0\] \href{https://example.org/a_b\#c}{site} \protect\phantomsection\label{mark}{span} {simple} {protected} \foreignlanguage{ngerman}{wort}";
+    let mut options = options();
+    let doc = inlines_to_doc(&inlines, &options, &mut Context::pure()).unwrap();
+    assert_eq!(doc.render(None), format!("``hi'' `ok' {suffix}"));
+
+    options.extensions.disable(Extension::Smart);
+    let doc = inlines_to_doc(&inlines, &options, &mut Context::pure()).unwrap();
+    assert_eq!(doc.render(None), format!("“hi” ‘ok’ {suffix}"));
+}
+
+#[test]
+fn inline_layout_wraps_in_a_bibliography_field() {
+    let inlines = [
+        text("alpha"),
+        Inline::Space,
+        text("bravo"),
+        Inline::Space,
+        text("charlie"),
+        Inline::Space,
+        Inline::Emph(vec![text("delta"), Inline::Space, text("echo")]),
+        Inline::SoftBreak,
+        text("foxtrot"),
+        Inline::Space,
+        text("golf"),
+        Inline::Space,
+        text("hotel"),
+    ];
+    let mut options = options();
+    let doc = inlines_to_doc(&inlines, &options, &mut Context::pure()).unwrap();
+    assert_eq!(
+        doc.render(Some(31)),
+        "alpha bravo charlie \\emph{delta\necho} foxtrot golf hotel"
+    );
+    let field = hang(4, literal("  title = {"), doc + literal("},"));
+    assert_eq!(
+        field.render(Some(31)),
+        "  title = {alpha bravo charlie\n    \\emph{delta echo} foxtrot\n    golf hotel},"
+    );
+    assert_eq!(
+        field.render(None),
+        r"  title = {alpha bravo charlie \emph{delta echo} foxtrot golf hotel},"
+    );
+
+    options.wrap_text = WrapOption::WrapPreserve;
+    let doc = inlines_to_doc(&inlines, &options, &mut Context::pure()).unwrap();
+    assert_eq!(
+        doc.render(None),
+        "alpha bravo charlie \\emph{delta echo}\nfoxtrot golf hotel"
+    );
+}
+
+#[test]
+fn inline_layout_checks_the_nesting_limit() {
+    let inlines = [Inline::Emph(vec![Inline::Strong(vec![text("word")])])];
+    let mut context = Context::pure();
+    context.limits.max_nesting_depth = 3;
+    let doc = inlines_to_doc(&inlines, &options(), &mut context).unwrap();
+    assert_eq!(doc.render(None), r"\emph{\textbf{word}}");
+
+    context.limits.max_nesting_depth = 2;
+    let error = inlines_to_doc(&inlines, &options(), &mut context).unwrap_err();
+    assert!(matches!(error, Error::Parse(_)));
 }
 
 #[test]

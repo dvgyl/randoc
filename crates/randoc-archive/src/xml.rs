@@ -5,6 +5,7 @@
 
 use std::collections::{BTreeMap, BTreeSet, HashSet};
 use std::fmt;
+use std::ops::Range;
 use std::sync::Arc;
 
 use quick_xml::Reader;
@@ -73,12 +74,28 @@ impl Default for XmlLimits {
 }
 
 /// Per-format parsing options for [`parse`].
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, Default)]
 pub struct XmlOptions {
     /// When `true`, resolve HTML5 named character references (e.g. `&eacute;`)
     /// even without an internal DTD declaration. DOCX/ODT/EPUB set this `false`.
     pub html_entities: bool,
+    /// Looks up an entity after the internal DTD and HTML entity tables.
+    pub extra_entities: Option<fn(&str) -> Option<&'static str>>,
 }
+
+impl PartialEq for XmlOptions {
+    fn eq(&self, other: &Self) -> bool {
+        self.html_entities == other.html_entities
+            && match (self.extra_entities, other.extra_entities) {
+                // Compare the stored function addresses.
+                (Some(left), Some(right)) => std::ptr::fn_addr_eq(left, right),
+                (None, None) => true,
+                _ => false,
+            }
+    }
+}
+
+impl Eq for XmlOptions {}
 
 /// A namespace-resolved XML qualified name.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -121,18 +138,40 @@ pub struct XmlDoc {
     pub root: XmlElement,
 }
 
-/// Errors produced by [`decode_utf8`] and [`parse`].
+/// An XML fragment with its top-level nodes in input order.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct XmlFragment {
+    /// Top-level elements and text.
+    pub nodes: Vec<XmlNode>,
+}
+
+/// A position in the input.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct XmlPos {
+    /// Line number, starting at 1.
+    pub line: usize,
+    /// Column number, starting at 1.
+    pub column: usize,
+    /// Character offset, starting at 0.
+    pub offset: usize,
+}
+
+impl fmt::Display for XmlPos {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}:{} ({})", self.line, self.column, self.offset)
+    }
+}
+
+/// Errors from XML decoding and parsing.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum XmlError {
-    /// XML well-formedness or syntax error.
+    /// XML syntax or well-formedness error.
     Syntax {
-        /// Character offset in the input string.
-        offset_chars: usize,
-        /// 1-based line number.
-        line: usize,
-        /// 1-based column number.
-        column: usize,
-        /// Human-readable description.
+        /// Start of the error span.
+        start: XmlPos,
+        /// End of the error span, exclusive.
+        end: XmlPos,
+        /// Error description.
         detail: Text,
     },
     /// Element nesting exceeded `max_depth`.
@@ -142,7 +181,14 @@ pub enum XmlError {
     /// Total DOM node count or allocated string bytes exceeded configured bounds.
     DomBudget,
     /// Reference to an undeclared named entity.
-    UnknownEntity(Text),
+    UnknownEntity {
+        /// Start of the error span.
+        start: XmlPos,
+        /// End of the error span, exclusive.
+        end: XmlPos,
+        /// Name of the entity.
+        name: Text,
+    },
     /// Input bytes are not valid UTF-8.
     NotUtf8 {
         /// First invalid byte.
@@ -153,22 +199,18 @@ pub enum XmlError {
 }
 
 impl XmlError {
-    /// Formats the error in a concise conduit-style message suitable for
-    /// `randoc_core::Error::Xml`.
-    pub fn format_conduit(&self) -> Text {
+    /// Formats the error with Pandoc-style positions.
+    pub fn format_pandoc(&self) -> Text {
         match self {
-            XmlError::Syntax {
-                line,
-                column,
-                detail,
-                ..
-            } => format!("Line {line}, column {column}: {detail}"),
+            XmlError::Syntax { start, end, detail } => format!("{start}-{end}: {detail}"),
+            XmlError::UnknownEntity { start, end, name } => {
+                format!("{start}-{end}: Unresolved entity &{name};")
+            }
             XmlError::Depth(limit) => {
                 format!("XML nesting exceeded limit of {limit} levels")
             }
             XmlError::EntityBudget => "XML entity expansion exceeded limit".to_owned(),
             XmlError::DomBudget => "XML DOM allocation exceeded limit".to_owned(),
-            XmlError::UnknownEntity(name) => format!("Unresolved entity &{name};"),
             XmlError::NotUtf8 { byte, .. } => {
                 format!(
                     "Cannot decode byte '\\x{byte:02x}': Data.Text.Internal.Encoding: Invalid UTF-8 stream"
@@ -180,7 +222,7 @@ impl XmlError {
 
 impl fmt::Display for XmlError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_str(&self.format_conduit())
+        f.write_str(&self.format_pandoc())
     }
 }
 
@@ -356,6 +398,11 @@ pub fn escape_xml_text(text: &str, out: &mut String) {
 
 /// Escapes character data for a double-quoted XML attribute value.
 pub fn escape_xml_attr(text: &str, out: &mut String) {
+    escape_xml_text_quot(text, out);
+}
+
+/// Escapes XML text, including double quotation marks.
+pub fn escape_xml_text_quot(text: &str, out: &mut String) {
     for ch in text.chars() {
         match ch {
             '&' => out.push_str("&amp;"),
@@ -384,12 +431,69 @@ pub fn decode_utf8(bytes: &[u8]) -> Result<&str, XmlError> {
 /// Parses an XML document string into an [`XmlDoc`] within `limits`.
 pub fn parse(input: &str, limits: &XmlLimits, options: XmlOptions) -> Result<XmlDoc, XmlError> {
     let input = input.strip_prefix('\u{FEFF}').unwrap_or(input);
-    let mut parser = Parser::new(input, *limits, options)?;
-    if let Some((idx, _)) = input.char_indices().find(|&(_, ch)| !is_valid_xml_char(ch)) {
-        return Err(parser.syntax_at(idx, "invalid XML 1.0 character"));
+    let mut nodes = parse_nodes(input, limits, options, false)?;
+    match nodes.pop() {
+        Some(XmlNode::Element(root)) => Ok(XmlDoc { root }),
+        _ => Err(syntax_at(
+            input,
+            input.len()..input.len(),
+            "missing root element",
+        )),
     }
-    parser.parse_stream(input, 0)?;
-    parser.finish()
+}
+
+/// Parses zero or more top-level text and element nodes with one shared budget.
+pub fn parse_fragment(
+    input: &str,
+    limits: &XmlLimits,
+    options: XmlOptions,
+) -> Result<XmlFragment, XmlError> {
+    parse_nodes(input, limits, options, true).map(|nodes| XmlFragment { nodes })
+}
+
+fn parse_nodes(
+    input: &str,
+    limits: &XmlLimits,
+    options: XmlOptions,
+    fragment: bool,
+) -> Result<Vec<XmlNode>, XmlError> {
+    if let Some((idx, ch)) = input.char_indices().find(|&(_, ch)| !is_valid_xml_char(ch)) {
+        return Err(syntax_at(
+            input,
+            idx..idx + ch.len_utf8(),
+            "invalid XML 1.0 character",
+        ));
+    }
+    let mut parser = Parser::new(input, *limits, options, fragment);
+    parser.parse_stream(input, 0, None)?;
+    Ok(parser.nodes)
+}
+
+fn position(input: &str, byte_offset: usize) -> XmlPos {
+    let prefix = &input[..input.floor_char_boundary(byte_offset)];
+    let mut pos = XmlPos {
+        line: 1,
+        column: 1,
+        offset: 0,
+    };
+    for ch in prefix.chars() {
+        pos.offset += 1;
+        if ch == '\n' {
+            pos.line += 1;
+            pos.column = 1;
+        } else {
+            pos.column += 1;
+        }
+    }
+    pos
+}
+
+fn syntax_at(input: &str, span: Range<usize>, detail: impl Into<Text>) -> XmlError {
+    XmlError::Syntax {
+        start: position(input, span.start),
+        end: position(input, span.end),
+        detail: detail.into(),
+    }
 }
 
 struct OpenElement {
@@ -402,7 +506,8 @@ struct Parser<'a> {
     limits: XmlLimits,
     options: XmlOptions,
     stack: Vec<OpenElement>,
-    root: Option<XmlElement>,
+    nodes: Vec<XmlNode>,
+    fragment: bool,
     namespaces: BTreeMap<Option<Arc<str>>, Vec<Arc<str>>>,
     interned: HashSet<Arc<str>>,
     entities: BTreeMap<Text, Text>,
@@ -417,8 +522,9 @@ fn new_strict_reader(input: &str) -> Reader<&[u8]> {
     let mut reader = Reader::from_str(input);
     let cfg = reader.config_mut();
     cfg.trim_text(false);
-    cfg.check_end_names = true;
-    cfg.allow_unmatched_ends = false;
+    // The DOM stack checks close tags and supplies their full error span.
+    cfg.check_end_names = false;
+    cfg.allow_unmatched_ends = true;
     cfg.allow_dangling_amp = false;
     cfg.expand_empty_elements = false;
     cfg.check_comments = true;
@@ -426,13 +532,14 @@ fn new_strict_reader(input: &str) -> Reader<&[u8]> {
 }
 
 impl<'a> Parser<'a> {
-    fn new(root_input: &'a str, limits: XmlLimits, options: XmlOptions) -> Result<Self, XmlError> {
+    fn new(root_input: &'a str, limits: XmlLimits, options: XmlOptions, fragment: bool) -> Self {
         let mut parser = Self {
             root_input,
             limits,
             options,
             stack: Vec::new(),
-            root: None,
+            nodes: Vec::new(),
+            fragment,
             namespaces: BTreeMap::new(),
             interned: HashSet::new(),
             entities: BTreeMap::new(),
@@ -447,7 +554,7 @@ impl<'a> Parser<'a> {
         parser.interned.insert(Arc::clone(&xml_prefix));
         parser.interned.insert(Arc::clone(&xml_uri));
         parser.namespaces.insert(Some(xml_prefix), vec![xml_uri]);
-        Ok(parser)
+        parser
     }
 
     fn charge_dom(&mut self, nodes: usize, bytes: usize) -> Result<(), XmlError> {
@@ -469,83 +576,119 @@ impl<'a> Parser<'a> {
         Ok(arc)
     }
 
-    fn syntax_at(&self, byte_offset: usize, detail: impl Into<Text>) -> XmlError {
-        let clamped = byte_offset.min(self.root_input.len());
-        let prefix = self.root_input.get(..clamped).unwrap_or("");
-        let mut line = 1usize;
-        let mut column = 1usize;
-        let mut offset_chars = 0usize;
-        for ch in prefix.chars() {
-            offset_chars += 1;
-            if ch == '\n' {
-                line += 1;
-                column = 1;
-            } else {
-                column += 1;
-            }
-        }
-        XmlError::Syntax {
-            offset_chars,
-            line,
-            column,
-            detail: detail.into(),
+    fn syntax_span(&self, span: Range<usize>, detail: impl Into<Text>) -> XmlError {
+        syntax_at(self.root_input, span, detail)
+    }
+
+    fn unknown_entity(&self, span: &Range<usize>, name: &str) -> XmlError {
+        XmlError::UnknownEntity {
+            start: position(self.root_input, span.start),
+            end: position(self.root_input, span.end),
+            name: Text::from(name),
         }
     }
 
-    fn parse_stream(&mut self, src: &str, entity_depth: usize) -> Result<(), XmlError> {
+    fn lookup_entity(&mut self, name: &str) -> Result<Option<&'static str>, XmlError> {
+        // The longest HTML entity name has 31 characters before its semicolon.
+        if self.options.html_entities
+            && name.len() <= 31
+            && let Some(value) = named_entity(&format!("{name};"))
+        {
+            return Ok(Some(value));
+        }
+        let value = self.options.extra_entities.and_then(|lookup| lookup(name));
+        if let Some(value) = value {
+            self.charge_entity_bytes(value.len())?;
+        }
+        Ok(value)
+    }
+
+    fn parse_stream(
+        &mut self,
+        src: &str,
+        entity_depth: usize,
+        origin: Option<Range<usize>>,
+    ) -> Result<(), XmlError> {
         if entity_depth > MAX_ENTITY_DEPTH {
             return Err(XmlError::EntityBudget);
         }
-        let mut reader = new_strict_reader(src);
+        let input = if origin.is_none() {
+            src.strip_prefix('\u{FEFF}').unwrap_or(src)
+        } else {
+            src
+        };
+        let bom_len = src.len() - input.len();
+        let mut reader = new_strict_reader(input);
+        let base_depth = self.stack.len();
         loop {
-            let start_pos = usize::try_from(reader.buffer_position()).unwrap_or(0);
-            let event = match reader.read_event() {
-                Ok(ev) => ev,
-                Err(err) => {
-                    let err_pos = usize::try_from(reader.error_position()).unwrap_or(start_pos);
-                    return Err(self.syntax_at(err_pos, err.to_string()));
-                }
-            };
+            let start = reader.buffer_position() as usize + bom_len;
+            let event = reader.read_event();
+            let end = reader.buffer_position() as usize + bom_len;
+            let span = origin.clone().unwrap_or(start..end);
+            let event = event.map_err(|err| {
+                let err_pos = reader.error_position() as usize + bom_len;
+                self.syntax_span(
+                    origin.clone().unwrap_or(err_pos..end.max(err_pos)),
+                    err.to_string(),
+                )
+            })?;
             match event {
-                Event::Start(tag) => self.on_start(&tag, start_pos, false)?,
-                Event::Empty(tag) => self.on_start(&tag, start_pos, true)?,
-                Event::End(tag) => self.on_end(&tag, start_pos)?,
+                Event::Start(tag) => self.on_start(&tag, &span, false)?,
+                Event::Empty(tag) => self.on_start(&tag, &span, true)?,
+                Event::End(tag) => self.on_end(tag.name().0, span, base_depth)?,
                 Event::Text(text) => {
                     let content = text.xml10_content();
                     if content.contains('&') {
-                        return Err(self.syntax_at(start_pos, "unescaped '&' in text"));
+                        return Err(self.syntax_span(span, "unescaped '&' in text"));
                     }
-                    self.push_text(&content, start_pos)?;
+                    self.push_text(&content, &span)?;
                 }
                 Event::CData(data) => {
                     let content = data.into_inner();
-                    self.push_text(&content, start_pos)?;
+                    self.push_text(&content, &span)?;
                 }
                 Event::GeneralRef(ref_ev) => {
-                    let name: &str = &ref_ev;
-                    self.on_general_ref(name, start_pos, entity_depth)?;
+                    self.on_general_ref(&ref_ev, span, entity_depth)?;
                 }
                 Event::DocType(dt) => {
                     if entity_depth > 0 {
-                        return Err(self.syntax_at(start_pos, "DOCTYPE not allowed inside entity"));
+                        return Err(self.syntax_span(span, "DOCTYPE not allowed inside entity"));
                     }
-                    if self.seen_doctype || self.root.is_some() || !self.stack.is_empty() {
-                        return Err(self.syntax_at(start_pos, "unexpected DOCTYPE"));
+                    if self.seen_doctype
+                        || !self.stack.is_empty()
+                        || self.nodes.iter().any(
+                            |node| !matches!(node, XmlNode::Text(text) if is_xml_whitespace(text)),
+                        )
+                    {
+                        return Err(self.syntax_span(span, "unexpected DOCTYPE"));
                     }
                     self.seen_doctype = true;
-                    let raw = dt.into_inner();
-                    self.parse_doctype(&raw, start_pos)?;
+                    self.parse_doctype(&dt.into_inner(), span)?;
                 }
                 Event::Decl(_) | Event::Comment(_) | Event::PI(_) => {}
-                Event::Eof => break,
+                Event::Eof => {
+                    if self.stack.len() > base_depth
+                        && let Some(open) = self.stack.last()
+                    {
+                        return Err(self.syntax_span(
+                            span,
+                            format!("unclosed element <{}>", open.element.name.local),
+                        ));
+                    }
+                    return Ok(());
+                }
             }
         }
-        Ok(())
     }
 
-    fn on_start(&mut self, tag: &BytesStart<'_>, pos: usize, empty: bool) -> Result<(), XmlError> {
-        if self.root.is_some() {
-            return Err(self.syntax_at(pos, "multiple root elements"));
+    fn on_start(
+        &mut self,
+        tag: &BytesStart<'_>,
+        span: &Range<usize>,
+        empty: bool,
+    ) -> Result<(), XmlError> {
+        if !self.fragment && !self.nodes.is_empty() {
+            return Err(self.syntax_span(span.clone(), "multiple root elements"));
         }
         if self.stack.len() >= self.limits.max_depth {
             return Err(XmlError::Depth(self.limits.max_depth));
@@ -553,7 +696,7 @@ impl<'a> Parser<'a> {
 
         let raw_name = tag.name().0;
         if raw_name.is_empty() {
-            return Err(self.syntax_at(pos, "empty element name"));
+            return Err(self.syntax_span(span.clone(), "empty element name"));
         }
 
         let mut ns_decls: Vec<(Option<Arc<str>>, Arc<str>)> = Vec::new();
@@ -561,10 +704,10 @@ impl<'a> Parser<'a> {
         let mut raw_attrs: Vec<(Text, Text)> = Vec::new();
 
         for attr_res in tag.attributes() {
-            let attr = attr_res.map_err(|err| self.syntax_at(pos, err.to_string()))?;
+            let attr = attr_res.map_err(|err| self.syntax_span(span.clone(), err.to_string()))?;
             let key = attr.key.0;
             let raw_val_str = attr.value.as_ref();
-            let value = self.expand_attr_value(raw_val_str, pos)?;
+            let value = self.expand_attr_value(raw_val_str, span)?;
             if value.len() > self.limits.max_attr_bytes {
                 return Err(XmlError::EntityBudget);
             }
@@ -579,7 +722,7 @@ impl<'a> Parser<'a> {
                 ns_decls.push((None, uri));
             } else if let Some(prefix) = key.strip_prefix("xmlns:") {
                 if prefix.is_empty() {
-                    return Err(self.syntax_at(pos, "empty namespace prefix"));
+                    return Err(self.syntax_span(span.clone(), "empty namespace prefix"));
                 }
                 let p = self.intern(prefix)?;
                 let uri = self.intern(&value)?;
@@ -622,29 +765,22 @@ impl<'a> Parser<'a> {
 
     fn on_end(
         &mut self,
-        tag: &quick_xml::events::BytesEnd<'_>,
-        pos: usize,
+        raw_end: &str,
+        span: Range<usize>,
+        base_depth: usize,
     ) -> Result<(), XmlError> {
-        let raw_end = tag.name().0;
-        let (end_prefix, end_local) = match raw_end.split_once(':') {
-            Some((p, l)) => (Some(p), l),
-            None => (None, raw_end),
-        };
-        let Some(open) = self.stack.last() else {
-            return Err(self.syntax_at(pos, "unexpected closing tag"));
-        };
-        if open.element.name.local != end_local || open.element.name.prefix.as_deref() != end_prefix
+        let (prefix, local) = raw_end
+            .split_once(':')
+            .map_or((None, raw_end), |(p, l)| (Some(p), l));
+        if self.stack.len() > base_depth
+            && let Some(open) = self.stack.last()
+            && open.element.name.local == local
+            && open.element.name.prefix.as_deref() == prefix
         {
-            return Err(self.syntax_at(
-                pos,
-                format!(
-                    "mismatched closing tag </{}> for <{}>",
-                    raw_end, open.element.name.local
-                ),
-            ));
+            self.pop_element();
+            return Ok(());
         }
-        self.pop_element();
-        Ok(())
+        Err(self.syntax_span(span, format!("Unexpected close tag {raw_end}")))
     }
 
     fn pop_element(&mut self) {
@@ -654,92 +790,90 @@ impl<'a> Parser<'a> {
                     uris.pop();
                 }
             }
-            match self.stack.last_mut() {
-                Some(parent) => parent.element.children.push(XmlNode::Element(open.element)),
-                None => self.root = Some(open.element),
-            }
+            self.children().push(XmlNode::Element(open.element));
         }
     }
 
-    fn push_text(&mut self, text: &str, pos: usize) -> Result<(), XmlError> {
+    fn push_text(&mut self, text: &str, span: &Range<usize>) -> Result<(), XmlError> {
         if text.is_empty() {
             return Ok(());
         }
         if text.chars().any(|ch| !is_valid_xml_char(ch)) {
-            return Err(self.syntax_at(pos, "invalid XML 1.0 character in text"));
+            return Err(self.syntax_span(span.clone(), "invalid XML 1.0 character in text"));
         }
-        let Some(open) = self.stack.last() else {
-            if text.chars().all(|c| matches!(c, ' ' | '\t' | '\r' | '\n')) {
+        if !self.fragment && self.stack.is_empty() {
+            if is_xml_whitespace(text) {
                 return Ok(());
             }
-            return Err(self.syntax_at(pos, "character data outside root element"));
-        };
-        let adding_node = usize::from(!matches!(
-            open.element.children.last(),
-            Some(XmlNode::Text(_))
-        ));
+            return Err(self.syntax_span(span.clone(), "character data outside root element"));
+        }
+        let adding_node = usize::from(!matches!(self.children().last(), Some(XmlNode::Text(_))));
         self.charge_dom(adding_node, text.len())?;
-        if let Some(open) = self.stack.last_mut() {
-            if let Some(XmlNode::Text(prev)) = open.element.children.last_mut() {
-                prev.push_str(text);
-            } else {
-                open.element.children.push(XmlNode::Text(Text::from(text)));
-            }
+        let children = self.children();
+        if let Some(XmlNode::Text(prev)) = children.last_mut() {
+            prev.push_str(text);
+        } else {
+            children.push(XmlNode::Text(Text::from(text)));
         }
         Ok(())
+    }
+
+    fn children(&mut self) -> &mut Vec<XmlNode> {
+        match self.stack.last_mut() {
+            Some(open) => &mut open.element.children,
+            None => &mut self.nodes,
+        }
     }
 
     fn on_general_ref(
         &mut self,
         name: &str,
-        pos: usize,
+        span: Range<usize>,
         entity_depth: usize,
     ) -> Result<(), XmlError> {
         if let Some(resolved) = resolve_builtin_or_char_ref(name) {
-            let resolved = resolved.map_err(|msg| self.syntax_at(pos, msg))?;
-            self.push_text(&resolved, pos)?;
+            let resolved = resolved.map_err(|msg| self.syntax_span(span.clone(), msg))?;
+            self.push_text(&resolved, &span)?;
             return Ok(());
         }
         if let Some(replacement) = self.entities.get(name).cloned() {
             if self.expanding.contains(name) {
-                return Err(self.syntax_at(pos, format!("recursive entity &{name};")));
+                return Err(self.syntax_span(span.clone(), format!("recursive entity &{name};")));
             }
             self.charge_entity_bytes(replacement.len())?;
             let key = Text::from(name);
             self.expanding.insert(key.clone());
             let res = if replacement.contains('<') || replacement.contains('&') {
-                self.parse_stream(&replacement, entity_depth + 1)
+                self.parse_stream(&replacement, entity_depth + 1, Some(span))
             } else {
-                self.push_text(&replacement, pos)
+                self.push_text(&replacement, &span)
             };
             self.expanding.remove(&key);
             return res;
         }
-        if self.options.html_entities
-            && let Some(val) = named_entity(name)
-        {
-            self.push_text(val, pos)?;
+        if let Some(val) = self.lookup_entity(name)? {
+            self.push_text(val, &span)?;
             return Ok(());
         }
-        Err(XmlError::UnknownEntity(Text::from(name)))
+        Err(self.unknown_entity(&span, name))
     }
 
-    fn expand_attr_value(&mut self, raw: &str, pos: usize) -> Result<Text, XmlError> {
+    fn expand_attr_value(&mut self, raw: &str, span: &Range<usize>) -> Result<Text, XmlError> {
         if raw.chars().any(|ch| !is_valid_xml_char(ch)) {
-            return Err(self.syntax_at(pos, "invalid XML 1.0 character in attribute"));
+            return Err(self.syntax_span(span.clone(), "invalid XML 1.0 character in attribute"));
         }
         if !raw.contains('&') {
             return Ok(Text::from(raw));
         }
         let mut out = String::with_capacity(raw.len());
-        self.expand_attr_into(raw, pos, 0, &mut out)?;
+        self.expand_attr_into(raw, span, 0, &mut out)?;
         Ok(out)
     }
 
     fn expand_attr_into(
         &mut self,
         raw: &str,
-        pos: usize,
+        span: &Range<usize>,
         depth: usize,
         out: &mut String,
     ) -> Result<(), XmlError> {
@@ -751,16 +885,20 @@ impl<'a> Parser<'a> {
             out.push_str(&rest[..amp]);
             let after_amp = &rest[amp + 1..];
             let Some(semi) = after_amp.find(';') else {
-                return Err(self.syntax_at(pos, "unterminated entity reference in attribute"));
+                return Err(
+                    self.syntax_span(span.clone(), "unterminated entity reference in attribute")
+                );
             };
             let name = &after_amp[..semi];
             rest = &after_amp[semi + 1..];
             if let Some(resolved) = resolve_builtin_or_char_ref(name) {
-                let s = resolved.map_err(|msg| self.syntax_at(pos, msg))?;
+                let s = resolved.map_err(|msg| self.syntax_span(span.clone(), msg))?;
                 out.push_str(&s);
             } else if let Some(replacement) = self.entities.get(name).cloned() {
                 if self.expanding.contains(name) {
-                    return Err(self.syntax_at(pos, format!("recursive entity &{name};")));
+                    return Err(
+                        self.syntax_span(span.clone(), format!("recursive entity &{name};"))
+                    );
                 }
                 self.charge_entity_bytes(replacement.len())?;
                 if out.len().saturating_add(replacement.len()) > self.limits.max_attr_bytes {
@@ -768,15 +906,21 @@ impl<'a> Parser<'a> {
                 }
                 let key = Text::from(name);
                 self.expanding.insert(key.clone());
-                let r = self.expand_attr_into(&replacement, pos, depth + 1, out);
+                let r = self.expand_attr_into(&replacement, span, depth + 1, out);
                 self.expanding.remove(&key);
                 r?;
-            } else if self.options.html_entities
-                && let Some(val) = named_entity(name)
-            {
+            } else if let Some(val) = self.lookup_entity(name)? {
+                if out.len().saturating_add(val.len()) > self.limits.max_attr_bytes {
+                    return Err(XmlError::EntityBudget);
+                }
+                if val.chars().any(|ch| !is_valid_xml_char(ch)) {
+                    return Err(
+                        self.syntax_span(span.clone(), "invalid XML 1.0 character in attribute")
+                    );
+                }
                 out.push_str(val);
             } else {
-                return Err(XmlError::UnknownEntity(Text::from(name)));
+                return Err(self.unknown_entity(span, name));
             }
             if out.len() > self.limits.max_attr_bytes {
                 return Err(XmlError::EntityBudget);
@@ -829,7 +973,7 @@ impl<'a> Parser<'a> {
 
     /// Parses internal DTD subset `[ ... ]` for `<!ENTITY name "value">`
     /// declarations while ignoring external `PUBLIC`/`SYSTEM` identifiers.
-    fn parse_doctype(&mut self, raw: &str, pos: usize) -> Result<(), XmlError> {
+    fn parse_doctype(&mut self, raw: &str, span: Range<usize>) -> Result<(), XmlError> {
         // Locate internal subset `[ ... ]` outside quotes.
         let bytes = raw.as_bytes();
         let mut i = 0usize;
@@ -856,7 +1000,7 @@ impl<'a> Parser<'a> {
         };
         // Find matching closing `]` scanning from the end.
         let Some(rel_end) = raw[start..].rfind(']') else {
-            return Err(self.syntax_at(pos, "unclosed DOCTYPE internal subset"));
+            return Err(self.syntax_span(span, "unclosed DOCTYPE internal subset"));
         };
         let subset = &raw[start..start + rel_end];
         let mut cur = subset;
@@ -866,7 +1010,7 @@ impl<'a> Parser<'a> {
                 if let Some(end_c) = after_comment.find("-->") {
                     cur = &after_comment[end_c + 3..];
                 } else {
-                    return Err(self.syntax_at(pos, "unclosed comment in DTD"));
+                    return Err(self.syntax_span(span, "unclosed comment in DTD"));
                 }
                 continue;
             }
@@ -926,20 +1070,6 @@ impl<'a> Parser<'a> {
         }
         Ok(())
     }
-
-    fn finish(mut self) -> Result<XmlDoc, XmlError> {
-        if let Some(open) = self.stack.last() {
-            return Err(self.syntax_at(
-                self.root_input.len(),
-                format!("unclosed element <{}>", open.element.name.local),
-            ));
-        }
-        let root = self
-            .root
-            .take()
-            .ok_or_else(|| self.syntax_at(self.root_input.len(), "missing root element"))?;
-        Ok(XmlDoc { root })
-    }
 }
 
 fn resolve_builtin_or_char_ref(name: &str) -> Option<Result<String, &'static str>> {
@@ -971,6 +1101,11 @@ fn resolve_builtin_or_char_ref(name: &str) -> Option<Result<String, &'static str
     }
 }
 
+fn is_xml_whitespace(text: &str) -> bool {
+    text.bytes()
+        .all(|byte| matches!(byte, b' ' | b'\t' | b'\r' | b'\n'))
+}
+
 fn is_valid_xml_char(ch: char) -> bool {
     let cp = u32::from(ch);
     cp == 0x9
@@ -985,6 +1120,124 @@ fn is_valid_xml_char(ch: char) -> bool {
 #[allow(clippy::expect_used)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn reports_pandoc_spans_for_close_tags_and_entities() {
+        let limits = XmlLimits::default();
+        let options = XmlOptions::default();
+        for (input, expected) in [
+            (
+                "<broken><p>X</broken>",
+                "1:13 (12)-1:22 (21): Unexpected close tag broken",
+            ),
+            (
+                "<package>       <p></package>",
+                "1:20 (19)-1:30 (29): Unexpected close tag package",
+            ),
+            (
+                "<a>&hellip;</a>",
+                "1:4 (3)-1:12 (11): Unresolved entity &hellip;",
+            ),
+            (
+                "<a>é😀\n&hellip;</a>",
+                "2:1 (6)-2:9 (14): Unresolved entity &hellip;",
+            ),
+            (
+                r#"<a b="&hellip;">x</a>"#,
+                "1:1 (0)-1:17 (16): Unresolved entity &hellip;",
+            ),
+            ("</what>", "1:1 (0)-1:8 (7): Unexpected close tag what"),
+        ] {
+            assert_eq!(
+                parse(input, &limits, options)
+                    .expect_err("invalid XML")
+                    .format_pandoc(),
+                expected
+            );
+        }
+    }
+
+    #[test]
+    fn fragments_keep_top_level_nodes_and_source_positions() {
+        let limits = XmlLimits::default();
+        let options = XmlOptions::default();
+        let input = "before &amp; <p>x</p><p>y</p><![CDATA[after]]>";
+        let fragment = parse_fragment(input, &limits, options).expect("fragment");
+        assert!(matches!(
+            fragment.nodes.as_slice(),
+            [XmlNode::Text(before), XmlNode::Element(x), XmlNode::Element(y), XmlNode::Text(after)]
+                if before == "before & " && x.text() == "x" && y.text() == "y" && after == "after"
+        ));
+        assert!(
+            parse_fragment("", &limits, options)
+                .expect("empty fragment")
+                .nodes
+                .is_empty()
+        );
+        assert!(parse("<p/><p/>", &limits, options).is_err());
+        assert_eq!(
+            parse_fragment("é\n<p></b>", &limits, options)
+                .expect_err("mismatched tag")
+                .format_pandoc(),
+            "2:4 (5)-2:8 (9): Unexpected close tag b"
+        );
+        assert_eq!(
+            parse_fragment(
+                "<p/><p/><p/>",
+                &XmlLimits {
+                    max_nodes: 2,
+                    ..limits
+                },
+                options
+            ),
+            Err(XmlError::DomBudget)
+        );
+    }
+
+    #[test]
+    fn extra_entities_follow_dtd_and_html_precedence_and_share_a_budget() {
+        let limits = XmlLimits::default();
+        let options = XmlOptions {
+            html_entities: true,
+            extra_entities: Some(|name| match name {
+                "b.alpha" => Some("𝛂"),
+                "hellip" | "nbsp" => Some("extra"),
+                _ => None,
+            }),
+        };
+        let input = r#"<!DOCTYPE a [<!ENTITY nbsp "DTD">]><a title="&b.alpha;">&nbsp;&hellip;&b.alpha;</a>"#;
+        let doc = parse(input, &limits, options).expect("entities");
+        assert_eq!(doc.root.attr_local("title"), Some("𝛂"));
+        assert_eq!(doc.root.text(), "DTD…𝛂");
+        let fragment_input = format!(" \n{input}<b>&b.alpha;</b>");
+        assert_eq!(
+            parse_fragment(&fragment_input, &limits, options)
+                .expect("fragment with DTD")
+                .nodes
+                .len(),
+            3
+        );
+
+        let input = "<a>&b.alpha;</a><b>&b.alpha;</b>";
+        assert_eq!(
+            parse_fragment(
+                input,
+                &XmlLimits {
+                    max_entity_bytes: 7,
+                    ..limits
+                },
+                options
+            ),
+            Err(XmlError::EntityBudget)
+        );
+    }
+
+    #[test]
+    fn escapes_quotes_in_xml_text() {
+        let mut out = "prefix: ".to_owned();
+        escape_xml_text_quot("<&>\"'", &mut out);
+        assert_eq!(out, "prefix: &lt;&amp;&gt;&quot;'");
+    }
 
     #[test]
     fn parses_namespaces_and_preserves_root_decls() {
@@ -1044,13 +1297,14 @@ mod tests {
         ));
         assert!(matches!(
             parse("<a>&eacute;</a>", &XmlLimits::default(), XmlOptions::default()),
-            Err(XmlError::UnknownEntity(name)) if name == "eacute"
+            Err(XmlError::UnknownEntity { name, .. }) if name == "eacute"
         ));
         let doc = parse(
             "<a>&eacute;</a>",
             &XmlLimits::default(),
             XmlOptions {
                 html_entities: true,
+                ..XmlOptions::default()
             },
         )
         .expect("html entities");

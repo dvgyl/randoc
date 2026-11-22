@@ -278,10 +278,12 @@ name = "randoc"
 version = "0.1.0"
 dependencies = [
  "randoc-ast",
+ "randoc-bibtex",
  "randoc-citeproc",
  "randoc-commonmark",
  "randoc-core",
  "randoc-docx",
+ "randoc-epub",
  "randoc-html",
  "randoc-html-reader",
  "randoc-latex",
@@ -294,6 +296,7 @@ dependencies = [
  "randoc-rst",
  "randoc-rtf",
  "randoc-wiki",
+ "randoc-xmlformats",
 ]
 
 [[package]]
@@ -311,6 +314,19 @@ name = "randoc-ast"
 version = "0.1.0"
 
 [[package]]
+name = "randoc-bibtex"
+version = "0.1.0"
+dependencies = [
+ "randoc-ast",
+ "randoc-citeproc",
+ "randoc-core",
+ "randoc-latex",
+ "randoc-latex-reader",
+ "randoc-layout",
+ "serde_json",
+]
+
+[[package]]
 name = "randoc-citeproc"
 version = "0.1.0"
 dependencies = [
@@ -326,6 +342,7 @@ version = "0.1.0"
 dependencies = [
  "randoc",
  "randoc-archive",
+ "randoc-bibtex",
  "randoc-citeproc",
  "randoc-data",
  "randoc-harness",
@@ -376,6 +393,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "randoc-epub"
+version = "0.1.0"
+dependencies = [
+ "randoc-archive",
+ "randoc-ast",
+ "randoc-core",
+ "randoc-data",
+ "randoc-highlight",
+ "randoc-html",
+ "randoc-html-reader",
+ "randoc-layout",
+ "randoc-templates",
+ "serde_json",
+]
+
+[[package]]
 name = "randoc-harness"
 version = "0.1.0"
 dependencies = [
@@ -411,6 +444,7 @@ dependencies = [
 name = "randoc-html-reader"
 version = "0.1.0"
 dependencies = [
+ "randoc-archive",
  "randoc-ast",
  "randoc-core",
  "serde_json",
@@ -576,6 +610,21 @@ dependencies = [
  "randoc-layout",
  "randoc-math",
  "randoc-native",
+ "randoc-templates",
+ "serde_json",
+]
+
+[[package]]
+name = "randoc-xmlformats"
+version = "0.1.0"
+dependencies = [
+ "randoc-archive",
+ "randoc-ast",
+ "randoc-citeproc",
+ "randoc-core",
+ "randoc-data",
+ "randoc-layout",
+ "randoc-math",
  "randoc-templates",
  "serde_json",
 ]

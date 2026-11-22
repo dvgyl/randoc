@@ -5,6 +5,7 @@
 //! All readers enforce [`randoc_core::Limits`] strictly without `unsafe` code,
 //! panics, or direct filesystem/environment/time access.
 
+pub mod mathml;
 pub mod media;
 pub mod opc;
 pub mod xml;

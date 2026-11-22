@@ -8,12 +8,13 @@
 //! remembered for its token, a failed inline element is not tried a second
 //! way, and a step budget stops input that needs more work than that.
 
+use randoc_archive::{mathml::mathml_str_to_tex, xml::XmlLimits};
 use randoc_ast::{
     Attr, Block, Caption, Format, Inline, ListAttributes, ListNumberDelim, ListNumberStyle,
     MathType, MetaValue, QuoteType, Target, Text,
 };
 use randoc_core::shared::stringify;
-use randoc_core::{Extension, Extensions, LogMessage, SourcePos};
+use randoc_core::{Extension, Extensions, Limits, LogMessage, SourcePos};
 
 use crate::table::CellBudget;
 use crate::text::{
@@ -198,7 +199,9 @@ struct Snapshot {
 
 /// The parser of one token list.
 pub(crate) struct Parser<'a> {
+    input: &'a str,
     toks: &'a [Token],
+    xml_limits: XmlLimits,
     pos: usize,
     extensions: Extensions,
     source: Text,
@@ -241,20 +244,22 @@ pub(crate) struct Parser<'a> {
 
 impl<'a> Parser<'a> {
     pub(crate) fn new(
+        input: &'a str,
         toks: &'a [Token],
         extensions: Extensions,
         source: Text,
-        max_depth: usize,
-        max_generated_cells: usize,
+        limits: &Limits,
     ) -> Self {
         let tokens = u64::try_from(toks.len()).unwrap_or(u64::MAX);
         Parser {
+            input,
             toks,
+            xml_limits: XmlLimits::from_limits(limits),
             pos: 0,
             extensions,
             source,
             depth: 0,
-            max_depth,
+            max_depth: limits.max_nesting_depth,
             steps: 0,
             max_steps: tokens.saturating_add(16).saturating_mul(STEPS_PER_TOKEN),
             failed: vec![0; toks.len()],
@@ -265,7 +270,7 @@ impl<'a> Parser<'a> {
             code_depth: 0,
             cell_budget: CellBudget {
                 used: 0,
-                max: max_generated_cells,
+                max: limits.max_table_cells,
             },
             ended_at_eof: false,
             furthest_failure: 0,
@@ -1408,7 +1413,7 @@ impl<'a> Parser<'a> {
                     self.raw_element_end("style")
                 };
                 if name == "math"
-                    && let Some(math) = self.tex_annotation(attributes, end)
+                    && let Some(math) = self.math(attributes, end)
                 {
                     self.pos = end;
                     out.push(math);
@@ -1427,11 +1432,26 @@ impl<'a> Parser<'a> {
         }
     }
 
+    /// Uses the TeX annotation when present. Otherwise converts the MathML.
+    fn math(&self, attributes: &[(Text, Text)], end: usize) -> Option<Inline> {
+        let tex = self.tex_annotation(end).or_else(|| {
+            let first = self.toks.get(self.pos)?.bytes.start;
+            let last = self.toks.get(end.checked_sub(1)?)?.bytes.end;
+            let source = self.input.get(first..last)?;
+            mathml_str_to_tex(source, &self.xml_limits, true)
+        })?;
+        let kind = if attribute(attributes, "display") == Some("block") {
+            MathType::DisplayMath
+        } else {
+            MathType::InlineMath
+        };
+        Some(Inline::Math(kind, tex))
+    }
+
     /// The TeX of the first `annotation` with the encoding
     /// `application/x-tex` in the `math` element from the current token to
-    /// `end`: its text, without a MathML conversion. Display math when the
-    /// attribute `display` is `block`.
-    fn tex_annotation(&self, attributes: &[(Text, Text)], end: usize) -> Option<Inline> {
+    /// `end`.
+    fn tex_annotation(&self, end: usize) -> Option<Text> {
         let tokens = self.toks.get(self.pos + 1..end)?;
         let start = tokens.iter().position(|token| {
             matches!(&token.kind, TokenKind::Open(name, annotation)
@@ -1446,12 +1466,7 @@ impl<'a> Parser<'a> {
                 _ => {}
             }
         }
-        let kind = if attribute(attributes, "display") == Some("block") {
-            MathType::DisplayMath
-        } else {
-            MathType::InlineMath
-        };
-        Some(Inline::Math(kind, tex))
+        Some(tex)
     }
 
     /// Reads the inline content of an element that Pandoc does not read a

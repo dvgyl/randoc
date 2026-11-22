@@ -48,6 +48,7 @@ fn each_document_gives_the_oracle_output() {
         let hooks = Hooks {
             find_resource: &mut find,
             yaml_references: &mut yaml,
+            bib_references: None,
         };
         process_citations(&mut context, &mut doc, hooks).unwrap();
         if doc != expected {
@@ -73,6 +74,7 @@ fn filter(context: &mut Context, markdown_json: &str) -> randoc_core::Result<ran
     let hooks = Hooks {
         find_resource: &mut find,
         yaml_references: &mut yaml,
+        bib_references: None,
     };
     process_citations(context, &mut doc, hooks)?;
     Ok(doc)
@@ -298,4 +300,86 @@ fn extreme_note_numbers_do_not_overflow() {
             "{notes:?}"
         );
     }
+}
+
+#[test]
+fn a_document_without_citations_or_references_skips_the_default_style() {
+    for metadata in [
+        String::new(),
+        format!(
+            r#""nocite":{{"t":"MetaInlines","c":[{}]}},"link-citations":{{"t":"MetaBool","c":true}}"#,
+            cite_json("*", 1)
+        ),
+        r#""references":{"t":"MetaList","c":[]},"bibliography":{"t":"MetaList","c":[]}"#.into(),
+    ] {
+        let input = document(&metadata, &[], &[]);
+        let mut context = Context::pure();
+        let expected = randoc_ast::json::from_json(&input).unwrap();
+        assert_eq!(filter(&mut context, &input).unwrap(), expected);
+        assert!(context.log().is_empty());
+    }
+
+    let mut context = Context::pure();
+    let with_citation = document("", &["unknown"], &[1]);
+    assert!(
+        filter(&mut context, &with_citation)
+            .unwrap_err()
+            .to_string()
+            .contains("default.csl")
+    );
+    let with_style = document(r#""csl":{"t":"MetaString","c":"missing.csl"}"#, &[], &[]);
+    assert!(
+        matches!(filter(&mut context, &with_style), Err(randoc_core::Error::ResourceNotFound(name)) if name == "missing.csl")
+    );
+}
+
+#[test]
+fn an_external_bibliography_reader_can_recognize_biblatex_files() {
+    let mut host = PureHost::default();
+    host.files
+        .insert("s.csl".into(), replay_style().into_bytes());
+    host.files
+        .insert("refs.BIBLATEX".into(), b"reference".to_vec());
+    host.files.insert(
+        "dd/csl/locales/locales-en-US.xml".into(),
+        std::fs::read("tests/replay/document-locale.xml").unwrap(),
+    );
+    let mut context = Context::new(Box::new(host));
+    context.state.user_data_dir = Some("dd".into());
+    let input = document(
+        r#""csl":{"t":"MetaString","c":"s.csl"},"bibliography":{"t":"MetaString","c":"refs.BIBLATEX"}"#,
+        &[],
+        &[],
+    );
+    let error = filter(&mut context, &input).unwrap_err();
+    assert!(
+        error
+            .to_string()
+            .contains("does not support the bibliography format of refs.BIBLATEX")
+    );
+
+    let mut doc = randoc_ast::json::from_json(&input).unwrap();
+    let mut find = |context: &mut Context, name: &str| {
+        context.host().file_exists(name).then(|| name.to_owned())
+    };
+    let mut yaml = |_: &mut Context, _: &str, _: &str| Ok(Vec::new());
+    let mut called = false;
+    let mut bib = |_: &mut Context, text: &str, file: &str, format| {
+        assert_eq!(text, "reference");
+        assert_eq!(file, "refs.BIBLATEX");
+        assert_eq!(format, randoc_citeproc::filter::BibFormat::BibLaTeX);
+        called = true;
+        Ok(Vec::new())
+    };
+    process_citations(
+        &mut context,
+        &mut doc,
+        Hooks {
+            find_resource: &mut find,
+            yaml_references: &mut yaml,
+            bib_references: Some(&mut bib),
+        },
+    )
+    .unwrap();
+    assert!(called);
 }

@@ -784,93 +784,39 @@ fn reader_options(settings: &Settings, extensions: randoc::Extensions) -> Reader
     options
 }
 
-/// The point of the conversion where Pandoc reads a named file.
-#[derive(Clone, Copy, PartialEq, Eq)]
-enum ReadPoint {
-    BeforeTemplate,
-    AfterInputs,
+/// Reads the EPUB metadata before the template and input files.
+fn read_epub_metadata(path: &str, context: &mut Context) -> Result<String> {
+    let bytes = context
+        .host()
+        .read_file(path)
+        .map_err(|error| io_error(path, "withBinaryFile", &error))?;
+    String::from_utf8(bytes)
+        .map_err(|error| utf8_decoding_error(path, error.as_bytes(), error.utf8_error()))
 }
 
-/// An option that names files which Pandoc reads and Randoc does not use yet.
-struct NamedFiles {
-    /// The files, in the order in which Pandoc reads them.
-    files: fn(&Settings) -> Vec<&String>,
-    /// The GHC operation that the error of a missing file names.
-    operation: &'static str,
-    point: ReadPoint,
-    /// True when Pandoc reads the files only with `--sandbox`. That read
-    /// skips a folder: only a missing file stops the run.
-    sandbox_only: bool,
-    /// True when Pandoc reads the files as text: a file that is not UTF-8 stops the run.
-    text: bool,
-}
+/// Selects the file names for one sandbox option.
+type SandboxNamedFiles = fn(&Settings) -> Vec<&String>;
 
-/// The named files in the read order of Pandoc. A file that cannot be read
-/// stops the run. The order and the operations come from the `named` cases
-/// of `tests/data/resources.json`. The other named files have their own
-/// readers in `convert`: the template, the theme, the include files, the
-/// abbreviations, the metadata files, the inputs and the filters.
-const NAMED_FILES: &[NamedFiles] = &[
-    NamedFiles {
-        files: |s| s.epub_metadata.iter().collect(),
-        operation: "withBinaryFile",
-        point: ReadPoint::BeforeTemplate,
-        sandbox_only: false,
-        text: true,
-    },
-    NamedFiles {
-        files: |s| s.reference_doc.iter().collect(),
-        operation: "withBinaryFile",
-        point: ReadPoint::AfterInputs,
-        sandbox_only: true,
-        text: false,
-    },
-    NamedFiles {
-        files: |s| s.csl.iter().collect(),
-        operation: "withBinaryFile",
-        point: ReadPoint::AfterInputs,
-        sandbox_only: true,
-        text: false,
-    },
-    NamedFiles {
-        files: |s| s.citation_abbreviations.iter().collect(),
-        operation: "withBinaryFile",
-        point: ReadPoint::AfterInputs,
-        sandbox_only: true,
-        text: false,
-    },
-    NamedFiles {
-        files: |s| s.epub_fonts.iter().collect(),
-        operation: "withBinaryFile",
-        point: ReadPoint::AfterInputs,
-        sandbox_only: true,
-        text: false,
-    },
-    NamedFiles {
-        files: |s| s.bibliography.iter().collect(),
-        operation: "withBinaryFile",
-        point: ReadPoint::AfterInputs,
-        sandbox_only: true,
-        text: false,
-    },
+const SANDBOX_NAMED_FILES: &[SandboxNamedFiles] = &[
+    |s| s.reference_doc.iter().collect(),
+    |s| s.csl.iter().collect(),
+    |s| s.citation_abbreviations.iter().collect(),
+    |s| s.epub_fonts.iter().collect(),
+    |s| s.bibliography.iter().collect(),
 ];
 
-/// Reads the named files of one point of the conversion, as `NAMED_FILES` gives them.
-fn read_named_files(point: ReadPoint, settings: &Settings, context: &mut Context) -> Result<()> {
-    let options = NAMED_FILES
-        .iter()
-        .filter(|named| named.point == point && (settings.sandbox || !named.sandbox_only));
-    for named in options {
-        for path in (named.files)(settings) {
-            if named.sandbox_only && std::path::Path::new(path).is_dir() {
-                continue;
-            }
-            let bytes = context
-                .host()
-                .read_file(path)
-                .map_err(|error| io_error(path, named.operation, &error))?;
-            if named.text {
-                check_utf8(path, &bytes)?;
+/// Checks the named files that Pandoc reads only in sandbox mode, in read order.
+fn read_sandbox_named_files(settings: &Settings, context: &mut Context) -> Result<()> {
+    if !settings.sandbox {
+        return Ok(());
+    }
+    for named in SANDBOX_NAMED_FILES {
+        for path in named(settings) {
+            if !std::path::Path::new(path).is_dir() {
+                context
+                    .host()
+                    .read_file(path)
+                    .map_err(|error| io_error(path, "withBinaryFile", &error))?;
             }
         }
     }
@@ -1014,7 +960,6 @@ fn writer_options(settings: &Settings, extensions: randoc::Extensions) -> Writer
     options.setext_headers = settings.setext_headings;
     options.list_tables = settings.list_tables;
     options.epub_subdirectory = settings.epub_subdirectory.clone();
-    options.epub_metadata = settings.epub_metadata.clone();
     options.epub_fonts = settings.epub_fonts.iter().cloned().collect();
     options.epub_title_page = settings.epub_title_page;
     options.split_level = settings.split_level;
@@ -1499,12 +1444,16 @@ pub(crate) fn check_utf8(name: &str, bytes: &[u8]) -> Result<()> {
     let Err(error) = std::str::from_utf8(bytes) else {
         return Ok(());
     };
+    Err(utf8_decoding_error(name, bytes, error))
+}
+
+fn utf8_decoding_error(name: &str, bytes: &[u8], error: std::str::Utf8Error) -> Error {
     let offset = utf8_error_offset(bytes, error.valid_up_to());
-    Err(Error::Utf8Decoding {
+    Error::Utf8Decoding {
         source: format!("'{name}'"),
         offset: offset as u64,
         byte: bytes.get(offset).copied().unwrap_or(0),
-    })
+    }
 }
 
 /// Returns the offset that Pandoc names in a UTF-8 error: the first byte that
@@ -1596,6 +1545,7 @@ fn process_citations(
         randoc_citeproc::filter::Hooks {
             find_resource: &mut find,
             yaml_references: &mut yaml,
+            bib_references: Some(&mut randoc_bibtex::references),
         },
     );
     if let Some(host) = sandbox {
@@ -1651,7 +1601,7 @@ fn is_html_format(name: &str) -> bool {
 fn is_binary_format(name: &str) -> bool {
     matches!(
         name,
-        "docx" | "odt" | "epub" | "epub2" | "epub3" | "pptx" | "fb2" | "pdf" | "xlsx"
+        "docx" | "odt" | "epub" | "epub2" | "epub3" | "pptx" | "pdf" | "xlsx"
     )
 }
 
@@ -1917,7 +1867,7 @@ fn convert(
     if citeproc_enabled {
         writer_extensions.disable(Extension::Citations);
     }
-    let writer_options = writer_options(settings, writer_extensions);
+    let mut writer_options = writer_options(settings, writer_extensions);
     if output.is_none()
         && settings.output_file.is_none()
         && is_binary_format(&to_spec.name)
@@ -1929,7 +1879,11 @@ fn convert(
             to_spec.name
         )));
     }
-    read_named_files(ReadPoint::BeforeTemplate, settings, context)?;
+    writer_options.epub_metadata = settings
+        .epub_metadata
+        .as_deref()
+        .map(|path| read_epub_metadata(path, context))
+        .transpose()?;
     let files = TemplateFiles::new(settings, data_dir);
     let mut writer = writer;
     let template = match (&settings.template, &writer) {
@@ -1993,7 +1947,7 @@ fn convert(
     )?;
 
     let raw = read_inputs(inputs, context)?;
-    read_named_files(ReadPoint::AfterInputs, settings, context)?;
+    read_sandbox_named_files(settings, context)?;
     let text_input = matches!(
         reader,
         InputReader::Builtin(Reader::Text(_)) | InputReader::Script(_, ScriptKind::Text, _)
@@ -2080,7 +2034,6 @@ fn convert(
         reader_options.extensions.enable(Extension::AutoIdentifiers);
     }
     // A Lua filter sees the writer options, so they are ready before the filters.
-    let mut writer_options = writer_options;
     writer_options.syntax_definitions = syntax_definitions;
     writer_options.highlight_theme = highlight_theme;
     // Pandoc ignores the template text of a format without a default
@@ -2528,7 +2481,7 @@ mod tests {
     }
 
     #[test]
-    fn named_files_are_read_at_their_point_and_the_sandbox_read_skips_a_folder() {
+    fn the_sandbox_read_skips_a_folder() {
         let folder = out_path("named-folder");
         std::fs::create_dir_all(&folder).unwrap();
         let settings = Settings {
@@ -2538,8 +2491,7 @@ mod tests {
             ..Settings::default()
         };
         let mut context = Context::new(Box::new(randoc::NativeHost));
-        assert!(read_named_files(ReadPoint::BeforeTemplate, &settings, &mut context).is_ok());
-        assert!(read_named_files(ReadPoint::AfterInputs, &settings, &mut context).is_ok());
+        assert!(read_sandbox_named_files(&settings, &mut context).is_ok());
         let error = read_syntax_definitions(&settings, &mut context)
             .unwrap_err()
             .to_string();

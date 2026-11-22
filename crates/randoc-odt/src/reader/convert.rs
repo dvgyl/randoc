@@ -1020,13 +1020,7 @@ impl<'a, 'b> Converter<'a, 'b> {
             return Ok(None);
         };
         let xml_limits = XmlLimits::from_limits(&self.context.limits);
-        let Ok(doc) = xml::parse(
-            text,
-            &xml_limits,
-            XmlOptions {
-                html_entities: false,
-            },
-        ) else {
+        let Ok(doc) = xml::parse(text, &xml_limits, XmlOptions::default()) else {
             return Ok(None);
         };
         if doc.root.name.local == "math" {
