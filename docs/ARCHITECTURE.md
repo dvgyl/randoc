@@ -8,17 +8,42 @@ Randoc converts a document in three steps, as Pandoc does:
 
 ## Crates
 
+### Workspace crates (21)
+
 | Crate | Purpose | Depends on |
 | --- | --- | --- |
 | `randoc-ast` | The document tree, its Pandoc-compatible JSON form, and tree traversal | none |
 | `randoc-layout` | The `Doc` type: text with breakable spaces, indentation and wrapping | none |
 | `randoc-templates` | The Pandoc template language: parser, renderer, pipes and partials | `randoc-ast`, `randoc-layout` |
-| `randoc-data` | The data files that the Randoc licence permits: the default templates and their partials | none |
-| `randoc-core` | The shared contracts (see below) and the shared utilities (`randoc_core::shared`) | `randoc-ast`, `randoc-layout`, `randoc-templates` |
-| `randoc-FORMAT` | One crate for each format family: the reader and the writer (`randoc-native` is the first one) | `randoc-ast`, `randoc-core` |
+| `randoc-data` | The data files that the Randoc licence permits: 62 default templates/partials and `dzslides` | none |
+| `randoc-core` | The shared contracts (see below) and shared utilities (`randoc_core::shared`) | `randoc-ast`, `randoc-layout`, `randoc-templates` |
+| `randoc-yaml` | YAML metadata reader | `randoc-ast`, `randoc-core` |
+| `randoc-math` | TeX math to MathML and Pandoc inline conversion | `randoc-ast`, `randoc-core` |
+| `randoc-highlight` | Syntax highlighting engine (`skylighting` 0.15 port) + 63 permissive KDE syntax definitions | `serde`, `serde_json` |
+| `randoc-citeproc` | CSL style/locale parser, `csljson` reader/writer, citation evaluator | `randoc-ast`, `randoc-core`, `quick-xml` |
+| `randoc-lua` | Embedded Lua 5.4.8 + LPeg 1.1.0 runtime, Lua filters, custom reader/writer hooks | `randoc-ast`, `randoc-core`, `mlua` |
+| `randoc-native` | `native` reader and writer | `randoc-ast`, `randoc-core`, `randoc-layout` |
+| `randoc-commonmark` | `commonmark`, `gfm`, and `commonmark_x` reader | `randoc-ast`, `randoc-core`, `randoc-yaml` |
+| `randoc-markdown` | Pandoc `markdown` and variant readers | `randoc-ast`, `randoc-core`, `randoc-yaml` |
+| `randoc-markdown-writer` | `markdown`, `gfm`, `commonmark`, `commonmark_x`, `plain`, and variant writers | `randoc-ast`, `randoc-core`, `randoc-layout`, `randoc-html` |
+| `randoc-html-reader` | `html` reader | `randoc-ast`, `randoc-core` |
+| `randoc-html` | `html` and `html4` writers (with standalone templates and math) | `randoc-ast`, `randoc-core`, `randoc-layout`, `randoc-math` |
+| `randoc-latex-reader` | `latex` reader | `randoc-ast`, `randoc-core` |
+| `randoc-latex` | `latex` and `beamer` writers | `randoc-ast`, `randoc-core`, `randoc-layout` |
 | `randoc` | The library facade and the registry of formats | all format crates |
-| `randoc-cli` | The `randoc` program: options, defaults files, input and output | `randoc` |
+| `randoc-cli` | The `randoc` program: options, defaults files, filters, input and output | `randoc`, `randoc-lua`, `randoc-data` |
 | `randoc-harness` | The conformance harness. It runs programs and does not link Randoc. | no Randoc crate |
+
+### Planned crate families (remaining Pandoc formats)
+
+To keep build times fast and avoid unnecessary crate proliferation (especially
+on exFAT where each file has 1 MB allocation overhead), remaining formats group
+by family:
+
+- Shared helpers: `randoc-xml` (`quick-xml` tree/limits), `randoc-container` (bounded ZIP), `randoc-media` (MIME/image/media-bag helpers).
+- Containers & office formats: `randoc-docx`, `randoc-odt` (`odt`, `opendocument`, `fodt`), `randoc-epub` (`epub*`, `chunkedhtml`), `randoc-pptx` (`pptx`, `xlsx`).
+- Markup & structured formats: `randoc-typst`, `randoc-rst`, `randoc-org`, `randoc-xmlformats` (`docbook*`, `jats*`, `bits`, `tei`, `opml`, `fb2`, `icml`, `xml`), `randoc-wiki` (`mediawiki`, `dokuwiki`, `creole`, `tikiwiki`, `twiki`, `vimwiki`, `jira`, `xwiki`, `zimwiki`), `randoc-roff` (`man`, `mdoc`, `ms`), `randoc-markup` (`asciidoc*`, `djot`, `textile`, `muse`, `t2t`, `haddock`, `pod`, `vimdoc`, `ansi`, `bbcode*`, `rtf`, `context`, `texinfo`), `randoc-dataformats` (`csv`, `tsv`, `ipynb`).
+- Bibliography formats (`bibtex`, `biblatex`, `ris`, `endnotexml`) belong in `randoc-citeproc`; slide formats (`revealjs`, `s5`, `slidy`, `slideous`, `dzslides`) belong in `randoc-html`.
 
 ## Shared contracts
 

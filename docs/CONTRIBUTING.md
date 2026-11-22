@@ -1,65 +1,42 @@
 # Contribution rules and the merge gate
 
-Work happens in workstreams. One workstream owns one crate or one subsystem,
-in its own branch and its own Git worktree. The coordinator merges a
-workstream into `main` only when the full gate below passes.
+Read [`ARCHITECTURE.md`](ARCHITECTURE.md) and [`../AGENTS.md`](../AGENTS.md)
+first.
 
-Read [`ARCHITECTURE.md`](ARCHITECTURE.md) first.
+## Quality bar and verification gate
 
-## The merge gate
-
-1. **No regressions.** `spec/baseline.json` lists each unit that passes on
-   `main`. No unit of the baseline can fail.
-2. **Measured progress.** The change raises the number of passing units. Each
-   remaining difference from Pandoc is recorded as a known divergence with its
-   reason in `docs/ISSUES.md`.
-3. **Tests that find real defects.** Each new behaviour has conformance cases
-   with results from the oracle, and the edge cases that the Pandoc manual
-   describes. Run `cargo mutants` on the changed code. Each surviving mutant
-   needs a new test or a written reason. Report line coverage of the new code
-   with `cargo llvm-cov`. Coverage below 85% needs a written reason.
-4. **No panics.** Each new or changed parser or archive reader has a fuzz
-   target and 15 minutes of fuzzing with no crash.
-5. **Two independent reviews.** One review is from GPT-6.1 Sol through the
-   Codex CLI. One review is from an Opus 5.5 agent with a new context. Each
-   reviewer tries to break the work. Critical, high and medium findings are
-   fixed. Low findings go to `docs/ISSUES.md`.
-   Severity levels of a finding:
-   - **Critical.** Memory unsafety. A crash (panic, abort, stack overflow) or a run that does not end in 60 seconds, for an input below 1 MB through the program with default settings. Loss of document text for an input form that the Pandoc manual shows. A licence violation.
-   - **High.** A crash or a stack overflow that needs the library interface with its default limits. Time or memory that grows faster than linear so that an input of 100 KB needs more than 5 seconds in a debug build. Wrong output, a wrong exit code or lost text for an input that occurs in real documents (the corpus, the Pandoc manual, or a form that the manual documents as normal use).
-   - **Medium.** Wrong output for a form that an author can plausibly write on purpose, when the difference changes the meaning or the structure of the result (a different element, lost or added text, a wrong attribute). Time that grows faster than linear at any size. A wrong warning or a wrong error for a common mistake. A claim of the report that the tests do not support. A missing licence notice.
-   - **Low.** A difference only for malformed or adversarial input (unbalanced or cut delimiters, random mixes that no author writes on purpose) where no text is lost. A difference only in the text or the position of an error or a warning for broken input. Documentation and code-quality items.
-
-   A low finding is recorded as a known divergence in `docs/ISSUES.md` with its smallest input, and it stays open work. If you are not sure between two levels, choose the higher one.
-
-   - **Scope gaps.** A row of `docs/ISSUES.md` that says that an extension, an option or a feature of a format is not implemented yet (for example the extension `sourcepos`, syntax highlighting, math conversion) is a scope gap. Gate 2 permits a merge with recorded scope gaps, so a scope gap is not a review finding and does not block an approval. The conditions: the row is exact, the gap loses no document text without a message, and the workstream report does not claim the feature. A row for a defect in behaviour that the workstream implements is a finding with a level: it must be low to stay open.
-6. **No slowdowns.** Benchmarks of the changed paths are not more than 5%
-   slower than `main`.
-7. **Clean build.** `cargo fmt --all -- --check`, `cargo clippy` with
-   `-D warnings` and `cargo doc` pass with no warnings. Each public item has
-   documentation.
-
-A gate that cannot apply to a change is recorded with its reason in
-`PROGRESS.md`. The bar is never lowered without a record.
-
-## Commit cadence (rule of the owner, 2026-11-11)
-
-The owner changed gate 5 on 2026-11-11 (`OWNER_INSTRUCTIONS.md`,
-instruction 17): the two reviews run after each major block of work, not
-before each commit. A small block merges into `main` when all of these
-hold: `scripts/gate.sh` passes on the merged tree (gates 1 and 7 and the
-tests); the licence scan (`env/bin/licence-scan` on the coordinator
-machine) shows no text that is copied from a copyleft source; no known
-finding with the level critical is open. Each finding of an earlier
-review that is still open is a row of `docs/ISSUES.md` with its level.
-The record of the merge in `docs/MERGE_LOG.md` says which review rounds
-exist for the block and which checks did not run (mutation tests,
-coverage, fuzzing, benchmarks). A major block is a unit of a workstream
-that adds a format, a subsystem or a large rule set. After a major
-block, both reviewers review the state of `main` or of the branch, and
-each finding with the level medium or higher is corrected in the next
-commits. Gates 2, 3, 4 and 6 keep their text; their evidence is
-collected for each major block.
+1. **No regressions.** `spec/baseline.json` lists every conformance unit that
+   passes on `main`. No baseline unit may regress.
+2. **Measured progress.** Changes raise passing unit counts across the
+   conformance harness and measurement suites (`tools/measure/measure.py`).
+   Remaining differences from Pandoc 3.13 are recorded in
+   [`ISSUES.md`](ISSUES.md).
+3. **Tests that find real defects.** Add conformance cases with oracle results
+   and edge cases from the Pandoc manual. For major subsystems, run mutation
+   tests (`cargo mutants`) and coverage (`cargo llvm-cov`).
+4. **No panics.** Parsers and archive readers must handle untrusted input
+   without panicking and have fuzz targets under `crates/CRATE/fuzz/`.
+5. **Code review & severity levels.** Run independent reviews on major blocks
+   (see [`MODEL_ROUTING.md`](MODEL_ROUTING.md)). Critical, high, and medium
+   findings are fixed; low findings are documented in [`ISSUES.md`](ISSUES.md).
+   - **Critical:** memory unsafety, crash/panic/stack overflow or hang (>60 s)
+     on <1 MB default input, lost document text on standard forms, or a licence
+     violation.
+   - **High:** crash/stack overflow via library API limits, super-linear
+     time/memory (>5 s debug on 100 KB), or wrong output/exit code on real
+     documents.
+   - **Medium:** wrong output/structure on plausible author input, super-linear
+     scaling, wrong warning/error on common mistakes, or missing licence notice.
+   - **Low:** differences only on malformed/adversarial input with no text loss,
+     error wording/position details on broken input, or docs/style nits.
+   - **Scope gaps:** unimplemented features recorded accurately in
+     [`ISSUES.md`](ISSUES.md) without silent text loss.
+6. **No slowdowns.** Benchmarks of changed paths should not regress more than
+   5% (`tools/bench/`).
+7. **Clean build & licence check.** `cargo fmt --all -- --check`,
+   `cargo clippy --workspace --all-targets -- -D warnings`,
+   `RUSTDOCFLAGS="-D warnings" cargo doc --workspace --no-deps`, and
+   `python3 -I tools/measure/licence_scan.py scan` must all pass.
 
 ## Reuse of open source
 
