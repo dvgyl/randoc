@@ -280,3 +280,103 @@ fn a_program_called_pandoc_lua_is_the_interpreter() {
         ok("pandoc-lua\targs.lua\t1\tq\n")
     );
 }
+
+#[test]
+fn saved_pandoc_read_write_string_template_userdata_partials_extensions_and_dag_budget() {
+    let folder = Folder::new("lua-hardening");
+
+    // 1. Saved top-level `local read = pandoc.read` / `pandoc.write` survives past load.
+    std::fs::write(
+        folder.0.join("saved_rw.lua"),
+        r#"
+local read = pandoc.read
+local write = pandoc.write
+function Writer(doc, opts)
+  local inner = read("*ok*", "markdown")
+  return write(inner, "html")
+end
+"#,
+    )
+    .expect("write saved_rw.lua");
+    assert_eq!(
+        folder.run(&["-t", "saved_rw.lua"], "ignored\n"),
+        ok("<p><em>ok</em></p>\n")
+    );
+
+    // 2. String global `Template = '<$body$>'`, compiled `opts.template` userdata, and resolved partials.
+    std::fs::write(folder.0.join("part.txt"), "PARTIAL($title$)").expect("write part.txt");
+    std::fs::write(folder.0.join("main.txt"), "MAIN[$part.txt()$:$body$]").expect("write main.txt");
+    std::fs::write(
+        folder.0.join("str_tpl.lua"),
+        r#"
+Template = "<$body$>"
+function Writer(doc, opts)
+  local t = opts.template
+  if not t then return "NO_TPL" end
+  local rendered = pandoc.template.apply(t, { body = pandoc.utils.stringify(doc), title = "Hi" }):render()
+  return type(t) .. ":" .. rendered
+end
+"#,
+    )
+    .expect("write str_tpl.lua");
+    assert_eq!(
+        folder.run(&["-t", "str_tpl.lua", "-s"], "hello\n"),
+        ok("userdata:<hello>")
+    );
+    assert_eq!(
+        folder.run(
+            &["-t", "str_tpl.lua", "-s", "--template=main.txt"],
+            "hello\n"
+        ),
+        ok("userdata:MAIN[PARTIAL(Hi):hello]")
+    );
+
+    // 3. Extensions table `'enable'`/`'disable'` and repeated toggles `+other-other`.
+    std::fs::write(
+        folder.0.join("ext_tbl.lua"),
+        r#"
+Extensions = { a = 'enable', b = 'disable', other = false }
+function Writer(doc, opts)
+  return table.concat(opts.extensions, ",") .. "\n"
+end
+"#,
+    )
+    .expect("write ext_tbl.lua");
+    assert_eq!(folder.run(&["-t", "ext_tbl.lua"], "hi\n"), ok("a\n"));
+    assert_eq!(
+        folder.run(&["-t", "ext_tbl.lua+other-other"], "hi\n"),
+        ok("a,other\n")
+    );
+    assert_eq!(folder.run(&["-t", "ext_tbl.lua-a+a-a"], "hi\n"), ok("a\n"));
+    std::fs::write(
+        folder.0.join("ext_bad.lua"),
+        "Extensions = { a = 'default' }\nfunction Writer(doc, opts) return '' end\n",
+    )
+    .expect("write ext_bad.lua");
+    let (code, _, stderr) = folder.run(&["-t", "ext_bad.lua"], "hi\n");
+    assert_eq!(code, 84);
+    assert!(
+        stderr.contains("expected 'disable' or 'enable'"),
+        "stderr={stderr}"
+    );
+
+    // 4. `pandoc.template.apply` rejects exponential DAG table expansion without OOM.
+    std::fs::write(
+        folder.0.join("dag_tpl.lua"),
+        r#"
+function Writer(doc, opts)
+  local x = { "a" }
+  for i = 1, 30 do x = { x, x } end
+  local ok, err = pcall(function() return pandoc.template.apply("$x$", { x = x }) end)
+  return tostring(ok) .. ":" .. tostring(err)
+end
+"#,
+    )
+    .expect("write dag_tpl.lua");
+    let (code, stdout, stderr) = folder.run(&["-t", "dag_tpl.lua"], "hi\n");
+    assert_eq!(code, 0, "stderr={stderr}");
+    assert!(
+        stdout.starts_with("false:") && stdout.contains("exceeded size limit"),
+        "stdout={stdout}"
+    );
+}

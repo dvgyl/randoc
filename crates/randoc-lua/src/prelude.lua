@@ -537,10 +537,25 @@ local function refused(name)
 end
 pandoc.pipe = refused('pandoc.pipe')
 pandoc.path.exists = refused('pandoc.path.exists')
+-- Mutable slots for scoped Rust callbacks updated on each `in_scope` call.
+-- Defining the Lua wrappers once ensures scripts that cache `local read = pandoc.read`,
+-- `local write = pandoc.write`, `local w = warn`, or `pandoc.system.*` at load time
+-- never invoke a destructed scoped callback on a later `Reader`/`Writer`/`Template` call.
+local active_report
+local active_read
+local active_write
+local active_system
+local warn_installed = false
+local convert_installed = false
+local system_installed = false
+
 -- `warn` of Lua, which Pandoc also reports as a scripting warning at the
 -- position of the caller. `@on` and `@off` turn the text `Lua warning: ...`
 -- of Lua itself on and off; a control message gives no report.
 function native.install_warn(report)
+  active_report = report
+  if warn_installed then return end
+  warn_installed = true
   local select, type, concat, on = select, type, table.concat, false
   function warn(...)
     local count = select('#', ...)
@@ -554,7 +569,7 @@ function native.install_warn(report)
     if count == 1 and message:sub(1, 1) == '@' then
       if message == '@on' then on = true elseif message == '@off' then on = false end
     else
-      report(message, on)
+      active_report(message, on)
     end
   end
 end
@@ -590,15 +605,22 @@ function native.options_object(name, values, names, writable)
   return proxy
 end
 function native.convert_functions(read, write, readers, writers)
-  pandoc.read = function(...) return check(read(...)) end
-  pandoc.write = function(...) return check(write(...)) end
+  active_read = read
+  active_write = write
   pandoc.readers = readers
   pandoc.writers = writers
+  if convert_installed then return end
+  convert_installed = true
+  pandoc.read = function(...) return check(active_read(...)) end
+  pandoc.write = function(...) return check(active_write(...)) end
 end
 function native.system_functions(system_call)
+  active_system = system_call
+  if system_installed then return end
+  system_installed = true
   local system = pandoc.system
   local pack, unpack, select, type, setmetatable = table.pack, table.unpack, select, type, setmetatable
-  local function op(name) return function(...) return check(system_call(name, ...)) end end
+  local function op(name) return function(...) return check(active_system(name, ...)) end end
   local filepath_list = {}
   for key, value in pairs(pandoc.List) do filepath_list[key] = value end
   filepath_list.__name = 'FilePath list'
@@ -676,7 +698,7 @@ function native.system_functions(system_call)
   }
   function pandoc.pipe(...)
     local command = ...
-    local code, output = check(system_call('pipe', ...))
+    local code, output = check(active_system('pipe', ...))
     if code then
       error(setmetatable({ command = command, error_code = code, output = output }, pipe_error), 0)
     end
@@ -714,24 +736,19 @@ for _, name in ipairs {
   pandoc.utils[name] = missing_function('pandoc.utils.' .. name)
 end
 pandoc.types.Sources = missing_function('pandoc.types.Sources')
--- `pandoc.template`: `compile` and `apply` (row I-LUA-27). A `Doc` of
--- `apply` keeps the rendered text.
+-- `pandoc.template`: `compile` and `apply` (row I-LUA-27). Compiled
+-- templates are opaque `userdata` (`LuaTemplate`) preserving resolved partials.
 local template_call = operation('template')
-local templates = setmetatable({}, { __mode = 'k' })
-local template_metatable = { __name = 'pandoc Template' }
 local doc_metatable = { __name = 'Doc' }
 doc_metatable.__index = { render = function(doc) return rawget(doc, 'text') end }
 doc_metatable.__tostring = function(doc) return rawget(doc, 'text') end
 doc_metatable.__concat = function(a, b) return tostring(a) .. tostring(b) end
 pandoc.template = {
   compile = function(text)
-    local template = setmetatable({}, template_metatable)
-    templates[template] = template_call('compile', text)
-    return template
+    return template_call('compile', text)
   end,
   apply = function(template, context)
-    local source = templates[template] or template
-    return setmetatable({ text = template_call('apply', source, context) }, doc_metatable)
+    return setmetatable({ text = template_call('apply', template, context) }, doc_metatable)
   end,
   default = missing_function('pandoc.template.default'),
   get = missing_function('pandoc.template.get'),

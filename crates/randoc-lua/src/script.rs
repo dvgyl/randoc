@@ -147,13 +147,41 @@ impl CustomScript {
                 let (name, on) = pair.map_err(|error| Error::Lua(error.to_string()))?;
                 if let Value::String(name) = name {
                     let name = name.text();
-                    if !matches!(on, Value::Nil | Value::Boolean(false)) {
+                    let default_on = match on {
+                        Value::Boolean(flag) => flag,
+                        Value::String(text) => match text.text().as_str() {
+                            "enable" => true,
+                            "disable" => false,
+                            _ => {
+                                return Err(Error::Lua(
+                                    "expected 'disable' or 'enable'\n\
+                                     \twhile retrieving value\n\
+                                     \twhile retrieving key-value pair"
+                                        .to_owned(),
+                                ));
+                            }
+                        },
+                        _ => {
+                            return Err(Error::Lua(
+                                "expected boolean or string\n\
+                                 \twhile retrieving value\n\
+                                 \twhile retrieving key-value pair"
+                                    .to_owned(),
+                            ));
+                        }
+                    };
+                    if default_on {
                         enabled.insert(name.clone());
                     }
                     supported.insert(name);
                 }
             }
         }
+        // Pandoc collects disables and enables into sets and applies disables
+        // before enables, so repeated toggles like `+other-other` or `-a+a-a`
+        // leave the extension enabled.
+        let mut to_enable = BTreeSet::new();
+        let mut to_disable = BTreeSet::new();
         for (on, name) in changes {
             if !supported.contains(name) {
                 return Err(Error::UnsupportedExtension {
@@ -162,10 +190,16 @@ impl CustomScript {
                 });
             }
             if *on {
-                enabled.insert(name.clone());
+                to_enable.insert(name.clone());
             } else {
-                enabled.remove(name);
+                to_disable.insert(name.clone());
             }
+        }
+        for name in to_disable {
+            enabled.remove(&name);
+        }
+        for name in to_enable {
+            enabled.insert(name);
         }
         let mut known = Extensions::empty();
         let mut custom = Vec::new();
@@ -183,16 +217,17 @@ impl CustomScript {
         Ok((names, known))
     }
 
-    /// Calls the global `Template` and returns its text, or `None` when the
-    /// script has no `Template`.
+    /// Reads the global `Template` (a string or a function returning a string)
+    /// and returns its text, or `None` when the script has no `Template`.
     pub fn template(&mut self, context: &mut Context) -> Result<Option<Text>, Error> {
-        if matches!(self.global("Template")?, Value::Nil) {
-            return Ok(None);
+        match self.global("Template")? {
+            Value::Nil => Ok(None),
+            Value::String(text) => Ok(Some(text.text())),
+            _ => self.run(context, |cx| {
+                let result = call(cx, "Template", MultiValue::new())?;
+                Ok(Some(cx.text(&result)?))
+            }),
         }
-        self.run(context, |cx| {
-            let result = call(cx, "Template", MultiValue::new())?;
-            Ok(Some(cx.text(&result)?))
-        })
     }
 
     /// Calls `Reader` with the sources. `extensions` are the names that

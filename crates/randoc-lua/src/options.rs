@@ -7,7 +7,7 @@ use randoc_core::{
     CaptionPosition, CiteMethod, Extensions, HtmlMathMethod, ObfuscationMethod, ReaderOptions,
     ReferenceLocation, Text, TopLevelDivision, TrackChanges, WrapOption, WriterOptions,
 };
-use randoc_templates::{Context as TemplateContext, Val};
+use randoc_templates::{Context as TemplateContext, Template, Val};
 
 use crate::peek::{Cx, LuaText, Peek, PeekError, mismatch};
 use crate::push;
@@ -55,6 +55,7 @@ enum Field<'a> {
     /// A text, or a table with the method and the URL.
     Math(&'static str, Option<&'a str>),
     Variables(&'a TemplateContext),
+    Template(&'a Template),
 }
 
 fn optional_text(value: &Option<String>) -> Field<'_> {
@@ -162,13 +163,13 @@ fn writer_fields(options: &WriterOptions) -> Vec<(&'static str, Field<'_>)> {
             text(caption(options.table_caption_position)),
         ),
         ("table_of_contents", Boolean(options.table_of_contents)),
-        // Pandoc gives a `Template` object (row I-LUA-27).
+        // Pandoc passes a compiled `Template` userdata (with partials already resolved).
         (
             "template",
             options
                 .template
                 .as_ref()
-                .map_or(Field::Nil, |template| text(template.source())),
+                .map_or(Field::Nil, Field::Template),
         ),
         ("toc_depth", Integer(options.toc_depth)),
         (
@@ -269,6 +270,9 @@ fn push_field(lua: &Lua, field: &Field, max_depth: usize) -> mlua::Result<Value>
             metatable.set("__name", "pandoc Context")?;
             table.set_metatable(Some(metatable))?;
             Value::Table(table)
+        }
+        Field::Template(template) => {
+            Value::UserData(lua.create_userdata(crate::template::LuaTemplate((*template).clone()))?)
         }
     })
 }
