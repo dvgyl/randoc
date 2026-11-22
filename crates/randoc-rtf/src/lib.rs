@@ -1,13 +1,23 @@
-//! Rich Text Format (`rtf`) reader and writer for Randoc.
+//! Rich Text Format (RTF) reader and writer.
 
-use randoc_core::{Reader, Writer};
+#![forbid(unsafe_code)]
 
-/// Returns the reader for `rtf`.
-pub fn reader(_format: &str) -> Option<Reader> {
-    None
+use std::sync::Arc;
+
+use randoc_core::{Reader, TemplateWriter, Writer};
+
+mod blocks;
+mod lexer;
+mod reader;
+mod writer;
+mod writer_math;
+
+/// Returns the reader for the RTF format.
+pub fn reader(format: &str) -> Option<Reader> {
+    (format == "rtf").then(|| Reader::Text(Arc::new(reader::read)))
 }
 
-/// Returns the writer for `rtf`.
-pub fn writer(_format: &str) -> Option<Writer> {
-    None
+/// Returns the writer for the RTF format.
+pub fn writer(format: &str) -> Option<Writer> {
+    (format == "rtf").then(|| Writer::Text(Arc::new(TemplateWriter(writer::write))))
 }

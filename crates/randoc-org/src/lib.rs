@@ -1,13 +1,24 @@
-//! Emacs Org-mode (`org`) reader and writer for Randoc.
+//! Reads and writes Emacs Org-mode documents.
 
-use randoc_core::{Reader, Writer};
+#![forbid(unsafe_code)]
 
-/// Returns the reader for `org`.
-pub fn reader(_format: &str) -> Option<Reader> {
-    None
+mod reader;
+mod shared;
+mod writer;
+
+use std::sync::Arc;
+
+use randoc_core::{Reader, TemplateWriter, Writer};
+
+/// Returns the text reader for Org.
+pub fn reader(format: &str) -> Option<Reader> {
+    (format == "org").then(|| Reader::Text(Arc::new(reader::read)))
 }
 
-/// Returns the writer for `org`.
-pub fn writer(_format: &str) -> Option<Writer> {
-    None
+/// Returns the text writer for Org.
+pub fn writer(format: &str) -> Option<Writer> {
+    (format == "org").then(|| Writer::Text(Arc::new(TemplateWriter(writer::write))))
 }
+
+#[cfg(test)]
+mod tests;

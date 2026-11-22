@@ -30,13 +30,16 @@ _spec.loader.exec_module(_matrix)
 DOCS, HELPER, FOOTER, lua_string = _matrix.DOCS, _matrix.HELPER, _matrix.FOOTER, _matrix.lua_string
 
 READERS = [
-    "commonmark", "commonmark_x", "csljson", "docx", "fodt", "gfm", "html", "json", "latex", "markdown",
-    "markdown_github", "markdown_mmd", "markdown_phpextra", "markdown_strict", "native", "odt", "rst",
+    "commonmark", "commonmark_x", "creole", "csljson", "docx", "dokuwiki", "fodt", "gfm", "html",
+    "jira", "json", "latex", "markdown",
+    "markdown_github", "markdown_mmd", "markdown_phpextra", "markdown_strict", "mediawiki",
+    "native", "odt", "org", "rst", "rtf",
 ]
 WRITERS = [
-    "beamer", "commonmark", "commonmark_x", "csljson", "fodt", "gfm", "html", "html4", "html5", "json",
+    "beamer", "commonmark", "commonmark_x", "csljson", "dokuwiki", "fodt", "gfm", "html", "html4",
+    "html5", "jira", "json",
     "latex", "markdown", "markdown_github", "markdown_mmd", "markdown_phpextra",
-    "markdown_strict", "markua", "native", "odt", "opendocument", "plain", "rst",
+    "markdown_strict", "markua", "mediawiki", "native", "odt", "opendocument", "org", "plain", "rst", "rtf",
 ]
 
 MARKDOWN = (
@@ -131,10 +134,22 @@ def odt():
 
 
 INPUT = {"csljson": CSLJSON, "docx": docx(), "html": HTML, "json": JSON, "latex": LATEX,
-         "native": NATIVE, "fodt": FODT, "odt": odt(), "rst": RST}
+         "native": NATIVE, "fodt": FODT, "odt": odt(), "rst": RST,
+         "creole": "= Head =\n\nSome //emph// and **strong**.\n\n* item\n",
+         "dokuwiki": "====== Head ======\n\nSome //emph// and **strong**.\n\n  * item\n",
+         "jira": "h1. Head\n\nSome _emph_ and *strong*.\n\n* item\n",
+         "mediawiki": "== Head ==\n\nSome ''emph'' and '''strong'''.\n\n* item\n",
+         "org": "* Head\n\nSome /emph/ and *strong*.\n\n- item\n",
+         "rtf": r"{\rtf1\ansi Some {\i emph} and {\b strong}.\par}"}
 
 # Extension changes for each reader, each one supported by its format.
 READER_SPECS = {
+    "creole": ["+east_asian_line_breaks"],
+    "dokuwiki": ["-smart", "+raw_html", "+tex_math_dollars"],
+    "jira": ["+east_asian_line_breaks"],
+    "mediawiki": ["-auto_identifiers", "+smart"],
+    "org": ["-auto_identifiers", "+smart", "-task_lists"],
+    "rtf": ["+east_asian_line_breaks"],
     "commonmark": ["+smart", "+pipe_tables+strikeout", "+autolink_bare_uris", "-raw_html"],
     "commonmark_x": ["-smart", "-pipe_tables", "-task_lists"],
     "gfm": ["-autolink_bare_uris", "+smart", "-raw_html", "-strikeout"],
@@ -184,8 +199,25 @@ DOC = (
     "{title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}})"
 )
 
+# Use a common wiki document for options probes. The full document still
+# tests known differences in links, divisions and code blocks.
+WIKI_DOC = (
+    "P.Pandoc({H(1, 'Head one', P.Attr('top')), "
+    "P.Para{P.Emph't', P.Space(), P.Str'\"q\"', P.Space(), P.Link('link', 'https://example.org', 'T'), "
+    "P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), "
+    "P.Str'a long line of words that the writer wraps at the column limit of the options'}, "
+    "H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, "
+    "{title = P.Inlines'The title'})"
+)
+
+
 # Extension changes for each writer, each one supported by its format.
 WRITER_SPECS = {
+    "dokuwiki": ["-smart", "+raw_html", "+tex_math_dollars"],
+    "jira": ["+east_asian_line_breaks"],
+    "mediawiki": ["-auto_identifiers", "+smart"],
+    "org": ["-auto_identifiers", "+smart", "-task_lists"],
+    "rtf": ["+east_asian_line_breaks"],
     "beamer": ["-smart", "+raw_tex"],
     "commonmark": ["+smart", "-raw_html", "+pipe_tables"],
     "commonmark_x": ["-smart", "-footnotes", "-pipe_tables"],
@@ -283,7 +315,8 @@ end"""
 
 
 def write_probe(name, spec, options=""):
-    arguments = f"{DOC}, {lua_string(spec)}{options}"
+    doc = WIKI_DOC if name in ("dokuwiki", "jira", "mediawiki") and (options or spec != name) else DOC
+    arguments = f"{doc}, {lua_string(spec)}{options}"
     if name == "odt":
         return f"return odt_content(P.write({arguments}))"
     if name == "fodt":
@@ -444,6 +477,11 @@ KNOWN = (
        ("I-LUA-31", "convert-write-plain", "write plain+gutenberg")]
     + [("I-LUA-31", "convert-write-markua", label)
        for label, _ in [("write markua", None)] + write_option_probes("markua")]
+    + [("I-ORG-01", "convert-final-newline", "end of org"),
+       ("I-WIKI-03", "convert-write-dokuwiki", "write dokuwiki"),
+       ("I-WIKI-04", "convert-write-jira", "write jira"),
+       ("I-WIKI-05", "convert-write-mediawiki", "write mediawiki"),
+       ("I-WIKI-05", "convert-final-newline", "end of mediawiki")]
     + [("I-LUA-32", "convert-arguments", "read spec table bad list"),
        ("I-LUA-32", "convert-arguments", "read list heading")]
 )

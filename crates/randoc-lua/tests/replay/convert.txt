@@ -1,7 +1,7 @@
 # The oracle matrix of pandoc.read and pandoc.write.
 # `tools/convert-matrix.py` writes this file. Do not edit it.
-# readers: commonmark commonmark_x csljson docx fodt gfm html json latex markdown markdown_github markdown_mmd markdown_phpextra markdown_strict native odt rst
-# writers: beamer commonmark commonmark_x csljson fodt gfm html html4 html5 json latex markdown markdown_github markdown_mmd markdown_phpextra markdown_strict markua native odt opendocument plain rst
+# readers: commonmark commonmark_x creole csljson docx dokuwiki fodt gfm html jira json latex markdown markdown_github markdown_mmd markdown_phpextra markdown_strict mediawiki native odt org rst rtf
+# writers: beamer commonmark commonmark_x csljson dokuwiki fodt gfm html html4 html5 jira json latex markdown markdown_github markdown_mmd markdown_phpextra markdown_strict markua mediawiki native odt opendocument org plain rst rtf
 # known I-LUA-30 convert-final-newline end of commonmark
 # known I-LUA-30 convert-final-newline end of commonmark_x
 # known I-LUA-30 convert-final-newline end of gfm
@@ -68,6 +68,11 @@
 # known I-LUA-31 convert-write-markua write markua {number_offset = {3, 1}}
 # known I-LUA-31 convert-write-markua write markua {dpi = 300}
 # known I-LUA-31 convert-write-markua write markua PANDOC_WRITER_OPTIONS
+# known I-ORG-01 convert-final-newline end of org
+# known I-WIKI-03 convert-write-dokuwiki write dokuwiki
+# known I-WIKI-04 convert-write-jira write jira
+# known I-WIKI-05 convert-write-mediawiki write mediawiki
+# known I-WIKI-05 convert-final-newline end of mediawiki
 # known I-LUA-32 convert-arguments read spec table bad list
 # known I-LUA-32 convert-arguments read list heading
 @@@ doc empty
@@ -209,6 +214,71 @@ function Pandoc(document)
   return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
 end
 
+@@@ filter convert-read-creole empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('read creole', function() return P.read('= Head =\010\010Some //emph// and **strong**.\010\010* item\010', 'creole') end)
+  probe('read creole+east_asian_line_breaks', function() return P.read('= Head =\010\010Some //emph// and **strong**.\010\010* item\010', 'creole+east_asian_line_breaks') end)
+  probe('read creole {columns = 20}', function() return P.read('= Head =\010\010Some //emph// and **strong**.\010\010* item\010', 'creole', {columns = 20}) end)
+  probe('read creole {tab_stop = 2}', function() return P.read('= Head =\010\010Some //emph// and **strong**.\010\010* item\010', 'creole', {tab_stop = 2}) end)
+  probe('read creole {tab_stop = 8}', function() return P.read('= Head =\010\010Some //emph// and **strong**.\010\010* item\010', 'creole', {tab_stop = 8}) end)
+  probe('read creole {indented_code_classes = {\039lua\039, \039x\039}}', function() return P.read('= Head =\010\010Some //emph// and **strong**.\010\010* item\010', 'creole', {indented_code_classes = {'lua', 'x'}}) end)
+  probe('read creole {default_image_extension = \039png\039}', function() return P.read('= Head =\010\010Some //emph// and **strong**.\010\010* item\010', 'creole', {default_image_extension = 'png'}) end)
+  probe('read creole {strip_comments = true}', function() return P.read('= Head =\010\010Some //emph// and **strong**.\010\010* item\010', 'creole', {strip_comments = true}) end)
+  probe('read creole {standalone = true}', function() return P.read('= Head =\010\010Some //emph// and **strong**.\010\010* item\010', 'creole', {standalone = true}) end)
+  probe('read creole {abbreviations = {[\039Mr.\039] = true}}', function() return P.read('= Head =\010\010Some //emph// and **strong**.\010\010* item\010', 'creole', {abbreviations = {['Mr.'] = true}}) end)
+  probe('read creole {abbreviations = {}}', function() return P.read('= Head =\010\010Some //emph// and **strong**.\010\010* item\010', 'creole', {abbreviations = {}}) end)
+  probe('read creole {track_changes = \039all-changes\039}', function() return P.read('= Head =\010\010Some //emph// and **strong**.\010\010* item\010', 'creole', {track_changes = 'all-changes'}) end)
+  probe('read creole PANDOC_READER_OPTIONS', function() return P.read('= Head =\010\010Some //emph// and **strong**.\010\010* item\010', 'creole', PANDOC_READER_OPTIONS) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
 @@@ filter convert-read-csljson empty small
 
 local P = pandoc
@@ -332,6 +402,73 @@ local function run(document)
   probe('read docx {abbreviations = {}}', function() return P.read('PK\003\004\020\000\000\000\000\000\000\000!\000\204T\140\016\156\001\000\000\156\001\000\000\019\000\000\000[Content_Types].xml<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>PK\003\004\020\000\000\000\000\000\000\000!\0006W\222\220\024\001\000\000\024\001\000\000\011\000\000\000_rels/.rels<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>PK\003\004\020\000\000\000\000\000\000\000!\000\133\163iR\155\002\000\000\155\002\000\000\017\000\000\000word/document.xml<?xml version="1.0" encoding="UTF-8"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t xml:space="preserve">Some </w:t></w:r><w:r><w:rPr><w:i/></w:rPr><w:t>emph</w:t></w:r><w:r><w:t xml:space="preserve"> and </w:t></w:r><w:r><w:rPr><w:b/></w:rPr><w:t>strong</w:t></w:r><w:ins w:id="1" w:author="A" w:date="2020-01-01T00:00:00Z"><w:r><w:t xml:space="preserve"> new</w:t></w:r></w:ins><w:del w:id="2" w:author="A" w:date="2020-01-01T00:00:00Z"><w:r><w:delText xml:space="preserve"> old</w:delText></w:r></w:del><w:r><w:t>.</w:t></w:r></w:p><w:p><w:r><w:t>Second paragraph.</w:t></w:r></w:p></w:body></w:document>PK\001\002\020\003\020\000\000\000\000\000\000\000!\000\204T\140\016\156\001\000\000\156\001\000\000\019\000\000\000\000\000\000\000\000\000\000\000\128\001\000\000\000\000[Content_Types].xmlPK\001\002\020\003\020\000\000\000\000\000\000\000!\0006W\222\220\024\001\000\000\024\001\000\000\011\000\000\000\000\000\000\000\000\000\000\000\128\001\205\001\000\000_rels/.relsPK\001\002\020\003\020\000\000\000\000\000\000\000!\000\133\163iR\155\002\000\000\155\002\000\000\017\000\000\000\000\000\000\000\000\000\000\000\128\001\014\003\000\000word/document.xmlPK\005\006\000\000\000\000\003\000\003\000\185\000\000\000\216\005\000\000\000\000', 'docx', {abbreviations = {}}) end)
   probe('read docx {track_changes = \039all-changes\039}', function() return P.read('PK\003\004\020\000\000\000\000\000\000\000!\000\204T\140\016\156\001\000\000\156\001\000\000\019\000\000\000[Content_Types].xml<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>PK\003\004\020\000\000\000\000\000\000\000!\0006W\222\220\024\001\000\000\024\001\000\000\011\000\000\000_rels/.rels<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>PK\003\004\020\000\000\000\000\000\000\000!\000\133\163iR\155\002\000\000\155\002\000\000\017\000\000\000word/document.xml<?xml version="1.0" encoding="UTF-8"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t xml:space="preserve">Some </w:t></w:r><w:r><w:rPr><w:i/></w:rPr><w:t>emph</w:t></w:r><w:r><w:t xml:space="preserve"> and </w:t></w:r><w:r><w:rPr><w:b/></w:rPr><w:t>strong</w:t></w:r><w:ins w:id="1" w:author="A" w:date="2020-01-01T00:00:00Z"><w:r><w:t xml:space="preserve"> new</w:t></w:r></w:ins><w:del w:id="2" w:author="A" w:date="2020-01-01T00:00:00Z"><w:r><w:delText xml:space="preserve"> old</w:delText></w:r></w:del><w:r><w:t>.</w:t></w:r></w:p><w:p><w:r><w:t>Second paragraph.</w:t></w:r></w:p></w:body></w:document>PK\001\002\020\003\020\000\000\000\000\000\000\000!\000\204T\140\016\156\001\000\000\156\001\000\000\019\000\000\000\000\000\000\000\000\000\000\000\128\001\000\000\000\000[Content_Types].xmlPK\001\002\020\003\020\000\000\000\000\000\000\000!\0006W\222\220\024\001\000\000\024\001\000\000\011\000\000\000\000\000\000\000\000\000\000\000\128\001\205\001\000\000_rels/.relsPK\001\002\020\003\020\000\000\000\000\000\000\000!\000\133\163iR\155\002\000\000\155\002\000\000\017\000\000\000\000\000\000\000\000\000\000\000\128\001\014\003\000\000word/document.xmlPK\005\006\000\000\000\000\003\000\003\000\185\000\000\000\216\005\000\000\000\000', 'docx', {track_changes = 'all-changes'}) end)
   probe('read docx PANDOC_READER_OPTIONS', function() return P.read('PK\003\004\020\000\000\000\000\000\000\000!\000\204T\140\016\156\001\000\000\156\001\000\000\019\000\000\000[Content_Types].xml<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>PK\003\004\020\000\000\000\000\000\000\000!\0006W\222\220\024\001\000\000\024\001\000\000\011\000\000\000_rels/.rels<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>PK\003\004\020\000\000\000\000\000\000\000!\000\133\163iR\155\002\000\000\155\002\000\000\017\000\000\000word/document.xml<?xml version="1.0" encoding="UTF-8"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t xml:space="preserve">Some </w:t></w:r><w:r><w:rPr><w:i/></w:rPr><w:t>emph</w:t></w:r><w:r><w:t xml:space="preserve"> and </w:t></w:r><w:r><w:rPr><w:b/></w:rPr><w:t>strong</w:t></w:r><w:ins w:id="1" w:author="A" w:date="2020-01-01T00:00:00Z"><w:r><w:t xml:space="preserve"> new</w:t></w:r></w:ins><w:del w:id="2" w:author="A" w:date="2020-01-01T00:00:00Z"><w:r><w:delText xml:space="preserve"> old</w:delText></w:r></w:del><w:r><w:t>.</w:t></w:r></w:p><w:p><w:r><w:t>Second paragraph.</w:t></w:r></w:p></w:body></w:document>PK\001\002\020\003\020\000\000\000\000\000\000\000!\000\204T\140\016\156\001\000\000\156\001\000\000\019\000\000\000\000\000\000\000\000\000\000\000\128\001\000\000\000\000[Content_Types].xmlPK\001\002\020\003\020\000\000\000\000\000\000\000!\0006W\222\220\024\001\000\000\024\001\000\000\011\000\000\000\000\000\000\000\000\000\000\000\128\001\205\001\000\000_rels/.relsPK\001\002\020\003\020\000\000\000\000\000\000\000!\000\133\163iR\155\002\000\000\155\002\000\000\017\000\000\000\000\000\000\000\000\000\000\000\128\001\014\003\000\000word/document.xmlPK\005\006\000\000\000\000\003\000\003\000\185\000\000\000\216\005\000\000\000\000', 'docx', PANDOC_READER_OPTIONS) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter convert-read-dokuwiki empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('read dokuwiki', function() return P.read('====== Head ======\010\010Some //emph// and **strong**.\010\010  * item\010', 'dokuwiki') end)
+  probe('read dokuwiki-smart', function() return P.read('====== Head ======\010\010Some //emph// and **strong**.\010\010  * item\010', 'dokuwiki-smart') end)
+  probe('read dokuwiki+raw_html', function() return P.read('====== Head ======\010\010Some //emph// and **strong**.\010\010  * item\010', 'dokuwiki+raw_html') end)
+  probe('read dokuwiki+tex_math_dollars', function() return P.read('====== Head ======\010\010Some //emph// and **strong**.\010\010  * item\010', 'dokuwiki+tex_math_dollars') end)
+  probe('read dokuwiki {columns = 20}', function() return P.read('====== Head ======\010\010Some //emph// and **strong**.\010\010  * item\010', 'dokuwiki', {columns = 20}) end)
+  probe('read dokuwiki {tab_stop = 2}', function() return P.read('====== Head ======\010\010Some //emph// and **strong**.\010\010  * item\010', 'dokuwiki', {tab_stop = 2}) end)
+  probe('read dokuwiki {tab_stop = 8}', function() return P.read('====== Head ======\010\010Some //emph// and **strong**.\010\010  * item\010', 'dokuwiki', {tab_stop = 8}) end)
+  probe('read dokuwiki {indented_code_classes = {\039lua\039, \039x\039}}', function() return P.read('====== Head ======\010\010Some //emph// and **strong**.\010\010  * item\010', 'dokuwiki', {indented_code_classes = {'lua', 'x'}}) end)
+  probe('read dokuwiki {default_image_extension = \039png\039}', function() return P.read('====== Head ======\010\010Some //emph// and **strong**.\010\010  * item\010', 'dokuwiki', {default_image_extension = 'png'}) end)
+  probe('read dokuwiki {strip_comments = true}', function() return P.read('====== Head ======\010\010Some //emph// and **strong**.\010\010  * item\010', 'dokuwiki', {strip_comments = true}) end)
+  probe('read dokuwiki {standalone = true}', function() return P.read('====== Head ======\010\010Some //emph// and **strong**.\010\010  * item\010', 'dokuwiki', {standalone = true}) end)
+  probe('read dokuwiki {abbreviations = {[\039Mr.\039] = true}}', function() return P.read('====== Head ======\010\010Some //emph// and **strong**.\010\010  * item\010', 'dokuwiki', {abbreviations = {['Mr.'] = true}}) end)
+  probe('read dokuwiki {abbreviations = {}}', function() return P.read('====== Head ======\010\010Some //emph// and **strong**.\010\010  * item\010', 'dokuwiki', {abbreviations = {}}) end)
+  probe('read dokuwiki {track_changes = \039all-changes\039}', function() return P.read('====== Head ======\010\010Some //emph// and **strong**.\010\010  * item\010', 'dokuwiki', {track_changes = 'all-changes'}) end)
+  probe('read dokuwiki PANDOC_READER_OPTIONS', function() return P.read('====== Head ======\010\010Some //emph// and **strong**.\010\010  * item\010', 'dokuwiki', PANDOC_READER_OPTIONS) end)
 end
 
 function Pandoc(document)
@@ -535,6 +672,71 @@ local function run(document)
   probe('read html {abbreviations = {}}', function() return P.read('<h1 id="x">Head</h1><p>Some <em>emph</em> &amp; "q" -- d</p><!-- c --><div class="c">in <span>div</span></div><table><tr><td>1</td></tr></table>', 'html', {abbreviations = {}}) end)
   probe('read html {track_changes = \039all-changes\039}', function() return P.read('<h1 id="x">Head</h1><p>Some <em>emph</em> &amp; "q" -- d</p><!-- c --><div class="c">in <span>div</span></div><table><tr><td>1</td></tr></table>', 'html', {track_changes = 'all-changes'}) end)
   probe('read html PANDOC_READER_OPTIONS', function() return P.read('<h1 id="x">Head</h1><p>Some <em>emph</em> &amp; "q" -- d</p><!-- c --><div class="c">in <span>div</span></div><table><tr><td>1</td></tr></table>', 'html', PANDOC_READER_OPTIONS) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter convert-read-jira empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('read jira', function() return P.read('h1. Head\010\010Some _emph_ and *strong*.\010\010* item\010', 'jira') end)
+  probe('read jira+east_asian_line_breaks', function() return P.read('h1. Head\010\010Some _emph_ and *strong*.\010\010* item\010', 'jira+east_asian_line_breaks') end)
+  probe('read jira {columns = 20}', function() return P.read('h1. Head\010\010Some _emph_ and *strong*.\010\010* item\010', 'jira', {columns = 20}) end)
+  probe('read jira {tab_stop = 2}', function() return P.read('h1. Head\010\010Some _emph_ and *strong*.\010\010* item\010', 'jira', {tab_stop = 2}) end)
+  probe('read jira {tab_stop = 8}', function() return P.read('h1. Head\010\010Some _emph_ and *strong*.\010\010* item\010', 'jira', {tab_stop = 8}) end)
+  probe('read jira {indented_code_classes = {\039lua\039, \039x\039}}', function() return P.read('h1. Head\010\010Some _emph_ and *strong*.\010\010* item\010', 'jira', {indented_code_classes = {'lua', 'x'}}) end)
+  probe('read jira {default_image_extension = \039png\039}', function() return P.read('h1. Head\010\010Some _emph_ and *strong*.\010\010* item\010', 'jira', {default_image_extension = 'png'}) end)
+  probe('read jira {strip_comments = true}', function() return P.read('h1. Head\010\010Some _emph_ and *strong*.\010\010* item\010', 'jira', {strip_comments = true}) end)
+  probe('read jira {standalone = true}', function() return P.read('h1. Head\010\010Some _emph_ and *strong*.\010\010* item\010', 'jira', {standalone = true}) end)
+  probe('read jira {abbreviations = {[\039Mr.\039] = true}}', function() return P.read('h1. Head\010\010Some _emph_ and *strong*.\010\010* item\010', 'jira', {abbreviations = {['Mr.'] = true}}) end)
+  probe('read jira {abbreviations = {}}', function() return P.read('h1. Head\010\010Some _emph_ and *strong*.\010\010* item\010', 'jira', {abbreviations = {}}) end)
+  probe('read jira {track_changes = \039all-changes\039}', function() return P.read('h1. Head\010\010Some _emph_ and *strong*.\010\010* item\010', 'jira', {track_changes = 'all-changes'}) end)
+  probe('read jira PANDOC_READER_OPTIONS', function() return P.read('h1. Head\010\010Some _emph_ and *strong*.\010\010* item\010', 'jira', PANDOC_READER_OPTIONS) end)
 end
 
 function Pandoc(document)
@@ -1010,6 +1212,72 @@ function Pandoc(document)
   return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
 end
 
+@@@ filter convert-read-mediawiki empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('read mediawiki', function() return P.read('== Head ==\010\010Some \039\039emph\039\039 and \039\039\039strong\039\039\039.\010\010* item\010', 'mediawiki') end)
+  probe('read mediawiki-auto_identifiers', function() return P.read('== Head ==\010\010Some \039\039emph\039\039 and \039\039\039strong\039\039\039.\010\010* item\010', 'mediawiki-auto_identifiers') end)
+  probe('read mediawiki+smart', function() return P.read('== Head ==\010\010Some \039\039emph\039\039 and \039\039\039strong\039\039\039.\010\010* item\010', 'mediawiki+smart') end)
+  probe('read mediawiki {columns = 20}', function() return P.read('== Head ==\010\010Some \039\039emph\039\039 and \039\039\039strong\039\039\039.\010\010* item\010', 'mediawiki', {columns = 20}) end)
+  probe('read mediawiki {tab_stop = 2}', function() return P.read('== Head ==\010\010Some \039\039emph\039\039 and \039\039\039strong\039\039\039.\010\010* item\010', 'mediawiki', {tab_stop = 2}) end)
+  probe('read mediawiki {tab_stop = 8}', function() return P.read('== Head ==\010\010Some \039\039emph\039\039 and \039\039\039strong\039\039\039.\010\010* item\010', 'mediawiki', {tab_stop = 8}) end)
+  probe('read mediawiki {indented_code_classes = {\039lua\039, \039x\039}}', function() return P.read('== Head ==\010\010Some \039\039emph\039\039 and \039\039\039strong\039\039\039.\010\010* item\010', 'mediawiki', {indented_code_classes = {'lua', 'x'}}) end)
+  probe('read mediawiki {default_image_extension = \039png\039}', function() return P.read('== Head ==\010\010Some \039\039emph\039\039 and \039\039\039strong\039\039\039.\010\010* item\010', 'mediawiki', {default_image_extension = 'png'}) end)
+  probe('read mediawiki {strip_comments = true}', function() return P.read('== Head ==\010\010Some \039\039emph\039\039 and \039\039\039strong\039\039\039.\010\010* item\010', 'mediawiki', {strip_comments = true}) end)
+  probe('read mediawiki {standalone = true}', function() return P.read('== Head ==\010\010Some \039\039emph\039\039 and \039\039\039strong\039\039\039.\010\010* item\010', 'mediawiki', {standalone = true}) end)
+  probe('read mediawiki {abbreviations = {[\039Mr.\039] = true}}', function() return P.read('== Head ==\010\010Some \039\039emph\039\039 and \039\039\039strong\039\039\039.\010\010* item\010', 'mediawiki', {abbreviations = {['Mr.'] = true}}) end)
+  probe('read mediawiki {abbreviations = {}}', function() return P.read('== Head ==\010\010Some \039\039emph\039\039 and \039\039\039strong\039\039\039.\010\010* item\010', 'mediawiki', {abbreviations = {}}) end)
+  probe('read mediawiki {track_changes = \039all-changes\039}', function() return P.read('== Head ==\010\010Some \039\039emph\039\039 and \039\039\039strong\039\039\039.\010\010* item\010', 'mediawiki', {track_changes = 'all-changes'}) end)
+  probe('read mediawiki PANDOC_READER_OPTIONS', function() return P.read('== Head ==\010\010Some \039\039emph\039\039 and \039\039\039strong\039\039\039.\010\010* item\010', 'mediawiki', PANDOC_READER_OPTIONS) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
 @@@ filter convert-read-native empty small
 
 local P = pandoc
@@ -1140,6 +1408,73 @@ function Pandoc(document)
   return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
 end
 
+@@@ filter convert-read-org empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('read org', function() return P.read('* Head\010\010Some /emph/ and *strong*.\010\010- item\010', 'org') end)
+  probe('read org-auto_identifiers', function() return P.read('* Head\010\010Some /emph/ and *strong*.\010\010- item\010', 'org-auto_identifiers') end)
+  probe('read org+smart', function() return P.read('* Head\010\010Some /emph/ and *strong*.\010\010- item\010', 'org+smart') end)
+  probe('read org-task_lists', function() return P.read('* Head\010\010Some /emph/ and *strong*.\010\010- item\010', 'org-task_lists') end)
+  probe('read org {columns = 20}', function() return P.read('* Head\010\010Some /emph/ and *strong*.\010\010- item\010', 'org', {columns = 20}) end)
+  probe('read org {tab_stop = 2}', function() return P.read('* Head\010\010Some /emph/ and *strong*.\010\010- item\010', 'org', {tab_stop = 2}) end)
+  probe('read org {tab_stop = 8}', function() return P.read('* Head\010\010Some /emph/ and *strong*.\010\010- item\010', 'org', {tab_stop = 8}) end)
+  probe('read org {indented_code_classes = {\039lua\039, \039x\039}}', function() return P.read('* Head\010\010Some /emph/ and *strong*.\010\010- item\010', 'org', {indented_code_classes = {'lua', 'x'}}) end)
+  probe('read org {default_image_extension = \039png\039}', function() return P.read('* Head\010\010Some /emph/ and *strong*.\010\010- item\010', 'org', {default_image_extension = 'png'}) end)
+  probe('read org {strip_comments = true}', function() return P.read('* Head\010\010Some /emph/ and *strong*.\010\010- item\010', 'org', {strip_comments = true}) end)
+  probe('read org {standalone = true}', function() return P.read('* Head\010\010Some /emph/ and *strong*.\010\010- item\010', 'org', {standalone = true}) end)
+  probe('read org {abbreviations = {[\039Mr.\039] = true}}', function() return P.read('* Head\010\010Some /emph/ and *strong*.\010\010- item\010', 'org', {abbreviations = {['Mr.'] = true}}) end)
+  probe('read org {abbreviations = {}}', function() return P.read('* Head\010\010Some /emph/ and *strong*.\010\010- item\010', 'org', {abbreviations = {}}) end)
+  probe('read org {track_changes = \039all-changes\039}', function() return P.read('* Head\010\010Some /emph/ and *strong*.\010\010- item\010', 'org', {track_changes = 'all-changes'}) end)
+  probe('read org PANDOC_READER_OPTIONS', function() return P.read('* Head\010\010Some /emph/ and *strong*.\010\010- item\010', 'org', PANDOC_READER_OPTIONS) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
 @@@ filter convert-read-rst empty small
 
 local P = pandoc
@@ -1200,6 +1535,71 @@ local function run(document)
   probe('read rst {abbreviations = {}}', function() return P.read('A heading\010=========\010\010Some *emphasis*, **strong text**, and `a link <https://example.org>`__.\010\010::\010\010    sample\010\010.. note::\010\010   A note.\010\010>>> print(1)\010', 'rst', {abbreviations = {}}) end)
   probe('read rst {track_changes = \039all-changes\039}', function() return P.read('A heading\010=========\010\010Some *emphasis*, **strong text**, and `a link <https://example.org>`__.\010\010::\010\010    sample\010\010.. note::\010\010   A note.\010\010>>> print(1)\010', 'rst', {track_changes = 'all-changes'}) end)
   probe('read rst PANDOC_READER_OPTIONS', function() return P.read('A heading\010=========\010\010Some *emphasis*, **strong text**, and `a link <https://example.org>`__.\010\010::\010\010    sample\010\010.. note::\010\010   A note.\010\010>>> print(1)\010', 'rst', PANDOC_READER_OPTIONS) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter convert-read-rtf empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('read rtf', function() return P.read('{\092rtf1\092ansi Some {\092i emph} and {\092b strong}.\092par}', 'rtf') end)
+  probe('read rtf+east_asian_line_breaks', function() return P.read('{\092rtf1\092ansi Some {\092i emph} and {\092b strong}.\092par}', 'rtf+east_asian_line_breaks') end)
+  probe('read rtf {columns = 20}', function() return P.read('{\092rtf1\092ansi Some {\092i emph} and {\092b strong}.\092par}', 'rtf', {columns = 20}) end)
+  probe('read rtf {tab_stop = 2}', function() return P.read('{\092rtf1\092ansi Some {\092i emph} and {\092b strong}.\092par}', 'rtf', {tab_stop = 2}) end)
+  probe('read rtf {tab_stop = 8}', function() return P.read('{\092rtf1\092ansi Some {\092i emph} and {\092b strong}.\092par}', 'rtf', {tab_stop = 8}) end)
+  probe('read rtf {indented_code_classes = {\039lua\039, \039x\039}}', function() return P.read('{\092rtf1\092ansi Some {\092i emph} and {\092b strong}.\092par}', 'rtf', {indented_code_classes = {'lua', 'x'}}) end)
+  probe('read rtf {default_image_extension = \039png\039}', function() return P.read('{\092rtf1\092ansi Some {\092i emph} and {\092b strong}.\092par}', 'rtf', {default_image_extension = 'png'}) end)
+  probe('read rtf {strip_comments = true}', function() return P.read('{\092rtf1\092ansi Some {\092i emph} and {\092b strong}.\092par}', 'rtf', {strip_comments = true}) end)
+  probe('read rtf {standalone = true}', function() return P.read('{\092rtf1\092ansi Some {\092i emph} and {\092b strong}.\092par}', 'rtf', {standalone = true}) end)
+  probe('read rtf {abbreviations = {[\039Mr.\039] = true}}', function() return P.read('{\092rtf1\092ansi Some {\092i emph} and {\092b strong}.\092par}', 'rtf', {abbreviations = {['Mr.'] = true}}) end)
+  probe('read rtf {abbreviations = {}}', function() return P.read('{\092rtf1\092ansi Some {\092i emph} and {\092b strong}.\092par}', 'rtf', {abbreviations = {}}) end)
+  probe('read rtf {track_changes = \039all-changes\039}', function() return P.read('{\092rtf1\092ansi Some {\092i emph} and {\092b strong}.\092par}', 'rtf', {track_changes = 'all-changes'}) end)
+  probe('read rtf PANDOC_READER_OPTIONS', function() return P.read('{\092rtf1\092ansi Some {\092i emph} and {\092b strong}.\092par}', 'rtf', PANDOC_READER_OPTIONS) end)
 end
 
 function Pandoc(document)
@@ -1504,6 +1904,83 @@ local function run(document)
   probe('write csljson {number_offset = {3, 1}}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'csljson', {number_offset = {3, 1}}):gsub('\n+$', '')) end)
   probe('write csljson {dpi = 300}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'csljson', {dpi = 300}):gsub('\n+$', '')) end)
   probe('write csljson PANDOC_WRITER_OPTIONS', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'csljson', PANDOC_WRITER_OPTIONS):gsub('\n+$', '')) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter convert-write-dokuwiki empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('write dokuwiki', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'dokuwiki'):gsub('\n+$', '')) end)
+  probe('write dokuwiki-smart', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'dokuwiki-smart'):gsub('\n+$', '')) end)
+  probe('write dokuwiki+raw_html', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'dokuwiki+raw_html'):gsub('\n+$', '')) end)
+  probe('write dokuwiki+tex_math_dollars', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'dokuwiki+tex_math_dollars'):gsub('\n+$', '')) end)
+  probe('write dokuwiki {columns = 30}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'dokuwiki', {columns = 30}):gsub('\n+$', '')) end)
+  probe('write dokuwiki {wrap_text = \039wrap-none\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'dokuwiki', {wrap_text = 'wrap-none'}):gsub('\n+$', '')) end)
+  probe('write dokuwiki {wrap_text = \039wrap-preserve\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'dokuwiki', {wrap_text = 'wrap-preserve'}):gsub('\n+$', '')) end)
+  probe('write dokuwiki {reference_links = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'dokuwiki', {reference_links = true}):gsub('\n+$', '')) end)
+  probe('write dokuwiki {reference_location = \039end-of-section\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'dokuwiki', {reference_location = 'end-of-section'}):gsub('\n+$', '')) end)
+  probe('write dokuwiki {setext_headers = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'dokuwiki', {setext_headers = true}):gsub('\n+$', '')) end)
+  probe('write dokuwiki {number_sections = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'dokuwiki', {number_sections = true}):gsub('\n+$', '')) end)
+  probe('write dokuwiki {section_divs = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'dokuwiki', {section_divs = true}):gsub('\n+$', '')) end)
+  probe('write dokuwiki {identifier_prefix = \039p-\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'dokuwiki', {identifier_prefix = 'p-'}):gsub('\n+$', '')) end)
+  probe('write dokuwiki {html_q_tags = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'dokuwiki', {html_q_tags = true}):gsub('\n+$', '')) end)
+  probe('write dokuwiki {email_obfuscation = \039references\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'dokuwiki', {email_obfuscation = 'references'}):gsub('\n+$', '')) end)
+  probe('write dokuwiki {top_level_division = \039top-level-chapter\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'dokuwiki', {top_level_division = 'top-level-chapter'}):gsub('\n+$', '')) end)
+  probe('write dokuwiki {tab_stop = 2}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'dokuwiki', {tab_stop = 2}):gsub('\n+$', '')) end)
+  probe('write dokuwiki {prefer_ascii = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'dokuwiki', {prefer_ascii = true}):gsub('\n+$', '')) end)
+  probe('write dokuwiki {slide_level = 1}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'dokuwiki', {slide_level = 1}):gsub('\n+$', '')) end)
+  probe('write dokuwiki {incremental = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'dokuwiki', {incremental = true}):gsub('\n+$', '')) end)
+  probe('write dokuwiki {list_tables = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'dokuwiki', {list_tables = true}):gsub('\n+$', '')) end)
+  probe('write dokuwiki {table_of_contents = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'dokuwiki', {table_of_contents = true}):gsub('\n+$', '')) end)
+  probe('write dokuwiki {number_offset = {3, 1}}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'dokuwiki', {number_offset = {3, 1}}):gsub('\n+$', '')) end)
+  probe('write dokuwiki {dpi = 300}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'dokuwiki', {dpi = 300}):gsub('\n+$', '')) end)
+  probe('write dokuwiki PANDOC_WRITER_OPTIONS', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'dokuwiki', PANDOC_WRITER_OPTIONS):gsub('\n+$', '')) end)
 end
 
 function Pandoc(document)
@@ -1898,6 +2375,81 @@ local function run(document)
   probe('write html5 {number_offset = {3, 1}}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'html5', {number_offset = {3, 1}}):gsub('\n+$', '')) end)
   probe('write html5 {dpi = 300}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'html5', {dpi = 300}):gsub('\n+$', '')) end)
   probe('write html5 PANDOC_WRITER_OPTIONS', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'html5', PANDOC_WRITER_OPTIONS):gsub('\n+$', '')) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter convert-write-jira empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('write jira', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'jira'):gsub('\n+$', '')) end)
+  probe('write jira+east_asian_line_breaks', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'jira+east_asian_line_breaks'):gsub('\n+$', '')) end)
+  probe('write jira {columns = 30}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'jira', {columns = 30}):gsub('\n+$', '')) end)
+  probe('write jira {wrap_text = \039wrap-none\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'jira', {wrap_text = 'wrap-none'}):gsub('\n+$', '')) end)
+  probe('write jira {wrap_text = \039wrap-preserve\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'jira', {wrap_text = 'wrap-preserve'}):gsub('\n+$', '')) end)
+  probe('write jira {reference_links = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'jira', {reference_links = true}):gsub('\n+$', '')) end)
+  probe('write jira {reference_location = \039end-of-section\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'jira', {reference_location = 'end-of-section'}):gsub('\n+$', '')) end)
+  probe('write jira {setext_headers = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'jira', {setext_headers = true}):gsub('\n+$', '')) end)
+  probe('write jira {number_sections = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'jira', {number_sections = true}):gsub('\n+$', '')) end)
+  probe('write jira {section_divs = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'jira', {section_divs = true}):gsub('\n+$', '')) end)
+  probe('write jira {identifier_prefix = \039p-\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'jira', {identifier_prefix = 'p-'}):gsub('\n+$', '')) end)
+  probe('write jira {html_q_tags = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'jira', {html_q_tags = true}):gsub('\n+$', '')) end)
+  probe('write jira {email_obfuscation = \039references\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'jira', {email_obfuscation = 'references'}):gsub('\n+$', '')) end)
+  probe('write jira {top_level_division = \039top-level-chapter\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'jira', {top_level_division = 'top-level-chapter'}):gsub('\n+$', '')) end)
+  probe('write jira {tab_stop = 2}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'jira', {tab_stop = 2}):gsub('\n+$', '')) end)
+  probe('write jira {prefer_ascii = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'jira', {prefer_ascii = true}):gsub('\n+$', '')) end)
+  probe('write jira {slide_level = 1}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'jira', {slide_level = 1}):gsub('\n+$', '')) end)
+  probe('write jira {incremental = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'jira', {incremental = true}):gsub('\n+$', '')) end)
+  probe('write jira {list_tables = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'jira', {list_tables = true}):gsub('\n+$', '')) end)
+  probe('write jira {table_of_contents = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'jira', {table_of_contents = true}):gsub('\n+$', '')) end)
+  probe('write jira {number_offset = {3, 1}}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'jira', {number_offset = {3, 1}}):gsub('\n+$', '')) end)
+  probe('write jira {dpi = 300}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'jira', {dpi = 300}):gsub('\n+$', '')) end)
+  probe('write jira PANDOC_WRITER_OPTIONS', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'jira', PANDOC_WRITER_OPTIONS):gsub('\n+$', '')) end)
 end
 
 function Pandoc(document)
@@ -2517,6 +3069,82 @@ function Pandoc(document)
   return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
 end
 
+@@@ filter convert-write-mediawiki empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('write mediawiki', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'mediawiki'):gsub('\n+$', '')) end)
+  probe('write mediawiki-auto_identifiers', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'mediawiki-auto_identifiers'):gsub('\n+$', '')) end)
+  probe('write mediawiki+smart', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'mediawiki+smart'):gsub('\n+$', '')) end)
+  probe('write mediawiki {columns = 30}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'mediawiki', {columns = 30}):gsub('\n+$', '')) end)
+  probe('write mediawiki {wrap_text = \039wrap-none\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'mediawiki', {wrap_text = 'wrap-none'}):gsub('\n+$', '')) end)
+  probe('write mediawiki {wrap_text = \039wrap-preserve\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'mediawiki', {wrap_text = 'wrap-preserve'}):gsub('\n+$', '')) end)
+  probe('write mediawiki {reference_links = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'mediawiki', {reference_links = true}):gsub('\n+$', '')) end)
+  probe('write mediawiki {reference_location = \039end-of-section\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'mediawiki', {reference_location = 'end-of-section'}):gsub('\n+$', '')) end)
+  probe('write mediawiki {setext_headers = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'mediawiki', {setext_headers = true}):gsub('\n+$', '')) end)
+  probe('write mediawiki {number_sections = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'mediawiki', {number_sections = true}):gsub('\n+$', '')) end)
+  probe('write mediawiki {section_divs = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'mediawiki', {section_divs = true}):gsub('\n+$', '')) end)
+  probe('write mediawiki {identifier_prefix = \039p-\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'mediawiki', {identifier_prefix = 'p-'}):gsub('\n+$', '')) end)
+  probe('write mediawiki {html_q_tags = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'mediawiki', {html_q_tags = true}):gsub('\n+$', '')) end)
+  probe('write mediawiki {email_obfuscation = \039references\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'mediawiki', {email_obfuscation = 'references'}):gsub('\n+$', '')) end)
+  probe('write mediawiki {top_level_division = \039top-level-chapter\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'mediawiki', {top_level_division = 'top-level-chapter'}):gsub('\n+$', '')) end)
+  probe('write mediawiki {tab_stop = 2}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'mediawiki', {tab_stop = 2}):gsub('\n+$', '')) end)
+  probe('write mediawiki {prefer_ascii = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'mediawiki', {prefer_ascii = true}):gsub('\n+$', '')) end)
+  probe('write mediawiki {slide_level = 1}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'mediawiki', {slide_level = 1}):gsub('\n+$', '')) end)
+  probe('write mediawiki {incremental = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'mediawiki', {incremental = true}):gsub('\n+$', '')) end)
+  probe('write mediawiki {list_tables = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'mediawiki', {list_tables = true}):gsub('\n+$', '')) end)
+  probe('write mediawiki {table_of_contents = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'mediawiki', {table_of_contents = true}):gsub('\n+$', '')) end)
+  probe('write mediawiki {number_offset = {3, 1}}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'mediawiki', {number_offset = {3, 1}}):gsub('\n+$', '')) end)
+  probe('write mediawiki {dpi = 300}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'mediawiki', {dpi = 300}):gsub('\n+$', '')) end)
+  probe('write mediawiki PANDOC_WRITER_OPTIONS', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'mediawiki', PANDOC_WRITER_OPTIONS):gsub('\n+$', '')) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
 @@@ filter convert-write-native empty small
 
 local P = pandoc
@@ -2752,6 +3380,83 @@ function Pandoc(document)
   return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
 end
 
+@@@ filter convert-write-org empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('write org', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'org'):gsub('\n+$', '')) end)
+  probe('write org-auto_identifiers', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'org-auto_identifiers'):gsub('\n+$', '')) end)
+  probe('write org+smart', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'org+smart'):gsub('\n+$', '')) end)
+  probe('write org-task_lists', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'org-task_lists'):gsub('\n+$', '')) end)
+  probe('write org {columns = 30}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'org', {columns = 30}):gsub('\n+$', '')) end)
+  probe('write org {wrap_text = \039wrap-none\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'org', {wrap_text = 'wrap-none'}):gsub('\n+$', '')) end)
+  probe('write org {wrap_text = \039wrap-preserve\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'org', {wrap_text = 'wrap-preserve'}):gsub('\n+$', '')) end)
+  probe('write org {reference_links = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'org', {reference_links = true}):gsub('\n+$', '')) end)
+  probe('write org {reference_location = \039end-of-section\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'org', {reference_location = 'end-of-section'}):gsub('\n+$', '')) end)
+  probe('write org {setext_headers = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'org', {setext_headers = true}):gsub('\n+$', '')) end)
+  probe('write org {number_sections = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'org', {number_sections = true}):gsub('\n+$', '')) end)
+  probe('write org {section_divs = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'org', {section_divs = true}):gsub('\n+$', '')) end)
+  probe('write org {identifier_prefix = \039p-\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'org', {identifier_prefix = 'p-'}):gsub('\n+$', '')) end)
+  probe('write org {html_q_tags = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'org', {html_q_tags = true}):gsub('\n+$', '')) end)
+  probe('write org {email_obfuscation = \039references\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'org', {email_obfuscation = 'references'}):gsub('\n+$', '')) end)
+  probe('write org {top_level_division = \039top-level-chapter\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'org', {top_level_division = 'top-level-chapter'}):gsub('\n+$', '')) end)
+  probe('write org {tab_stop = 2}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'org', {tab_stop = 2}):gsub('\n+$', '')) end)
+  probe('write org {prefer_ascii = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'org', {prefer_ascii = true}):gsub('\n+$', '')) end)
+  probe('write org {slide_level = 1}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'org', {slide_level = 1}):gsub('\n+$', '')) end)
+  probe('write org {incremental = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'org', {incremental = true}):gsub('\n+$', '')) end)
+  probe('write org {list_tables = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'org', {list_tables = true}):gsub('\n+$', '')) end)
+  probe('write org {table_of_contents = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'org', {table_of_contents = true}):gsub('\n+$', '')) end)
+  probe('write org {number_offset = {3, 1}}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'org', {number_offset = {3, 1}}):gsub('\n+$', '')) end)
+  probe('write org {dpi = 300}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'org', {dpi = 300}):gsub('\n+$', '')) end)
+  probe('write org PANDOC_WRITER_OPTIONS', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'org', PANDOC_WRITER_OPTIONS):gsub('\n+$', '')) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
 @@@ filter convert-write-plain empty small
 
 local P = pandoc
@@ -2905,6 +3610,81 @@ function Pandoc(document)
   return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
 end
 
+@@@ filter convert-write-rtf empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('write rtf', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rtf'):gsub('\n+$', '')) end)
+  probe('write rtf+east_asian_line_breaks', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rtf+east_asian_line_breaks'):gsub('\n+$', '')) end)
+  probe('write rtf {columns = 30}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rtf', {columns = 30}):gsub('\n+$', '')) end)
+  probe('write rtf {wrap_text = \039wrap-none\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rtf', {wrap_text = 'wrap-none'}):gsub('\n+$', '')) end)
+  probe('write rtf {wrap_text = \039wrap-preserve\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rtf', {wrap_text = 'wrap-preserve'}):gsub('\n+$', '')) end)
+  probe('write rtf {reference_links = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rtf', {reference_links = true}):gsub('\n+$', '')) end)
+  probe('write rtf {reference_location = \039end-of-section\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rtf', {reference_location = 'end-of-section'}):gsub('\n+$', '')) end)
+  probe('write rtf {setext_headers = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rtf', {setext_headers = true}):gsub('\n+$', '')) end)
+  probe('write rtf {number_sections = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rtf', {number_sections = true}):gsub('\n+$', '')) end)
+  probe('write rtf {section_divs = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rtf', {section_divs = true}):gsub('\n+$', '')) end)
+  probe('write rtf {identifier_prefix = \039p-\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rtf', {identifier_prefix = 'p-'}):gsub('\n+$', '')) end)
+  probe('write rtf {html_q_tags = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rtf', {html_q_tags = true}):gsub('\n+$', '')) end)
+  probe('write rtf {email_obfuscation = \039references\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rtf', {email_obfuscation = 'references'}):gsub('\n+$', '')) end)
+  probe('write rtf {top_level_division = \039top-level-chapter\039}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rtf', {top_level_division = 'top-level-chapter'}):gsub('\n+$', '')) end)
+  probe('write rtf {tab_stop = 2}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rtf', {tab_stop = 2}):gsub('\n+$', '')) end)
+  probe('write rtf {prefer_ascii = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rtf', {prefer_ascii = true}):gsub('\n+$', '')) end)
+  probe('write rtf {slide_level = 1}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rtf', {slide_level = 1}):gsub('\n+$', '')) end)
+  probe('write rtf {incremental = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rtf', {incremental = true}):gsub('\n+$', '')) end)
+  probe('write rtf {list_tables = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rtf', {list_tables = true}):gsub('\n+$', '')) end)
+  probe('write rtf {table_of_contents = true}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rtf', {table_of_contents = true}):gsub('\n+$', '')) end)
+  probe('write rtf {number_offset = {3, 1}}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rtf', {number_offset = {3, 1}}):gsub('\n+$', '')) end)
+  probe('write rtf {dpi = 300}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rtf', {dpi = 300}):gsub('\n+$', '')) end)
+  probe('write rtf PANDOC_WRITER_OPTIONS', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rtf', PANDOC_WRITER_OPTIONS):gsub('\n+$', '')) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
 @@@ filter convert-final-newline empty small
 
 local P = pandoc
@@ -2954,11 +3734,13 @@ local function run(document)
   probe('end of commonmark', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'commonmark'):sub(-2) end)
   probe('end of commonmark_x', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'commonmark_x'):sub(-2) end)
   probe('end of csljson', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'csljson'):sub(-2) end)
+  probe('end of dokuwiki', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'dokuwiki'):sub(-2) end)
   probe('end of fodt', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'fodt'):sub(-2) end)
   probe('end of gfm', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'gfm'):sub(-2) end)
   probe('end of html', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'html'):sub(-2) end)
   probe('end of html4', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'html4'):sub(-2) end)
   probe('end of html5', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'html5'):sub(-2) end)
+  probe('end of jira', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'jira'):sub(-2) end)
   probe('end of json', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'json'):sub(-2) end)
   probe('end of latex', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'latex'):sub(-2) end)
   probe('end of markdown', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'markdown'):sub(-2) end)
@@ -2967,10 +3749,13 @@ local function run(document)
   probe('end of markdown_phpextra', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'markdown_phpextra'):sub(-2) end)
   probe('end of markdown_strict', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'markdown_strict'):sub(-2) end)
   probe('end of markua', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'markua'):sub(-2) end)
+  probe('end of mediawiki', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'mediawiki'):sub(-2) end)
   probe('end of native', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'native'):sub(-2) end)
   probe('end of opendocument', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'opendocument'):sub(-2) end)
+  probe('end of org', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'org'):sub(-2) end)
   probe('end of plain', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'plain'):sub(-2) end)
   probe('end of rst', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rst'):sub(-2) end)
+  probe('end of rtf', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rtf'):sub(-2) end)
 end
 
 function Pandoc(document)

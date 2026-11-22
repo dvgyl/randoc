@@ -23,6 +23,9 @@ randoc-latex-reader = { workspace = true }
 randoc-docx = { workspace = true }
 randoc-odt = { workspace = true }
 randoc-rst = { workspace = true }
+randoc-org = { workspace = true }
+randoc-rtf = { workspace = true }
+randoc-wiki = { workspace = true }
 
 [lints]
 workspace = true

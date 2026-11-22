@@ -25,6 +25,9 @@ const READERS: &[ReaderLookup] = &[
     randoc_docx::reader,
     randoc_odt::reader,
     randoc_rst::reader,
+    randoc_org::reader,
+    randoc_rtf::reader,
+    randoc_wiki::reader,
 ];
 
 /// The writer lookup of each format crate. Add one line for a new crate.
@@ -38,6 +41,9 @@ const WRITERS: &[WriterLookup] = &[
     randoc_citeproc::csljson::writer,
     randoc_odt::writer,
     randoc_rst::writer,
+    randoc_org::writer,
+    randoc_rtf::writer,
+    randoc_wiki::writer,
 ];
 
 /// Returns the reader for a format name without extension changes, for example `markdown`.
