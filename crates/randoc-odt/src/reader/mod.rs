@@ -52,9 +52,10 @@ pub fn read_odt(bytes: &[u8], options: &ReaderOptions, context: &mut Context) ->
         .and_then(|body| body.child(OFFICE, "text"))
         .ok_or_else(|| Error::Parse("Could not convert opendocument".into()))?;
 
-    let mut style_table = StyleTable::new(context.limits.max_nesting_depth);
-    style_table.load_from_root(&styles_doc.root);
-    style_table.load_from_root(&content_doc.root);
+    let style_table = StyleTable::from_roots(
+        [&styles_doc.root, &content_doc.root],
+        context.limits.max_nesting_depth,
+    );
 
     convert_office_text(
         office_text,
@@ -97,7 +98,9 @@ pub fn read_fodt(
     })?;
 
     if !is_el(&doc.root, OFFICE, "document") {
-        return Err(Error::Parse("Could not convert opendocument".into()));
+        return Err(Error::Parse(
+            "Expected office:document at the root of the flat OpenDocument file".into(),
+        ));
     }
     if doc.root.child(OFFICE, "styles").is_none()
         && doc.root.child(OFFICE, "automatic-styles").is_none()
@@ -110,8 +113,7 @@ pub fn read_fodt(
         .and_then(|body| body.child(OFFICE, "text"))
         .ok_or_else(|| Error::Parse("Could not convert opendocument".into()))?;
 
-    let mut style_table = StyleTable::new(context.limits.max_nesting_depth);
-    style_table.load_from_root(&doc.root);
+    let style_table = StyleTable::from_roots([&doc.root], context.limits.max_nesting_depth);
 
     convert_office_text(office_text, &style_table, None, true, options, context)
 }
@@ -133,14 +135,17 @@ fn parse_part(name: &str, text: &str, limits: &XmlLimits, opts: XmlOptions) -> R
 #[cfg(test)]
 mod tests {
     use super::*;
+    use randoc_archive::zip::ArchiveWriter;
     use randoc_ast::{Block, Inline};
 
     fn flat(styles: &str, body: &str, context: &mut Context) -> Result<Pandoc> {
         let document = format!(
-            "<office:document xmlns:office=\"{OFFICE}\" xmlns:text=\"{}\" xmlns:table=\"{}\" xmlns:style=\"{}\"><office:styles>{styles}</office:styles><office:body><office:text>{body}</office:text></office:body></office:document>",
+            "<office:document xmlns:office=\"{OFFICE}\" xmlns:text=\"{}\" xmlns:table=\"{}\" xmlns:style=\"{}\" xmlns:draw=\"{}\" xmlns:xlink=\"{}\"><office:styles>{styles}</office:styles><office:body><office:text>{body}</office:text></office:body></office:document>",
             crate::ns::TEXT,
             crate::ns::TABLE,
             crate::ns::STYLE,
+            crate::ns::DRAW,
+            crate::ns::XLINK,
         );
         read_fodt(
             &Sources::from_text(document),
@@ -150,7 +155,7 @@ mod tests {
     }
 
     #[test]
-    fn excessive_depth_repeats_and_spaces_fail_on_a_two_mib_stack() -> std::thread::Result<()> {
+    fn excessive_depth_and_repeats_fail_on_a_two_mib_stack() -> std::thread::Result<()> {
         std::thread::Builder::new()
             .stack_size(2 << 20)
             .spawn(|| {
@@ -158,16 +163,12 @@ mod tests {
                 assert!(matches!(flat("", &deep, &mut Context::pure()), Err(Error::Xml { .. })));
 
                 for table in [
-                    "<table:table><table:table-column table:number-columns-repeated=\"1000000000\" /></table:table>",
                     "<table:table><table:table-row table:number-rows-repeated=\"1000000000\" /></table:table>",
                     "<table:table><table:table-row table:number-rows-repeated=\"1000\"><table:table-cell table:number-columns-repeated=\"1000\" /></table:table-row></table:table>",
                     "<table:table><table:table-row><table:table-cell table:number-columns-spanned=\"1000000000\" /></table:table-row></table:table>",
                 ] {
                     assert!(matches!(flat("", table, &mut Context::pure()), Err(Error::Parse(_))));
                 }
-
-                let spaces = "<text:p>x<text:s text:c=\"1000000000\" />y</text:p>";
-                assert!(matches!(flat("", spaces, &mut Context::pure()), Err(Error::Parse(_))));
 
                 let cycle = concat!(
                     "<style:style style:name=\"A\" style:family=\"paragraph\" style:parent-style-name=\"B\"/>",
@@ -185,7 +186,7 @@ mod tests {
     fn explicit_spaces_replace_an_adjacent_literal_space() -> Result<()> {
         let doc = flat(
             "",
-            "<text:p>x <text:s text:c=\"3\"/>y</text:p>",
+            r#"<text:p>x <text:span>  </text:span><text:s text:c="2"/>y<text:s text:c="-3"/>z</text:p>"#,
             &mut Context::pure(),
         )?;
         assert_eq!(
@@ -194,10 +195,161 @@ mod tests {
                 Inline::Str("x".into()),
                 Inline::Space,
                 Inline::Space,
-                Inline::Space,
-                Inline::Str("y".into()),
+                Inline::Str("yz".into()),
             ])]
         );
         Ok(())
+    }
+    #[test]
+    fn explicit_space_counts_have_local_and_document_limits() -> Result<()> {
+        let spaces = r#"<text:s text:c="1000000"/>"#;
+        let body = format!("<text:p>x{}y</text:p>", spaces.repeat(9));
+        let doc = flat("", &body, &mut Context::pure())?;
+        assert_eq!(
+            doc.blocks,
+            vec![Block::Para(
+                [Inline::Str("x".into())]
+                    .into_iter()
+                    .chain(std::iter::repeat_n(Inline::Space, 8_992))
+                    .chain([Inline::Str("y".into())])
+                    .collect(),
+            )]
+        );
+        let code = format!(
+            r#"<text:p text:style-name="Preformatted_20_Text">a{spaces}<text:s text:c="-3"/>b</text:p>"#
+        );
+        let doc = flat("", &code, &mut Context::pure())?;
+        assert_eq!(
+            doc.blocks,
+            vec![Block::CodeBlock(
+                Default::default(),
+                format!("a{}b", " ".repeat(1_000))
+            )]
+        );
+        let mut context = Context::pure();
+        context.limits.max_input_size = 5_000;
+        assert!(
+            matches!(flat("", &body, &mut context), Err(Error::Parse(message)) if message.contains("space count"))
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn paragraph_styles_keep_hidden_text_and_inherit_quote_and_code() -> Result<()> {
+        let styles = r#"
+<style:style style:name="Hidden" style:family="paragraph"><style:text-properties text:display="none"/></style:style>
+<style:style style:name="Quote" style:family="paragraph" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0"><style:paragraph-properties fo:margin-left="6mm"/></style:style>
+<style:style style:name="NestedQuote" style:family="paragraph" style:parent-style-name="Quote"/>
+<style:style style:name="NestedCode" style:family="paragraph" style:parent-style-name="Preformatted_20_Text"/>"#;
+        let doc = flat(
+            styles,
+            r#"
+<text:p text:style-name="Hidden"><text:span text:style-name="Hidden">Visible</text:span></text:p>
+<text:p text:style-name="NestedQuote">Quote</text:p>
+<text:p text:style-name="NestedCode">Code</text:p>
+<text:h text:outline-level="0">Zero</text:h><text:h text:outline-level="9">Nine</text:h>"#,
+            &mut Context::pure(),
+        )?;
+        assert!(matches!(doc.blocks.as_slice(), [
+            Block::Para(text), Block::BlockQuote(quote), Block::CodeBlock(_, code),
+            Block::Header(0, _, _), Block::Header(9, _, _)
+        ] if text == &[Inline::Str("Visible".into())]
+            && quote == &[Block::Para(vec![Inline::Str("Quote".into())])] && code == "Code"));
+        Ok(())
+    }
+
+    #[test]
+    fn table_width_uses_rows_and_clips_spans() -> Result<()> {
+        let doc = flat(
+            r#"<style:style style:name="Other" style:family="paragraph" style:parent-style-name="Caption"/>"#,
+            r#"<text:p text:style-name="Other">Separate paragraph</text:p>
+<table:table><table:table-column table:number-columns-repeated="1000000000"/>
+<table:table-row><table:table-cell table:number-columns-spanned="0"><text:p>Omitted</text:p></table:table-cell></table:table-row>
+</table:table><text:p text:style-name="Table">Table caption</text:p>
+<table:table><table:table-row><table:table-cell table:number-columns-repeated="x" table:number-rows-spanned="5"><text:p>Cell</text:p></table:table-cell></table:table-row></table:table>"#,
+            &mut Context::pure(),
+        )?;
+        let [Block::Para(_), Block::Table(empty), Block::Table(single)] = doc.blocks.as_slice()
+        else {
+            return Err(Error::App("Expected a paragraph and two tables.".into()));
+        };
+        assert!(empty.col_specs.is_empty() && empty.bodies[0].body[0].cells.is_empty());
+        assert_eq!(
+            empty.caption.long,
+            [Block::Para(vec![
+                Inline::Str("Table".into()),
+                Inline::Space,
+                Inline::Str("caption".into())
+            ])]
+        );
+        assert_eq!(single.col_specs.len(), 1);
+        let cells = &single.bodies[0].body[0].cells;
+        assert_eq!(cells.len(), 1);
+        assert_eq!(cells[0].row_span, 1);
+        Ok(())
+    }
+
+    #[test]
+    fn text_box_figure_extracts_its_image_once() -> Result<()> {
+        let mut context = Context::pure();
+        let doc = flat(
+            "",
+            r#"<text:p><draw:frame><draw:text-box><text:p><draw:frame>
+<draw:image draw:mime-type="image/gif"><office:binary-data>R0lG
+  ODlh AQAB  AIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7</office:binary-data></draw:image>
+</draw:frame></text:p></draw:text-box></draw:frame></text:p>"#,
+            &mut context,
+        )?;
+        let [Block::Figure(_, caption, body)] = doc.blocks.as_slice() else {
+            return Err(Error::App("Expected a figure.".into()));
+        };
+        assert_eq!(caption.long, [Block::Plain(Vec::new())]);
+        assert!(matches!(body.as_slice(), [Block::Plain(inlines)]
+            if matches!(inlines.as_slice(), [Inline::Image(_, alt, target)]
+                if alt.is_empty() && target.url == "Pictures/image1.gif")));
+        assert_eq!(context.media.len(), 1);
+        assert!(context.media.get("Pictures/image1.gif").is_some());
+        Ok(())
+    }
+
+    #[test]
+    fn percent_encoded_image_href_matches_media_key() -> Result<()> {
+        let href = "Pictures/a%20b.gif";
+        let mut zip = ArchiveWriter::new();
+        let content = format!(
+            r#"<office:document-content xmlns:office="{OFFICE}" xmlns:text="{}" xmlns:draw="{}" xmlns:xlink="{}"><office:body><office:text><text:p><draw:frame><draw:image xlink:href="{href}"/></draw:frame></text:p></office:text></office:body></office:document-content>"#,
+            crate::ns::TEXT,
+            crate::ns::DRAW,
+            crate::ns::XLINK,
+        );
+        let styles = format!(
+            r#"<office:document-styles xmlns:office="{OFFICE}"><office:styles/></office:document-styles>"#
+        );
+        zip.write_deflated("content.xml", content.as_bytes())
+            .map_err(|error| Error::App(error.to_string()))?;
+        zip.write_deflated("styles.xml", styles.as_bytes())
+            .map_err(|error| Error::App(error.to_string()))?;
+        zip.write_stored(href, b"GIF89a")
+            .map_err(|error| Error::App(error.to_string()))?;
+        let mut context = Context::pure();
+        let bytes = zip
+            .finish()
+            .map_err(|error| Error::App(error.to_string()))?;
+        let doc = read_odt(&bytes, &ReaderOptions::default(), &mut context)?;
+        assert!(matches!(doc.blocks.as_slice(), [Block::Para(inlines)]
+            if matches!(inlines.as_slice(), [Inline::Image(_, _, target)]
+                if target.url == href && context.media.get(&target.url).is_some())));
+        Ok(())
+    }
+
+    #[test]
+    fn flat_document_reports_the_expected_root() {
+        let error = read_fodt(
+            &Sources::from_text("<unrelated/>"),
+            &ReaderOptions::default(),
+            &mut Context::pure(),
+        );
+        assert!(matches!(error, Err(error) if error.exit_code() == 64
+            && error.to_string().contains("Expected office:document at the root of the flat OpenDocument file")));
     }
 }

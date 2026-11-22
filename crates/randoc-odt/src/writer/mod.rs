@@ -77,7 +77,6 @@ struct Renderer<'a> {
     context: &'a mut Context,
     format: Format,
     resources: Resources,
-    links: package::RelativeLinks,
     text_styles: Vec<String>,
     text_style_index: HashMap<u8, usize>,
     paragraph_styles: Vec<String>,
@@ -105,13 +104,11 @@ fn render(
     resources: Resources,
 ) -> Result<(String, Resources)> {
     let depth = context.limits.max_nesting_depth;
-    let links = package::RelativeLinks::new(format, context);
     let mut renderer = Renderer {
         options,
         context,
         format,
         resources,
-        links,
         text_styles: Vec::new(),
         text_style_index: HashMap::new(),
         paragraph_styles: Vec::new(),
@@ -169,8 +166,8 @@ fn render(
                     renderer
                         .paragraph_styles
                         .iter()
-                        .chain(renderer.list_styles.values())
                         .chain(&renderer.table_styles)
+                        .chain(renderer.list_styles.values())
                         .map(text),
                 ),
         );

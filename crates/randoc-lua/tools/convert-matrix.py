@@ -260,12 +260,34 @@ def written(arguments):
     return f"return (P.write({arguments}):gsub('\\n+$', ''))"
 
 
+ODT_CONTENT = """local function odt_content(bytes)
+  local ok, archive = pcall(function() return P.zip.Archive end)
+  if not ok then return P.read(bytes, 'odtcontentxml').blocks[1].text end
+  for _, entry in ipairs(archive(bytes).entries) do
+    if entry.path == 'content.xml' then return entry:contents() end
+  end
+  error('Missing content.xml')
+end"""
+
+FODT_BODY = """local function fodt_body(xml)
+  local body = assert(xml:match('(<office:body>.-</office:body>)'))
+  -- Match equivalent XML text and attribute order. Skip the formula
+  -- annotation because Pandoc and Randoc use different encodings (I-ODT-03).
+  body = body:gsub('>([^<]+)<', function(text)
+    return '>' .. text:gsub('&quot;', '"') .. '<'
+  end)
+  body = body:gsub('(<math) (display="[^"]+") (xmlns="[^"]+")>', '%1 %3 %2>')
+  return (body:gsub('<annotation encoding="StarMath 5%.0">.-</annotation>', '')
+              :gsub('<annotation encoding="application/x%-tex">.-</annotation>', ''))
+end"""
+
+
 def write_probe(name, spec, options=""):
     arguments = f"{DOC}, {lua_string(spec)}{options}"
-    if name in ("odt", "fodt"):
-        # Reference styles and archive bytes can differ. Compare the document
-        # that each package produces when its corresponding reader opens it.
-        return f"local bytes = P.write({arguments}); return P.read(bytes, {lua_string(name)})"
+    if name == "odt":
+        return f"return odt_content(P.write({arguments}))"
+    if name == "fodt":
+        return f"return fodt_body(P.write({arguments}))"
     return written(arguments)
 
 
@@ -290,7 +312,7 @@ for _name in WRITERS:
     GROUPS[f"convert-write-{_name}"] = write_probes(_name) + write_option_probes(_name)
 
 GROUPS["convert-final-newline"] = [
-    (f"end of {name}", f"return P.write({DOC}, {lua_string(name)}):sub(-2)") for name in WRITERS if name not in ("odt", "fodt")
+    (f"end of {name}", f"return P.write({DOC}, {lua_string(name)}):sub(-2)") for name in WRITERS if name != "odt"
 ]
 
 _DOC = "P.Pandoc{P.Para{P.Emph't', P.Space(), P.Str'\"q\"'}, P.Header(2, 'h')}"
@@ -427,8 +449,13 @@ KNOWN = (
 )
 
 
-def filter_source(probes):
-    lines = [HELPER, "local function run(document)"]
+def filter_source(name, probes):
+    lines = [HELPER]
+    if name == "convert-write-odt":
+        lines.append(ODT_CONTENT)
+    if name == "convert-write-fodt":
+        lines.append(FODT_BODY)
+    lines.append("local function run(document)")
     for label, body in probes:
         lines.append(f"  probe({lua_string(label)}, function() {body} end)")
     lines.append("end")
@@ -446,7 +473,7 @@ def main():
     for name, text in DOCS.items():
         parts.append(f"@@@ doc {name}\n{text}\n")
     for name, probes in GROUPS.items():
-        parts.append(f"@@@ filter {name} empty small\n{filter_source(probes)}\n")
+        parts.append(f"@@@ filter {name} empty small\n{filter_source(name, probes)}\n")
     with open(OUTPUT, "w", encoding="utf-8") as handle:
         handle.write("".join(parts))
     print(f"{len(GROUPS)} filters, {sum(len(p) for p in GROUPS.values())} probes")

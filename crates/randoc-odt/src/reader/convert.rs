@@ -5,9 +5,7 @@
 
 use std::collections::HashMap;
 
-use randoc_archive::media::{
-    base64_decode, image_size_and_mime, is_safe_media_path, sanitize_media_path,
-};
+use randoc_archive::media::{base64_decode, image_size_and_mime, is_safe_media_path};
 use randoc_archive::xml::{self, XmlElement, XmlLimits, XmlNode, XmlOptions};
 use randoc_archive::zip::Archive;
 use randoc_ast::{
@@ -37,9 +35,9 @@ pub fn convert_office_text(
             .limits
             .max_input_size
             .min(context.limits.max_resource_size)
-            .min(10_000_000),
+            .min(1_000_000),
     )
-    .unwrap_or(10_000_000);
+    .unwrap_or(1_000_000);
 
     let mut conv = Converter {
         styles,
@@ -99,7 +97,7 @@ struct Converter<'a, 'b> {
 /// (table caption attachment, blockquote merging, preformatted codeblock merging).
 enum RawBlock {
     Block(Block),
-    /// A paragraph that came from a style inheriting from `Caption` (may attach to an adjacent table).
+    /// A paragraph with the `Table` style that can attach to an adjacent table.
     CaptionCandidate(Vec<Inline>, bool),
     /// A preformatted code line paragraph.
     CodeLine(String),
@@ -235,8 +233,7 @@ impl<'a, 'b> Converter<'a, 'b> {
             let level = el
                 .attr(TEXT, "outline-level")
                 .and_then(|s| s.trim().parse::<i64>().ok())
-                .unwrap_or(1)
-                .clamp(1, 6);
+                .unwrap_or(1);
             let inlines = self.convert_inlines(el, depth + 1)?;
             let id = self.make_heading_id(&inlines);
             out.push(RawBlock::Block(Block::Header(
@@ -274,14 +271,12 @@ impl<'a, 'b> Converter<'a, 'b> {
         out: &mut Vec<RawBlock>,
     ) -> Result<()> {
         let style_name = el.attr(TEXT, "style-name");
-
-        // Hidden paragraph style -> skip.
-        if style_name.is_some_and(|sn| self.styles.is_hidden(sn)) {
-            return Ok(());
-        }
+        let flags = style_name
+            .map(|name| self.styles.paragraph_flags(name))
+            .unwrap_or_default();
 
         // Preformatted code block paragraph.
-        if style_name.is_some_and(|sn| self.styles.is_preformatted(sn)) {
+        if flags.preformatted {
             let line = self.extract_code_text(el, depth + 1)?;
             out.push(RawBlock::CodeLine(line));
             return Ok(());
@@ -299,9 +294,9 @@ impl<'a, 'b> Converter<'a, 'b> {
             .unwrap_or_default();
         inlines = apply_text_props(inlines, props);
 
-        if style_name.is_some_and(|sn| self.styles.is_blockquote(sn)) {
+        if flags.blockquote {
             out.push(RawBlock::QuotePara(inlines));
-        } else if style_name.is_some_and(|sn| self.styles.is_caption(sn)) {
+        } else if style_name == Some("Table") {
             let non_empty = !is_effectively_empty(&inlines);
             out.push(RawBlock::CaptionCandidate(inlines, non_empty));
         } else {
@@ -363,12 +358,12 @@ impl<'a, 'b> Converter<'a, 'b> {
         let Some(inner_frame) = inner_frame else {
             return Ok(None);
         };
-        let Some((img_attr, img_target)) = self.extract_frame_image(inner_frame, depth + 1)? else {
+        let Some(img) = inner_frame.child(DRAW, "image") else {
             return Ok(None);
         };
-        if after_nodes.is_empty() {
+        let Some((img_attr, img_target)) = self.extract_frame_image(inner_frame, img)? else {
             return Ok(None);
-        }
+        };
 
         // Convert all trailing caption nodes (for `Image` alt text) AND track
         // whether a `<text:sequence>` splits off a label prefix (like `"Abbildung 1: "`).
@@ -391,10 +386,6 @@ impl<'a, 'b> Converter<'a, 'b> {
             }
         }
         let full_alt = normalize_inlines(full_alt);
-        if full_alt.is_empty() {
-            return Ok(None);
-        }
-
         let caption_inlines = if let Some(post) = after_seq {
             let trimmed = strip_leading_caption_separator(normalize_inlines(post));
             if trimmed.is_empty() {
@@ -583,27 +574,12 @@ impl<'a, 'b> Converter<'a, 'b> {
 
     fn convert_table(&mut self, table_el: &XmlElement, depth: usize) -> Result<Table> {
         self.check_depth(depth)?;
-        let mut declared_cols: usize = 0;
         let mut head_rows: Vec<Row> = Vec::new();
         let mut body_rows: Vec<Row> = Vec::new();
         let mut max_row_cols: usize = 0;
 
         for child in table_el.elements() {
-            if is_el(child, TABLE, "table-column") {
-                let repeat = parse_repeat(child, "number-columns-repeated")?;
-                self.charge_table_cells(repeat)?;
-                declared_cols = declared_cols.saturating_add(repeat);
-            } else if is_el(child, TABLE, "table-columns")
-                || is_el(child, TABLE, "table-header-columns")
-            {
-                for col in child.elements() {
-                    if is_el(col, TABLE, "table-column") {
-                        let repeat = parse_repeat(col, "number-columns-repeated")?;
-                        self.charge_table_cells(repeat)?;
-                        declared_cols = declared_cols.saturating_add(repeat);
-                    }
-                }
-            } else if is_el(child, TABLE, "table-header-rows") {
+            if is_el(child, TABLE, "table-header-rows") {
                 for row_el in child.elements() {
                     if is_el(row_el, TABLE, "table-row") {
                         self.push_table_row(row_el, depth + 1, &mut head_rows, &mut max_row_cols)?;
@@ -620,13 +596,14 @@ impl<'a, 'b> Converter<'a, 'b> {
             }
         }
 
-        let num_cols = declared_cols.max(max_row_cols);
+        self.fit_table_rows(&mut head_rows, max_row_cols)?;
+        self.fit_table_rows(&mut body_rows, max_row_cols)?;
         let col_specs = vec![
             ColSpec {
                 align: Alignment::AlignDefault,
                 width: ColWidth::ColWidthDefault,
             };
-            num_cols
+            max_row_cols
         ];
 
         let bodies = vec![TableBody {
@@ -653,6 +630,47 @@ impl<'a, 'b> Converter<'a, 'b> {
         })
     }
 
+    // Fit the rows to the width calculated from their declared column spans.
+    // Count row spans within each section, with a limit at the last row.
+    fn fit_table_rows(&mut self, rows: &mut [Row], width: usize) -> Result<()> {
+        if rows.is_empty() {
+            return Ok(());
+        }
+        let mut occupied_until = vec![0; width];
+        let row_count = rows.len();
+        for (index, row) in rows.iter_mut().enumerate() {
+            let mut cells = std::mem::take(&mut row.cells).into_iter();
+            let mut column = 0;
+            while column < width {
+                if occupied_until[column] > index {
+                    self.charge_table_cells(1)?;
+                    column += 1;
+                    continue;
+                }
+                let mut cell = if let Some(cell) = cells.next() {
+                    cell
+                } else {
+                    self.charge_table_cells(1)?;
+                    Cell::default()
+                };
+                let wanted = usize::try_from(cell.col_span).unwrap_or(usize::MAX);
+                let free = occupied_until[column..]
+                    .iter()
+                    .take(wanted)
+                    .take_while(|&&end| end <= index)
+                    .count();
+                let rows_left = i64::try_from(row_count - index).unwrap_or(i64::MAX);
+                cell.row_span = cell.row_span.clamp(1, rows_left);
+                cell.col_span = i64::try_from(free).unwrap_or(i64::MAX);
+                let end = column + free;
+                occupied_until[column..end].fill(index + cell.row_span as usize);
+                row.cells.push(cell);
+                column = end;
+            }
+        }
+        Ok(())
+    }
+
     fn push_table_row(
         &mut self,
         row_el: &XmlElement,
@@ -660,7 +678,8 @@ impl<'a, 'b> Converter<'a, 'b> {
         dest: &mut Vec<Row>,
         max_row_cols: &mut usize,
     ) -> Result<()> {
-        let row_repeat = parse_repeat(row_el, "number-rows-repeated")?;
+        let row_repeat = usize::try_from(table_count(row_el, "number-rows-repeated").max(1))
+            .unwrap_or(usize::MAX);
         if row_repeat > self.context.limits.max_table_cells {
             return Err(Error::Parse(format!(
                 "ODT table row repeat {row_repeat} exceeds limit of {}",
@@ -684,16 +703,17 @@ impl<'a, 'b> Converter<'a, 'b> {
     fn convert_table_row(&mut self, row_el: &XmlElement, depth: usize) -> Result<(Row, usize)> {
         self.check_depth(depth)?;
         let mut cells: Vec<Cell> = Vec::new();
-        let mut col_sum: usize = 0;
+        let mut col_sum: i64 = 0;
 
         for child in row_el.elements() {
             if is_el(child, TABLE, "table-cell") {
-                let col_repeat = parse_repeat(child, "number-columns-repeated")?;
-                let col_span = parse_positive_usize(child, TABLE, "number-columns-spanned")?;
-                let row_span = parse_positive_usize(child, TABLE, "number-rows-spanned")?;
-                let span_cost = col_repeat.saturating_mul(col_span).saturating_mul(row_span);
+                let repeat = table_count(child, "number-columns-repeated").max(1);
+                let col_repeat = usize::try_from(repeat).unwrap_or(usize::MAX);
+                let col_span = table_count(child, "number-columns-spanned");
+                let span_cost = col_repeat
+                    .saturating_mul(usize::try_from(col_span.max(1)).unwrap_or(usize::MAX));
                 self.charge_table_cells(span_cost)?;
-                col_sum = col_sum.saturating_add(col_repeat.saturating_mul(col_span));
+                col_sum = col_sum.saturating_add(repeat.saturating_mul(col_span));
 
                 let mut blocks = self.with_repeat(col_repeat, |converter| {
                     converter.convert_blocks(child, depth + 1)
@@ -708,17 +728,14 @@ impl<'a, 'b> Converter<'a, 'b> {
                 let cell = Cell {
                     attr: Attr::default(),
                     align: Alignment::AlignDefault,
-                    row_span: i64::try_from(row_span).unwrap_or(1),
-                    col_span: i64::try_from(col_span).unwrap_or(1),
+                    row_span: table_count(child, "number-rows-spanned"),
+                    col_span: col_span.max(1),
                     content: blocks,
                 };
                 for _ in 1..col_repeat {
                     cells.push(cell.clone());
                 }
                 cells.push(cell);
-            } else if is_el(child, TABLE, "covered-table-cell") {
-                let col_repeat = parse_repeat(child, "number-columns-repeated")?;
-                self.charge_table_cells(col_repeat)?;
             }
         }
         Ok((
@@ -726,7 +743,7 @@ impl<'a, 'b> Converter<'a, 'b> {
                 attr: Attr::default(),
                 cells,
             },
-            col_sum,
+            usize::try_from(col_sum.max(0)).unwrap_or(usize::MAX),
         ))
     }
 
@@ -763,32 +780,28 @@ impl<'a, 'b> Converter<'a, 'b> {
 
         if is_el(el, TEXT, "span") {
             let style_name = el.attr(TEXT, "style-name");
-            if style_name.is_some_and(|sn| self.styles.is_hidden(sn)) {
-                return Ok(());
-            }
             if style_name.is_some_and(|sn| self.styles.is_inline_code(sn)) {
                 let code_text = self.extract_code_text(el, depth + 1)?;
                 out.push(Inline::Code(Attr::default(), code_text));
                 return Ok(());
             }
-            let inner = self.convert_inlines_raw(el, depth + 1)?;
             let props = style_name
                 .map(|sn| self.styles.direct_text_props(sn))
                 .unwrap_or_default();
             if has_any_text_prop(props) {
-                let wrapped = apply_text_props(normalize_inlines(inner), props);
-                out.extend(wrapped);
+                let inner = self.convert_inlines(el, depth + 1)?;
+                out.extend(apply_text_props(inner, props));
             } else {
-                out.extend(inner);
+                self.convert_inline_children(el, depth + 1, out)?;
             }
         } else if is_el(el, TEXT, "s") {
-            let count = el
-                .attr(TEXT, "c")
-                .and_then(|s| s.trim().parse::<usize>().ok())
-                .unwrap_or(1);
+            let count = space_count(el);
             self.charge_spaces(count)?;
-            for _ in 0..count {
-                out.push(Inline::Space);
+            if count > 0 {
+                if matches!(out.last(), Some(Inline::Space)) {
+                    out.pop();
+                }
+                out.extend(std::iter::repeat_n(Inline::Space, count));
             }
         } else if is_el(el, TEXT, "tab") {
             // Multiple consecutive tabs/spaces collapse to one Space (verified in `tab.native`).
@@ -902,31 +915,33 @@ impl<'a, 'b> Converter<'a, 'b> {
             {
                 return Ok(());
             }
-            let inner = self.convert_inlines_raw(el, depth + 1)?;
-            out.extend(inner);
+            self.convert_inline_children(el, depth + 1, out)?;
         } else if el.name.ns.as_deref() == Some(DRAW) {
             // Shapes have no inline representation.
         } else {
             // Other inline wrappers: descend transparently.
-            let inner = self.convert_inlines_raw(el, depth + 1)?;
-            out.extend(inner);
+            self.convert_inline_children(el, depth + 1, out)?;
         }
         Ok(())
     }
 
     fn convert_inlines_raw(&mut self, parent: &XmlElement, depth: usize) -> Result<Vec<Inline>> {
-        self.check_depth(depth)?;
         let mut out = Vec::new();
-        for (index, node) in parent.children.iter().enumerate() {
-            self.convert_inline_node(node, depth + 1, &mut out)?;
-            if matches!(node, XmlNode::Text(_))
-                && matches!(parent.children.get(index + 1), Some(XmlNode::Element(next)) if is_el(next, TEXT, "s"))
-                && matches!(out.last(), Some(Inline::Space))
-            {
-                out.pop();
-            }
-        }
+        self.convert_inline_children(parent, depth, &mut out)?;
         Ok(out)
+    }
+
+    fn convert_inline_children(
+        &mut self,
+        parent: &XmlElement,
+        depth: usize,
+        out: &mut Vec<Inline>,
+    ) -> Result<()> {
+        self.check_depth(depth)?;
+        for node in &parent.children {
+            self.convert_inline_node(node, depth + 1, out)?;
+        }
+        Ok(())
     }
 
     fn convert_frame(
@@ -957,7 +972,9 @@ impl<'a, 'b> Converter<'a, 'b> {
         }
 
         // 2. Check for `<draw:image>`.
-        if let Some((attr, target)) = self.extract_frame_image(frame, depth + 1)? {
+        if let Some(img) = frame.child(DRAW, "image")
+            && let Some((attr, target)) = self.extract_frame_image(frame, img)?
+        {
             out.push(Inline::Image(attr, Vec::new(), target));
             return Ok(());
         }
@@ -1022,11 +1039,8 @@ impl<'a, 'b> Converter<'a, 'b> {
     fn extract_frame_image(
         &mut self,
         frame: &XmlElement,
-        _depth: usize,
+        img: &XmlElement,
     ) -> Result<Option<(Attr, Target)>> {
-        let Some(img) = frame.child(DRAW, "image") else {
-            return Ok(None);
-        };
         let mut kvs = Vec::new();
         if let Some(w) = frame.attr(SVG, "width") {
             kvs.push(("width".to_owned(), w.to_owned()));
@@ -1042,42 +1056,30 @@ impl<'a, 'b> Converter<'a, 'b> {
             })
             .unwrap_or_default();
 
-        // Inline base64 image in FODT (`<office:binary-data>`).
-        if let Some(bin_el) = img.child(OFFICE, "binary-data") {
-            let b64 = bin_el.all_text();
-            let max_bytes =
-                usize::try_from(self.context.limits.max_resource_size).unwrap_or(usize::MAX);
-            if (b64.len() / 4).saturating_mul(3) > max_bytes.saturating_add(3) {
-                return Err(Error::Parse(format!(
-                    "ODT inline image exceeds limit of {max_bytes} bytes"
-                )));
-            }
-            if let Some(bytes) = base64_decode(&b64) {
-                if bytes.len() > max_bytes {
-                    return Err(Error::Parse(format!(
-                        "ODT inline image exceeds limit of {max_bytes} bytes"
-                    )));
-                }
-                let (_, mime_opt) = image_size_and_mime(&bytes, None);
-                let mime = img
-                    .attr(DRAW, "mime-type")
-                    .or(mime_opt)
-                    .unwrap_or("application/octet-stream");
-                let ext = ext_for_mime(mime);
-                self.fodt_image_count += 1;
-                let path = format!("Pictures/image{}.{ext}", self.fodt_image_count);
-                self.context.media.insert(
-                    path.clone(),
-                    MediaItem {
-                        mime_type: mime.to_owned(),
-                        contents: bytes,
-                    },
-                );
-                return Ok(Some((
-                    Attr::new(String::new(), Vec::new(), kvs),
-                    Target { url: path, title },
-                )));
-            }
+        let max_bytes =
+            usize::try_from(self.context.limits.max_resource_size).unwrap_or(usize::MAX);
+        if let Some(bin_el) = img.child(OFFICE, "binary-data")
+            && let Some(bytes) = decode_inline_image(bin_el.all_text(), max_bytes)?
+        {
+            let (_, mime_opt) = image_size_and_mime(&bytes, None);
+            let mime = img
+                .attr(DRAW, "mime-type")
+                .or(mime_opt)
+                .unwrap_or("application/octet-stream");
+            let ext = ext_for_mime(mime);
+            self.fodt_image_count += 1;
+            let path = format!("Pictures/image{}.{ext}", self.fodt_image_count);
+            self.context.media.insert(
+                path.clone(),
+                MediaItem {
+                    mime_type: mime.to_owned(),
+                    contents: bytes,
+                },
+            );
+            return Ok(Some((
+                Attr::new(String::new(), Vec::new(), kvs),
+                Target { url: path, title },
+            )));
         }
 
         let Some(href) = img.attr(XLINK, "href") else {
@@ -1108,9 +1110,14 @@ impl<'a, 'b> Converter<'a, 'b> {
                     .attr(DRAW, "mime-type")
                     .or(mime_opt)
                     .unwrap_or("application/octet-stream");
-                let media_key = sanitize_media_path(entry_name, &bytes);
+                // The extractor hashes percent-encoded keys when it writes files.
+                let key = if entry_name.contains('%') {
+                    href
+                } else {
+                    entry_name
+                };
                 self.context.media.insert(
-                    media_key,
+                    key,
                     MediaItem {
                         mime_type: mime.to_owned(),
                         contents: bytes,
@@ -1139,10 +1146,7 @@ impl<'a, 'b> Converter<'a, 'b> {
                 }
                 XmlNode::Element(child) => {
                     if is_el(child, TEXT, "s") {
-                        let count = child
-                            .attr(TEXT, "c")
-                            .and_then(|s| s.trim().parse::<usize>().ok())
-                            .unwrap_or(1);
+                        let count = space_count(child);
                         self.charge_spaces(count)?;
                         for _ in 0..count {
                             out.push(' ');
@@ -1379,24 +1383,39 @@ fn strip_leading_caption_separator(inlines: Vec<Inline>) -> Vec<Inline> {
     iter.collect()
 }
 
-fn parse_repeat(el: &XmlElement, attr_name: &str) -> Result<usize> {
-    parse_positive_usize(el, TABLE, attr_name)
+fn decode_inline_image(mut encoded: String, max_bytes: usize) -> Result<Option<Vec<u8>>> {
+    let too_large = || {
+        Error::Parse(format!(
+            "ODT inline image exceeds limit of {max_bytes} bytes"
+        ))
+    };
+    encoded.retain(|ch| !ch.is_ascii_whitespace());
+    if (encoded.len() / 4).saturating_mul(3) > max_bytes.saturating_add(2) {
+        return Err(too_large());
+    }
+    let bytes = base64_decode(&encoded);
+    if bytes.as_ref().is_some_and(|bytes| bytes.len() > max_bytes) {
+        return Err(too_large());
+    }
+    Ok(bytes)
 }
 
-fn parse_positive_usize(el: &XmlElement, ns: &str, attr_name: &str) -> Result<usize> {
-    match el.attr(ns, attr_name) {
-        None => Ok(1),
-        Some(raw) => {
-            let trimmed = raw.trim();
-            match trimmed.parse::<usize>() {
-                Ok(0) => Ok(1),
-                Ok(n) => Ok(n),
-                Err(_) => Err(Error::Parse(format!(
-                    "Invalid ODT table attribute {attr_name}='{trimmed}'"
-                ))),
-            }
-        }
+fn space_count(el: &XmlElement) -> usize {
+    let count = el.attr(TEXT, "c").unwrap_or("1").trim();
+    match count.parse::<i64>() {
+        Ok(count) => count.clamp(0, 1_000) as usize,
+        Err(error) => match error.kind() {
+            std::num::IntErrorKind::PosOverflow => 1_000,
+            std::num::IntErrorKind::NegOverflow => 0,
+            _ => 1,
+        },
     }
+}
+
+fn table_count(el: &XmlElement, attr_name: &str) -> i64 {
+    el.attr(TABLE, attr_name)
+        .and_then(|raw| raw.trim().parse().ok())
+        .unwrap_or(1)
 }
 
 fn ext_for_mime(mime: &str) -> &'static str {
@@ -1409,5 +1428,23 @@ fn ext_for_mime(mime: &str) -> &'static str {
         "image/bmp" => "bmp",
         "image/tiff" => "tiff",
         _ => "bin",
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn inline_image_size_limit_uses_decoded_bytes() {
+        let encoded = "  Y  W J   j \n".repeat(4);
+        assert_eq!(
+            decode_inline_image(encoded.clone(), 12),
+            Ok(Some(b"abcabcabcabc".to_vec()))
+        );
+        assert!(matches!(
+            decode_inline_image(encoded, 11),
+            Err(Error::Parse(_))
+        ));
     }
 }

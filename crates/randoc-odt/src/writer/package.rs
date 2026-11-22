@@ -1,14 +1,15 @@
 use std::borrow::Cow;
 use std::collections::{BTreeMap, BTreeSet, HashSet};
 use std::fmt::Write;
-use std::path::{Component, Path, PathBuf};
+use std::path::Path;
 
 use randoc_archive::media::{
-    base64_encode, image_size_and_mime, is_safe_media_path, mime_from_extension,
+    base64_encode, decode_data_uri, image_size_and_mime, is_safe_media_path, mime_from_extension,
 };
 use randoc_archive::xml::{self, XmlDoc, XmlLimits, XmlNode, XmlOptions};
 use randoc_archive::zip::{Archive, ArchiveError, ArchiveLimits, ArchiveWriter};
 use randoc_ast::{Attr, Inline, MathType, Meta, MetaValue, Pandoc, Target};
+use randoc_citeproc::{Lang, parse_lang};
 use randoc_core::shared::stringify;
 use randoc_core::{Context, Error, LogMessage, Result, WriterOptions};
 use randoc_highlight::{Style, TokenType};
@@ -22,97 +23,6 @@ const MIME: &str = "application/vnd.oasis.opendocument.text";
 const FORMULA_MIME: &str = "application/vnd.oasis.opendocument.formula";
 const XML: &str = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
 const MANIFEST_FILE: &str = "META-INF/manifest.xml";
-
-#[derive(Default)]
-pub(super) struct RelativeLinks {
-    cwd: PathBuf,
-    output_dir: Option<PathBuf>,
-}
-
-impl RelativeLinks {
-    pub(super) fn new(format: Format, context: &mut Context) -> Self {
-        if format != Format::Odt {
-            return Self::default();
-        }
-        let Some(output) = context
-            .state
-            .output_file
-            .as_deref()
-            .and_then(|path| Path::new(path).parent())
-            .map(Path::to_owned)
-        else {
-            return Self::default();
-        };
-        if output.as_os_str().is_empty() {
-            return Self::default();
-        }
-        let Ok(cwd) = context.host().working_directory() else {
-            return Self::default();
-        };
-        let cwd = PathBuf::from(cwd);
-        let output_dir = normalize_path(&cwd.join(output));
-        Self {
-            cwd,
-            output_dir: Some(output_dir),
-        }
-    }
-
-    pub(super) fn resolve<'a>(&self, url: &'a str) -> Cow<'a, str> {
-        let Some(output) = &self.output_dir else {
-            return Cow::Borrowed(url);
-        };
-        if url.is_empty()
-            || url.starts_with(['#', '?', '/'])
-            || url
-                .split('/')
-                .next()
-                .is_some_and(|prefix| prefix.contains(':'))
-        {
-            return Cow::Borrowed(url);
-        }
-        let suffix_start = url.find(['#', '?']).unwrap_or(url.len());
-        let (path, suffix) = url.split_at(suffix_start);
-        let path = normalize_path(&self.cwd.join(path));
-        let common = output
-            .components()
-            .zip(path.components())
-            .take_while(|(left, right)| left == right)
-            .count();
-        if common == 0 {
-            return Cow::Borrowed(url);
-        }
-        let mut relative = PathBuf::new();
-        for _ in output.components().skip(common) {
-            relative.push("..");
-        }
-        for component in path.components().skip(common) {
-            relative.push(component);
-        }
-        let mut relative = relative.to_string_lossy().into_owned();
-        if relative.is_empty() {
-            relative.push('.');
-        }
-        if url.ends_with('/') {
-            relative.push('/');
-        }
-        relative.push_str(suffix);
-        Cow::Owned(relative)
-    }
-}
-
-fn normalize_path(path: &Path) -> PathBuf {
-    let mut normalized = PathBuf::new();
-    for component in path.components() {
-        match component {
-            Component::CurDir => {}
-            Component::ParentDir => {
-                normalized.pop();
-            }
-            other => normalized.push(other),
-        }
-    }
-    normalized
-}
 
 #[derive(Default)]
 pub(super) struct Resources {
@@ -167,7 +77,8 @@ pub(super) fn write_odt(
         ns::META,
         metadata(&doc.meta, stamp)
     );
-    let styles = styles_xml(reference, options, &resources, context)?;
+    let lang = document_language(&doc.meta, context);
+    let styles = styles_xml(reference, options, &resources, lang.as_ref(), context)?;
     if !resources.parts.contains_key("manifest.rdf") {
         let rdf = concat!(
             "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" ",
@@ -190,9 +101,13 @@ pub(super) fn write_odt(
             .saturating_add(meta.len()),
         5,
     )?;
-    resources.insert("content.xml".into(), "text/xml", content.into_bytes());
-    resources.insert("styles.xml".into(), "text/xml", styles.into_bytes());
-    resources.insert("meta.xml".into(), "text/xml", meta.into_bytes());
+    resources.insert(
+        "content.xml".into(),
+        "application/xml",
+        content.into_bytes(),
+    );
+    resources.insert("styles.xml".into(), "application/xml", styles.into_bytes());
+    resources.insert("meta.xml".into(), "application/xml", meta.into_bytes());
     let manifest = manifest(&resources);
     resources.charge(context, manifest.len().saturating_add(MIME.len()), 2)?;
 
@@ -218,7 +133,8 @@ pub(super) fn write_fodt(
 ) -> Result<String> {
     let (reference, resources) = reference(options, context, false)?;
     let (content, resources) = render(doc, options, context, Format::Fodt, resources)?;
-    let styles = styles_xml(reference, options, &resources, context)?;
+    let lang = document_language(&doc.meta, context);
+    let styles = styles_xml(reference, options, &resources, lang.as_ref(), context)?;
     let mut content = parse_xml(&content, "content.xml", context)?.root;
     if !is_el(&content, OFFICE, "document-content") && !is_el(&content, OFFICE, "document") {
         return Err(Error::App(
@@ -358,15 +274,20 @@ fn reference(
     let data_dir = context.state.user_data_dir.clone();
     let candidate = data_dir.as_ref().map(|dir| format!("{dir}/reference.odt"));
     let explicit = options.reference_doc.as_deref();
-    let path = explicit.or_else(|| candidate.as_deref().filter(|path| is_file(context, path)));
+    let path = if let Some(name) = explicit {
+        Some(reference_path(name, context)?)
+    } else {
+        candidate.filter(|path| is_file(context, path))
+    };
     let mut resources = Resources::default();
-    let limit = usize::try_from(context.limits.max_input_size).unwrap_or(usize::MAX);
+    let limit = usize::try_from(context.limits.max_resource_size).unwrap_or(usize::MAX);
     if let Some(path) = path {
-        let input = context.read_file_limited(path, limit)?;
-        let mut archive = Archive::open(&input, ArchiveLimits::from_limits(&context.limits))
-            .map_err(|error| {
-                Error::Parse(format!("Could not parse reference-doc {path:?}: {error}"))
-            })?;
+        let input = context.read_file_limited(&path, limit)?;
+        let mut limits = ArchiveLimits::from_limits(&context.limits);
+        limits.max_input = context.limits.max_resource_size;
+        let mut archive = Archive::open(&input, limits).map_err(|error| {
+            Error::Parse(format!("Could not parse reference-doc {path:?}: {error}"))
+        })?;
         let styles = archive.read("styles.xml").map_err(zip_error)?;
         if copy_parts {
             let names: Vec<_> = archive
@@ -386,7 +307,6 @@ fn reference(
     }
     let mut styles = None;
     if let Some(dir) = data_dir {
-        let limit = usize::try_from(context.limits.max_resource_size).unwrap_or(usize::MAX);
         let path = format!("{dir}/odt/styles.xml");
         if is_file(context, &path) {
             styles = Some(context.read_file_limited(&path, limit)?);
@@ -405,6 +325,23 @@ fn reference(
     Ok((styles, resources))
 }
 
+fn reference_path(name: &str, context: &mut Context) -> Result<String> {
+    if Path::new(name).is_absolute() {
+        return Ok(name.to_owned());
+    }
+    for dir in context.state.resource_path.clone() {
+        let path = if dir == "." {
+            name.to_owned()
+        } else {
+            Path::new(&dir).join(name).to_string_lossy().into_owned()
+        };
+        if is_file(context, &path) {
+            return Ok(path);
+        }
+    }
+    Err(Error::ResourceNotFound(name.to_owned()))
+}
+
 fn reserved_part(path: &str) -> bool {
     matches!(
         path,
@@ -421,7 +358,7 @@ fn is_file(context: &mut Context, path: &str) -> bool {
 
 fn part_type(path: &str) -> &'static str {
     if path.ends_with(".xml") {
-        "text/xml"
+        "application/xml"
     } else if path.ends_with(".rdf") {
         "application/rdf+xml"
     } else {
@@ -456,10 +393,41 @@ fn manifest(resources: &Resources) -> String {
     out
 }
 
+fn document_language(meta: &Meta, context: &mut Context) -> Option<Lang> {
+    let value = meta.0.get("lang").and_then(meta_text)?;
+    match parse_lang(&value) {
+        Ok(lang) => Some(lang),
+        Err(_) => {
+            context.report(LogMessage::InvalidLang(value));
+            None
+        }
+    }
+}
+
+fn localize_styles(element: &mut xml::XmlElement, lang: &Lang) {
+    if is_el(element, STYLE, "text-properties") {
+        for (name, value) in &mut element.attrs {
+            if name.ns.as_deref() == Some(ns::FO) {
+                match name.local.as_str() {
+                    "language" => value.clone_from(&lang.language),
+                    "country" => value.replace_range(.., lang.region.as_deref().unwrap_or("")),
+                    _ => {}
+                }
+            }
+        }
+    }
+    for child in &mut element.children {
+        if let XmlNode::Element(child) = child {
+            localize_styles(child, lang);
+        }
+    }
+}
+
 fn styles_xml(
     reference: Option<Vec<u8>>,
     options: &WriterOptions,
     resources: &Resources,
+    lang: Option<&Lang>,
     context: &Context,
 ) -> Result<String> {
     let reference = reference
@@ -472,7 +440,9 @@ fn styles_xml(
     let additions = extra_styles(options, resources);
     if let Some(reference) = reference {
         let mut root = parse_xml(&reference, "styles.xml", context)?.root;
-        if additions.is_empty() {
+        if let Some(lang) = lang {
+            localize_styles(&mut root, lang);
+        } else if additions.is_empty() {
             return Ok(reference);
         }
         let index =
@@ -515,7 +485,7 @@ fn styles_xml(
         return Ok(out);
     }
 
-    let mut out = default_styles();
+    let mut out = default_styles(lang);
     for (_, style) in additions {
         out.push_str(&style);
     }
@@ -523,13 +493,24 @@ fn styles_xml(
     Ok(out)
 }
 
-fn default_styles() -> String {
+fn default_styles(lang: Option<&Lang>) -> String {
     let mut out = format!(
         "{XML}<office:document-styles xmlns:office=\"{OFFICE}\" xmlns:style=\"{STYLE}\" xmlns:text=\"{}\" xmlns:fo=\"{}\" xmlns:svg=\"{}\" office:version=\"1.3\"><office:font-face-decls><style:font-face style:name=\"Courier New\" svg:font-family=\"'Courier New'\" style:font-pitch=\"fixed\" /></office:font-face-decls><office:styles>",
         ns::TEXT,
         ns::FO,
         ns::SVG
     );
+    let language = lang.map_or_else(String::new, |lang| attribute("fo:language", &lang.language));
+    let mut locale = language.clone();
+    if let Some(region) = lang.and_then(|lang| lang.region.as_deref()) {
+        locale.push_str(&attribute("fo:country", region));
+    }
+    if lang.is_some() {
+        let _ = write!(
+            out,
+            "<style:default-style style:family=\"paragraph\"><style:text-properties{locale} /></style:default-style>"
+        );
+    }
     for (name, props) in [
         ("Emphasis", "fo:font-style=\"italic\""),
         ("Strong_20_Emphasis", "fo:font-weight=\"bold\""),
@@ -544,9 +525,14 @@ fn default_styles() -> String {
         ),
         ("Numbering_20_Symbols", ""),
     ] {
+        let lang = if name == "Source_20_Text" {
+            language.as_str()
+        } else {
+            ""
+        };
         let _ = write!(
             out,
-            "<style:style style:name=\"{name}\" style:family=\"text\"><style:text-properties {props}/></style:style>"
+            "<style:style style:name=\"{name}\" style:family=\"text\"><style:text-properties {props}{lang}/></style:style>"
         );
     }
     for name in [
@@ -800,12 +786,12 @@ impl Renderer<'_> {
             )?;
             self.resources.insert(
                 format!("{path}/content.xml"),
-                "text/xml",
+                "application/xml",
                 content.into_bytes(),
             );
             self.resources.insert(
                 format!("{path}/settings.xml"),
-                "text/xml",
+                "application/xml",
                 settings.into_bytes(),
             );
             self.resources.next_index = index + 2;
@@ -819,6 +805,30 @@ impl Renderer<'_> {
         )))
     }
 
+    pub(super) fn href<'a>(&self, url: &'a str) -> Cow<'a, str> {
+        if self.format != Format::Odt {
+            return Cow::Borrowed(url);
+        }
+        let path = url.split(['?', '#']).next().unwrap_or_default();
+        if path.is_empty()
+            || path
+                .split('/')
+                .next()
+                .is_some_and(|part| part.contains(':'))
+            || !valid_uri_reference(url)
+        {
+            return Cow::Borrowed(url);
+        }
+        let prefix = path.strip_prefix("//").map_or(0, |rest| {
+            rest.find('/').map_or(path.len(), |index| index + 2)
+        });
+        if prefix == path.len() {
+            return Cow::Borrowed(url);
+        }
+        let (authority, rest) = url.split_at(prefix);
+        Cow::Owned(format!("{authority}../{rest}"))
+    }
+
     pub(super) fn image(
         &mut self,
         attr: &Attr,
@@ -829,7 +839,7 @@ impl Renderer<'_> {
         self.image_count += 1;
         let mut width = attr.get("width").map(str::to_owned);
         let mut height = attr.get("height").map(str::to_owned);
-        let mut reference = self.links.resolve(&target.url).into_owned();
+        let mut reference = self.href(&target.url).into_owned();
         let mut embedded = None;
         if self.format != Format::Fragment {
             match fetch(self.context, &target.url) {
@@ -841,9 +851,7 @@ impl Renderer<'_> {
                         .unwrap_or_else(|| "application/octet-stream".into());
                     if let Some((w, h)) = size.filter(|&(w, h)| w > 0 && h > 0) {
                         let ratio = f64::from(w) / f64::from(h);
-                        let default_dpi = self.options.dpi.max(1) as f64;
-                        let (x_dpi, y_dpi) =
-                            image_density(&bytes).unwrap_or((default_dpi, default_dpi));
+                        let (x_dpi, y_dpi) = image_density(&bytes).unwrap_or((72.0, 72.0));
                         match (&width, &height) {
                             (None, None) => {
                                 width = Some(format!(
@@ -915,15 +923,24 @@ impl Renderer<'_> {
         if let Some(height) = height {
             attrs.push_str(&attribute("svg:height", &height));
         }
-        let description = if alt.is_empty() || self.format == Format::Fragment {
-            String::new()
-        } else {
-            format!("<svg:desc>{}</svg:desc>", escaped(&stringify(alt)))
-        };
-        Ok(text(format!(
-            "<draw:frame {attrs}>{image}{description}</draw:frame>"
-        )))
+        Ok(text(format!("<draw:frame {attrs}>{image}</draw:frame>")))
     }
+}
+
+fn valid_uri_reference(url: &str) -> bool {
+    let mut bytes = url.bytes();
+    while let Some(byte) = bytes.next() {
+        if byte == b'%' {
+            if !bytes.next().is_some_and(|b| b.is_ascii_hexdigit())
+                || !bytes.next().is_some_and(|b| b.is_ascii_hexdigit())
+            {
+                return false;
+            }
+        } else if !byte.is_ascii_alphanumeric() && !b"-._~:/?#[]@!$&'()*+,;=".contains(&byte) {
+            return false;
+        }
+    }
+    true
 }
 
 fn image_density(bytes: &[u8]) -> Option<(f64, f64)> {
@@ -1019,6 +1036,10 @@ fn fetch(context: &mut Context, url: &str) -> Option<(Vec<u8>, Option<String>)> 
     if let Some(item) = context.media.get(url) {
         return (item.contents.len() as u64 <= max)
             .then(|| (item.contents.clone(), Some(item.mime_type.clone())));
+    }
+    if url.starts_with("data:") {
+        let (mime, bytes) = decode_data_uri(url, max)?;
+        return Some((bytes, Some(mime)));
     }
     if url.starts_with("https://") || url.starts_with("http://") {
         let headers = context.state.request_headers.clone();
@@ -1119,6 +1140,160 @@ mod tests {
                 Some(&gif)
             );
         }
+        Ok(())
+    }
+    fn xml_part(archive: &mut Archive<'_>, name: &str) -> Result<String> {
+        let bytes = archive
+            .read(name)
+            .map_err(zip_error)?
+            .ok_or_else(|| Error::App(format!("Missing {name}")))?;
+        String::from_utf8(bytes).map_err(|error| Error::App(error.to_string()))
+    }
+
+    #[test]
+    fn odt_prefixes_relative_links_at_every_output_path() -> Result<()> {
+        let links = [
+            ("file.txt", "../file.txt"),
+            ("./file.txt", ".././file.txt"),
+            ("../file.txt", "../../file.txt"),
+            ("/file.txt", "..//file.txt"),
+            ("https://example.org/file", "https://example.org/file"),
+            ("#section", "#section"),
+            ("?query", "?query"),
+        ];
+        let doc = Pandoc {
+            blocks: vec![Block::Para(
+                links
+                    .iter()
+                    .map(|(href, _)| {
+                        Inline::Link(
+                            Attr::default(),
+                            vec![Inline::Str("link".into())],
+                            Target::new(*href, ""),
+                        )
+                    })
+                    .collect(),
+            )],
+            ..Pandoc::default()
+        };
+        for output in [None, Some("out.odt"), Some("a/b/out.odt")] {
+            let mut context = Context::pure();
+            context.state.output_file = output.map(str::to_owned);
+            let odt = write_odt(&doc, &WriterOptions::default(), &mut context)?;
+            let mut zip = Archive::open(&odt, ArchiveLimits::default()).map_err(zip_error)?;
+            let content = xml_part(&mut zip, "content.xml")?;
+            for (_, expected) in links {
+                assert!(
+                    content.contains(&format!("xlink:href=\"{expected}\"")),
+                    "{content}"
+                );
+            }
+        }
+        let fodt = write_fodt(&doc, &WriterOptions::default(), &mut Context::pure())?;
+        for (expected, _) in links {
+            assert!(
+                fodt.contains(&format!("xlink:href=\"{expected}\"")),
+                "{fodt}"
+            );
+        }
+        Ok(())
+    }
+
+    #[test]
+    fn data_uri_images_use_intrinsic_size_without_description() -> Result<()> {
+        // A 20-by-10 PNG header with no density chunk.
+        let png = b"\x89PNG\r\n\x1a\n\0\0\0\x0dIHDR\0\0\0\x14\0\0\0\x0a";
+        let data = format!(
+            "data:image/png;base64,{}",
+            base64_encode(png).replace('/', "%2F")
+        );
+        let doc = Pandoc {
+            blocks: vec![Block::Para(vec![Inline::Image(
+                Attr::default(),
+                vec![Inline::Str("Alt text".into())],
+                Target::new(data, ""),
+            )])],
+            ..Pandoc::default()
+        };
+        let mut options = WriterOptions::default();
+        options.dpi = 300;
+        let mut context = Context::pure();
+        let odt = write_odt(&doc, &options, &mut context)?;
+        let mut zip = Archive::open(&odt, ArchiveLimits::default()).map_err(zip_error)?;
+        assert_eq!(
+            zip.read("Pictures/0.png").map_err(zip_error)?.as_deref(),
+            Some(png.as_slice())
+        );
+        let content = xml_part(&mut zip, "content.xml")?;
+        let fodt = write_fodt(&doc, &options, &mut context)?;
+        assert!(content.contains("xlink:href=\"Pictures/0.png\""));
+        assert!(fodt.contains("<office:binary-data>"));
+        for xml in [content, fodt] {
+            assert!(xml.contains("svg:width=\"20.0pt\" svg:height=\"10.0pt\""));
+            assert!(!xml.contains("<svg:desc"));
+        }
+        Ok(())
+    }
+
+    #[test]
+    fn manifest_uses_application_xml_and_styles_use_document_language() -> Result<()> {
+        let mut doc = Pandoc::default();
+        doc.meta
+            .0
+            .insert("lang".into(), MetaValue::MetaString("de-DE".into()));
+        let mut context = Context::pure();
+        let odt = write_odt(&doc, &WriterOptions::default(), &mut context)?;
+        let mut zip = Archive::open(&odt, ArchiveLimits::default()).map_err(zip_error)?;
+        let manifest = xml_part(&mut zip, MANIFEST_FILE)?;
+        for part in ["styles.xml", "content.xml", "meta.xml"] {
+            assert!(manifest.contains(&format!(
+                r#"manifest:media-type="application/xml" manifest:full-path="{part}""#
+            )));
+        }
+        let styles = xml_part(&mut zip, "styles.xml")?;
+        let fodt = write_fodt(&doc, &WriterOptions::default(), &mut context)?;
+        for xml in [styles, fodt] {
+            assert!(xml.contains(r#"fo:language="de" fo:country="DE""#));
+        }
+        Ok(())
+    }
+
+    #[test]
+    fn reference_documents_use_resource_lookup_and_size_limit() -> Result<()> {
+        let doc = Pandoc::default();
+        let mut options = WriterOptions::default();
+        options.reference_doc = Some("reference.odt".into());
+        let err = write_odt(&doc, &options, &mut Context::pure());
+        assert!(matches!(err, Err(Error::ResourceNotFound(name)) if name == "reference.odt"));
+
+        let styles = format!(
+            r#"<office:document-styles xmlns:office="{OFFICE}" xmlns:style="{STYLE}" xmlns:fo="{}"><office:styles><style:default-style style:family="paragraph"><style:text-properties fo:language="fr" fo:country="CA" /></style:default-style></office:styles></office:document-styles>"#,
+            ns::FO
+        );
+        let mut zip = ArchiveWriter::new();
+        zip.write_stored("styles.xml", styles.as_bytes())
+            .map_err(zip_error)?;
+        let reference = zip.finish().map_err(zip_error)?;
+        let size = reference.len() as u64;
+        let mut host = PureHost::default();
+        host.files
+            .insert("resources/reference.odt".into(), reference);
+        let mut context = Context::new(Box::new(host));
+        context.state.resource_path = vec!["resources".into()];
+        context.limits.max_input_size = 1;
+        let mut doc = doc;
+        doc.meta
+            .0
+            .insert("lang".into(), MetaValue::MetaString("de-DE".into()));
+        let odt = write_odt(&doc, &options, &mut context)?;
+        let mut zip = Archive::open(&odt, ArchiveLimits::default()).map_err(zip_error)?;
+        assert!(xml_part(&mut zip, "styles.xml")?.contains(r#"fo:language="de" fo:country="DE""#));
+        context.limits.max_input_size = size;
+        context.limits.max_resource_size = size - 1;
+        assert!(matches!(
+            write_odt(&doc, &options, &mut context),
+            Err(Error::Io(_))
+        ));
         Ok(())
     }
 }

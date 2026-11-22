@@ -12,9 +12,11 @@
 #![allow(clippy::panic, clippy::unwrap_used)]
 
 use std::collections::HashMap;
+use std::sync::Arc;
 
-use randoc_ast::json;
-use randoc_core::{Context, Output, Reader, ReaderOptions, Source, Sources};
+use randoc_archive::zip::{Archive, ArchiveLimits};
+use randoc_ast::{Block, Pandoc, json};
+use randoc_core::{BinaryReader, Context, Error, Output, Reader, ReaderOptions, Source, Sources};
 use randoc_lua::{FilterEnvironment, LuaFilter, Mode, RuntimeLimits, apply_filter};
 
 const HEADER: &str = "@@@ ";
@@ -114,9 +116,40 @@ fn each_probe_of_the_system_matrix_gives_the_result_of_the_oracle() {
     );
 }
 
+// The oracle uses pandoc.zip. The replay uses the archive reader directly
+// until Randoc exposes the same Lua module.
+struct OdtContentXml;
+
+impl BinaryReader for OdtContentXml {
+    fn read(
+        &self,
+        bytes: &[u8],
+        _: &ReaderOptions,
+        context: &mut Context,
+    ) -> randoc_core::Result<Pandoc> {
+        let mut archive = Archive::open(bytes, ArchiveLimits::from_limits(&context.limits))
+            .map_err(|error| Error::Parse(error.to_string()))?;
+        let bytes = archive
+            .read("content.xml")
+            .map_err(|error| Error::Parse(error.to_string()))?
+            .ok_or_else(|| Error::Parse("Missing content.xml".into()))?;
+        let content = String::from_utf8(bytes).map_err(|error| Error::Parse(error.to_string()))?;
+        Ok(Pandoc {
+            blocks: vec![Block::CodeBlock(Default::default(), content)],
+            ..Pandoc::default()
+        })
+    }
+}
+
 /// The lookups of the program, as the command line gives them.
 fn with_registry(environment: &mut FilterEnvironment) {
-    environment.readers = randoc::formats::reader;
+    environment.readers = |name| {
+        if name == "odtcontentxml" {
+            Some(Reader::Binary(Arc::new(OdtContentXml)))
+        } else {
+            randoc::formats::reader(name)
+        }
+    };
     environment.writers = randoc::formats::writer;
 }
 

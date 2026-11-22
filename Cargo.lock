@@ -447,6 +447,7 @@ dependencies = [
  "mlua",
  "mlua-sys",
  "randoc",
+ "randoc-archive",
  "randoc-ast",
  "randoc-core",
  "randoc-layout",
@@ -504,6 +505,7 @@ version = "0.1.0"
 dependencies = [
  "randoc-archive",
  "randoc-ast",
+ "randoc-citeproc",
  "randoc-core",
  "randoc-data",
  "randoc-highlight",

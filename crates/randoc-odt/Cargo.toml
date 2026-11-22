@@ -11,6 +11,7 @@ authors.workspace = true
 [dependencies]
 randoc-archive = { workspace = true }
 randoc-ast = { workspace = true }
+randoc-citeproc = { workspace = true }
 randoc-core = { workspace = true }
 randoc-data = { workspace = true }
 randoc-highlight = { workspace = true }

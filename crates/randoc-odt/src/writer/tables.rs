@@ -1,4 +1,4 @@
-use randoc_ast::{Alignment, ColSpec, ColWidth, Row, Table};
+use randoc_ast::{Alignment, ColWidth, Row, Table};
 use randoc_core::{CaptionPosition, Error, Result};
 use randoc_layout::{Doc, text, vcat};
 
@@ -22,21 +22,25 @@ impl Renderer<'_> {
         };
         if self.table_styles.is_empty() {
             for cell in ["TableHeaderRowCell", "TableRowCell"] {
-                self.table_styles.push(format!("<style:style style:name=\"{cell}\" style:family=\"table-cell\"><style:table-cell-properties fo:border=\"none\" /></style:style>"));
+                self.table_styles.push(format!("<style:style style:name=\"{cell}\" style:family=\"table-cell\">\n  <style:table-cell-properties fo:border=\"none\" />\n</style:style>"));
             }
         }
-        self.table_styles.push(format!("<style:style style:name=\"{name}\" style:family=\"table\"><style:table-properties table:align=\"center\"{width} /></style:style>"));
+        self.table_styles.push(format!("<style:style style:name=\"{name}\" style:family=\"table\">\n  <style:table-properties table:align=\"center\"{width} />\n</style:style>"));
         let mut content = Vec::new();
         for (index, col) in table.col_specs.iter().enumerate() {
             let column = format!("{name}.{}", column_name(index));
-            let child = match col.width {
-                ColWidth::ColWidthDefault => String::new(),
+            let start =
+                format!("<style:style style:name=\"{column}\" style:family=\"table-column\"");
+            let style = match col.width {
+                ColWidth::ColWidthDefault => format!("{start} />"),
                 ColWidth::ColWidth(width) => {
                     let width = (width.clamp(0.0, 1.0) * 65535.0) as u32;
-                    format!("<style:table-column-properties style:rel-column-width=\"{width}*\" />")
+                    format!(
+                        "{start}>\n  <style:table-column-properties style:rel-column-width=\"{width}*\" />\n</style:style>"
+                    )
                 }
             };
-            self.table_styles.push(format!("<style:style style:name=\"{column}\" style:family=\"table-column\">{child}</style:style>"));
+            self.table_styles.push(style);
             content.push(text(format!(
                 "<table:table-column table:style-name=\"{column}\" />"
             )));
@@ -58,12 +62,15 @@ impl Renderer<'_> {
         for head in [true, false] {
             let mut row_styles = Vec::new();
             for col in &table.col_specs {
-                row_styles.push(self.cell_style(col.align, head));
+                let parent = cell_parent(head);
+                row_styles.push(match alignment_properties(col.align) {
+                    Some(properties) => self.add_paragraph_style(parent, properties),
+                    None => parent.to_owned(),
+                });
             }
             styles.push(row_styles);
         }
         let mut layout = RowLayout {
-            columns: &table.col_specs,
             styles,
             occupied: vec![0; table.col_specs.len()],
             index: 0,
@@ -109,25 +116,6 @@ impl Renderer<'_> {
         }
     }
 
-    fn cell_style(&mut self, align: Alignment, header: bool) -> String {
-        let parent = if header {
-            "Table_20_Heading"
-        } else {
-            "Table_20_Contents"
-        };
-        match align {
-            Alignment::AlignCenter => self.add_paragraph_style(
-                parent,
-                "fo:text-align=\"center\" style:justify-single-word=\"false\"",
-            ),
-            Alignment::AlignRight => self.add_paragraph_style(
-                parent,
-                "fo:text-align=\"end\" style:justify-single-word=\"false\"",
-            ),
-            Alignment::AlignLeft | Alignment::AlignDefault => parent.to_owned(),
-        }
-    }
-
     fn charge_cells(&mut self, count: usize) -> Result<()> {
         self.table_cells = self.table_cells.saturating_add(count);
         if self.table_cells > self.context.limits.max_table_cells {
@@ -141,7 +129,7 @@ impl Renderer<'_> {
     fn row(
         &mut self,
         row: &Row,
-        layout: &mut RowLayout<'_>,
+        layout: &mut RowLayout,
         header: bool,
         heads: usize,
         depth: usize,
@@ -160,19 +148,13 @@ impl Renderer<'_> {
             } else {
                 "TableRowCell"
             };
-            let style = if cell.align == Alignment::AlignDefault
-                || layout
-                    .columns
-                    .get(column)
-                    .is_some_and(|spec| spec.align == cell.align)
-            {
-                layout.styles[usize::from(!is_header)]
-                    .get(column)
-                    .cloned()
-                    .unwrap_or_else(|| self.cell_style(cell.align, is_header))
-            } else {
-                self.cell_style(cell.align, is_header)
-            };
+            let parent = layout.styles[usize::from(!is_header)]
+                .get(column)
+                .map_or_else(|| cell_parent(is_header), String::as_str);
+            let style = alignment_properties(cell.align).map_or_else(
+                || parent.to_owned(),
+                |props| self.paragraph_style(parent, props),
+            );
             let mut attrs = attribute("table:style-name", cell_style);
             let col_span = usize::try_from(cell.col_span.max(1)).unwrap_or(usize::MAX);
             let row_span = usize::try_from(cell.row_span.max(1)).unwrap_or(usize::MAX);
@@ -211,18 +193,35 @@ impl Renderer<'_> {
     }
 }
 
-struct RowLayout<'a> {
-    columns: &'a [ColSpec],
+struct RowLayout {
     styles: Vec<Vec<String>>,
     occupied: Vec<usize>,
     index: usize,
 }
 
-impl RowLayout<'_> {
+impl RowLayout {
     fn covered(&self, column: usize) -> bool {
         self.occupied
             .get(column)
             .is_some_and(|&end| end > self.index)
+    }
+}
+
+fn cell_parent(header: bool) -> &'static str {
+    if header {
+        "Table_20_Heading"
+    } else {
+        "Table_20_Contents"
+    }
+}
+
+fn alignment_properties(align: Alignment) -> Option<&'static str> {
+    match align {
+        Alignment::AlignCenter => {
+            Some("fo:text-align=\"center\" style:justify-single-word=\"false\"")
+        }
+        Alignment::AlignRight => Some("fo:text-align=\"end\" style:justify-single-word=\"false\""),
+        Alignment::AlignLeft | Alignment::AlignDefault => None,
     }
 }
 
@@ -236,4 +235,91 @@ fn column_name(mut index: usize) -> String {
         index = next;
     }
     name.into_iter().rev().collect()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use randoc_ast::{
+        Block, Cell, ColSpec, Inline, ListAttributes, ListNumberDelim, ListNumberStyle, Pandoc,
+        TableBody,
+    };
+    use randoc_core::{Context, WriterOptions};
+
+    #[test]
+    fn automatic_styles_follow_document_order_and_reuse_cell_overrides() -> Result<()> {
+        let cell = Cell {
+            align: Alignment::AlignCenter,
+            content: vec![Block::Plain(vec![Inline::Str("cell".into())])],
+            ..Cell::default()
+        };
+        let table = Table {
+            col_specs: vec![
+                ColSpec {
+                    align: Alignment::AlignRight,
+                    width: ColWidth::ColWidth(0.5),
+                },
+                ColSpec {
+                    align: Alignment::AlignDefault,
+                    width: ColWidth::ColWidthDefault,
+                },
+            ],
+            bodies: vec![TableBody {
+                body: vec![
+                    Row {
+                        cells: vec![cell.clone()],
+                        ..Row::default()
+                    },
+                    Row {
+                        cells: vec![cell],
+                        ..Row::default()
+                    },
+                ],
+                ..TableBody::default()
+            }],
+            ..Table::default()
+        };
+        let doc = Pandoc {
+            blocks: vec![
+                Block::Table(Box::new(table)),
+                Block::OrderedList(
+                    ListAttributes {
+                        start: 1,
+                        style: ListNumberStyle::UpperRoman,
+                        delim: ListNumberDelim::Period,
+                    },
+                    vec![vec![Block::Plain(vec![Inline::Str("item".into())])]],
+                ),
+            ],
+            ..Pandoc::default()
+        };
+        let xml = super::super::package::write_fodt(
+            &doc,
+            &WriterOptions::default(),
+            &mut Context::pure(),
+        )?;
+        assert!(xml.contains("style:family=\"table\">\n      <style:table-properties"));
+        assert!(
+            xml.contains("style:family=\"table-column\">\n      <style:table-column-properties")
+        );
+        assert!(
+            xml.contains(r#"<style:style style:name="Table1.B" style:family="table-column" />"#)
+        );
+        assert_eq!(xml.matches(r#"fo:text-align="center""#).count(), 1);
+        assert_eq!(
+            xml.matches(r#"<text:p text:style-name="P3">cell</text:p>"#)
+                .count(),
+            2
+        );
+        let names = [
+            r#"style:name="P3""#,
+            r#"style:name="Table1""#,
+            r#"style:name="Pandoc_5f_Numbering_5f_1""#,
+        ];
+        let positions = names.map(|name| xml.find(name).unwrap_or(usize::MAX));
+        assert!(
+            positions[0] < positions[1] && positions[1] < positions[2] && positions[2] < xml.len()
+        );
+        Ok(())
+    }
 }

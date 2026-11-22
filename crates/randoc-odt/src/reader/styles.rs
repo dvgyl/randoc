@@ -34,8 +34,6 @@ pub struct TextProps {
     pub strikeout: bool,
     /// Superscript or subscript (`style:text-position`).
     pub vertical: Option<VerticalPos>,
-    /// Hidden (`text:display="none"`).
-    pub hidden: bool,
 }
 
 /// One `<style:style>` definition.
@@ -83,32 +81,43 @@ pub struct StyleTable {
     styles: HashMap<String, StyleDef>,
     /// List styles keyed by `style:name`.
     list_styles: HashMap<String, ListStyle>,
-    /// Maximum parent-chain hops allowed.
-    max_depth: usize,
+    paragraph_flags: HashMap<String, ParagraphFlags>,
 }
 
 /// Left margin threshold in millimeters for BlockQuote detection (oracle-verified: 5.5 mm).
 const BLOCKQUOTE_MARGIN_MM: f64 = 5.5;
 
-impl StyleTable {
-    /// Creates an empty style table with the given parent-chain depth bound.
-    pub fn new(max_depth: usize) -> Self {
-        Self {
-            styles: HashMap::new(),
-            list_styles: HashMap::new(),
-            max_depth: max_depth.max(1),
-        }
-    }
+#[derive(Debug, Clone, Copy, Default)]
+pub struct ParagraphFlags {
+    pub preformatted: bool,
+    pub blockquote: bool,
+}
 
-    /// Loads `<office:styles>` and `<office:automatic-styles>` children from a
-    /// document root (`<office:document-styles>`, `<office:document-content>`,
-    /// or `<office:document>`).
-    pub fn load_from_root(&mut self, root: &XmlElement) {
-        for child in root.elements() {
-            if is_el(child, OFFICE, "styles") || is_el(child, OFFICE, "automatic-styles") {
-                self.load_style_container(child);
+impl StyleTable {
+    /// Loads named and automatic styles, then resolves paragraph properties.
+    pub fn from_roots<'a>(
+        roots: impl IntoIterator<Item = &'a XmlElement>,
+        max_depth: usize,
+    ) -> Self {
+        let mut table = Self::default();
+        for root in roots {
+            for child in root.elements() {
+                if is_el(child, OFFICE, "styles") || is_el(child, OFFICE, "automatic-styles") {
+                    table.load_style_container(child);
+                }
             }
         }
+        table.paragraph_flags = table
+            .styles
+            .keys()
+            .map(|name| {
+                (
+                    name.clone(),
+                    table.resolve_paragraph_flags(name, max_depth.max(1)),
+                )
+            })
+            .collect();
+        table
     }
 
     fn load_style_container(&mut self, container: &XmlElement) {
@@ -139,69 +148,46 @@ impl StyleTable {
         matches!(name, "Source_20_Text" | "Source_Text")
     }
 
-    /// Returns `true` if `name` or any ancestor in its `parent-style-name` chain
-    /// is `Preformatted_20_Text` (or `Preformatted_Text`). Cycle-safe.
-    pub fn is_preformatted(&self, name: &str) -> bool {
-        self.ancestors_any(name, |s| {
-            matches!(s, "Preformatted_20_Text" | "Preformatted_Text")
-        })
+    /// Returns the cached properties of a paragraph style.
+    pub fn paragraph_flags(&self, name: &str) -> ParagraphFlags {
+        self.paragraph_flags
+            .get(name)
+            .copied()
+            .unwrap_or_else(|| ParagraphFlags {
+                preformatted: is_preformatted(name),
+                blockquote: false,
+            })
     }
 
-    /// Returns `true` if `name` or any ancestor in its `parent-style-name` chain
-    /// is `Caption`. Cycle-safe.
-    pub fn is_caption(&self, name: &str) -> bool {
-        self.ancestors_any(name, |s| s == "Caption")
-    }
-
-    /// Returns `true` if `name` or any ancestor has `fo:margin-left` >= 5.5 mm
-    /// (or a positive percentage margin). Cycle-safe.
-    pub fn is_blockquote(&self, name: &str) -> bool {
-        let mut current = Some(name);
-        let mut visited: HashSet<&str> = HashSet::new();
-        let mut steps = 0usize;
-        while let Some(cur) = current {
-            if steps > self.max_depth || !visited.insert(cur) {
+    fn resolve_paragraph_flags(&self, name: &str, max_depth: usize) -> ParagraphFlags {
+        let mut flags = ParagraphFlags::default();
+        let mut blockquote = None;
+        let mut seen = HashSet::new();
+        let mut current = name;
+        for _ in 0..=max_depth {
+            flags.preformatted |= is_preformatted(current);
+            if !seen.insert(current) {
                 break;
             }
-            steps += 1;
-            if let Some(def) = self.styles.get(cur) {
-                if def.is_list_paragraph {
-                    return false;
-                }
-                if let Some(mm) = def.margin_left_mm {
-                    return mm >= BLOCKQUOTE_MARGIN_MM;
-                }
-                if let Some(pct) = def.margin_left_pct {
-                    return pct > 0.0;
-                }
-                current = def.parent.as_deref();
-            } else {
+            let Some(style) = self.styles.get(current) else {
                 break;
+            };
+            if blockquote.is_none() {
+                blockquote = if style.is_list_paragraph {
+                    Some(false)
+                } else if let Some(mm) = style.margin_left_mm {
+                    Some(mm >= BLOCKQUOTE_MARGIN_MM)
+                } else {
+                    style.margin_left_pct.map(|pct| pct > 0.0)
+                };
             }
+            let Some(parent) = style.parent.as_deref() else {
+                break;
+            };
+            current = parent;
         }
-        false
-    }
-
-    /// Returns `true` if `name` or any ancestor has `text:display="none"`.
-    pub fn is_hidden(&self, name: &str) -> bool {
-        let mut current = Some(name);
-        let mut visited: HashSet<&str> = HashSet::new();
-        let mut steps = 0usize;
-        while let Some(cur) = current {
-            if steps > self.max_depth || !visited.insert(cur) {
-                break;
-            }
-            steps += 1;
-            if let Some(def) = self.styles.get(cur) {
-                if def.text.hidden {
-                    return true;
-                }
-                current = def.parent.as_deref();
-            } else {
-                break;
-            }
-        }
-        false
+        flags.blockquote = blockquote.unwrap_or(false);
+        flags
     }
 
     /// Looks up the list level definition for `list_style_name` at 1-based `level`.
@@ -217,23 +203,10 @@ impl StyleTable {
             .or_else(|| ls.levels.iter().next())
             .map(|(_, k)| *k)
     }
+}
 
-    fn ancestors_any(&self, start: &str, mut pred: impl FnMut(&str) -> bool) -> bool {
-        let mut current = Some(start);
-        let mut visited: HashSet<&str> = HashSet::new();
-        let mut steps = 0usize;
-        while let Some(cur) = current {
-            if pred(cur) {
-                return true;
-            }
-            if steps > self.max_depth || !visited.insert(cur) {
-                break;
-            }
-            steps += 1;
-            current = self.styles.get(cur).and_then(|s| s.parent.as_deref());
-        }
-        false
-    }
+fn is_preformatted(name: &str) -> bool {
+    matches!(name, "Preformatted_20_Text" | "Preformatted_Text")
 }
 
 fn parse_style_def(el: &XmlElement) -> StyleDef {
@@ -314,11 +287,6 @@ fn parse_text_props(el: &XmlElement, props: &mut TextProps) {
                 props.vertical = Some(VerticalPos::Normal);
             }
         }
-    }
-    if let Some(disp) = el.attr(TEXT, "display")
-        && disp.trim().eq_ignore_ascii_case("none")
-    {
-        props.hidden = true;
     }
 }
 

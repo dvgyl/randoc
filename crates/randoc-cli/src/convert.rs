@@ -592,7 +592,7 @@ fn extract_media(
         if settings.sandbox {
             continue;
         }
-        if let Some((mime, bytes)) = decode_data_uri(&url, max_single) {
+        if let Some((mime, bytes)) = randoc_archive::media::decode_data_uri(&url, max_single) {
             if fetched_total.saturating_add(bytes.len() as u64) <= max_total {
                 fetched_total = fetched_total.saturating_add(bytes.len() as u64);
                 let digest = randoc_archive::media::sha1_hex(&bytes);
@@ -750,62 +750,9 @@ fn has_uri_scheme(url: &str) -> bool {
             .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'+' | b'-' | b'.'))
 }
 
-fn decode_data_uri(url: &str, max_bytes: u64) -> Option<(String, Vec<u8>)> {
-    let rest = url.strip_prefix("data:")?;
-    let (meta, payload) = rest.split_once(',')?;
-    let is_base64 = meta.ends_with(";base64");
-    let mime_raw = if is_base64 {
-        meta.strip_suffix(";base64").unwrap_or("")
-    } else {
-        meta
-    };
-    let mime = mime_raw.split(';').next().unwrap_or("").trim();
-    let mime_type = if mime.is_empty() {
-        "text/plain".to_owned()
-    } else {
-        mime.to_ascii_lowercase()
-    };
-    let max_usize = usize::try_from(max_bytes).unwrap_or(usize::MAX);
-    if is_base64 {
-        if (payload.len() / 4).saturating_mul(3) > max_usize.saturating_add(3) {
-            return None;
-        }
-        let bytes = randoc_archive::media::base64_decode(payload)?;
-        if bytes.len() > max_usize {
-            return None;
-        }
-        Some((mime_type, bytes))
-    } else {
-        let bytes = decode_percent_bytes(payload, max_usize)?;
-        Some((mime_type, bytes))
-    }
-}
-
 fn percent_decode(url: &str) -> String {
-    let bytes = decode_percent_bytes(url, url.len()).unwrap_or_default();
+    let bytes = randoc_archive::media::decode_percent_bytes(url, url.len()).unwrap_or_default();
     String::from_utf8_lossy(&bytes).into_owned()
-}
-
-fn decode_percent_bytes(text: &str, limit: usize) -> Option<Vec<u8>> {
-    let mut out = Vec::with_capacity(text.len().min(limit));
-    let mut raw = text.as_bytes();
-    while let Some((&first, rest)) = raw.split_first() {
-        if out.len() == limit {
-            return None;
-        }
-        if first == b'%'
-            && let [hi, lo, after @ ..] = rest
-            && let (Some(hi), Some(lo)) =
-                (char::from(*hi).to_digit(16), char::from(*lo).to_digit(16))
-        {
-            out.push((hi * 16 + lo) as u8);
-            raw = after;
-        } else {
-            out.push(first);
-            raw = rest;
-        }
-    }
-    Some(out)
 }
 
 fn extension_for_mime(mime: &str) -> Option<&'static str> {

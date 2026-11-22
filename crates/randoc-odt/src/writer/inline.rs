@@ -158,7 +158,7 @@ impl Renderer<'_> {
                 } else {
                     let attrs = format!(
                         " xlink:type=\"simple\"{}{}",
-                        attribute("xlink:href", &self.links.resolve(&target.url)),
+                        attribute("xlink:href", &self.href(&target.url)),
                         attribute("office:name", &target.title)
                     );
                     tag(
