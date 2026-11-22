@@ -1047,7 +1047,7 @@
     "extract-media": {
       "status": "partial",
       "units": {
-        "passing": 2,
+        "passing": 4,
         "total": 5
       }
     },
@@ -1537,7 +1537,7 @@
     "toc": {
       "status": "partial",
       "units": {
-        "passing": 90,
+        "passing": 91,
         "total": 143
       }
     },
@@ -2028,7 +2028,7 @@
       "passing": 7
     },
     "units": {
-      "passing": 61622,
+      "passing": 61628,
       "total": 63750
     }
   }

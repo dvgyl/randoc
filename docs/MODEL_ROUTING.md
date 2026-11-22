@@ -13,7 +13,7 @@ the two exceptions below applies.
 
 - **Primary workhorse builder (quota-aware default):** Use **GPT 6.2 Sol** (`codex`, `reasoningEffort: "high"`) as the primary worker/builder given abundant OpenAI usage (verify parity assertions against the Pandoc 3.13 oracle during review).
 - **Cross-model reviews & secondary builds:** Use **Claude Opus 5.5** for cross-model reviews of GPT 6.2 Sol's work and select build slices (and GPT 6.2 Sol for reviews of Opus 5.5's work — always review with a different model than the author).
-- **Conserve Gemini 4 Neon:** Keep **Gemini 4 Neon** strictly for lightweight main-thread coordination and tie-breaking; do **not** spawn Gemini 4 Neon subagents unless explicitly requested.
+- **Conserve Gemini 4 Neon:** Not a blanket ban—use **Gemini 4 Neon** when it genuinely adds value (and for main-thread coordination/tie-breaking), while defaulting routine builds, reviews, and heavy reasoning to **GPT 6.2 Sol** / **GPT 6.2 Astra** / **Claude Opus 5.5** whenever they can do the same work.
 - **Deep thinking / hard technical problems:** Consult **GPT 6.2 Astra** only when heavy reasoning is needed (never directly with the user).
 - **Disagreement resolution:** Do **not** blindly agree with other models (including Opus 5.5, GPT 6.2 Sol, or GPT 6.2 Astra). Verify claims against the codebase and black-box Pandoc 3.13 oracle probes, reason disagreements out to reach agreement, and if deadlocked, **Opus 5.5 or Gemini 4 Neon** makes the final decision.
 - **Last resort only:** Do **not** use Fable 5.2 unless the user explicitly asks for it.
