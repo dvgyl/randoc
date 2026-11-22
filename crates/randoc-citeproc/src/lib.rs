@@ -39,6 +39,7 @@ mod disambiguate;
 mod element;
 mod error;
 pub mod eval;
+pub mod filter;
 mod haskell;
 pub mod json;
 pub mod lang;

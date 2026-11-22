@@ -1298,49 +1298,55 @@ fn utf8_error_offset(bytes: &[u8], valid: usize) -> usize {
     valid
 }
 
-/// Returns true when a file exists in a directory of the resource path.
-fn in_resource_path(path: &str, settings: &Settings, context: &mut Context) -> bool {
-    find_resource(path, settings, context).is_some()
-}
-
-/// The bibliography formats that Pandoc knows by the file extension.
-fn bibliography_format_known(path: &str) -> bool {
-    let extension = extension_of(path).to_ascii_lowercase();
-    matches!(
-        extension.as_str(),
-        ".bib" | ".bibtex" | ".json" | ".yaml" | ".yml" | ".ris" | ".xml" | ".enl"
+/// Runs the citation filter of `randoc-citeproc` with the resource path
+/// and the Markdown reader of this program.
+fn run_citeproc(
+    doc: &mut Pandoc,
+    settings: &Settings,
+    reader_options: &ReaderOptions,
+    from: &str,
+    context: &mut Context,
+) -> Result<()> {
+    let options = metadata_options(reader_options, from);
+    let mut find = |context: &mut Context, name: &str| find_resource(name, settings, context);
+    let mut yaml = |context: &mut Context, text: &str, path: &str| {
+        yaml_references(text, path, &options, context)
+    };
+    randoc_citeproc::filter::process_citations(
+        context,
+        doc,
+        randoc_citeproc::filter::Hooks {
+            find_resource: &mut find,
+            yaml_references: &mut yaml,
+        },
     )
 }
 
-/// Returns the error for citeproc: the error of Pandoc for a missing file,
-/// else the error of the missing subsystem.
-fn citeproc_error(settings: &Settings, context: &mut Context) -> Error {
-    // Pandoc reads the CSL file first.
-    for file in settings.csl.iter() {
-        if !in_resource_path(file, settings, context) {
-            return Error::ResourceNotFound(file.clone());
+/// The `references` of a CSL YAML bibliography, with the strings read as
+/// Markdown, as in a metadata file.
+fn yaml_references(
+    text: &str,
+    path: &str,
+    options: &ReaderOptions,
+    context: &mut Context,
+) -> Result<Vec<MetaValue>> {
+    let limits = Limits {
+        max_depth: context.limits.max_nesting_depth,
+        ..Limits::default()
+    };
+    let entrance = Entrance::MetadataFile { name: path };
+    let root =
+        randoc_yaml::parse(text, limits).map_err(|error| Error::Parse(error.report(entrance)))?;
+    if let Kind::Mapping(entries) = &root.kind {
+        for (key, value) in entries {
+            if key.as_str() == Some("references")
+                && let MetaValue::MetaList(items) = yaml_to_meta(value, options, context)?
+            {
+                return Ok(items);
+            }
         }
     }
-    for file in &settings.bibliography {
-        if !in_resource_path(file, settings, context) {
-            return Error::ResourceNotFound(file.clone());
-        }
-        if !bibliography_format_known(file) {
-            return Error::App(format!(
-                "Could not determine bibliography format for {file}"
-            ));
-        }
-    }
-    for file in settings
-        .citation_abbreviations
-        .iter()
-        .chain(&settings.citation_abbreviations_options)
-    {
-        if !in_resource_path(file, settings, context) {
-            return Error::ResourceNotFound(file.clone());
-        }
-    }
-    subsystem::missing(Subsystem::Citeproc)
+    Ok(Vec::new())
 }
 
 /// The output formats that `--embed-resources` changes.
@@ -1840,7 +1846,16 @@ fn convert(
                 )?;
                 doc
             }
-            Filter::Citeproc => return Err(citeproc_error(settings, context)),
+            Filter::Citeproc => {
+                run_citeproc(
+                    &mut doc,
+                    settings,
+                    &reader_options,
+                    &from_spec.name,
+                    context,
+                )?;
+                doc
+            }
         };
     }
     // Pandoc shifts the headings after the filters.
@@ -2441,7 +2456,7 @@ mod tests {
             }),
             "File 'c.csl' not found in resource path"
         );
-        assert!(error(|s| s.filters = vec![Filter::Citeproc]).contains("citation processing"));
+        assert!(error(|s| s.filters = vec![Filter::Citeproc]).contains("no built-in CSL style"));
         assert!(
             convert_files(&[], &["nosuch.json"], |_| {})
                 .0
@@ -2859,7 +2874,6 @@ mod tests {
         assert!(keeps_tabs("man") && !keeps_tabs("json"));
         assert!(is_html_format("html5") && !is_html_format("json"));
         assert!(is_binary_format("docx") && !is_binary_format("json"));
-        assert!(bibliography_format_known("a.BIB") && !bibliography_format_known("a.txt"));
     }
 
     #[test]

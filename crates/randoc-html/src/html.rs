@@ -152,6 +152,9 @@ pub(crate) struct Html<'a> {
     incremental: bool,
     /// `true` inside a link: Pandoc writes an inner link as a span.
     in_link: bool,
+    /// `true` inside a citation: HTML5 gives a link to a bibliography entry
+    /// (`#ref-...`) the role `doc-biblioref`.
+    in_cite: bool,
     /// `true` while text is written as character references for e-mail obfuscation.
     obfuscating: bool,
     /// The smallest heading level of the document. Section numbers count from it.
@@ -207,6 +210,7 @@ impl<'a> Html<'a> {
             plain_paragraphs: false,
             incremental: options.incremental,
             in_link: false,
+            in_cite: false,
             obfuscating: false,
             min_level,
             warnings: RefCell::new(Vec::new()),
@@ -1660,7 +1664,10 @@ impl Html<'_> {
                 }
             }
             Inline::Cite(citations, content) => {
-                let body = self.inlines(content, depth)?;
+                let outer = std::mem::replace(&mut self.in_cite, true);
+                let body = self.inlines(content, depth);
+                self.in_cite = outer;
+                let body = body?;
                 let mut attrs = vec![("class".to_owned(), "citation".to_owned())];
                 if self.html5() {
                     let ids: Vec<&str> = citations.iter().map(|c| c.id.as_str()).collect();
@@ -1819,7 +1826,14 @@ impl Html<'_> {
             return self.span(attr, content, depth);
         }
         self.in_link = true;
-        let result = self.link_body(attr, content, target, depth);
+        let result = if self.in_cite && self.html5() && target.url.starts_with("#ref-") {
+            let mut attr = attr.clone();
+            attr.attributes
+                .insert(0, ("role".to_owned(), "doc-biblioref".to_owned()));
+            self.link_body(&attr, content, target, depth)
+        } else {
+            self.link_body(attr, content, target, depth)
+        };
         self.in_link = false;
         result
     }
@@ -2728,6 +2742,38 @@ mod tests {
             html("a"),
             "<figure>\n<img src=\"i.png\" alt=\"a\" />\n<figcaption>a\nb</figcaption>\n</figure>"
         );
+    }
+
+    // Pandoc 3.13 with `--citeproc -M link-citations=true`: `-t html` gives
+    // `<a href="#ref-z" role="doc-biblioref">`, `-t html4` gives no role,
+    // and a link to another target in a citation gets no role.
+    #[test]
+    fn citation_links_to_entries_get_a_role_in_html5() {
+        let link = |url: &str| {
+            Inline::Link(
+                Attr::default(),
+                vec![Inline::Str("x".into())],
+                randoc_ast::Target::new(url, ""),
+            )
+        };
+        let cite = Block::Para(vec![Inline::Cite(
+            Vec::new(),
+            vec![link("#ref-z"), link("http://a")],
+        )]);
+        let doc = Pandoc {
+            meta: Default::default(),
+            blocks: vec![cite],
+        };
+        let options = WriterOptions::default();
+        let html5 = write(&doc, &options, &mut Context::pure(), Version::Html5).unwrap();
+        let html5 = html5.replace('\n', " ");
+        assert!(
+            html5.contains(r##"<a href="#ref-z" role="doc-biblioref">x</a>"##),
+            "{html5}"
+        );
+        assert!(html5.contains(r#"<a href="http://a">x</a>"#), "{html5}");
+        let html4 = write(&doc, &options, &mut Context::pure(), Version::Html4).unwrap();
+        assert!(!html4.contains("role"), "{html4}");
     }
 
     #[test]

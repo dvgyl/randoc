@@ -58,10 +58,24 @@ fn read(sources: &Sources, _: &ReaderOptions, context: &mut Context) -> Result<P
 ///
 /// The error texts are the texts of the oracle (exit code 64).
 pub fn read_references(text: &str, max_depth: usize) -> Result<Vec<Reference<Vec<Markup>>>> {
+    references_of(text, max_depth, true)
+}
+
+/// Reads the references of a CSL JSON bibliography file. Unlike the reader
+/// of the format, Pandoc parses the text of the file as it is.
+pub fn read_bibliography(text: &str, max_depth: usize) -> Result<Vec<Reference<Vec<Markup>>>> {
+    references_of(text, max_depth, false)
+}
+
+fn references_of(text: &str, max_depth: usize, pad: bool) -> Result<Vec<Reference<Vec<Markup>>>> {
     if randoc_ast::json::nesting_depth(text) > max_depth.min(MAX_JSON_DEPTH) {
         return Err(Error::Parse(TOO_DEEP.into()));
     }
-    let root = parse_json(text)?;
+    let root = if pad {
+        parse_json(text)?
+    } else {
+        parse_json_text(text)?
+    };
     let (items, under_items) = match &root {
         Json::Array(items) => (items.as_slice(), false),
         Json::Object(object) => match object.get("items") {
@@ -111,7 +125,11 @@ fn parse_json(text: &str) -> Result<Json> {
         input.push('\n');
     }
     input.push('\n');
-    match randoc_ast::json::parse_value(&input, MAX_JSON_DEPTH) {
+    parse_json_text(&input)
+}
+
+fn parse_json_text(input: &str) -> Result<Json> {
+    match randoc_ast::json::parse_value(input, MAX_JSON_DEPTH) {
         Ok(tape) => Ok(Json::from_value(tape.root())),
         Err(error) if error.is_too_deep() => Err(Error::Parse(TOO_DEEP.into())),
         Err(error) => Err(Error::Parse(error.to_string())),
@@ -396,7 +414,7 @@ fn too_deep() -> Error {
 
 /// A reference from its metadata map, or `None` when the map has no `id`
 /// with a text value: the oracle drops such an entry.
-fn meta_to_reference(
+pub(crate) fn meta_to_reference(
     map: &BTreeMap<Text, MetaValue>,
     max_depth: usize,
 ) -> Result<Option<Reference<Vec<Markup>>>> {

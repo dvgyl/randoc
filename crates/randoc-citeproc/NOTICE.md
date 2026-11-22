@@ -31,6 +31,8 @@ licence. The rest of the crate has the licence `MIT OR Apache-2.0`.
   the canonical decompositions and combining classes of the Unicode
   Character Database 13.0.0 (Unicode License v3), written from the
   unicode.org files by `tools/collation_tables.py`.
+- `src/filter.rs` (the `--citeproc` filter) has no upstream code: its rules
+  come from the Pandoc manual and from black-box probes.
 - `src/unicode_class.rs`: ranges of general categories, derived from the
   Unicode Character Database 16.0.0 (Unicode License v3) by
   `tools/unicode_classes.py`.

@@ -321,6 +321,7 @@ version = "0.1.0"
 dependencies = [
  "randoc",
  "randoc-archive",
+ "randoc-citeproc",
  "randoc-data",
  "randoc-harness",
  "randoc-highlight",
