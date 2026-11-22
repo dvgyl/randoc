@@ -82,6 +82,9 @@ the repository; the behaviour was found with the oracle.
 | Join rules of an inline list, grid rules of a table | `pandoc-types` 1.23.1 (`Text.Pandoc.Builder`) | BSD-3-Clause | Port | `crates/randoc-html-reader/src/text.rs`, `src/table.rs` | ADR 13 |
 | Tree rules of the HTML reader | none: found with oracle probes | not applicable | Observed | `crates/randoc-html-reader/src/parse.rs`, `src/table.rs` | ADR 13 |
 | Rules of the HTML writer (elements, attributes, sections, notes, tables) | none: found with oracle probes | not applicable | Observed | `crates/randoc-html/src/` | none (no reuse) |
+| Syntax highlighting engine | `skylighting-core` 0.15, `skylighting-format-blaze-html` 0.1.2.2, `skylighting-format-latex` 0.1 | BSD-3-Clause | Port | `crates/randoc-highlight/src/` | ADR 20 |
+| 63 KDE syntax definitions with a permissive licence | `skylighting-core` 0.15 `xml/` (from KDE syntax-highlighting) | MIT, BSD-3-Clause, NCSA, WTFPL (per file) | Data | `crates/randoc-highlight/data/syntax-definitions.txt` | ADR 20 |
+| Skip offset for regular expression rules | KSyntaxHighlighting 6.8.0 (`src/lib/abstracthighlighter.cpp`, `src/lib/rule.cpp`) | MIT (SPDX header of both files) | Studied, not used | none | ADR 20 |
 
 Rust dependencies on `main`, pinned by `Cargo.lock`:
 
@@ -90,24 +93,24 @@ Rust dependencies on `main`, pinned by `Cargo.lock`:
 | `serde`, `serde_json` | 1.0.229, 1.0.154 | MIT OR Apache-2.0 | The harness (a test tool), and tests of `randoc-core`, `randoc-native`, `randoc-templates` |
 | `toml` | 1.2.1 | MIT OR Apache-2.0 | The harness, tests of `randoc-native` |
 | `zip` | 9.5.0 | MIT | The harness |
-| `nix` | 0.31.3 | MIT | Time tests of `randoc-native` on Unix |
+| `nix` | 0.31.3 | MIT | Time tests of `randoc-native` and `randoc-citeproc` on Unix |
 
 The library and the program on `main` have no external dependency at run
 time. That was a result of the first sessions, not a goal. The rule above
 replaces it.
 
-## Material in use on branches that are not merged
+## Material in use (merged from earlier workstreams)
 
-| Material | Upstream and version | Licence | Use | Branch |
+All earlier workstreams (`ws/highlight`, `ws/commonmark-reader`, `ws/citeproc`, `ws/math`) are now merged onto `main`:
+
+| Material | Upstream and version | Licence | Use | Where |
 | --- | --- | --- | --- | --- |
-| Syntax highlighting engine | `skylighting-core` 0.15 | BSD-3-Clause | Port | `ws/highlight` |
-| 63 KDE syntax definitions with a permissive licence | `skylighting-core` 0.15 `xml/` (from KDE syntax-highlighting) | MIT, BSD, Apache-2.0 and others; one row for each file on the branch | Data | `ws/highlight` |
-| CommonMark specification examples | `commonmark-spec` 0.31.2 | CC-BY-SA-4.0 | Not in the repository: `tools/commonmark-spec/run.py` downloads the file and stores only numbers | `ws/commonmark-reader` |
-| CSL processor: types, style parser, locale parser, locale merge (later units: evaluation, output) | `citeproc` 0.14.1.1 (Hackage, SHA-256 `e5a353f975c32169979b4c9e158d3edb9e57a5f653fab8ff0505a2067e2b1b4b`) | BSD-2-Clause | Port | `ws/citeproc` (ADR 17) |
-| BCP 47 language tag (`Lang`, `parseLang`, `renderLang`) | `unicode-collation` 0.1.3.7 `src/Text/Collate/Lang.hs` (code only; no data file) | BSD-2-Clause | Port | `ws/citeproc` (ADR 17) |
-| XML events for CSL styles and locales | `quick-xml` 0.42.0 (`=0.42.0`, `default-features = false`), with `memchr` 2 | MIT; Unlicense OR MIT | Dependency (ADR 10) | `ws/citeproc` |
-| Candidate command names for the TeX math probes (names only, 1,013 names) | KaTeX 0.16.11, `dist/katex.js` of the npm package | MIT | Data: `crates/randoc-math/tools/katex-names.txt`; the tables of `src/symbols.rs` hold oracle results for these names (ADR 14) | `ws/math` |
-| CommonMark and GFM reader: delimiter run matching, the path rule of `rebase_relative_paths` with its URI scheme list, the footnote, definition list and attribute block rules | `commonmark` 0.3.1, `commonmark-extensions` 0.2.7.3, `commonmark-pandoc` 0.3.0.2 (Hackage release archives; the versions of the `stack.yaml` of Pandoc 3.13) | BSD-3-Clause | Port of rules and one data table; the list is in `crates/randoc-commonmark/NOTICE.md`; ADR 12 | `ws/commonmark-reader` |
+| CommonMark specification examples | `commonmark-spec` 0.31.2 | CC-BY-SA-4.0 | Not in the repository: `tools/commonmark-spec/run.py` downloads the file and stores only numbers | `tools/commonmark-spec/` |
+| CSL processor: types, style parser, locale parser, locale merge, evaluation, output | `citeproc` 0.14.1.1 (Hackage, SHA-256 `e5a353f975c32169979b4c9e158d3edb9e57a5f653fab8ff0505a2067e2b1b4b`) | BSD-2-Clause | Port | `crates/randoc-citeproc/` (ADR 17) |
+| BCP 47 language tag (`Lang`, `parseLang`, `renderLang`) | `unicode-collation` 0.1.3.7 `src/Text/Collate/Lang.hs` (code only; no data file) | BSD-2-Clause | Port | `crates/randoc-citeproc/` (ADR 17) |
+| XML events for CSL styles and locales | `quick-xml` 0.42.0 (`=0.42.0`, `default-features = false`), with `memchr` 2 | MIT; Unlicense OR MIT | Dependency (ADR 10) | `crates/randoc-citeproc/` |
+| Candidate command names for the TeX math probes (names only, 1,013 names) | KaTeX 0.16.11, `dist/katex.js` of the npm package | MIT | Data: `crates/randoc-math/tools/katex-names.txt`; the tables of `src/symbols.rs` hold oracle results for these names (ADR 14) | `crates/randoc-math/` |
+| CommonMark and GFM reader: delimiter run matching, the path rule of `rebase_relative_paths` with its URI scheme list, the footnote, definition list and attribute block rules | `commonmark` 0.3.1, `commonmark-extensions` 0.2.7.3, `commonmark-pandoc` 0.3.0.2 (Hackage release archives; the versions of the `stack.yaml` of Pandoc 3.13) | BSD-3-Clause | Port of rules and one data table; the list is in `crates/randoc-commonmark/NOTICE.md`; ADR 12 | `crates/randoc-commonmark/` |
 
 ## Candidates to study
 

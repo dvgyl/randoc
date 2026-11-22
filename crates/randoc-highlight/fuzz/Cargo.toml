@@ -1,0 +1,29 @@
+[package]
+name = "randoc-highlight-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2024"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+randoc-highlight = { path = ".." }
+
+[[bin]]
+name = "definition"
+path = "fuzz_targets/definition.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "tokenize"
+path = "fuzz_targets/tokenize.rs"
+test = false
+doc = false
+bench = false
+
+# The fuzz crate is not a member of the main workspace.
+[workspace]

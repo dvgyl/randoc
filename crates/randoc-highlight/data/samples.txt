@@ -1,0 +1,5832 @@
+abnf
+rule = "a" / "b"
+abnf
+; a comment line with TODO marker
+greeting = "hello" SP name ; trailing comment
+abnf
+digits = 1*DIGIT
+octet = %x00-FF
+abnf
+bits = %b0101.1100
+dec = %d13.10
+abnf
+range = %d48-57 / %x41-5A / %xA.B.C
+abnf
+word = %s"Case" / %i"nocase"
+abnf
+note = <prose value in angle brackets>
+abnf
+list = elem *("," elem)
+elem = [sign] 1*3DIGIT
+abnf
+choice =/ "extra"
+choice =/ other-rule
+abnf
+open = "never closed
+next = ALPHA
+abnf
+prose = <no closing bracket
+after = BIT
+abnf
+esc = "x" \n \t é \U0001F600 \z \
+abnf
+all = ALPHA / BIT / CHAR / CR / CRLF / CTL / DIGIT / DQUOTE / HEXDIG / HTAB / LF / LWSP / OCTET / SP / VCHAR / WSP
+abnf
+odd = !a &b @c ^d ~e $f #g ?h +i
+abnf
+header = name ":"
+         [ value ]
+         CRLF
+abnf
+a = "1"
+
+    
+b = "2"
+abnf
+	c	= "3"	; tab separated
+abnf
+mot = "é" / "日本" ; ünïcödé comment
+abnf
+long = "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "ab" / "end"
+abnf
+g = ((a / b) [c (d / [e])]) *(f)
+abnf
+spaced-rule    =  "x"
+another-rule
+   = "y"
+abnf
+= "leading equals"
+x = 2*4( "-" ) 0*1%x20 3"z" %b
+alert
+TODO fix this later
+alert
+FIXME: broken on empty input
+alert
+ALERT DANGER HACK SECURITY
+alert
+BUG 123 is here
+alert
+DEPRECATED TASK TBD
+alert
+WARNING CAUTION NOLINT NOQA
+alert
+NOTE NOTICE TEST TESTING
+alert
+ATTENTION please read
+alert
+todo and fixme in lower case
+alert
+TODO:FIXME;BUG(NOTE)
+alert
+first line
+
+    
+last line
+alert
+	TODO	after tab
+alert
+NOTE café 日本 TODO
+alert
+word TODO word TODO word TODO word TODO word TODO word TODO word TODO word TODO word TODO word TODO word TODO word TODO word TODO word TODO word TODO word TODO word TODO word TODO word TODO word TODO word TODO word TODO word TODO word TODO word TODO word TODO word TODO word TODO word TODO word TODO end
+alert
+TODOS NOTED WARNINGS
+alert
+one TODO
+two FIXME
+three BUG
+alert
+###TODO###
+alert
+_TODO_ and TODO_X and xTODO
+alert
+FIXME123 BUG2
+alert
+plain text without any marker
+alert
+"WARNING" in quotes and 'NOTE'
+alert
+NOTE-WORTHY TEST.TESTING
+asciidoc
+= Document Title
+Author Name <author@example.org>
+:toc: left
+asciidoc
+== Section One
+
+Some *bold* and _italic_ text with `mono` and #marked# words.
+asciidoc
+=== Level Two
+==== Level Three
+===== Level Four
+====== Level Five
+asciidoc
+// a single line comment
+////
+block comment
+TODO inside
+////
+asciidoc
+----
+listing block
+  keeps spaces
+----
+asciidoc
+....
+literal block
+....
+asciidoc
+++++
+<div>raw pass</div>
+++++
+asciidoc
+|===
+| Name | Value
+| a | 1
+| b | 2
+|===
+asciidoc
+NOTE: Read this.
+TIP: Use this.
+WARNING: Be careful here.
+asciidoc
+image::pic.png[Alt text,200,100]
+include::chapter.adoc[]
+asciidoc
+:project: Randoc
+The name is {project} and {undefined-attr}.
+asciidoc
+.Block Title
+[source,python]
+----
+print("hi") # <1>
+----
+<1> A callout.
+asciidoc
+[[anchor-id]]
+See <<anchor-id,the anchor>> and https://example.org[link].
+asciidoc
+* item one
+** nested item
+. ordered
+term:: definition
+asciidoc
+first paragraph
++
+continued block
+asciidoc
+'''
+<<<
+asciidoc
+ifdef::backend-html5[]
+HTML only
+endif::[]
+asciidoc
+== Café 日本
+
+Texte en français : é è à.
+asciidoc
+word *strong* word *strong* word *strong* word *strong* word *strong* word *strong* word *strong* word *strong* word *strong* word *strong* word *strong* word *strong* word *strong* word *strong* word *strong* word *strong* word *strong* word *strong* word *strong* word *strong* word *strong* word *strong* word *strong* word *strong* word *strong* end
+asciidoc
+	indented with tab
+    
+
+    literal by indent
+asciidoc
+----
+never closed listing
+more text
+asciidoc
+[quote, Someone]
+____
+A quoted block.
+____
+
+kbd:[Ctrl+C] and footnote:[note text] (C) 2024 -- A => B ...
+cabal
+cabal-version:      3.0
+name:               my-pkg
+version:            0.1.0.2
+cabal
+license:            BSD-3-Clause
+license-file:       LICENSE
+author:             Jane Doe
+maintainer:         jane@example.org
+cabal
+copyright:          2024 Jane Doe
+homepage:           https://example.org/my-pkg
+bug-reports:        https://example.org/my-pkg/issues
+cabal
+build-type:         Simple
+tested-with:        GHC == 9.4.7, GHC == 9.6.3
+cabal
+description:
+    A small package.
+    It has two lines.
+cabal
+-- a comment line
+library
+    exposed-modules:  Data.Thing
+    build-depends:    base >=4.14 && <5, text ^>=2.0
+cabal
+executable my-exe
+    main-is:          Main.hs
+    hs-source-dirs:   app
+    default-language: Haskell2010
+cabal
+test-suite tests
+    type:             exitcode-stdio-1.0
+    main-is:          Spec.hs
+cabal
+flag fast
+    description: Use fast path
+    default:     False
+    manual:      True
+cabal
+if os(windows)
+    cpp-options: -DWINDOWS
+elif arch(x86_64) && !flag(fast)
+    ghc-options: -O2
+else
+    buildable: False
+cabal
+if impl(ghc >= 9.2) || impl(ghcjs)
+    ghc-options: -Wunused-packages
+cabal
+default-extensions: OverloadedStrings
+                    LambdaCase
+                    ScopedTypeVariables
+cabal
+source-repository head
+  type:     git
+  location: https://example.org/repo.git
+cabal
+common warnings
+    ghc-options: -Wall
+
+library
+    import: warnings
+cabal
+author:             José 日本 <jose@example.org>
+synopsis:           Données
+cabal
+build-depends: pkg-a >=1.0 && <2, pkg-a >=1.0 && <2, pkg-a >=1.0 && <2, pkg-a >=1.0 && <2, pkg-a >=1.0 && <2, pkg-a >=1.0 && <2, pkg-a >=1.0 && <2, pkg-a >=1.0 && <2, pkg-a >=1.0 && <2, pkg-a >=1.0 && <2, pkg-a >=1.0 && <2, pkg-a >=1.0 && <2, pkg-a >=1.0 && <2, pkg-a >=1.0 && <2, pkg-a >=1.0 && <2, pkg-a >=1.0 && <2, pkg-a >=1.0 && <2, pkg-a >=1.0 && <2, pkg-a >=1.0 && <2, pkg-a >=1.0 && <2, base
+cabal
+library
+	build-depends:	base
+
+    
+cabal
+benchmark bench
+    type: exitcode-stdio-1.0
+foreign-library flib
+    type: native-shared
+custom-setup
+    setup-depends: base
+cabal
+build-depends: base == 4.*, containers > 0.5 || == 0.4.2, mtl < 3
+cabal
+unknown-field: some value -- comment after
+cabal
+Name: CamelCase
+Version: 1
+Build-Type: Configure
+cabal
+license: GPL-3.0-or-later
+tested-with: GHC ==8.10.7 || ==9.0.2, ghcjs
+changelog
+2024-05-02  Jane Doe  <jane@example.org>
+
+	* src/main.c (main): Fix exit code.
+changelog
+	* lib/util.c: New file.
+	* Makefile.am (SOURCES): Add util.c.
+changelog
+2023 - 12 - 31 Tom Ray <tom@example.org>
+changelog
+* top level entry: text
+changelog
+2022-01-01  Name Only
+changelog
+	* a.c, b.c (f, g): Rename.
+changelog
+2021-01-01  A  <a@example.org>
+
+    
+	* x: y.
+changelog
+2021-07-04  José Müller  <jose@example.org>
+	* doc/日本.txt: Translate.
+changelog
+2020-01-01  Long Name Long Name Long Name Long Name Long Name Long Name Long Name Long Name Long Name Long Name Long Name Long Name Long Name Long Name Long Name Long Name Long Name Long Name Long Name Long Name Long Name Long Name Long Name Long Name Long Name Long Name Long Name Long Name Long Name Long Name  <long@example.org>
+changelog
+	* file.c no colon here
+changelog
+Not a date line
+	plain text
+changelog
+2020-02-29  A B C  <a@b>
+	* x: y.
+changelog
+  * indented star: ok
+changelog
+	* config.h:
+	multiple lines
+	continue here.
+changelog
+2019-03-03  <only@mail.example>
+changelog
+2018-08-08  Multi Word Name Here  <m@w.example>
+
+	* one.c (a): First.
+
+	* two.c (b): Second.
+changelog
+2017-1-1 bad date
+changelog
+	*no space: entry
+changelog
+	* path/with spaces.c (fn): Desc: with colon.
+changelog
+2016-06-16  N  <broken@mail
+changelog
+* (x): y
+* z: w
+changelog
+		* deep: tabbed
+cobol
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. HELLO.
+       PROCEDURE DIVISION.
+           DISPLAY "Hello".
+           STOP RUN.
+cobol
+000100* comment in indicator column
+000200 DATA DIVISION.
+000300 WORKING-STORAGE SECTION.
+000400 01 WS-COUNT PIC 9(4) VALUE 0.
+cobol
+       01 WS-NAME    PIC X(20).
+       01 WS-AMOUNT  PIC IS S9(7)V99 COMP-3.
+       01 WS-RATE    PICTURE 99.99.
+       01 WS-EDIT    PIC $ZZ,ZZ9.99CR.
+cobol
+           IF WS-COUNT GREATER THAN 10 AND WS-FLAG EQUAL 1
+               DISPLAY 'big'
+           ELSE
+               DISPLAY 'small'
+           END-IF.
+cobol
+           COMPUTE WS-TOTAL = WS-A * 2 + 3.5 - -1 + .25.
+cobol
+           MOVE FUNCTION UPPER-CASE(WS-NAME) TO WS-OUT.
+           MOVE FUNCTION CURRENT-DATE TO WS-DATE.
+cobol
+           EXEC SQL
+               SELECT NAME INTO :WS-NAME FROM USERS WHERE ID = 42
+           END-EXEC.
+cobol
+           ADD 1 TO WS-COUNT *> increment TODO
+cobol
+      / new page comment
+cobol
+           MOVE X"4142" TO WS-HEX.
+           MOVE H'FF' TO WS-H.
+           MOVE SPACES TO WS-NAME.
+           MOVE ZEROS TO WS-COUNT.
+           MOVE HIGH-VALUES TO WS-KEY.
+cobol
+           DISPLAY "no end
+           DISPLAY 'also open
+cobol
+           PERFORM VARYING I FROM 1 BY 1 UNTIL I > 10
+               DISPLAY I
+           END-PERFORM.
+cobol
+       CLASS-ID. Account.
+       METHOD-ID. Deposit.
+       END METHOD Deposit.
+       END CLASS Account.
+cobol
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       FILE SECTION.
+       FD IN-FILE.
+       01 IN-REC PIC X(80).
+cobol
+           EVALUATE TRUE
+               WHEN WS-A < 0 DISPLAY "neg"
+               WHEN OTHER CONTINUE
+           END-EVALUATE.
+cobol
+           DISPLAY "Café 日本" 'é'.
+cobol
+           DISPLAY WS-FIELD-A ", " WS-FIELD-A ", " WS-FIELD-A ", " WS-FIELD-A ", " WS-FIELD-A ", " WS-FIELD-A ", " WS-FIELD-A ", " WS-FIELD-A ", " WS-FIELD-A ", " WS-FIELD-A ", " WS-FIELD-A ", " WS-FIELD-A ", " WS-FIELD-A ", " WS-FIELD-A ", " WS-FIELD-A ", " WS-FIELD-A ", " WS-FIELD-A ", " WS-FIELD-A ", " WS-FIELD-A ", " WS-FIELD-A ", " WS-END.
+cobol
+	MOVE 1 TO A.
+
+    
+           MOVE 2 TO B.
+cobol
+*comment at column zero
+/slash at column zero
+cobol
+           CALL 'SUBPROG' USING BY REFERENCE WS-A BY CONTENT WS-B.
+           GOBACK.
+cobol
+       01 X PIC 9.
+       01 Y PIC *> comment here
+       01 Z PIC X(3)/X(2).
+cobol
+           STRING WS-A DELIMITED BY SIZE INTO WS-B
+           END-STRING.
+           MOVE FUNCTION ALL TO WS-C.
+           INSPECT WS-B TALLYING WS-C FOR ALL 'A'.
+coffee
+# a comment
+square = (x) -> x * x
+cube   = (x) => square(x) * x
+coffee
+###
+Block comment
+TODO later
+###
+coffee
+name = "World"
+greet = "Hello, #{name}! Sum: #{1 + 2}"
+single = 'no #{interp} here\n'
+coffee
+html = """
+  <p>#{name}</p>
+  """
+raw = '''
+  plain text
+  '''
+coffee
+re = /^\d+(\.\d+)?$/gi
+big = ///
+  ^ [a-z]+  # word
+  \d{2,}    # digits #{suffix}
+///
+coffee
+class Animal extends Base
+  constructor: (@name) ->
+  speak: -> console.log "#{@name} speaks"
+  @create: -> new Animal "x"
+coffee
+nums = [0x1F, 0o17, 0b101, 1.5e-3, .5, 42]
+coffee
+if yes and not no then alert "ok" else alert off
+value = undefined ? null
+coffee
+for own key, val of obj when val?
+  console.log key
+while i-- > 0 then i
+until done then loop
+coffee
+`var legacy = function() { return 1; };`
+coffee
+```
+function block(a) {
+  return `t ${a}` + {k: 1}.k;
+}
+```
+coffee
+switch day
+  when "Mon" then work()
+  when "Sun", "Sat" then rest()
+  else idle()
+coffee
+try
+  risky()
+catch err
+  throw new Error err.message
+finally
+  cleanup()
+coffee
+fs = require 'fs'
+module.exports = process.env.HOME
+window.document.title = navigator.userAgent
+coffee
+{a, b: [c, d]} = obj
+[first, rest...] = list
+coffee
+s = "never closed
+t = 'also open
+coffee
+message = "Café 日本 #{x}"  # é comment
+coffee
+total = item + item + item + item + item + item + item + item + item + item + item + item + item + item + item + item + item + item + item + item + item + item + item + item + item + item + item + item + item + item + item + item + item + item + item + item + item + item + item + item + item + item + last
+coffee
+	x = 1
+
+    
+y = 2
+coffee
+a = b / c / d
+e = f /g/ h
+coffee
+s = "tab\tquote\"newline\nunié hex\x41"
+coffee
+fn = (args...) -> args?.length ? 0
+x ?= 5
+z = a is b isnt c
+typeof x; delete obj.k; await p
+comments
+TODO: a task
+comments
+SPDX-License-Identifier: MIT
+comments
+SPDX-FileCopyrightText: 2024 Jane Doe <jane@example.org>
+comments
+kate: indent-width 4; replace-tabs on;
+comments
+vim: set ts=8 sw=4 et:
+comments
+-*- mode: c; tab-width: 4 -*-
+comments
+SPDX-License-Identifier: GPL-2.0-only OR MIT
+comments
+SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+comments
+FIXME BUG HACK
+comments
+kate-mimetype(text/x-c): indent-mode cstyle;
+comments
+plain comment text with no markers
+comments
+NOTE café 日本
+comments
+text NOTE text NOTE text NOTE text NOTE text NOTE text NOTE text NOTE text NOTE text NOTE text NOTE text NOTE text NOTE text NOTE text NOTE text NOTE text NOTE text NOTE text NOTE text NOTE text NOTE text NOTE text NOTE text NOTE text NOTE text NOTE text NOTE text NOTE text NOTE text NOTE text NOTE end
+comments
+kate: space-indent on; indent-width 2; unknown-key value;
+comments
+vi: noet ts=4
+comments
+SPDX-License-Identifier: (MIT AND BSD-2-Clause)
+comments
+kate-wildcard(*.txt): word-wrap true;
+comments
+WARNING DEPRECATED
+comments
+first
+
+    
+	TODO tab
+comments
+SPDX-License-Identifier: LicenseRef-Custom
+comments
+SPDX-License-Identifier: NOT-A-LICENSE
+comments
+multiple
+TODO lines
+kate: tab-width 3;
+commonlisp
+(defun square (x)
+  "Return X times X."
+  (* x x))
+commonlisp
+; single comment
+;; double
+;;; triple TODO
+commonlisp
+#| block
+   #| nested |#
+   comment |#
+commonlisp
+(defmacro my-when (test &body body)
+  `(if ,test (progn ,@body) nil))
+commonlisp
+(let ((a 1) (b 2.5) (c 1/3) (d 1.0e10) (e -7))
+  (+ a b c d e))
+commonlisp
+(list #x1F #b1011 #o777 #36rZZ #c(1 2))
+commonlisp
+(format t "Value: ~a~%" "esc \" quote \\")
+commonlisp
+(defclass point ()
+  ((x :initarg :x :accessor point-x)
+   (y :initarg :y :initform 0)))
+commonlisp
+(mapcar #'1+ '(1 2 3))
+(funcall #'(lambda (n) (* 2 n)) 4)
+commonlisp
+(defvar *counter* 0)
+(defparameter *limit* 100)
+(print *standard-output*)
+commonlisp
+(defun opt (a &optional (b 2) &rest more &key verbose &aux tmp)
+  (list a b more verbose tmp))
+commonlisp
+(list #\a #\Space #\Newline #\日)
+commonlisp
+#+sbcl (sb-ext:quit)
+#-sbcl (exit)
+commonlisp
+#(1 2 3)
+#*1011
+#p"/tmp/file"
+#.(+ 1 2)
+commonlisp
+(defgeneric area (shape))
+(defmethod area ((s circle))
+  (* pi (expt (radius s) 2)))
+commonlisp
+(print "never closed
+  (more))
+commonlisp
+#| open comment
+still comment
+commonlisp
+(setq name "Café 日本") ; é
+commonlisp
+(list (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) (f x) end)
+commonlisp
+	(car x)
+
+    
+(cdr y)
+commonlisp
+(loop for i from 0 below 10
+      when (evenp i) collect i into evens
+      finally (return evens))
+commonlisp
+(handler-case (error 'simple-error)
+  (error (c) (format nil "~a" c)))
+(cl-user::foo pkg:bar :keyword)
+(<= 1 2 3) (/= a b)
+csv
+name,age,city
+Ann,30,Paris
+Bob,25,Rome
+csv
+a;b;c
+1;2;3
+csv
+x	y	z
+1	2	3
+csv
+col1|col2|col3
+v1|v2|v3
+csv
+one two three
+4 5 6
+csv
+"quoted, with comma",plain,"with ""escaped"" quotes"
+csv
+"multi
+line field",next
+last,row
+csv
+1,2,3,4,5,6,7,8,9,10,11,12,13
+csv
+"semi;inside";b;"c""d"
+csv
+"never closed,a,b
+next line
+csv
+,,,
+,a,,b
+csv
+nom,ville
+José,Zürich
+田中,東京
+csv
+value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,value1,end
+csv
+a,b
+
+    
+1,2
+csv
+"bad"x,y
+z,"w"
+csv
+alone
+values
+here
+csv
+id;name;price
+1;"Widget";9.99
+2;"Gadget; large";19.50
+csv
+|leading|pipes|
+|1|2|
+csv
+"a b"	c
+ d	"e""f"
+csv
+1.5,-2,3e10,0x1F,true
+csv
+a,b
+c;d
+e|f
+csv
+"","",""
+"only quotes"
+dart
+void main() {
+  print('Hello');
+}
+dart
+// line comment
+/* block
+   comment */
+/// doc comment with [link]
+/** @param x value */
+dart
+final name = 'World';
+var s = "Hi $name and ${name.length}";
+var e = 'tab\t quote\' uni \u{1F600}';
+dart
+var raw = r'no $interp \n';
+var multi = '''
+line one $name
+''';
+var m2 = """
+double ${1 + 2}
+""";
+dart
+class Point {
+  final double x, y;
+  const Point(this.x, this.y);
+  @override
+  String toString() => 'P($x, $y)';
+}
+dart
+Future<void> load() async {
+  final data = await fetch();
+  await for (final v in stream) {}
+}
+dart
+var nums = [0xFF, 42, 3.14, 1e-5, .5, 2E10];
+dart
+for (var i = 0; i < 10; i++) {
+  if (i.isEven) continue;
+  else break;
+}
+switch (x) { case 1: default: }
+dart
+try {
+  throw FormatException('bad');
+} on ArgumentError catch (e) {
+  rethrow;
+} finally {}
+dart
+abstract class Shape { double get area; }
+mixin Walker on Animal {}
+enum Color { red, green }
+extension on String {}
+dart
+late int count;
+static const max = 10;
+dynamic d = null;
+bool ok = true || false;
+dart
+List<int> a = [];
+Map<String, Object?> m = {};
+Set<num> s = {};
+Stream<Duration> st;
+dart
+//BEGIN region
+int a = 1;
+//END region
+dart
+typedef Fn = int Function(int);
+import 'dart:async' as async show Timer hide Zone;
+export 'src/a.dart';
+part of lib;
+dart
+var s = 'never closed
+var t = 1;
+/* open comment
+still inside
+dart
+var greet = 'Café 日本'; // é
+dart
+var sum = value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + 0;
+dart
+	int a = 1;
+
+    
+int b = 2;
+dart
+sealed class Result {}
+final class Ok extends Result {}
+var r = switch (x) { 1 => 'one', _ => 'other' };
+dart
+this.value = super.value;
+assert(x != null, 'message');
+yield* gen();
+x is String; y as int;
+dart
+/**
+ * Multi-line doc.
+ * @return nothing
+ * TODO: finish
+ */
+void f() {}
+dart
+var nested = "outer ${"inner ${'deep'}"}";
+var dollar = '\$notvar';
+default
+Plain text line.
+default
+Two lines
+of text.
+default
+Numbers 123 and 4.56 have no color.
+default
+"Quotes" and 'quotes' stay plain.
+default
+// not a comment here
+default
+# also not a comment
+default
+first
+
+    
+last
+default
+	tab at start	and inside
+default
+Café 日本 ünïcödé Ελληνικά
+default
+plain text plain text plain text plain text plain text plain text plain text plain text plain text plain text plain text plain text plain text plain text plain text plain text plain text plain text plain text plain text plain text plain text plain text plain text plain text plain text plain text plain text plain text plain text end
+default
+TODO is plain here
+default
+key = value
+default
+<tag>markup</tag>
+default
+{ "json": true }
+default
+if (x) { y(); }
+default
+    indented line
+default
+symbols !@#$%^&*()_+-=[]{}|;':",./<>?
+default
+a backslash \ and \n text
+default
+trailing spaces
+default
+emoji 😀 and math ∑ ∫
+default
+line one
+line two
+line three
+default
+-- dashes --
+dockerfile
+FROM debian:12 AS build
+WORKDIR /src
+COPY . .
+RUN make
+dockerfile
+# syntax=docker/dockerfile:1
+# escape=\
+# normal comment TODO
+dockerfile
+RUN apt-get update && \
+    apt-get install -y curl && \
+    rm -rf /var/lib/apt/lists/*
+dockerfile
+CMD ["python", "app.py"]
+ENTRYPOINT ["/bin/sh", "-c"]
+dockerfile
+CMD echo "shell form $HOME"
+ENTRYPOINT exec /usr/bin/app --flag
+dockerfile
+ENV APP_HOME=/app PATH="/app/bin:$PATH"
+ARG VERSION=1.0
+LABEL maintainer="jane@example.org" version='2'
+dockerfile
+COPY --from=build --chown=1000:1000 /src/out /app
+ADD --checksum=sha256:abc https://example.org/f.tgz /tmp/
+dockerfile
+HEALTHCHECK --interval=30s --timeout=3s CMD curl -f http://localhost/ || exit 1
+dockerfile
+RUN --mount=type=cache,target=/root/.cache pip install -r req.txt
+dockerfile
+EXPOSE 8080/tcp 9090
+USER app
+VOLUME ["/data"]
+STOPSIGNAL SIGTERM
+dockerfile
+ONBUILD RUN echo built
+MAINTAINER someone
+dockerfile
+RUN <<EOF
+set -e
+echo one
+EOF
+dockerfile
+SHELL ["/bin/bash", "-c"]
+dockerfile
+LABEL desc="never closed
+RUN echo 'open
+dockerfile
+FROM --platform=linux/amd64 alpine:3.19
+dockerfile
+LABEL title="Café 日本"
+RUN echo é
+dockerfile
+RUN echo word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a word-a end
+dockerfile
+	RUN true
+
+    
+CMD false
+dockerfile
+from ubuntu
+run echo hi
+cmd ["x"]
+dockerfile
+RUN for i in 1 2 3; do \
+      echo "$i"; \
+    done
+dockerfile
+ENV OLD_STYLE value with spaces
+ARG NOVALUE
+dockerfile
+# comment continues \
+RUN echo after
+WORKDIR ${APP_HOME:-/app}
+doxygen
+/**
+ * @brief Short text.
+ * @param[in] x The input.
+ * @return The result.
+ */
+int f(int x);
+doxygen
+/// \brief Line doc.
+/// \param y second value
+//! Qt style line
+int y; ///< trailing member doc
+doxygen
+/*!
+ * \class Widget widget.h "inc/widget.h"
+ * \author Jane
+ */
+doxygen
+/**
+ * \code
+ * int a = 1;
+ * \endcode
+ * @verbatim raw text @endverbatim
+ */
+doxygen
+/**
+ * Inline formula \f$ a^2 + b^2 \f$ here.
+ * \f[ \sum_{i=0}^{n} i \f]
+ */
+doxygen
+/**
+ * \f{eqnarray*}{
+ *   x &=& 1 \\
+ *   y &=& 2
+ * \f}
+ */
+doxygen
+/** <b>bold</b> <a href="x.html">link</a> <!-- html comment --> &amp; &copy; */
+doxygen
+/**
+ * @todo Finish this.
+ * @note A note.
+ * @warning Danger.
+ * @attention Look.
+ * @bug Known issue.
+ */
+doxygen
+//@{
+int a;
+//@}
+/*@{*/
+int b;
+/*@}*/
+doxygen
+/**
+ * \msc
+ *   a,b;
+ *   a->b [label="go"];
+ * \endmsc
+ */
+doxygen
+/**
+ * \dot
+ *   digraph G { a -> b; }
+ * \enddot
+ */
+doxygen
+/** @see other() @sa \ref page1 "Page One" @deprecated use g() */
+doxygen
+/**
+ * \defgroup grp Group Title
+ * \ingroup parent
+ * \file main.c
+ * \page p1 Title text
+ */
+doxygen
+/** never closed
+ * @param x
+ * still inside
+doxygen
+/// \brief Café 日本 é
+/// @param naïve value
+doxygen
+/// @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text end
+doxygen
+/** @param[in,out] buf the buffer
+ *  @param[out] len
+ *  @tparam T type
+ *  @retval 0 success
+ *  @throws Error on failure */
+doxygen
+/**
+	* tabbed line
+
+    
+ */
+doxygen
+/** \li item one
+ *  \li item two
+ *  - dash list
+ *  \e emph \b bold \c code \p param */
+doxygen
+/** @code{.py}
+ * print(1)
+ * @endcode */
+doxygen
+// not doc
+/* not doc */
+/***/
+/**/
+doxygen
+/** @htmlonly <p>x</p> @endhtmlonly
+ *  @latexonly \textbf{x} @endlatexonly
+ *  \n newline \\ \@ \& */
+doxygenlua
+--- Short description.
+--- @param x the input
+--- @return the result
+function f(x) end
+doxygenlua
+--! @brief Qt style
+--! @param a first
+doxygenlua
+--- @todo finish
+--- @note note here
+--- @warning careful
+--- @attention see
+doxygenlua
+--- \code local x = 1 \endcode
+doxygenlua
+--- formula \f$ x^2 \f$ inline
+doxygenlua
+--- \f[ \int_0^1 x\,dx \f]
+doxygenlua
+--- <b>bold</b> <i>it</i> <!-- c --> &amp; &lt;
+doxygenlua
+-- @{
+local a = 1
+-- @}
+doxygenlua
+--- @param[in] t table
+--- @param[out] r result
+--- @retval nil on error
+doxygenlua
+--- @see other
+--- @sa \ref sect "Section"
+doxygenlua
+--- TODO FIXME BUG
+doxygenlua
+--- @verbatim raw @endverbatim
+doxygenlua
+--- \msc a,b; \endmsc
+--- \dot digraph{} \enddot
+doxygenlua
+--- \class Foo
+--- \author Jane
+--- \file a.lua
+doxygenlua
+--- Café 日本 é
+doxygenlua
+--- @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text @c word text end
+doxygenlua
+	--- tabbed
+
+    
+doxygenlua
+-- plain lua comment
+local s = "not doc"
+doxygenlua
+--- \f{align}{ a &= b \f}
+doxygenlua
+--- @deprecated use g
+--- @since 1.2
+--- @version 3
+doxygenlua
+--- \e emph \b bold \c code \p arg
+doxygenlua
+--- @code{.lua}
+--- print(1)
+--- @endcode
+elixireex
+<h1><%= @title %></h1>
+elixireex
+<%= for item <- @items do %>
+  <li><%= item.name %></li>
+<% end %>
+elixireex
+<%!-- an EEx comment --%>
+elixireex
+<%% literal tag %>
+elixireex
+<%= if @user do %>
+  Hi <%= @user.name %>
+<% else %>
+  Guest
+<% end %>
+elixireex
+<%| piped %> <%/ slash %>
+elixireex
+<p><%= String.upcase("esc \" q") %></p>
+elixireex
+<%= 1 + 2.5 * 0x1F %> <%= :atom %> <%= ~s(sigil) %>
+elixireex
+<%!--
+multi-line
+comment
+--%>
+elixireex
+<%= @count |> Integer.to_string() %>
+elixireex
+<%!-- never closed
+still comment
+elixireex
+<%= @open
+more text
+elixireex
+<p>Café 日本 <%= "é" %></p>
+elixireex
+<p><%= @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> @a <> "" %></p>
+elixireex
+	<%= @x %>
+
+    
+elixireex
+<%= case @status do %>
+<% :ok -> %>fine
+<% _ -> %>bad
+<% end %>
+elixireex
+plain text only, no tags
+elixireex
+<%= render("x.html", conn: @conn) %>
+elixireex
+<%= # comment inside %>
+elixireex
+<%= [1, 2] |> Enum.map(fn x -> x * 2 end) %>
+elixireex
+<%= %{a: 1, "b" => 2} %>
+elixireex
+<script>var x = "<%= @js %>";</script>
+elixirheex
+<div class="box">{@title}</div>
+elixirheex
+<.button phx-click="save" disabled={@busy}>Save</.button>
+elixirheex
+<MyAppWeb.Components.card title="Hi" />
+elixirheex
+<.table rows={@rows}>
+  <:col :let={row} label="Name">{row.name}</:col>
+</.table>
+elixirheex
+<ul>
+  <li :for={item <- @items} :if={item.visible}>{item.label}</li>
+</ul>
+elixirheex
+<!-- html comment -->
+<!DOCTYPE html>
+elixirheex
+<%= @legacy %>
+<% if true do %>yes<% end %>
+elixirheex
+<script>
+  const n = 42;
+  console.log("hi");
+</script>
+elixirheex
+<style>
+  .box { color: red; }
+</style>
+elixirheex
+<form phx-submit="go" phx-change="check">
+  <input name="q" value={@q} phx-debounce="300" />
+</form>
+elixirheex
+<div {@rest} id={"item-#{@id}"}>x</div>
+elixirheex
+<p>&amp; &nbsp; &#169;</p>
+elixirheex
+<div class="open
+  more
+elixirheex
+<p>{@value
+</p>
+elixirheex
+<p class="é">Café 日本</p>
+elixirheex
+<p>{@a} text {@a} text {@a} text {@a} text {@a} text {@a} text {@a} text {@a} text {@a} text {@a} text {@a} text {@a} text {@a} text {@a} text {@a} text {@a} text {@a} text {@a} text {@a} text {@a} text {@a} text {@a} text {@a} text {@a} text {@a} text {@a} text {@a} text {@a} text {@a} text {@a} text </p>
+elixirheex
+<div>
+	<span>x</span>
+
+    
+</div>
+elixirheex
+<.link navigate={~p"/users/#{@user}"}>Profile</.link>
+elixirheex
+<.modal :if={@show} id="m" on_cancel={JS.hide("#m")}>
+  <:title>Title</:title>
+</.modal>
+elixirheex
+<div phx-hook="Chart" phx-update="ignore" data-value={@v}></div>
+elixirheex
+<%!-- comment --%>
+<span>{assigns.name}</span>
+elixirheex
+<input type="checkbox" checked />
+<br/>
+<img src='a.png' alt=x>
+elm
+module Main exposing (main, view)
+
+import Html exposing (Html, div, text)
+import Dict as D
+elm
+-- line comment
+{- block
+   {- nested -}
+   comment -}
+elm
+type alias Model =
+    { count : Int
+    , name : String
+    }
+elm
+type Msg
+    = Increment
+    | Decrement
+    | Set Int
+elm
+update : Msg -> Model -> Model
+update msg model =
+    case msg of
+        Increment ->
+            { model | count = model.count + 1 }
+        _ ->
+            model
+elm
+view model =
+    let
+        label = String.fromInt model.count
+    in
+    div [] [ text label ]
+elm
+nums = [ 0x1F, 42, 3.14, 6.02e23, 1.5E-3 ]
+elm
+chars = [ 'a', '\n', '\'', '\\', '\u{1F600}' ]
+elm
+greeting = "Hello, \"World\"\n"
+empty = ""
+elm
+doc = """
+multi-line
+string "quoted"
+"""
+elm
+port module Ports exposing (..)
+
+port send : String -> Cmd msg
+elm
+isBig n = if n > 10 then True else False
+both = a && b || not c
+elm
+pipe = list |> List.map ((+) 1) >> List.sum <| x
+concat = "a" ++ "b"
+neq = a /= b
+elm
+infix right 0 (<|) = apL
+infix left  0 (|>) = apR
+infix non 4 (==) = eq
+elm
+effect module Task where { command = MyCmd }
+command : a
+subscription : b
+elm
+s = "never closed
+t = 1
+{- open comment
+still inside
+elm
+salut = "Café 日本" -- é
+elm
+total = value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + value + 0
+elm
+	x = 1
+
+    
+y = 2
+elm
+import Json.Decode as Decode exposing (Decoder, field)
+elm
+lambda = \x y -> x + y
+tuple = ( 1, "two", 3.0 )
+_ = Debug.log "x" ()
+elm
+main : Program () Model Msg
+main =
+    Browser.sandbox { init = init, update = update, view = view }
+email
+From: Jane Doe <jane@example.org>
+To: bob@example.org
+Subject: Hello
+
+Hi Bob.
+email
+Subject: Re: "quoted" title
+Date: Mon, 1 Jan 2024 10:00:00 +0000
+
+Body.
+email
+From: "Doe, Jane" (work) <jane@example.org>
+Cc: a@x.example, b@y.example
+email
+To: someone@example.org (comment (nested) here)
+Reply-To: <r@example.org>
+email
+X-Custom-Header: some value
+X-Mailer: tool 1.0
+
+text
+email
+Content-Type: multipart/mixed; boundary="abc123defg45"
+MIME-Version: 1.0
+
+--abc123defg45
+Content-Type: text/plain
+
+part one
+--abc123defg45--
+email
+Subject: A long subject
+ that is folded
+	over lines
+
+Body
+email
+From: "Esc \" inside" <e@example.org>
+email
+Message-ID: <id.123@host.example>
+In-Reply-To: <id.122@host.example>
+References: <a@b> <c@d>
+email
+Received: from host by mx; Tue, 2 Jan 2024
+Return-Path: <bounce@example.org>
+email
+Subject: Café 日本
+From: José <jose@example.org>
+
+Bonjour é.
+email
+To: user@example.org, user@example.org, user@example.org, user@example.org, user@example.org, user@example.org, user@example.org, user@example.org, user@example.org, user@example.org, user@example.org, user@example.org, user@example.org, user@example.org, user@example.org, last@example.org
+email
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: attachment; filename="a.txt"
+
+=C3=A9t=C3=A9
+email
+lowercase-header: value
+subject: lower subject
+
+Body text.
+email
+From: "never closed <x@y.example>
+To: z@w.example
+
+body
+email
+To: a@b.example (open comment
+Cc: c@d.example
+
+body
+email
+Bcc: hidden@example.org
+Sender: s@example.org
+Comments: a note
+
+> quoted reply
+>> deeper
+email
+Subject: spaces
+
+    
+	tabbed body line
+email
+Authentication-Results: mx.example; spf=pass
+Content-Description: notes
+
+body
+--short--
+--boundaryXYZ1234567
+X-Part: 2
+email
+
+No headers here.
+Just text.
+email
+Not a header line
+From: a@b.example
+email
+Subject: test
+
+--
+Signature line
+Jane
+fortranfixed
+      PROGRAM HELLO
+      PRINT *, 'Hello'
+      END
+fortranfixed
+C     full line comment
+c     lower case comment
+*     star comment
+      X = 1 ! inline comment
+fortranfixed
+      DO 10 I = 1, 10
+         S = S + I
+   10 CONTINUE
+fortranfixed
+      WRITE (*, 100) X, Y
+  100 FORMAT (1X, 'X=', F8.3, 2X, I5)
+fortranfixed
+      Y = A +
+     &    B * C
+     1    - D
+fortranfixed
+      REAL*8 A, B
+      INTEGER N
+      DOUBLE PRECISION D
+      LOGICAL FLAG
+      CHARACTER*20 NAME
+      COMPLEX Z
+fortranfixed
+      A = 1.0D0
+      B = 2.5E-3
+      C = .5
+      N = 42
+      K = 3_8
+fortranfixed
+      IF (X .GT. 0 .AND. .NOT. FLAG) THEN
+         Y = .TRUE.
+      ELSE IF (X .EQ. 0) THEN
+         Y = .FALSE.
+      END IF
+fortranfixed
+      S = 'it''s quoted'
+      T = "double"
+      U = 'never closed
+fortranfixed
+#ifdef DEBUG
+      PRINT *, 'debug'
+#endif
+#include "defs.h"
+fortranfixed
+      SUBROUTINE SWAP(A, B)
+      REAL A, B, T
+      T = A
+      A = B
+      B = T
+      RETURN
+      END
+fortranfixed
+      FUNCTION SQ(X)
+      SQ = SQRT(ABS(X)) + SIN(X) * EXP(X)
+      END
+fortranfixed
+      OPEN (UNIT=10, FILE='data.txt', STATUS='OLD', IOSTAT=IERR)
+      READ (10, *, END=99) N
+      CLOSE (10)
+fortranfixed
+      INQUIRE (FILE='a.dat', EXIST=EX)
+      REWIND 10
+      BACKSPACE 10
+fortranfixed
+      COMMON /BLK/ A, B
+      DIMENSION X(100)
+      PARAMETER (PI = 3.14159)
+      DATA N /5/
+fortranfixed
+      CALL SUB(MAXVAL(ARR), SIZE(ARR), SUM(ARR))
+      GO TO 20
+      STOP
+fortranfixed
+C     Commentaire é 日本
+      S = 'Café'
+fortranfixed
+      X = A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + A1 + B
+fortranfixed
+	X = 1
+
+    
+      Y = 2
+fortranfixed
+      IMPLICIT NONE
+      INTEGER, PARAMETER :: N = 3
+      REAL, DIMENSION(N) :: V
+fortranfixed
+      SELECT CASE (K)
+      CASE (1)
+         J = 1
+      CASE DEFAULT
+         J = 0
+      END SELECT
+fortranfixed
+      X = Y .LT. Z .OR. W .GE. V
+      Z = (1.0, 2.0)
+      B = Z'FF' + O'17' + B'101'
+fortranfree
+program hello
+  implicit none
+  print *, "Hello"
+end program hello
+fortranfree
+! comment line
+x = 1 ! trailing comment
+!$omp parallel do
+fortranfree
+module geometry
+  implicit none
+  real, parameter :: pi = 3.14159265_8
+contains
+  pure function area(r) result(a)
+    real, intent(in) :: r
+    real :: a
+    a = pi * r**2
+  end function area
+end module geometry
+fortranfree
+subroutine swap(a, b)
+  real, intent(inout) :: a, b
+  real :: t
+  t = a; a = b; b = t
+end subroutine
+fortranfree
+type :: point
+  real :: x = 0.0, y = 0.0
+contains
+  procedure :: norm
+end type point
+fortranfree
+do i = 1, n
+  if (mod(i, 2) == 0) cycle
+  if (i > 10) exit
+end do
+do concurrent (j = 1:m)
+end do
+fortranfree
+select case (k)
+case (1:3)
+  s = 'low'
+case default
+  s = "other"
+end select
+fortranfree
+total = a + &
+        b * c &
+        - d
+fortranfree
+s = 'it''s'
+t = "say ""hi"""
+u = 'never closed
+fortranfree
+write (*, '(a, i0)') 'n = ', n
+read (unit=5, fmt=*, iostat=ios) x
+open (newunit=u, file='a.txt', status='replace', action='write')
+fortranfree
+inquire (file='x.dat', exist=found)
+close (u)
+rewind (u)
+100 format (1x, f10.4, es12.4)
+fortranfree
+real(kind=8) :: x = 1.0d0, y = 2.5e-3_dp
+integer :: n = 42, m = int(z'1F')
+complex :: z = (1.0, -2.0)
+logical :: ok = .true.
+fortranfree
+if (a .eq. b .and. .not. c) then
+  x = 1
+else if (a /= b .or. d) then
+  x = 2
+else
+  x = 3
+end if
+fortranfree
+interface operator(+)
+  module procedure add_points
+end interface
+abstract interface
+end interface
+fortranfree
+where (arr > 0.0)
+  arr = sqrt(arr)
+elsewhere
+  arr = 0.0
+end where
+forall (i = 1:n) v(i) = i
+fortranfree
+associate (n => size(arr))
+  print *, maxval(arr), minloc(arr), matmul(a, b)
+end associate
+block
+  integer :: tmp
+end block
+fortranfree
+integer, allocatable :: buf(:)
+allocate (buf(100))
+deallocate (buf)
+call random_number(r)
+call cpu_time(t)
+fortranfree
+real :: x[*]
+sync all
+if (this_image() == 1) print *, num_images()
+fortranfree
+character(len=*), parameter :: msg = 'Café 日本' ! é
+fortranfree
+x = a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + a1 + b
+fortranfree
+	x = 1
+
+    
+y = 2
+fortranfree
+elemental impure function f(x) bind(c, name='f')
+  use iso_c_binding, only: c_int
+  integer(c_int), value :: x
+end function
+#ifdef USE_MPI
+call mpi_init(ierr)
+#endif
+gleam
+import gleam/io
+import gleam/list.{map, filter} as l
+import gleam/dict.{type Dict}
+gleam
+pub fn greet(name: String) -> String {
+  "tab\t quote\" back\\ nl\n uni\u{1F600} bad\q"
+}
+gleam
+const sizes = [1_000, 0b1010, 0o777, 0xFF, 3.14, 1.0e-3, 2., 12abc]
+gleam
+let packet = <<head:size(8), body:bytes, 3:int-big-unit(2), rest:bits>>
+gleam
+// plain comment
+/// doc comment for the next item
+//// module doc
+pub fn id(x) { x }
+gleam
+case shape {
+  Circle(r) if r >. 0.0 -> r *. r
+  Square(s) -> s *. s
+  _ -> 0.0
+}
+gleam
+pub type Shape {
+  Circle(Float)
+  Square(side: Float)
+}
+pub type Box(a) = Result(List(a), Nil)
+gleam
+@external(erlang, "lists", "reverse")
+@deprecated("use other")
+@target(javascript)
+@internal
+pub fn rev(x: List(a)) -> List(a)
+gleam
+pub fn later() {
+  let assert Ok(v) = parse("1")
+  todo as "not yet"
+  panic as "boom"
+}
+gleam
+auto delegate derive else implement macro test
+gleam
+let s = "this string does not end
+and goes on \
+let x = 1
+gleam
+pub fn f() {
+
+    
+	let y = 2
+}
+gleam
+let name = "café 日本 Ωmega"
+let ünïcode = 1
+gleam
+pub const big = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94]
+gleam
+pub fn run() {
+  use x <- result.try(parse(input))
+  use <- bool.guard(x < 0, Error(Nil))
+  Ok(x)
+}
+gleam
+"a" <> "b" |> string.length |> int.to_string
+1 + 2 - 3 * 4 / 5 % 6 == 7 != 8 && True || False
+gleam
+pub const answer: Int = 42
+const pi = 3.14159
+gleam
+import 42
+import gleam/io as
+import
+gleam
+let bad = "\u{zzzz} \u{110000} end"
+gleam
+pub fn main() {
+  echo [1, 2, 3]
+  let assert [first, ..] = items
+}
+gleam
+let p2 = Point(..p, x: 10)
+let add = fn(a, b) { a + b }
+#(1, "two", 3.0)
+gleam
+pub opaque type Counter {
+  Counter(value: Int)
+}
+fn wrap(c: Counter) -> Option(Counter) { Some(c) }
+gpr
+project Demo is
+   for Source_Dirs use ("src");
+   for Object_Dir use "obj";
+end Demo;
+gpr
+with "shared.gpr";
+project App extends "base.gpr" is
+   for Main use ("main.adb");
+end App;
+gpr
+for Source_Dirs use ("src", "src/é", "日本");
+gpr
+package Compiler is
+   for Default_Switches ("Ada") use ("-O2", "-gnatwa");
+end Compiler;
+gpr
+case Mode is
+   when "debug" =>
+      for Object_Dir use "obj/debug";
+   when others =>
+      null;
+end case;
+gpr
+--  BEGIN settings
+-- a plain comment
+for Exec_Dir use ".";
+--  END settings
+gpr
+type Mode_Type is ("debug", "release");
+Mode : Mode_Type := external ("MODE", "debug");
+gpr
+for Main use ("main.adb);
+for Exec_Dir use "bin";
+gpr
+abstract project Common is
+   for Source_Files use ();
+end Common;
+X : null record;
+gpr
+library project Lib is
+   for Library_Name use "lib";
+   for Library_Kind use "static";
+   for Library_Dir use "lib";
+end Lib;
+gpr
+Msg := "say ""hello"" twice";
+gpr
+project P is
+
+   
+	for Languages use ("Ada");
+end P;
+gpr
+for Switches ("main.adb") use ("-flag0", "-flag1", "-flag2", "-flag3", "-flag4", "-flag5", "-flag6", "-flag7", "-flag8", "-flag9", "-flag10", "-flag11", "-flag12", "-flag13", "-flag14", "-flag15", "-flag16", "-flag17", "-flag18", "-flag19", "-flag20", "-flag21", "-flag22", "-flag23", "-flag24", "-flag25", "-flag26", "-flag27", "-flag28", "-flag29");
+gpr
+if X then null; end if;
+loop exit; end loop;
+type R is record null; end record;
+select delay 1.0; end select;
+gpr
+package Naming is
+   for Spec_Suffix ("Ada") use ".ads";
+   for Body_Suffix ("Ada") use ".adb";
+   for Casing use "lowercase";
+   for Dot_Replacement use "-";
+end Naming;
+gpr
+package Builder is
+   for Executable ("main.adb") use "app";
+end Builder;
+package Linker is
+   for Linker_Options use ("-lm");
+end Linker;
+gpr
+Root := Project'Project_Dir & "/obj";
+for Object_Dir use Root & "/" & Mode;
+gpr
+package Install is
+   for Prefix use "/usr/local";
+   for Install_Project use "true";
+end Install;
+gpr
+-- comment with café and 日本語 text
+for Exec_Dir use "bin"; -- trailing
+gpr
+PROJECT Upper IS
+   FOR Object_Dir USE "OBJ";
+END Upper;
+gpr
+Flags := external_as_list ("FLAGS", ",");
+for Languages use ("Ada", "C", "C++");
+gpr
+aggregate project Agg is
+   for Project_Files use ("a.gpr", "b.gpr");
+end Agg;
+graphql
+query User($id: ID!, $flag: Boolean = false) {
+  user(id: $id) @include(if: $flag) {
+    name
+  }
+}
+graphql
+mutation Create($in: NewPost!) {
+  createPost(input: $in) { id title }
+}
+graphql
+type Book implements Node & Item {
+  id: ID!
+  pages: Int
+  price: Float
+  tags: [String!]!
+}
+graphql
+"""
+Block "description" with \n escape
+"""
+scalar Date
+graphql
+{ search(text: "tab\t quote\" uni\u00e9 back\\") { id } }
+graphql
+{ f(a: 42, b: -7, c: 3.14, d: 1e10, e: 6.02e-23, g: 0) }
+graphql
+{ f(a: null, b: true, c: false) }
+graphql
+# a comment line
+{ me { name } } # trailing comment
+graphql
+{ f(s: "not closed
+  next: 1) }
+graphql
+"""
+this block string
+never closes
+graphql
+query Q {
+  me { ...UserFields ... on Admin { level } }
+}
+fragment UserFields on User { name }
+graphql
+{ small: picture(size: 64) big: picture(size: 512) }
+graphql
+query {
+
+    
+	me { id }
+}
+graphql
+"Описание café 日本"
+type Ünit { name: String }
+graphql
+{ user { field0 field1 field2 field3 field4 field5 field6 field7 field8 field9 field10 field11 field12 field13 field14 field15 field16 field17 field18 field19 field20 field21 field22 field23 field24 field25 field26 field27 field28 field29 field30 field31 field32 field33 field34 field35 field36 field37 field38 field39 } }
+graphql
+subscription OnEvent {
+  event(kind: CREATED) { id at }
+}
+graphql
+directive @auth(role: String = "admin") on FIELD_DEFINITION | OBJECT
+graphql
+input Filter {
+  ids: [ID!] = []
+  range: [[Int]]
+}
+graphql
+{ f(o: {a: 1, b: [1, 2, {c: "x"}], d: $v}) }
+graphql
+extend type Query {
+  books: [Book]
+}
+extend schema { subscription: Sub }
+graphql
+enum Color { RED GREEN BLUE }
+schema { query: Query mutation: Mutation }
+graphql
+union Result = Book | Author | Error
+interface Node { id: ID! }
+haxe
+package my.pack;
+import haxe.ds.StringMap;
+using StringTools;
+haxe
+class Main {
+  static public function main():Void {
+    trace("Hello");
+  }
+}
+haxe
+var s = "tab\t quote\" uni\u00e9 big\U0001F600 ent\&amp; end";
+haxe
+var raw = 'single $name ${a + b} \' \n';
+haxe
+var nums = [42, 3.14, .5, 1.5e3, 2e-4, 0xFF, 0x1a2B];
+haxe
+for (i in 0...10) trace(i);
+var r = 1..2;
+haxe
+// line comment
+/* block
+   comment */
+var x = 1;
+haxe
+/* this comment
+never ends
+var y = 2;
+haxe
+#if js
+trace("js");
+#elseif (cpp && !debug)
+trace("cpp");
+#else
+#error "unsupported"
+#end
+haxe
+var a:Array<Int> = [];
+var b:Bool = true;
+var d:Dynamic = null;
+var f:Float = 0;
+haxe
+typedef Point = { x:Int, y:Int };
+enum Color { Red; Green; Rgb(r:Int, g:Int, b:Int); }
+haxe
+abstract Meters(Float) from Float to Float {
+  inline public function new(v) this = v;
+}
+haxe
+@:keep @:native("Foo") class Foo extends Bar implements Baz {
+  override public function run() super.run();
+}
+haxe
+try { throw "err"; } catch (e:Dynamic) { trace(e); }
+switch (v) { case 1: trace(1); default: }
+haxe
+var t = cast(x, String);
+untyped __js__("1");
+var u = new Map<String, Int>();
+haxe
+class C {
+
+    
+	var z = 0;
+}
+haxe
+var name = "café 日本";
+// commentaire é
+haxe
+var list = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94];
+haxe
+var s = "never closed
+var t = 2;
+haxe
+var c = '\n' + "\x41";
+var q = '\u00e9 \U0001F600';
+haxe
+while (true) { if (x > 3) break else continue; }
+do x++ while (x < 9);
+haxe
+import haxe.macro.Expr; // comment after import
+import /* inline */ sys.io.File;
+javascriptreact
+function Hello({ name }) {
+  return <div className="greet" id='x'>Hello, {name}!</div>;
+}
+javascriptreact
+const b = <Button onClick={() => go(1)} disabled />;
+javascriptreact
+const f = (
+  <>
+    <A />
+    <B>text</B>
+  </>
+);
+javascriptreact
+const t = <p>a &amp; b &copy; &#169; &#x1F600; &bogus</p>;
+javascriptreact
+const s = <svg:rect xlink:href="#a" data-id="1" aria-label="x" />;
+javascriptreact
+const m = <Foo.Bar.Baz prop={1}><Foo.Item /></Foo.Bar.Baz>;
+javascriptreact
+const g = <Select<Item> items={list} />;
+const h = <Map<string, [number, {a: (b)}]> />;
+javascriptreact
+const ul = (
+  <ul>
+    {items.map((it) => <li key={it.id}>{it.label}</li>)}
+  </ul>
+);
+javascriptreact
+const c = ok && <p>yes</p>;
+const d = ok ? <A /> : <B x="1" />;
+const e = no || <Empty />;
+javascriptreact
+const x = (
+  <div>
+    {/* jsx comment */}
+    <span /* inline */ a="1" />
+  </div>
+); // line comment
+javascriptreact
+const tpl = `value ${ <b>{v}</b> } and ${n + 1}`;
+javascriptreact
+class App extends React.Component {
+  render() {
+    return <main>{this.props.children}</main>;
+  }
+}
+javascriptreact
+import React, { useState } from "react";
+export default <App />;
+javascriptreact
+const u = <Café label="日本" />;
+const w = <p>texte é 日本語</p>;
+javascriptreact
+const p = <Input {...props} value={state.v} onChange={e => set(e.target.value)} />;
+javascriptreact
+const bad = <div className="open
+  /* comment never ends
+javascriptreact
+const r = /ab+c/gi.test(s);
+const z = a / b / c;
+javascriptreact
+const row = <tr><td key="0">0</td><td key="1">1</td><td key="2">2</td><td key="3">3</td><td key="4">4</td><td key="5">5</td><td key="6">6</td><td key="7">7</td><td key="8">8</td><td key="9">9</td><td key="10">10</td><td key="11">11</td><td key="12">12</td><td key="13">13</td><td key="14">14</td><td key="15">15</td><td key="16">16</td><td key="17">17</td><td key="18">18</td><td key="19">19</td><td key="20">20</td><td key="21">21</td></tr>;
+javascriptreact
+#!/usr/bin/env node
+console.log(<b />);
+javascriptreact
+function F() {
+
+    
+	return <i />;
+}
+javascriptreact
+function* gen() { yield <a />; }
+async function load() { return await <b />; }
+const arr = [<li key="1" />, <li key="2" />];
+javascriptreact
+let n = 0x1F + 1e3 + 0b101 + 0o17 + 10n;
+const str = "esc \n \u00e9";
+const obj = { tag: <em>x</em>, num: 2 };
+jinja
+<ul>
+{% for item in items %}
+  <li>{{ item.name }}</li>
+{% endfor %}
+</ul>
+jinja
+{% if user and not banned %}hi{% elif guest %}guest{% else %}no{% endif %}
+jinja
+{# a comment #}
+{#- trimmed comment -#}
+jinja
+{%- set total = 0x1F + 017 + 3.5 + 42 -%}
+{{- total +}}
+jinja
+{% macro input(name, value='', type="text") %}
+  <input name="{{ name }}" value="{{ value|e }}">
+{% endmacro %}
+jinja
+{% call render(user) %}body{% endcall %}
+{% filter upper %}text{% endfilter %}
+jinja
+{% extends "base.html" %}
+{% block content %}{{ super() }}{% endblock %}
+jinja
+{% raw %}{{ not parsed }}{% endraw %}
+jinja
+{% include 'header.html' ignore missing with context %}
+{% import 'forms.html' as forms %}
+{% from 'm.html' import a, b without context %}
+jinja
+{{ 'tab\t quote\' uni\u00e9 big\U0001F600' }}
+{{ "dq \" \n" }}
+jinja
+{{ name|default('x')|trim|title|truncate(10) }}
+{{ list|join(", ")|custom_filter }}
+jinja
+{% if n is divisibleby 3 %}fizz{% endif %}
+{% if x is not none and y is defined %}ok{% endif %}
+jinja
+{{ range(10)|list }} {{ lipsum(2) }} {{ dict(a=1) }} {{ cycler('a', 'b') }}
+jinja
+{{ true }} {{ false }} {{ none }} {{ True }} {{ None }}
+jinja
+{% trans count=n %}one{% pluralize %}many{% endtrans %}
+{% autoescape false %}{{ html }}{% endautoescape %}
+jinja
+{% with a = 1, b = [1, 2] %}{{ a ~ b[0] }}{% endwith %}
+{% for k, v in d.items() if v %}{% break %}{% continue %}{% endfor %}
+jinja
+{{ unclosed expression
+more text
+{# open comment
+jinja
+<p>
+
+    
+	{{ x }}
+</p>
+jinja
+<p>café 日本 {{ "Ωmega" }}</p>
+jinja
+{{ [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89]|sum }}
+jinja
+{{ a + b - c * d / e % f // g ** h }}
+{{ x == y != z < 1 > 2 <= 3 >= 4 }}
+jinja
+{%+ for i in loop.cycle(1, 2) +%}{{ loop.index }}{% endfor %}
+{{ caller() }} {{ varargs }} {{ kwargs }} {{ joiner() }} {{ namespace() }}
+julia
+function greet(name::String)::Nothing
+    println("Hello, $name and $(uppercase(name))!")
+    return nothing
+end
+julia
+s = "tab\t quote\" uni\u00e9 dollar\$ back\\"
+t = """
+triple $x "quoted"
+"""
+julia
+r = r"^\d+(?:[a-z]|\.)*$"i
+rb = r"""
+[^abc]+ (?i) x|y
+"""m
+julia
+p = raw"C:\path\no$escape"
+q = raw"""block \raw"""
+b = b"bytes\x00" ; v = v"1.2.3" ; d = doc"text"
+julia
+cmd = `ls -la $dir`
+blk = ```
+echo hi
+```
+julia
+c = 'a' ; n = '\n' ; u = '\u00e9'
+A' * B'
+x = a.
+julia
+nums = [0x1F, 0x1p3, 0x.8p-1, 0o17, 0b101, 1_000, 1e-3, 2.5f0, .5, 3im, 1.5e2im]
+julia
+# line comment
+#= block
+   #= nested =#
+=#
+x = 1
+julia
+#BEGIN region
+y = 2
+#END
+julia
+using LinearAlgebra
+using Base: show, print
+import Statistics: mean, std
+julia
+struct Point{T<:Real}
+    x::T
+    y::T
+end
+mutable struct Box end
+abstract type Shape end
+primitive type U24 24 end
+julia
+if a > 1
+    b = 2
+elseif a < 0
+    b = -1
+else
+    b = 0
+end
+julia
+try
+    error("x")
+catch e
+    @warn e
+finally
+    close(io)
+end
+julia
+for i in 1:10
+    i == 5 && break
+    continue
+end
+while true; break; end
+julia
+v = Vector{Float64}(undef, 3)
+d = Dict{String, Vector{Int}}()
+x[end] = x[end-1] + x[begin]
+julia
+let a = 1
+    begin
+        quote $a end
+    end
+end
+map(xs) do x x^2 end
+julia
+module M
+macro twice(ex) esc(:($ex; $ex)) end
+@time @twice f()
+export f
+end
+julia
+x = nothing; y = missing; z = true || false
+pi_ = Base.MathConstants.pi; e = ℯ; s = Inf
+julia
+α = 1; β₂ = α + 1
+∑ = sum([1, 2]) ≤ 3
+println("café 日本")
+julia
+long = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89]
+julia
+s = "this string never closes
+x = 1
+julia
+function f()
+
+    
+	return 1
+end
+llvm
+define i32 @main(i32 %argc, i8** %argv) {
+entry:
+  ret i32 0
+}
+llvm
+@.str = private unnamed_addr constant [6 x i8] c"hello\0A\00", align 1
+llvm
+declare i32 @printf(i8* nocapture readonly, ...) nounwind
+llvm
+%struct.Point = type { i32, i32 }
+%pair = type <{ i8, i64 }>
+llvm
+loop:
+  %i = phi i32 [ 0, %entry ], [ %next, %loop ]
+  %next = add nsw i32 %i, 1
+  %c = icmp slt i32 %next, 10
+  br i1 %c, label %loop, label %done
+llvm
+  %r = call fastcc i32 @helper(i32 %x)
+  %s = tail call coldcc i64 @cold()
+  call cc 10 void @f()
+llvm
+; full line comment
+  %a = fadd double %x, 1.5 ; trailing comment
+llvm
+!0 = !{i32 1, !"flag", !1}
+!llvm.module.flags = !{!0}
+llvm
+@"name with space" = global i32 0
+%"quoted local" = alloca i32
+llvm
+attributes #0 = { nounwind readnone uwtable "frame-pointer"="all" }
+define void @g() #0 { ret void }
+llvm
+  %p = getelementptr inbounds %struct.Point, %struct.Point* %pt, i32 0, i32 1
+  store i32 7, i32* %p, align 4
+  %v = load i32, i32* %p
+llvm
+  switch i32 %v, label %def [
+    i32 0, label %zero
+    i32 1, label %one
+  ]
+llvm
+@llvm.used = appending global [1 x i8*] [i8* bitcast (i32* @g to i8*)]
+@llvm.global_ctors = appending global [0 x { i32, void ()*, i8* }] zeroinitializer
+llvm
+@d = global double 0x3FF0000000000000
+@f = global float 1.500000e+02
+@n = global i64 -42
+llvm
+define hidden void @h() { ret void }
+define protected void @k() { ret void }
+@w = weak global i32 0
+@e = external global i32
+llvm
+define void @s(%struct.Point* noalias sret %out, i8 zeroext %b, i16 signext %c) {
+  ret void
+}
+llvm
+@bad = constant [3 x i8] c"abc
+  ret void
+llvm
+define void @t() {
+
+    
+	ret void
+}
+llvm
+; commentaire é 日本
+@u = constant [5 x i8] c"caf\C3\A9"
+llvm
+@big = constant [64 x i32] [i32 0, i32 1, i32 2, i32 3, i32 4, i32 5, i32 6, i32 7, i32 8, i32 9, i32 10, i32 11, i32 12, i32 13, i32 14, i32 15, i32 16, i32 17, i32 18, i32 19, i32 20, i32 21, i32 22, i32 23, i32 24, i32 25, i32 26, i32 27, i32 28, i32 29, i32 30, i32 31, i32 32, i32 33, i32 34, i32 35, i32 36, i32 37, i32 38, i32 39]
+llvm
+  %x = fcmp ogt double %a, %b
+  %y = select i1 %x, double %a, double %b
+  %z = sext i32 %q to i64
+  unreachable
+llvm
+define linkonce_odr i32 @lo() alwaysinline { ret i32 1 }
+define internal i32 @in() noinline optsize { ret i32 2 }
+@sym = alias i32, i32* @w
+logfile
+2024-01-01 10:00:00 INFO server started on port 8080
+2024-01-01 10:00:01 DEBUG loading config
+logfile
+[warn] disk usage at 91%
+[warning] cache is stale
+logfile
+ERROR: cannot open file
+Error connecting to db
+fail: test case 3
+failure in module x
+logfile
+CRITICAL temperature too high
+crit: power lost
+FATAL: out of memory
+logfile
+QDEBUG this is a Qt debug line
+QINFO info from Qt
+QWARN Qt warning
+QCRITICAL Qt critical
+QFATAL Qt fatal
+logfile
+information: user logged in
+Info – details follow
+logfile
+deferred query in queue (no level here)
+created file, closed window, fixed item
+logfile
+warnings are not a level word
+errors also not
+debugging neither
+logfile
+plain line without level
+another plain line
+logfile
+Jan  1 00:00:01 host kernel: [  0.1] info: cpu0 up
+Jan  1 00:00:02 host sshd[42]: error: auth failed
+logfile
+
+logfile
+
+    
+	info after empty lines
+logfile
+line with tab	warn	column
+logfile
+café info: démarrage
+日本 error 失敗
+logfile
+2024-01-01 field0=v field1=v field2=v field3=v field4=v field5=v field6=v field7=v field8=v field9=v field10=v field11=v field12=v field13=v field14=v field15=v field16=v field17=v field18=v field19=v field20=v field21=v field22=v field23=v field24=v field25=v field26=v field27=v field28=v field29=v error at end
+logfile
+level=info msg="ok"
+level=error msg="bad"
+level=debug msg="trace"
+logfile
+{"level":"warn","msg":"slow"}
+{"level":"fatal","msg":"stop"}
+logfile
+DEBUG first then ERROR later on the same line
+ERROR first then DEBUG later
+logfile
+eeee dddd ffff iiii cccc qqqq wwww info
+logfile
+INFO
+DEBUG
+WARN
+ERROR
+CRITICAL
+logfile
+2024-02-02T12:00:00Z [main] Info: ok
+2024-02-02T12:00:01Z [worker] Warning: retry 2/3
+logfile
+failed (not a level word: failed)
+fail-safe mode
+info.log rotated
+m4
+define(`greeting', `Hello, $1!')dnl
+greeting(`world')
+m4
+changequote([, ])dnl
+define([square], [eval([$1] * [$1])])dnl
+square(7)
+m4
+ifdef(`DEBUG', `debug on', `debug off')
+ifelse($#, 0, `none', `$1')
+m4
+# a comment line
+define(`x', 1) # trailing comment
+m4
+pushdef(`v', 1)popdef(`v')undefine(`v')
+defn(`define')indir(`define', `y', 2)
+m4
+incr(41) decr(43) eval(0x1F + 10) len(`abc')
+m4
+substr(`hello', 1, 3) index(`hello', `l')
+translit(`abc', `a-c', `A-C') regexp(`abc', `b')
+patsubst(`a-b', `-', `+')
+m4
+divert(1)saved text
+divert(0)undivert(1)divnum
+m4
+include(`file.m4')sinclude(`opt.m4')
+syscmd(`date')sysval esyscmd(`ls')
+m4
+m4_define(`m', `x')m4_dnl
+m4_ifdef(`m', `yes')m4_eval(2 ** 8)
+m4
+__file__ __line__ __program__
+__gnu__ __unix__ unix __windows__ windows
+m4
+m4___gnu__ m4___unix__ m4_unix m4___file__
+m4
+define(`args', `$0 $1 $2 $# $* $@ ${1} ${10}')
+m4
+format(`%d items', 3) errprint(`warn
+')m4exit(1)
+m4
+traceon(`f')traceoff(`f')dumpdef(`f')
+changecom(`//')m4wrap(`end')
+m4
+define(`nested', `f(g(h(1, 2), 3), 4)')
+f(g(h(1, 2), 3), 4)
+m4
+define(`open', `f(1, 2
+next line still inside
+m4
+define(`a', 1)
+
+    
+	a
+m4
+define(`café', `日本')dnl
+text with é and 日本
+m4
+define(`long', `item0,item1,item2,item3,item4,item5,item6,item7,item8,item9,item10,item11,item12,item13,item14,item15,item16,item17,item18,item19,item20,item21,item22,item23,item24,item25,item26,item27,item28,item29,item30,item31,item32,item33,item34,item35,item36,item37,item38,item39')
+m4
+maketemp(`/tmp/fooXXXXXX')mkstemp(`/tmp/xXXXXXX')
+shift(1, 2, 3) builtin(`define', `z', 9)
+m4
+x = 1 + 2 * 3 / 4 % 5 | 6 & 7 ^ 8 ~ 9 ! 10 < 11 > 12 = 13
+)
+mermaid
+---
+title: Demo chart
+config:
+  theme: dark
+---
+flowchart TD
+  A[[Sub]] --- B[(Db)] -.-> C((Circle))
+  C ==> D>Flag] --o E{{Hex}} --x F[/Para/]
+  F ~~~ G(((Ring))) <--> H([Stadium])
+  n0 --> n1 --> n2 --> n3 --> n4 --> n5 --> n6 --> n7 --> n8 --> n9 --> n10 --> n11 --> n12 --> n13 --> n14 --> n15 --> n16 --> n17 --> n18 --> n19 --> n20 --> n21 --> n22 --> n23 --> n24 --> n25 --> n26 --> n27 --> n28 --> n29 --> n30 --> n31 --> n32 --> n33 --> n34 --> n35 --> n36 --> n37 --> n38 --> n39 --> n40 --> n41 --> n42 --> n43 --> n44
+mermaid
+graph LR
+  A -- text on link --> B
+  B -->|pipe text| C
+  C -. dotted .-> D
+  D == thick ==> E
+  subgraph one [First group]
+    direction TB
+    a1 --> a2
+  end
+  classDef hot fill:#f96,stroke:#333
+  class a1 hot
+  a2:::hot
+  style a2 fill:#bbf
+  linkStyle 0 stroke:red
+  click a1 "https://example.com" "Tip"
+mermaid
+flowchart LR
+  %% a comment line
+  A["Quoted **bold** _it_ text"] --> B["`Markdown **string**`"]
+  accTitle: Accessible title
+  accDescr { Multi line
+  description }
+  C["never closed --> D
+mermaid
+sequenceDiagram
+  participant A as Alice
+  actor B as Bob
+  A->>B: Hello
+  B-->>A: Hi
+  loop Every minute
+    A-)B: ping
+  end
+  alt ok
+    B->>A: yes
+  else no
+    B-xA: fail
+  end
+  Note right of B: thinking
+mermaid
+classDiagram
+  class Animal {
+    +String name
+    -int age
+    +eat(food) bool
+  }
+  Animal <|-- Dog
+  Animal "1" *-- "many" Leg : has
+mermaid
+stateDiagram-v2
+  [*] --> Idle
+  Idle --> Busy : start
+  state Busy {
+    [*] --> Work
+  }
+  Busy --> [*]
+  note right of Idle : waiting
+mermaid
+erDiagram
+  CUSTOMER ||--o{ ORDER : places
+  ORDER {
+    string id PK
+    int total
+  }
+mermaid
+journey
+  title My day
+  section Morning
+    Wake up: 3: Me
+    Coffee: 5: Me, Cat
+mermaid
+gantt
+  title Plan
+  dateFormat YYYY-MM-DD
+  section Build
+    Design :done, d1, 2024-01-01, 3d
+    Code   :active, after d1, 5d
+mermaid
+pie showData
+  title Pets
+  "Dogs" : 42
+  "Cats" : 37.5
+mermaid
+quadrantChart
+  title Reach
+  x-axis Low --> High
+  y-axis Low --> High
+  quadrant-1 Expand
+  A: [0.3, 0.6]
+mermaid
+requirementDiagram
+  requirement r1 {
+    id: 1
+    text: must work
+    risk: high
+  }
+  element e1 { type: sim }
+  e1 - satisfies -> r1
+mermaid
+gitGraph
+  commit id: "init"
+  branch dev
+  checkout dev
+  commit tag: "v1"
+  checkout main
+  merge dev
+mermaid
+mindmap
+  root((Ideas))
+    One
+      Sub [Square]
+    Two
+      ::icon(fa fa-book)
+mermaid
+timeline
+  title History
+  2020 : start
+  2021 : growth : more
+       : again
+mermaid
+zenuml
+  title Order
+  Alice->Bob: hello
+  Bob.method() {
+    return x
+  }
+mermaid
+sankey
+  A,B,10
+  "C, quoted",D,2.5
+mermaid
+xychart
+  title "Sales"
+  x-axis [jan, feb, mar]
+  y-axis "Revenue" 0 --> 100
+  bar [10, 50, 30]
+  line [5, 40, 20]
+mermaid
+block
+  columns 3
+  a["A"] b:2 c
+  space
+  a --> c
+packet
+  0-15: "Source Port"
+  16-31: "Dest Port"
+mermaid
+kanban
+  todo[To do]
+    t1[Write café 日本]@{ ticket: 42, priority: 'High' }
+
+    
+	  done[Done]
+mermaid
+architecture-beta
+  group api(cloud)[API]
+  service db(database)[DB] in api
+  service web(server)[Web] in api
+  db:L -- R:web
+mermaid
+radar-beta
+  axis a, b, c
+  curve x{1, 2, 3}
+treemap-beta
+  "Root"
+    "Leaf": 10
+mips
+.data
+msg: .asciiz "Hello\n"
+.text
+main:
+  li $v0, 4
+  la $a0, msg
+  syscall
+mips
+  add $t0, $t1, $t2
+  addi $s0, $s0, -1
+  sub $t3, $t0, $zero
+  addu $8, $9, $10
+mips
+  lw $t0, 4($sp)
+  sw $ra, 0($sp)
+  lb $t1, 0($a0)
+  sb $t1, 1($a0)
+mips
+loop:
+  beq $t0, $zero, done
+  bne $t0, $t1, loop
+  j loop
+done:
+  jr $ra
+mips
+  move $a0, $t0
+  blt $t0, $t1, less
+  bgt $t0, $t1, more
+  beqz $t2, out
+mips
+  add.s $f0, $f1, $f2
+  mul.d $f4, $f6, $f8
+  lwc1 $f12, 0($a0)
+  mov.s $f0, $f12
+mips
+# a full line comment
+  nop # trailing comment
+mips
+# BEGIN helpers
+helper: jr $ra
+# END helpers
+mips
+.data
+vals: .word 1, -2, 0x1F, 017, 42
+b: .byte 0xFF, 7
+h: .half 300
+f: .float 3.14
+d: .double 2.5e-3
+buf: .space 64
+mips
+.align 2
+.globl main
+.ascii "no terminator"
+.kdata
+.ktext
+mips
+msg: .asciiz "tab\t quote\" back\\ nl\n"
+mips
+bad: .asciiz "never closed
+  li $v0, 10
+mips
+main:
+
+    
+	li $v0, 10
+	syscall
+mips
+# commentaire é 日本
+txt: .asciiz "café 日本"
+mips
+table: .word 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89
+mips
+  mult $t0, $t1
+  mfhi $t2
+  mflo $t3
+  div $t0, $t1
+  sll $t0, $t0, 2
+  srl $t1, $t1, 1
+mips
+  jal func
+  jalr $t9
+  addiu $sp, $sp, -8
+  lui $at, 0x1000
+  ori $at, $at, 0x0010
+mips
+  slt $t0, $a0, $a1
+  slti $t1, $a0, 5
+  and $t2, $t0, $t1
+  or $t3, $t0, $t1
+  xor $t4, $t0, $t1
+mips
+  li $v0, 1
+  move $a0, $s7
+  syscall
+  li $v0, 10
+  syscall
+mips
+a.b.c: nop
+_start: nop
+L1: L2: nop
+mips
+  c.eq.s $f0, $f2
+  bc1t yes
+  cvt.d.s $f4, $f0
+  abs.d $f6, $f4
+mips
+  mfc0 $k0, $13
+  eret
+  break
+  teq $t0, $t1
+modelines
+// kate: tab-width 4; indent-width 4; replace-tabs on;
+modelines
+# kate: indent-mode cstyle; encoding utf-8;
+modelines
+/* kate: line-numbers true; folding-markers false; */
+modelines
+-- kate: remove-trailing-spaces modified; word-wrap-column 80;
+modelines
+kate: remove-trailing-spaces all; bom off;
+modelines
+kate: auto-brackets on; dynamic-word-wrap 1; show-tabs 0;
+modelines
+kate: font-size 12; auto-center-lines 3;
+modelines
+kate: background-color #202020; selection-color #404080;
+modelines
+kate: tab-width abc; replace-tabs maybe;
+modelines
+kate: unknown-option 3; tab-width 2
+modelines
+kate:tab-width 8;indent-width 8;
+modelines
+kate: default-dictionary en_US; scheme Normal;
+modelines
+
+modelines
+
+    
+	kate: show-trailing-spaces true;
+modelines
+# kate: mode Python; hl Python; syntax café 日本;
+modelines
+kate: tab-width 0; tab-width 1; tab-width 2; tab-width 3; tab-width 4; tab-width 5; tab-width 6; tab-width 7; tab-width 8; tab-width 9; tab-width 10; tab-width 11; tab-width 12; tab-width 13; tab-width 14; tab-width 15; tab-width 16; tab-width 17; tab-width 18; tab-width 19; tab-width 20; tab-width 21; tab-width 22; tab-width 23; tab-width 24; tab-width 25; tab-width 26; tab-width 27; tab-width 28; tab-width 29;
+modelines
+text before kate: tab-width 3; text after
+modelines
+kate: remove-trailing-spaces none; remove-trailing-spaces -;
+modelines
+kate: smart-home on; space-indent off; wrap-cursor true; overwrite-mode false;
+modelines
+kate: word-wrap off; indent-pasted-text on; keep-extra-spaces off;
+modelines
+kate: bracket-highlight-color #ff0; current-line-color #111; icon-bar-color #222;
+modelines
+plain line without modeline
+kate-wildcard(*.c): tab-width 2;
+modula2
+MODULE Hello;
+FROM InOut IMPORT WriteString, WriteLn;
+BEGIN
+  WriteString("Hello"); WriteLn
+END Hello.
+modula2
+(*!m2pim*)
+MODULE P;
+VAR x : CARDINAL; s : BITSET;
+BEGIN x := 0FFH + 17B; INC(x); EXCL(s, 1) END P.
+modula2
+(*!m2iso*)
+MODULE I;
+VAR c : COMPLEX;
+BEGIN c := CMPLX(1.0, 2.0) END I.
+modula2
+(*!m2r10*)
+MODULE R;
+VAR o : OCTET; u : UNICHAR;
+BEGIN o := 0b1010; u := 0u41 END R.
+modula2
+(*!m2iso+gm2*)
+(*!m2r10+ext1*)
+modula2
+(* outer (* nested *) still comment *)
+x := 1;
+modula2
+(* this comment
+never closes
+x := 2;
+modula2
+CONST Pi = 3.14159; E = 2.7E0; Big = 1.0E+10; N = 42;
+modula2
+s := "double quoted"; t := 'single quoted';
+modula2
+s := "not closed
+t := 1;
+modula2
+(*!m2pim*)
+(*$R- range checks off *)
+MODULE X; END X.
+modula2
+(*!m2iso*)
+<* ASSIGN (Debug, TRUE) *>
+MODULE Y; END Y.
+modula2
+(*!m2r10*)
+! line comment in R10
+x := 1'000'000 + 0x1'FF;
+modula2
+PROCEDURE Max(a, b : INTEGER) : INTEGER;
+BEGIN
+  IF a > b THEN RETURN a ELSE RETURN b END
+END Max;
+modula2
+TYPE Rec = RECORD a : CHAR; b : BOOLEAN END;
+     Ptr = POINTER TO Rec;
+VAR p : Ptr; q : ARRAY [0..9] OF REAL;
+modula2
+FROM SYSTEM IMPORT ADDRESS, WORD, ADR;
+VAR a : ADDRESS;
+BEGIN a := ADR(x); p := NIL; ok := TRUE; no := FALSE
+modula2
+EXCEPT
+  RETRY
+FINALLY
+  x := 10 REM 3
+modula2
+MODULE M;
+
+    
+	BEGIN
+END M.
+modula2
+(* commentaire é 日本 *)
+s := "café 日本";
+modula2
+CONST Table = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89};
+modula2
+WHILE i < 10 DO INC(i) END;
+REPEAT DEC(i) UNTIL i = 0;
+FOR k := 1 TO 10 BY 2 DO END;
+LOOP EXIT END;
+modula2
+CASE ch OF
+  "a".."z" : low := TRUE
+| "0".."9" : dig := TRUE
+ELSE
+END;
+WITH r DO a := CHR(65) END
+mustache
+<p>Hello, {{name}}! Raw: {{{html}}} Amp: {{&html}}</p>
+mustache
+{{#items}}
+  <li>{{.}}</li>
+{{/items}}
+{{^items}}<p>none</p>{{/items}}
+mustache
+{{! a mustache comment }}
+{{!-- a handlebars comment with }} inside --}}
+mustache
+{{> header}}
+{{< layout}}{{$title}}Page{{/title}}{{/layout}}
+mustache
+{{=<% %>=}}
+<% name %>
+<%={{ }}=%>
+mustache
+{{#if user}}hi{{else if guest}}guest{{else}}no{{/if}}
+{{#each list as |item i|}}{{i}}{{/each}}
+mustache
+{{{{raw}}}}
+  {{not parsed}}
+{{{{/raw}}}}
+mustache
+{{format date style="long" count=3 'single' "dq \" esc"}}
+mustache
+{{log "debug" level="info"}} {{{link "x"}}} {{link "y"}}
+mustache
+{{~#with person~}}{{~name~}}{{~/with~}}
+mustache
+\{{escaped}} text
+<a href="/u/{{id}}" title='{{t}}' data-n=5 class={{cls}}>x</a>
+mustache
+<style>
+  .a { color: {{color}}; margin: 0 }
+  #b[data-x="1"] { width: 10px }
+</style>
+mustache
+<script>
+  var n = "{{name}}", s = 'x', t = `hi ${n} {{v}}`;
+  var o = { a: 1 }; // comment </script>
+mustache
+<!DOCTYPE html>
+<?xml version="1.0"?>
+<![CDATA[ raw {{cdata}} ]]>
+mustache
+<!-- html comment with {{var}} inside -->
+<p>&amp; &copy; &#169;</p>
+mustache
+<!DOCTYPE note [
+  <!ENTITY e "x">
+  <!ELEMENT note (#PCDATA)>
+]>
+mustache
+<div><section><nav><ul><li>{{a}}</li></ul></nav></section></div>
+<table><tr><td>1</td></tr></table>
+mustache
+<p>{{name
+<p>never closed {{#open
+mustache
+<div>
+
+    
+	{{x}}
+</div>
+mustache
+<p>café 日本 {{ "Ωmega" }}</p>
+mustache
+<p>{{v0}} {{v1}} {{v2}} {{v3}} {{v4}} {{v5}} {{v6}} {{v7}} {{v8}} {{v9}} {{v10}} {{v11}} {{v12}} {{v13}} {{v14}} {{v15}} {{v16}} {{v17}} {{v18}} {{v19}} {{v20}} {{v21}} {{v22}} {{v23}} {{v24}} {{v25}} {{v26}} {{v27}} {{v28}} {{v29}} {{v30}} {{v31}} {{v32}} {{v33}} {{v34}} {{v35}} {{v36}} {{v37}} {{v38}} {{v39}}</p>
+mustache
+<script type="text/javascript" src="{{src}}"></script>
+<style media="print"></style>
+<img src="a.png" alt="" />
+nginx
+server {
+    listen 80;
+    server_name example.com www.example.com;
+    root /var/www/html;
+}
+nginx
+http {
+    sendfile on;
+    tcp_nopush off;
+    include mime.types;
+}
+nginx
+location /api/ {
+    proxy_pass http://backend;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+}
+nginx
+# a comment line
+worker_processes auto; # trailing comment
+nginx
+client_max_body_size 10m;
+keepalive_timeout 65s;
+proxy_buffer_size 4k;
+expires 30d;
+nginx
+upstream backend {
+    server 127.0.0.1:8080 weight=5;
+    server 10.0.0.2:8080 backup;
+}
+nginx
+add_header X-Note 'value with $request_uri inside';
+return 200 'ok';
+nginx
+add_header X-Bad 'never closed;
+listen 443 ssl;
+nginx
+events {
+    worker_connections 1024;
+}
+nginx
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    '' close;
+}
+nginx
+if ($request_method = POST) {
+    return 405;
+}
+set $custom_var "x";
+nginx
+location ~* \.(png|jpg)$ {
+    expires 7d;
+    access_log off;
+}
+nginx
+rewrite ^/old/(.*)$ /new/$1 permanent;
+return 301 https://$host$request_uri;
+nginx
+ssl_certificate /etc/ssl/cert.pem;
+ssl_protocols TLSv1.2 TLSv1.3;
+allow all;
+deny 10.0.0.0/8;
+nginx
+server {
+
+    
+	listen 8080;
+}
+nginx
+# commentaire é 日本
+add_header X-Name 'café 日本';
+nginx
+log_format main '$remote_addr $http_x_h0 $http_x_h1 $http_x_h2 $http_x_h3 $http_x_h4 $http_x_h5 $http_x_h6 $http_x_h7 $http_x_h8 $http_x_h9 $http_x_h10 $http_x_h11 $http_x_h12 $http_x_h13 $http_x_h14 $http_x_h15 $http_x_h16 $http_x_h17 $http_x_h18 $http_x_h19 $http_x_h20 $http_x_h21 $http_x_h22 $http_x_h23 $http_x_h24 $status';
+nginx
+gzip on;
+gzip_types text/plain application/json;
+gzip_min_length 1000;
+nginx
+location = /health {
+    location /nested {
+        return 204;
+    }
+}
+nginx
+error_page 404 /404.html;
+error_page 500 502 503 504 /50x.html;
+try_files $uri $uri/ /index.html;
+nginx
+limit_req_zone $binary_remote_addr zone=one:10m rate=1r/s;
+limit_req zone=one burst=5;
+nginx
+unknown_directive value;
+}
+stray text
+nim
+proc greet(name: string): string =
+  result = "Hello, " & name
+nim
+func add*(a, b: int): int = a + b
+iterator count(n: int): int =
+  for i in 0 ..< n: yield i
+nim
+proc `+`(a, b: Vec): Vec = Vec(x: a.x + b.x)
+method draw(s: Shape) {.base.} = discard
+nim
+type
+  Color = enum red, green, blue
+  Point = object
+    x, y: float
+  Node = ref object of RootObj
+nim
+let s = "tab\t quote\" back\\ nl\n bell\a"
+let t = """triple "quoted" text"""
+let r = r"raw ""double"" \n"
+nim
+let pat = re"\d+\.\w*/x"
+let c = 'a'
+let n = '\n' 
+nim
+let nums = [0xFF'u8, 0o17, 0b1010_1010, 1_000, 1.5e3, 2.0'f32, 3'i64, 7'u]
+nim
+for i in 1..10: echo i
+let sl = a[0..^1]
+nim
+# line comment
+## doc comment
+#[ block #[ nested ]# comment ]#
+##[ doc block ]##
+nim
+#[ this block comment
+never ends
+let x = 1
+nim
+const Max = 10
+import std/[strutils, sequtils]
+include helpers
+export greet
+nim
+if x > 0: echo "pos"
+elif x < 0: echo "neg"
+else: discard
+case k
+of 1: echo 1
+else: echo 0
+nim
+try:
+  raise newException(ValueError, "bad")
+except ValueError as e:
+  echo e.msg
+finally:
+  echo "done"
+nim
+let ok = a and b or not c xor d
+let q = 7 div 2 mod 3 shl 1 shr 1
+if x is int and y isnot string: echo x
+nim
+var p: ptr int = nil
+var r: ref Node
+var st: static int
+let f = true; let g = false; let h = inf
+nim
+proc fast() {.inline, noSideEffect.} = discard
+{.push checks: off.}
+{.pop.}
+nim
+let up = obj.Name
+let call = obj.compute(1)
+let field = obj.value
+let s2 = seq[int](@[1, 2])
+nim
+proc f() =
+
+    
+	echo 1
+nim
+let café = "日本 Ωmega"
+# commentaire é
+nim
+let big = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89]
+nim
+let s = "never closed
+let t = 2
+nim
+macro m(body: untyped): untyped = body
+template t(x: untyped) = x
+converter toInt(b: bool): int = ord(b)
+type Cmp = concept x
+  x < x is bool
+ninja
+ninja_required_version = 1.10
+builddir = build
+ninja
+rule cc
+  command = gcc -c $in -o $out
+  description = CC $out
+ninja
+build foo.o: cc foo.c
+build app: link foo.o bar.o
+ninja
+build out.o | out.d: cc in.c | config.h || gen_dir |@ check.stamp
+ninja
+rule dep
+  command = gcc -MMD -MF $out.d -c $in -o $out
+  depfile = $out.d
+  deps = gcc
+ninja
+pool link_pool
+  depth = 4
+rule link
+  command = ld ${in} -o ${out}
+  pool = link_pool
+ninja
+build all: phony app tests
+default all
+ninja
+include rules.ninja
+subninja sub/build.ninja
+ninja
+# a comment line
+cflags = -O2 -Wall # not a comment in value
+ninja
+rule gen
+  command = python gen.py $
+      --flag $in $
+      > $out
+  generator = 1
+  restat = 1
+ninja
+rule rsp
+  command = ar rcs $out @$out.rsp
+  rspfile = $out.rsp
+  rspfile_content = $in
+ninja
+build path$ with$ space.o: cc a$:b.c
+x = cost $$5
+ninja
+rule msvc
+  command = cl /showIncludes $in
+  deps = msvc
+  msvc_deps_prefix = Note: including file:
+ninja
+build long.o: cc long.c
+  pool = console
+ninja
+rule a
+  command = true
+
+    
+	bad tab line
+ninja
+build café.o: cc 日本.c
+desc = café 日本
+ninja
+build big.o: cc src/file0.c src/file1.c src/file2.c src/file3.c src/file4.c src/file5.c src/file6.c src/file7.c src/file8.c src/file9.c src/file10.c src/file11.c src/file12.c src/file13.c src/file14.c src/file15.c src/file16.c src/file17.c src/file18.c src/file19.c src/file20.c src/file21.c src/file22.c src/file23.c src/file24.c src/file25.c src/file26.c src/file27.c
+ninja
+build x: cc y
+  cflags = $cflags -DX=1
+  dyndep = x.dd
+ninja
+  indented garbage line
+: oops
+rule
+build
+ninja
+rule bad
+  unknownkey = 1
+  command
+pool p
+  wrong = 1
+ninja
+build a: cc ${undefined
+v = ${unterminated
+ninja
+rule copy
+  command = cp $in $out
+  description = COPY ${in}
+build b.txt: copy a.txt
+build c.txt: copy b.txt
+nix
+{ pkgs ? import <nixpkgs> {}, lib, ... }:
+pkgs.mkShell { buildInputs = [ pkgs.git ]; }
+nix
+let
+  x = 1;
+  y = x + 2;
+in x * y
+nix
+if a > 1 then "big" else "small"
+nix
+with pkgs; [ hello git curl ]
+nix
+assert lib.isString name; "ok: ${name}"
+nix
+rec {
+  a = 1;
+  b = a + 1;
+  inherit c d;
+  inherit (pkgs) git curl;
+}
+nix
+s = "tab\t quote\" dollar\${x} interp ${toString n} back\\";
+nix
+''
+  indented ${x} text
+  escaped ''${y} ''$ ''\n ''''
+'';
+nix
+inc = x: x + 1;
+add = a: b: a + b;
+f = { a, b ? 2, ... }@args: a + b;
+nix
+p = ./foo/bar.nix;
+q = /etc/nixos/configuration.nix;
+u = https://example.com/x.tar.gz;
+nix
+l = [ 1 2.5 "s" true false null ./p (x: x) ];
+nix
+v = builtins.map (x: x * 2) [ 1 2 3 ];
+d = derivation { name = "x"; builder = "/bin/sh"; system = "x86_64-linux"; };
+i = import ./other.nix;
+nix
+# line comment
+/* block
+   comment */
+1
+nix
+/* comment never closes
+x = 1;
+nix
+r = a // b ++ c ? d -> e || f && g;
+neg = !true;
+cmp = 1 < 2 == true;
+nix
+x = a.b.${c}.d;
+y = a."quoted key".e;
+z = a.b or "fallback";
+nix
+s = "not closed
+y = 2;
+nix
+{
+
+    
+	a = 1;
+}
+nix
+name = "café 日本";
+# commentaire é
+nix
+big = [ 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 ];
+nix
+{ "quoted attr" = 1; ${dyn} = 2; ''ind'' = 3; }
+nix
+{ abort ? null }: throw "x" + baseNameOf ./a + dirOf ./b + toString 3 + removeAttrs {} [] + isNull null + fetchTarball "u"
+odin
+package main
+
+import "core:fmt"
+
+main :: proc() {
+    fmt.println("Hellope!")
+}
+odin
+add :: proc "c" (a, b: i32) -> i32 {
+    return a + b
+}
+odin
+x := 5
+y : int = 3
+z : f64 : 1.5
+w, v := 1, 2
+odin
+Vec :: struct { x, y: f32 }
+Dir :: enum u8 { North, South }
+Val :: union { int, string }
+odin
+@(private)
+@(link_name="foo_impl")
+@(require_results)
+foo :: proc() -> bool { return true }
+odin
+#partial switch d {
+case .North: fmt.println("n")
+case: fallthrough
+}
+odin
+nums := [?]int{1_000, 0xFF, 0x_ab, 0o17, 0b1010, 1.5e-3, 2.0, 0, 3i, 7.5j}
+odin
+s := "tab\t quote\" nl\n hex\x41 oct\101 u\u00e9 big\U0001F600 bad\q"
+c := '\n'
+r := `raw \n string`
+odin
+// line comment
+/* block /* nested */ comment */
+x := 1
+odin
+/* comment never closes
+y := 2
+odin
+foreign import libc "system:c"
+foreign libc {
+    puts :: proc "c" (s: cstring) -> i32 ---
+}
+odin
+for i in 0..<10 { if i == 5 { break } }
+for x, idx in arr { continue }
+when ODIN_OS == .Windows { }
+odin
+defer free(p)
+context.allocator = context.temp_allocator
+using vec
+odin
+Meters :: distinct f64
+m := map[string]int{}
+d := [dynamic]u8{}
+p := cast(^int)ptr
+b := transmute(u32)f
+a := auto_cast x
+odin
+#assert(size_of(int) == 8)
+#no_bounds_check {
+    x := arr[10]
+}
+loc := #location()
+odin
+main :: proc() {
+
+    
+	x := 1
+}
+odin
+nom := "café 日本"
+// commentaire é
+odin
+big := [?]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89}
+odin
+s := "never closed
+t := 2
+odin
+b: b8 = true; k: rune = 'é'; q: u128 = 0; o: rawptr = nil
+t: typeid = i16; any_v: any = 1; cs: cstring = "x"
+odin
+x := y if cond else z
+ok := a && b || !c
+v := a ~ b &~ c << 2 >> 1 %% 3
+odin
+proc_lit := proc(x: int) -> int { return x * 2 }
+r := proc_lit(3)
+or_else_v := m["k"] or_else 0
+val := maybe() or_return
+orgmode
+* TODO [#A] Write report [1/3] :work:
+** DONE Gather data
+** NEXT Draft text
+*** DOING Edit
+*** WAITING Review
+*** CANCELED Old idea
+*** CANCELLED Older idea
+orgmode
+* Heading
+:PROPERTIES:
+:ID: 1234
+:CREATED: [2024-01-01]
+:END:
+orgmode
+- item one
+- [ ] open box
+- [X] done box
+- [-] partial
++ plus item
+  * star bullet
+orgmode
+1. first
+2) second
+3. [ ] third with box
+orgmode
+# a comment line
+#+TITLE: My Document
+#+AUTHOR: Someone
+#+OPTIONS: toc:nil
+orgmode
+#+BEGIN_SRC python
+def f(x):
+    return "s" + str(x)
+#+END_SRC
+orgmode
+#+BEGIN_SRC bash
+echo "hi $USER" | grep -v x
+#+END_SRC
+#+BEGIN_SRC c
+int main(void) { return 0; }
+#+END_SRC
+orgmode
+#+BEGIN_SRC js
+const a = `t ${1}`;
+#+END_SRC
+#+BEGIN_SRC jsx
+const b = <div>{a}</div>;
+#+END_SRC
+orgmode
+#+BEGIN_SRC yaml
+key: value
+list: [1, 2]
+#+END_SRC
+#+BEGIN_SRC json
+{"a": [1, true, null]}
+#+END_SRC
+orgmode
+#+BEGIN_SRC rust
+fn main() { println!("x"); }
+#+END_SRC
+#+BEGIN_SRC go
+func main() {}
+#+END_SRC
+orgmode
+#+BEGIN_SRC html
+<p class="x">hi</p>
+#+END_SRC
+#+BEGIN_SRC css
+p { color: red; }
+#+END_SRC
+orgmode
+#+BEGIN_SRC sql
+SELECT * FROM t WHERE id = 1;
+#+END_SRC
+#+BEGIN_SRC nim
+echo "nim"
+#+END_SRC
+#+BEGIN_SRC odin
+x := 1
+#+END_SRC
+orgmode
+#+BEGIN_QUOTE
+A quoted paragraph.
+#+END_QUOTE
+#+BEGIN_EXAMPLE
+example text
+#+END_EXAMPLE
+orgmode
+Text with *bold*, _underline_, /italic/, +strike+, ~code~ and =verbatim=.
+orgmode
+See [[https://example.com][the site]] and [[file:notes.org]] or https://orgmode.org now.
+orgmode
+#+MACRO: greet Hello $1
+{{{greet(World)}}} and {{{date}}}
+orgmode
+#+BEGIN_SRC haskell
+main = putStrLn "never ends"
+* still in block
+orgmode
+* Heading
+
+    
+	indented text
+orgmode
+* Café 日本 :tag:
+Texte avec é et 日本語.
+orgmode
+* Long
+word0 word1 word2 word3 word4 word5 word6 word7 word8 word9 word10 word11 word12 word13 word14 word15 word16 word17 word18 word19 word20 word21 word22 word23 word24 word25 word26 word27 word28 word29 word30 word31 word32 word33 word34 word35 word36 word37 word38 word39 word40 word41 word42 word43 word44
+orgmode
+#+BEGIN_SRC ruby
+puts "r"
+#+END_SRC
+#+BEGIN_SRC java
+class A {}
+#+END_SRC
+#+BEGIN_SRC php
+<?php echo 1; ?>
+#+END_SRC
+orgmode
+#+BEGIN_SRC markdown
+# md *head*
+#+END_SRC
+#+BEGIN_SRC mustache
+{{name}}
+#+END_SRC
+#+BEGIN_SRC typescript
+let x: number = 1;
+#+END_SRC
+powershell
+# line comment
+<# block
+   comment #>
+Write-Host "hi" # trailing
+powershell
+<#
+.SYNOPSIS
+Show a value.
+.PARAMETER Name
+The name to show.
+.EXAMPLE
+Get-Thing -Name a
+#>
+function Get-Thing { param([string]$Name) $Name }
+powershell
+$s = "tab`t quote`" dollar`$ and $x and `u{263A} end"
+$t = 'it''s single $notvar'
+$e = "line`r`nnext`0"
+powershell
+$h = @"
+Hello $env:USERNAME
+Sum: $(1 + 2) and `t tab
+"@
+$l = @'
+raw $x stays `n
+'@
+powershell
+$a = 42; $b = 0x1F; $c = 3.14e-2; $d = 10KB; $e = 2gb
+$f = 7L; $g = 1.5d; $h = .5; $i = 1e3; $j = 0xFFl; $k = 5PB
+powershell
+foreach ($i in 1..5) {
+  if ($i -eq 3) { continue } elseif ($i -gt 4) { break } else { $i }
+}
+while ($true) { break }
+do { $n++ } until ($n -ge 3)
+do { $n-- } while ($n -gt 0)
+switch -regex ($x) { '^a' { 'A' } default { 'other' } }
+powershell
+try {
+  throw [System.IO.IOException]::new("disk")
+} catch [System.IO.IOException] {
+  Write-Error $_.Exception.Message
+} finally {
+  exit 1
+}
+trap { return }
+powershell
+[CmdletBinding(SupportsShouldProcess = $true)]
+param(
+  [Parameter(Mandatory = $true, ValueFromPipeline)]
+  [ValidateNotNullOrEmpty()]
+  [int[]]$Ids,
+  [System.IO.FileInfo]$File,
+  [switch]$Force
+)
+powershell
+$global:count = 0
+$script:name = "x"
+$local:tmp = ${env:ProgramFiles(x86)}
+$_; $PSItem; $args; $null; $true; $false; $LASTEXITCODE; $Host; $PSScriptRoot
+powershell
+[Math]::Round(2.5)
+[string]::IsNullOrEmpty($s)
+$obj.Property.Method(1, "two")
+"text".Length
+$list.Count
+powershell
+Get-ChildItem -Path C:\Temp -Recurse |
+  Where-Object { $_.Length -gt 1MB } |
+  Sort-Object -Property Length -Descending |
+  Select-Object -First 5 | ForEach-Object { $_.Name }
+powershell
+class Point {
+  [int]$X
+  hidden [int]$Y = 0
+  Point([int]$x) { $this.X = $x }
+  [string] ToString() { return "($($this.X))" }
+  static [Point] Zero() { return [Point]::new(0) }
+}
+enum Color { Red; Green = 2 }
+powershell
+$r = ($a -and $b) -or -not $c
+$m = "abc" -match '^a' ; $n = "x" -like 'x*' ; $o = $s -replace 'a', 'b'
+$p = "a,b" -split ',' ; $q = $arr -join ';' ; $f = '{0:N2}' -f 3.14159
+$band = 5 -band 3 ; $in = 2 -in 1,2 ; $is = $x -is [int] ; $as = "5" -as [int]
+powershell
+$bad = "never closed $x
+next line still string
+powershell
+<# open comment
+still comment $x
+powershell
+$a = 1
+
+    
+	$b = 2
+		# tab comment
+powershell
+Write-Output "Café 日本語 ü ß"
+$naïve = 'ñ' # ¿comentario?
+powershell
+$list = @(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 0)
+powershell
+"Total: $( ($items | Measure-Object -Sum).Sum ) in $($dir.Name) and $($a[0].B)"
+"Nested: $(if ($x) { "yes $(1+1)" } else { 'no' })"
+powershell
+$params = @{ Path = '.'; Filter = '*.ps1' }
+Get-ChildItem @params
+& { param($x) $x * 2 } 4
+. .\lib.ps1
+$arr = @(1, 2, 3)[1..2]
+powershell
+function Invoke-All {
+  begin { $sum = 0 }
+  process { $sum += $_ }
+  end { $sum }
+}
+filter Double { $_ * 2 }
+1, 2, 3 | Invoke-All
+powershell
+#requires -Version 5.1
+Get-Item `
+  -Path . `
+  -Force > out.txt 2>&1
+$x = 1; $x += 2; $x *= 3
+purescript
+module Main where
+
+import Prelude
+import Effect (Effect)
+import Effect.Console (log)
+
+main :: Effect Unit
+main = log "hello"
+purescript
+-- line comment
+{- block
+   {- nested -} comment -}
+x = 1 -- trailing
+purescript
+greeting = "tab\t quote\" newline\n unicode \x263A end"
+c = 'a'
+nl = '\n' 
+purescript
+n1 = 42
+n2 = 0xFF
+n3 = 3.14
+n4 = 1.0e-3
+n5 = -7
+purescript
+data Shape
+  = Circle Number
+  | Rect Number Number
+
+newtype Name = Name String
+type Pair a = { fst :: a, snd :: a }
+purescript
+class Show a <= Pretty a where
+  pretty :: a -> String
+
+instance prettyInt :: Pretty Int where
+  pretty n = "Int " <> show n
+purescript
+area :: Shape -> Number
+area s = case s of
+  Circle r -> 3.14 * r * r
+  Rect w h -> w * h
+purescript
+sumList :: List Int -> Int
+sumList xs = go 0 xs
+  where
+  go acc Nil = acc
+  go acc (Cons y ys) = go (acc + y) ys
+purescript
+main = do
+  let x = 5
+  y <- pure 3
+  if x > y then log "big" else log "small"
+purescript
+foreign import data Window :: Type
+foreign import alert :: String -> Effect Unit
+purescript
+identity' :: forall a. a -> a
+identity' a = a
+
+apply' :: forall a b. (a -> b) -> a -> b
+apply' f x = f $ x
+purescript
+point = { x: 1, y: 2 }
+moved = point { x = 10 }
+getX :: forall r. { x :: Int | r } -> Int
+getX p = p.x
+purescript
+infixr 5 append as <+>
+total = 1 `add` 2
+composed = show <<< (_ + 1) >>> identity
+purescript
+raw = """
+multi "line" text
+"""
+purescript
+bad = "never closed
+next = 1
+purescript
+{- open comment
+still comment
+purescript
+f x =
+
+    
+	x + 1
+purescript
+nom = "Café 日本 ñ"
+-- ¿comentario? ü
+purescript
+longList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 0]
+purescript
+nested = map (\x -> case x of
+  Just (Tuple a b) -> a + b
+  Nothing -> 0) [Just (Tuple 1 2)]
+purescript
+guarded n
+  | n < 0 = "neg"
+  | n == 0 = "zero"
+  | otherwise = "pos"
+purescript
+derive instance eqShape :: Eq Shape
+let arr = [1, 2, 3] in arr
+ado
+  a <- pure 1
+  in a
+qml
+#!/usr/bin/env qml
+import QtQuick 2.15
+import QtQuick.Controls as Ctl
+Item {}
+qml
+import QtQuick
+
+Rectangle {
+    id: root
+    width: 200; height: 100
+    color: "steelblue"
+}
+qml
+// line comment
+/* block
+   comment */
+Item { x: 1 /* inline */ }
+qml
+Item {
+    property int count: 0
+    property real ratio: 1.5e2
+    property string label: "tab\t quote\" \u00e9"
+    property color tint: '#ff00ff'
+    property var list: [1, 0x1F, .5]
+}
+qml
+Item {
+    readonly property bool ready: true
+    required property url source
+    default property alias content: box.data
+}
+qml
+Item {
+    signal clicked(int x, string name)
+    signal done
+    onClicked: (x, name) => console.log(x, name)
+}
+qml
+Item {
+    function sum(a, b) {
+        for (var i = 0; i < 3; i++) { a += i }
+        return a + b
+    }
+}
+qml
+Text {
+    text: enabled ? "on" : "off"
+    color: count > 5 ? "red" : (count > 2 ? "orange" : "green")
+}
+qml
+Item {
+    states: [
+        State {
+            name: "big"
+            PropertyChanges { target: root; width: 400 }
+        }
+    ]
+    transitions: Transition { NumberAnimation { duration: 200 } }
+}
+qml
+pragma Singleton
+import QtQml
+
+QtObject {
+    enum Mode { Off, On }
+    property int mode: Mode.Off
+}
+qml
+Item {
+    component Badge: Rectangle { radius: 4 }
+    Badge { width: 10 }
+    Behavior on opacity { NumberAnimation { duration: 100 } }
+}
+qml
+Item {
+    anchors.fill: parent
+    anchors.margins: 8
+    Component.onCompleted: { let r = /a+b/g.test("aab"); print(r) }
+}
+qml
+Item {
+    property string bad: "never closed
+    width: 1
+}
+qml
+Item {
+    /* open comment
+    still comment
+qml
+Item {
+
+    
+	width: 10
+}
+qml
+Text {
+    text: "Café 日本語 ü"
+    // ¿comentario?
+}
+qml
+Item { property var v: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 0] }
+qml
+ListView {
+    model: ListModel { ListElement { name: "a" } }
+    delegate: Text { text: model.name + index }
+}
+qml
+Item {
+    property var obj: ({ a: 1, b: [true, false, null] })
+    property double d: Math.PI * 2
+}
+qml
+Timer {
+    interval: 500; running: true; repeat: true
+    onTriggered: { if (root.count >= 10) stop(); else root.count++ }
+}
+qml
+Item {
+    property list<Item> kids
+    property date when
+    property variant old: undefined
+}
+qml
+MouseArea {
+    onPressed: function (mouse) { mouse.accepted = false }
+    SequentialAnimation on x { loops: Animation.Infinite; PauseAnimation { duration: 10 } }
+}
+racket
+#lang racket
+(define (square x) (* x x))
+(displayln (square 4))
+racket
+; line comment
+;; another
+#| block
+   #| nested |# comment |#
+(+ 1 2)
+racket
+#;(this datum is commented)
+(list 1 #;2 3)
+racket
+(define s "tab\t quote\" newline\n hex\x41; octal\101 end")
+(define c #\a)
+(define cs (list #\space #\newline #\x41 #\λ))
+racket
+(list 42 -7 3.14 .5 1e10 6.02e23 1/3)
+(list #x1F #b1010 #o17 #e1.5 #i3 #d99)
+racket
+(list #t #f #T #F true false)
+racket
+(let loop ([i 0])
+  (when (< i 3)
+    (printf "~a\n" i)
+    (loop (add1 i))))
+racket
+(cond
+  [(null? xs) 'empty]
+  [(pair? xs) (car xs)]
+  [else (error "bad")])
+racket
+(define-syntax-rule (swap! a b)
+  (let ([tmp a]) (set! a b) (set! b tmp)))
+(define-values (q r) (quotient/remainder 7 2))
+racket
+(struct point (x y) #:transparent)
+(match (point 1 2)
+  [(point a b) (+ a b)])
+racket
+`(1 ,(+ 1 1) ,@(list 3 4))
+'(a b c)
+#(1 2 3)
+#hash((a . 1))
+racket
+(lambda (x) (if (zero? x) 1 (* x 2)))
+(λ (y) (and y (or #f y)))
+racket
+(define x #/a+b/i)
+(define t #<p class="c">hello</p>)
+racket
+(define doc &{Hello &name; and &#65; &-
+next line})
+racket
+#!/usr/bin/env racket
+!#
+(display "after guile comment")
+racket
+(define bad "never closed
+(next line)
+racket
+#| open comment
+still comment
+racket
+(define (f x)
+
+    
+	(+ x 1))
+racket
+(define name "Café 日本 ñ")
+; ¿comentario? ü
+racket
+(list 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 )
+racket
+(define (deep a)
+  (vector (list (cons a (hash-ref (make-hash) 'k (lambda () (string-append "x" (number->string a))))))))
+racket
+(module+ test
+  (require rackunit)
+  (check-equal? (square 2) 4))
+(provide square)
+raku
+#!/usr/bin/env raku
+use v6;
+say "hello";
+raku
+# line comment
+#`( embedded
+    comment ) my $x = 1;
+#`[ another ] say $x;
+raku
+=begin pod
+=head1 Title
+Some B<bold> and I<italic> text.
+=end pod
+say 1;
+raku
+my $s = "tab\t quote\" newline\n {1 + 2} $name @list[0] %h<k>";
+my $t = 'single \' no $interp';
+my $u = Q[raw $x];
+raku
+my @n = 42, -7, 1_000, 0x1F, 0o17, 0b1010, 3.14, 1e3, 2.5e-2, 1/3, 4+2i, Inf, NaN;
+raku
+my $text = q:to/END/;
+    heredoc line $x
+    END
+my $interp = qq:to/EOT/;
+    value $x
+    EOT
+raku
+for 1..5 -> $i {
+    next if $i == 2;
+    last if $i > 4;
+    say $i;
+}
+while True { last }
+loop (my $j = 0; $j < 3; $j++) { }
+raku
+sub add(Int $a, Int $b --> Int) { return $a + $b }
+multi sub f(Str $s) { "str" }
+multi sub f(Int $i) { "int" }
+method m() { self }
+raku
+class Point is Cool does Positional {
+    has $.x = 0;
+    has @!items;
+    method len() { sqrt($!x ** 2) }
+}
+role R { }
+grammar G { token TOP { \d+ } }
+raku
+if $s ~~ /^ \d+ [ '-' \d+ ]* $/ { say "match" }
+$s ~~ s/foo/bar/;
+$s ~~ tr/a..z/A..Z/;
+my $rx = rx:i/ <[a..f]>+ /;
+m:g/ (\w+) /;
+raku
+my @a = <a b c>;
+my %h = a => 1, :b(2), :!c;
+say @a[*-1], %h{'a'}, %h<b>;
+my ($x, $y) = 1, 2;
+raku
+my @r = @a »+« @b;
+my @s = @a >>*>> 2;
+my $sum = [+] 1..10;
+my @z = @a Z~ @b;
+say 5 <=> 3, 2 cmp 1, "a" eq "b";
+raku
+given $x {
+    when Int { say "int" }
+    when /a/ { say "has a" }
+    default { say "other" }
+}
+raku
+try { die "oops" ; CATCH { default { say .message } } }
+my $p = start { 42 };
+await $p;
+react { whenever Supply.interval(1) { done } }
+raku
+my $bad = "never closed
+next line
+raku
+my $a = 1;
+
+    
+	my $b = 2;
+raku
+my $café = "日本語 ü";
+say $café.chars; # ¿comentario?
+raku
+my @long = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 0;
+raku
+my $deep = { a => [ 1, { b => ( 2, [ 3, %( c => 4 ) ] ) } ] };
+say "{ $deep<a>[1]<b>[1][1]<c> }";
+raku
+my $twig = $*OUT;
+my $env = %*ENV<HOME>;
+our $pkg = $?PACKAGE;
+say $^a + $^b for 1..2;
+raku
+my token word { \w+ }
+my regex pair { <word> '=' <word> }
+say "a=b" ~~ /<pair>/;
+say m:P5/^\w+$/;
+raku
+subset Pos of Int where * > 0;
+enum Color <Red Green>;
+constant PI2 = π * 2;
+unit module X;
+rdoc
+\name{square}
+\alias{square}
+\title{Square a Number}
+\description{Returns the square of \code{x}.}
+rdoc
+% line comment
+\name{f} % trailing comment
+\docType{data}
+\encoding{UTF-8}
+\keyword{math}
+rdoc
+\usage{
+square(x, na.rm = FALSE)
+}
+\examples{
+y <- square(3)  # R comment
+print(y)
+}
+rdoc
+\arguments{
+  \item{x}{a numeric vector.}
+  \item{na.rm}{logical; see \link{mean}.}
+}
+\value{
+  \item{result}{the squared value.}
+}
+rdoc
+\details{
+Use \emph{this} with \bold{care}, see \pkg{stats} and \file{data.csv}.
+Escapes: 50\% and \{ and \} and \\ done.
+\R is \dots fine \cr next.
+}
+rdoc
+\section{Notes}{
+Some \strong{strong} and \sQuote{quoted} and \dQuote{double} words.
+}
+\subsection{Inner}{text}
+rdoc
+\details{
+\itemize{
+  \item first point
+  \item second \var{v}
+}
+\enumerate{ \item one }
+}
+rdoc
+\details{
+\describe{
+  \item{\code{a}}{the first}
+  \item{b}{the second}
+}
+}
+rdoc
+\details{
+Write to \email{someone@example.org}, see \url{https://example.org}.
+Press \kbd{Ctrl-C} and set \env{HOME} with \option{-v}.
+\samp{x[1]} and \verb{raw{}} text.
+}
+rdoc
+\details{
+Math: \eqn{a^2 + b^2}{a2 + b2} and
+\deqn{\sum_{i=1}^n x_i}
+}
+rdoc
+\details{
+\tabular{ll}{
+  a \tab b \cr
+  c \tab d \cr
+}
+\href{https://example.org}{link text}
+}
+rdoc
+\seealso{
+\code{\link{mean}}, \code{\link[stats]{median}}, \link[=sum]{total}.
+\linkS4class{Matrix}
+}
+rdoc
+\usage{
+\method{print}{square}(x, \dots)
+\S3method{summary}{square}(object, \dots)
+\S4method{show}{square}(object)
+}
+rdoc
+\examples{
+\dontrun{
+download.file("http://example.org", "x")
+}
+\donttest{ slow() }
+\dontshow{ hidden() }
+}
+rdoc
+\details{
+Value is \Sexpr[results=rd]{1 + 1} now.
+\if{html}{HTML only.}
+\ifelse{latex}{LaTeX}{Other}
+}
+rdoc
+#ifdef windows
+\note{Windows only.}
+#endif
+#ifndef unix
+\note{Not unix.}
+#endif
+rdoc
+\newcommand{\myname}{\bold{#1}}
+\renewcommand{\x}{y}
+\references{Author (2020). \emph{Title}.}
+\author{A. Person}
+rdoc
+\details{
+\preformatted{
+code  stays   as is
+}
+\out{<b>raw</b>}
+}
+rdoc
+\title{Unclosed {brace
+\description{next
+rdoc
+\details{
+line one
+
+    
+	indented with tab
+}
+rdoc
+\title{Café 日本語}
+\description{Données ü ñ.} % ¿comentario?
+rdoc
+\description{word0 \emph{e0} word1 \emph{e1} word2 \emph{e2} word3 \emph{e3} word4 \emph{e4} word5 \emph{e5} word6 \emph{e6} word7 \emph{e7} word8 \emph{e8} word9 \emph{e9} word10 \emph{e10} word11 \emph{e11} word12 \emph{e12} word13 \emph{e13} word14 \emph{e14} word15 \emph{e15} word16 \emph{e16} word17 \emph{e17} }
+rust
+fn main() {
+    println!("hello, {}", "world");
+}
+rust
+// line comment
+/* block /* nested */ comment */
+/// doc comment
+//! inner doc
+let x = 1;
+rust
+let s = "tab\t quote\" newline\n unicode \u{1F600} null\0 hex\x41";
+let c = 'a';
+let e = '\n';
+let u = '\u{e9}';
+rust
+let r = r"raw \n stays";
+let r2 = r#"has "quotes" inside"#;
+let b = b"bytes\x00\n";
+let bc = b'a';
+let br = br#"raw bytes"#;
+rust
+let n = (42, 1_000_000, 0xFF, 0o77, 0b1010_1010, 3.14, 1e10, 2.5E-3, 7u8, 9i64, 1.0f32, 100usize);
+rust
+#[derive(Debug, Clone)]
+#![allow(dead_code)]
+struct Point { x: i32, y: f64 }
+rust
+enum Shape {
+    Circle(f64),
+    Rect { w: f64, h: f64 },
+}
+impl Shape {
+    pub fn area(&self) -> f64 {
+        match self { Shape::Circle(r) => 3.14 * r * r, Shape::Rect { w, h } => w * h }
+    }
+}
+rust
+trait Speak { fn speak(&self) -> String; }
+impl Speak for Dog { fn speak(&self) -> String { String::from("woof") } }
+impl<T: Clone + Send + Sync> Wrapper<T> where T: Default {}
+rust
+for i in 0..10 {
+    if i % 2 == 0 { continue; } else if i > 7 { break; }
+}
+while let Some(v) = stack.pop() { }
+loop { break 'outer; }
+'outer: loop {}
+rust
+fn first<'a>(s: &'a str) -> &'a str { &s[..1] }
+let b: Box<dyn Fn(i32) -> i32> = Box::new(|x| x + 1);
+let v: Vec<Option<Result<u32, String>>> = Vec::new();
+rust
+use std::collections::HashMap;
+mod inner { pub(crate) const MAX: usize = 10; static mut COUNT: u32 = 0; }
+extern crate alloc;
+type Map = HashMap<String, i32>;
+rust
+async fn fetch() -> Result<(), Box<dyn std::error::Error>> {
+    let r = client.get(url).send().await?;
+    unsafe { ptr::read(p) };
+    Ok(())
+}
+rust
+let t = true; let f = false; let n: Option<i32> = None; let s = Self::new();
+let c = self.count; let m = std::i32::MAX; let p = core::ptr::null::<u8>();
+rust
+macro_rules! square {
+    ($x:expr) => { $x * $x };
+}
+let v = vec![1, 2, 3];
+assert_eq!(square!(2), 4);
+rust
+let bad = "never closed
+let next = 1;
+rust
+/* open comment
+still comment
+rust
+fn f() {
+
+    
+	let x = 1;
+}
+rust
+let name = "Café 日本語 ü";
+let ñ = 'é'; // ¿comentario?
+rust
+let long = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 0];
+rust
+let deep = vec![Some((1, [2, 3], (4, vec![(5, "six")])))].into_iter().map(|x| x.map(|(a, b, c)| a + b[0] + (c.0))).collect::<Vec<_>>();
+rust
+let c_types: (c_int, c_char, c_void) = unimplemented!();
+let x = i32::MAX as u64 as f32;
+let r = &mut *ptr;
+rust
+union U { a: u32, b: f32 }
+const fn id<const N: usize>() -> usize { N }
+let _ = move || yield_now();
+sas
+data work.out;
+  set sashelp.class;
+  bmi = weight / height**2;
+run;
+sas
+/* block
+   comment */
+* statement comment;
+%* macro comment;
+data a; x = 1; run;
+sas
+data _null_;
+  s = "tab and ""quote"" text";
+  t = 'it''s single';
+  d = '01JAN2020'd;
+  put s= t=;
+run;
+sas
+data nums;
+  a = 42; b = -7; c = 3.14; d = 1e5; e = 2.5E-3; f = .;
+  g = 'FF'x;
+run;
+sas
+proc print data=work.out (obs=10 keep=name age);
+  var name age;
+  where age > 12;
+  title "Students";
+run;
+sas
+data out;
+  set in;
+  if age < 13 then group = "child";
+  else if age < 20 then group = "teen";
+  else group = "adult";
+  do i = 1 to 3 by 1;
+    total + i;
+  end;
+run;
+sas
+data out;
+  set in;
+  length name $ 20;
+  retain total 0;
+  array scores{3} s1-s3;
+  drop i;
+  output;
+run;
+sas
+%macro report(ds, n=5);
+  %if &n > 3 %then %do;
+    proc print data=&ds.(obs=&n); run;
+  %end;
+%mend report;
+%report(sashelp.class)
+sas
+%let name = World;
+%put Hello &name.!;
+%let x = %sysfunc(today(), date9.);
+%global g;
+sas
+proc sql;
+  create table big as
+  select name, age from sashelp.class
+  where age > 13 order by age;
+quit;
+sas
+proc python;
+submit;
+import sys
+print("from python", sys.version)
+endsubmit;
+run;
+sas
+proc lua;
+submit;
+local x = 10
+print("lua " .. x)
+endsubmit;
+run;
+sas
+data raw;
+  input name $ age;
+  datalines;
+Ann 12
+Bob 14
+;
+run;
+sas
+data raw4;
+  input line $char80.;
+  cards4;
+text; with; semicolons
+;;;;
+run;
+sas
+options nodate nonumber linesize=80 pagesize=60;
+libname mylib "/data/lib";
+filename f "/tmp/x.txt";
+sas
+data a;
+  x = sum(1, 2, 3); y = mean(of s1-s3); z = substr("abc", 2, 1);
+  w = upcase(name); v = input("12", 8.); u = put(x, best.);
+run;
+sas
+data bad;
+  s = "never closed;
+run;
+sas
+/* open comment
+data x; run;
+sas
+data a;
+
+    
+	x = 1;
+run;
+sas
+data u;
+  s = "Café 日本語 ü";
+run; /* ¿comentario? */
+sas
+data l; x = 0 + 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 + 11 + 12 + 13 + 14 + 15 + 16 + 17 + 18 + 19 + 20 + 21 + 22 + 23 + 24 + 25 + 26 + 27 + 28 + 29 + 30 + 31 + 32 + 33 + 34 + 35 + 36 + 37 + 38 + 39 + 40 + 41 + 42 + 43 + 44 + 45 + 46 + 47 + 48 + 49 + 50 + 51 + 52 + 53 + 54 + 55 + 56 + 57 + 58 + 59 + 60 + 61 + 0; run;
+sas
+proc means data=sashelp.class mean std maxdec=2;
+  class sex;
+  var height weight;
+  output out=stats mean= / autoname;
+run;
+sass
+// line comment
+/* block comment */
+body
+  margin: 0
+  padding: 0
+sass
+$primary: #3366ff
+$size: 16px !default
+$font: "Helvetica Neue", sans-serif
+.box
+  color: $primary
+  font: $size $font
+sass
+nav
+  ul
+    list-style: none
+    li
+      display: inline-block
+      &:hover
+        color: red
+      &.active > a
+        font-weight: bold
+sass
+=rounded($r: 4px)
+  border-radius: $r
+  -webkit-border-radius: $r
+.card
+  +rounded(8px)
+sass
+@mixin flex($dir)
+  display: flex
+  flex-direction: $dir
+.row
+  @include flex(row)
+sass
+@if $theme == dark
+  background: black
+@else if $theme == light
+  background: white
+@else
+  background: gray
+sass
+@each $name in a, b, c
+  .icon-#{$name}
+    background-image: url("/img/#{$name}.png")
+@for $i from 1 through 3
+  .m-#{$i}
+    margin: #{$i * 4}px
+sass
+.btn
+  @extend %base
+  @extend .link
+%base
+  cursor: pointer
+sass
+@function double($n)
+  @return $n * 2
+.a
+  width: double(5px)
+  height: calc(100% - #{$gap})
+sass
+@media screen and (max-width: 600px)
+  .col
+    width: 100%
+@media print
+  body
+    color: black
+sass
+@keyframes spin
+  from
+    transform: rotate(0deg)
+  to
+    transform: rotate(360deg)
+sass
+@font-face
+  font-family: "Mine"
+  src: url(mine.woff2) format("woff2")
+@page :first
+  margin: 1in
+sass
+a[href^="http"], input[type='text']
+  color: rgba(0, 0, 0, .5)
+p::first-line, li:nth-child(2n + 1), :not(.x)
+  color: hsl(120, 50%, 50%)
+sass
+.x
+  width: 10px
+  height: 2.5em
+  line-height: 1.5
+  margin: -3rem 0 .5vh 10%
+  transition: all 0.3s ease-in-out
+  z-index: 10 !important
+sass
+@use "sass:math"
+@forward "src/list"
+@import "base", "theme"
+.r
+  width: math.div(10px, 3)
+sass
+@debug "value: #{$x}"
+@warn "careful"
+@error "stop"
+@at-root .top
+  color: red
+sass
+.q
+  content: "tab \t quote \" and \f00c"
+  content: 'single \' quote'
+  content: "never closed
+  color: blue
+sass
+/* open comment
+.a
+  color: red
+sass
+.a
+  color: red
+
+    
+	margin: 0
+sass
+.café
+  content: "日本語 ü ñ"
+  // ¿comentario?
+sass
+.long
+  font-family: Font0, Font1, Font2, Font3, Font4, Font5, Font6, Font7, Font8, Font9, Font10, Font11, Font12, Font13, Font14, Font15, Font16, Font17, Font18, Font19, Font20, Font21, Font22, Font23, Font24, Font25, Font26, Font27, Font28, Font29, Font30, Font31, Font32, Font33, Font34, Font35, Font36, Font37, Font38, serif
+sass
+.grid
+  display: grid
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr))
+  -moz-box-sizing: border-box
+  background: linear-gradient(to right, #fff 0%, #000 100%)
+scheme
+(define (square x) (* x x))
+(display (square 5))
+(newline)
+scheme
+; line comment
+;; double
+#| block
+   #| nested |# comment |#
+(+ 1 2)
+scheme
+#;(ignored datum)
+(list 1 #;(2 3) 4)
+scheme
+(define s "tab\t quote\" newline\n hex\x41; octal\101 end")
+(define m "line one \
+   continued")
+scheme
+(list #\a #\space #\newline #\x41 #\tab #\()
+scheme
+(list 42 -7 3.14 .5 1e10 1/3 #x1F #b1010 #o17 #e1.5 #i2 #d10)
+scheme
+(list #t #f #T #F)
+scheme
+(let loop ((i 0))
+  (if (< i 3)
+      (begin (display i) (loop (+ i 1)))))
+scheme
+(cond ((null? x) 'empty)
+      ((pair? x) (car x))
+      (else (error "bad" x)))
+(case n ((1 2) 'small) (else 'big))
+scheme
+(define-syntax swap!
+  (syntax-rules ()
+    ((_ a b) (let ((tmp a)) (set! a b) (set! b tmp)))))
+scheme
+(let* ((a 1) (b (+ a 1)))
+  (letrec ((even? (lambda (n) (if (= n 0) #t (odd? (- n 1))))))
+    (and a (or b #f))))
+scheme
+`(1 ,(+ 1 1) ,@(list 3 4))
+'(a b . c)
+#(1 2 3)
+(vector-ref #(a b) 0)
+scheme
+(a (b (c (d (e (f (g (h 1))))))))
+scheme
+(define re #/[a-z]+/i)
+(define t #<p class="c">hello &(+ 1 2) and &{x}</p>)
+scheme
+(define x #<!-- xml comment -->)
+(define y #<![CDATA[raw <data>]]>)
+(define z #<?xml version="1.0"?>)
+scheme
+(define doc &{Hello &name; and &[(+ 1 2)] and &#65; &-
+next &~a{x}})
+scheme
+#!/usr/bin/guile -s
+!#
+(display "guile")
+#!eof
+scheme
+(define bad "never closed
+(next)
+scheme
+#| open comment
+still comment
+scheme
+(define (f x)
+
+    
+	(+ x 1))
+scheme
+(define nom "Café 日本 ñ")
+; ¿comentario? ü
+scheme
+(list 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 )
+sml
+val x = 42
+fun square n = n * n
+val y = square x
+sml
+(* block comment *)
+(* nested (* inner *) comment *)
+val z = 1 (* trailing *)
+sml
+val s = "tab\t quote\" newline\n code\065 ctrl\^A end"
+val c = #"a"
+val nl = #"\n"
+sml
+val a = 42
+val b = ~7
+val h = 0x1F
+val w = 0w255
+val wx = 0wxFF
+val r = 3.14
+val e = 1.5e10
+val ne = 2.0E~3
+sml
+datatype shape = Circle of real | Rect of real * real
+type point = { x : int, y : int }
+exception Bad of string
+sml
+fun area (Circle r) = 3.14 * r * r
+  | area (Rect (w, h)) = w * h
+sml
+fun fact 0 = 1
+  | fact n = if n > 0 then n * fact (n - 1) else raise Bad "neg"
+sml
+val r = case xs of
+    [] => 0
+  | (h :: t) => h + length t
+sml
+let
+  val a = 1
+  val b = 2
+in
+  a + b
+end
+sml
+structure Stack :> STACK =
+struct
+  type 'a t = 'a list
+  val empty = []
+  fun push (x, s) = x :: s
+end
+sml
+signature STACK =
+sig
+  type 'a t
+  val empty : 'a t
+  val push : 'a * 'a t -> 'a t
+end
+sml
+functor MakeSet (Ord : ORD) = struct open Ord end
+local val hidden = 1 in val shown = hidden end
+sml
+val t = true andalso false orelse not true
+val f = fn x => x + 1
+val l = map (fn (a, b) => a + b) [(1, 2)]
+sml
+val v : int ref = ref 0
+val () = v := !v + 1
+val arr : int array = Array.array (3, 0)
+val opt : string option = SOME "x"
+sml
+val res = (raise Fail "x") handle Fail m => m | _ => "other"
+val u : unit = ()
+val ord : order = LESS
+sml
+val _ = while !v < 10 do v := !v + 1
+abstype t = T of int with fun mk n = T n end
+infix 6 ++
+eqtype k
+sml
+val bad = "never closed
+val next = 1
+sml
+(* open comment
+still comment
+sml
+fun f x =
+
+    
+	x + 1
+sml
+val nom = "Café 日本 ñ"
+(* ¿comentario? ü *)
+sml
+val long = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 0]
+sml
+val rec loop = fn 0 => () | n => loop (n - 1)
+val w : word = 0w1 and ch : char = #"z" and sub : substring = Substring.full "ab"
+val vec : int vector = #[1, 2]
+sparql
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+SELECT ?name WHERE {
+  ?p foaf:name ?name .
+}
+sparql
+# line comment
+SELECT * WHERE { ?s ?p ?o } # trailing
+LIMIT 10
+sparql
+BASE <http://example.org/>
+PREFIX ex: <ns#>
+ASK { ex:a ex:b ex:c }
+sparql
+SELECT ?x WHERE {
+  ?x ex:label "tab\t quote\" newline\n" .
+  ?x ex:alt 'single \' quote' .
+  ?x ex:lang "chat"@fr .
+}
+sparql
+SELECT ?x WHERE {
+  ?x ex:note """multi "line"
+text \t""" .
+  ?x ex:other '''single
+triple''' .
+}
+sparql
+SELECT ?x WHERE {
+  ?x ex:n 42, -7, 3.14, 1e10, 2.5E-3 .
+  ?x ex:t "5"^^xsd:integer .
+  ?x ex:b true, false .
+}
+sparql
+SELECT ?name (COUNT(?f) AS ?n) (AVG(?age) AS ?a) WHERE {
+  ?p foaf:name ?name ; foaf:knows ?f ; ex:age ?age .
+}
+GROUP BY ?name
+HAVING (COUNT(?f) > 2)
+ORDER BY DESC(?n) ASC(?name)
+sparql
+SELECT ?x WHERE {
+  ?x ex:v ?v .
+  FILTER (?v > 3 && ?v < 10 || !BOUND(?w))
+  FILTER regex(STR(?x), "^http", "i")
+}
+sparql
+SELECT ?x ?y WHERE {
+  ?x a ex:T .
+  OPTIONAL { ?x ex:y ?y }
+  { ?x ex:a 1 } UNION { ?x ex:b 2 }
+  MINUS { ?x ex:c 3 }
+}
+sparql
+CONSTRUCT { ?s ex:copy ?o }
+WHERE { ?s ex:orig ?o }
+sparql
+DESCRIBE <http://example.org/thing>
+sparql
+INSERT DATA { ex:a ex:b "c" . }
+DELETE WHERE { ?s ex:old ?o }
+DELETE { ?s ex:p ?o } INSERT { ?s ex:q ?o } WHERE { ?s ex:p ?o }
+sparql
+LOAD <http://example.org/data.ttl> INTO GRAPH <g>
+CLEAR GRAPH <g>
+CREATE SILENT GRAPH <h>
+DROP DEFAULT
+sparql
+SELECT ?x WHERE {
+  BIND (CONCAT(UCASE(?a), LCASE(?b)) AS ?x)
+  BIND (IF(ISIRI(?a), STRLEN(?b), COALESCE(?c, 0)) AS ?y)
+  VALUES ?z { 1 2 3 }
+}
+sparql
+SELECT ?x WHERE {
+  SERVICE <http://dbpedia.org/sparql> { ?x ?p ?o }
+  GRAPH ?g { ?x ex:in ?g }
+  ?x ex:path/ex:next* ?end .
+  [] ex:blank _:b1 .
+}
+sparql
+SELECT (GROUP_CONCAT(?n; SEPARATOR=", ") AS ?all) (SAMPLE(?n) AS ?one) (SUM(?v) AS ?s) (MIN(?v) AS ?lo) (MAX(?v) AS ?hi)
+WHERE { ?x ex:n ?n ; ex:v ?v }
+sparql
+SELECT DISTINCT ?x WHERE { ?x ex:y ?y } OFFSET 5 LIMIT 5
+SELECT REDUCED ?x FROM NAMED <g> WHERE { FILTER NOT EXISTS { ?x ex:z ?z } }
+sparql
+SELECT ?x WHERE {
+  ?x ex:label "never closed .
+  ?x ex:b ?c .
+}
+sparql
+SELECT ?x WHERE {
+
+    
+	?x ex:a ?b .
+}
+sparql
+SELECT ?x WHERE {
+  ?x ex:nom "Café 日本語"@fr .
+} # ¿comentario?
+sparql
+SELECT ?v0 ?v1 ?v2 ?v3 ?v4 ?v5 ?v6 ?v7 ?v8 ?v9 ?v10 ?v11 ?v12 ?v13 ?v14 ?v15 ?v16 ?v17 ?v18 ?v19 ?v20 ?v21 ?v22 ?v23 ?v24 ?v25 ?v26 ?v27 ?v28 ?v29 ?v30 ?v31 ?v32 ?v33 ?v34 ?v35 ?v36 ?v37 ?v38 ?v39 ?v40 ?v41 ?v42 ?v43 ?v44 ?v45 ?v46 ?v47 ?v48 ?v49 ?v50 ?v51 ?v52 ?v53 ?v54 ?v55 ?v56 ?v57 ?v58 ?v59 ?v60 ?v61 WHERE { ?s ?p ?o }
+sparql
+SELECT ?d WHERE {
+  BIND (NOW() AS ?now)
+  BIND (YEAR(?now) AS ?d)
+  BIND (MD5("x") AS ?h)
+  FILTER (LANGMATCHES(LANG(?l), "en") && DATATYPE(?v) = xsd:string)
+}
+spdxcomments
+SPDX-License-Identifier: MIT
+spdxcomments
+SPDX-License-Identifier: Apache-2.0 OR MIT
+spdxcomments
+SPDX-License-Identifier: GPL-2.0-only WITH Classpath-exception-2.0
+spdxcomments
+SPDX-License-Identifier: (MIT AND BSD-3-Clause) OR Apache-2.0
+spdxcomments
+SPDX-License-Identifier: GPL-2.0+
+spdxcomments
+SPDX-License-Identifier: LicenseRef-MyCompany-1.0
+spdxcomments
+SPDX-License-Identifier: LGPL-3.0
+spdxcomments
+SPDX-License-Identifier: GPL-1.0 OR AGPL-1.0
+spdxcomments
+SPDX-License-Identifier: GPL-2.0-or-later WITH Nokia-Qt-exception-1.1
+spdxcomments
+SPDX-License-Identifier: LGPL-2.1-only WITH openvpn-openssl-exception
+spdxcomments
+SPDX-FileCopyrightText: 2024 Jane Doe <jane@example.org>
+spdxcomments
+SPDX-FileContributor: John Smith
+spdxcomments
+SPDX-LicenseInfoInFile: BSD-2-Clause
+spdxcomments
+SPDX-License-Identifier: MPL-2.0
+SPDX-FileCopyrightText: 2020 Example Org
+Some ordinary text after the tags.
+spdxcomments
+SPDX-License-Identifier: NotARealLicense AND MIT
+spdxcomments
+SPDX-License-Identifier: ((Zlib OR ISC) AND (BSL-1.0 OR Unlicense))
+spdxcomments
+Ordinary line without a tag
+SPDX-License-Identifier: CC0-1.0
+spdxcomments
+SPDX-License-Identifier: MIT
+
+    
+	SPDX-FileContributor: Tab Person
+spdxcomments
+SPDX-FileCopyrightText: 2023 José Müller 日本
+spdxcomments
+SPDX-License-Identifier: MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR MIT OR Apache-2.0
+spdxcomments
+SPDX-License-Identifier: EPL-2.0 WITH Autoconf-exception-2.0 OR GPL-3.0-only
+spdxcomments
+SPDX-License-Identifier:
+SPDX-License-Identifier: (MIT
+stan
+data {
+  int<lower=0> N;
+  vector[N] y;
+}
+stan
+// line comment
+/* block
+   comment */
+# hash comment
+model { }
+stan
+parameters {
+  real mu;
+  real<lower=0> sigma;
+  real<lower=-1, upper=1> rho;
+  vector<offset=0, multiplier=10>[3] beta;
+}
+stan
+model {
+  mu ~ normal(0, 10);
+  sigma ~ cauchy(0, 2.5);
+  y ~ normal(mu, sigma);
+}
+stan
+transformed data {
+  real a = 42;
+  real b = 3.14;
+  real c = 1e-3;
+  real d = 2.5E10;
+  int e = -7;
+  complex z = 3 + 2i;
+}
+stan
+generated quantities {
+  for (n in 1:N) {
+    if (y[n] > 0) continue;
+    else if (y[n] < -5) break;
+  }
+  while (1) { break; }
+}
+stan
+functions {
+  real square(real x) {
+    return x * x;
+  }
+  void check(int n) {
+    if (n < 0) reject("negative n: ", n);
+    if (n > 100) fatal_error("too big");
+  }
+}
+stan
+transformed parameters {
+  simplex[4] theta;
+  ordered[3] cut;
+  positive_ordered[2] p;
+  unit_vector[3] u;
+  cov_matrix[3] S;
+  cholesky_factor_corr[3] L;
+}
+stan
+model {
+  y ~ normal(mu, sigma) T[0, ];
+  z ~ poisson(lambda) T[, 10];
+  w ~ exponential(1) T[1, 5];
+}
+stan
+model {
+  target += normal_lpdf(y | mu, sigma);
+  target += log_sum_exp(a, b);
+  print("mu = ", mu, " tab\t");
+}
+stan
+generated quantities {
+  real yrep = normal_rng(mu, sigma);
+  array[N] int idx;
+  matrix[2, 2] M = [[1, 0], [0, 1]];
+  row_vector[2] r = [1, 2];
+}
+stan
+model {
+  profile("likelihood") {
+    y ~ normal(mu, sigma);
+  }
+}
+stan
+transformed data {
+  real x = (N > 0) ? 1.0 : 0.0;
+  int k = N %/% 2;
+  real m = N % 3;
+}
+stan
+model {
+  print("never closed);
+}
+stan
+/* open comment
+model { }
+stan
+model {
+
+    
+	mu ~ normal(0, 1);
+}
+stan
+model {
+  print("Café 日本語"); // ¿comentario? ü
+}
+stan
+transformed data { real x = 0 + 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 + 11 + 12 + 13 + 14 + 15 + 16 + 17 + 18 + 19 + 20 + 21 + 22 + 23 + 24 + 25 + 26 + 27 + 28 + 29 + 30 + 31 + 32 + 33 + 34 + 35 + 36 + 37 + 38 + 39 + 40 + 41 + 42 + 43 + 44 + 45 + 46 + 47 + 48 + 49 + 50 + 51 + 52 + 53 + 54 + 55 + 56 + 57 + 58 + 59 + 60 + 61 + 0; }
+stan
+data {
+  int<lower=1> K;
+  array[K] vector<lower=0, upper=1>[2] p;
+  sum_to_zero_vector[K] s;
+}
+stan
+model {
+  vector[N] mu_vec = alpha + x * beta;
+  y ~ bernoulli_logit(mu_vec);
+}
+stan
+functions {
+  vector sho(real t, vector y, real theta) {
+    vector[2] dydt;
+    dydt[1] = y[2];
+    dydt[2] = -y[1] - theta * y[2];
+    return dydt;
+  }
+}
+stan
+model {
+  array[2] real a = integrate_ode_rk45(f, y0, t0, ts, theta, x_r, x_i);
+  vector[2] s = algebra_solver(g, guess, theta, x_r, x_i);
+}
+swift
+#!/usr/bin/env swift
+import Foundation
+print("hello")
+swift
+// line comment
+/* block /* nested */ comment */
+/// doc comment
+let x = 1
+swift
+let s = "tab\t quote\" newline\n null\0 unicode \u{1F600} value \(x + 1)"
+let c: Character = "a"
+swift
+let m = """
+    multi "line"
+    with \(name) and \t
+    """
+swift
+let raw = #"raw \n and \#(x) and "quotes""#
+let raw2 = ##"double ## hashes"##
+swift
+let n = (42, -7, 1_000_000, 0xFF, 0o17, 0b1010, 3.14, 1e10, 2.5E-3, 0x1p4, .zero)
+swift
+struct Point {
+    var x: Double
+    let y: Double
+    mutating func move(by d: Double) { x += d }
+}
+swift
+class Animal: NSObject, Codable {
+    private(set) var name: String
+    init(name: String) { self.name = name; super.init() }
+    deinit { }
+    override func description() -> String { return name }
+}
+swift
+enum Shape {
+    case circle(radius: Double)
+    case rect(w: Double, h: Double)
+    indirect case group([Shape])
+}
+swift
+protocol Speaker { func speak() -> String }
+extension Int: Speaker { func speak() -> String { "\(self)" } }
+func first<T: Equatable>(_ a: [T]) -> T? where T: Hashable { a.first }
+swift
+for i in 0..<10 where i % 2 == 0 {
+    if i > 6 { break } else if i == 2 { continue }
+}
+while x < 3 { x += 1 }
+repeat { x -= 1 } while x > 0
+swift
+switch shape {
+case .circle(let r) where r > 1:
+    print(r)
+case .rect(let w, _):
+    fallthrough
+default:
+    break
+}
+swift
+guard let v = opt else { return }
+if case .some(let w) = opt { print(w) }
+let z = opt ?? 0
+let c = obj?.child?.name
+swift
+do {
+    let data = try fetch()
+    _ = try? parse(data)
+    _ = try! parse(data)
+} catch let e as MyError {
+    throw e
+}
+swift
+@MainActor
+@available(iOS 15, *)
+final class Model: ObservableObject {
+    @Published var count = 0
+    @objc dynamic var flag = false
+}
+swift
+func load() async throws -> Data {
+    async let a = fetch()
+    return try await a
+}
+actor Counter { var n = 0 }
+swift
+let bad = "never closed
+let next = 1
+swift
+/* open comment
+still comment
+swift
+func f() {
+
+    
+	let x = 1
+}
+swift
+let café = "日本語 ü ñ"
+// ¿comentario?
+swift
+let long = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 0]
+swift
+let closure: (Int, Int) -> Int = { $0 + $1 }
+let sorted = items.sorted { $0.name < $1.name }.map(\.id)
+typealias Handler = @escaping (Result<Data, Error>) -> Void
+let t: Int.Type = Int.self; let any: Any = nil as Any?
+terraform
+terraform {
+  required_version = ">= 1.0"
+  required_providers {
+    aws = { source = "hashicorp/aws", version = "~> 5.0" }
+  }
+  backend "s3" { bucket = "state" }
+}
+terraform
+# hash comment
+// slash comment
+/* block
+   comment */
+locals { a = 1 }
+terraform
+provider "aws" {
+  region = "eu-west-1"
+}
+terraform
+resource "aws_instance" "web" {
+  ami           = "ami-123456"
+  instance_type = "t3.micro"
+  count         = 2
+  depends_on    = [aws_vpc.main]
+  lifecycle { create_before_destroy = true }
+}
+terraform
+variable "name" {
+  type        = string
+  default     = "app"
+  description = "tab\t quote\" newline\n"
+}
+variable "ports" { type = list(number) }
+variable "tags" { type = map(string) }
+terraform
+variable "cfg" {
+  type = object({ name = string, size = number, on = bool })
+}
+variable "pair" { type = tuple([string, number]) }
+variable "loose" { type = any }
+variable "uniq" { type = set(string) }
+terraform
+output "ip" {
+  value     = aws_instance.web[0].public_ip
+  sensitive = true
+}
+terraform
+data "aws_ami" "latest" {
+  most_recent = true
+  owners      = ["self"]
+}
+terraform
+module "vpc" {
+  source = "./modules/vpc"
+  cidr   = "10.0.0.0/16"
+}
+terraform
+locals {
+  n      = 42
+  f      = 3.14
+  e      = 1e3
+  yes    = true
+  no     = false
+  none   = null
+}
+terraform
+locals {
+  names = [for s in var.list : upper(s) if s != ""]
+  pairs = { for k, v in var.map : k => v * 2 }
+}
+terraform
+resource "aws_s3_bucket" "b" {
+  for_each = toset(var.buckets)
+  bucket   = "${each.key}-${local.suffix}"
+  tags     = merge(var.tags, { Name = each.value })
+}
+terraform
+resource "aws_security_group" "sg" {
+  dynamic "ingress" {
+    for_each = var.ports
+    content {
+      from_port = ingress.value
+      to_port   = ingress.value
+    }
+  }
+}
+terraform
+resource "null_resource" "r" {
+  provisioner "local-exec" {
+    command = "echo ${self.id}"
+  }
+}
+terraform
+locals {
+  script = <<-EOT
+    #!/bin/sh
+    echo "${var.name}"
+  EOT
+  plain = <<EOF
+raw text
+EOF
+}
+terraform
+locals {
+  a = length(var.list) > 0 ? element(var.list, 0) : "none"
+  b = join(",", formatlist("%s-x", var.names))
+  c = lookup(var.map, "k", "default")
+  d = max(1, 2, 3) + abs(-4) + ceil(1.2) + floor(2.8)
+}
+terraform
+locals {
+  s = "nested ${upper("in ${var.x}")} done"
+  t = "%{ if var.on }yes%{ else }no%{ endif }"
+}
+terraform
+locals {
+  bad = "never closed
+  next = 1
+}
+terraform
+/* open comment
+locals { }
+terraform
+locals {
+
+    
+	a = 1
+}
+terraform
+locals {
+  nom = "Café 日本語" # ¿comentario?
+}
+terraform
+locals { long = ["v0", "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13", "v14", "v15", "v16", "v17", "v18", "v19", "v20", "v21", "v22", "v23", "v24", "v25", "v26", "v27", "v28", "v29", "v30", "v31", "v32", "v33", "v34", "v35", "v36", "v37", "v38", "v39", "v40", "v41", "v42", "v43", "v44", "end"] }
+todo
+Buy milk
+todo
+(A) Call the bank +Finance @phone
+todo
+(B) 2024-03-01 Write report +Work @desk due:2024-03-08
+todo
+x 2024-03-02 2024-03-01 Pay rent +Home
+todo
+x	done with a tab separator
+todo
+2024-01-15 Plan trip +Travel @laptop
+todo
+(C) Fix bike
+(D) Read book @home
+(E) Water plants
+todo
+(F) 2023-12-31 Review year
+(G) Clean garage +House
+(H) Email Sam @computer
+todo
+(I) Learn chords +Music
+(J) Renew passport due:2025-01-01
+(K) Book dentist @phone
+todo
+(L) Sort photos
+(M) Back up disk +IT
+(N) Update CV
+todo
+(O) Call mom @phone
+(P) Pay taxes +Finance
+(Q) Buy gift
+todo
+(R) Test code +Dev @work
+(S) Repair fence
+(T) Walk dog
+todo
+(U) Plan party +Social
+(V) Wash car
+(W) Order parts @shop
+todo
+(X) Archive mail
+(Y) Read paper +Study
+(Z) Sleep early
+todo
+Task with key:value and url:http://x and bad::meta and tail:
+todo
+(a) lowercase is not a priority
+(AA) not valid either
+( A) space inside
+todo
+Write+notatag and mail@notacontext but +real and @real
+todo
+x not a date here
+xno space so not done
+2024-1-5 short date is plain
+todo
+Line one
+
+    
+	(A) indented task
+todo
+(A) Acheter du café +Maison @cuisine
+日本語のタスク +プロジェクト
+todo
+(A) word0 +p0 @c0 word1 +p1 @c1 word2 +p2 @c2 word3 +p3 @c3 word4 +p4 @c4 word5 +p5 @c5 word6 +p6 @c6 word7 +p7 @c7 word8 +p8 @c8 word9 +p9 @c9 word10 +p10 @c10 word11 +p11 @c11 word12 +p12 @c12 word13 +p13 @c13 word14 +p14 @c14 word15 +p15 @c15 word16 +p16 @c16 word17 +p17 @c17 word18 +p18 @c18 word19 +p19 @c19 end
+todo
+(B) 2024-05-05 2024-05-01 two dates then text +P @c k:v
+typescript
+#!/usr/bin/env node
+const greet = (name: string): string => `Hello, ${name}`;
+console.log(greet("world"));
+typescript
+// line comment
+/* block
+   comment */
+/** JSDoc @param x the value */
+let x = 1;
+typescript
+const s = "tab\t quote\" newline\n unicode é \u{1F600} hex \x41";
+const t = 'single \' quote';
+const u = `template ${a + `nested ${b}`} end`;
+typescript
+const n = [42, -7, 1_000, 0xFF, 0o17, 0b1010, 3.14, .5, 1e10, 2.5E-3, 10n, NaN, Infinity];
+typescript
+interface User {
+  readonly id: number;
+  name?: string;
+  tags: Array<string>;
+  [key: string]: unknown;
+}
+typescript
+type Maybe<T> = T | null | undefined;
+type Keys = keyof User;
+type Ro<T> = { readonly [K in keyof T]: T[K] };
+type Fn = (a: number, ...rest: string[]) => void;
+type C<T> = T extends string ? "s" : never;
+typescript
+class Animal<T> extends Base implements Speaker {
+  private name: string;
+  protected static count = 0;
+  constructor(public readonly kind: T) { super(); }
+  get label(): string { return this.name; }
+  abstract speak(): void;
+}
+typescript
+enum Color { Red, Green = 2, Blue = "b" }
+const enum Dir { Up, Down }
+declare module "lib" { export function f(): void; }
+namespace NS { export const v = 1; }
+typescript
+import fs from "fs";
+import { readFile as rf, type Stats } from "node:fs";
+import * as path from "path";
+export default class Foo {}
+export { a, b as c } from "./mod";
+typescript
+for (let i = 0; i < 10; i++) {
+  if (i % 2 === 0) continue;
+  else if (i > 7) break;
+}
+for (const k in obj) {}
+for (const v of list) {}
+do { x--; } while (x > 0);
+typescript
+switch (kind) {
+  case "a":
+    return 1;
+  default:
+    throw new Error("bad");
+}
+try { risky(); } catch (e: unknown) { } finally { done(); }
+typescript
+async function load(url: string): Promise<Response> {
+  const r = await fetch(url);
+  return r;
+}
+function* gen() { yield 1; }
+typescript
+const re = /^[a-z]+\d*$/gi;
+const ok = re.test("abc1");
+const m = "x".replace(/x/g, "y");
+typescript
+@Component({ selector: "app" })
+class Widget {
+  @Input() value!: number;
+}
+typescript
+const v = obj?.a?.[0] ?? "default";
+const w = <HTMLInputElement>el;
+const y = el as unknown as number;
+const z = val!;
+let q = typeof x === "string" && x instanceof String;
+typescript
+console.log(Math.PI, Math.max(1, 2), JSON.stringify({ a: 1 }));
+document.getElementById("id")?.addEventListener("click", () => {});
+process.exit(0); Promise.all([]); Number.isInteger(3);
+typescript
+const bad = "never closed
+const next = 1;
+typescript
+/* open comment
+still comment
+typescript
+function f() {
+
+    
+	return 1;
+}
+typescript
+const café = "日本語 ü ñ";
+// ¿comentario?
+typescript
+const long = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 0];
+typescript
+function assertIsString(v: any): asserts v is string {}
+let tuple: [string, number?] = ["a"];
+let sym: unique symbol;
+const obj = { a: 1, b: [true, false, null] } satisfies Record<string, unknown>;
+typst
+= Heading
+== Sub heading
+Some *strong* and _emphasis_ text.
+typst
+// line comment
+/* block
+   comment */
+Text after.
+typst
+- first item
+- second item
++ numbered
++ numbered again
+typst
+Inline `raw code` and a block:
+```rust
+fn main() {}
+```
+typst
+Link https://typst.app/docs here.
+A label <intro> and a reference @intro.
+Escapes: \* \_ \# \u{1F600}
+typst
+Inline math $a^2 + b^2 = c^2$ and block:
+$ sum_(i=1)^n i = (n(n+1))/2 $
+typst
+#let name = "World"
+#let add(a, b) = a + b
+Hello #name and #add(1, 2).
+typst
+#set page(width: 10cm, margin: 1in)
+#set text(size: 11pt, lang: "fr")
+#set par(leading: 0.65em, justify: true)
+typst
+#show heading: it => [*#it.body*]
+#show "Typst": set text(fill: blue)
+typst
+#import "@preview/cetz:0.2.0": canvas, draw
+#import "utils.typ": *
+#include "chapter.typ"
+typst
+#let n = (42, -7, 3.14, 1e3, 50%, 2fr, 1.5em, 10pt, 3mm, 2cm, 1in)
+#let flags = (true, false, none, auto)
+typst
+#if x > 3 [
+  big
+] else if x == 3 [
+  equal
+] else [
+  small
+]
+typst
+#for item in (1, 2, 3) [
+  - Item #item
+]
+#while i < 3 { i += 1 }
+typst
+#let f(x) = {
+  let y = x * 2
+  if y > 10 { return y }
+  for i in range(3) { if i == 1 { continue } else { break } }
+  y
+}
+typst
+#let s = "tab\t quote\" newline\n unicode\u{e9}"
+#let d = (a: 1, b: (c: [nested *markup*]))
+typst
+#figure(
+  image("cat.png", width: 50%),
+  caption: [A cat with #emph[style]],
+) <fig-cat>
+typst
+#text(fill: red)[warning] then #box[inner [brackets] here] done.
+typst
+#let bad = "never closed
+next line
+typst
+/* open comment
+still comment
+typst
+Paragraph one.
+
+    
+	Indented line.
+typst
+Texte en français: café, 日本語, ü.
+// ¿comentario?
+typst
+#let long = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 0)
+zig
+const std = @import("std");
+
+pub fn main() !void {
+    std.debug.print("hello {s}\n", .{"world"});
+}
+zig
+// line comment
+/// doc comment
+//! top-level doc
+const x = 1;
+zig
+const s = "tab\t quote\" newline\n hex\x41 unicode\u{1F600}";
+const c = 'a';
+const e = '\n';
+const u = '\u{e9}';
+zig
+const m =
+    \\multi line
+    \\string with "quotes" and \n raw
+;
+zig
+const n = .{ 42, -7, 1_000_000, 0xFF, 0o17, 0b1010, 3.14, 1e10, 2.5e-3, 0x1.8p3 };
+zig
+const Point = struct {
+    x: i32,
+    y: f64 = 0,
+    pub fn len(self: Point) f64 {
+        return @sqrt(self.y * self.y);
+    }
+};
+zig
+const Color = enum(u8) { red, green, blue };
+const Value = union(enum) { int: i64, float: f64, none };
+const E = error{ OutOfMemory, NotFound };
+zig
+for (items, 0..) |item, i| {
+    if (i == 2) continue;
+    if (item > 5) break;
+}
+while (n < 10) : (n += 1) {}
+zig
+const r = switch (c) {
+    .red => 1,
+    .green, .blue => 2,
+    else => unreachable,
+};
+zig
+fn read(path: []const u8) !usize {
+    const f = try std.fs.cwd().openFile(path, .{});
+    defer f.close();
+    errdefer std.log.err("fail", .{});
+    return f.read(buf) catch |err| return err;
+}
+zig
+const a: u8 = 255; const b: i128 = 0; const c: usize = 0;
+const d: c_int = 0; const e: f16 = 0; const f: bool = true;
+const g: ?*u8 = null; const h: anyerror = error.X; const k: comptime_int = 3;
+zig
+comptime var i = 0;
+threadlocal var t: u32 = 0;
+extern fn puts(s: [*:0]const u8) c_int;
+export fn add(a: i32, b: i32) i32 { return a + b; }
+zig
+const p = @as(u32, @intCast(x));
+const sz = @sizeOf(Point);
+const tn = @typeName(T);
+@compileError("stop");
+zig
+fn List(comptime T: type) type {
+    return struct { items: []T, len: usize };
+}
+test "basic" { try std.testing.expect(true); }
+zig
+const v = if (ok) 1 else 0;
+const o = maybe orelse 5;
+const w = ptr.*;
+const sl = arr[1..3];
+const z = undefined;
+zig
+const bad = "never closed
+const next = 1;
+zig
+inline fn f() void {}
+noinline fn g() void {}
+const al align(16) = 0;
+asm volatile ("nop");
+zig
+pub fn f() void {
+
+    
+	const x = 1;
+}
+zig
+const nom = "Café 日本語 ü";
+// ¿comentario?
+zig
+const long = [_]u32{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 0 };
+zig
+const deep = .{ .a = .{ .b = .{ .c = [_]u8{ 1, 2, 3 } } }, .d = &[_][]const u8{ "x", "y" } };
+zig
+suspend {}
+nosuspend foo();
+const fr = async bar();
+_ = await fr;
+const al: anyopaque = undefined;
+zsh
+#!/bin/zsh
+echo "hello"
+print -P "%F{red}red%f"
+zsh
+# line comment
+echo hi # trailing
+: <<'COMMENT'
+block as heredoc
+COMMENT
+zsh
+s="tab\t quote\" dollar\$ var $HOME and ${name}"
+t='single $notvar'
+u=$'escape\n\x41é' ; echo $u
+zsh
+cat <<EOF
+Hello $USER, today is $(date)
+EOF
+cat <<-'RAW'
+	raw $x
+	RAW
+zsh
+n=$(( 42 + 0x1F + 2#1010 + 3.14 * 2 ))
+(( i++ ))
+(( x = y > 3 ? 1 : 0 ))
+zsh
+for i in {1..5}; do
+  if [[ $i -eq 3 ]]; then continue
+  elif (( i > 4 )); then break
+  else echo $i; fi
+done
+while true; do break; done
+until false; do break; done
+zsh
+case $1 in
+  start|run) echo go ;;
+  stop) echo halt ;&
+  *) echo other ;|
+esac
+zsh
+function greet {
+  local name=${1:-world}
+  echo "hi $name"
+}
+other() { return 0 }
+greet "$@"
+zsh
+arr=(a b c)
+echo ${arr[1]} ${#arr} ${arr[-1]} ${arr[@]}
+typeset -A map
+map=(k1 v1 k2 v2)
+echo ${(k)map} ${(v)map}
+zsh
+echo ${(U)name} ${(j:,:)arr} ${(s: :)line} ${(f)"$(ls)"}
+echo ${name:u} ${file:t} ${file:r} ${path:h}
+echo ${var/old/new} ${var//a/b} ${var#pre} ${var%%suf}
+zsh
+ls *.txt(.) **/*.zsh(om[1,3]) *(/)
+ls ^*.bak *.(c|h) file<1-10>.log
+setopt extended_glob nullglob
+zsh
+diff <(sort a) <(sort b)
+cmd > out.txt 2>&1 < in.txt >> log
+cmd &> all.log | tee x |& grep err
+read -r line <<< "here string"
+zsh
+[[ -f $file && -n $var || ! -d $dir ]]
+[[ $s == *.txt ]] && echo txt
+[[ $s =~ ^[0-9]+$ ]] && echo num
+test -z "$x" ; [ "$a" = "$b" ]
+zsh
+autoload -Uz compinit && compinit
+zstyle ':completion:*' menu select
+bindkey '^R' history-incremental-search-backward
+alias ll='ls -l'
+export PATH="$HOME/bin:$PATH"
+zsh
+repeat 3 echo hi
+select opt in a b c; do break; done
+{ echo grouped } always { echo cleanup }
+coproc cat
+trap 'echo bye' EXIT
+zsh
+x=`date +%s`
+y=$(echo $(whoami))
+z=${$(pwd):t}
+echo $? $$ $! $# $0 $argv[1]
+zsh
+bad="never closed
+echo next
+zsh
+echo one
+
+    
+	echo tab
+zsh
+echo "Café 日本語 ü"
+# ¿comentario?
+zsh
+arr=(item0 item1 item2 item3 item4 item5 item6 item7 item8 item9 item10 item11 item12 item13 item14 item15 item16 item17 item18 item19 item20 item21 item22 item23 item24 item25 item26 item27 item28 item29 item30 item31 item32 item33 item34 item35 item36 item37 item38 item39 item40 item41 item42 item43 item44 )
+zsh
+git log --oneline -n 5 --format='%h %s' && sudo -E make -j4 install
+grep -rn --include='*.c' pattern . | sed 's/a/b/g' | awk '{print $1}' 
+zsh
+zmodload zsh/datetime
+print -l ${(o)${(u)words}}
+echo ${${name#*/}%.*}
+noglob echo *

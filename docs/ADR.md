@@ -620,3 +620,30 @@ They were written afterwards from the merge records in `MERGE_LOG.md`.
   (`lpeg_errors_cross_the_c_boundary_as_lua_errors`). The backtrack limit
   of LPeg is the default 400 (`MAXBACK`), changeable with
   `lpeg.setmaxstack`. A WebAssembly build has no Lua and so no LPeg.
+
+## ADR 20: Highlight engine keeps the `skylighting-core` port with ordered search (2026-11-10)
+
+- **Context.** KSyntaxHighlighting is the first implementation of the KDE
+  definition format. Its engine has the MIT licence. It keeps a skip offset
+  for each regular expression rule on a line. It runs an unanchored search
+  from the offset on the full line and stores the start of the next match
+  for each rule. It clears the store when the captures of a dynamic rule
+  change. `skylighting-core` is the library that Pandoc uses, and
+  `randoc-highlight` ports it. It matches each rule on the rest of the
+  line: `^` is the current position, and a look-behind sees nothing before
+  that position. Thus an unanchored search gives other results for
+  patterns with `^`, look-behind or `\b`. Also, the measured cause of the
+  slow lines was different: one call of the set search computed every
+  match and scanned to the end of the line.
+- **Decision.** KSyntaxHighlighting was studied and not used. The crate
+  keeps the port of the `skylighting-core` engine. It adds an ordered
+  search inside that engine, with an exact condition for when the ordered
+  search applies (`ordered_search_applies` in
+  `crates/randoc-highlight/src/regex.rs`). Tests run both searches on each
+  regular expression call of the samples.
+- **Why.** The skip offset changes the results for some patterns, and it
+  does not remove the measured cause of the slow lines.
+- **Licence.** Not applicable: no code of KSyntaxHighlighting is in the
+  repository.
+- **Consequences.** No code is ported, so no attribution is necessary. The
+  results stay equal to the oracle by construction of the port.

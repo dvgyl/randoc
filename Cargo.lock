@@ -298,6 +298,7 @@ version = "0.1.0"
 name = "randoc-citeproc"
 version = "0.1.0"
 dependencies = [
+ "nix",
  "quick-xml",
  "randoc-ast",
  "randoc-core",
@@ -351,6 +352,14 @@ dependencies = [
  "serde_json",
  "toml",
  "zip",
+]
+
+[[package]]
+name = "randoc-highlight"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

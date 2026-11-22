@@ -1,0 +1,239 @@
+Notices for the syntax definitions in data/syntax-definitions.txt
+
+Source: skylighting-core 0.15 as released on Hackage, directory `xml/` (https://hackage.haskell.org/package/skylighting-core-0.15, tarball SHA-256 485721e90b3f5e52369a11f08994969a224c038ae4c812734233ff3b30b6fa61, source repository https://github.com/jgm/skylighting). The files come from the KDE syntax-highlighting project (https://invent.kde.org/frameworks/syntax-highlighting).
+
+abnf.xml: licence MIT (license="MIT")
+  SPDX-FileCopyrightText: 2026 Jonathan Poelen <jonathan.poelen@gmail.com>
+  Copyright: Jonathan Poelen (jonathan.poelen@gmail.com)
+alert.xml: licence MIT (license="MIT")
+  Copyright: Dominik Haumann (dhaumann@kde.org)
+asciidoc.xml: licence MIT (license="MIT")
+  Copyright: Andreas Gratzer
+cabal.xml: licence MIT (license="MIT")
+  Copyright: Jonathan Poelen (jonathan.poelen@gmail.com)
+changelog.xml: licence MIT (license="MIT")
+  Copyright: Dominik Haumann (dhaumann@kde.org)
+cobol.xml: licence MIT (license="MIT")
+  Copyright: Jonathan Poelen (jonathan.poelen@gmail.com);github.com/MihailJP
+coffee.xml: licence MIT (license="MIT")
+  Copyright: Max Shawabkeh (max99x@gmail.com)
+comments.xml: licence MIT (license="MIT")
+  Copyright: Alex Turbov (i.zaufi@gmail.com)
+commonlisp.xml: licence MIT (license="MIT")
+  Copyright: Dominik Haumann (dhaumann@kde.org)
+csv.xml: licence MIT (license="MIT")
+  Copyright: Jonathan Poelen (jonathan.poelen@gmail.com)
+dart.xml: licence MIT (license="MIT")
+  Copyright: Waqar Ahmed (waqar.17a@gmail.com)
+default.xml: licence MIT (license="MIT")
+  Copyright: John MacFarlane
+dockerfile.xml: licence MIT (license="MIT")
+  SPDX-FileCopyrightText: James Turnbull <james@lovedthanlost.net>
+  SPDX-FileCopyrightText: 2020-2021 Alex Turbov <i.zaufi@gmail.com>
+  Copyright: James Turnbull (james@lovedthanlost.net)
+doxygen.xml: licence MIT (license="MIT")
+  Copyright: Dominik Haumann (dhaumann@kde.org)
+doxygenlua.xml: licence MIT (license="MIT")
+  Copyright: Dominik Haumann (dhaumann@kde.org)
+elixir-eex.xml: licence MIT (license="MIT")
+  Copyright: Jade Pfeiffer (jade@pfeiffer.codes)
+elixir-heex.xml: licence MIT (license="MIT")
+  Copyright: Jade Pfeiffer (jade@pfeiffer.codes)
+elm.xml: licence MIT (license="MIT")
+  Copyright: Bonghyun Kim (bonghyun.d.kim@gmail.com)
+email.xml: licence MIT (license="MIT")
+  Copyright: Volker Krause (vkrause@kde.org)
+fortran-fixed.xml: licence MIT (license="MIT")
+  Copyright: Franchin Matteo (fnch@libero.it)
+fortran-free.xml: licence MIT (license="MIT")
+  Copyright: Franchin Matteo (fnch@libero.it), Janus Weil
+gleam.xml: licence MIT (license="MIT")
+  SPDX-FileCopyrightText: 2024 Louis Guichard <kde@glpda.net>
+  Copyright: Louis Guichard (kde@glpda.net)
+gpr.xml: licence MIT (license="MIT")
+  Copyright: Léo Germond (germond@adacore.com)
+graphql.xml: licence MIT (license="MIT")
+  Copyright: Volker Krause (vkrause@kde.org)
+haxe.xml: licence MIT (license="MIT")
+  Copyright: Chad Joan
+javascript-react.xml: licence MIT (license="MIT")
+  Copyright 2018-2020 Nibaldo González S. (nibgonz@gmail.com)
+  Copyright: Nibaldo González (nibgonz@gmail.com)
+jinja.xml: licence MIT (license="MIT")
+  Copyright: zoltan.gera@qt.io
+julia.xml: licence MIT (license="MIT")
+  Copyright: the authors of the KDE syntax-highlighting project
+llvm.xml: licence NCSA (license="LLVM Release License")
+  Copyright: LLVM Team
+logfile.xml: licence MIT (license="MIT")
+  Copyright: Jonathan Poelen (jonathan.poelen@gmail.com)
+m4.xml: licence BSD-3-Clause (license="New BSD License")
+  Copyright (c) 2011, Cybernetica AS ( http://www.cyber.ee/ )
+  Copyright: Jaak Ristioja
+mermaid.xml: licence MIT (license="MIT")
+  Copyright: Jonathan Poelen (jonathan.poelen@gmail.com)
+mips.xml: licence MIT (license="MIT")
+  Copyright: Dominik Haumann (dhaumann@kde.org)
+modelines.xml: licence MIT (license="MIT")
+  Copyright (c) 2012-2014 by Alex Turbov (i.zaufi@gmail.com)
+  Copyright: Alex Turbov (i.zaufi@gmail.com)
+modula-2.xml: licence MIT (license="MIT")
+  Copyright (C) 2018 Modula-2 Software Foundation
+  Copyright: B. Kowarsch (trijezdci@github)
+mustache.xml: licence MIT (license="MIT")
+  Copyright: Nibaldo González (nibgonz@gmail.com), based on the HTML highlighter by Wilbert Berendsen (wilbert@kde.nl)
+nginx.xml: licence MIT (license="MIT")
+  Copyright: Jyrki Gadinger (nilsding@nilsding.org)
+nim.xml: licence WTFPL (license="WTFPL")
+  Copyright: github.com/juancarlospaco
+ninja.xml: licence MIT (license="MIT")
+  Copyright: Jonathan Poelen (jonathan.poelen@gmail.com)
+nix.xml: licence MIT (license="MIT")
+  SPDX-FileCopyrightText: 2024-2025 Katalin Rebhan <me@dblsaiko.net>
+  Copyright: Katalin Rebhan &lt;me@dblsaiko.net&gt;
+odin.xml: licence MIT (license="MIT")
+  Copyright: Akseli Lahtinen (akselmo@akselmo.dev)
+orgmode.xml: licence MIT (license="MIT")
+  Copyright: Gary Wang
+powershell.xml: licence MIT (license="MIT")
+  Copyright: Motoki Kashihara (motoki8791@gmail.com); Michael Lombardi (Michael.T.Lombardi@outlook.com)
+purescript.xml: licence BSD-3-Clause (license="BSD3")
+  Copyright: Gleb Popov (6yearold@gmail.com)
+qml.xml: licence MIT (license="MIT")
+  Copyright: Milian Wolff (mail@milianw.de)
+racket.xml: licence MIT (license="MIT")
+  Copyright: slbtty(shenlebantongying@gmail.com)
+raku.xml: licence MIT (license="MIT")
+  Copyright: Jonathan Poelen (jonathan.poelen@gmail.com)
+rdoc.xml: licence MIT (license="MIT")
+  Copyright: Aaron Puchert
+rust.xml: licence MIT (license="MIT")
+  Copyright (c) 2015 The Rust Project Developers
+  Copyright: The Rust Project Developers
+sas.xml: licence MIT (license="MIT")
+  SPDX-FileCopyrightText: 2026 Michael Walshe <michael.j.t.walshe@gmail.com>
+  Copyright: Michael Walshe (michael.j.t.walshe@gmail.com)
+sass.xml: licence MIT (license="MIT")
+  Copyright: Jonathan Poelen (jonathan.poelen@gmail.com)
+scheme.xml: licence MIT (license="MIT")
+  Copyright: Dominik Haumann (dhaumann@kde.org)
+sml.xml: licence MIT (license="MIT")
+  Copyright: Christoph Cullmann (cullmann@kde.org)
+sparql.xml: licence MIT (license="MIT")
+  Copyright: Damian Oswald (damian.oswald@protonmail.com)
+spdx-comments.xml: licence MIT (license="MIT")
+  Copyright: Alex Turbov (i.zaufi@gmail.com)
+stan.xml: licence MIT (license="MIT")
+  Copyright: the authors of the KDE syntax-highlighting project
+swift.xml: licence MIT (license="MIT")
+  Copyright: I. Elland (igor@elland.me)
+terraform.xml: licence MIT (license="MIT")
+  Copyright: Thuck (denisdoria@gmail.com)
+todo.xml: licence MIT (license="MIT")
+  Copyright: Jonathan Poelen (jonathan.poelen@gmail.com)
+typescript.xml: licence MIT (license="MIT")
+  Copyright 2018-2020 Nibaldo González S. (nibgonz@gmail.com)
+  Copyright: Nibaldo González (nibgonz@gmail.com)
+typst.xml: licence MIT (license="MIT")
+  SPDX-FileCopyrightText: 2024 Katalin Rebhan <me@dblsaiko.net>
+  Copyright: Katalin Rebhan &lt;me@dblsaiko.net&gt;
+zig.xml: licence MIT (license="MIT")
+  Copyright: Waqar Ahmed (waqar.17a@gmail.com)
+zsh.xml: licence MIT (license="MIT")
+  Copyright: Jonathan Poelen (jonathan.poelen@gmail.com)
+
+--- MIT ---
+
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation
+the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.
+
+--- BSD-3-Clause ---
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice,
+   this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its
+   contributors may be used to endorse or promote products derived from this
+   software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+
+--- NCSA ---
+
+University of Illinois/NCSA Open Source License
+
+Developed by: LLVM Team, University of Illinois at Urbana-Champaign,
+http://llvm.org
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to
+deal with the Software without restriction, including without limitation
+the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following conditions:
+
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimers.
+
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimers in the
+      documentation and/or other materials provided with the distribution.
+
+    * Neither the names of the LLVM Team, University of Illinois at
+      Urbana-Champaign, nor the names of its contributors may be used to
+      endorse or promote products derived from this Software without
+      specific prior written permission.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+CONTRIBUTORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+WITH THE SOFTWARE.
+
+--- WTFPL ---
+
+DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+Version 2, December 2004
+
+Everyone is permitted to copy and distribute verbatim or modified copies of
+this license document, and changing it is allowed as long as the name is
+changed.
+
+DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+
+0. You just DO WHAT THE FUCK YOU WANT TO.
