@@ -22,25 +22,27 @@ Historical handoffs from sessions 1–6 are archived in
   `markdown` (+ variants), `html`, `csljson`, `latex` (partial).
 - **Writers:** `json`, `native`, `html`, `html4`, `csljson`, `markdown`,
   `gfm`, `commonmark`, `commonmark_x`, `plain` (+ variants, with standalone
-  templates), `latex`, `beamer` (fragments; `-s` returns a scope-gap error).
+  templates), `latex`, `beamer` (fragments + standalone templates, `$highlighting-macros$`, `$pdf-trailer-id$`).
 - **CLI & infrastructure:** command-line option parsing, defaults files,
   resource search, templates, JSON filters, Lua 5.4.8 + LPeg 1.1.0 filters,
-  syntax highlighting (`randoc-highlight` wired into `randoc-html`, `randoc-latex`, and `randoc-cli`),
-  logging, errors, and exit codes.
+  Lua custom readers (`-f FILE.lua`), Lua custom writers (`-t FILE.lua`),
+  `pandoc lua` / `pandoc-lua` interpreter mode, `pandoc.read`/`pandoc.write`
+  in filters, syntax highlighting (`randoc-highlight` wired into `randoc-html`,
+  `randoc-latex`, and `randoc-cli`), logging, errors, and exit codes.
 - **Libraries ready to wire into CLI/writers:**
-  - `randoc-citeproc` (CSL style/locale parser + date/name/citation evaluation)
-  - `randoc-lua` (custom reader/writer/interpreter entry points + `pandoc.read`/`pandoc.write`)
+  - `randoc-citeproc` (CSL style/locale parser + date/name/citation evaluation; unit 4 & `--citeproc` CLI wiring next)
 
 ### Latest recorded baseline metrics
 
-- **Conformance harness (`spec/baseline.json`):** 61,608 passing baseline units
+- **Conformance harness (`spec/baseline.json`):** 61,622 passing baseline units
   out of 64,170 (+2,085 from `randoc-highlight` integration, +10 from
-  `randoc-markdown-writer` round-2 fixes, 0 regressions).
+  `randoc-markdown-writer` round-2 fixes, +14 from `randoc-latex` standalone &
+  `randoc-lua` CLI wiring; 0 regressions).
 - **Capability matrix (`spec/capabilities.json`):**
   - Input formats: 4 passing, 9 partial, 11 failing (new reader baselines) of 52
   - Output formats: 7 passing, 11 partial of 77
   - Extensions: 61 passing, 17 partial, 1 failing of 90
-  - Options: 91 passing, 17 partial, 1 not started of 109
+  - Options: 93 passing, 15 partial, 1 not started of 109
 - **Pandoc 3.13 test suite (`tools/pandoc-testsuite`):** 646 of 2,231 tests pass.
 - **Real-document corpus (`tools/corpus`):** 162 of 690 units pass.
 
@@ -53,9 +55,8 @@ Historical handoffs from sessions 1–6 are archived in
      `randoc-math`, `randoc-yaml`: remaining medium/low findings in `docs/ISSUES.md`.
    - `randoc-markdown-writer`: stack overflows and round-2 high findings fixed (`fd3d4e9`); remaining minor/cross-crate items tracked in `I-MDW-18`/`I-MDW-19`.
 2. **Wire up built libraries:**
-   - Connect `randoc-lua` `FilterEnvironment::readers`/`writers`, custom readers/writers, and `pandoc lua` mode.
    - Complete `randoc-citeproc` unit 4 (sorting, disambiguation, collapse, positions, bibliography) and wire `--citeproc`.
-   - Connect standalone template output for `randoc-latex` (unlocking `$highlighting-macros$`).
+   - Land verified review fixes for `randoc-highlight`, `randoc-markdown-writer`, `randoc-latex` standalone, and `randoc-lua` CLI integration.
 3. **Add next format families:**
    - Shared `randoc-xml`, `randoc-container`, `randoc-media` utilities.
    - `docx`, `odt`, `epub`, `pptx`/`xlsx`, `rst`, `org`, `typst`, `djot`, `man`/`mdoc`/`ms`, `docbook`/`jats`/XML formats, wiki formats, PDF engine driver, and `pandoc-server`.

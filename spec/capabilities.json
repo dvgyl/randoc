@@ -1101,9 +1101,9 @@
       }
     },
     "highlight-style": {
-      "status": "partial",
+      "status": "passing",
       "units": {
-        "passing": 53,
+        "passing": 61,
         "total": 61
       }
     },
@@ -1514,9 +1514,9 @@
       }
     },
     "template": {
-      "status": "partial",
+      "status": "passing",
       "units": {
-        "passing": 881,
+        "passing": 889,
         "total": 889
       }
     },
@@ -1537,7 +1537,7 @@
     "toc": {
       "status": "partial",
       "units": {
-        "passing": 88,
+        "passing": 90,
         "total": 143
       }
     },
@@ -2019,8 +2019,8 @@
     },
     "options": {
       "not_started": 1,
-      "partial": 17,
-      "passing": 91
+      "partial": 15,
+      "passing": 93
     },
     "output_formats": {
       "not_started": 59,
@@ -2028,7 +2028,7 @@
       "passing": 7
     },
     "units": {
-      "passing": 61608,
+      "passing": 61622,
       "total": 63750
     }
   }
