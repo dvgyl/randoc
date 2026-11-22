@@ -5,7 +5,7 @@ use randoc_core::shared::auto_identifier;
 use randoc_core::{Extension, Result};
 
 use super::directives::field_line;
-use super::{Line, Parser, TargetDef, attr, key};
+use super::{Line, Parser, attr, key};
 
 pub(super) fn skip_blanks(input: &[Line<'_>], mut i: usize) -> usize {
     while input.get(i).is_some_and(|line| line.blank()) {
@@ -226,6 +226,7 @@ impl Parser<'_> {
         let mut out = Vec::new();
         let mut targets = Vec::new();
         let mut classes = Vec::new();
+        let mut bird_run_end = 0;
         let mut i = 0;
         while i < input.len() {
             i = skip_blanks(input, i);
@@ -251,22 +252,13 @@ impl Parser<'_> {
                         self.adornments.push(style);
                         self.adornments.len() - 1
                     });
-                let generate = [
-                    Extension::AutoIdentifiers,
-                    Extension::AsciiIdentifiers,
-                    Extension::GfmAutoIdentifiers,
-                ]
-                .into_iter()
-                .any(|extension| self.enabled(extension));
-                let auto = if generate {
+                let auto = if self.enabled(Extension::AutoIdentifiers) {
                     let base = auto_identifier(&label, self.options.extensions);
                     self.ids.unique(&base)
                 } else {
                     String::new()
                 };
-                self.targets
-                    .entry(key(title.text))
-                    .or_insert_with(|| TargetDef::Url(format!("#{auto}")));
+                self.section_targets.insert(key(title.text), auto.clone());
                 let id = targets.pop().unwrap_or(auto);
                 for earlier in targets.drain(..) {
                     label.push(Inline::Span(attr(earlier, &[]), Vec::new()));
@@ -285,7 +277,7 @@ impl Parser<'_> {
                     continue;
                 }
                 let first = produced.remove(0);
-                out.push(apply_pending(first, &mut targets, &mut classes));
+                out.push(self.apply_pending(first, &mut targets, &mut classes, depth)?);
                 out.extend(produced);
                 continue;
             } else if let Some(url) = text.strip_prefix("__ ") {
@@ -298,13 +290,10 @@ impl Parser<'_> {
                 i = end;
                 continue;
             } else if self.enabled(Extension::LiterateHaskell)
-                && text.starts_with('>')
-                && !definition_start(input, i)
+                && let Some(end) = bird_track_end(input, i, &mut bird_run_end)
             {
                 let start = i;
-                while input.get(i).is_some_and(|l| l.text.starts_with('>')) {
-                    i += 1;
-                }
+                i = end;
                 let content = &input[start..i];
                 let margin = usize::from(
                     content
@@ -426,11 +415,12 @@ impl Parser<'_> {
                 let inlines = self.inlines(&para, &line.pos());
                 if let Some(code) = literal {
                     if !inlines.is_empty() {
-                        out.push(apply_pending(
+                        out.push(self.apply_pending(
                             Block::Para(inlines),
                             &mut targets,
                             &mut classes,
-                        ));
+                            depth,
+                        )?);
                     }
                     Block::CodeBlock(
                         Attr::new("", self.highlight.iter().cloned().collect(), Vec::new()),
@@ -440,7 +430,7 @@ impl Parser<'_> {
                     Block::Para(inlines)
                 }
             };
-            block = apply_pending(block, &mut targets, &mut classes);
+            block = self.apply_pending(block, &mut targets, &mut classes, depth)?;
             out.push(block);
         }
         Ok(out)
@@ -539,17 +529,43 @@ fn paragraph_boundary(line: Line<'_>) -> bool {
         || field_line(line.text).is_some()
 }
 
-fn apply_pending(mut block: Block, targets: &mut Vec<String>, classes: &mut Vec<String>) -> Block {
-    for id in targets.drain(..).rev() {
-        block = Block::Div(attr(id, &[]), vec![block]);
-    }
-    if !classes.is_empty() {
-        let classes = std::mem::take(classes);
-        if let Block::Header(_, attr, _) = &mut block {
-            attr.classes.extend(classes);
-        } else {
-            block = Block::Div(Attr::new("", classes, Vec::new()), vec![block]);
+impl Parser<'_> {
+    fn apply_pending(
+        &self,
+        mut block: Block,
+        targets: &mut Vec<String>,
+        classes: &mut Vec<String>,
+        depth: usize,
+    ) -> Result<Block> {
+        let class_div =
+            !classes.is_empty() && (!targets.is_empty() || !matches!(block, Block::Header(..)));
+        self.check_depth(depth + targets.len() + usize::from(class_div))?;
+        for id in targets.drain(..).rev() {
+            block = Block::Div(attr(id, &[]), vec![block]);
         }
+        if !classes.is_empty() {
+            let classes = std::mem::take(classes);
+            if let Block::Header(_, attr, _) = &mut block {
+                attr.classes.extend(classes);
+            } else {
+                block = Block::Div(Attr::new("", classes, Vec::new()), vec![block]);
+            }
+        }
+        Ok(block)
     }
-    block
+}
+
+fn bird_track_end(input: &[Line<'_>], start: usize, run_end: &mut usize) -> Option<usize> {
+    if start < *run_end || !input[start].text.starts_with('>') {
+        return None;
+    }
+    *run_end = start
+        + input[start..]
+            .iter()
+            .take_while(|line| line.text.starts_with('>'))
+            .count();
+    input
+        .get(*run_end)
+        .is_none_or(|line| line.blank())
+        .then_some(*run_end)
 }

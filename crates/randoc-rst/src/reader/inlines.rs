@@ -7,6 +7,7 @@ use super::{Parser, Reference, attr, key, str_inline};
 #[cfg(test)]
 thread_local! {
     static CLOSER_STEPS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+    static NAME_STEPS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
 }
 
 const DELIMITERS: [&str; 7] = ["**", "*", "``", "`", "|", "'", "\""];
@@ -204,12 +205,35 @@ fn autolink(label: &str, email: bool) -> Inline {
     )
 }
 
-fn simple_name(word: &str) -> bool {
-    word.chars().next().is_some_and(char::is_alphanumeric)
-        && word.chars().next_back().is_some_and(char::is_alphanumeric)
-        && word
-            .chars()
-            .all(|c| c.is_alphanumeric() || "-.:+_".contains(c))
+fn name_char(c: char) -> bool {
+    #[cfg(test)]
+    NAME_STEPS.with(|steps| steps.set(steps.get() + 1));
+    c.is_alphanumeric() || "-.:+_".contains(c)
+}
+
+fn internal_name(text: &str) -> Option<&str> {
+    if !first(text).is_some_and(char::is_alphanumeric) {
+        return None;
+    }
+    let mut end = 0;
+    let mut separator = false;
+    for (i, c) in text.char_indices() {
+        if !name_char(c) {
+            break;
+        }
+        if c == '_' && after(first(&text[i + 1..])) {
+            if end == i {
+                return Some(&text[..end]);
+            }
+            separator = true;
+        } else if c.is_alphanumeric() {
+            if separator {
+                return None;
+            }
+            end = i + c.len_utf8();
+        }
+    }
+    Some(&text[..end])
 }
 
 impl Parser<'_> {
@@ -234,6 +258,7 @@ impl Parser<'_> {
         let mut role_end = 0;
         let mut email_end_offset = 0;
         let mut name_start = 0;
+        let mut non_name_end = 0;
         while let Some(c) = first(&text[cursor..]) {
             let rest = &text[cursor..];
             let next = cursor + c.len_utf8();
@@ -263,6 +288,8 @@ impl Parser<'_> {
                     if escaped.is_whitespace() {
                         if first(&text[cursor..]).is_some_and(|c| "*:`|[_".contains(c)) {
                             flush(&mut word, &mut out);
+                            name_start = 0;
+                            non_name_end = 0;
                         }
                         boundary = true;
                         prev = Some(' ');
@@ -305,22 +332,11 @@ impl Parser<'_> {
                     let internal = rest.starts_with("_`");
                     let offset = role.map_or(usize::from(internal), |(_, len)| len);
                     let tail = &rest[offset..];
-                    if c == '_' && !internal {
-                        let len = rest[1..]
-                            .char_indices()
-                            .take_while(|(_, c)| c.is_alphanumeric() || ".:+_-".contains(*c))
-                            .last()
-                            .map_or(0, |(i, c)| i + c.len_utf8());
-                        let name =
-                            rest[1..1 + len].trim_end_matches(|c: char| !c.is_alphanumeric());
-                        let end = name
-                            .match_indices('_')
-                            .find(|(i, _)| after(first(&name[i + 1..])))
-                            .map_or(name.len(), |(i, _)| i);
-                        let name = &name[..end];
-                        if simple_name(name) {
-                            parsed = Some((1 + name.len(), self.internal_target(name)));
-                        }
+                    if c == '_'
+                        && !internal
+                        && let Some(name) = internal_name(&rest[1..])
+                    {
+                        parsed = Some((1 + name.len(), self.internal_target(name)));
                     }
                     if c == '[' {
                         let len = rest[1..]
@@ -411,11 +427,13 @@ impl Parser<'_> {
                 }
                 if parsed.is_none()
                     && c == '_'
-                    && !word.is_empty()
+                    && non_name_end <= name_start
                     && word.chars().next_back().is_some_and(char::is_alphanumeric)
                 {
                     let len = if rest.starts_with("__") { 2 } else { 1 };
-                    if after(first(&rest[len..])) && simple_name(&word[name_start..]) {
+                    if after(first(&rest[len..]))
+                        && first(&word[name_start..]).is_some_and(char::is_alphanumeric)
+                    {
                         let name = word.split_off(name_start);
                         let label = vec![str_inline(&name)];
                         let reference = if len == 2 {
@@ -449,8 +467,18 @@ impl Parser<'_> {
             prev = text[..cursor].chars().next_back();
             if word.is_empty() {
                 name_start = 0;
-            } else if before(prev) && !matches!(prev, Some('-' | ':')) {
-                name_start = word.len();
+                non_name_end = 0;
+            } else {
+                if word
+                    .chars()
+                    .next_back()
+                    .is_some_and(|last| !name_char(last))
+                {
+                    non_name_end = word.len();
+                }
+                if before(prev) && !matches!(prev, Some('-' | ':')) {
+                    name_start = word.len();
+                }
             }
         }
         flush(&mut word, &mut out);
@@ -558,7 +586,7 @@ impl Parser<'_> {
 
 #[cfg(test)]
 mod tests {
-    use super::CLOSER_STEPS;
+    use super::{CLOSER_STEPS, NAME_STEPS};
     use randoc_core::{Context, ReaderOptions, Sources};
 
     fn closer_steps(repeats: usize) -> usize {
@@ -582,6 +610,35 @@ mod tests {
     fn a_failed_closer_scan_needs_linear_steps() {
         let short = closer_steps(4_096);
         let long = closer_steps(16_384);
+        assert!(short > 0 && long <= short * 5, "{short} -> {long}");
+    }
+
+    fn name_steps(input: String) -> usize {
+        NAME_STEPS.with(|steps| steps.set(0));
+        let doc = super::super::read(
+            &Sources::from_text(input),
+            &ReaderOptions::default(),
+            &mut Context::pure(),
+        )
+        .expect("document");
+        assert_eq!(doc.blocks.len(), 1);
+        NAME_STEPS.with(std::cell::Cell::get)
+    }
+
+    #[test]
+    fn rejected_internal_target_names_need_linear_steps() {
+        for input in ["_-", "_a-_--"] {
+            let short = name_steps(input.repeat(4_096));
+            let long = name_steps(input.repeat(16_384));
+            assert!(short > 0 && long <= short * 5, "{short} -> {long}");
+        }
+    }
+
+    #[test]
+    fn rejected_link_reference_names_need_linear_steps() {
+        let steps = |n| name_steps(format!("{}!{}", "a".repeat(n), "b_?".repeat(n / 3)));
+        let short = steps(4_096);
+        let long = steps(16_384);
         assert!(short > 0 && long <= short * 5, "{short} -> {long}");
     }
 }

@@ -39,6 +39,7 @@ impl Parser<'_> {
         }
         let mut resolver = Resolver {
             active: Active::default(),
+            in_block_substitution: false,
             citation_names,
             remaining: usize::try_from(self.bytes)
                 .unwrap_or(usize::MAX)
@@ -72,6 +73,7 @@ impl Parser<'_> {
 struct Resolver<'p, 'a> {
     parser: &'p mut Parser<'a>,
     active: Active,
+    in_block_substitution: bool,
     citation_names: HashMap<String, String>,
     remaining: usize,
 }
@@ -94,7 +96,21 @@ impl Resolver<'_, '_> {
                     self.parser.references.get(index)
             {
                 let (name, pos) = (name.clone(), pos.clone());
-                if let Some(replacement) = self.substitution(&name, &pos, depth + 1)? {
+                // The first block reference opens the replacement as blocks.
+                // Track the references inside it to detect a loop.
+                let replacement =
+                    if self.active.substitutions.is_empty() && !self.in_block_substitution {
+                        let mut replacement = self.parser.substitutions.get(&key(&name)).cloned();
+                        if let Some(blocks) = &mut replacement {
+                            self.in_block_substitution = true;
+                            self.blocks(blocks, depth + 1)?;
+                            self.in_block_substitution = false;
+                        }
+                        replacement
+                    } else {
+                        self.substitution(&name, &pos, depth + 1)?
+                    };
+                if let Some(replacement) = replacement {
                     out.extend(replacement);
                 } else {
                     self.missing(&format!("\"{name}\""), &pos);
@@ -203,7 +219,10 @@ impl Resolver<'_, '_> {
                             if matches!(out.last(), Some(Inline::Space)) {
                                 out.pop();
                             }
-                            let note = if name == "#" || name == "*" {
+                            let repeated = self.active.notes.contains(&name);
+                            let note = if repeated {
+                                None
+                            } else if name == "#" || name == "*" {
                                 self.parser
                                     .auto_notes
                                     .get_mut(&name)
@@ -211,14 +230,15 @@ impl Resolver<'_, '_> {
                             } else {
                                 self.parser.notes.get(&name).cloned()
                             };
-                            inline = if let Some(mut note) =
-                                note.filter(|_| self.active.notes.insert(name.clone()))
-                            {
+                            inline = if let Some(mut note) = note {
+                                self.active.notes.insert(name.clone());
                                 self.blocks(&mut note, depth + 1)?;
                                 self.active.notes.remove(&name);
                                 Inline::Note(note)
                             } else {
-                                self.missing(&label, &pos);
+                                if !repeated {
+                                    self.missing(&label, &pos);
+                                }
                                 Inline::Link(
                                     Attr::default(),
                                     vec![str_inline(&label)],
@@ -300,9 +320,10 @@ impl Resolver<'_, '_> {
             self.parser
                 .context
                 .report(LogMessage::CircularReference(name.into(), pos.clone()));
-            return Ok(Some(vec![Block::Para(vec![str_inline(format!(
-                "|{name}|"
-            ))])]));
+            return Ok(Some(vec![Block::Para(vec![Inline::Span(
+                Attr::default(),
+                vec![str_inline(format!("|{name}|"))],
+            )])]));
         }
         let content = if let Some(mut blocks) = self.parser.substitutions.get(&key).cloned() {
             self.blocks(&mut blocks, depth)?;
@@ -326,7 +347,12 @@ impl Resolver<'_, '_> {
                         .report(LogMessage::CircularReference(key, pos.clone()));
                     return String::new();
                 }
-                target = self.parser.targets.get(&key).cloned();
+                target = self.parser.targets.get(&key).cloned().or_else(|| {
+                    self.parser
+                        .section_targets
+                        .get(&key)
+                        .map(|id| TargetDef::Url(format!("#{id}")))
+                });
             }
             match target.take() {
                 Some(TargetDef::Indirect(key)) => next = Some(key),

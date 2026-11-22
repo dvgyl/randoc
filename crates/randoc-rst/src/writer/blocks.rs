@@ -21,11 +21,30 @@ const ADMONITIONS: &[&str] = &[
 
 impl Writer<'_> {
     pub(super) fn blocks(&mut self, blocks: &[Block], depth: usize) -> Result<Doc> {
+        self.render_blocks(blocks, depth, false)
+    }
+
+    pub(super) fn render_blocks(
+        &mut self,
+        blocks: &[Block],
+        depth: usize,
+        compact_headings: bool,
+    ) -> Result<Doc> {
         self.check_depth(depth)?;
         let mut out = Doc::default();
         let mut prev = None;
+        let mut section_levels = Vec::new();
         for block in blocks {
-            let mut doc = self.block(block, depth + 1)?;
+            let level = if compact_headings && let Block::Header(level, _, _) = block {
+                while section_levels.last().is_some_and(|last| last >= level) {
+                    section_levels.pop();
+                }
+                section_levels.push(*level);
+                Some(section_levels.len() as i64)
+            } else {
+                None
+            };
+            let mut doc = self.block(block, depth + 1, level)?;
             if matches!(block, Block::BlockQuote(_)) && prev.is_some_and(takes_indent) {
                 doc = literal("..").above_blank(doc);
             }
@@ -46,7 +65,7 @@ impl Writer<'_> {
         Ok(out)
     }
 
-    fn block(&mut self, block: &Block, depth: usize) -> Result<Doc> {
+    fn block(&mut self, block: &Block, depth: usize, heading_level: Option<i64>) -> Result<Doc> {
         Ok(match block {
             Block::Plain(ils) | Block::Para(ils)
                 if ils.iter().any(|i| matches!(i, Inline::LineBreak)) =>
@@ -78,7 +97,7 @@ impl Writer<'_> {
                     };
                     return Ok(directive.above(name));
                 }
-                let mark = match level {
+                let mark = match heading_level.unwrap_or(*level) {
                     1 => '=',
                     2 => '-',
                     3 => '~',
@@ -202,21 +221,13 @@ impl Writer<'_> {
             .iter()
             .find(|c| ADMONITIONS.contains(&c.as_str()))
         {
-            let mut header = literal(format!(".. {kind}::"));
-            if let Some((Block::Div(a, _), body)) = blocks
-                .split_first()
-                .filter(|(b, _)| matches!(b, Block::Div(..)))
+            if kind != "admonition"
+                && let Some((Block::Div(a, _), body)) = blocks.split_first()
+                && a.has_class("title")
             {
-                if a.has_class("title") {
-                    content = body;
-                }
-            } else if kind == "admonition"
-                && let Some((Block::Para(title), body)) = blocks.split_first()
-            {
-                header = header + literal(" ") + self.inlines(title, depth)?;
                 content = body;
             }
-            header
+            literal(format!(".. {kind}::"))
         } else {
             let classes = attr
                 .classes

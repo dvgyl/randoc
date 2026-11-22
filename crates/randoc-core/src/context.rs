@@ -64,6 +64,11 @@ pub struct ProcessOutput {
 /// Each method has a default that reports "not supported", so that a new
 /// method does not break a host.
 pub trait Host: Send {
+    /// Returns `true` if the host runs the conversion in sandbox mode.
+    fn is_sandboxed(&self) -> bool {
+        false
+    }
+
     /// Reads a file.
     fn read_file(&mut self, path: &str) -> io::Result<Vec<u8>> {
         Err(unsupported(path))

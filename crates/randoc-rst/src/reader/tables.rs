@@ -1,9 +1,19 @@
 use randoc_ast::{Block, Cell, ColSpec, ColWidth, Row, Table, TableBody};
-use randoc_core::{Error, LogMessage, Result};
+use randoc_core::{Error, Result};
 
 use super::blocks::{indented, joined, plain_first, skip_blanks};
 use super::directives::field;
 use super::{Line, Options, Parser, lines};
+
+fn table_width(mut text: &str) -> Option<f64> {
+    while let Some(inner) = text.strip_prefix('(').and_then(|s| s.strip_suffix(')')) {
+        text = inner;
+    }
+    if !text.as_bytes().first().is_some_and(u8::is_ascii_digit) || text.ends_with('.') {
+        return None;
+    }
+    text.parse().ok()
+}
 
 fn border(text: &str, marker: char) -> Vec<(usize, usize)> {
     let mut groups = Vec::new();
@@ -429,16 +439,32 @@ impl Parser<'_> {
                 .long
                 .push(Block::Plain(self.inlines(arg, &line.pos())));
         }
-        if let Some(widths) = field(fields, "widths") {
+        if let Some(widths) = field(fields, "widths")
+            && kind == "table"
+        {
+            let widths = widths
+                .split(|c: char| c.is_whitespace() || c == ',')
+                .filter(|s| !s.is_empty() && widths != "auto");
+            let total = self.options.columns.max(1) as f64;
+            table.col_specs = table
+                .col_specs
+                .into_iter()
+                .zip(widths)
+                .map(|(mut col, width)| {
+                    col.width = table_width(width)
+                        .filter(|n| n.is_finite() && *n > 0.0)
+                        .map_or(ColWidth::ColWidthDefault, |width| {
+                            ColWidth::ColWidth(width / total)
+                        });
+                    col
+                })
+                .collect();
+        } else if let Some(widths) = field(fields, "widths") {
             let widths: Vec<f64> = widths
                 .split(|c: char| c.is_whitespace() || c == ',')
                 .filter_map(|s| s.parse().ok())
                 .collect();
-            let total: f64 = if kind == "table" {
-                self.options.columns.max(1) as f64
-            } else {
-                widths.iter().sum()
-            };
+            let total: f64 = widths.iter().sum();
             if total.is_finite() && total > 0.0 && widths.len() == table.col_specs.len() {
                 for (col, width) in table.col_specs.iter_mut().zip(widths) {
                     if width.is_finite() && width >= 0.0 {
@@ -495,16 +521,16 @@ impl Parser<'_> {
         line: Line<'_>,
         depth: usize,
     ) -> Result<Table> {
+        let external;
+        let inline;
         let text = if let Some(file) = field(fields, "file") {
-            if let Some((_, text)) = self.load(file)? {
-                text
-            } else {
-                self.context
-                    .report(LogMessage::CouldNotLoadIncludeFile(file.into(), line.pos()));
-                String::new()
-            }
+            (_, external) = self
+                .load(file, None)?
+                .ok_or_else(|| Error::ResourceNotFound(file.to_owned()))?;
+            external.as_ref()
         } else {
-            joined(body)
+            inline = joined(body);
+            &inline
         };
         let delimiter = match field(fields, "delim") {
             Some("tab") => '\t',
@@ -518,7 +544,7 @@ impl Parser<'_> {
         let escape = field(fields, "escape").and_then(|s| s.chars().next());
         let header = field(fields, "header");
         let mut rows = Vec::new();
-        for text in header.into_iter().chain(std::iter::once(text.as_str())) {
+        for text in header.into_iter().chain(std::iter::once(text)) {
             let mut chars = text.chars().peekable();
             let mut quoted = false;
             let mut value = String::new();

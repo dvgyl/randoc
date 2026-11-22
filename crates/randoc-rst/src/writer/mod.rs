@@ -16,6 +16,7 @@ struct Writer<'a> {
     links: Vec<Doc>,
     link_urls: HashMap<String, String>,
     images: Vec<Doc>,
+    image_number: usize,
     image_ids: HashMap<String, Image>,
     raw_tex: bool,
 }
@@ -61,6 +62,7 @@ pub(super) fn write(doc: &Pandoc, options: &WriterOptions, context: &mut Context
         links: Vec::new(),
         link_urls: HashMap::new(),
         images: Vec::new(),
+        image_number: 0,
         image_ids: HashMap::new(),
         raw_tex: false,
     };

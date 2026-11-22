@@ -1232,6 +1232,10 @@ impl SandboxHost {
 }
 
 impl randoc::Host for SandboxHost {
+    fn is_sandboxed(&self) -> bool {
+        true
+    }
+
     /// Reads a named file of each kind, also `/dev/stdin` or a pipe, as Pandoc does.
     fn read_file(&mut self, path: &str) -> std::io::Result<Vec<u8>> {
         if self.is_named(path) {

@@ -29,6 +29,39 @@ fn escape(text: &str) -> String {
     out
 }
 
+fn escape_smart(mut text: &str) -> String {
+    let mut out = String::with_capacity(text.len());
+    while let Some(c) = text.chars().next() {
+        text = &text[c.len_utf8()..];
+        match c {
+            '-' | '.' => {
+                let run = text.bytes().take_while(|&next| next == c as u8).count();
+                text = &text[run..];
+                let len = run + 1;
+                let minimum = if c == '-' { 2 } else { 3 };
+                if len >= minimum {
+                    for _ in 0..=len - minimum {
+                        out.push('\\');
+                        out.push(c);
+                    }
+                    out.extend(std::iter::repeat_n(c, minimum - 1));
+                } else {
+                    out.extend(std::iter::repeat_n(c, len));
+                }
+            }
+            '"' | '\'' => {
+                out.push('\\');
+                out.push(c);
+            }
+            '\u{2026}' => out.push_str("..."),
+            '\u{2013}' => out.push_str("--"),
+            '\u{2014}' => out.push_str("---"),
+            _ => out.push(c),
+        }
+    }
+    out
+}
+
 fn wrap(start: &str, body: Doc, end: &str) -> Doc {
     literal(start) + body + literal(end)
 }
@@ -104,7 +137,7 @@ impl Writer<'_> {
             Inline::Str(s) => {
                 let text = escape(s);
                 literal(if self.options.extensions.contains(Extension::Smart) {
-                    text.replace('"', "\\\"").replace('\'', "\\'")
+                    escape_smart(&text)
                 } else {
                     text
                 })
@@ -221,15 +254,15 @@ impl Writer<'_> {
         if plain == *url || url.strip_prefix("mailto:") == Some(&plain) {
             return Ok(literal(plain));
         }
-        if self.options.reference_links && !plain.is_empty() {
-            let key = plain.to_lowercase();
-            if self.link_urls.get(&key).is_none_or(|old| old == url) {
-                if self.link_urls.insert(key, url.clone()).is_none() {
-                    self.links
-                        .push(literal(".. _") + text.clone() + literal(format!(": {url}")));
-                }
-                return Ok(wrap("`", text, "`_"));
+        if self.options.reference_links
+            && !plain.is_empty()
+            && self.link_urls.get(&plain).is_none_or(|old| old == url)
+        {
+            if self.link_urls.insert(plain, url.clone()).is_none() {
+                self.links
+                    .push(literal(".. _") + text.clone() + literal(format!(": {url}")));
             }
+            return Ok(wrap("`", text, "`_"));
         }
         Ok(wrap("`", text, &format!(" <{url}>`__")))
     }
@@ -248,26 +281,22 @@ impl Writer<'_> {
             target: link.map(str::to_owned),
         };
         let mut name = stringify(label);
-        if name.is_empty() || self.image_ids.get(&name).is_some_and(|old| *old != image) {
-            let mut index = self.images.len() + 1;
-            loop {
-                name = format!("image{index}");
-                if !self.image_ids.contains_key(&name) {
-                    break;
-                }
-                index += 1;
-            }
+        let generated =
+            name.is_empty() || self.image_ids.get(&name).is_some_and(|old| *old != image);
+        if generated {
+            self.image_number += 1;
+            name = format!("image{}", self.image_number);
         }
-        if !self.image_ids.contains_key(&name) {
+        if generated || !self.image_ids.contains_key(&name) {
             let definition = literal(format!(".. |{name}| image:: {}", target.url));
             let options = image_options(a, None, None, link);
             self.images.push(definition.above(vcat(options)));
             self.image_ids.insert(name.clone(), image);
         }
-        let label = if name == stringify(label) {
-            self.inlines(label, depth)?
-        } else {
+        let label = if generated {
             literal(name)
+        } else {
+            self.inlines(label, depth)?
         };
         Ok(wrap("|", label, "|"))
     }

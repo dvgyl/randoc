@@ -1,11 +1,15 @@
+use std::io::ErrorKind;
 use std::path::{Component, Path, PathBuf};
 
+use std::rc::Rc;
+
 use randoc_ast::{Attr, Block, Caption, Format, Inline, MathType, Target};
-use randoc_core::{LogMessage, Result, SourcePos};
+use randoc_core::{Error, LogMessage, Result, SourcePos};
 
 use super::blocks::{indented, joined, plain_first, skip_blanks};
 use super::{
-    Line, Options, Parser, Role, TargetDef, expand_tabs, key, lines, str_inline, too_large,
+    IncludeSource, Line, Options, Parser, Role, TargetDef, expand_tabs, key, lines, str_inline,
+    too_large,
 };
 
 pub(super) const ADMONITIONS: &[&str] = &[
@@ -145,34 +149,14 @@ fn image(arg: &str, fields: &Options, alt: Vec<Inline>, figure: bool) -> Inline 
     }
     let scale = field(fields, "scale").and_then(|s| {
         if let Some(percent) = s.strip_suffix('%') {
-            percent.trim().parse::<f64>().ok().map(|n| n / 100.0)
+            percent.trim_end().parse::<f64>().ok().map(|n| n / 100.0)
         } else {
             s.parse::<f64>().ok()
         }
     });
     let sizes = ["width", "height"]
-        .iter()
-        .filter_map(|&k| {
-            let size = field(fields, k)?;
-            let i = size
-                .bytes()
-                .take_while(|b| b.is_ascii_digit() || *b == b'.')
-                .count();
-            let unit = match &size[i..] {
-                "" if i > 0 => "px",
-                unit => unit,
-            };
-            let scaled = scale.and_then(|scale| {
-                size[..i]
-                    .parse::<f64>()
-                    .ok()
-                    .map(|n| format!("{}{}", n * scale, unit))
-            });
-            Some((
-                k.to_owned(),
-                scaled.unwrap_or_else(|| format!("{}{unit}", &size[..i])),
-            ))
-        })
+        .into_iter()
+        .filter_map(|k| Some((k.to_owned(), image_size(field(fields, k)?, scale)?)))
         .collect();
     let img = Inline::Image(
         Attr::new(field(fields, "name").unwrap_or_default(), classes, sizes),
@@ -182,6 +166,53 @@ fn image(arg: &str, fields: &Options, alt: Vec<Inline>, figure: bool) -> Inline 
     match field(fields, "target") {
         Some(url) => Inline::Link(Attr::default(), vec![img], Target::new(url, "")),
         None => img,
+    }
+}
+
+fn image_size(text: &str, scale: Option<f64>) -> Option<String> {
+    let integer_len = text.bytes().take_while(u8::is_ascii_digit).count();
+    if integer_len == 0 {
+        return None;
+    }
+    let (integer, rest) = text.split_at(integer_len);
+    let fraction_len = if let Some(fraction) = rest.strip_prefix('.') {
+        let digits = fraction.bytes().take_while(u8::is_ascii_digit).count();
+        if digits == 0 {
+            return None;
+        }
+        digits + 1
+    } else {
+        0
+    };
+    let (fraction, unit) = rest.split_at(fraction_len);
+    let unit = unit.trim_start();
+    if matches!(unit, "" | "px") {
+        if let Some(scale) = scale {
+            let pixels = (integer.parse::<f64>().ok()? * scale).round_ties_even();
+            return pixels.is_finite().then(|| format!("{}px", pixels as i64));
+        }
+        let integer = integer.trim_start_matches('0');
+        return Some(format!(
+            "{}px",
+            if integer.is_empty() { "0" } else { integer }
+        ));
+    }
+    let value = if fraction.is_empty() {
+        integer.parse::<f64>().ok()?
+    } else {
+        text[..integer_len + fraction_len].parse::<f64>().ok()?
+    } * scale.unwrap_or(1.0);
+    if !value.is_finite() {
+        return None;
+    }
+    match unit {
+        "%" => Some(format!("{}%", randoc_ast::json::show_double(value))),
+        "cm" | "mm" | "in" | "inch" | "pt" | "pc" | "em" => {
+            let unit = if unit == "inch" { "in" } else { unit };
+            let rounded = (value * 1e5).round_ties_even() / 1e5;
+            Some(format!("{rounded}{unit}"))
+        }
+        _ => None,
     }
 }
 
@@ -227,7 +258,6 @@ impl Parser<'_> {
             if name == "_" {
                 self.anonymous.push_back(target(&value));
             } else if value.is_empty() {
-                self.check_depth(depth + targets.len())?;
                 targets.push(name.to_owned());
                 self.ids.register(name);
                 self.targets
@@ -345,15 +375,45 @@ impl Parser<'_> {
             classes.extend(names);
             return Ok((Vec::new(), end));
         }
-        let directive = Directive {
-            line,
-            kind,
-            arg: &arg,
-            fields,
-            body,
-            substitution,
+        let result = if kind == "include" {
+            let mut last = input[end - 1];
+            let mut next = None;
+            for &row in input[end..]
+                .iter()
+                .take_while(|row| row.number != 0 && row.source == line.source)
+            {
+                if !row.blank() {
+                    next = Some(row.number);
+                    break;
+                }
+                last = row;
+            }
+            let pos = SourcePos::new(
+                if line.column > 1 {
+                    "_chunk"
+                } else {
+                    line.source
+                },
+                next.unwrap_or_else(|| last.number.saturating_add(2)),
+                1,
+            );
+            if field(&fields, "literal").is_some() && !body.is_empty() {
+                Vec::new()
+            } else {
+                self.check_depth(depth + 1)?;
+                self.include(&arg, &fields, line.source, pos, depth + 1)?
+            }
+        } else {
+            let directive = Directive {
+                line,
+                kind,
+                arg: &arg,
+                fields,
+                body,
+                substitution,
+            };
+            self.directive(&directive, depth + 1)?
         };
-        let result = self.directive(&directive, depth + 1)?;
         if let Some(name) = substitution {
             self.substitutions.insert(key(name), result);
             Ok((Vec::new(), end))
@@ -374,7 +434,6 @@ impl Parser<'_> {
         } = *d;
         let pos = line.pos();
         let single = match kind {
-            "include" => return self.include(d, depth),
             "code" | "code-block" | "sourcecode" => code(arg, fields, code_body(body)),
             "highlight" => {
                 self.highlight = (!arg.is_empty()).then(|| arg.into());
@@ -538,26 +597,25 @@ impl Parser<'_> {
         Ok(vec![single])
     }
 
-    fn include(&mut self, d: &Directive<'_>, depth: usize) -> Result<Vec<Block>> {
-        let Directive {
-            arg,
-            line,
-            ref fields,
-            ..
-        } = *d;
-        let Some((path, text)) = self.load(arg)? else {
-            self.context.report(LogMessage::CouldNotLoadIncludeFile(
-                arg.into(),
-                SourcePos::new(line.source, line.number.saturating_add(2), line.column),
-            ));
-            return Ok(Vec::new());
-        };
-        let path_key = normalize_path(Path::new(&path));
-        if !self.includes.insert(path_key.clone()) {
+    fn include(
+        &mut self,
+        arg: &str,
+        fields: &Options,
+        source: &str,
+        pos: SourcePos,
+        depth: usize,
+    ) -> Result<Vec<Block>> {
+        let relative_to = self
+            .include_dirs
+            .last()
+            .map(|(dir, _)| dir.clone())
+            .or_else(|| Path::new(source).parent().map(Path::to_path_buf));
+        let file = self.load(arg, relative_to.as_deref())?;
+        if file.is_none() {
             self.context
-                .report(LogMessage::CircularReference(arg.into(), line.pos()));
-            return Ok(Vec::new());
+                .report(LogMessage::CouldNotLoadIncludeFile(arg.into(), pos.clone()));
         }
+        let text = file.as_ref().map_or("", |(_, text)| text.as_ref());
         let start = field(fields, "start-line")
             .and_then(|n| n.parse::<usize>().ok())
             .unwrap_or(1)
@@ -581,13 +639,12 @@ impl Parser<'_> {
             text.push_str(line);
             text.push('\n');
         }
-        let result = if field(fields, "literal").is_some() || field(fields, "code").is_some() {
-            let language = field(fields, "code").unwrap_or_default();
+        if let Some(language) = field(fields, "code").or_else(|| field(fields, "literal")) {
             let code_fields = fields
                 .iter()
                 .map(|(key, value)| {
-                    let value = if value.is_empty() {
-                        String::new()
+                    let value = if value.is_empty() || matches!(key.as_str(), "name" | "class") {
+                        value.clone()
                     } else {
                         format!("{value}\n\n")
                     };
@@ -595,21 +652,50 @@ impl Parser<'_> {
                 })
                 .collect();
             Ok(vec![code(language, &code_fields, text)])
-        } else {
+        } else if let Some((path, _)) = file {
+            let path_key = normalize_path(&self.working_dir.join(&path));
+            if let Some(active) = self.includes.get(&path_key) {
+                let pos = match active {
+                    IncludeSource::Input => self.include_dirs.first().map_or(&pos, |(_, pos)| pos),
+                    IncludeSource::Nested => &pos,
+                };
+                return Err(Error::Parse(format!(
+                    "Include file loop at {} (line {}, column {})",
+                    randoc_ast::json::show_string(arg),
+                    pos.line,
+                    pos.column
+                )));
+            }
+            self.includes
+                .insert(path_key.clone(), IncludeSource::Nested);
+            self.include_dirs.push((
+                path.parent().unwrap_or_else(|| Path::new("")).to_path_buf(),
+                pos,
+            ));
             let text = expand_tabs(&text, self.options.tab_stop);
             let lines: Vec<_> = lines(
                 &text,
-                &path,
+                arg,
                 u32::try_from(start).unwrap_or(u32::MAX).saturating_add(1),
             )
             .collect();
-            self.blocks(&lines, depth)
-        };
-        self.includes.remove(&path_key);
-        result
+            let result = self.blocks(&lines, depth);
+            self.include_dirs.pop();
+            self.includes.remove(&path_key);
+            result
+        } else {
+            Ok(Vec::new())
+        }
     }
 
-    pub(super) fn load(&mut self, name: &str) -> Result<Option<(String, String)>> {
+    pub(super) fn load(
+        &mut self,
+        name: &str,
+        relative_to: Option<&Path>,
+    ) -> Result<Option<(PathBuf, Rc<str>)>> {
+        if self.context.host().is_sandboxed() {
+            return Ok(None);
+        }
         let remaining = self
             .context
             .limits
@@ -617,30 +703,52 @@ impl Parser<'_> {
             .saturating_sub(self.bytes)
             .min(self.context.limits.max_resource_size);
         let max = usize::try_from(remaining).unwrap_or(usize::MAX);
-        let paths = self.context.state.resource_path.clone();
-        for dir in paths {
-            let path = Path::new(&dir).join(name);
+        let name = Path::new(name);
+        let resource_path = self.context.state.resource_path.clone();
+        let dirs = relative_to
+            .into_iter()
+            .chain(resource_path.iter().map(Path::new));
+        let paths = name
+            .is_absolute()
+            .then(|| name.to_path_buf())
+            .into_iter()
+            .chain(
+                dirs.filter(|_| !name.is_absolute())
+                    .map(|dir| dir.join(name)),
+            );
+        for path in paths {
             let path = normalize_path(&path);
-            let path = path.to_string_lossy();
-            let bytes = match self.context.read_file_limited(&path, max) {
-                Ok(bytes) => bytes,
-                Err(randoc_core::Error::Io(message))
-                    if message.contains("size limit")
-                        || message.contains("the file is larger than")
-                        || message.contains("exceeds") =>
+            let (text, size) = if let Some((text, size)) = self.file_cache.get(&path) {
+                (Rc::clone(text), *size)
+            } else {
+                let bytes = match self
+                    .context
+                    .host()
+                    .read_file_limited(&path.to_string_lossy(), max)
                 {
+                    Ok(bytes) => bytes,
+                    Err(error) if error.kind() == ErrorKind::FileTooLarge => {
+                        return Err(too_large());
+                    }
+                    Err(_) => continue,
+                };
+                if bytes.len() > max {
                     return Err(too_large());
                 }
-                Err(_) => continue,
+                let text = Rc::<str>::from(String::from_utf8_lossy(&bytes).as_ref());
+                let cached_bytes = self.cached_bytes.saturating_add(text.len());
+                if self.file_cache.len() < 256 && cached_bytes <= 8 * 1024 * 1024 {
+                    self.file_cache
+                        .insert(path.clone(), (Rc::clone(&text), bytes.len()));
+                    self.cached_bytes = cached_bytes;
+                }
+                (text, bytes.len())
             };
-            if bytes.len() > max {
+            if size > max {
                 return Err(too_large());
             }
-            self.bytes = self.bytes.saturating_add(bytes.len() as u64);
-            return Ok(Some((
-                path.into_owned(),
-                String::from_utf8_lossy(&bytes).into_owned(),
-            )));
+            self.bytes = self.bytes.saturating_add(size as u64);
+            return Ok(Some((path, text)));
         }
         Ok(None)
     }
@@ -674,7 +782,7 @@ impl Parser<'_> {
     }
 }
 
-fn normalize_path(path: &Path) -> PathBuf {
+pub(super) fn normalize_path(path: &Path) -> PathBuf {
     let mut out = PathBuf::new();
     for part in path.components() {
         match part {
