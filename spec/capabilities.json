@@ -296,8 +296,8 @@
     "literate_haskell": {
       "status": "partial",
       "units": {
-        "passing": 2,
-        "total": 4
+        "passing": 5,
+        "total": 7
       }
     },
     "mark": {
@@ -721,12 +721,12 @@
     },
     "markdown": {
       "end_to_end": {
-        "passing": 1832,
-        "total": 1846
+        "passing": 1833,
+        "total": 1847
       },
       "read": {
-        "passing": 2879,
-        "total": 2920
+        "passing": 2880,
+        "total": 2921
       },
       "status": "partial"
     },
@@ -809,7 +809,15 @@
       "status": "failing"
     },
     "rst": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 6,
+        "total": 6
+      },
+      "read": {
+        "passing": 6,
+        "total": 6
+      },
+      "status": "passing"
     },
     "rtf": {
       "status": "not_started"
@@ -1334,8 +1342,8 @@
     "number-sections": {
       "status": "passing",
       "units": {
-        "passing": 30,
-        "total": 30
+        "passing": 33,
+        "total": 33
       }
     },
     "output": {
@@ -1474,8 +1482,8 @@
     "standalone": {
       "status": "passing",
       "units": {
-        "passing": 46,
-        "total": 46
+        "passing": 49,
+        "total": 49
       }
     },
     "strip-comments": {
@@ -1537,8 +1545,8 @@
     "toc": {
       "status": "partial",
       "units": {
-        "passing": 91,
-        "total": 143
+        "passing": 95,
+        "total": 146
       }
     },
     "toc-depth": {
@@ -1955,7 +1963,15 @@
       "status": "not_started"
     },
     "rst": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 7,
+        "total": 7
+      },
+      "status": "passing",
+      "write": {
+        "passing": 7,
+        "total": 7
+      }
     },
     "rtf": {
       "status": "not_started"
@@ -2013,9 +2029,9 @@
     },
     "input_formats": {
       "failing": 11,
-      "not_started": 28,
+      "not_started": 27,
       "partial": 9,
-      "passing": 4
+      "passing": 5
     },
     "options": {
       "not_started": 1,
@@ -2023,13 +2039,13 @@
       "passing": 93
     },
     "output_formats": {
-      "not_started": 59,
+      "not_started": 58,
       "partial": 11,
-      "passing": 7
+      "passing": 8
     },
     "units": {
-      "passing": 61628,
-      "total": 63750
+      "passing": 61653,
+      "total": 63771
     }
   }
 }
