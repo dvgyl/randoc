@@ -125,6 +125,11 @@ pub fn sanitize_media_path(path: &str, contents: &[u8]) -> Text {
     if is_safe_media_path(path) && !path.contains('%') {
         return Text::from(path);
     }
+    hashed_media_path(path, contents)
+}
+
+/// Returns a content hash with the safe filename extension of `path`, if present.
+pub fn hashed_media_path(path: &str, contents: &[u8]) -> Text {
     let digest = sha1_hex(contents);
     let ext = safe_extension(path);
     match ext {

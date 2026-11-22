@@ -397,6 +397,38 @@ mod tests {
     }
 
     #[test]
+    fn repeated_notes_charge_run_children_and_text() {
+        const NS: &str = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+        let rels = br#"<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+          <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footnotes" Target="footnotes.xml"/>
+        </Relationships>"#;
+        let refs = r#"<w:footnoteReference w:id="1"/>"#.repeat(100);
+        let document = format!(
+            r#"<w:document xmlns:w="{NS}"><w:body><w:p><w:r>{refs}</w:r></w:p></w:body></w:document>"#
+        );
+        for (body, limit) in [
+            ("<w:br/>".repeat(510), "nodes"),
+            (format!("<w:t>{}</w:t>", "a".repeat(512)), "text bytes"),
+        ] {
+            let notes = format!(
+                r#"<w:footnotes xmlns:w="{NS}"><w:footnote w:id="1"><w:p><w:r>{body}</w:r></w:p></w:footnote></w:footnotes>"#
+            );
+            let bytes = build_docx(&[
+                ("_rels/.rels", ROOT_RELS),
+                ("word/_rels/document.xml.rels", rels),
+                ("word/document.xml", document.as_bytes()),
+                ("word/footnotes.xml", notes.as_bytes()),
+            ]);
+            let mut ctx = Context::pure();
+            ctx.limits.max_table_cells = 1_000;
+            ctx.limits.max_archive_size = 12_000;
+            let result = convert::read_docx(&bytes, &ReaderOptions::default(), &mut ctx);
+            assert!(matches!(result, Err(Error::Parse(message))
+                if message.contains("DOCX note/comment expansion") && message.ends_with(limit)));
+        }
+    }
+
+    #[test]
     fn zotero_locator_suffix_preserves_trailing_space() {
         let document = br#"<?xml version="1.0" encoding="UTF-8"?>
 <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">

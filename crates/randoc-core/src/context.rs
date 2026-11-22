@@ -293,7 +293,8 @@ pub fn write_real_media_file(root_dir: &str, rel_path: &str, contents: &[u8]) ->
     {
         use nix::errno::Errno;
         use nix::fcntl::{OFlag, open, openat};
-        use nix::sys::stat::{Mode, mkdirat};
+        use nix::sys::stat::{Mode, SFlag, fstatat, mkdirat};
+        use nix::unistd::{UnlinkatFlags, unlinkat};
         use std::io::Write;
 
         let dir_flags = OFlag::O_RDONLY | OFlag::O_DIRECTORY | OFlag::O_NOFOLLOW | OFlag::O_CLOEXEC;
@@ -314,11 +315,26 @@ pub fn write_real_media_file(root_dir: &str, rel_path: &str, contents: &[u8]) ->
             dir_fd = openat(&dir_fd, seg, dir_flags, Mode::empty()).map_err(io::Error::from)?;
         }
 
-        let file_flags = OFlag::O_WRONLY
-            | OFlag::O_CREAT
-            | OFlag::O_TRUNC
-            | OFlag::O_NOFOLLOW
-            | OFlag::O_CLOEXEC;
+        match fstatat(&dir_fd, *filename, nix::fcntl::AtFlags::AT_SYMLINK_NOFOLLOW) {
+            Ok(stat)
+                if SFlag::from_bits_truncate(stat.st_mode) & SFlag::S_IFMT == SFlag::S_IFREG =>
+            {
+                match unlinkat(&dir_fd, *filename, UnlinkatFlags::NoRemoveDir) {
+                    Ok(()) | Err(Errno::ENOENT) => {}
+                    Err(err) => return Err(io::Error::from(err)),
+                }
+            }
+            Ok(_) => {
+                return Err(io::Error::new(
+                    io::ErrorKind::InvalidInput,
+                    "media destination is not a regular file",
+                ));
+            }
+            Err(Errno::ENOENT) => {}
+            Err(err) => return Err(io::Error::from(err)),
+        }
+        let file_flags =
+            OFlag::O_WRONLY | OFlag::O_CREAT | OFlag::O_EXCL | OFlag::O_NOFOLLOW | OFlag::O_CLOEXEC;
         let file_fd = openat(
             &dir_fd,
             *filename,
@@ -369,21 +385,24 @@ pub fn write_real_media_file(root_dir: &str, rel_path: &str, contents: &[u8]) ->
             }
         }
         cur.push(filename);
-        if let Ok(meta) = std::fs::symlink_metadata(&cur)
-            && (meta.file_type().is_symlink() || meta.is_dir())
-        {
-            return Err(io::Error::new(
-                io::ErrorKind::InvalidInput,
-                format!(
-                    "{}: refuses to overwrite symlink or directory",
-                    cur.display()
-                ),
-            ));
+        match std::fs::symlink_metadata(&cur) {
+            Ok(meta) if meta.is_file() => match std::fs::remove_file(&cur) {
+                Ok(()) => {}
+                Err(err) if err.kind() == io::ErrorKind::NotFound => {}
+                Err(err) => return Err(err),
+            },
+            Ok(_) => {
+                return Err(io::Error::new(
+                    io::ErrorKind::InvalidInput,
+                    "media destination is not a regular file",
+                ));
+            }
+            Err(err) if err.kind() == io::ErrorKind::NotFound => {}
+            Err(err) => return Err(err),
         }
         let mut file = std::fs::OpenOptions::new()
             .write(true)
-            .create(true)
-            .truncate(true)
+            .create_new(true)
             .open(&cur)?;
         file.write_all(contents)?;
         Ok(())
@@ -1119,6 +1138,38 @@ impl Context {
 
 #[cfg(test)]
 mod tests {
+    #[cfg(unix)]
+    #[test]
+    fn extract_media_replaces_a_hard_link_instead_of_writing_through_it() {
+        let dir = std::env::temp_dir().join(format!("randoc-hard-link-{}", std::process::id()));
+        let dir = dir.to_string_lossy().into_owned();
+        std::fs::create_dir_all(&dir).unwrap();
+        let dest = format!("{dir}/image.png");
+        let original = format!("{dir}/original.png");
+        std::fs::write(&original, b"original").unwrap();
+        match nix::unistd::linkat(
+            nix::fcntl::AT_FDCWD,
+            original.as_str(),
+            nix::fcntl::AT_FDCWD,
+            dest.as_str(),
+            nix::fcntl::AtFlags::empty(),
+        ) {
+            Ok(()) => {
+                write_real_media_file(&dir, "image.png", b"new contents").unwrap();
+                assert_eq!(std::fs::read(&original).unwrap(), b"original");
+                assert_eq!(std::fs::read(&dest).unwrap(), b"new contents");
+            }
+            Err(nix::errno::Errno::ENOTSUP) => {
+                // Some filesystems, including exFAT, do not support hard links.
+                std::fs::write(&dest, b"old contents").unwrap();
+                write_real_media_file(&dir, "image.png", b"new contents").unwrap();
+                assert_eq!(std::fs::read(&dest).unwrap(), b"new contents");
+            }
+            Err(error) => panic!("{error}"),
+        }
+        std::fs::remove_dir_all(&dir).unwrap();
+    }
+
     use std::sync::{Arc, Mutex};
 
     use super::*;

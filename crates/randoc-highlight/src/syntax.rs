@@ -2,6 +2,7 @@
 //! XML tree into that model. Ported from `Skylighting.Types` and
 //! `Skylighting.Parser` of skylighting-core 0.15.
 
+use std::borrow::Cow;
 use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 use std::sync::Arc;
 
@@ -28,14 +29,6 @@ pub(crate) enum WordSet {
 }
 
 impl WordSet {
-    fn new(case_sensitive: bool, words: Vec<String>) -> WordSet {
-        if case_sensitive {
-            WordSet::CaseSensitive(words.into_iter().collect())
-        } else {
-            WordSet::CaseInsensitive(words.iter().map(|w| fold_case(w)).collect())
-        }
-    }
-
     /// Tests whether `word` is in the set.
     pub(crate) fn contains(&self, word: &str) -> bool {
         match self {
@@ -608,6 +601,10 @@ fn to_token_type(t: &str) -> TokenType {
 /// `include` items of the lists, as `resolveKeywords` does. The rules that
 /// name one list with one case mode share one word set.
 pub(crate) fn resolve_keywords(syntaxes: &mut [Syntax]) {
+    resolve_keywords_with_limit(syntaxes, MAX_RESOLVED_BYTES);
+}
+
+fn resolve_keywords_with_limit(syntaxes: &mut [Syntax], mut byte_budget: usize) {
     let lists: HashMap<String, BTreeMap<String, Vec<ListItem>>> = syntaxes
         .iter()
         .map(|s| (s.name.clone(), s.lists.clone()))
@@ -615,7 +612,6 @@ pub(crate) fn resolve_keywords(syntaxes: &mut [Syntax]) {
     for syntax in syntaxes.iter_mut() {
         let mut resolved: HashMap<(String, bool), Arc<WordSet>> = HashMap::new();
         let mut word_budget = MAX_RESOLVED_WORDS;
-        let mut byte_budget = MAX_RESOLVED_BYTES;
         for context in syntax.contexts.values_mut() {
             for rule in &mut context.rules {
                 let Matcher::Keyword(attr, list) = &mut rule.matcher else {
@@ -635,10 +631,15 @@ pub(crate) fn resolve_keywords(syntaxes: &mut [Syntax]) {
                             &syntax.name,
                             name,
                             &lists,
+                            *case_sensitive,
                             &mut word_budget,
                             &mut byte_budget,
                         );
-                        Arc::new(WordSet::new(*case_sensitive, words))
+                        Arc::new(if *case_sensitive {
+                            WordSet::CaseSensitive(words)
+                        } else {
+                            WordSet::CaseInsensitive(words)
+                        })
                     });
                 *list = KeywordList::Resolved(Arc::clone(words));
             }
@@ -652,7 +653,7 @@ pub(crate) fn resolve_keywords(syntaxes: &mut [Syntax]) {
 const MAX_RESOLVED_WORDS: usize = 1_000_000;
 
 /// The largest cumulative byte length of resolved keyword strings collected
-/// across all keyword lists of one syntax (32 MiB), preventing byte
+/// across all keyword lists in the registry (32 MiB), preventing byte
 /// amplification when many lists include a list containing huge words.
 const MAX_RESOLVED_BYTES: usize = 32 * 1024 * 1024;
 
@@ -664,10 +665,11 @@ fn collect_words(
     syntax: &str,
     list: &str,
     all: &HashMap<String, BTreeMap<String, Vec<ListItem>>>,
+    case_sensitive: bool,
     word_budget: &mut usize,
     byte_budget: &mut usize,
-) -> Vec<String> {
-    let mut words: HashSet<&str> = HashSet::new();
+) -> BTreeSet<String> {
+    let mut words = HashSet::new();
     let mut expanded: HashSet<(&str, &str)> = HashSet::new();
     let mut pending: Vec<(&str, &str)> = vec![(syntax, list)];
     while let Some((syntax, list)) = pending.pop() {
@@ -683,20 +685,27 @@ fn collect_words(
         for item in items {
             match item {
                 ListItem::Item(word) => {
+                    let word = if case_sensitive {
+                        Cow::Borrowed(word.as_str())
+                    } else {
+                        Cow::Owned(fold_case(word))
+                    };
+                    if words.contains(&word) {
+                        continue;
+                    }
                     if *word_budget == 0 || word.len() > *byte_budget {
                         *byte_budget = 0;
                         break;
                     }
-                    if words.insert(word) {
-                        *word_budget -= 1;
-                        *byte_budget -= word.len();
-                    }
+                    *word_budget -= 1;
+                    *byte_budget -= word.len();
+                    words.insert(word);
                 }
                 ListItem::IncludeList(syntax, list) => pending.push((syntax, list)),
             }
         }
     }
-    words.into_iter().map(str::to_owned).collect()
+    words.into_iter().map(Cow::into_owned).collect()
 }
 
 #[cfg(test)]
@@ -873,7 +882,7 @@ mod tests {
             &rules[1].matcher,
             Matcher::Keyword(_, KeywordList::Unresolved(_))
         ));
-        let insensitive = WordSet::new(false, vec!["Straße".into()]);
+        let insensitive = WordSet::CaseInsensitive(BTreeSet::from([fold_case("Straße")]));
         assert!(insensitive.contains("STRASSE"));
     }
 
@@ -933,6 +942,33 @@ mod tests {
             })
             .map(|h| h.join().is_ok());
         assert_eq!(done.ok(), Some(true));
+    }
+
+    #[test]
+    fn syntax_definitions_share_one_resolved_keyword_byte_budget() {
+        let text = definition(
+            r#"<context name="A" attribute="N"><keyword String="words" attribute="K"/></context>"#,
+            r#"<list name="words"><item>first</item></list>"#,
+        );
+        let mut registry = [
+            parse(&text).unwrap(),
+            parse(
+                &text
+                    .replace("name=\"T\"", "name=\"U\"")
+                    .replace("first", "other"),
+            )
+            .unwrap(),
+        ];
+        resolve_keywords_with_limit(&mut registry, 5);
+        for (syntax, word, expected) in [
+            (&registry[0], "first", true),
+            (&registry[1], "other", false),
+        ] {
+            assert!(matches!(
+                &syntax.contexts["A"].rules[0].matcher,
+                Matcher::Keyword(_, KeywordList::Resolved(words)) if words.contains(word) == expected
+            ));
+        }
     }
 
     #[test]

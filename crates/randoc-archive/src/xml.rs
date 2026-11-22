@@ -591,6 +591,7 @@ impl<'a> Parser<'a> {
                 bound_prefixes.push(Some(Arc::clone(&p)));
                 ns_decls.push((Some(p), uri));
             } else {
+                self.charge_dom(1, key.len().saturating_add(value.len()))?;
                 raw_attrs.push((Text::from(key), value));
             }
         }
@@ -600,7 +601,6 @@ impl<'a> Parser<'a> {
         let mut attrs = Vec::with_capacity(raw_attrs.len());
         for (k, v) in raw_attrs {
             let q = self.resolve_qname(&k, true)?;
-            self.charge_dom(1, q.local.len().saturating_add(v.len()))?;
             attrs.push((q, v));
         }
 
@@ -1128,6 +1128,26 @@ mod tests {
             parse(&xml, &tight_bytes, XmlOptions::default()).err(),
             Some(XmlError::DomBudget)
         );
+    }
+
+    #[test]
+    fn charges_attributes_before_reading_the_rest_of_the_tag() {
+        let xml = r#"<tag first="value" second="value" broken/>"#;
+        for limits in [
+            XmlLimits {
+                max_nodes: 1,
+                ..XmlLimits::default()
+            },
+            XmlLimits {
+                max_dom_bytes: 3,
+                ..XmlLimits::default()
+            },
+        ] {
+            assert_eq!(
+                parse(xml, &limits, XmlOptions::default()).err(),
+                Some(XmlError::DomBudget)
+            );
+        }
     }
 
     #[test]

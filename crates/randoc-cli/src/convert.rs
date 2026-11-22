@@ -589,6 +589,9 @@ fn extract_media(
         if context.media.get(&url).is_some() || context.media.get(stripped).is_some() {
             continue;
         }
+        if settings.sandbox {
+            continue;
+        }
         if let Some((mime, bytes)) = decode_data_uri(&url, max_single) {
             if fetched_total.saturating_add(bytes.len() as u64) <= max_total {
                 fetched_total = fetched_total.saturating_add(bytes.len() as u64);
@@ -608,13 +611,14 @@ fn extract_media(
             }
             continue;
         }
-        if has_uri_scheme(&url) || settings.sandbox {
+        if has_uri_scheme(&url) {
             continue;
         }
         let remaining = max_total.saturating_sub(fetched_total).min(max_single);
         let limit = usize::try_from(remaining).unwrap_or(usize::MAX);
         let mut loaded: Option<Vec<u8>> = None;
-        for candidate in resource_candidates(&url, &settings.resource_path) {
+        let path = percent_decode(&url);
+        for candidate in resource_candidates(&path, &settings.resource_path) {
             if let Ok(bytes) = context.host().read_file_limited(&candidate, limit) {
                 loaded = Some(bytes);
                 break;
@@ -622,8 +626,23 @@ fn extract_media(
         }
         if let Some(bytes) = loaded {
             fetched_total = fetched_total.saturating_add(bytes.len() as u64);
-            let (_, mime) = randoc_archive::media::image_size_and_mime(&bytes, Some(stripped));
-            let key = randoc_archive::media::sanitize_media_path(stripped, &bytes);
+            let (_, mime) = randoc_archive::media::image_size_and_mime(&bytes, Some(&path));
+            let key = if randoc_archive::media::is_safe_media_path(stripped)
+                && !stripped.contains(['%', ' ', '[', ']'])
+            {
+                stripped.to_owned()
+            } else if let Some(ext) =
+                randoc_archive::media::mime_from_extension(&path).and_then(extension_for_mime)
+            {
+                format!("{}.{ext}", randoc_archive::media::sha1_hex(&bytes))
+            } else {
+                let key = randoc_archive::media::hashed_media_path(&path, &bytes);
+                if key.contains('.') {
+                    key
+                } else {
+                    format!("{key}.so")
+                }
+            };
             context.media.insert(
                 key.clone(),
                 randoc::MediaItem {
@@ -757,27 +776,36 @@ fn decode_data_uri(url: &str, max_bytes: u64) -> Option<(String, Vec<u8>)> {
         }
         Some((mime_type, bytes))
     } else {
-        let mut out = Vec::with_capacity(payload.len().min(max_usize));
-        let raw = payload.as_bytes();
-        let mut i = 0usize;
-        while i < raw.len() {
-            if out.len() >= max_usize {
-                return None;
-            }
-            if raw[i] == b'%'
-                && i + 2 < raw.len()
-                && let Ok(hex) = std::str::from_utf8(&raw[i + 1..i + 3])
-                && let Ok(byte) = u8::from_str_radix(hex, 16)
-            {
-                out.push(byte);
-                i += 3;
-            } else {
-                out.push(raw[i]);
-                i += 1;
-            }
-        }
-        Some((mime_type, out))
+        let bytes = decode_percent_bytes(payload, max_usize)?;
+        Some((mime_type, bytes))
     }
+}
+
+fn percent_decode(url: &str) -> String {
+    let bytes = decode_percent_bytes(url, url.len()).unwrap_or_default();
+    String::from_utf8_lossy(&bytes).into_owned()
+}
+
+fn decode_percent_bytes(text: &str, limit: usize) -> Option<Vec<u8>> {
+    let mut out = Vec::with_capacity(text.len().min(limit));
+    let mut raw = text.as_bytes();
+    while let Some((&first, rest)) = raw.split_first() {
+        if out.len() == limit {
+            return None;
+        }
+        if first == b'%'
+            && let [hi, lo, after @ ..] = rest
+            && let (Some(hi), Some(lo)) =
+                (char::from(*hi).to_digit(16), char::from(*lo).to_digit(16))
+        {
+            out.push((hi * 16 + lo) as u8);
+            raw = after;
+        } else {
+            out.push(first);
+            raw = rest;
+        }
+    }
+    Some(out)
 }
 
 fn extension_for_mime(mime: &str) -> Option<&'static str> {
@@ -788,7 +816,7 @@ fn extension_for_mime(mime: &str) -> Option<&'static str> {
         "image/svg+xml" => Some("svg"),
         "image/webp" => Some("webp"),
         "image/bmp" => Some("bmp"),
-        "image/tiff" => Some("tif"),
+        "image/tiff" => Some("tiff"),
         "image/x-icon" => Some("ico"),
         "application/pdf" => Some("pdf"),
         _ => None,
@@ -3299,6 +3327,44 @@ mod tests {
         ));
         assert_eq!(ctx.host().read_file("md_out/photo.png").unwrap(), png);
 
+        for (target, file, expected) in [
+            (
+                "a%20b.PNG",
+                "a b.PNG",
+                "11f6ad8ec52a2984abaafd7c3b516503785c2072.png",
+            ),
+            (
+                "%C3%BC%2Epng",
+                "ü.png",
+                "11f6ad8ec52a2984abaafd7c3b516503785c2072.png",
+            ),
+            (
+                "a%25b.jpeg",
+                "a%b.jpeg",
+                "11f6ad8ec52a2984abaafd7c3b516503785c2072.jpg",
+            ),
+            ("ü.png", "ü.png", "ü.png"),
+        ] {
+            let mut host = PureHost::default();
+            host.files.insert(file.into(), b"x".to_vec());
+            let mut ctx = Context::new(Box::new(host));
+            let mut doc = make_doc(&[target]);
+            extract_media("out", &mut doc, &settings, &mut ctx).unwrap();
+            assert_eq!(doc, make_doc(&[&format!("out/{expected}")]));
+            assert_eq!(
+                ctx.host().read_file(&format!("out/{expected}")).unwrap(),
+                b"x"
+            );
+        }
+
+        let mut host = PureHost::default();
+        host.files.insert("a b.tif".into(), png.to_vec());
+        let mut ctx = Context::new(Box::new(host));
+        let mut doc = make_doc(&["a%20b.tif"]);
+        extract_media("out", &mut doc, &settings, &mut ctx).unwrap();
+        let hash = randoc_archive::media::sha1_hex(png);
+        assert_eq!(doc, make_doc(&[&format!("out/{hash}.tiff")]));
+
         // 4. Under --sandbox, local Markdown images are NOT fetched from disk, while embedded media IS extracted.
         let tmp =
             std::env::temp_dir().join(format!("randoc-extract-sandbox-{}", std::process::id()));
@@ -3312,6 +3378,11 @@ mod tests {
         };
         let host = SandboxHost::new(&sb_settings, &[], "");
         let mut ctx = Context::new(Box::new(host));
+        let data_url = "data:image/png;base64,eA==";
+        let mut doc = make_doc(&[data_url]);
+        extract_media(&out_dir_str, &mut doc, &sb_settings, &mut ctx).unwrap();
+        assert_eq!(doc, make_doc(&[data_url]));
+        assert!(!out_dir.exists());
         ctx.media.insert(
             "media/embedded.png".to_owned(),
             randoc::MediaItem {

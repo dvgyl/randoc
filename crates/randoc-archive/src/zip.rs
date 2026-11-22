@@ -150,7 +150,7 @@ impl std::error::Error for ArchiveError {}
 pub struct Archive<'a> {
     zip: ZipArchive<Cursor<&'a [u8]>>,
     limits: ArchiveLimits,
-    archive_len: u64,
+    entry_ends: Vec<u64>,
     used: u64,
     addressable: Vec<bool>,
     names: Vec<Option<String>>,
@@ -162,31 +162,31 @@ pub struct Archive<'a> {
 fn precheck_eocd_entry_count(bytes: &[u8], max_entries: usize) -> Result<(), ArchiveError> {
     const EOCD_MIN_LEN: usize = 22;
     const EOCD_SIG: [u8; 4] = [0x50, 0x4b, 0x05, 0x06];
-    const ZIP64_LOC_LEN: usize = 20;
-    const ZIP64_LOC_SIG: [u8; 4] = [0x50, 0x4b, 0x06, 0x07];
-    const ZIP64_EOCD_MIN_LEN: usize = 56;
-    const ZIP64_EOCD_SIG: [u8; 4] = [0x50, 0x4b, 0x06, 0x06];
 
     if bytes.len() < EOCD_MIN_LEN {
         return Ok(());
     }
-    let min_pos = bytes.len().saturating_sub(EOCD_MIN_LEN + 65_535);
-    let mut pos = bytes.len() - EOCD_MIN_LEN;
-    let eocd_pos = loop {
+    let min_pos = bytes.len().saturating_sub(EOCD_MIN_LEN + 65_536);
+    for pos in (min_pos..=bytes.len() - EOCD_MIN_LEN).rev() {
         if bytes[pos..pos + 4] == EOCD_SIG {
             let comment_len = usize::from(u16::from_le_bytes([bytes[pos + 20], bytes[pos + 21]]));
-            if pos + EOCD_MIN_LEN + comment_len == bytes.len() {
-                break Some(pos);
+            if comment_len <= bytes.len() - pos - EOCD_MIN_LEN {
+                precheck_eocd_candidate(bytes, pos, max_entries)?;
             }
         }
-        if pos == min_pos {
-            break None;
-        }
-        pos -= 1;
-    };
-    let Some(eocd_pos) = eocd_pos else {
-        return Ok(());
-    };
+    }
+    Ok(())
+}
+
+fn precheck_eocd_candidate(
+    bytes: &[u8],
+    eocd_pos: usize,
+    max_entries: usize,
+) -> Result<(), ArchiveError> {
+    const ZIP64_LOC_LEN: usize = 20;
+    const ZIP64_LOC_SIG: [u8; 4] = [0x50, 0x4b, 0x06, 0x07];
+    const ZIP64_EOCD_MIN_LEN: usize = 56;
+    const ZIP64_EOCD_SIG: [u8; 4] = [0x50, 0x4b, 0x06, 0x06];
 
     // Check for ZIP64 EOCD locator immediately before the standard EOCD.
     if let Some(loc_pos) = eocd_pos.checked_sub(ZIP64_LOC_LEN)
@@ -203,7 +203,9 @@ fn precheck_eocd_entry_count(bytes: &[u8], max_entries: usize) -> Result<(), Arc
             bytes[loc_pos + 15],
         ]);
         if let Ok(off) = usize::try_from(z64_off)
-            && off + ZIP64_EOCD_MIN_LEN <= bytes.len()
+            && off
+                .checked_add(ZIP64_EOCD_MIN_LEN)
+                .is_some_and(|end| end <= loc_pos)
             && bytes[off..off + 4] == ZIP64_EOCD_SIG
         {
             let disk_entries = u64::from_le_bytes([
@@ -288,6 +290,23 @@ impl<'a> Archive<'a> {
             return Err(ArchiveError::DuplicateNames);
         }
 
+        let directory_start = zip.central_directory_start();
+        let mut entries: Vec<_> = (0..count)
+            .filter_map(|idx| {
+                zip.by_index_data(idx)
+                    .ok()
+                    .map(|entry| (entry.header_start(), idx))
+            })
+            .collect();
+        entries.sort_unstable();
+        let mut entry_ends = vec![directory_start; count];
+        for pair in entries.windows(2) {
+            let [(_, idx), (next_start, _)] = pair else {
+                continue;
+            };
+            entry_ends[*idx] = directory_start.min(*next_start);
+        }
+
         let mut addressable = Vec::with_capacity(count);
         let mut names = Vec::with_capacity(count);
         for idx in 0..count {
@@ -315,7 +334,7 @@ impl<'a> Archive<'a> {
         Ok(Self {
             zip,
             limits,
-            archive_len: size,
+            entry_ends,
             used: 0,
             addressable,
             names,
@@ -372,7 +391,10 @@ impl<'a> Archive<'a> {
                 detail: err.to_string(),
             })?;
 
-        let compressed_size = file.compressed_size().min(self.archive_len);
+        let data_start = file.data_start().unwrap_or(self.entry_ends[idx]);
+        let compressed_size = file
+            .compressed_size()
+            .min(self.entry_ends[idx].saturating_sub(data_start));
         let remaining_total = self.limits.max_total.saturating_sub(self.used);
         let read_cap = self.limits.max_entry.min(remaining_total);
 
@@ -383,17 +405,21 @@ impl<'a> Archive<'a> {
         let mut actual: u64 = 0;
         let mut chunk = [0u8; 32 * 1024];
 
-        loop {
-            let n = match file.read(&mut chunk) {
-                Ok(0) => break,
-                Ok(n) => n,
-                Err(err) => {
-                    return Err(ArchiveError::Corrupt {
-                        name: display_name,
-                        detail: err.to_string(),
-                    });
-                }
-            };
+        while actual < declared {
+            let remaining =
+                (declared - actual).min(read_cap.saturating_sub(actual).saturating_add(1));
+            let chunk_len = chunk
+                .len()
+                .min(usize::try_from(remaining).unwrap_or(usize::MAX));
+            let n = file
+                .read(&mut chunk[..chunk_len])
+                .map_err(|err| ArchiveError::Corrupt {
+                    name: display_name.clone(),
+                    detail: err.to_string(),
+                })?;
+            if n == 0 {
+                break;
+            }
             let n64 = n as u64;
             actual = actual.saturating_add(n64);
             // Charge inflated bytes immediately so failed reads (CRC/ratio/limit)
@@ -415,7 +441,7 @@ impl<'a> Archive<'a> {
                 && actual > RATIO_CHECK_MIN_BYTES
             {
                 let denom = compressed_size.max(1);
-                let ratio = actual / denom;
+                let ratio = actual.div_ceil(denom);
                 if ratio > max_ratio {
                     return Err(ArchiveError::CompressionRatioExceeded {
                         name: display_name,
@@ -427,6 +453,22 @@ impl<'a> Archive<'a> {
             buf.extend_from_slice(&chunk[..n]);
         }
 
+        if actual != declared {
+            return Err(ArchiveError::Corrupt {
+                name: display_name,
+                detail: "entry size does not match the declared uncompressed size".to_owned(),
+            });
+        }
+        // The ZIP reader probes at most one byte past the declared size in
+        // read_to_end. It preserves that byte in the buffer even on error.
+        let result = file.read_to_end(&mut buf);
+        self.used = self
+            .used
+            .saturating_add((buf.len() as u64).saturating_sub(actual));
+        result.map_err(|error| ArchiveError::Corrupt {
+            name: display_name,
+            detail: error.to_string(),
+        })?;
         Ok(buf)
     }
 
@@ -744,6 +786,16 @@ mod tests {
             })
         );
 
+        let mut trailing = eocd.to_vec();
+        trailing.extend_from_slice(b"trailing bytes");
+        assert_eq!(
+            Archive::open(&trailing, limits).err(),
+            Some(ArchiveError::TooManyEntries {
+                count: 60_000,
+                limit: 100
+            })
+        );
+
         // Synthetic ZIP64 EOCD + Locator + EOCD claiming 5,000,000 entries.
         let mut buf = Vec::new();
         let mut z64 = [0u8; 56];
@@ -768,6 +820,58 @@ mod tests {
                 limit: 100,
             })
         );
+        buf[64..72].copy_from_slice(&u64::MAX.to_le_bytes());
+        assert_eq!(
+            precheck_eocd_entry_count(&buf, 100),
+            Err(ArchiveError::TooManyEntries {
+                count: 65_535,
+                limit: 100
+            })
+        );
+    }
+
+    #[test]
+    fn ratio_uses_entry_bounds_and_rejects_fractional_excess() {
+        let payload = vec![0; 2 * 1024 * 1024 + 1];
+        let other = vec![0; 64 * 1024];
+        let mut bytes = make_zip(&[("first.bin", &payload, false), ("second.bin", &other, true)]);
+        let mut zip = ZipArchive::new(Cursor::new(bytes.as_slice())).unwrap();
+        let entry = zip.by_index_raw(0).unwrap();
+        let ratio = payload.len() as u64 / entry.compressed_size();
+        assert_ne!(payload.len() as u64 % entry.compressed_size(), 0);
+        let central = usize::try_from(entry.central_header_start()).unwrap();
+        drop(entry);
+        let limits = ArchiveLimits {
+            max_ratio: Some(ratio),
+            ..ArchiveLimits::default()
+        };
+        assert!(matches!(
+            Archive::open(&bytes, limits).unwrap().read_index(0),
+            Err(ArchiveError::CompressionRatioExceeded { .. })
+        ));
+
+        let overstated = 32_768u32.to_le_bytes();
+        bytes[18..22].copy_from_slice(&overstated);
+        bytes[central + 20..central + 24].copy_from_slice(&overstated);
+        assert!(matches!(
+            Archive::open(&bytes, limits).unwrap().read_index(0),
+            Err(ArchiveError::CompressionRatioExceeded { .. })
+        ));
+    }
+
+    #[test]
+    fn a_byte_hidden_by_a_size_error_counts_toward_the_total() {
+        let mut bytes = make_zip(&[("short.bin", b"12345", false)]);
+        let zip = ZipArchive::new(Cursor::new(bytes.as_slice())).unwrap();
+        let central = usize::try_from(zip.central_directory_start()).unwrap();
+        bytes[22..26].copy_from_slice(&2u32.to_le_bytes());
+        bytes[central + 24..central + 28].copy_from_slice(&2u32.to_le_bytes());
+        let mut archive = Archive::open(&bytes, ArchiveLimits::default()).unwrap();
+        assert!(matches!(
+            archive.read_index(0),
+            Err(ArchiveError::Corrupt { .. })
+        ));
+        assert_eq!(archive.used_bytes(), 3);
     }
 
     #[test]

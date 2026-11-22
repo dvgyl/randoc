@@ -6,7 +6,7 @@ use randoc_archive::media::image_size_and_mime;
 use randoc_archive::opc::{
     Relationship, media_name, parse_relationships, rels_part_for, resolve_target,
 };
-use randoc_archive::xml::{self, XmlDoc, XmlElement, XmlError, XmlLimits, XmlOptions};
+use randoc_archive::xml::{self, XmlDoc, XmlElement, XmlError, XmlLimits, XmlNode, XmlOptions};
 use randoc_archive::zip::{Archive, ArchiveError, ArchiveLimits};
 use randoc_ast::{
     Alignment, Attr, Block, Caption, Cell, Citation, CitationMode, ColSpec, ColWidth, Inline,
@@ -106,6 +106,7 @@ pub fn read_docx(bytes: &[u8], options: &ReaderOptions, context: &mut Context) -
     let page_width = extract_page_width(body, &main_ns);
 
     let max_expanded_nodes = context.limits.max_table_cells.saturating_mul(2).max(50_000);
+    let max_expanded_text_bytes = context.limits.max_archive_size;
     let mut conv = Converter {
         archive: &mut archive,
         context,
@@ -120,6 +121,8 @@ pub fn read_docx(bytes: &[u8], options: &ReaderOptions, context: &mut Context) -
         active_comments: HashSet::new(),
         expanded_nodes_used: 0,
         max_expanded_nodes,
+        expanded_text_bytes_used: 0,
+        max_expanded_text_bytes,
         media_cache: HashMap::new(),
         table_cells_used: 0,
         depth: 0,
@@ -482,6 +485,8 @@ struct Converter<'a, 'b> {
     active_comments: HashSet<Text>,
     expanded_nodes_used: usize,
     max_expanded_nodes: usize,
+    expanded_text_bytes_used: u64,
+    max_expanded_text_bytes: u64,
     media_cache: HashMap<String, Option<Text>>,
     table_cells_used: usize,
     depth: usize,
@@ -506,6 +511,25 @@ impl<'a, 'b> Converter<'a, 'b> {
         }
         Ok(())
     }
+    fn run_text(&mut self, element: &XmlElement) -> Result<Text> {
+        if self.in_expanded_note_or_comment() {
+            for node in &element.children {
+                if let XmlNode::Text(text) = node {
+                    self.expanded_text_bytes_used = self
+                        .expanded_text_bytes_used
+                        .saturating_add(text.len() as u64);
+                    if self.expanded_text_bytes_used > self.max_expanded_text_bytes {
+                        return Err(Error::Parse(format!(
+                            "DOCX note/comment expansion exceeded limit of {} text bytes",
+                            self.max_expanded_text_bytes
+                        )));
+                    }
+                }
+            }
+        }
+        Ok(element.text())
+    }
+
     fn keep_styles(&self) -> bool {
         self.options.extensions.contains(Extension::Styles)
     }
@@ -1033,8 +1057,11 @@ impl<'a, 'b> Converter<'a, 'b> {
             if ns.is_w(child, "rPr") {
                 continue;
             }
+            if self.in_expanded_note_or_comment() {
+                self.charge_expanded_node()?;
+            }
             if ns.is_w(child, "t") || (in_deleted && ns.is_w(child, "delText")) {
-                let raw_text = child.text();
+                let raw_text = self.run_text(child)?;
                 if !raw_text.is_empty() {
                     let decoded = decode_pua_text(&raw_text, props.font.as_deref());
                     atoms.push(RunAtom::Text(decoded));
@@ -1071,7 +1098,7 @@ impl<'a, 'b> Converter<'a, 'b> {
                     && ns.is_w(child, "delInstrText"))
             {
                 flush_atoms(&props, &mut atoms, out);
-                out.push(RawInline::FldInstr(child.text()));
+                out.push(RawInline::FldInstr(self.run_text(child)?));
             } else if ns.is_w(child, "footnoteReference") {
                 if let Some(id) = ns.w_attr(child, "id") {
                     flush_atoms(&props, &mut atoms, out);
