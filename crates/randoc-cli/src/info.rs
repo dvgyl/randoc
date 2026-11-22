@@ -4,7 +4,7 @@
 use randoc::{Error, FORMAT_EXTENSIONS, Result};
 
 use crate::cli::{HIGHLIGHT_STYLES, InfoCommand, Shell};
-use crate::subsystem::{self, Subsystem};
+use crate::subsystem;
 
 /// The input formats of Pandoc 3.13, as `--list-input-formats` prints them.
 #[rustfmt::skip]
@@ -271,8 +271,7 @@ pub fn run(command: &InfoCommand, program: &str, user_data_dir: &str) -> Result<
         }
         InfoCommand::PrintDefaultDataFile(name) => return subsystem::default_data_file(name),
         InfoCommand::PrintHighlightStyle(style) => {
-            return subsystem::highlight_style(style)
-                .ok_or_else(|| subsystem::missing(Subsystem::Highlighting(style.clone())));
+            return crate::convert::print_highlight_style(style, |path| std::fs::read(path));
         }
     };
     Ok(text.into_bytes())

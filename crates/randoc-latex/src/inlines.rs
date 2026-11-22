@@ -331,6 +331,15 @@ impl LatexWriter<'_> {
             let protect = if self.in_caption { "\\protect" } else { "" };
             return literal(format!("{protect}{}", listings_inline(attr, code)));
         }
+        if !self.in_heading
+            && let Some(highlighted) = self.highlight(attr, code)
+        {
+            let opts = crate::blocks::format_options(attr, &highlighted.language);
+            return literal(randoc_highlight::format_latex_inline(
+                &opts,
+                &highlighted.lines,
+            ));
+        }
         if self.options.highlight_style.is_some()
             && !self.in_heading
             && (attr

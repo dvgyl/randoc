@@ -5,11 +5,22 @@ use std::path::Path;
 use std::sync::OnceLock;
 
 use crate::syntax::{self, Syntax};
+use crate::token::{SourceLine, TokenType};
 use crate::xml;
 
 /// The embedded syntax definitions: each one starts with a form feed, the
 /// file name and a newline.
 const EMBEDDED: &str = include_str!("../data/syntax-definitions.txt");
+
+/// The result of [`Registry::highlight_classes`].
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct HighlightedCode {
+    /// The lower-case short name of the syntax, or empty for code without
+    /// a syntax. Pass it to [`FormatOptions::from_attr`](crate::FormatOptions::from_attr).
+    pub language: String,
+    /// The highlighted lines.
+    pub lines: Vec<SourceLine>,
+}
 
 /// A set of syntax definitions, keyed by the full syntax name.
 #[derive(Debug, Clone, Default)]
@@ -126,24 +137,46 @@ impl Registry {
         &mut self,
         dir: &str,
         names: Vec<String>,
-        mut read: impl FnMut(&str) -> Result<Vec<u8>, String>,
+        read: impl FnMut(&str) -> Result<Vec<u8>, String>,
     ) -> Result<(), String> {
         let files = definition_files(dir, names)?;
-        let mut parsed = Vec::new();
-        for path in files {
-            let bytes = read(&path)?;
-            if bytes.len() > MAX_DEFINITION_BYTES {
-                return Err(format!(
-                    "{path}: a syntax definition is larger than {MAX_DEFINITION_BYTES} bytes"
-                ));
-            }
-            let text = String::from_utf8_lossy(&bytes);
-            let s = parse_definition(&path, &text)
-                .map_err(|e| format!("Error parsing file {}: {e}", haskell_show(&path)))?;
-            parsed.push(s);
-        }
+        let parsed = parse_files(&files, read, |path, e| {
+            format!("Error parsing file {}: {e}", haskell_show(path))
+        })??;
         self.insert_all(parsed);
         Ok(())
+    }
+
+    /// Adds the definition files at `paths`, in order. `read` reads one
+    /// file; a writer passes the file read of its `Context`, so that the
+    /// sandbox rules apply. A definition with the same full name as an
+    /// earlier one replaces it.
+    ///
+    /// ```
+    /// use randoc_highlight::Registry;
+    /// let mut registry = Registry::new();
+    /// let xml = r#"<language name="Tiny" extensions="*.tiny"><highlighting>
+    ///   <contexts><context name="Normal" attribute="Normal Text"/></contexts>
+    ///   <itemDatas><itemData name="Normal Text" defStyleNum="dsNormal"/></itemDatas>
+    ///   </highlighting></language>"#;
+    /// let added = registry.add_files(&["tiny.xml"], |_| Ok::<_, ()>(xml.as_bytes().to_vec()));
+    /// assert_eq!(added, Ok(Ok(())));
+    /// assert_eq!(registry.lookup("tiny").map(|s| s.name()), Some("Tiny"));
+    /// ```
+    ///
+    /// # Errors
+    ///
+    /// The outer result is the first error of `read`. The inner result is
+    /// the first parse error without the path, as Pandoc reports it for
+    /// `--syntax-definition`, or an error for more than
+    /// [`MAX_DEFINITION_FILES`] paths or a file larger than
+    /// [`MAX_DEFINITION_BYTES`]. On an error, the registry does not change.
+    pub fn add_files<E>(
+        &mut self,
+        paths: &[impl AsRef<str>],
+        read: impl FnMut(&str) -> Result<Vec<u8>, E>,
+    ) -> Result<Result<(), String>, E> {
+        Ok(parse_files(paths, read, |_, e| e)?.map(|parsed| self.insert_all(parsed)))
     }
 
     fn insert_all(&mut self, parsed: Vec<Syntax>) {
@@ -205,6 +238,68 @@ impl Registry {
         classes.iter().find_map(|c| self.lookup(c))
     }
 
+    /// Highlights the code of a `CodeBlock` or `Code` element with the
+    /// classes `classes`, as Pandoc 3.13 does. `max_depth` is the largest
+    /// size of the context stack.
+    ///
+    /// - The first class that names a language selects the syntax. The
+    ///   language of the result is its lower-case short name.
+    /// - Without a syntax, the class `numberLines` or `number-lines` gives
+    ///   each line as one `Normal` token, with an empty language.
+    /// - Otherwise the result is `None`: the writer gives plain code.
+    ///
+    /// ```
+    /// use randoc_highlight::{Registry, TokenType};
+    /// let registry = Registry::embedded();
+    /// let classes = ["rs".to_string()];
+    /// let code = registry.highlight_classes(&classes, "let x;", 64);
+    /// assert_eq!(code.and_then(Result::ok).map(|c| c.language), Some("rust".to_string()));
+    /// let classes = ["nosuch".to_string(), "numberLines".to_string()];
+    /// let code = registry.highlight_classes(&classes, "a\nb", 64).and_then(Result::ok);
+    /// let lines = code.map(|c| c.lines);
+    /// assert_eq!(lines, Some(vec![
+    ///     vec![(TokenType::Normal, "a".to_string())],
+    ///     vec![(TokenType::Normal, "b".to_string())],
+    /// ]));
+    /// assert!(registry.highlight_classes(&["nosuch".to_string()], "a", 64).is_none());
+    /// ```
+    ///
+    /// # Errors
+    ///
+    /// The inner result is the error of [`highlight`](crate::highlight).
+    /// Pandoc then reports `Could not highlight code block` and gives plain
+    /// code.
+    pub fn highlight_classes(
+        &self,
+        classes: &[String],
+        code: &str,
+        max_depth: usize,
+    ) -> Option<Result<HighlightedCode, String>> {
+        match self.lookup_classes(classes) {
+            Some(syntax) => Some(
+                crate::tokenizer::tokenize(self, syntax, code, max_depth).map(|lines| {
+                    HighlightedCode {
+                        language: syntax.short_name.to_lowercase(),
+                        lines,
+                    }
+                }),
+            ),
+            None if classes
+                .iter()
+                .any(|class| class == "numberLines" || class == "number-lines") =>
+            {
+                Some(Ok(HighlightedCode {
+                    language: String::new(),
+                    lines: code
+                        .split_terminator('\n')
+                        .map(|line| vec![(TokenType::Normal, line.to_string())])
+                        .collect(),
+                }))
+            }
+            None => None,
+        }
+    }
+
     /// The names that `--list-highlight-languages` prints: the lower-case
     /// short names, sorted. Pandoc 3.13 leaves out `alert` (the `Alerts`
     /// syntax), although a code block with the class `alert` highlights;
@@ -235,6 +330,35 @@ impl Registry {
     pub(crate) fn get(&self, name: &str) -> Option<&Syntax> {
         self.syntaxes.get(name)
     }
+}
+
+/// Parses the definition files at `paths`. `describe` gives the text of a
+/// parse error from the path and the error.
+fn parse_files<E>(
+    paths: &[impl AsRef<str>],
+    mut read: impl FnMut(&str) -> Result<Vec<u8>, E>,
+    describe: impl Fn(&str, String) -> String,
+) -> Result<Result<Vec<Syntax>, String>, E> {
+    if paths.len() > MAX_DEFINITION_FILES {
+        return Ok(Err(format!(
+            "more than {MAX_DEFINITION_FILES} syntax definitions"
+        )));
+    }
+    let mut parsed = Vec::new();
+    for path in paths {
+        let path = path.as_ref();
+        let bytes = read(path)?;
+        if bytes.len() > MAX_DEFINITION_BYTES {
+            return Ok(Err(format!(
+                "{path}: a syntax definition is larger than {MAX_DEFINITION_BYTES} bytes"
+            )));
+        }
+        match parse_definition(path, &String::from_utf8_lossy(&bytes)) {
+            Ok(s) => parsed.push(s),
+            Err(e) => return Ok(Err(describe(path, e))),
+        }
+    }
+    Ok(Ok(parsed))
 }
 
 fn parse_definition(path: &str, text: &str) -> Result<Syntax, String> {

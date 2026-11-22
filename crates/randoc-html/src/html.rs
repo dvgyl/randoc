@@ -35,6 +35,7 @@ pub(crate) fn write(
         context.limits.max_nesting_depth,
         min_heading_level(&doc.blocks),
     );
+    writer.registry = crate::highlight::load_registry(options, context)?;
     let mut template_context = match options.template {
         Some(_) => Some(writer.meta_context(&doc.meta)?),
         None => None,
@@ -54,6 +55,16 @@ pub(crate) fn write(
     let mut out = match (&options.template, template_context.as_mut()) {
         (Some(template), Some(fields)) => {
             writer.add_writer_fields(fields, &doc.meta, body)?;
+            if writer.wrote_highlighting
+                && let Some(style) = &options.highlight_style
+            {
+                let css =
+                    randoc_highlight::style_css(&crate::highlight::load_style(style, context)?);
+                fields
+                    .0
+                    .entry("highlighting-css".to_owned())
+                    .or_insert(randoc_templates::Val::text(css));
+            }
             template.render(fields).render(width)
         }
         _ => {
@@ -87,6 +98,7 @@ pub(crate) fn write_blocks(
         context.limits.max_nesting_depth,
         min_heading_level(blocks),
     );
+    writer.registry = crate::highlight::load_registry(options, context)?;
     let mut body = writer.section_blocks(blocks, 0)?;
     let notes = writer.footnote_section(ReferenceLocation::EndOfDocument, "")?;
     if !notes.is_empty() {
@@ -145,7 +157,7 @@ pub(crate) struct Html<'a> {
     /// The smallest heading level of the document. Section numbers count from it.
     min_level: i64,
     /// The warnings of the conversion, in order.
-    warnings: RefCell<Vec<LogMessage>>,
+    pub(crate) warnings: RefCell<Vec<LogMessage>>,
     /// The leading heading level of each div that `leading_heading_level` has
     /// walked, by address. The key is valid because the writer reads only the
     /// blocks of the input document, which lives for the whole conversion.
@@ -164,6 +176,15 @@ pub(crate) struct Html<'a> {
     pub(crate) wrote_q_tags: bool,
     /// `true` when the document has math (the template variable `math`).
     pub(crate) wrote_math: bool,
+    /// The syntax definitions when the options add files to the embedded
+    /// definitions.
+    pub(crate) registry: Option<randoc_highlight::Registry>,
+    /// The number of code blocks without an identifier so far. A
+    /// highlighted block without an identifier gets the identifier `cbN`.
+    code_blocks: usize,
+    /// `true` when the output has highlighted code (the template variable
+    /// `highlighting-css`).
+    pub(crate) wrote_highlighting: bool,
 }
 
 impl<'a> Html<'a> {
@@ -195,6 +216,9 @@ impl<'a> Html<'a> {
             toc_open: Vec::new(),
             wrote_q_tags: false,
             wrote_math: false,
+            registry: None,
+            code_blocks: 0,
+            wrote_highlighting: false,
         }
     }
 }
@@ -234,7 +258,7 @@ impl Html<'_> {
     /// Returns the key-value pairs as attributes. Pandoc leaves out a pair
     /// with an empty key, and keeps the first pair of each key with a warning
     /// for each later pair.
-    fn key_values(&self, pairs: &[(Text, Text)]) -> Attrs {
+    pub(crate) fn key_values(&self, pairs: &[(Text, Text)]) -> Attrs {
         let mut seen = Seen::default();
         let mut out = Attrs::new();
         for (key, value) in pairs {
@@ -966,6 +990,15 @@ impl Html<'_> {
                 self.inline_element("div", &attrs, body)
             }
             Block::CodeBlock(attr, code) => {
+                let id = if attr.id.is_empty() {
+                    self.code_blocks += 1;
+                    format!("cb{}", self.code_blocks)
+                } else {
+                    attr.id.clone()
+                };
+                if let Some(doc) = self.highlighted_block(attr, code, &id, &extra) {
+                    return Ok(doc);
+                }
                 let mut attrs = self.attrs(attr);
                 attrs.extend(extra);
                 let mut doc = self.open("pre", &attrs);
@@ -1636,6 +1669,11 @@ impl Html<'_> {
                 self.inline_element("span", &attrs, body)
             }
             Inline::Code(attr, code) => {
+                if !self.obfuscating
+                    && let Some(doc) = self.highlighted_code(attr, code)
+                {
+                    return Ok(doc);
+                }
                 let body = if self.obfuscating {
                     lit(&obfuscate(code))
                 } else {

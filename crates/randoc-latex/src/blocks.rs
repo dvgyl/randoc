@@ -3,7 +3,8 @@
 use std::borrow::Cow;
 
 use randoc_ast::{Attr, Block, Caption, Inline, ListAttributes, ListNumberDelim, ListNumberStyle};
-use randoc_core::{Extension, Result, TopLevelDivision};
+use randoc_core::{Extension, LogMessage, Result, TopLevelDivision};
+use randoc_highlight::{FormatOptions, HighlightedCode, Registry};
 use randoc_layout::{Doc, cr, empty, flush, literal, nest, vcat, vsep};
 
 use crate::LatexWriter;
@@ -386,7 +387,38 @@ pub(crate) fn highlight_escape(code: &str) -> String {
     out
 }
 
+/// The options of the highlighter for a code element with `attr`.
+pub(crate) fn format_options(attr: &Attr, language: &str) -> FormatOptions {
+    let key_values: Vec<(String, String)> = attr
+        .attributes
+        .iter()
+        .map(|(key, value)| (key.to_string(), value.to_string()))
+        .collect();
+    FormatOptions::from_attr("", &attr.classes, &key_values, language)
+}
+
 impl LatexWriter<'_> {
+    /// Highlights code with the classes of `attr` when the options ask for
+    /// highlighting. A highlighter error gives a warning and `None`, as
+    /// Pandoc gives plain code then.
+    pub(crate) fn highlight(&mut self, attr: &Attr, code: &str) -> Option<HighlightedCode> {
+        if self.options.listings {
+            return None;
+        }
+        self.options.highlight_style.as_ref()?;
+        let registry = self
+            .registry
+            .as_ref()
+            .unwrap_or_else(|| Registry::embedded());
+        match registry.highlight_classes(&attr.classes, code, self.max_depth)? {
+            Ok(highlighted) => Some(highlighted),
+            Err(error) => {
+                self.warnings.push(LogMessage::CouldNotHighlight(error));
+                None
+            }
+        }
+    }
+
     /// Renders a list of blocks, separated by blank lines.
     pub(crate) fn blocks(&mut self, blocks: &[Block]) -> Result<Doc> {
         self.blocks_after(Vec::new(), blocks)
@@ -545,6 +577,12 @@ impl LatexWriter<'_> {
             literal(format!("\\begin{{lstlisting}}{options}"))
                 .above(literal(code.to_owned()))
                 .above(literal("\\end{lstlisting}"))
+        } else if let Some(highlighted) = self.highlight(attr, code) {
+            let opts = format_options(attr, &highlighted.language);
+            literal(randoc_highlight::format_latex_block(
+                &opts,
+                &highlighted.lines,
+            ))
         } else if code.contains(&format!("\\end{{{verbatim}}}"))
             || (!attr.classes.is_empty() && self.options.highlight_style.is_some())
         {
@@ -1249,6 +1287,63 @@ mod tests {
         assert_eq!(
             highlight_escape("% # _ ^ ~ < > | \" ` -- … é"),
             "\\% \\# \\_ \\^{} \\textasciitilde{} \\textless{} \\textgreater{} | \" \\textasciigrave{} {-}{-} … é"
+        );
+    }
+
+    fn latex(blocks: Vec<Block>, options: &randoc_core::WriterOptions) -> String {
+        let doc = randoc_ast::Pandoc {
+            meta: Default::default(),
+            blocks,
+        };
+        crate::write_latex(&doc, options, &mut randoc_core::Context::pure()).unwrap()
+    }
+
+    fn code(classes: &[&str], attributes: &[(&str, &str)], code: &str) -> Block {
+        let classes = classes.iter().map(|c| c.to_string()).collect();
+        let attributes = attributes
+            .iter()
+            .map(|(k, v)| (k.to_string(), v.to_string()))
+            .collect();
+        Block::CodeBlock(Attr::new("", classes, attributes), code.into())
+    }
+
+    #[test]
+    fn highlighted_code_has_the_tokens_of_the_language() {
+        // The bytes of `pandoc -t latex` for these blocks.
+        let options = randoc_core::WriterOptions::default();
+        let block = code(&["rust", "numberLines"], &[("startFrom", "3")], "fn x(){}");
+        assert_eq!(
+            latex(vec![block], &options),
+            "\\begin{Shaded}\n\\begin{Highlighting}[numbers=left,,firstnumber=3,]\n\
+             \\KeywordTok{fn}\\NormalTok{ x()}\\OperatorTok{\\{\\}}\n\
+             \\end{Highlighting}\n\\end{Shaded}"
+        );
+        let inline = Block::Para(vec![Inline::Code(
+            Attr::new("", vec!["rust".into()], Vec::new()),
+            "fn".into(),
+        )]);
+        assert_eq!(latex(vec![inline], &options), "\\VERB|\\KeywordTok{fn}|");
+        // An unknown class gives one `\NormalTok` per line.
+        assert_eq!(
+            latex(vec![code(&["foo"], &[], "x")], &options),
+            "\\begin{Shaded}\n\\begin{Highlighting}[]\n\\NormalTok{x}\n\\end{Highlighting}\n\\end{Shaded}"
+        );
+    }
+
+    #[test]
+    fn listings_and_no_highlighting_give_no_tokens() {
+        let mut options = randoc_core::WriterOptions::default();
+        options.highlight_style = None;
+        // `listings` has no Rust language.
+        let block = || code(&["rust"], &[], "fn x");
+        assert_eq!(
+            latex(vec![block()], &options),
+            "\\begin{verbatim}\nfn x\n\\end{verbatim}"
+        );
+        options.listings = true;
+        assert_eq!(
+            latex(vec![block()], &options),
+            "\\begin{lstlisting}\nfn x\n\\end{lstlisting}"
         );
     }
 }

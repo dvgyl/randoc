@@ -18,8 +18,8 @@ use std::sync::Arc;
 
 use randoc_ast::{Block, Pandoc, Text};
 use randoc_core::{
-    CiteMethod, Context, Error, Extension, Result, TopLevelDivision, WrapOption, Writer,
-    WriterOptions,
+    CiteMethod, Context, Error, Extension, LogMessage, Result, TopLevelDivision, WrapOption,
+    Writer, WriterOptions,
 };
 use randoc_layout::Doc;
 
@@ -51,6 +51,7 @@ fn write(
     beamer: bool,
 ) -> Result<Text> {
     let mut writer = LatexWriter::new(options, context.limits.max_nesting_depth, beamer);
+    writer.registry = load_registry(options, context)?;
     let blocks = body_blocks(&doc.blocks, options.cite_method);
     let body = if beamer {
         writer.slides(&blocks)?
@@ -66,7 +67,26 @@ fn write(
     if text.ends_with('\n') {
         text.pop();
     }
+    for warning in writer.warnings {
+        context.report(warning);
+    }
     Ok(text)
+}
+
+/// Reads the syntax definition files of the options through the context.
+/// The result is `None` when the embedded definitions are enough.
+fn load_registry(
+    options: &WriterOptions,
+    context: &mut Context,
+) -> Result<Option<randoc_highlight::Registry>> {
+    if options.highlight_style.is_none() || options.syntax_definitions.is_empty() {
+        return Ok(None);
+    }
+    let mut registry = randoc_highlight::Registry::embedded().clone();
+    registry
+        .add_files(&options.syntax_definitions, |path| context.read_file(path))?
+        .map_err(Error::SyntaxMap)?;
+    Ok(Some(registry))
 }
 
 /// The top-level blocks that the writer renders. With `natbib` or
@@ -179,6 +199,11 @@ pub(crate) struct LatexWriter<'a> {
     pub(crate) emphasis_seen: HashSet<usize>,
     /// The addresses of the emphasis commands that such a note splits.
     pub(crate) emphasis_split: HashSet<usize>,
+    /// The syntax definitions when the options add files to the embedded
+    /// definitions.
+    pub(crate) registry: Option<randoc_highlight::Registry>,
+    /// The warnings of the conversion, in order.
+    pub(crate) warnings: Vec<LogMessage>,
 }
 
 impl<'a> LatexWriter<'a> {
@@ -217,6 +242,8 @@ impl<'a> LatexWriter<'a> {
             table_notes: Vec::new(),
             emphasis_seen: HashSet::new(),
             emphasis_split: HashSet::new(),
+            registry: None,
+            warnings: Vec::new(),
         }
     }
 

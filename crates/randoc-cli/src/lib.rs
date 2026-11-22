@@ -177,9 +177,6 @@ fn run_checked(args: &[String]) -> Result<()> {
             .data_dir
             .clone()
             .unwrap_or_else(default_user_data_dir);
-        if let cli::InfoCommand::PrintHighlightStyle(style) = &command {
-            convert::check_highlight_style(style, |path| std::fs::read(path))?;
-        }
         return write_stdout(&info::run(&command, program, &data_dir)?);
     }
     convert::run_on_this_thread(settings, positional)

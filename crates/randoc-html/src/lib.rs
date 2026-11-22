@@ -22,6 +22,7 @@
 mod attributes;
 #[cfg(test)]
 mod digests;
+mod highlight;
 mod html;
 pub mod shared;
 mod standalone;
@@ -84,7 +85,8 @@ mod tests {
         assert_eq!(html, "<div id=\"d\">\n<p>a&lt;b</p>\n</div>");
     }
 
-    /// Write units with a known divergence. See `docs/ISSUES.md`, I-HTML-01 and I-HTML-02.
+    /// Write units with a known divergence. See `docs/ISSUES.md`, I-HTML-01 and
+    /// I-HL-01 (`haskell` is not an embedded syntax).
     const KNOWN_DIVERGENCES: &[&str] = &[
         "cite-math/math-inline#",
         "cite-math/math-display#",

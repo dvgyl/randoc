@@ -70,7 +70,8 @@ impl FormatOptions {
     ///   The key `start-from` has no effect.
     /// - `language` is the lower-case name of the syntax that the highlighter
     ///   selected (for example `cpp` for the class `c++`). It is the only
-    ///   code class.
+    ///   code class. An empty language (code with line numbers and without
+    ///   a syntax) gives no code class.
     /// - `line_anchors` and `title_attributes` stay `false`.
     ///
     /// The HTML formatters use the start number also without line numbers.
@@ -104,7 +105,11 @@ impl FormatOptions {
             start_number,
             line_anchors: false,
             title_attributes: false,
-            code_classes: vec![language.to_string()],
+            code_classes: if language.is_empty() {
+                Vec::new()
+            } else {
+                vec![language.to_string()]
+            },
             container_classes: classes.to_vec(),
             line_id_prefix: if id.is_empty() {
                 String::new()

@@ -576,7 +576,6 @@ fn reader_options(settings: &Settings, spec: &FormatSpec) -> Result<ReaderOption
 #[derive(Clone, Copy, PartialEq, Eq)]
 enum ReadPoint {
     BeforeTemplate,
-    AfterTemplate,
     AfterInputs,
 }
 
@@ -606,13 +605,6 @@ const NAMED_FILES: &[NamedFiles] = &[
         point: ReadPoint::BeforeTemplate,
         sandbox_only: false,
         text: true,
-    },
-    NamedFiles {
-        files: |s| s.syntax_definitions.iter().collect(),
-        operation: "openBinaryFile",
-        point: ReadPoint::AfterTemplate,
-        sandbox_only: false,
-        text: false,
     },
     NamedFiles {
         files: |s| s.reference_doc.iter().collect(),
@@ -671,6 +663,42 @@ fn read_named_files(point: ReadPoint, settings: &Settings, context: &mut Context
         }
     }
     Ok(())
+}
+
+/// Reads and parses each `--syntax-definition` file in the order of Pandoc,
+/// after the template. Pandoc does it for each output format, so a bad file
+/// is an error also when the writer does not highlight.
+fn read_syntax_definitions(settings: &Settings, context: &mut Context) -> Result<()> {
+    let paths: Vec<&String> = settings.syntax_definitions.iter().collect();
+    randoc_highlight::Registry::new()
+        .add_files(&paths, |path| {
+            context
+                .host()
+                .read_file(path)
+                .map_err(|error| io_error(path, "openBinaryFile", &error))
+        })?
+        .map_err(Error::SyntaxMap)
+}
+
+/// The JSON form of a built-in highlighting style or of a theme file, as
+/// `--print-highlight-style` prints it.
+pub fn print_highlight_style(
+    style: &str,
+    read: impl FnOnce(&str) -> std::io::Result<Vec<u8>>,
+) -> Result<Vec<u8>> {
+    if let Some(builtin) = randoc_highlight::Style::builtin(style) {
+        return Ok(builtin.to_json().into_bytes());
+    }
+    let mut bytes = Vec::new();
+    check_highlight_style(style, |path| {
+        bytes = read(path)?;
+        Ok(bytes.clone())
+    })?;
+    std::str::from_utf8(&bytes)
+        .ok()
+        .and_then(|text| randoc_highlight::Style::from_json(text).ok())
+        .map(|theme| theme.to_json().into_bytes())
+        .ok_or_else(|| Error::Option(format!("Could not read highlighting theme {style}")))
 }
 
 /// Returns the abbreviations for the reader: one on each line of the
@@ -1467,7 +1495,7 @@ fn convert(
         }
         None => None,
     };
-    read_named_files(ReadPoint::AfterTemplate, settings, context)?;
+    read_syntax_definitions(settings, context)?;
     // Pandoc reads the template, then the theme file, then the include files.
     let style = settings.syntax_highlighting.as_str();
     if !matches!(style, "none" | "default" | "idiomatic") {
@@ -2019,7 +2047,7 @@ mod tests {
         let mut context = Context::new(Box::new(randoc::NativeHost));
         assert!(read_named_files(ReadPoint::BeforeTemplate, &settings, &mut context).is_ok());
         assert!(read_named_files(ReadPoint::AfterInputs, &settings, &mut context).is_ok());
-        let error = read_named_files(ReadPoint::AfterTemplate, &settings, &mut context)
+        let error = read_syntax_definitions(&settings, &mut context)
             .unwrap_err()
             .to_string();
         assert_eq!(

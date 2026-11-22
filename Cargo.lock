@@ -311,6 +311,7 @@ dependencies = [
  "randoc",
  "randoc-data",
  "randoc-harness",
+ "randoc-highlight",
  "randoc-layout",
  "randoc-lua",
  "randoc-templates",
@@ -369,6 +370,7 @@ dependencies = [
  "randoc-ast",
  "randoc-core",
  "randoc-data",
+ "randoc-highlight",
  "randoc-layout",
  "randoc-math",
  "randoc-templates",
@@ -391,6 +393,7 @@ version = "0.1.0"
 dependencies = [
  "randoc-ast",
  "randoc-core",
+ "randoc-highlight",
  "randoc-layout",
  "serde_json",
  "toml",

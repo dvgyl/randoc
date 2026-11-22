@@ -19,6 +19,7 @@ lua = ["dep:randoc-lua"]
 [dependencies]
 randoc = { workspace = true }
 randoc-data = { workspace = true }
+randoc-highlight = { workspace = true }
 randoc-layout = { workspace = true }
 randoc-templates = { workspace = true }
 randoc-yaml = { workspace = true }

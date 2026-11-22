@@ -13,6 +13,7 @@ exclude = ["src/*.jsonl", "src/digests.json"]
 [dependencies]
 randoc-ast = { workspace = true }
 randoc-core = { workspace = true }
+randoc-highlight = { workspace = true }
 randoc-layout = { workspace = true }
 randoc-math = { workspace = true }
 randoc-templates = { workspace = true }

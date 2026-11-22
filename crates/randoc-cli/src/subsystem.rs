@@ -14,8 +14,6 @@ pub enum Subsystem {
     DataFiles(String),
     /// Templates and `--standalone` output.
     Templates,
-    /// Syntax highlighting (`--print-highlight-style`, `--syntax-definition`).
-    Highlighting(String),
     /// Citation processing (`--citeproc`, `--bibliography`).
     Citeproc,
     /// PDF output with a PDF engine.
@@ -31,41 +29,12 @@ pub fn missing(subsystem: Subsystem) -> Error {
     let feature = match subsystem {
         Subsystem::DataFiles(name) => format!("the default data file '{name}'"),
         Subsystem::Templates => "templates and standalone output".to_owned(),
-        Subsystem::Highlighting(name) => format!("syntax highlighting ('{name}')"),
         Subsystem::Citeproc => "citation processing".to_owned(),
         Subsystem::Pdf => "PDF output".to_owned(),
         Subsystem::ExtractMedia => "--extract-media".to_owned(),
         Subsystem::EmbedResources => "--embed-resources".to_owned(),
     };
     Error::App(format!("Randoc does not support {feature} yet."))
-}
-
-/// The highlighting styles as `--print-highlight-style` prints them.
-const HIGHLIGHT_STYLES: &[u8] = include_bytes!("../data/highlight-styles.bundle");
-
-/// Finds an entry in a bundle: a sequence of `NAME\nLENGTH\nBYTES`.
-fn bundle_entry<'a>(mut bundle: &'a [u8], name: &str) -> Option<&'a [u8]> {
-    loop {
-        let line_end = bundle.iter().position(|&b| b == b'\n')?;
-        let (entry_name, rest) = bundle.split_at(line_end);
-        let rest = rest.get(1..)?;
-        let length_end = rest.iter().position(|&b| b == b'\n')?;
-        let length: usize = std::str::from_utf8(rest.get(..length_end)?)
-            .ok()?
-            .parse()
-            .ok()?;
-        let body = rest.get(length_end + 1..)?;
-        let contents = body.get(..length)?;
-        if entry_name == name.as_bytes() {
-            return Some(contents);
-        }
-        bundle = body.get(length..)?;
-    }
-}
-
-/// Returns the JSON form of a highlighting style.
-pub fn highlight_style(name: &str) -> Option<Vec<u8>> {
-    bundle_entry(HIGHLIGHT_STYLES, &name.to_ascii_lowercase()).map(<[u8]>::to_vec)
 }
 
 /// Returns a default data file of Pandoc.
@@ -100,8 +69,5 @@ mod tests {
         );
         let plain = default_data_file("templates/default.plain").unwrap_or_default();
         assert!(plain.starts_with(b"$if(titleblock)$"));
-        assert!(highlight_style("Tango").is_some_and(|s| s.starts_with(b"{")));
-        assert!(highlight_style("nosuch").is_none());
-        assert_eq!(bundle_entry(b"a\n9\nxy", "a"), None);
     }
 }
