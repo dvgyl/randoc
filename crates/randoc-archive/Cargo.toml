@@ -1,0 +1,18 @@
+[package]
+name = "randoc-archive"
+description = "Bounded ZIP container, OPC, media, and XML parsing helpers for Randoc"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]
+quick-xml = { workspace = true }
+randoc-ast = { workspace = true }
+randoc-core = { workspace = true }
+zip = { workspace = true }
+
+[lints]
+workspace = true
