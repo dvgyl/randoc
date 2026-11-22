@@ -34,11 +34,6 @@
 # known I-LUA-31 convert-read-markdown_strict read markdown_strict {tab_stop = 8}
 # known I-LUA-31 convert-read-markdown_strict read markdown_strict {default_image_extension = 'png'}
 # known I-LUA-31 convert-read-markdown_strict read markdown_strict {strip_comments = true}
-# known I-LUA-31 convert-write-commonmark write commonmark {identifier_prefix = 'p-'}
-# known I-LUA-31 convert-write-commonmark_x write commonmark_x {identifier_prefix = 'p-'}
-# known I-LUA-31 convert-write-markdown write markdown {identifier_prefix = 'p-'}
-# known I-LUA-31 convert-write-markdown_strict write markdown_strict {identifier_prefix = 'p-'}
-# known I-LUA-31 convert-write-plain write plain {identifier_prefix = 'p-'}
 # known I-LUA-31 convert-write-commonmark write commonmark {prefer_ascii = true}
 # known I-LUA-31 convert-write-gfm write gfm {prefer_ascii = true}
 # known I-LUA-31 convert-write-markdown_github write markdown_github {prefer_ascii = true}

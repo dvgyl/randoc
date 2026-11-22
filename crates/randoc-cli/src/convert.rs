@@ -1456,8 +1456,18 @@ fn convert(
         None => guess_output_format(output, context),
     };
     let from_spec = format_spec(&from)?;
-    let reader =
-        formats::reader(&from_spec.name).ok_or(Error::UnknownReader(from_spec.name.clone()))?;
+    // Pandoc loads a custom reader script before it checks the extensions.
+    // The script gets the options of each read when it reads.
+    let script_options = (ReaderOptions::default(), WriterOptions::default());
+    let script_options = crate::lua::Options {
+        reader: &script_options.0,
+        writer: &script_options.1,
+    };
+    let reader = if crate::lua::is_script(&from_spec.name) {
+        crate::lua::custom_reader(&from_spec.name, settings, data_dir, script_options, context)?
+    } else {
+        formats::reader(&from_spec.name).ok_or(Error::UnknownReader(from_spec.name.clone()))?
+    };
     let mut reader_options = reader_options(settings, &from_spec)?;
     // The program applies `east_asian_line_breaks` after the reader; the
     // readers of Pandoc do not look at it.
@@ -1471,8 +1481,11 @@ fn convert(
     if to_spec.name == "pdf" {
         return Err(subsystem::missing(Subsystem::Pdf));
     }
-    let writer =
-        formats::writer(&to_spec.name).ok_or(Error::UnknownWriter(to_spec.name.clone()))?;
+    let writer = if crate::lua::is_script(&to_spec.name) {
+        crate::lua::custom_writer(&to_spec.name, settings, data_dir, script_options, context)?
+    } else {
+        formats::writer(&to_spec.name).ok_or(Error::UnknownWriter(to_spec.name.clone()))?
+    };
     let writer_options = writer_options(settings, &to_spec)?;
     if output.is_none()
         && settings.output_file.is_none()
@@ -1489,6 +1502,15 @@ fn convert(
     let files = TemplateFiles::new(settings, data_dir);
     let template = match &settings.template {
         Some(name) => Some(find_template(name, &to_spec.name, &files, context)?.1),
+        // A custom writer gives its template in the global `Template`,
+        // which Randoc does not read yet (I-LUA-29). Pandoc gives exit
+        // code 87 for this error; `randoc-core` has no error of that code.
+        None if settings.is_standalone() && crate::lua::is_script(&to_spec.name) => {
+            return Err(Error::App(format!(
+                "No template defined in '{}'",
+                to_spec.name
+            )));
+        }
         None if settings.is_standalone() => {
             let text = crate::template::default_template(&to_spec.name, &files, context)?;
             Some(crate::template::compile(&text, &files, context)?)
@@ -1539,9 +1561,19 @@ fn convert(
                 usize::try_from(settings.tab_stop).unwrap_or(0)
             };
             let max_len = usize::try_from(context.limits.max_resource_size).unwrap_or(usize::MAX);
+            let script_reader = crate::lua::is_script(&from_spec.name);
             let mut sources = Vec::new();
             for (name, bytes) in &raw {
-                let text = decode(name, bytes, context);
+                let mut text = decode(name, bytes, context);
+                // A custom reader gets each text with a final line end and
+                // one more line end (oracle probes: `a` and `a\n` give
+                // `a\n\n`, an empty file gives `\n`).
+                if script_reader {
+                    if !text.is_empty() && !text.ends_with('\n') {
+                        text.push('\n');
+                    }
+                    text.push('\n');
+                }
                 sources.push(Source {
                     name: name.clone(),
                     text: expand_tabs(&text, tab_stop, max_len).ok_or_else(|| {

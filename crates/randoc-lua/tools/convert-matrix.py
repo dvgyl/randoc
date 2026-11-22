@@ -322,8 +322,6 @@ KNOWN = (
        for name in _MARKDOWN_READERS
        for options in ["{tab_stop = 2}", "{tab_stop = 8}", "{default_image_extension = 'png'}",
                        "{strip_comments = true}"]]
-    + [("I-LUA-31", f"convert-write-{name}", f"write {name} {{identifier_prefix = 'p-'}}")
-       for name in ["commonmark", "commonmark_x", "markdown", "markdown_strict", "plain"]]
     + [("I-LUA-31", f"convert-write-{name}", f"write {name} {{prefer_ascii = true}}")
        for name in ["commonmark", "gfm", "markdown_github", "markdown_mmd", "markdown_phpextra",
                     "markdown_strict", "plain"]]

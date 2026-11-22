@@ -161,6 +161,14 @@ pub fn settings_from_args(
 fn run_checked(args: &[String]) -> Result<()> {
     let program = program_name(args);
     let rest = args.get(1..).unwrap_or_default();
+    // `pandoc lua ARGS` and a program called `pandoc-lua` run the Lua
+    // interpreter.
+    if program == "pandoc-lua" {
+        return lua_interpreter(program, rest);
+    }
+    if let Some(("lua", arguments)) = rest.split_first().map(|(a, r)| (a.as_str(), r)) {
+        return lua_interpreter("pandoc lua", arguments);
+    }
     let before_end = rest.iter().take_while(|arg| *arg != "--");
     if before_end
         .into_iter()
@@ -180,6 +188,22 @@ fn run_checked(args: &[String]) -> Result<()> {
         return write_stdout(&info::run(&command, program, &data_dir)?);
     }
     convert::run_on_this_thread(settings, positional)
+}
+
+/// Runs the Lua interpreter with the arguments after `pandoc lua`. The
+/// options of the interpreter are not implemented (I-LUA-29); `--` before
+/// the script is permitted.
+fn lua_interpreter(program: &str, arguments: &[String]) -> Result<()> {
+    let arguments = match arguments.split_first() {
+        Some((first, rest)) if first == "--" => rest,
+        Some((first, _)) if first.len() > 1 && first.starts_with('-') => {
+            return Err(Error::App(format!(
+                "Randoc does not support the option {first} of pandoc lua yet."
+            )));
+        }
+        _ => arguments,
+    };
+    lua::interpreter(program, arguments)
 }
 
 /// Writes bytes to standard output.

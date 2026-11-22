@@ -277,18 +277,34 @@ impl BinaryWriter for LuaWriter {
     }
 }
 
-/// Runs a script as `pandoc lua SCRIPT ARGS` does: `arg[-1]` is
-/// `pandoc lua`, `arg[0]` the script, `arg[1]` and later the arguments,
-/// which the chunk also gets as `...`. The options `-e`, `-i`, `-l`, `-v`
-/// and `-W` of the interpreter are not implemented (row I-LUA-29).
+/// The command line of `pandoc lua`, which gives the global `arg`.
+#[derive(Debug, Clone, Copy)]
+pub struct Invocation<'a> {
+    /// The program name: `pandoc lua`, or the name of a program called
+    /// `pandoc-lua`.
+    pub program: &'a str,
+    /// The script argument as the user gave it (`-` for standard input),
+    /// or `None` when the command line names no script.
+    pub script: Option<&'a str>,
+    /// The arguments after the script.
+    pub arguments: &'a [String],
+}
+
+/// Runs a script as `pandoc lua SCRIPT ARGS` does. `script.path` names the
+/// chunk in error messages (Pandoc names standard input `stdin`). In `arg`,
+/// `arg[-1]` is the program, `arg[0]` the script argument, `arg[1]` and
+/// later the arguments, which the chunk also gets as `...`. Without a
+/// script argument, `arg[0]` is the program. The options `-e`, `-i`, `-l`,
+/// `-v` and `-W` of the interpreter are not implemented (row I-LUA-29).
 ///
 /// An error is [`Error::Lua`] with the text of Pandoc (exit code 84).
 pub fn run_script(
     script: &LuaFilter,
-    arguments: &[String],
+    invocation: &Invocation,
     environment: &FilterEnvironment,
     context: &mut Context,
 ) -> Result<(), Error> {
+    let arguments = invocation.arguments;
     let globals = Globals {
         format: None,
         script_file: None,
@@ -297,8 +313,13 @@ pub fn run_script(
     with_state(environment, globals, context, |cx| {
         let lua = cx.lua;
         let arg = lua.create_table()?;
-        arg.raw_set(-1, "pandoc lua")?;
-        arg.raw_set(0, script.path)?;
+        match invocation.script {
+            Some(name) => {
+                arg.raw_set(-1, invocation.program)?;
+                arg.raw_set(0, name)?;
+            }
+            None => arg.raw_set(0, invocation.program)?,
+        }
         for (index, argument) in arguments.iter().enumerate() {
             arg.raw_set(index + 1, argument.as_str())?;
         }

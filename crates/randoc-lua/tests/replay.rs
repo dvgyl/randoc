@@ -490,7 +490,12 @@ fn run_script_case(case: &ScriptCase, folder: &std::path::Path) -> (i32, String)
             let out = folder.join(format!("{}.txt", case.name));
             let mut arguments = vec![out.display().to_string()];
             arguments.extend(case.arguments.iter().cloned());
-            randoc_lua::run_script(&script, &arguments, &script_environment(), &mut context)
+            let invocation = randoc_lua::Invocation {
+                program: "pandoc lua",
+                script: Some("s.lua"),
+                arguments: &arguments,
+            };
+            randoc_lua::run_script(&script, &invocation, &script_environment(), &mut context)
                 .map(|()| std::fs::read_to_string(&out).unwrap())
         }
         other => panic!("unknown kind {other}"),
