@@ -31,12 +31,12 @@ DOCS, HELPER, FOOTER, lua_string = _matrix.DOCS, _matrix.HELPER, _matrix.FOOTER,
 
 READERS = [
     "commonmark", "commonmark_x", "csljson", "docx", "fodt", "gfm", "html", "json", "latex", "markdown",
-    "markdown_github", "markdown_mmd", "markdown_phpextra", "markdown_strict", "native", "odt",
+    "markdown_github", "markdown_mmd", "markdown_phpextra", "markdown_strict", "native", "odt", "rst",
 ]
 WRITERS = [
     "beamer", "commonmark", "commonmark_x", "csljson", "fodt", "gfm", "html", "html4", "html5", "json",
     "latex", "markdown", "markdown_github", "markdown_mmd", "markdown_phpextra",
-    "markdown_strict", "markua", "native", "odt", "opendocument", "plain",
+    "markdown_strict", "markua", "native", "odt", "opendocument", "plain", "rst",
 ]
 
 MARKDOWN = (
@@ -56,6 +56,13 @@ LATEX = (
     "\\begin{itemize}\\item one\\end{itemize}\n% comment\n"
 )
 JSON = DOCS["small"]
+RST = (
+    "A heading\n=========\n\n"
+    "Some *emphasis*, **strong text**, and `a link <https://example.org>`__.\n\n"
+    "::\n\n    sample\n\n"
+    ".. note::\n\n   A note.\n\n"
+    ">>> print(1)\n"
+)
 NATIVE = '[Header 1 ("h",[],[]) [Str "H"],Para [Emph [Str "a"],Space,Str "b"]]'
 CSLJSON = (
     '[{"id":"k","type":"book","title":"The title","author":[{"family":"Fam","given":"Giv"}],'
@@ -124,7 +131,7 @@ def odt():
 
 
 INPUT = {"csljson": CSLJSON, "docx": docx(), "html": HTML, "json": JSON, "latex": LATEX,
-         "native": NATIVE, "fodt": FODT, "odt": odt()}
+         "native": NATIVE, "fodt": FODT, "odt": odt(), "rst": RST}
 
 # Extension changes for each reader, each one supported by its format.
 READER_SPECS = {
@@ -145,6 +152,7 @@ READER_SPECS = {
     "docx": ["+empty_paragraphs", "+native_numbering"],
     "fodt": ["+empty_paragraphs", "-auto_identifiers"],
     "odt": ["+empty_paragraphs", "-auto_identifiers"],
+    "rst": ["-auto_identifiers", "+literate_haskell", "+smart"],
 }
 
 READER_OPTIONS = [
@@ -200,6 +208,7 @@ WRITER_SPECS = {
     "fodt": ["+empty_paragraphs", "+native_numbering"],
     "odt": ["+empty_paragraphs", "+native_numbering"],
     "opendocument": ["+empty_paragraphs", "+native_numbering", "+xrefs_name"],
+    "rst": ["-auto_identifiers", "+literate_haskell", "+smart"],
 }
 
 # Not `email_obfuscation = 'javascript'`: its output is a script of Pandoc
