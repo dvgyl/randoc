@@ -133,22 +133,35 @@ impl FormatSpec {
     /// Letter case does not matter: Pandoc makes the specification lowercase
     /// first, and its error messages show the lowercase form. This function
     /// does not check the names.
+    ///
+    /// A name with a `.` is a file name, for example a custom script: it
+    /// keeps its case, and it ends at the first `+` or `-` after the last
+    /// `.`, as in Pandoc 3.13. `my-writer.lua+foo` is the script
+    /// `my-writer.lua` with `+foo`, `x+y.lua` is the script `x+y.lua`, and
+    /// `A-B.C` is the unknown format `A-B.C`.
     pub fn parse(spec: &str) -> FormatSpec {
-        let spec = spec.to_lowercase();
-        let spec = spec.as_str();
-        let name_end = spec.find(['+', '-']).unwrap_or(spec.len());
-        let (name, mut rest) = spec.split_at(name_end);
-        let mut changes = Vec::new();
-        while let Some(sign) = rest.chars().next() {
-            let body = &rest[sign.len_utf8()..];
-            let end = body.find(['+', '-']).unwrap_or(body.len());
-            changes.push((sign == '+', Text::from(&body[..end])));
-            rest = &body[end..];
+        if let Some(file) = Self::parse_file_name(spec) {
+            return file;
         }
+        let spec = spec.to_lowercase();
+        let name_end = spec.find(['+', '-']).unwrap_or(spec.len());
+        let (name, rest) = spec.split_at(name_end);
         FormatSpec {
             name: Text::from(name),
-            changes,
+            changes: parse_changes(rest),
         }
+    }
+
+    fn parse_file_name(spec: &str) -> Option<FormatSpec> {
+        let extension = spec.rfind('.')? + 1;
+        let name_end = spec[extension..]
+            .find(['+', '-'])
+            .map_or(spec.len(), |end| extension + end);
+        let (name, rest) = spec.split_at(name_end);
+        Some(FormatSpec {
+            name: Text::from(name),
+            changes: parse_changes(rest),
+        })
     }
 
     /// Applies the extension changes to the default extensions of the format.
@@ -174,6 +187,18 @@ impl FormatSpec {
         }
         Ok(extensions)
     }
+}
+
+/// The extension changes of `+a-b`, in source order.
+fn parse_changes(mut rest: &str) -> Vec<(bool, Text)> {
+    let mut changes = Vec::new();
+    while let Some(sign) = rest.chars().next() {
+        let body = &rest[sign.len_utf8()..];
+        let end = body.find(['+', '-']).unwrap_or(body.len());
+        changes.push((sign == '+', Text::from(&body[..end])));
+        rest = &body[end..];
+    }
+    changes
 }
 
 #[cfg(test)]
@@ -214,6 +239,44 @@ mod tests {
         assert!(supported_extensions("markdown").contains(Extension::Emoji));
         assert!(default_extensions("nosuch").is_empty());
         assert!(supported_extensions("nosuch").is_empty());
+    }
+
+    #[test]
+    fn a_script_name_keeps_its_case_and_its_dashes() {
+        let parse = |spec: &str| {
+            let spec = FormatSpec::parse(spec);
+            (spec.name, spec.changes)
+        };
+        assert_eq!(parse("My-Writer.lua"), ("My-Writer.lua".into(), vec![]));
+        assert_eq!(
+            parse("my-writer.lua-smart+Foo"),
+            (
+                "my-writer.lua".into(),
+                vec![(false, "smart".into()), (true, "Foo".into())]
+            )
+        );
+        assert_eq!(parse("x+y.lua"), ("x+y.lua".into(), vec![]));
+        assert_eq!(parse("d.lua+smart.lua"), ("d.lua+smart.lua".into(), vec![]));
+        assert_eq!(
+            parse("e-f.lua+"),
+            ("e-f.lua".into(), vec![(true, "".into())])
+        );
+        // Pandoc 3.13: `Unknown output format 'NOEXT.LUA'`, `'A-B.C'`,
+        // `'Foo.Bar'` and `'markdown+foo.bar'`.
+        assert_eq!(
+            parse("NOEXT.LUA+smart"),
+            ("NOEXT.LUA".into(), vec![(true, "smart".into())])
+        );
+        assert_eq!(parse("A-B.C"), ("A-B.C".into(), vec![]));
+        assert_eq!(
+            parse("Foo.Bar+Smart"),
+            ("Foo.Bar".into(), vec![(true, "Smart".into())])
+        );
+        assert_eq!(
+            parse("markdown+foo.bar"),
+            ("markdown+foo.bar".into(), vec![])
+        );
+        assert_eq!(parse("Foo/Bar"), ("foo/bar".into(), vec![]));
     }
 
     #[test]

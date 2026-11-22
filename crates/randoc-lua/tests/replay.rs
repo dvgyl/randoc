@@ -14,7 +14,7 @@
 use std::collections::HashMap;
 
 use randoc_ast::json;
-use randoc_core::{Context, Reader, ReaderOptions, Source, Sources, Writer};
+use randoc_core::{Context, Output, Reader, ReaderOptions, Source, Sources};
 use randoc_lua::{FilterEnvironment, LuaFilter, Mode, RuntimeLimits, apply_filter};
 
 const HEADER: &str = "@@@ ";
@@ -445,25 +445,26 @@ fn run_script_case(case: &ScriptCase, folder: &std::path::Path) -> (i32, String)
     };
     let mut context = Context::pure();
     let output = match case.kind {
-        "reader" => randoc_lua::custom_reader(&script, script_environment(), &mut context)
-            .and_then(|reader| {
+        "reader" => randoc_lua::CustomScript::load(&script, script_environment(), &mut context)
+            .and_then(|mut reader| {
                 let options = script_environment().reader_options;
-                let doc = match reader {
-                    Reader::Text(reader) => {
+                let doc = match reader.reader_kind()? {
+                    randoc_lua::ScriptKind::Text => {
                         let sources = Sources(vec![Source {
                             name: "in.txt".into(),
                             text: case.input.as_str().into(),
                         }]);
-                        reader.read(&sources, &options, &mut context)?
+                        reader.read_text(&sources, &options, &[], &mut context)?
                     }
-                    Reader::Binary(reader) => {
-                        reader.read(case.input.as_bytes(), &options, &mut context)?
+                    randoc_lua::ScriptKind::Binary => {
+                        reader.read_binary(case.input.as_bytes(), &options, &[], &mut context)?
                     }
                 };
                 Ok(json::to_json(&doc) + "\n")
             }),
-        "writer" => randoc_lua::custom_writer(&script, script_environment(), &mut context)
-            .and_then(|writer| {
+        "writer" => randoc_lua::CustomScript::load(&script, script_environment(), &mut context)
+            .and_then(|mut writer| {
+                let kind = writer.writer_kind()?;
                 let Some(Reader::Text(native)) = randoc_native::reader("native") else {
                     panic!("no native reader");
                 };
@@ -473,17 +474,15 @@ fn run_script_case(case: &ScriptCase, folder: &std::path::Path) -> (i32, String)
                     &mut context,
                 )?;
                 let options = script_environment().writer_options;
-                match writer {
-                    Writer::Text(writer) => {
-                        let mut text = writer.write(&doc, &options, &mut context)?;
+                let names: Vec<String> = Vec::new();
+                match writer.write(kind, &doc, &options, &names, &mut context)? {
+                    Output::Text(mut text) => {
                         if !text.ends_with('\n') {
                             text.push('\n');
                         }
                         Ok(text)
                     }
-                    Writer::Binary(writer) => {
-                        Ok(String::from_utf8(writer.write(&doc, &options, &mut context)?).unwrap())
-                    }
+                    Output::Binary(bytes) => Ok(String::from_utf8(bytes).unwrap()),
                 }
             }),
         "lua" => {
@@ -492,6 +491,7 @@ fn run_script_case(case: &ScriptCase, folder: &std::path::Path) -> (i32, String)
             arguments.extend(case.arguments.iter().cloned());
             let invocation = randoc_lua::Invocation {
                 program: "pandoc lua",
+                options: &[],
                 script: Some("s.lua"),
                 arguments: &arguments,
             };

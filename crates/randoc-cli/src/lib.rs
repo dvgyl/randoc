@@ -192,18 +192,18 @@ fn run_checked(args: &[String]) -> Result<()> {
 
 /// Runs the Lua interpreter with the arguments after `pandoc lua`. The
 /// options of the interpreter are not implemented (I-LUA-29); `--` before
-/// the script is permitted.
+/// the script is permitted, and the script sees it in `arg[-1]`.
 fn lua_interpreter(program: &str, arguments: &[String]) -> Result<()> {
-    let arguments = match arguments.split_first() {
-        Some((first, rest)) if first == "--" => rest,
+    let (options, arguments) = match arguments.split_first() {
+        Some((first, _)) if first == "--" => arguments.split_at(1),
         Some((first, _)) if first.len() > 1 && first.starts_with('-') => {
             return Err(Error::App(format!(
                 "Randoc does not support the option {first} of pandoc lua yet."
             )));
         }
-        _ => arguments,
+        _ => (&[][..], arguments),
     };
-    lua::interpreter(program, arguments)
+    lua::interpreter(program, options, arguments)
 }
 
 /// Writes bytes to standard output.

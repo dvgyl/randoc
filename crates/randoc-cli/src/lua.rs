@@ -7,7 +7,7 @@
 //! sandbox (ADR 11).
 
 use randoc::ast::Pandoc;
-use randoc::{Context, Reader, ReaderOptions, Result, Writer, WriterOptions};
+use randoc::{Context, Output, ReaderOptions, Result, WriterOptions};
 #[cfg(feature = "lua")]
 use randoc::{Host, LogMessage, NativeHost};
 
@@ -140,56 +140,130 @@ fn find_custom(path: &str, data_dir: &str) -> String {
     }
 }
 
-/// Returns the reader of the custom reader script `path` (`-f FILE.lua`).
+/// The largest script file that the program reads: the input limit of the
+/// conversion.
 #[cfg(feature = "lua")]
-pub fn custom_reader(
-    path: &str,
-    settings: &Settings,
-    data_dir: &str,
-    options: Options<'_>,
-    context: &mut Context,
-) -> Result<Reader> {
-    let file = find_custom(path, data_dir);
-    let source = randoc_lua::read_script(&file)?;
-    let script = randoc_lua::LuaFilter {
-        path: &file,
-        source: &source,
-    };
-    let environment = environment("", settings, data_dir, options, context);
-    randoc_lua::custom_reader(&script, environment, context)
+fn max_script_bytes(context: &Context) -> usize {
+    usize::try_from(context.limits.max_input_size).unwrap_or(usize::MAX)
 }
 
-/// Returns the writer of the custom writer script `path` (`-t FILE.lua`).
+/// A custom reader or writer script (`-f FILE.lua`, `-t FILE.lua`) with
+/// its Lua state: the program uses one state for all calls, as Pandoc does.
 #[cfg(feature = "lua")]
-pub fn custom_writer(
+pub struct CustomScript(Box<randoc_lua::CustomScript>);
+
+/// The kind of a custom reader or writer script.
+#[cfg(feature = "lua")]
+pub use randoc_lua::ScriptKind;
+
+/// Loads the custom reader or writer script `path`: it runs the top-level
+/// code one time.
+#[cfg(feature = "lua")]
+pub fn load_custom(
     path: &str,
     settings: &Settings,
     data_dir: &str,
     options: Options<'_>,
     context: &mut Context,
-) -> Result<Writer> {
+) -> Result<CustomScript> {
     let file = find_custom(path, data_dir);
-    let source = randoc_lua::read_script(&file)?;
+    let source = randoc_lua::read_script(&file, max_script_bytes(context))?;
     let script = randoc_lua::LuaFilter {
         path: &file,
         source: &source,
     };
     let environment = environment("", settings, data_dir, options, context);
-    randoc_lua::custom_writer(&script, environment, context)
+    randoc_lua::CustomScript::load(&script, environment, context)
+        .map(|script| CustomScript(Box::new(script)))
+}
+
+#[cfg(feature = "lua")]
+impl CustomScript {
+    /// The kind of the reader; an error when the script has no reader.
+    pub fn reader_kind(&self) -> Result<ScriptKind> {
+        self.0.reader_kind()
+    }
+
+    /// The kind of the writer; an error when the script has no writer.
+    pub fn writer_kind(&self) -> Result<ScriptKind> {
+        self.0.writer_kind()
+    }
+
+    /// The names that `opts.extensions` shows and the known extensions,
+    /// for the extension changes of the format.
+    pub fn extensions(
+        &self,
+        spec: &randoc::FormatSpec,
+    ) -> Result<(Vec<String>, randoc::Extensions)> {
+        self.0.extensions(&spec.changes, &spec.name)
+    }
+
+    /// The text of the global `Template`, or `None` without it.
+    pub fn template(&mut self, context: &mut Context) -> Result<Option<String>> {
+        self.0.template(context)
+    }
+
+    /// Reads text sources with `Reader`.
+    pub fn read_text(
+        &mut self,
+        sources: &randoc::Sources,
+        options: &ReaderOptions,
+        extensions: &[String],
+        context: &mut Context,
+    ) -> Result<Pandoc> {
+        self.0.read_text(sources, options, extensions, context)
+    }
+
+    /// Reads the bytes of one input with `ByteStringReader`.
+    pub fn read_binary(
+        &mut self,
+        bytes: &[u8],
+        options: &ReaderOptions,
+        extensions: &[String],
+        context: &mut Context,
+    ) -> Result<Pandoc> {
+        self.0.read_binary(bytes, options, extensions, context)
+    }
+
+    /// Writes the document with `Writer` or `ByteStringWriter`.
+    pub fn write(
+        &mut self,
+        kind: ScriptKind,
+        doc: &Pandoc,
+        options: &WriterOptions,
+        extensions: &[String],
+        context: &mut Context,
+    ) -> Result<Output> {
+        self.0.write(kind, doc, options, extensions, context)
+    }
 }
 
 /// Runs the Lua interpreter as `pandoc lua SCRIPT ARGS` does. `program` is
 /// `pandoc lua`, or `pandoc-lua` for a program of that name. The script `-`,
 /// and no script, read standard input, which error messages name `stdin`.
 #[cfg(feature = "lua")]
-pub fn interpreter(program: &str, args: &[String]) -> Result<()> {
+pub fn interpreter(program: &str, options: &[String], args: &[String]) -> Result<()> {
+    let mut context = Context::native();
+    context.limits.max_nesting_depth = crate::CLI_MAX_NESTING_DEPTH;
+    let max_bytes = max_script_bytes(&context);
     let script_argument = args.first().map(String::as_str);
     let (name, source) = match script_argument {
-        Some(path) if path != "-" => (path.to_owned(), randoc_lua::read_script(path)?),
+        Some(path) if path != "-" => (path.to_owned(), randoc_lua::read_script(path, max_bytes)?),
         _ => {
             let mut bytes = Vec::new();
-            std::io::Read::read_to_end(&mut std::io::stdin(), &mut bytes)
-                .map_err(|error| randoc::Error::Io(format!("<stdin>: {error}")))?;
+            let limit = u64::try_from(max_bytes)
+                .unwrap_or(u64::MAX)
+                .saturating_add(1);
+            std::io::Read::read_to_end(
+                &mut std::io::Read::take(std::io::stdin(), limit),
+                &mut bytes,
+            )
+            .map_err(|error| randoc::Error::Io(format!("<stdin>: {error}")))?;
+            if bytes.len() > max_bytes {
+                return Err(randoc::Error::Lua(format!(
+                    "cannot read stdin: the file is larger than {max_bytes} bytes"
+                )));
+            }
             ("stdin".to_owned(), bytes)
         }
     };
@@ -199,13 +273,12 @@ pub fn interpreter(program: &str, args: &[String]) -> Result<()> {
     };
     let invocation = randoc_lua::Invocation {
         program,
+        options,
         script: script_argument,
         arguments: args.get(1..).unwrap_or_default(),
     };
     let settings = Settings::default();
     let data_dir = crate::default_user_data_dir();
-    let mut context = Context::native();
-    context.limits.max_nesting_depth = crate::CLI_MAX_NESTING_DEPTH;
     let reader = ReaderOptions::default();
     let writer = WriterOptions::default();
     let options = Options {
@@ -231,33 +304,97 @@ pub fn run(
     Err(randoc::Error::NoScriptingEngine)
 }
 
-/// Without Lua, a custom reader gives the error of a Pandoc without Lua.
+/// Without Lua, a script has no kinds.
 #[cfg(not(feature = "lua"))]
-pub fn custom_reader(
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[expect(dead_code, reason = "without Lua no script exists")]
+pub enum ScriptKind {
+    /// A text reader or writer.
+    Text,
+    /// A binary reader or writer.
+    Binary,
+}
+
+/// Without Lua, no custom script can exist.
+#[cfg(not(feature = "lua"))]
+pub enum CustomScript {}
+
+/// Without Lua, a custom reader or writer gives the error of a Pandoc
+/// without Lua.
+#[cfg(not(feature = "lua"))]
+pub fn load_custom(
     _path: &str,
     _settings: &Settings,
     _data_dir: &str,
     _options: Options<'_>,
     _context: &mut Context,
-) -> Result<Reader> {
+) -> Result<CustomScript> {
     Err(randoc::Error::NoScriptingEngine)
 }
 
-/// Without Lua, a custom writer gives the error of a Pandoc without Lua.
 #[cfg(not(feature = "lua"))]
-pub fn custom_writer(
-    _path: &str,
-    _settings: &Settings,
-    _data_dir: &str,
-    _options: Options<'_>,
-    _context: &mut Context,
-) -> Result<Writer> {
-    Err(randoc::Error::NoScriptingEngine)
+impl CustomScript {
+    /// No script exists without Lua.
+    pub fn reader_kind(&self) -> Result<ScriptKind> {
+        match *self {}
+    }
+
+    /// No script exists without Lua.
+    pub fn writer_kind(&self) -> Result<ScriptKind> {
+        match *self {}
+    }
+
+    /// No script exists without Lua.
+    pub fn extensions(
+        &self,
+        _spec: &randoc::FormatSpec,
+    ) -> Result<(Vec<String>, randoc::Extensions)> {
+        match *self {}
+    }
+
+    /// No script exists without Lua.
+    pub fn template(&mut self, _context: &mut Context) -> Result<Option<String>> {
+        match *self {}
+    }
+
+    /// No script exists without Lua.
+    pub fn read_text(
+        &mut self,
+        _sources: &randoc::Sources,
+        _options: &ReaderOptions,
+        _extensions: &[String],
+        _context: &mut Context,
+    ) -> Result<Pandoc> {
+        match *self {}
+    }
+
+    /// No script exists without Lua.
+    pub fn read_binary(
+        &mut self,
+        _bytes: &[u8],
+        _options: &ReaderOptions,
+        _extensions: &[String],
+        _context: &mut Context,
+    ) -> Result<Pandoc> {
+        match *self {}
+    }
+
+    /// No script exists without Lua.
+    pub fn write(
+        &mut self,
+        _kind: ScriptKind,
+        _doc: &Pandoc,
+        _options: &WriterOptions,
+        _extensions: &[String],
+        _context: &mut Context,
+    ) -> Result<Output> {
+        match *self {}
+    }
 }
 
 /// Without Lua, `pandoc lua` gives the error of a Pandoc without Lua.
 #[cfg(not(feature = "lua"))]
-pub fn interpreter(_program: &str, _args: &[String]) -> Result<()> {
+pub fn interpreter(_program: &str, _options: &[String], _args: &[String]) -> Result<()> {
     Err(randoc::Error::NoScriptingEngine)
 }
 

@@ -50,6 +50,7 @@ mod show;
 mod sources;
 mod steps;
 mod system;
+mod template;
 #[cfg(test)]
 mod tests;
 mod text;
@@ -59,4 +60,4 @@ mod walk;
 pub use convert::{ReaderLookup, WriterLookup};
 pub use filter::{FilterEnvironment, LuaFilter, apply_filter, apply_filter_files};
 pub use runtime::{INSTRUCTION_LIMIT_MESSAGE, LuaRuntime, Mode, RuntimeLimits};
-pub use script::{Invocation, custom_reader, custom_writer, read_script, run_script};
+pub use script::{CustomScript, Invocation, ScriptKind, read_script, run_script};

@@ -11,6 +11,7 @@ use randoc::{
 };
 
 use crate::cli::HIGHLIGHT_STYLES;
+use crate::lua::ScriptKind;
 use crate::settings::{Eol, Filter, Settings};
 use crate::subsystem::{self, Subsystem};
 use crate::template::{Includes, TemplateFiles, TemplateText};
@@ -518,9 +519,9 @@ fn shift_headings(doc: &mut Pandoc, by: i64) {
 }
 
 /// Builds the reader options from the settings.
-fn reader_options(settings: &Settings, spec: &FormatSpec) -> Result<ReaderOptions> {
+fn reader_options(settings: &Settings, extensions: randoc::Extensions) -> ReaderOptions {
     let mut options = ReaderOptions::default();
-    options.extensions = spec.extensions()?;
+    options.extensions = extensions;
     options.standalone = settings.is_standalone();
     options.columns = settings.columns;
     options.tab_stop = settings.tab_stop;
@@ -528,7 +529,7 @@ fn reader_options(settings: &Settings, spec: &FormatSpec) -> Result<ReaderOption
     options.default_image_extension = settings.default_image_extension.clone();
     options.track_changes = settings.track_changes;
     options.strip_comments = settings.strip_comments;
-    Ok(options)
+    options
 }
 
 /// The point of the conversion where Pandoc reads a named file.
@@ -707,10 +708,11 @@ fn abbreviations(
         .collect())
 }
 
-/// Builds the writer options from the settings.
-fn writer_options(settings: &Settings, spec: &FormatSpec) -> Result<WriterOptions> {
+/// Builds the writer options from the settings. The caller adds the
+/// syntax definitions after it reads them.
+fn writer_options(settings: &Settings, extensions: randoc::Extensions) -> WriterOptions {
     let mut options = WriterOptions::default();
-    options.extensions = spec.extensions()?;
+    options.extensions = extensions;
     options.tab_stop = settings.tab_stop;
     options.table_of_contents = settings.toc;
     options.list_of_figures = settings.lof;
@@ -751,7 +753,7 @@ fn writer_options(settings: &Settings, spec: &FormatSpec) -> Result<WriterOption
     options.table_caption_position = settings.table_caption_position;
     options.prefer_ascii = settings.ascii;
     options.link_images = settings.link_images;
-    Ok(options)
+    options
 }
 
 /// Removes the byte order mark and each carriage return of a template, as
@@ -980,9 +982,16 @@ impl randoc::Host for SandboxHost {
         randoc::Host::show_log_message(&mut randoc::NativeHost, message);
     }
 
-    /// Gives the environment to the filter search, as without `--sandbox`.
+    /// Gives the filter search and the filter runner their variables, as
+    /// without `--sandbox`: Pandoc runs filters outside the sandbox. The
+    /// readers and writers see no environment (oracle: `SOURCE_DATE_EPOCH`
+    /// gives no `pdf-trailer-id`, and `\today` is 1970-01-01).
     fn environment_variable(&mut self, name: &str) -> Option<randoc::Text> {
-        randoc::Host::environment_variable(&mut randoc::NativeHost, name)
+        if crate::filter::ENVIRONMENT_VARIABLES.contains(&name) {
+            randoc::Host::environment_variable(&mut randoc::NativeHost, name)
+        } else {
+            None
+        }
     }
 
     /// Gives the working directory to the variable `curdir`: Pandoc fills it
@@ -1415,6 +1424,81 @@ fn write_output(output: Option<&str>, bytes: &[u8]) -> Result<()> {
     }
 }
 
+/// The reader of a conversion: a built-in reader, or a custom reader
+/// script with its kind and the extension names that it sees.
+enum InputReader {
+    Builtin(Reader),
+    Script(crate::lua::CustomScript, ScriptKind, Vec<String>),
+}
+
+impl InputReader {
+    fn read_text(
+        &mut self,
+        sources: &Sources,
+        options: &ReaderOptions,
+        context: &mut Context,
+    ) -> Result<Pandoc> {
+        match self {
+            InputReader::Builtin(Reader::Text(reader)) => reader.read(sources, options, context),
+            InputReader::Script(script, _, names) => {
+                script.read_text(sources, options, names, context)
+            }
+            InputReader::Builtin(Reader::Binary(_)) => {
+                Err(Error::ShouldNeverHappen("a binary reader got text".into()))
+            }
+        }
+    }
+
+    fn read_binary(
+        &mut self,
+        bytes: &[u8],
+        options: &ReaderOptions,
+        context: &mut Context,
+    ) -> Result<Pandoc> {
+        match self {
+            InputReader::Builtin(Reader::Binary(reader)) => reader.read(bytes, options, context),
+            InputReader::Script(script, _, names) => {
+                script.read_binary(bytes, options, names, context)
+            }
+            InputReader::Builtin(Reader::Text(_)) => {
+                Err(Error::ShouldNeverHappen("a text reader got bytes".into()))
+            }
+        }
+    }
+}
+
+/// The writer of a conversion: a built-in writer, or a custom writer
+/// script with its kind and the extension names that it sees.
+enum OutputWriter {
+    Builtin(randoc::Writer),
+    Script(crate::lua::CustomScript, ScriptKind, Vec<String>),
+}
+
+impl OutputWriter {
+    /// `true` when the writer uses the template text. A custom writer gets
+    /// the template in its options.
+    fn renders_template(&self) -> bool {
+        match self {
+            OutputWriter::Builtin(writer) => writer.renders_template(),
+            OutputWriter::Script(..) => true,
+        }
+    }
+
+    fn write(
+        &mut self,
+        doc: &Pandoc,
+        options: &WriterOptions,
+        context: &mut Context,
+    ) -> Result<Output> {
+        match self {
+            OutputWriter::Builtin(writer) => writer.write(doc, options, context),
+            OutputWriter::Script(script, kind, names) => {
+                script.write(*kind, doc, options, names, context)
+            }
+        }
+    }
+}
+
 fn convert(
     settings: &Settings,
     inputs: &[String],
@@ -1438,12 +1522,18 @@ fn convert(
         reader: &script_options.0,
         writer: &script_options.1,
     };
-    let reader = if crate::lua::is_script(&from_spec.name) {
-        crate::lua::custom_reader(&from_spec.name, settings, data_dir, script_options, context)?
+    let (mut reader, reader_extensions) = if crate::lua::is_script(&from_spec.name) {
+        let script =
+            crate::lua::load_custom(&from_spec.name, settings, data_dir, script_options, context)?;
+        let kind = script.reader_kind()?;
+        let (names, known) = script.extensions(&from_spec)?;
+        (InputReader::Script(script, kind, names), known)
     } else {
-        formats::reader(&from_spec.name).ok_or(Error::UnknownReader(from_spec.name.clone()))?
+        let reader =
+            formats::reader(&from_spec.name).ok_or(Error::UnknownReader(from_spec.name.clone()))?;
+        (InputReader::Builtin(reader), from_spec.extensions()?)
     };
-    let mut reader_options = reader_options(settings, &from_spec)?;
+    let mut reader_options = reader_options(settings, reader_extensions);
     // The program applies `east_asian_line_breaks` after the reader; the
     // readers of Pandoc do not look at it.
     let east_asian_line_breaks = reader_options
@@ -1456,12 +1546,23 @@ fn convert(
     if to_spec.name == "pdf" {
         return Err(subsystem::missing(Subsystem::Pdf));
     }
-    let writer = if crate::lua::is_script(&to_spec.name) {
-        crate::lua::custom_writer(&to_spec.name, settings, data_dir, script_options, context)?
+    // Pandoc calls the `Template` function of a custom writer after it
+    // loads the script, before the extension check; it compiles the text
+    // only when it uses it.
+    let mut script_template = None;
+    let (writer, writer_extensions) = if crate::lua::is_script(&to_spec.name) {
+        let mut script =
+            crate::lua::load_custom(&to_spec.name, settings, data_dir, script_options, context)?;
+        let kind = script.writer_kind()?;
+        script_template = script.template(context)?;
+        let (names, known) = script.extensions(&to_spec)?;
+        (OutputWriter::Script(script, kind, names), known)
     } else {
-        formats::writer(&to_spec.name).ok_or(Error::UnknownWriter(to_spec.name.clone()))?
+        let writer =
+            formats::writer(&to_spec.name).ok_or(Error::UnknownWriter(to_spec.name.clone()))?;
+        (OutputWriter::Builtin(writer), to_spec.extensions()?)
     };
-    let writer_options = writer_options(settings, &to_spec)?;
+    let writer_options = writer_options(settings, writer_extensions);
     if output.is_none()
         && settings.output_file.is_none()
         && is_binary_format(&to_spec.name)
@@ -1475,22 +1576,26 @@ fn convert(
     }
     read_named_files(ReadPoint::BeforeTemplate, settings, context)?;
     let files = TemplateFiles::new(settings, data_dir);
-    let template = match &settings.template {
-        Some(name) => Some(find_template(name, &to_spec.name, &files, context)?.1),
-        // A custom writer gives its template in the global `Template`,
-        // which Randoc does not read yet (I-LUA-29). Pandoc gives exit
-        // code 87 for this error; `randoc-core` has no error of that code.
-        None if settings.is_standalone() && crate::lua::is_script(&to_spec.name) => {
-            return Err(Error::App(format!(
-                "No template defined in '{}'",
-                to_spec.name
-            )));
+    let mut writer = writer;
+    let template = match (&settings.template, &writer) {
+        (Some(name), _) => Some(find_template(name, &to_spec.name, &files, context)?.1),
+        // A custom writer gives its template in the global `Template`.
+        (None, OutputWriter::Script(..)) if settings.is_standalone() => {
+            let Some(text) = script_template else {
+                return Err(Error::NoTemplate(to_spec.name.clone()));
+            };
+            let text = TemplateText {
+                path: to_spec.name.clone(),
+                text,
+                is_file: true,
+            };
+            Some(crate::template::compile(&text, &files, context)?)
         }
-        None if settings.is_standalone() => {
+        (None, _) if settings.is_standalone() => {
             let text = crate::template::default_template(&to_spec.name, &files, context)?;
             Some(crate::template::compile(&text, &files, context)?)
         }
-        None => None,
+        (None, _) => None,
     };
     let syntax_definitions = read_syntax_definitions(settings, context)?;
     // Pandoc reads the template, then the theme file, then the include files.
@@ -1532,28 +1637,31 @@ fn convert(
 
     let raw = read_inputs(inputs, context)?;
     read_named_files(ReadPoint::AfterInputs, settings, context)?;
-    let mut doc = match reader {
-        Reader::Text(reader) => {
-            let tab_stop = if settings.preserve_tabs || keeps_tabs(&from_spec.name) {
-                0
-            } else {
-                usize::try_from(settings.tab_stop).unwrap_or(0)
-            };
-            let max_len = usize::try_from(context.limits.max_resource_size).unwrap_or(usize::MAX);
-            let script_reader = crate::lua::is_script(&from_spec.name);
-            let mut sources = Vec::new();
-            for (name, bytes) in &raw {
-                let mut text = decode(name, bytes, context);
-                // A custom reader gets each text with a final line end and
-                // one more line end (oracle probes: `a` and `a\n` give
-                // `a\n\n`, an empty file gives `\n`).
-                if script_reader {
-                    if !text.is_empty() && !text.ends_with('\n') {
-                        text.push('\n');
-                    }
+    let text_input = matches!(
+        reader,
+        InputReader::Builtin(Reader::Text(_)) | InputReader::Script(_, ScriptKind::Text, _)
+    );
+    let mut doc = if text_input {
+        let tab_stop = if settings.preserve_tabs || keeps_tabs(&from_spec.name) {
+            0
+        } else {
+            usize::try_from(settings.tab_stop).unwrap_or(0)
+        };
+        let max_len = usize::try_from(context.limits.max_resource_size).unwrap_or(usize::MAX);
+        let script_reader = crate::lua::is_script(&from_spec.name);
+        let mut sources = Vec::new();
+        for (name, bytes) in &raw {
+            let mut text = decode(name, bytes, context);
+            // A custom reader gets each text with a final line end and
+            // one more line end (oracle probes: `a` and `a\n` give
+            // `a\n\n`, an empty file gives `\n`).
+            if script_reader {
+                if !text.is_empty() && !text.ends_with('\n') {
                     text.push('\n');
                 }
-                sources.push(Source {
+                text.push('\n');
+            }
+            sources.push(Source {
                     name: name.clone(),
                     text: expand_tabs(&text, tab_stop, max_len).ok_or_else(|| {
                         Error::App(format!(
@@ -1563,25 +1671,31 @@ fn convert(
                         ))
                     })?,
                 });
-            }
-            if settings.file_scope && sources.len() > 1 {
-                let mut combined = Pandoc::default();
-                for source in sources {
-                    let part = reader.read(&Sources(vec![source]), &reader_options, context)?;
-                    for (key, value) in part.meta.0 {
-                        combined.meta.0.entry(key).or_insert(value);
-                    }
-                    combined.blocks.extend(part.blocks);
+        }
+        if settings.file_scope && sources.len() > 1 {
+            let mut combined = Pandoc::default();
+            for source in sources {
+                let part = reader.read_text(&Sources(vec![source]), &reader_options, context)?;
+                for (key, value) in part.meta.0 {
+                    combined.meta.0.entry(key).or_insert(value);
                 }
-                combined
-            } else {
-                reader.read(&Sources(sources), &reader_options, context)?
+                combined.blocks.extend(part.blocks);
             }
+            combined
+        } else {
+            reader.read_text(&Sources(sources), &reader_options, context)?
         }
-        Reader::Binary(reader) => {
-            let bytes = raw.into_iter().next().map(|(_, b)| b).unwrap_or_default();
-            reader.read(&bytes, &reader_options, context)?
+    } else {
+        // A binary reader reads each input on its own. The metadata of
+        // a later input wins, also without `--file-scope` (oracle: a
+        // `ByteStringReader` with `a.txt` and `b.txt`).
+        let mut combined = Pandoc::default();
+        for (_, bytes) in &raw {
+            let part = reader.read_binary(bytes, &reader_options, context)?;
+            combined.meta.0.extend(part.meta.0);
+            combined.blocks.extend(part.blocks);
         }
+        combined
     };
 
     // Pandoc keeps the line breaks for a writer that has the extension
@@ -2133,6 +2247,22 @@ mod tests {
             host.read_file_limited(&named, 0).unwrap_err().kind(),
             std::io::ErrorKind::FileTooLarge
         );
+    }
+
+    /// Pandoc 3.13 with `--sandbox`: `SOURCE_DATE_EPOCH` gives no
+    /// `pdf-trailer-id`, and `\today` of the LaTeX reader is 1970-01-01.
+    /// The filter search keeps `PATH`.
+    #[test]
+    fn the_sandbox_hides_the_environment_but_not_from_the_filters() {
+        use randoc::Host;
+        let mut host = SandboxHost::new(&Settings::default(), &[], "/u");
+        assert_eq!(host.environment_variable("SOURCE_DATE_EPOCH"), None);
+        assert_eq!(host.environment_variable("HOME"), None);
+        assert_eq!(
+            host.environment_variable("PATH"),
+            randoc::NativeHost.environment_variable("PATH")
+        );
+        assert_eq!(host.current_time().unix_seconds, 0);
     }
 
     /// Each `--syntax-definition` file is read one time, so `/dev/stdin`

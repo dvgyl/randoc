@@ -54,7 +54,10 @@ fn write(
     context: &mut Context,
     beamer: bool,
 ) -> Result<Text> {
-    let mut writer = LatexWriter::new(options, context.limits.max_nesting_depth, beamer);
+    let max_depth = context.limits.max_nesting_depth;
+    // The class lookup below reads the variables, also for a fragment.
+    standalone::check_variable_depth(&options.variables, max_depth)?;
+    let mut writer = LatexWriter::new(options, max_depth, beamer);
     writer.registry = load_registry(options)?;
     writer.chapter_class = standalone::has_chapters(
         standalone::document_class(&doc.meta, &options.variables).as_deref(),

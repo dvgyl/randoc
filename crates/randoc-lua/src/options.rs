@@ -5,7 +5,7 @@
 use mlua::{Function, Lua, Table, Value};
 use randoc_core::{
     CaptionPosition, CiteMethod, Extensions, HtmlMathMethod, ObfuscationMethod, ReaderOptions,
-    ReferenceLocation, TopLevelDivision, TrackChanges, WrapOption, WriterOptions,
+    ReferenceLocation, Text, TopLevelDivision, TrackChanges, WrapOption, WriterOptions,
 };
 use randoc_templates::{Context as TemplateContext, Val};
 
@@ -292,32 +292,43 @@ fn object(
 }
 
 /// The options object that a custom reader gets. Its type name has no
-/// `(read-only)`, unlike the global (probed).
-pub(crate) fn reader_object(cx: &Cx, options: &ReaderOptions) -> mlua::Result<Value> {
+/// `(read-only)`, unlike the global (probed). `extensions` replaces the
+/// names of `opts.extensions`: a script can have extensions that Pandoc
+/// does not know.
+pub(crate) fn reader_object(
+    cx: &Cx,
+    options: &ReaderOptions,
+    extensions: Option<&[Text]>,
+) -> mlua::Result<Value> {
     let native: Table = cx.lua.named_registry_value(crate::module::NATIVE)?;
     let make: Function = native.get("options_object")?;
-    object(
-        cx.lua,
-        &make,
-        "ReaderOptions",
-        &reader_fields(options),
-        false,
-        cx.max_depth,
-    )
+    let mut fields = reader_fields(options);
+    replace_extensions(&mut fields, extensions);
+    object(cx.lua, &make, "ReaderOptions", &fields, false, cx.max_depth)
 }
 
-/// The options object that a custom writer gets.
-pub(crate) fn writer_object(cx: &Cx, options: &WriterOptions) -> mlua::Result<Value> {
+/// The options object that a custom writer gets. `extensions` is as for
+/// [`reader_object`].
+pub(crate) fn writer_object(
+    cx: &Cx,
+    options: &WriterOptions,
+    extensions: Option<&[Text]>,
+) -> mlua::Result<Value> {
     let native: Table = cx.lua.named_registry_value(crate::module::NATIVE)?;
     let make: Function = native.get("options_object")?;
-    object(
-        cx.lua,
-        &make,
-        "WriterOptions",
-        &writer_fields(options),
-        true,
-        cx.max_depth,
-    )
+    let mut fields = writer_fields(options);
+    replace_extensions(&mut fields, extensions);
+    object(cx.lua, &make, "WriterOptions", &fields, true, cx.max_depth)
+}
+
+fn replace_extensions<'a>(fields: &mut [(&'static str, Field<'a>)], names: Option<&'a [Text]>) {
+    if let Some(names) = names {
+        for (name, field) in fields.iter_mut() {
+            if *name == "extensions" {
+                *field = Field::Texts(names);
+            }
+        }
+    }
 }
 
 /// Sets the globals `PANDOC_READER_OPTIONS` and `PANDOC_WRITER_OPTIONS`.

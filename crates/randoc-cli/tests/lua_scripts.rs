@@ -35,6 +35,31 @@ end
 
 const ARGS: &str = "print(arg[-1], arg[0], #arg, ...)\n";
 
+/// A writer with a `Template` function, `Extensions` and a counter that
+/// shows that the top-level code runs one time.
+const TEMPLATE_WRITER: &str = r#"io.stderr:write("loaded\n")
+local calls = 0
+Extensions = { smart = true, foo = false, zeta = true }
+function Template() calls = calls + 1; return "<$body$>" end
+function Writer(doc, opts)
+  calls = calls + 1
+  local body = pandoc.utils.stringify(doc) .. ":" .. table.concat(opts.extensions, ",")
+  if opts.template then
+    body = pandoc.template.apply(opts.template, { body = body }):render()
+  end
+  return body .. ":" .. calls
+end
+"#;
+
+/// A binary reader that counts its calls.
+const BINARY_READER: &str = r##"local n = 0
+function ByteStringReader(input, opts)
+  n = n + 1
+  local text = tostring(input):gsub("%s+$", "")
+  return pandoc.Pandoc({ pandoc.Para(text .. "#" .. n) }, { title = text, count = tostring(n) })
+end
+"##;
+
 /// A folder with the scripts, removed at the end of the test.
 struct Folder(PathBuf);
 
@@ -47,6 +72,10 @@ impl Folder {
             ("r.lua", READER),
             ("w.lua", WRITER),
             ("args.lua", ARGS),
+            ("my-Writer.lua", TEMPLATE_WRITER),
+            ("bin.lua", BINARY_READER),
+            ("m.tpl", "$title$|$count$\n$body$"),
+            ("c.txt", "c"),
             ("data/custom/c.lua", WRITER),
             ("b.txt", "b\n"),
             ("e.txt", ""),
@@ -151,16 +180,59 @@ fn a_custom_writer_gets_the_writer_options() {
         folder.run(&["--data-dir=data", "-t", "c.lua"], "hi"),
         ok("W:hi:72\n")
     );
-    // Pandoc gives the exit code 87; `randoc-core` has no error of that
-    // code (I-LUA-29).
     assert_eq!(
         folder.run(&["-t", "w.lua", "-s"], "hello"),
         (
-            4,
+            87,
             String::new(),
             "No template defined in 'w.lua'\n".to_owned()
         )
     );
+}
+
+/// The script runs one time, and Pandoc calls its `Template` each time;
+/// with `-s` the result gives `opts.template`, and `--template` replaces
+/// it. The name keeps its case and its `-`, and the extension changes
+/// follow `Extensions`.
+#[test]
+fn a_custom_writer_has_one_state_a_template_and_extensions() {
+    let folder = Folder::new("lua-writer-template");
+    let loaded = "loaded\n".to_owned();
+    assert_eq!(
+        folder.run(&["-t", "my-Writer.lua+foo-smart"], "hi"),
+        (0, "hi:foo,zeta:2\n".to_owned(), loaded.clone())
+    );
+    assert_eq!(
+        folder.run(&["-t", "my-Writer.lua", "-s"], "hi"),
+        (0, "<hi:smart,zeta>:2".to_owned(), loaded.clone())
+    );
+    assert_eq!(
+        folder.run(&["-t", "my-Writer.lua", "-s", "--template=m.tpl"], "hi"),
+        (0, "|\nhi:smart,zeta:2".to_owned(), loaded.clone())
+    );
+    assert_eq!(
+        folder.run(&["-t", "my-Writer.lua+bar"], "hi"),
+        (
+            23,
+            String::new(),
+            "loaded\nThe extension 'bar' is not supported for my-Writer.lua.\n\
+             Use --list-extensions=my-Writer.lua to list supported extensions.\n"
+                .to_owned()
+        )
+    );
+}
+
+/// A binary reader reads each input in one state; the metadata of a later
+/// input wins, also without `--file-scope`.
+#[test]
+fn a_binary_reader_reads_each_input() {
+    let folder = Folder::new("lua-binary-reader");
+    for scope in [&[][..], &["--file-scope"][..]] {
+        let mut args = vec!["-f", "bin.lua", "-t", "plain", "-s", "--template=m.tpl"];
+        args.extend_from_slice(scope);
+        args.extend(["b.txt", "c.txt"]);
+        assert_eq!(folder.run(&args, ""), ok("c|2\nb#1\n\nc#2\n"), "{scope:?}");
+    }
 }
 
 #[test]
@@ -187,6 +259,12 @@ fn the_interpreter_runs_a_script_with_its_arguments() {
     assert_eq!(
         folder.run(&["lua"], "print(arg[0], arg[-1])\n"),
         ok("pandoc lua\tnil\n")
+    );
+    // Pandoc 3.13: the arguments before the script have negative indices.
+    let script = "print(arg[-2], arg[-1], arg[0], arg[1], ...)\n";
+    assert_eq!(
+        folder.run(&["lua", "--", "-", "x"], script),
+        ok("pandoc lua\t--\t-\tx\tx\n")
     );
 }
 

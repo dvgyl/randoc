@@ -142,6 +142,45 @@ mod tests {
         read_markdown(text, "", &options, &mut context).unwrap_or_default()
     }
 
+    /// `pandoc -t native -s`: the key `*` of `nocite: '@*'` and of the
+    /// body, in each citation form.
+    #[test]
+    fn a_star_is_a_citation_key() {
+        use randoc_ast::{CitationMode, Inline, MetaValue};
+        let doc = read_with(
+            "---\nnocite: '@*'\n---\n\nA @* and [@*] and [-@*] and @*x and @**\n",
+            "markdown",
+        );
+        let keys = |inlines: &[Inline]| -> Vec<(String, CitationMode)> {
+            inlines
+                .iter()
+                .filter_map(|inline| match inline {
+                    Inline::Cite(citations, _) => {
+                        Some((citations[0].id.clone(), citations[0].mode))
+                    }
+                    _ => None,
+                })
+                .collect()
+        };
+        let Some(MetaValue::MetaInlines(nocite)) = doc.meta.get("nocite") else {
+            panic!("no nocite inlines: {:?}", doc.meta);
+        };
+        assert_eq!(keys(nocite), [("*".into(), CitationMode::AuthorInText)]);
+        let Some(randoc_ast::Block::Para(inlines)) = doc.blocks.first() else {
+            panic!("no paragraph");
+        };
+        assert_eq!(
+            keys(inlines),
+            [
+                ("*".into(), CitationMode::AuthorInText),
+                ("*".into(), CitationMode::NormalCitation),
+                ("*".into(), CitationMode::SuppressAuthor),
+                ("*x".into(), CitationMode::AuthorInText),
+                ("*".into(), CitationMode::AuthorInText),
+            ]
+        );
+    }
+
     #[test]
     fn reader_knows_each_format() {
         for format in FORMATS {

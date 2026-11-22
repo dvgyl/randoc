@@ -1988,6 +1988,9 @@ impl Inl<'_> {
                     .map_or(self.s.len(), |k| k + 1)
             } else {
                 let mut k = self.i + 1;
+                if self.s.get(k) == Some(&'*') {
+                    k += 1;
+                }
                 while self.s.get(k).is_some_and(|c| {
                     c.is_alphanumeric() || *c == '_' || ":.#$%&-+?<>~/".contains(*c)
                 }) {
@@ -2606,7 +2609,9 @@ fn cite_key(s: &str) -> Option<(Text, usize)> {
     }
     let chars: Vec<char> = rest.chars().collect();
     let first = *chars.first()?;
-    if !(first.is_alphanumeric() || first == '_') {
+    // `*` starts a key too, for the `nocite: '@*'` of all references
+    // (oracle: `@*x` is the key `*x`, `@**` the key `*` and a `*`).
+    if !(first.is_alphanumeric() || first == '_' || first == '*') {
         return None;
     }
     let mut k = 1;
@@ -3025,5 +3030,10 @@ mod tests {
         assert_eq!(cite_key("@doe:2001."), Some(("doe:2001".into(), 9)));
         assert_eq!(cite_key("@{a.b}"), Some(("a.b".into(), 6)));
         assert_eq!(cite_key("@{a b}"), None);
+        assert_eq!(cite_key("@*"), Some(("*".into(), 2)));
+        assert_eq!(cite_key("@*x"), Some(("*x".into(), 3)));
+        assert_eq!(cite_key("@**"), Some(("*".into(), 2)));
+        assert_eq!(cite_key("@*:"), Some(("*".into(), 2)));
+        assert_eq!(cite_key("@x*"), Some(("x".into(), 2)));
     }
 }

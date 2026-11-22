@@ -76,22 +76,71 @@ const CONSTANTS: [u32; 64] = [
     0xeb86_d391,
 ];
 
-/// Returns the MD5 digest of `data` as 32 lowercase hexadecimal digits.
-pub(crate) fn hex_digest(data: &[u8]) -> String {
-    let mut state: [u32; 4] = [0x6745_2301, 0xefcd_ab89, 0x98ba_dcfe, 0x1032_5476];
-    let bit_length = (data.len() as u64).wrapping_mul(8);
-    let mut message = data.to_vec();
-    message.push(0x80);
-    while message.len() % 64 != 56 {
-        message.push(0);
+/// An MD5 digest that takes its input in parts, so that the caller does
+/// not copy the input into one buffer.
+pub(crate) struct Md5 {
+    state: [u32; 4],
+    /// The bytes after the last full block of 64 bytes.
+    pending: Vec<u8>,
+    length: u64,
+}
+
+impl Md5 {
+    pub(crate) fn new() -> Self {
+        Md5 {
+            state: [0x6745_2301, 0xefcd_ab89, 0x98ba_dcfe, 0x1032_5476],
+            pending: Vec::with_capacity(64),
+            length: 0,
+        }
     }
-    message.extend_from_slice(&bit_length.to_le_bytes());
-    for block in message.as_chunks::<64>().0 {
+
+    /// Adds bytes to the input.
+    pub(crate) fn update(&mut self, mut data: &[u8]) {
+        self.length = self.length.wrapping_add(data.len() as u64);
+        if !self.pending.is_empty() {
+            let taken = data.len().min(64 - self.pending.len());
+            self.pending.extend_from_slice(&data[..taken]);
+            data = &data[taken..];
+            if self.pending.len() < 64 {
+                return;
+            }
+            let block = std::mem::take(&mut self.pending);
+            self.compress(&block);
+            self.pending = block;
+            self.pending.clear();
+        }
+        let (blocks, rest) = data.as_chunks::<64>();
+        for block in blocks {
+            self.compress(block);
+        }
+        self.pending.extend_from_slice(rest);
+    }
+
+    /// Returns the digest as 32 lowercase hexadecimal digits.
+    pub(crate) fn finish(mut self) -> String {
+        let bit_length = self.length.wrapping_mul(8);
+        let mut tail = std::mem::take(&mut self.pending);
+        tail.push(0x80);
+        while tail.len() % 64 != 56 {
+            tail.push(0);
+        }
+        tail.extend_from_slice(&bit_length.to_le_bytes());
+        for block in tail.as_chunks::<64>().0 {
+            self.compress(block);
+        }
+        self.state
+            .iter()
+            .flat_map(|word| word.to_le_bytes())
+            .map(|byte| format!("{byte:02x}"))
+            .collect()
+    }
+
+    fn compress(&mut self, block: &[u8]) {
         let mut words = [0u32; 16];
         for (word, bytes) in words.iter_mut().zip(block.as_chunks::<4>().0) {
             *word = u32::from_le_bytes(*bytes);
         }
-        let [mut a, mut b, mut c, mut d] = state;
+        let [mut a, mut b, mut c, mut d] = self.state;
         for step in 0..64 {
             let (mixed, index) = match step / 16 {
                 0 => ((b & c) | (!b & d), step),
@@ -108,20 +157,21 @@ pub(crate) fn hex_digest(data: &[u8]) -> String {
             c = b;
             b = b.wrapping_add(sum.rotate_left(SHIFTS[step]));
         }
-        for (value, added) in state.iter_mut().zip([a, b, c, d]) {
+        for (value, added) in self.state.iter_mut().zip([a, b, c, d]) {
             *value = value.wrapping_add(added);
         }
     }
-    state
-        .iter()
-        .flat_map(|word| word.to_le_bytes())
-        .map(|byte| format!("{byte:02x}"))
-        .collect()
 }
 
 #[cfg(test)]
 mod tests {
-    use super::hex_digest;
+    use super::Md5;
+
+    fn hex_digest(data: &[u8]) -> String {
+        let mut md5 = Md5::new();
+        md5.update(data);
+        md5.finish()
+    }
 
     #[test]
     fn digests_equal_the_test_suite_of_rfc_1321() {
@@ -142,6 +192,14 @@ mod tests {
         ];
         for (input, digest) in cases {
             assert_eq!(hex_digest(input.as_bytes()), digest, "{input:?}");
+            // The same input in parts of each size gives the same digest.
+            for size in [1, 3, 63, 64, 65] {
+                let mut md5 = Md5::new();
+                for part in input.as_bytes().chunks(size) {
+                    md5.update(part);
+                }
+                assert_eq!(md5.finish(), digest, "{input:?} in parts of {size}");
+            }
         }
     }
 }

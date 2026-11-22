@@ -22,8 +22,8 @@
 
 use std::cell::RefCell;
 
-use randoc_ast::walk::{Visitor, query, query_inlines};
-use randoc_ast::{Attr, Block, Inline, Meta, MetaValue, Pandoc};
+use randoc_ast::walk::query_inlines;
+use randoc_ast::{Attr, Block, Caption, Inline, Meta, MetaValue, Pandoc, Row};
 use randoc_core::shared::meta_context::meta_to_context;
 use randoc_core::shared::stringify_meta;
 use randoc_core::{CiteMethod, Context, Error, Result, TopLevelDivision};
@@ -65,10 +65,11 @@ const CHAPTER_CLASSES: &[&str] = &[
     "scrbook",
     "extbook",
     "extreport",
+    "tufte-book",
 ];
 
 /// The classes that have `\frontmatter`.
-const FRONTMATTER_CLASSES: &[&str] = &["book", "memoir", "scrbook", "extbook"];
+const FRONTMATTER_CLASSES: &[&str] = &["book", "memoir", "scrbook", "extbook", "tufte-book"];
 
 /// The template variables that make links colored.
 const LINK_COLORS: &[&str] = &[
@@ -101,13 +102,22 @@ pub(crate) fn has_chapters(class: Option<&str>) -> bool {
     class.is_some_and(|class| CHAPTER_CLASSES.contains(&class))
 }
 
-/// The text of a template value: a list gives its first item.
-fn val_text(value: &Val) -> String {
-    match value {
-        Val::Simple(doc) => doc.render(None),
-        Val::List(items) => items.first().map(val_text).unwrap_or_default(),
-        Val::Bool(true) => "true".to_owned(),
-        Val::Map(_) | Val::Bool(false) | Val::Null => String::new(),
+/// The text of a template value: a list gives its first item. The loop
+/// has no recursion, so a deep list is safe on a small stack.
+fn val_text(mut value: &Val) -> String {
+    loop {
+        return match value {
+            Val::Simple(doc) => doc.render(None),
+            Val::List(items) => match items.first() {
+                Some(first) => {
+                    value = first;
+                    continue;
+                }
+                None => String::new(),
+            },
+            Val::Bool(true) => "true".to_owned(),
+            Val::Map(_) | Val::Bool(false) | Val::Null => String::new(),
+        };
     }
 }
 
@@ -116,7 +126,6 @@ impl LatexWriter<'_> {
     pub(crate) fn meta_context(&mut self, meta: &Meta) -> Result<TemplateContext> {
         let max_depth = self.max_depth;
         let variables = &self.options.variables;
-        check_variable_depth(variables, max_depth)?;
         let writer = RefCell::new(&mut *self);
         meta_to_context(
             meta,
@@ -142,7 +151,11 @@ impl LatexWriter<'_> {
         if let Some(epoch) = context.host().environment_variable("SOURCE_DATE_EPOCH") {
             let seconds = epoch_seconds(&epoch)
                 .unwrap_or_else(|| context.host().current_time().unix_seconds.to_string());
-            let digest = crate::md5::hex_digest(format!("{seconds}s{body_text}").as_bytes());
+            let mut md5 = crate::md5::Md5::new();
+            md5.update(seconds.as_bytes());
+            md5.update(b"s");
+            md5.update(body_text.as_bytes());
+            let digest = md5.finish();
             new.push((
                 "pdf-trailer-id",
                 Val::text(format!("<{digest}> <{digest}>")),
@@ -185,13 +198,13 @@ impl LatexWriter<'_> {
         let chapters = division_chapters || has_chapters(class.as_deref());
         let frontmatter_class = class.as_deref().unwrap_or(default_class);
         new.push(("documentclass", Val::text(default_class)));
-        if chapters {
-            new.push(("has-chapters", Val::Bool(true)));
-        }
-        if FRONTMATTER_CLASSES.contains(&frontmatter_class) {
-            new.push(("has-frontmatter", Val::Bool(true)));
-        }
-        let toc_depth = options.toc_depth - i64::from(chapters);
+        new.push(("has-chapters", Val::Bool(chapters)));
+        new.push((
+            "has-frontmatter",
+            Val::Bool(FRONTMATTER_CLASSES.contains(&frontmatter_class)),
+        ));
+        // Pandoc's `Int` arithmetic wraps.
+        let toc_depth = options.toc_depth.wrapping_sub(i64::from(chapters));
         new.push(("toc-depth", Val::text(toc_depth.to_string())));
         for (name, on) in [
             ("toc", options.table_of_contents),
@@ -212,9 +225,14 @@ impl LatexWriter<'_> {
             ("csl-refs", self.usage.csl_refs),
             ("cancel", self.usage.cancel),
             ("zero-width-non-joiner", zero_width_non_joiner),
+            ("section-titles", true),
+        ] {
+            new.push((name, Val::Bool(on)));
+        }
+        // Pandoc leaves out these two flags when they are off.
+        for (name, on) in [
             ("natbib", options.cite_method == CiteMethod::Natbib),
             ("biblatex", options.cite_method == CiteMethod::Biblatex),
-            ("section-titles", true),
         ] {
             if on {
                 new.push((name, Val::Bool(true)));
@@ -226,9 +244,10 @@ impl LatexWriter<'_> {
             let macros = randoc_highlight::style_latex_macros(&load_style(style, context)?);
             new.push(("highlighting-macros", Val::text(macros)));
         }
-        if LINK_COLORS.iter().any(|name| fields.get(name).is_some()) {
-            new.push(("colorlinks", Val::Bool(true)));
-        }
+        new.push((
+            "colorlinks",
+            Val::Bool(LINK_COLORS.iter().any(|name| fields.get(name).is_some())),
+        ));
         if options.cite_method != CiteMethod::Citeproc {
             if let Some(title) = bibliography_title(&doc.blocks) {
                 new.push(("biblio-title", Val::Simple(self.inlines(title)?)));
@@ -246,7 +265,7 @@ impl LatexWriter<'_> {
             }
         }
 
-        let (languages, has_dir) = attribute_languages(&doc.blocks);
+        let (languages, has_dir) = attribute_languages(&doc.blocks, self.max_depth)?;
         if !languages.is_empty() {
             new.push(("lang", Val::text("en")));
         }
@@ -287,22 +306,82 @@ impl LatexWriter<'_> {
 }
 
 /// The epoch of `SOURCE_DATE_EPOCH` as Haskell shows an integer, or `None`
-/// when the text is not an integer.
+/// when the text is not an integer. The text is read as Haskell's
+/// `read :: String -> Integer` reads it: spaces around, parentheses,
+/// a `-` sign with spaces after it, and decimal, `0x` or `0o` digits of
+/// any length. Oracle probes: `(5)`, `0x5` and ` 05 ` give `5`, `(- 5)`
+/// gives `-5`; `+5`, `1e3`, `0b1` and `- (5)` are not integers.
 fn epoch_seconds(text: &str) -> Option<String> {
-    let text = text.trim();
-    let (negative, digits) = match text.strip_prefix('-') {
-        Some(rest) => (true, rest),
+    let mut text = text.trim();
+    while let Some(inner) = text.strip_prefix('(').and_then(|t| t.strip_suffix(')')) {
+        text = inner.trim();
+    }
+    let (negative, literal) = match text.strip_prefix('-') {
+        Some(rest) => (true, rest.trim_start()),
         None => (false, text),
     };
-    if digits.is_empty() || !digits.bytes().all(|b| b.is_ascii_digit()) {
+    let (radix, digits) = if let Some(d) = literal
+        .strip_prefix("0x")
+        .or_else(|| literal.strip_prefix("0X"))
+    {
+        (16, d)
+    } else if let Some(d) = literal
+        .strip_prefix("0o")
+        .or_else(|| literal.strip_prefix("0O"))
+    {
+        (8, d)
+    } else {
+        (10, literal)
+    };
+    if digits.is_empty() || !digits.chars().all(|c| c.is_digit(radix)) {
         return None;
     }
     let digits = digits.trim_start_matches('0');
-    Some(match (digits.is_empty(), negative) {
+    let decimal = if radix == 10 {
+        digits.to_owned()
+    } else {
+        decimal_digits(digits, radix)?
+    };
+    Some(match (decimal.is_empty(), negative) {
         (true, _) => "0".to_owned(),
-        (false, true) => format!("-{digits}"),
-        (false, false) => digits.to_owned(),
+        (false, true) => format!("-{decimal}"),
+        (false, false) => decimal,
     })
+}
+
+/// The most hexadecimal or octal digits that [`decimal_digits`] converts.
+/// The conversion takes time that grows with the square of the length.
+const MAX_RADIX_DIGITS: usize = 20_000;
+
+/// The decimal digits of a number in base 8 or 16, without leading zeros.
+/// `digits` has no leading zeros and only digits of `radix`.
+fn decimal_digits(digits: &str, radix: u32) -> Option<String> {
+    const LIMB: u64 = 1_000_000_000;
+    if digits.len() > MAX_RADIX_DIGITS {
+        return None;
+    }
+    // Little-endian limbs of nine decimal digits.
+    let mut limbs: Vec<u64> = Vec::new();
+    for c in digits.chars() {
+        let mut carry = u64::from(c.to_digit(radix)?);
+        for limb in &mut limbs {
+            let value = *limb * u64::from(radix) + carry;
+            *limb = value % LIMB;
+            carry = value / LIMB;
+        }
+        while carry > 0 {
+            limbs.push(carry % LIMB);
+            carry /= LIMB;
+        }
+    }
+    let mut text = String::new();
+    if let Some((last, rest)) = limbs.split_last() {
+        text.push_str(&last.to_string());
+        for limb in rest.iter().rev() {
+            text.push_str(&format!("{limb:09}"));
+        }
+    }
+    Some(text)
 }
 
 /// The text of an author in `author-meta`: a map has none.
@@ -328,39 +407,127 @@ fn bibliography_title(blocks: &[Block]) -> Option<&[Inline]> {
     }
 }
 
-/// The `lang` attributes of the divs and spans of the body, in document
-/// order, and whether one of them has a `dir` attribute.
-fn attribute_languages(blocks: &[Block]) -> (Vec<String>, bool) {
-    #[derive(Default)]
-    struct Attributes {
-        languages: Vec<String>,
-        has_dir: bool,
+/// The `lang` attributes of the divs and spans of the blocks, in document
+/// order, and whether one of them has a `dir` attribute. The walk uses a
+/// stack on the heap and fails for a tree deeper than `max_depth`: the
+/// writer does not render a `refs` div that it drops, so this walk is the
+/// first to see its depth.
+fn attribute_languages(blocks: &[Block], max_depth: usize) -> Result<(Vec<String>, bool)> {
+    enum Node<'a> {
+        Block(&'a Block),
+        Inline(&'a Inline),
     }
-    impl Attributes {
-        fn note(&mut self, attr: &Attr) {
-            if let Some(lang) = attr.get("lang") {
-                self.languages.push(lang.to_owned());
-            }
-            self.has_dir |= attr.get("dir").is_some();
-        }
+    fn push_blocks<'a>(stack: &mut Vec<(Node<'a>, usize)>, blocks: &'a [Block], depth: usize) {
+        stack.extend(blocks.iter().rev().map(|b| (Node::Block(b), depth)));
     }
-    impl Visitor for Attributes {
-        fn block(&mut self, block: &Block) {
-            if let Block::Div(attr, _) = block {
-                self.note(attr);
-            }
-        }
-        fn inline(&mut self, inline: &Inline) {
-            if let Inline::Span(attr, _) = inline {
-                self.note(attr);
+    fn push_inlines<'a>(stack: &mut Vec<(Node<'a>, usize)>, inlines: &'a [Inline], depth: usize) {
+        stack.extend(inlines.iter().rev().map(|i| (Node::Inline(i), depth)));
+    }
+    fn push_rows<'a>(stack: &mut Vec<(Node<'a>, usize)>, rows: &'a [Row], depth: usize) {
+        for row in rows.iter().rev() {
+            for cell in row.cells.iter().rev() {
+                push_blocks(stack, &cell.content, depth);
             }
         }
     }
-    let mut attributes = Attributes::default();
-    for block in blocks {
-        query(block, &mut attributes);
+    fn push_caption<'a>(stack: &mut Vec<(Node<'a>, usize)>, caption: &'a Caption, depth: usize) {
+        push_blocks(stack, &caption.long, depth);
+        if let Some(short) = &caption.short {
+            push_inlines(stack, short, depth);
+        }
     }
-    (attributes.languages, attributes.has_dir)
+    let mut languages = Vec::new();
+    let mut has_dir = false;
+    let mut note = |attr: &Attr| {
+        if let Some(lang) = attr.get("lang") {
+            languages.push(lang.to_owned());
+        }
+        has_dir |= attr.get("dir").is_some();
+    };
+    let mut stack = Vec::new();
+    push_blocks(&mut stack, blocks, 1);
+    while let Some((node, depth)) = stack.pop() {
+        if depth > max_depth {
+            return Err(crate::too_deep());
+        }
+        let inner = depth + 1;
+        match node {
+            Node::Block(block) => match block {
+                Block::Plain(inlines) | Block::Para(inlines) | Block::Header(_, _, inlines) => {
+                    push_inlines(&mut stack, inlines, inner);
+                }
+                Block::LineBlock(lines) => {
+                    for line in lines.iter().rev() {
+                        push_inlines(&mut stack, line, inner);
+                    }
+                }
+                Block::Div(attr, blocks) => {
+                    note(attr);
+                    push_blocks(&mut stack, blocks, inner);
+                }
+                Block::BlockQuote(blocks) => push_blocks(&mut stack, blocks, inner),
+                Block::OrderedList(_, items) | Block::BulletList(items) => {
+                    for item in items.iter().rev() {
+                        push_blocks(&mut stack, item, inner);
+                    }
+                }
+                Block::DefinitionList(items) => {
+                    for (term, definitions) in items.iter().rev() {
+                        for definition in definitions.iter().rev() {
+                            push_blocks(&mut stack, definition, inner);
+                        }
+                        push_inlines(&mut stack, term, inner);
+                    }
+                }
+                Block::Table(table) => {
+                    push_rows(&mut stack, &table.foot.rows, inner);
+                    for body in table.bodies.iter().rev() {
+                        push_rows(&mut stack, &body.body, inner);
+                        push_rows(&mut stack, &body.head, inner);
+                    }
+                    push_rows(&mut stack, &table.head.rows, inner);
+                    push_caption(&mut stack, &table.caption, inner);
+                }
+                Block::Figure(_, caption, blocks) => {
+                    push_blocks(&mut stack, blocks, inner);
+                    push_caption(&mut stack, caption, inner);
+                }
+                Block::CodeBlock(..) | Block::RawBlock(..) | Block::HorizontalRule => {}
+            },
+            Node::Inline(inline) => match inline {
+                Inline::Span(attr, inlines) => {
+                    note(attr);
+                    push_inlines(&mut stack, inlines, inner);
+                }
+                Inline::Emph(inlines)
+                | Inline::Underline(inlines)
+                | Inline::Strong(inlines)
+                | Inline::Strikeout(inlines)
+                | Inline::Superscript(inlines)
+                | Inline::Subscript(inlines)
+                | Inline::SmallCaps(inlines)
+                | Inline::Quoted(_, inlines)
+                | Inline::Link(_, inlines, _)
+                | Inline::Image(_, inlines, _) => push_inlines(&mut stack, inlines, inner),
+                Inline::Cite(citations, inlines) => {
+                    push_inlines(&mut stack, inlines, inner);
+                    for citation in citations.iter().rev() {
+                        push_inlines(&mut stack, &citation.suffix, inner);
+                        push_inlines(&mut stack, &citation.prefix, inner);
+                    }
+                }
+                Inline::Note(blocks) => push_blocks(&mut stack, blocks, inner),
+                Inline::Str(_)
+                | Inline::Code(..)
+                | Inline::Space
+                | Inline::SoftBreak
+                | Inline::LineBreak
+                | Inline::Math(..)
+                | Inline::RawInline(..) => {}
+            },
+        }
+    }
+    Ok((languages, has_dir))
 }
 
 /// Reads a highlighting style: a built-in name or a theme file.
@@ -376,7 +543,7 @@ fn load_style(name: &str, context: &mut Context) -> Result<Style> {
 }
 
 /// Fails when the template variables are nested deeper than `max_depth`.
-fn check_variable_depth(variables: &TemplateContext, max_depth: usize) -> Result<()> {
+pub(crate) fn check_variable_depth(variables: &TemplateContext, max_depth: usize) -> Result<()> {
     let mut pending: Vec<(&Val, usize)> = variables.0.values().map(|v| (v, 1)).collect();
     while let Some((value, depth)) = pending.pop() {
         if depth > max_depth {
@@ -428,7 +595,7 @@ mod tests {
         let template = "$documentclass$|$has-chapters$|$has-frontmatter$|$toc-depth$";
         assert_eq!(
             render(EMPTY, template, WriterOptions::default(), None),
-            "article|||3"
+            "article|false|false|3"
         );
         let mut chapters = WriterOptions::default();
         chapters.top_level_division = TopLevelDivision::TopLevelChapter;
@@ -437,12 +604,67 @@ mod tests {
         report
             .variables
             .insert("documentclass", Val::text("report"));
-        assert_eq!(render(EMPTY, template, report, None), "report|true||2");
+        assert_eq!(render(EMPTY, template, report, None), "report|true|false|2");
         // A metadata string (`-M documentclass=book`) does not count.
         let meta_string = r#"{"pandoc-api-version":[1,23,1,2],"meta":{"documentclass":{"t":"MetaString","c":"book"}},"blocks":[]}"#;
         assert_eq!(
             render(meta_string, template, WriterOptions::default(), None),
-            "book|||3"
+            "book|false|false|3"
+        );
+        // `-V documentclass=tufte-book --toc` gives `tufte-book|true|true|2`.
+        let mut tufte = WriterOptions::default();
+        tufte
+            .variables
+            .insert("documentclass", Val::text("tufte-book"));
+        tufte.table_of_contents = true;
+        assert_eq!(
+            render(EMPTY, template, tufte, None),
+            "tufte-book|true|true|2"
+        );
+        // An extreme `toc-depth` wraps as Pandoc's `Int` does.
+        let mut extreme = WriterOptions::default();
+        extreme.toc_depth = i64::MIN;
+        extreme.top_level_division = TopLevelDivision::TopLevelChapter;
+        assert_eq!(
+            render(EMPTY, "$toc-depth$", extreme, None),
+            i64::MAX.to_string()
+        );
+    }
+
+    /// `pandoc -t latex --template=t` for an empty document: each flag is
+    /// `false`, but `natbib` and `biblatex` are left out.
+    #[test]
+    fn the_flags_that_are_off_are_false() {
+        let names = [
+            "toc",
+            "lof",
+            "lot",
+            "numbersections",
+            "beamer",
+            "listings",
+            "lhs",
+            "tables",
+            "multirow",
+            "graphics",
+            "svg",
+            "subfigure",
+            "strikeout",
+            "url",
+            "verbatim-in-note",
+            "csl-refs",
+            "cancel",
+            "zero-width-non-joiner",
+            "natbib",
+            "biblatex",
+            "section-titles",
+            "colorlinks",
+        ];
+        let template: String = names.iter().map(|name| format!("${name}$,")).collect();
+        let expected = "false,false,false,false,false,false,false,false,false,false,false,\
+                        false,false,false,false,false,false,false,,,true,false,";
+        assert_eq!(
+            render(EMPTY, &template, WriterOptions::default(), None),
+            expected
         );
     }
 
@@ -505,5 +727,119 @@ mod tests {
         assert_eq!(epoch_seconds("1.5"), None);
         assert_eq!(epoch_seconds("+5"), None);
         assert_eq!(epoch_seconds(""), None);
+        // Each result is the integer that Pandoc 3.13 shows in the digest.
+        for (text, shown) in [
+            ("(5)", "5"),
+            ("((5))", "5"),
+            ("0x5", "5"),
+            ("0X1f", "31"),
+            ("0o7", "7"),
+            ("(- 5)", "-5"),
+            ("( -5 )", "-5"),
+            ("- 5", "-5"),
+            ("\t5\n", "5"),
+            ("0xFFFFFFFFFFFFFFFFFFFF", "1208925819614629174706175"),
+            ("0o777777777777777777777777", "4722366482869645213695"),
+        ] {
+            assert_eq!(epoch_seconds(text).as_deref(), Some(shown), "{text:?}");
+        }
+        for text in ["- (5)", "1e3", "0b1", "1_0", "5x", "0x", "\u{ff15}"] {
+            assert_eq!(epoch_seconds(text), None, "{text:?}");
+        }
+    }
+
+    /// A list of `depth` lists around one text.
+    fn deep_list(depth: usize) -> Val {
+        let mut value = Val::text("book");
+        for _ in 0..depth {
+            value = Val::List(vec![value]);
+        }
+        value
+    }
+
+    /// A deep `documentclass` variable gives an error, in a fragment too,
+    /// and no stack overflow on a thread with a 2 MB stack. The value
+    /// leaks, because the recursive drop of a deep value would overflow.
+    #[test]
+    fn a_deep_document_class_is_safe_on_a_small_stack() {
+        let done = std::thread::Builder::new()
+            .stack_size(2 * 1024 * 1024)
+            .spawn(|| {
+                let doc = randoc_ast::Pandoc::default();
+                for template in [None, Some("$body$")] {
+                    let mut options = WriterOptions::default();
+                    options
+                        .variables
+                        .insert("documentclass", deep_list(200_000));
+                    options.template = template.and_then(|text| {
+                        Template::compile("t", text, 16, &mut |_| Err::<String, ()>(())).ok()
+                    });
+                    let error = crate::write_latex(&doc, &options, &mut Context::pure());
+                    assert!(error.is_err());
+                    std::mem::forget(options);
+                }
+                let mut shallow = WriterOptions::default();
+                shallow.variables.insert("documentclass", deep_list(3));
+                let text = crate::write_latex(
+                    &randoc_ast::Pandoc {
+                        blocks: vec![randoc_ast::Block::Header(
+                            1,
+                            randoc_ast::Attr::default(),
+                            vec![randoc_ast::Inline::Str("H".into())],
+                        )],
+                        ..Default::default()
+                    },
+                    &shallow,
+                    &mut Context::pure(),
+                );
+                assert_eq!(text.ok().as_deref(), Some("\\chapter{H}"));
+            })
+            .map(|h| h.join().is_ok());
+        assert_eq!(done.ok(), Some(true));
+    }
+
+    /// With `natbib` the writer drops a top-level `refs` div, but its
+    /// languages count (oracle: a `lang=de` span in it gives `ngerman`).
+    /// A deep `refs` div gives an error and no stack overflow.
+    #[test]
+    fn the_languages_of_a_dropped_refs_div_are_safe_on_a_small_stack() {
+        use randoc_ast::{Attr, Block, Inline, Pandoc};
+        let done = std::thread::Builder::new()
+            .stack_size(2 * 1024 * 1024)
+            .spawn(|| {
+                let refs =
+                    |content: Vec<Block>| Block::Div(Attr::new("refs", vec![], vec![]), content);
+                let mut options = WriterOptions::default();
+                options.cite_method = randoc_core::CiteMethod::Natbib;
+                options.template = Template::compile(
+                    "t",
+                    "$for(babel-otherlangs)$$babel-otherlangs$$endfor$",
+                    16,
+                    &mut |_| Err::<String, ()>(()),
+                )
+                .ok();
+                let span = Inline::Span(
+                    Attr::new("", vec![], vec![("lang".into(), "de".into())]),
+                    vec![Inline::Str("x".into())],
+                );
+                let shallow = Pandoc {
+                    blocks: vec![refs(vec![Block::Para(vec![span])])],
+                    ..Default::default()
+                };
+                let text = crate::write_latex(&shallow, &options, &mut Context::pure());
+                assert_eq!(text.ok().as_deref(), Some("ngerman"));
+                let mut deep = Block::Para(vec![Inline::Str("x".into())]);
+                for _ in 0..200_000 {
+                    deep = Block::Div(Attr::default(), vec![deep]);
+                }
+                let doc = Pandoc {
+                    blocks: vec![refs(vec![deep])],
+                    ..Default::default()
+                };
+                assert!(crate::write_latex(&doc, &options, &mut Context::pure()).is_err());
+                std::mem::forget(doc);
+            })
+            .map(|h| h.join().is_ok());
+        assert_eq!(done.ok(), Some(true));
     }
 }

@@ -114,6 +114,10 @@ pub enum Error {
     CouldNotFindMetadataFile(Text),
     /// A resource is not in the resource path.
     ResourceNotFound(Text),
+    /// A custom writer runs with `--standalone`, but the command line has
+    /// no `--template` and the script has no `Template` function. The text
+    /// is the script path.
+    NoTemplate(Text),
     /// A failure that stops the whole program at once with exit code 1,
     /// also inside a Lua `pcall`: for example a program that
     /// `pandoc.system.command` cannot start (row I-LUA-15). The text is the
@@ -156,6 +160,7 @@ impl Error {
             Error::InputNotText(_) => 95,
             Error::CouldNotFindDataFile(_) => 97,
             Error::CouldNotFindMetadataFile(_) => 98,
+            Error::NoTemplate(_) => 87,
             Error::ResourceNotFound(_) => 99,
             Error::Fatal(_) => 1,
         }
@@ -238,6 +243,7 @@ impl fmt::Display for Error {
             Error::ResourceNotFound(name) => {
                 write!(f, "File '{name}' not found in resource path")
             }
+            Error::NoTemplate(script) => write!(f, "No template defined in '{script}'"),
         }
     }
 }
@@ -251,6 +257,10 @@ mod tests {
     #[test]
     fn messages_match_pandoc_3_13() {
         // Each expected string is the standard error output of Pandoc 3.13.
+        assert_eq!(
+            Error::NoTemplate("w.lua".into()).to_string(),
+            "No template defined in 'w.lua'"
+        );
         assert_eq!(
             Error::UnknownReader("nosuch".into()).to_string(),
             "Unknown input format 'nosuch'"
@@ -370,6 +380,7 @@ mod tests {
                 83,
             ),
             (Error::Lua(text()), 84),
+            (Error::NoTemplate(text()), 87),
             (Error::NoScriptingEngine, 89),
             (Error::MacroLoop(text()), 91),
             (

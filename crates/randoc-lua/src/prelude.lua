@@ -714,9 +714,33 @@ for _, name in ipairs {
   pandoc.utils[name] = missing_function('pandoc.utils.' .. name)
 end
 pandoc.types.Sources = missing_function('pandoc.types.Sources')
+-- `pandoc.template`: `compile` and `apply` (row I-LUA-27). A `Doc` of
+-- `apply` keeps the rendered text.
+local template_call = operation('template')
+local templates = setmetatable({}, { __mode = 'k' })
+local template_metatable = { __name = 'pandoc Template' }
+local doc_metatable = { __name = 'Doc' }
+doc_metatable.__index = { render = function(doc) return rawget(doc, 'text') end }
+doc_metatable.__tostring = function(doc) return rawget(doc, 'text') end
+doc_metatable.__concat = function(a, b) return tostring(a) .. tostring(b) end
+pandoc.template = {
+  compile = function(text)
+    local template = setmetatable({}, template_metatable)
+    templates[template] = template_call('compile', text)
+    return template
+  end,
+  apply = function(template, context)
+    local source = templates[template] or template
+    return setmetatable({ text = template_call('apply', source, context) }, doc_metatable)
+  end,
+  default = missing_function('pandoc.template.default'),
+  get = missing_function('pandoc.template.get'),
+  meta_to_context = missing_function('pandoc.template.meta_to_context'),
+}
+
 local missing_modules = {
   'cli', 'image', 'layout', 'log', 'mediabag', 'scaffolding',
-  'template', 'zip', 'readers', 'writers',
+  'zip', 'readers', 'writers',
 }
 for _, name in ipairs(missing_modules) do
   pandoc[name] = missing_module('pandoc.' .. name)

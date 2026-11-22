@@ -2,94 +2,285 @@
 //! (`pandoc -f FILE.lua`), a custom writer (`pandoc -t FILE.lua`) and the
 //! interpreter (`pandoc lua FILE ARGS`).
 //!
-//! A reader or writer object of `randoc-core` must be `Send` and `Sync`,
-//! and a Lua state is neither. So each call runs the script in a new
-//! state: [`custom_reader`] and [`custom_writer`] run it one time to find
-//! its kind, and each read or write runs it again (row I-LUA-29).
-
-use std::sync::Arc;
+//! A [`CustomScript`] keeps one Lua state, as Pandoc does: the top-level
+//! code of the script runs one time, and the globals of the script stay
+//! from one read or write to the next. A Lua state is neither `Send` nor
+//! `Sync`, so the program uses the script directly and not as a reader or
+//! writer object of `randoc-core`.
 
 use mlua::{Function, MultiValue, Table, Value};
 use randoc_ast::{Pandoc, Text};
+use std::collections::BTreeSet;
+
 use randoc_core::{
-    BinaryReader, BinaryWriter, Context, Error, Reader, ReaderOptions, Sources, TextReader,
-    TextWriter, Writer, WriterOptions,
+    Context, Error, Extension, Extensions, Output, ReaderOptions, Sources, WriterOptions,
 };
 
-use crate::filter::{FilterEnvironment, Globals, LuaFilter, load_chunk, open_error, with_state};
+use crate::filter::{
+    FilterEnvironment, Globals, LuaFilter, in_scope, load_chunk, new_state, open_error, with_state,
+};
 use crate::peek::{Cx, LuaText, Peek, PeekError};
+use crate::runtime::LuaRuntime;
 use crate::walk::CALL_TRACED;
 use crate::{options, push};
 
-/// Reads a script file, with the error text of Pandoc for a file that
-/// cannot be read (exit code 84).
-pub fn read_script(path: &str) -> Result<Vec<u8>, Error> {
-    std::fs::read(path).map_err(|error| Error::Lua(open_error(path, &error)))
+/// Reads a script file of at most `max_bytes` bytes, with the error text
+/// of Pandoc for a file that cannot be read (exit code 84). The read stops
+/// after the limit, so a large file or an endless stream does not fill the
+/// memory.
+pub fn read_script(path: &str, max_bytes: usize) -> Result<Vec<u8>, Error> {
+    randoc_core::read_real_file_limited(path, max_bytes).map_err(|error| {
+        let message = if error.kind() == std::io::ErrorKind::FileTooLarge {
+            format!("cannot read {path}: {error}")
+        } else {
+            open_error(path, &error)
+        };
+        Error::Lua(message)
+    })
 }
 
-/// The kinds of custom readers and writers, by the global that the script
+/// The kind of a custom reader or writer, by the global that the script
 /// defines.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum Kind {
+pub enum ScriptKind {
+    /// `Reader` or `Writer`: the script reads or writes text.
     Text,
+    /// `ByteStringReader` or `ByteStringWriter`: the script reads or
+    /// writes bytes.
     Binary,
 }
 
-/// A custom reader or writer script: the path as the user gave it, the
-/// content of the file and the environment of the conversion.
-#[derive(Debug, Clone)]
-struct Script {
+/// A custom reader or writer script with its Lua state.
+pub struct CustomScript {
+    runtime: LuaRuntime,
     path: Text,
-    source: Vec<u8>,
     environment: FilterEnvironment,
 }
 
-impl Script {
-    fn new(script: &LuaFilter, environment: FilterEnvironment) -> Self {
-        Script {
-            path: script.path.into(),
-            source: script.source.to_vec(),
-            environment,
-        }
-    }
-
-    /// Runs the script and then `body` with the state, as Pandoc runs a
-    /// custom reader or writer: without `FORMAT` and the option globals.
-    fn run<T>(&self, context: &mut Context, body: impl FnOnce(&Cx) -> Peek<T>) -> Result<T, Error> {
+impl CustomScript {
+    /// Runs the top-level code of a script in a new state, as Pandoc loads
+    /// a custom reader or writer: without `FORMAT` and the option globals.
+    /// An error of the script is [`Error::Lua`] (exit code 84).
+    pub fn load(
+        script: &LuaFilter,
+        environment: FilterEnvironment,
+        context: &mut Context,
+    ) -> Result<Self, Error> {
         let globals = Globals {
             format: None,
-            script_file: Some(&self.path),
+            script_file: Some(script.path),
             options: false,
         };
-        with_state(&self.environment, globals, context, |cx| {
-            let chunk = load_chunk(cx, &self.path, &self.source, self.environment.mode)?;
+        let runtime = new_state(&environment, globals, context.limits.max_nesting_depth)
+            .map_err(|error| Error::Lua(error.text()))?;
+        in_scope(&runtime, &environment, context, |cx| {
+            let chunk = load_chunk(cx, script.path, script.source, environment.mode)?;
             traced(cx, &chunk, MultiValue::new())?;
-            body(cx)
+            Ok(())
         })
-        .map_err(|error| Error::Lua(error.text()))
+        .map_err(|error| Error::Lua(error.text()))?;
+        Ok(CustomScript {
+            runtime,
+            path: script.path.into(),
+            environment,
+        })
     }
 
-    /// The kind of the script: the first of the globals `names` that is
-    /// not `nil`, in the order text, binary.
-    fn kind(&self, names: [&str; 2], context: &mut Context) -> Result<Option<Kind>, Error> {
-        self.run(context, |cx| {
-            let globals = cx.lua.globals();
-            for (name, kind) in names.into_iter().zip([Kind::Text, Kind::Binary]) {
-                if !matches!(globals.raw_get::<Value>(name)?, Value::Nil) {
-                    return Ok(Some(kind));
+    /// The path of the script as the user gave it.
+    pub fn path(&self) -> &str {
+        &self.path
+    }
+
+    fn global(&self, name: &str) -> Result<Value, Error> {
+        self.runtime
+            .lua()
+            .globals()
+            .raw_get(name)
+            .map_err(|error| Error::Lua(error.to_string()))
+    }
+
+    fn kind(&self, names: [&str; 2]) -> Result<Option<ScriptKind>, Error> {
+        for (name, kind) in names
+            .into_iter()
+            .zip([ScriptKind::Text, ScriptKind::Binary])
+        {
+            if !matches!(self.global(name)?, Value::Nil) {
+                return Ok(Some(kind));
+            }
+        }
+        Ok(None)
+    }
+
+    /// The reader kind of the script: `Reader` before `ByteStringReader`.
+    /// A script without either global gives [`Error::App`] with the text
+    /// of Pandoc (exit code 4).
+    pub fn reader_kind(&self) -> Result<ScriptKind, Error> {
+        self.kind(["Reader", "ByteStringReader"])?
+            .ok_or_else(|| Error::App(format!("{} does not contain a custom reader", self.path)))
+    }
+
+    /// The writer kind of the script: `Writer` before `ByteStringWriter`.
+    /// A classic custom writer (a global function for each element) is not
+    /// implemented (row I-LUA-29). The errors are those of
+    /// [`CustomScript::reader_kind`].
+    pub fn writer_kind(&self) -> Result<ScriptKind, Error> {
+        self.kind(["Writer", "ByteStringWriter"])?
+            .ok_or_else(|| Error::App(format!("{} does not contain a custom writer", self.path)))
+    }
+
+    /// The extensions of the format `FILE.lua+a-b`: the defaults of the
+    /// global `Extensions` table with the `changes` of the format applied.
+    /// The result is the names that `opts.extensions` shows, the known
+    /// ones in the order of Pandoc and then the others in sorted order, and
+    /// the known ones as a set. A change of a name that the table does not
+    /// have is [`Error::UnsupportedExtension`] for `format` (exit code 23);
+    /// a script without the table has no extensions.
+    pub fn extensions(
+        &self,
+        changes: &[(bool, Text)],
+        format: &str,
+    ) -> Result<(Vec<Text>, Extensions), Error> {
+        let mut supported = BTreeSet::new();
+        let mut enabled = BTreeSet::new();
+        if let Value::Table(table) = self.global("Extensions")? {
+            for pair in table.pairs::<Value, Value>() {
+                let (name, on) = pair.map_err(|error| Error::Lua(error.to_string()))?;
+                if let Value::String(name) = name {
+                    let name = name.text();
+                    if !matches!(on, Value::Nil | Value::Boolean(false)) {
+                        enabled.insert(name.clone());
+                    }
+                    supported.insert(name);
                 }
             }
-            Ok(None)
+        }
+        for (on, name) in changes {
+            if !supported.contains(name) {
+                return Err(Error::UnsupportedExtension {
+                    extension: name.clone(),
+                    format: format.into(),
+                });
+            }
+            if *on {
+                enabled.insert(name.clone());
+            } else {
+                enabled.remove(name);
+            }
+        }
+        let mut known = Extensions::empty();
+        let mut custom = Vec::new();
+        for name in enabled {
+            match Extension::from_name(&name) {
+                Some(extension) => known.enable(extension),
+                None => custom.push(name),
+            }
+        }
+        let mut names: Vec<Text> = crate::formats::extension_names(known)
+            .into_iter()
+            .map(Text::from)
+            .collect();
+        names.extend(custom);
+        Ok((names, known))
+    }
+
+    /// Calls the global `Template` and returns its text, or `None` when the
+    /// script has no `Template`.
+    pub fn template(&mut self, context: &mut Context) -> Result<Option<Text>, Error> {
+        if matches!(self.global("Template")?, Value::Nil) {
+            return Ok(None);
+        }
+        self.run(context, |cx| {
+            let result = call(cx, "Template", MultiValue::new())?;
+            Ok(Some(cx.text(&result)?))
         })
     }
 
-    /// Calls the global `name` with `arguments` and a traceback for an
-    /// error.
-    fn call(cx: &Cx, name: &str, arguments: MultiValue) -> Peek<Value> {
-        let function: Value = cx.lua.globals().raw_get(name)?;
-        let results = traced_value(cx, function, arguments)?;
-        Ok(results.into_iter().next().unwrap_or(Value::Nil))
+    /// Calls `Reader` with the sources. `extensions` are the names that
+    /// `opts.extensions` shows.
+    pub fn read_text(
+        &mut self,
+        sources: &Sources,
+        options: &ReaderOptions,
+        extensions: &[Text],
+        context: &mut Context,
+    ) -> Result<Pandoc, Error> {
+        self.read(options, extensions, context, "Reader", |cx| {
+            push_sources(cx, sources)
+        })
     }
+
+    /// Calls `ByteStringReader` with the bytes of one input.
+    pub fn read_binary(
+        &mut self,
+        bytes: &[u8],
+        options: &ReaderOptions,
+        extensions: &[Text],
+        context: &mut Context,
+    ) -> Result<Pandoc, Error> {
+        self.read(options, extensions, context, "ByteStringReader", |cx| {
+            Ok(Value::String(cx.lua.create_string(bytes)?))
+        })
+    }
+
+    /// Calls `Writer` or `ByteStringWriter`, as `kind` gives: text output
+    /// or bytes. `extensions` are the names that `opts.extensions` shows.
+    pub fn write(
+        &mut self,
+        kind: ScriptKind,
+        doc: &Pandoc,
+        options: &WriterOptions,
+        extensions: &[Text],
+        context: &mut Context,
+    ) -> Result<Output, Error> {
+        let name = match kind {
+            ScriptKind::Text => "Writer",
+            ScriptKind::Binary => "ByteStringWriter",
+        };
+        self.environment.writer_options = options.clone();
+        let bytes = self.run(context, |cx| {
+            let doc = push::pandoc(cx.lua, doc)?;
+            let options = options::writer_object(cx, options, Some(extensions))?;
+            let result = call(cx, name, MultiValue::from_iter([doc, options]))?;
+            match &result {
+                Value::String(text) => Ok(text.as_bytes().to_vec()),
+                Value::Integer(_) | Value::Number(_) => Ok(cx.text(&result)?.into_bytes()),
+                other => Err(crate::peek::mismatch("string", other).thrown()),
+            }
+        })?;
+        Ok(match kind {
+            ScriptKind::Text => Output::Text(crate::peek::text_from_bytes(&bytes)),
+            ScriptKind::Binary => Output::Binary(bytes),
+        })
+    }
+
+    fn read(
+        &mut self,
+        options: &ReaderOptions,
+        extensions: &[Text],
+        context: &mut Context,
+        name: &str,
+        input: impl FnOnce(&Cx) -> Peek<Value>,
+    ) -> Result<Pandoc, Error> {
+        self.environment.reader_options = options.clone();
+        self.run(context, |cx| {
+            let input = input(cx)?;
+            let options = options::reader_object(cx, options, Some(extensions))?;
+            let result = call(cx, name, MultiValue::from_iter([input, options]))?;
+            cx.pandoc(&result).map_err(PeekError::thrown)
+        })
+    }
+
+    fn run<T>(&self, context: &mut Context, body: impl FnOnce(&Cx) -> Peek<T>) -> Result<T, Error> {
+        in_scope(&self.runtime, &self.environment, context, body)
+            .map_err(|error| Error::Lua(error.text()))
+    }
+}
+
+/// Calls the global `name` with `arguments` and a traceback for an error.
+fn call(cx: &Cx, name: &str, arguments: MultiValue) -> Peek<Value> {
+    let function: Value = cx.lua.globals().raw_get(name)?;
+    let results = traced_value(cx, function, arguments)?;
+    Ok(results.into_iter().next().unwrap_or(Value::Nil))
 }
 
 /// Calls `function` through the traceback handler of the prelude.
@@ -113,53 +304,6 @@ fn traced_value(cx: &Cx, function: Value, arguments: MultiValue) -> Peek<MultiVa
         None => String::new(),
     }))
 }
-
-/// Returns the reader of a custom reader script: `Reader` gives a text
-/// reader, `ByteStringReader` a binary reader.
-///
-/// The error for a script without either global is [`Error::App`] with
-/// the text of Pandoc and the exit code 4; an error of the script is
-/// [`Error::Lua`] (exit code 84).
-pub fn custom_reader(
-    script: &LuaFilter,
-    environment: FilterEnvironment,
-    context: &mut Context,
-) -> Result<Reader, Error> {
-    let script = Arc::new(Script::new(script, environment));
-    match script.kind(["Reader", "ByteStringReader"], context)? {
-        Some(Kind::Text) => Ok(Reader::Text(Arc::new(LuaReader(script)))),
-        Some(Kind::Binary) => Ok(Reader::Binary(Arc::new(LuaReader(script)))),
-        None => Err(Error::App(format!(
-            "{} does not contain a custom reader",
-            script.path
-        ))),
-    }
-}
-
-/// Returns the writer of a custom writer script: `Writer` gives a text
-/// writer, `ByteStringWriter` a binary writer.
-///
-/// A classic custom writer (a global function for each element) is not
-/// implemented (row I-LUA-29). The errors are those of [`custom_reader`].
-pub fn custom_writer(
-    script: &LuaFilter,
-    environment: FilterEnvironment,
-    context: &mut Context,
-) -> Result<Writer, Error> {
-    let script = Arc::new(Script::new(script, environment));
-    match script.kind(["Writer", "ByteStringWriter"], context)? {
-        Some(Kind::Text) => Ok(Writer::Text(Arc::new(LuaWriter(script)))),
-        Some(Kind::Binary) => Ok(Writer::Binary(Arc::new(LuaWriter(script)))),
-        None => Err(Error::App(format!(
-            "{} does not contain a custom writer",
-            script.path
-        ))),
-    }
-}
-
-struct LuaReader(Arc<Script>);
-
-struct LuaWriter(Arc<Script>);
 
 /// The `Sources` value of a custom reader: a list of tables with the
 /// fields `name` and `text`; `tostring` gives the texts together.
@@ -188,101 +332,14 @@ fn push_sources(cx: &Cx, sources: &Sources) -> Peek<Value> {
     Ok(Value::Table(list))
 }
 
-impl LuaReader {
-    fn run(
-        &self,
-        options: &ReaderOptions,
-        context: &mut Context,
-        name: &str,
-        input: impl FnOnce(&Cx) -> Peek<Value>,
-    ) -> randoc_core::Result<Pandoc> {
-        let mut script = (*self.0).clone();
-        script.environment.reader_options = options.clone();
-        script.run(context, |cx| {
-            let input = input(cx)?;
-            let options = options::reader_object(cx, options)?;
-            let result = Script::call(cx, name, MultiValue::from_iter([input, options]))?;
-            cx.pandoc(&result).map_err(PeekError::thrown)
-        })
-    }
-}
-
-impl TextReader for LuaReader {
-    fn read(
-        &self,
-        sources: &Sources,
-        options: &ReaderOptions,
-        context: &mut Context,
-    ) -> randoc_core::Result<Pandoc> {
-        self.run(options, context, "Reader", |cx| push_sources(cx, sources))
-    }
-}
-
-impl BinaryReader for LuaReader {
-    fn read(
-        &self,
-        bytes: &[u8],
-        options: &ReaderOptions,
-        context: &mut Context,
-    ) -> randoc_core::Result<Pandoc> {
-        self.run(options, context, "ByteStringReader", |cx| {
-            Ok(Value::String(cx.lua.create_string(bytes)?))
-        })
-    }
-}
-
-impl LuaWriter {
-    fn run(
-        &self,
-        doc: &Pandoc,
-        options: &WriterOptions,
-        context: &mut Context,
-        name: &str,
-    ) -> randoc_core::Result<Vec<u8>> {
-        let mut script = (*self.0).clone();
-        script.environment.writer_options = options.clone();
-        script.run(context, |cx| {
-            let doc = push::pandoc(cx.lua, doc)?;
-            let options = options::writer_object(cx, options)?;
-            let result = Script::call(cx, name, MultiValue::from_iter([doc, options]))?;
-            match &result {
-                Value::String(text) => Ok(text.as_bytes().to_vec()),
-                Value::Integer(_) | Value::Number(_) => Ok(cx.text(&result)?.into_bytes()),
-                other => Err(crate::peek::mismatch("string", other).thrown()),
-            }
-        })
-    }
-}
-
-impl TextWriter for LuaWriter {
-    fn write(
-        &self,
-        doc: &Pandoc,
-        options: &WriterOptions,
-        context: &mut Context,
-    ) -> randoc_core::Result<Text> {
-        let bytes = self.run(doc, options, context, "Writer")?;
-        Ok(crate::peek::text_from_bytes(&bytes))
-    }
-}
-
-impl BinaryWriter for LuaWriter {
-    fn write(
-        &self,
-        doc: &Pandoc,
-        options: &WriterOptions,
-        context: &mut Context,
-    ) -> randoc_core::Result<Vec<u8>> {
-        self.run(doc, options, context, "ByteStringWriter")
-    }
-}
-
 /// The command line of `pandoc lua`, which gives the global `arg`.
 #[derive(Debug, Clone, Copy)]
 pub struct Invocation<'a> {
     /// The program name: `pandoc lua`, or the name of a program called
     /// `pandoc-lua`.
     pub program: &'a str,
+    /// The arguments before the script, for example `--`.
+    pub options: &'a [String],
     /// The script argument as the user gave it (`-` for standard input),
     /// or `None` when the command line names no script.
     pub script: Option<&'a str>,
@@ -291,11 +348,14 @@ pub struct Invocation<'a> {
 }
 
 /// Runs a script as `pandoc lua SCRIPT ARGS` does. `script.path` names the
-/// chunk in error messages (Pandoc names standard input `stdin`). In `arg`,
-/// `arg[-1]` is the program, `arg[0]` the script argument, `arg[1]` and
-/// later the arguments, which the chunk also gets as `...`. Without a
-/// script argument, `arg[0]` is the program. The options `-e`, `-i`, `-l`,
-/// `-v` and `-W` of the interpreter are not implemented (row I-LUA-29).
+/// chunk in error messages (Pandoc names standard input `stdin`). `arg`
+/// is the table of the standalone Lua interpreter: `arg[0]` is the script
+/// argument, the arguments before it have negative indices and the program
+/// comes first (oracle: `pandoc lua -- a.lua x` gives `arg[-2]` `pandoc
+/// lua`, `arg[-1]` `--` and `arg[1]` `x`). The arguments after the script
+/// are also `...` of the chunk. Without a script argument, `arg[0]` is the
+/// program. The options `-e`, `-i`, `-l`, `-v` and `-W` of the interpreter
+/// are not implemented (row I-LUA-29).
 ///
 /// An error is [`Error::Lua`] with the text of Pandoc (exit code 84).
 pub fn run_script(
@@ -313,15 +373,20 @@ pub fn run_script(
     with_state(environment, globals, context, |cx| {
         let lua = cx.lua;
         let arg = lua.create_table()?;
-        match invocation.script {
+        let mut all: Vec<&str> = vec![invocation.program];
+        all.extend(invocation.options.iter().map(String::as_str));
+        let script_index = match invocation.script {
             Some(name) => {
-                arg.raw_set(-1, invocation.program)?;
-                arg.raw_set(0, name)?;
+                all.push(name);
+                all.len() - 1
             }
-            None => arg.raw_set(0, invocation.program)?,
-        }
-        for (index, argument) in arguments.iter().enumerate() {
-            arg.raw_set(index + 1, argument.as_str())?;
+            None => 0,
+        };
+        all.extend(arguments.iter().map(String::as_str));
+        for (index, text) in all.into_iter().enumerate() {
+            let key =
+                i64::try_from(index).unwrap_or(i64::MAX) - i64::try_from(script_index).unwrap_or(0);
+            arg.raw_set(key, text)?;
         }
         lua.globals().raw_set("arg", arg)?;
         let chunk = load_chunk(cx, script.path, script.source, environment.mode)?;

@@ -344,6 +344,15 @@ fn dispatch(cx: &Cx, arguments: &[Value]) -> Peek<Vec<Value>> {
             };
             utils::call(&call, &name).and_then(one)
         }
+        "template" => {
+            let name = name_argument(rest, 0)?;
+            let call = Call {
+                cx,
+                name: &name,
+                arguments: rest.get(1..).unwrap_or_default(),
+            };
+            crate::template::call(&call, &name).and_then(one)
+        }
         "path" | "text" | "json" | "format" => {
             let name = name_argument(rest, 0)?;
             let call = Call {

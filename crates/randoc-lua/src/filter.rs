@@ -147,13 +147,36 @@ pub(crate) fn with_state<T>(
     context: &mut Context,
     body: impl FnOnce(&Cx) -> Peek<T>,
 ) -> Peek<T> {
-    let max_depth = context.limits.max_nesting_depth;
+    let runtime = new_state(environment, globals, context.limits.max_nesting_depth)?;
+    in_scope(&runtime, environment, context, body)
+}
+
+/// Makes a Lua state with the `pandoc` module and the globals.
+pub(crate) fn new_state(
+    environment: &FilterEnvironment,
+    globals: Globals,
+    max_depth: usize,
+) -> Peek<LuaRuntime> {
     let runtime = LuaRuntime::with_limits(environment.mode, environment.limits)
         .map_err(|error| PeekError::Thrown(lua_error_text(&error)))?;
+    module::install(runtime.lua(), max_depth)?;
+    set_globals(runtime.lua(), globals, environment, max_depth)?;
+    Ok(runtime)
+}
+
+/// Runs `body` in a state of [`new_state`] with the functions that use the
+/// context: `warn`, `pandoc.read`, `pandoc.write` and (in full mode) the
+/// system functions. They work only during `body`; each call installs
+/// them again, so one state can serve many calls.
+pub(crate) fn in_scope<T>(
+    runtime: &LuaRuntime,
+    environment: &FilterEnvironment,
+    context: &mut Context,
+    body: impl FnOnce(&Cx) -> Peek<T>,
+) -> Peek<T> {
+    let max_depth = context.limits.max_nesting_depth;
     let lua = runtime.lua();
     let cx = Cx { lua, max_depth };
-    module::install(lua, max_depth)?;
-    set_globals(lua, globals, environment, max_depth)?;
     // `warn`, `pandoc.read` and `pandoc.write` share the context. None of
     // them runs Lua code while it holds the context.
     let context = RefCell::new(context);

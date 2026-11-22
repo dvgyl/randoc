@@ -8,6 +8,10 @@ use randoc::{Context, Error, LogMessage, ReaderOptions, Result, TrackChanges, Ve
 
 use crate::convert::data_file;
 
+/// The environment variables that the filter search and the filter runner
+/// read through the host: `PATH`, and the variables that a filter gets.
+pub const ENVIRONMENT_VARIABLES: [&str; 3] = ["PATH", "PANDOC_VERSION", "PANDOC_READER_OPTIONS"];
+
 /// The interpreter that Pandoc selects by the file extension of a filter
 /// that is not executable.
 fn interpreter(path: &str) -> Option<&'static str> {
