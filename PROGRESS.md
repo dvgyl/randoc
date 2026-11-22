@@ -8,8 +8,10 @@ Historical handoffs from sessions 1–6 are archived in
 
 ## Current state of `main`
 
-- **21 Rust crates** in the workspace, including `randoc-highlight` (extracted
-  from `ws/highlight` after full per-definition licence and shingle audit).
+- **23 Rust crates** in the workspace, including `randoc-highlight` (extracted
+  from `ws/highlight` after full per-definition licence and shingle audit),
+  `randoc-archive` (shared bounded ZIP/OPC/media/XML container layer), and
+  `randoc-docx` (Pandoc 3.13 DOCX reader).
 - **Consolidated verification & measurement suites** from the `gpt/build` and
   `M1-*` workstreams under `tools/measure/` and `tools/{casegen,pivot,readers,errors,ast,custom-writers,server,extension-caps}/`, with Codex-specific `ops`/`guard`/`plan` tooling removed.
 - **Upgraded `randoc-harness`** with work-folder file diffing, symlink hashing,
@@ -19,12 +21,13 @@ Historical handoffs from sessions 1–6 are archived in
 ### Implemented formats & subsystems
 
 - **Readers:** `json`, `native`, `commonmark`, `gfm`, `commonmark_x`,
-  `markdown` (+ variants), `html`, `csljson`, `latex` (partial).
+  `markdown` (+ variants), `html`, `csljson`, `docx` (103/105 Pandoc `readers/docx`
+  tests, 10/11 corpus `.docx` docs), `latex` (partial).
 - **Writers:** `json`, `native`, `html`, `html4`, `csljson`, `markdown`,
   `gfm`, `commonmark`, `commonmark_x`, `plain` (+ variants, with standalone
   templates), `latex`, `beamer` (fragments + standalone templates, `$highlighting-macros$`, `$pdf-trailer-id$`).
 - **CLI & infrastructure:** command-line option parsing, defaults files,
-  resource search, templates, JSON filters, Lua 5.4.8 + LPeg 1.1.0 filters,
+  resource search, `--extract-media`, templates, JSON filters, Lua 5.4.8 + LPeg 1.1.0 filters,
   Lua custom readers (`-f FILE.lua`), Lua custom writers (`-t FILE.lua`),
   `pandoc lua` / `pandoc-lua` interpreter mode, `pandoc.read`/`pandoc.write`
   in filters, syntax highlighting (`randoc-highlight` wired into `randoc-html`,
@@ -58,8 +61,7 @@ Historical handoffs from sessions 1–6 are archived in
    - Complete `randoc-citeproc` unit 4 (sorting, disambiguation, collapse, positions, bibliography) and wire `--citeproc`.
    - Land verified review fixes for `randoc-highlight`, `randoc-markdown-writer`, `randoc-latex` standalone, and `randoc-lua` CLI integration.
 3. **Add next format families:**
-   - Shared `randoc-xml`, `randoc-container`, `randoc-media` utilities.
-   - `docx`, `odt`, `epub`, `pptx`/`xlsx`, `rst`, `org`, `typst`, `djot`, `man`/`mdoc`/`ms`, `docbook`/`jats`/XML formats, wiki formats, PDF engine driver, and `pandoc-server`.
+   - `odt` (`odt`/`fodt`/`opendocument`), `epub` (`epub`/`epub2`/`epub3`), `rst`, `typst`, `org`, `docx` writer, `pptx`/`xlsx`, `djot`, `man`/`mdoc`/`ms`, `docbook`/`jats`/XML formats, wiki formats, PDF engine driver, and `pandoc-server`.
 
 ## Oracle & licence decisions
 
