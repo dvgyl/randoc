@@ -23,6 +23,7 @@ const READERS: &[ReaderLookup] = &[
     randoc_commonmark::reader,
     randoc_latex_reader::reader,
     randoc_docx::reader,
+    randoc_odt::reader,
 ];
 
 /// The writer lookup of each format crate. Add one line for a new crate.

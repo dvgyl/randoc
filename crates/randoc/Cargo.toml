@@ -21,6 +21,7 @@ randoc-html-reader = { workspace = true }
 randoc-commonmark = { workspace = true }
 randoc-latex-reader = { workspace = true }
 randoc-docx = { workspace = true }
+randoc-odt = { workspace = true }
 
 [lints]
 workspace = true

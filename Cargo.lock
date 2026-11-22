@@ -289,6 +289,7 @@ dependencies = [
  "randoc-markdown",
  "randoc-markdown-writer",
  "randoc-native",
+ "randoc-odt",
 ]
 
 [[package]]
@@ -494,6 +495,20 @@ dependencies = [
  "randoc-core",
  "serde_json",
  "toml",
+]
+
+[[package]]
+name = "randoc-odt"
+version = "0.1.0"
+dependencies = [
+ "randoc-archive",
+ "randoc-ast",
+ "randoc-core",
+ "randoc-data",
+ "randoc-highlight",
+ "randoc-layout",
+ "randoc-math",
+ "randoc-templates",
 ]
 
 [[package]]

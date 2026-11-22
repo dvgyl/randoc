@@ -1,0 +1,22 @@
+[package]
+name = "randoc-odt"
+description = "Pandoc 3.13 compatible ODT, FODT, and OpenDocument readers and writers"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]
+randoc-archive = { workspace = true }
+randoc-ast = { workspace = true }
+randoc-core = { workspace = true }
+randoc-data = { workspace = true }
+randoc-highlight = { workspace = true }
+randoc-layout = { workspace = true }
+randoc-math = { workspace = true }
+randoc-templates = { workspace = true }
+
+[lints]
+workspace = true
