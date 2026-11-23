@@ -53,7 +53,14 @@ fn run(args: &[String]) -> i32 {
         Ok(()) => 0,
         Err(error) => {
             // A failure to write the message must not change the exit code.
-            let _ = writeln!(std::io::stderr(), "{error}");
+            let hint = match &error {
+                Error::UnknownWriter(format) if format == "pdf" => {
+                    "To create a pdf using pandoc, use -t latex|beamer|context|ms|html5|typst\n\
+                     and specify an output file with .pdf extension (-o filename.pdf)."
+                }
+                _ => "",
+            };
+            let _ = writeln!(std::io::stderr(), "{error}{hint}");
             error.exit_code()
         }
     }

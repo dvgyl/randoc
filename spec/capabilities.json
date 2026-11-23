@@ -1349,7 +1349,7 @@
     "output": {
       "status": "partial",
       "units": {
-        "passing": 16,
+        "passing": 17,
         "total": 18
       }
     },
@@ -1545,7 +1545,7 @@
     "toc": {
       "status": "partial",
       "units": {
-        "passing": 121,
+        "passing": 134,
         "total": 146
       }
     },
@@ -2042,7 +2042,7 @@
       "passing": 12
     },
     "units": {
-      "passing": 63375,
+      "passing": 63436,
       "total": 63771
     }
   }

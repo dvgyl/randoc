@@ -8,6 +8,8 @@ command reads a titled document and an empty document. The default
 templates of these writers are present in randoc-data. For OpenDocument,
 record the document body without the default styles. For EPUB, record the
 first chapter in the archive. For DOCX, record the body paragraph text.
+For PPTX, record the slide text. For chunked HTML, check the site map and
+record the index page.
 For Jupyter notebooks, replace the generated cell identifiers.
 Each oracle process has memory and time limits.
 """
@@ -35,6 +37,9 @@ FORMATS = sorted([
     "docx", "man", "ms", "typst",
     "asciidoc", "asciidoctor", "asciidoc_legacy", "ipynb", "djot", "xwiki", "zimwiki",
     "revealjs", "slidy", "dzslides", "slideous", "s5",
+    "textile", "muse", "t2t", "haddock", "opml", "vimdoc", "icml", "texinfo",
+    "context", "ansi", "bbcode", "bbcode_fluxbb", "bbcode_hubzilla",
+    "bbcode_phpbb", "bbcode_steam", "bbcode_xenforo", "xml", "chunkedhtml", "pptx",
 ] + list(EPUB_FORMATS))
 ODF_FORMATS = {"fodt", "odt", "opendocument"}
 REQUESTS = [
@@ -61,6 +66,7 @@ ODF_TEMPLATE = (
 
 
 DOCX_NS = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+DRAWING_NS = "http://schemas.openxmlformats.org/drawingml/2006/main"
 DOCX_TEMPLATE = (
     f'<w:document xmlns:w="{DOCX_NS}"><w:body>'
     '<w:p><w:r><w:t>marker:</w:t></w:r>$title$</w:p>'
@@ -69,6 +75,22 @@ DOCX_TEMPLATE = (
 
 
 def document_body(writer, data):
+    if writer == "pptx":
+        with ZipFile(io.BytesIO(data)) as archive:
+            ElementTree.fromstring(archive.read("ppt/presentation.xml"))
+            slides = sorted(
+                name for name in archive.namelist()
+                if re.fullmatch(r"ppt/slides/slide[0-9]+\.xml", name)
+            )
+            return "\n".join(
+                text.text or ""
+                for name in slides
+                for text in ElementTree.fromstring(archive.read(name)).iter(f"{{{DRAWING_NS}}}t")
+            )
+    if writer == "chunkedhtml":
+        with ZipFile(io.BytesIO(data)) as archive:
+            json.loads(archive.read("sitemap.json"))
+            data = archive.read("index.html")
     if writer == "docx":
         with ZipFile(io.BytesIO(data)) as archive:
             xml = ElementTree.fromstring(archive.read("word/document.xml"))

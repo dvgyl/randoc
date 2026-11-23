@@ -16,8 +16,6 @@ pub enum Subsystem {
     Templates,
     /// Citation processing (`--citeproc`, `--bibliography`).
     Citeproc,
-    /// PDF output with a PDF engine.
-    Pdf,
     /// `--extract-media`.
     ExtractMedia,
     /// `--embed-resources` and `--self-contained`.
@@ -30,7 +28,6 @@ pub fn missing(subsystem: Subsystem) -> Error {
         Subsystem::DataFiles(name) => format!("the default data file '{name}'"),
         Subsystem::Templates => "templates and standalone output".to_owned(),
         Subsystem::Citeproc => "citation processing".to_owned(),
-        Subsystem::Pdf => "PDF output".to_owned(),
         Subsystem::ExtractMedia => "--extract-media".to_owned(),
         Subsystem::EmbedResources => "--embed-resources".to_owned(),
     };

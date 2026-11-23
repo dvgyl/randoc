@@ -30,11 +30,10 @@ Historical handoffs from sessions 1–6 are archived in
   `asciidoc_legacy` variants.
 - **Waves 5A and 5C slides** add TikiWiki, TWiki, and Vimwiki readers,
   XWiki and ZimWiki writers, and five HTML slide writers.
-- **Preparation for Waves 5B and 6** adds child process settings, a shared
-  chunk planner, and four crates for future work. The crates are
-  `randoc-light`, `randoc-tail-writers`, `randoc-office`, and `randoc-pdf`.
-  The format registry uses the first three crates, which have no active formats.
-  The CLI includes the PDF crate for later engine support.
+- **Wave 6 is complete.** The command line supports all 52 Pandoc 3.13 input
+  formats and all 77 output formats, including PDF. The PDF driver supports
+  all 15 `--pdf-engine` values. Lua uses the shared registry for all 52 readers
+  and 76 writers. See [known issues](docs/ISSUES.md) for remaining differences.
 - **Consolidated verification & measurement suites** from the `gpt/build` and
   `M1-*` workstreams under `tools/measure/` and `tools/{casegen,pivot,readers,errors,ast,custom-writers,server,extension-caps}/`, with Codex-specific `ops`/`guard`/`plan` tooling removed.
 - **Upgraded `randoc-harness`** with work-folder file diffing, symlink hashing,
@@ -50,7 +49,8 @@ Historical handoffs from sessions 1–6 are archived in
   read & write), `latex`, `org`, `rtf`, `mediawiki`, `dokuwiki`, `jira`, `creole`,
   `docbook`, `jats`, `bits`, `fb2`, `epub`, `bibtex`, `biblatex`, `ris`,
   `typst`, `man`, `mdoc`, `csv`, `tsv`, `pod`, `endnotexml`, `asciidoc`,
-  `ipynb`, `djot`, `tikiwiki`, `twiki`, and `vimwiki`.
+  `ipynb`, `djot`, `tikiwiki`, `twiki`, `vimwiki`, `textile`, `muse`,
+  `t2t`, `haddock`, `opml`, `xml`, `xlsx`, and `pptx`.
 - **Writers:** `json`, `native`, `html`, `html4`, `csljson`, `markdown`,
   `gfm`, `commonmark`, `commonmark_x`, `plain` (+ variants, with standalone
   templates), `latex`, `beamer` (fragments + standalone templates, `$highlighting-macros$`, `$pdf-trailer-id$`),
@@ -61,7 +61,10 @@ Historical handoffs from sessions 1–6 are archived in
   `fb2`, `tei`, `epub`, `epub2`, `epub3`, `bibtex`, `biblatex`, `typst`,
   `man`, `ms`, `docx`, `asciidoc`, `asciidoctor`, `asciidoc_legacy`,
   `ipynb`, `djot`, `xwiki`, `zimwiki`, `revealjs`, `slidy`, `dzslides`,
-  `slideous`, and `s5`.
+  `slideous`, `s5`, `textile`, `muse`, `t2t`, `haddock`, `opml`,
+  `vimdoc`, `icml`, `texinfo`, `context`, `ansi`, `bbcode`,
+  `bbcode_fluxbb`, `bbcode_hubzilla`, `bbcode_phpbb`, `bbcode_steam`,
+  `bbcode_xenforo`, `xml`, `chunkedhtml`, and `pptx`.
 - **CLI & infrastructure:** command-line option parsing, defaults files,
   resource search, `--extract-media`, `--citeproc` / `-C` (full CSL 1.0.2
   engine with DUCET 13.0.0 collation, sorting, disambiguation, collapsing,
@@ -70,23 +73,27 @@ Historical handoffs from sessions 1–6 are archived in
   Lua custom readers (`-f FILE.lua`), Lua custom writers (`-t FILE.lua`),
   `pandoc lua` / `pandoc-lua` interpreter mode, `pandoc.read`/`pandoc.write`
   in filters, syntax highlighting (`randoc-highlight` wired into `randoc-html`,
-  `randoc-latex`, and `randoc-cli`), logging, errors, and exit codes.
+  `randoc-latex`, and `randoc-cli`), PDF output through `randoc-pdf`,
+  logging, errors, and exit codes.
 
 ### Latest recorded baseline metrics
 
-- **Conformance harness (`spec/baseline.json`)** has 63,375 passing units
-  out of 64,191. The previous baseline had 63,049 passing units.
-  This update adds 326 passes with zero regressions. The harness reports
-  396 failures outside the baseline and 420 skipped units.
+- **Conformance harness (`spec/baseline.json`)** has 63,436 passing units
+  out of 64,191. The previous baseline had 63,375 passing units.
+  This update adds 61 passes with zero regressions. The harness reports
+  335 failures outside the baseline and 420 skipped units. Each passing
+  result is byte-identical.
 - **Capability matrix (`spec/capabilities.json`)** records results from the harness.
+  It includes 63,436 passing units out of 63,771 units that ran.
   - Input formats have 19 passing, 6 partial, 0 failing, 27 not started.
   - Output formats have 12 passing, 7 partial, 0 failing, 58 not started.
   - Extensions have 72 passing, 7 partial, 0 failing, 11 not started.
   - Options have 95 passing, 13 partial, 0 failing, 1 not started.
 - **Pandoc 3.13 test suite (`tools/pandoc-testsuite`):** The last suite-wide report counted 646 of 2,231 passing tests.
 - **Real-document corpus (`tools/corpus`):** The last corpus-wide report counted 162 of 690 passing units.
-- **Lua conversion replay** covers all active formats in 103 filters. The CLI
-  standalone replay covers 57 writers in 456 cases.
+- **Lua conversion replay** covers 52 readers and 76 writers in 130 filters
+  with 2,669 probes. It runs 260 filter and document pairs in each Lua mode.
+  The command-line standalone replay covers 76 writers in 608 cases.
 - **Wave 3 oracle checks** cover the new formats in 81 Lua replay filters. The CLI replay adds 32 writer cases.
   The mdoc reader matches 36 of 40 harness cases. Pandoc exits with an
   internal parser error in the other four cases. The EPUB oracle tests
@@ -108,9 +115,7 @@ Historical handoffs from sessions 1–6 are archived in
    - `randoc-markdown-writer`: stack overflows and round-2 high findings fixed (`fd3d4e9`); remaining minor/cross-crate items tracked in `I-MDW-18`/`I-MDW-19`.
 2. **Harden & close open gaps on existing crates:**
    - Connect `pandoc.utils.citeproc` (`I-LUA-04`).
-3. **Add next format families:**
-   - Tabular formats, POD, AsciiDoc, Jupyter notebooks, Djot,
-     `pptx`/`xlsx`, the PDF engine driver, and `pandoc-server`.
+3. **Add the `pandoc-server` subsystem.**
 
 ## Oracle & licence decisions
 

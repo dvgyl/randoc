@@ -68,25 +68,6 @@ pub const HIGHLIGHT_STYLES: [&str; 8] = [
     "haddock",
 ];
 
-/// The PDF engines that Pandoc accepts.
-pub const PDF_ENGINES: [&str; 15] = [
-    "weasyprint",
-    "wkhtmltopdf",
-    "pagedjs-cli",
-    "prince",
-    "pdflatex",
-    "lualatex",
-    "xelatex",
-    "latexmk",
-    "tectonic",
-    "pdflatex-dev",
-    "lualatex-dev",
-    "groff",
-    "pdfroff",
-    "typst",
-    "context",
-];
-
 /// The services that applying an option needs.
 pub trait Environment {
     /// Prints a warning to standard error at once, for example a deprecation.
@@ -382,16 +363,7 @@ pub fn apply(settings: &mut Settings, action: &Action, env: &mut dyn Environment
         Opt::PreserveTabs => s.preserve_tabs = bool_arg(opt, value)?,
         Opt::TabStop => s.tab_stop = positive(opt, arg)?,
         Opt::PdfEngine => {
-            let program = arg.rsplit('/').next().unwrap_or(arg);
-            if !PDF_ENGINES.contains(&program) {
-                let mut message = String::from("Argument of --pdf-engine must be one of\n");
-                for engine in PDF_ENGINES {
-                    message.push('\t');
-                    message.push_str(engine);
-                    message.push('\n');
-                }
-                return Err(option_error(message));
-            }
+            randoc_pdf::validate_pdf_engine(arg)?;
             s.pdf_engine = Some(arg.to_owned());
         }
         Opt::PdfEngineOpt => s.pdf_engine_opts.push(arg.to_owned()),

@@ -12,3 +12,8 @@ crates/randoc-lua/tests/replay/convert.txt	pandoc-tests	56609fa0ae2c04686180e722
 crates/randoc-typst/src/reader/eval.rs	pandoc-tests	dce8dbe1d78124c8905c7c1818806659903a89f7058bafaeb1e5e3eed498485c	The matches are standard Lorem ipsum placeholder text for the lorem function.
 crates/randoc-typst/src/reader/parser.rs	pandoc-source	0c25b0516f18f53ec6e5432b6e1292e36c42b135194a70f4022900be15c09ba4	The matches are character comparisons for spaces, tabs, and carriage returns.
 third_party/licences/typst-codex.txt	pandoc-source	62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a	The matches are standard Apache-2.0 terms from the typst/codex v0.1.1 licence.
+crates/randoc-cli/tests/data/writer-capabilities.json	pandoc-tests	e295fb35e294a54f8f9b94603cf2bf4711cb3c224076a08ff480a20ad9b176a8	The matches are a comment from the BSD-3-Clause default.icml template. See ADR 5.
+crates/randoc-cli/tests/pdf.rs	pandoc-source	e04adc7b1bd7a2454cff443ca0b2d7fe9eb29597244d6ab576c8549ba84de824	The matches are two public PDF diagnostic messages that the tests check.
+crates/randoc-lua/tests/replay/convert.txt	pandoc-tests	42c9f72598c04e0eb363d3586ea9f05d928b061a3ce0b4f969e96c03178af825	All 69 added matches are in the sorted lists of public format names.
+crates/randoc-office/src/pptx/reference.rs	pandoc-data	c39d99f0553d998cd0bb38f527e4943e1324327f3e3b3308dd2f9bceb7313e86	The matches are standard Office Open XML color names in the default color map.
+crates/randoc-tail-writers/tests/oracle_parity.rs	pandoc-tests	afcb5a9b17984596215472fd0a7d009073c1617430769d66053f782d9305b778	The matches are Native table syntax in a two-cell fixture with fractional widths.

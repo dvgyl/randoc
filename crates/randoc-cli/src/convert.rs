@@ -745,10 +745,14 @@ fn extension_for_mime(mime: &str) -> Option<&'static str> {
 }
 
 /// Builds the reader options from the settings.
-fn reader_options(settings: &Settings, extensions: randoc::Extensions) -> ReaderOptions {
+fn reader_options(
+    settings: &Settings,
+    extensions: randoc::Extensions,
+    standalone: bool,
+) -> ReaderOptions {
     let mut options = ReaderOptions::default();
     options.extensions = extensions;
-    options.standalone = settings.is_standalone();
+    options.standalone = standalone;
     options.columns = settings.columns;
     options.tab_stop = settings.tab_stop;
     options.indented_code_classes = settings.indented_code_classes.clone();
@@ -1645,6 +1649,13 @@ fn is_binary_format(name: &str) -> bool {
     )
 }
 
+fn terminal_output_error(format: &str) -> Error {
+    Error::App(format!(
+        "Cannot write {format} output to terminal.\n\
+         Specify an output file using the -o option, or use '-o -' to force output to stdout."
+    ))
+}
+
 /// Returns the input files: the files of the defaults files first, then the
 /// files of the command line, as Pandoc reads them.
 fn input_files(settings: &Settings, positional: Vec<String>) -> Vec<String> {
@@ -1842,14 +1853,17 @@ fn convert(
     context: &mut Context,
 ) -> Result<Vec<u8>> {
     let output = settings.output_file.as_deref().filter(|path| *path != "-");
+    let pdf_output = settings.to.as_deref() == Some("pdf")
+        || output.and_then(format_from_extension) == Some("pdf");
+    let standalone = settings.is_standalone() || pdf_output;
     let from = match &settings.from {
         Some(from) => from.clone(),
         None => guess_format(inputs, "markdown", context),
     };
-    let to = match &settings.to {
-        Some(to) => to.clone(),
-        None => guess_output_format(output, context),
-    };
+    let to = settings
+        .to
+        .clone()
+        .unwrap_or_else(|| guess_output_format(output, context));
     let from_spec = format_spec(&from)?;
     // Pandoc loads a custom reader script before it checks the extensions.
     // The script gets the options of each read when it reads.
@@ -1869,7 +1883,7 @@ fn convert(
             formats::reader(&from_spec.name).ok_or(Error::UnknownReader(from_spec.name.clone()))?;
         (InputReader::Builtin(reader), from_spec.extensions()?)
     };
-    let mut reader_options = reader_options(settings, reader_extensions);
+    let mut reader_options = reader_options(settings, reader_extensions, standalone);
     // The program applies `east_asian_line_breaks` after the reader; the
     // readers of Pandoc do not look at it.
     let east_asian_line_breaks = reader_options
@@ -1879,10 +1893,14 @@ fn convert(
         .extensions
         .disable(Extension::EastAsianLineBreaks);
     let to_spec = format_spec(&to)?;
+    let (to_spec, pdf_plan) = if pdf_output {
+        let plan =
+            randoc_pdf::resolve_pdf_plan(settings.to.as_deref(), settings.pdf_engine.as_deref())?;
+        (format_spec(plan.writer())?, Some(plan))
+    } else {
+        (to_spec, None)
+    };
     reader_options.output_format = Some(to_spec.name.clone());
-    if to_spec.name == "pdf" {
-        return Err(subsystem::missing(Subsystem::Pdf));
-    }
     // Pandoc calls the `Template` function of a custom writer after it
     // loads the script, before the extension check; it compiles the text
     // only when it uses it.
@@ -1909,16 +1927,12 @@ fn convert(
         writer_extensions.disable(Extension::Citations);
     }
     let mut writer_options = writer_options(settings, writer_extensions);
-    if output.is_none()
-        && settings.output_file.is_none()
+    if settings.output_file.is_none()
+        && !pdf_output
         && is_binary_format(&to_spec.name)
         && std::io::stdout().is_terminal()
     {
-        return Err(Error::App(format!(
-            "Cannot write {} output to terminal.\n\
-             Specify an output file using the -o option, or use '-o -' to force output to stdout.",
-            to_spec.name
-        )));
+        return Err(terminal_output_error(&to_spec.name));
     }
     writer_options.epub_metadata = settings
         .epub_metadata
@@ -1930,7 +1944,7 @@ fn convert(
     let template = match (&settings.template, &writer) {
         (Some(name), _) => Some(find_template(name, &to_spec.name, &files, context)?.1),
         // A custom writer gives its template in the global `Template`.
-        (None, OutputWriter::Script(..)) if settings.is_standalone() => {
+        (None, OutputWriter::Script(..)) if standalone => {
             let Some(text) = script_template else {
                 return Err(Error::NoTemplate(to_spec.name.clone()));
             };
@@ -1941,7 +1955,7 @@ fn convert(
             };
             Some(crate::template::compile(&text, &files, context)?)
         }
-        (None, _) if settings.is_standalone() => {
+        (None, _) if standalone => {
             let text = crate::template::default_template(&to_spec.name, &files, context)?;
             Some(crate::template::compile(&text, &files, context)?)
         }
@@ -1959,7 +1973,7 @@ fn convert(
     } else {
         None
     };
-    if settings.is_standalone()
+    if standalone
         && !writer.renders_template()
         && randoc_data::default_template(&to_spec.name).is_some()
     {
@@ -1987,6 +2001,9 @@ fn convert(
         context,
     )?;
 
+    if pdf_output && settings.output_file.is_none() && std::io::stdout().is_terminal() {
+        return Err(terminal_output_error("pdf"));
+    }
     let raw = read_inputs(inputs, context)?;
     read_sandbox_named_files(settings, context)?;
     let text_input = matches!(
@@ -2095,6 +2112,13 @@ fn convert(
         &curdir,
         context.limits.max_nesting_depth,
     )?;
+    if let Some(plan) = &pdf_plan
+        && writer_options.variables.get("pdf-engine").is_none()
+    {
+        writer_options
+            .variables
+            .insert("pdf-engine", randoc_templates::Val::text(plan.program()));
+    }
     // The writer options as a Lua filter sees them: the option defaults of
     // Pandoc for a format without default extensions, and no number offset
     // when the command line gives none (oracle matrix `tests/data/lua-options.json`).
@@ -2153,18 +2177,42 @@ fn convert(
     if let Some(dir) = &settings.extract_media {
         extract_media(dir, &mut doc, settings, context)?;
     }
-    if settings.embed_resources && is_html_format(&to_spec.name) {
+    if settings.embed_resources && !pdf_output && is_html_format(&to_spec.name) {
         return Err(subsystem::missing(Subsystem::EmbedResources));
     }
 
     if is_html_format(&to_spec.name) && writer_options.template.is_some() {
         crate::template::page_title_fallback(&mut writer_options.variables, &doc, context);
     }
+    if let Some(plan) = pdf_plan {
+        let variables = writer_options
+            .variables
+            .0
+            .iter()
+            .filter_map(|(name, value)| match value {
+                randoc_templates::Val::Simple(text) => Some((name.clone(), text.render(None))),
+                _ => None,
+            })
+            .collect();
+        return randoc_pdf::make_pdf(
+            &plan,
+            &doc,
+            &writer_options,
+            context,
+            &mut randoc::NativeHost,
+            randoc_pdf::PdfOptions {
+                engine_arguments: &settings.pdf_engine_opts,
+                variables,
+                stderr: Some(&mut std::io::stderr()),
+            },
+            |doc, options, context| writer.write(doc, options, context),
+        );
+    }
     let bytes = match writer.write(&doc, &writer_options, context)? {
         Output::Text(mut text) => {
             let empty_bibliography =
                 text.is_empty() && matches!(to_spec.name.as_str(), "bibtex" | "biblatex");
-            if !settings.is_standalone() && !empty_bibliography && !text.ends_with('\n') {
+            if !standalone && !empty_bibliography && !text.ends_with('\n') {
                 text.push('\n');
             }
             if settings.eol == Eol::Crlf {
@@ -2809,7 +2857,10 @@ mod tests {
             error(|s| s.from = Some("json+smart".to_owned())).starts_with("The extension 'smart'")
         );
         assert!(error(|s| s.to = Some(String::new())).starts_with("Error parsing format ''"));
-        assert!(error(|s| s.to = Some("pdf".to_owned())).contains("PDF output"));
+        assert_eq!(
+            error(|s| s.to = Some("pdf+smart".to_owned())),
+            "Unknown output format 'pdf'"
+        );
         assert_eq!(
             error(|s| s.template = Some("t".to_owned())),
             "Could not find data file 'templates/t.json'"

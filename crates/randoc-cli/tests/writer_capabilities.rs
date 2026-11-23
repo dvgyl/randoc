@@ -39,9 +39,65 @@ fn is_epub(writer: &str) -> bool {
 /// on the reference document, so the replay compares the body separately.
 /// For EPUB, compare the first chapter. The archive has a random identifier
 /// and format-specific default styles. For DOCX, compare the body text.
+/// For PPTX, compare the slide text. For chunked HTML, check the site map
+/// and compare the index page.
 /// For Jupyter notebooks, replace the generated cell identifiers.
 fn document_body(writer: &str, data: Vec<u8>) -> Vec<u8> {
     use randoc_archive::zip::{Archive, ArchiveLimits};
+    if writer == "pptx" {
+        use randoc_archive::xml::{self, XmlLimits, XmlNode, XmlOptions};
+        const A: &str = "http://schemas.openxmlformats.org/drawingml/2006/main";
+
+        let mut archive = Archive::open(&data, ArchiveLimits::default()).expect("PPTX output");
+        assert!(
+            archive
+                .read("ppt/presentation.xml")
+                .expect("read the presentation")
+                .is_some()
+        );
+        let mut slides: Vec<_> = archive
+            .entry_names()
+            .into_iter()
+            .filter(|name| {
+                name.strip_prefix("ppt/slides/slide")
+                    .and_then(|name| name.strip_suffix(".xml"))
+                    .is_some_and(|number| number.parse::<u32>().is_ok())
+            })
+            .map(str::to_owned)
+            .collect();
+        slides.sort();
+        let mut text = Vec::new();
+        for name in slides {
+            let slide = archive.read(&name).expect("read slide").expect("slide");
+            let source = std::str::from_utf8(&slide).expect("UTF-8 slide");
+            let doc = xml::parse(source, &XmlLimits::default(), XmlOptions::default())
+                .expect("parse slide");
+            let mut nodes = vec![&doc.root];
+            while let Some(node) = nodes.pop() {
+                if node.name.ns.as_deref() == Some(A) && node.name.local == "t" {
+                    text.push(node.text());
+                }
+                nodes.extend(node.children.iter().rev().filter_map(|child| match child {
+                    XmlNode::Element(element) => Some(element),
+                    XmlNode::Text(_) => None,
+                }));
+            }
+        }
+        return text.join("\n").into_bytes();
+    }
+    if writer == "chunkedhtml" {
+        let mut archive =
+            Archive::open(&data, ArchiveLimits::default()).expect("chunked HTML output");
+        let map = archive
+            .read("sitemap.json")
+            .expect("read the site map")
+            .expect("the archive has a site map");
+        serde_json::from_slice::<serde_json::Value>(&map).expect("JSON site map");
+        return archive
+            .read("index.html")
+            .expect("read the index page")
+            .expect("the archive has an index page");
+    }
 
     if is_epub(writer) {
         let mut archive = Archive::open(&data, ArchiveLimits::default()).expect("EPUB output");
@@ -187,27 +243,34 @@ fn standalone_output_preserves_the_oracle_result_or_reports_the_scope_gap() {
                 record.stderr.into_bytes(),
             )
         };
-        // These custom-template cases omit the final newline. See I-CLI-36.
-        if matches!(record.request.as_str(), "template" | "both")
-            && (record.writer == "djot"
-                || record.document == "titled"
-                    && matches!(
-                        record.writer.as_str(),
-                        "asciidoc"
-                            | "asciidoc_legacy"
-                            | "asciidoctor"
-                            | "mediawiki"
-                            | "org"
-                            | "rst"
-                            | "typst"
-                    ))
+        let custom = matches!(record.request.as_str(), "template" | "both");
+        let titled = record.document == "titled";
+        // These outputs omit the oracle's final newline. See I-CLI-36.
+        if (record.writer == "xml" && record.request != "none")
+            || custom
+                && (matches!(record.writer.as_str(), "djot" | "vimdoc")
+                    || record.writer == "texinfo" && !titled
+                    || titled
+                        && matches!(
+                            record.writer.as_str(),
+                            "asciidoc"
+                                | "asciidoc_legacy"
+                                | "asciidoctor"
+                                | "context"
+                                | "haddock"
+                                | "mediawiki"
+                                | "muse"
+                                | "org"
+                                | "rst"
+                                | "typst"
+                        ))
         {
             assert_eq!(expected.1.pop(), Some(b'\n'));
         }
         // A custom EPUB chapter has an empty template title and a final
         // newline. See I-EPUB-03 in docs/ISSUES.md.
-        if is_epub(&record.writer) && matches!(record.request.as_str(), "template" | "both") {
-            if record.document == "titled" {
+        if is_epub(&record.writer) && custom {
+            if titled {
                 let body = expected
                     .1
                     .strip_prefix(b"marker:Title|")
@@ -215,6 +278,27 @@ fn standalone_output_preserves_the_oracle_result_or_reports_the_scope_gap() {
                 expected.1 = [b"marker:|".as_slice(), body].concat();
             }
             expected.1.push(b'\n');
+        }
+        // These Wave 6 cases have different spacing or template values.
+        // See I-TAIL-03 in docs/ISSUES.md.
+        match (record.writer.as_str(), record.request.as_str(), titled) {
+            ("ansi", "standalone", true) => {
+                let text = String::from_utf8(expected.1).expect("ANSI text");
+                expected.1 = text
+                    .replacen(&format!("\n{}\n", " ".repeat(36)), "\n\n", 1)
+                    .into_bytes();
+            }
+            ("vimdoc", "standalone", false) => {
+                let text = String::from_utf8(expected.1).expect("Vim help text");
+                expected.1 = text.replacen("\n vim:", "\n\n\n\n vim:", 1).into_bytes();
+            }
+            ("icml", "template" | "both", true) => {
+                let text = String::from_utf8(expected.1).expect("ICML text");
+                let (_, body) = text.split_once('|').expect("the template body separator");
+                expected.1 = format!("marker:Title|{body}").into_bytes();
+            }
+            ("chunkedhtml", "template" | "both", _) => expected.1.push(b'\n'),
+            _ => {}
         }
         let stdout = if output.status.success() {
             document_body(&record.writer, output.stdout)

@@ -41,20 +41,27 @@ WAVE4_WRITERS = ["asciidoc", "asciidoctor", "asciidoc_legacy", "ipynb", "djot"]
 WAVE5_READERS = ["tikiwiki", "twiki", "vimwiki"]
 WAVE5_WRITERS = ["xwiki", "zimwiki"]
 SLIDE_WRITERS = ["revealjs", "slidy", "dzslides", "slideous", "s5"]
+LIGHT_FORMATS = ["textile", "muse", "t2t", "haddock", "opml"]
+WAVE6_READERS = LIGHT_FORMATS + ["xml", "xlsx", "pptx"]
+WAVE6_WRITERS = LIGHT_FORMATS + [
+    "vimdoc", "icml", "texinfo", "context", "ansi", "bbcode", "bbcode_fluxbb",
+    "bbcode_hubzilla", "bbcode_phpbb", "bbcode_steam", "bbcode_xenforo", "xml",
+    "chunkedhtml", "pptx",
+]
 
 READERS = sorted([
     "commonmark", "commonmark_x", "creole", "csljson", "docx", "dokuwiki", "fodt", "gfm", "html",
     "jira", "json", "latex", "markdown",
     "markdown_github", "markdown_mmd", "markdown_phpextra", "markdown_strict", "mediawiki",
     "native", "odt", "org", "rst", "rtf",
-] + WAVE2_READERS + WAVE4_READERS + WAVE5_READERS + ["man", "mdoc", "typst"])
+] + WAVE2_READERS + WAVE4_READERS + WAVE5_READERS + WAVE6_READERS + ["man", "mdoc", "typst"])
 WRITERS = sorted([
     "beamer", "commonmark", "commonmark_x", "csljson", "dokuwiki", "fodt", "gfm", "html", "html4",
     "html5", "jira", "json",
     "latex", "markdown", "markdown_github", "markdown_mmd", "markdown_phpextra",
     "markdown_strict", "markua", "mediawiki", "native", "odt", "opendocument", "org", "plain", "rst", "rtf",
 ] + XML_WRITERS + EPUB_WRITERS + BIB_WRITERS + WAVE4_WRITERS
-  + WAVE5_WRITERS + SLIDE_WRITERS + ["docx", "man", "ms", "typst"])
+  + WAVE5_WRITERS + SLIDE_WRITERS + WAVE6_WRITERS + ["docx", "man", "ms", "typst"])
 
 MARKDOWN = (
     "# A head {#top}\n\nSome *emph*, **strong**, \"quotes\" -- and --- dashes...\n"
@@ -119,11 +126,69 @@ def docx():
             '<w:p><w:r><w:t>Second paragraph.</w:t></w:r></w:p>'
             '</w:body></w:document>',
     }
+    return zip_fixture(parts)
+
+
+def zip_fixture(parts):
+    """Pack fixture parts with fixed dates."""
     buffer = io.BytesIO()
     with zipfile.ZipFile(buffer, "w", zipfile.ZIP_STORED) as archive:
         for name, text in parts.items():
             archive.writestr(zipfile.ZipInfo(name, (1980, 1, 1, 0, 0, 0)), text)
     return buffer.getvalue()
+
+
+OOXML = "http://schemas.openxmlformats.org"
+REL = f"{OOXML}/officeDocument/2006/relationships"
+
+
+def relationships(kind, target):
+    return (
+        f'<Relationships xmlns="{OOXML}/package/2006/relationships">'
+        f'<Relationship Id="rId1" Type="{REL}/{kind}" Target="{target}"/>'
+        '</Relationships>'
+    )
+
+
+def office_fixture(main, content_type, parts):
+    return zip_fixture({
+        "[Content_Types].xml":
+            f'<Types xmlns="{OOXML}/package/2006/content-types">'
+            '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'
+            '<Default Extension="xml" ContentType="application/xml"/>'
+            f'<Override PartName="/{main}" ContentType="application/vnd.openxmlformats-officedocument.{content_type}.main+xml"/>'
+            '</Types>',
+        "_rels/.rels": relationships("officeDocument", main),
+        **parts,
+    })
+
+
+def xlsx():
+    """Pack a workbook with one numeric cell."""
+    ns = f"{OOXML}/spreadsheetml/2006/main"
+    return office_fixture("xl/workbook.xml", "spreadsheetml.sheet", {
+        "xl/workbook.xml": f'<workbook xmlns="{ns}" xmlns:r="{REL}">'
+                           '<sheets><sheet name="Data" sheetId="1" r:id="rId1"/></sheets></workbook>',
+        "xl/_rels/workbook.xml.rels": relationships("worksheet", "worksheets/sheet1.xml"),
+        "xl/worksheets/sheet1.xml": f'<worksheet xmlns="{ns}"><sheetData>'
+                                    '<row r="1"><c r="A1"><v>42</v></c></row></sheetData></worksheet>',
+    })
+
+
+def pptx():
+    """Pack a presentation with one slide title and one text shape."""
+    ns = f"{OOXML}/presentationml/2006/main"
+    drawing = f"{OOXML}/drawingml/2006/main"
+    return office_fixture("ppt/presentation.xml", "presentationml.presentation", {
+        "ppt/presentation.xml": f'<p:presentation xmlns:p="{ns}" xmlns:r="{REL}">'
+                                '<p:sldIdLst><p:sldId id="256" r:id="rId1"/></p:sldIdLst></p:presentation>',
+        "ppt/_rels/presentation.xml.rels": relationships("slide", "slides/slide1.xml"),
+        "ppt/slides/slide1.xml": f'<p:sld xmlns:p="{ns}" xmlns:a="{drawing}"><p:cSld><p:spTree>'
+                               '<p:sp><p:nvSpPr><p:nvPr><p:ph type="title"/></p:nvPr></p:nvSpPr>'
+                               '<p:txBody><a:p><a:r><a:t>Head</a:t></a:r></a:p></p:txBody></p:sp>'
+                               '<p:sp><p:txBody><a:p><a:r><a:t>Sample</a:t></a:r></a:p>'
+                               '</p:txBody></p:sp></p:spTree></p:cSld></p:sld>',
+    })
 
 
 OFFICE_NS = 'xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0"'
@@ -198,6 +263,14 @@ NOTEBOOK = json.dumps({
 })
 
 INPUT = {"csv": 'name,value\n"sample, quoted",3\n',
+         "textile": "h1. Head\n\nSome _emphasis_ and *strong*.\n",
+         "muse": "* Head\n\nSome *emphasis* and **strong**.\n",
+         "t2t": "\n\n\n= Head =\n\nSome //emphasis// and **strong**.\n",
+         "haddock": "= Head\n\nSome /emphasis/ and __strong__.\n",
+         "opml": '<opml version="2.0"><head><title>Sample</title></head><body>'
+                 '<outline text="Head" _note="Some *emphasis*."/></body></opml>',
+         "xml": '<Pandoc><meta/><blocks><Para>Sample <Emph>text</Emph></Para></blocks></Pandoc>',
+         "xlsx": xlsx(), "pptx": pptx(),
          "tsv": 'name\tvalue\n"sample"\t3\n',
          "pod": "=head1 Head\n\nSome I<emphasis> and C<code>.\n\n=cut\n",
          "endnotexml": '<xml><records><record><ref-type name="Book">6</ref-type>'
@@ -231,6 +304,7 @@ INPUT = {"csv": 'name,value\n"sample, quoted",3\n',
 
 # Extension changes for each reader, each one supported by its format.
 READER_SPECS = {
+    **dict.fromkeys(WAVE6_READERS, ["+east_asian_line_breaks"]),
     **dict.fromkeys(WAVE2_READERS, ()),
     **dict.fromkeys(WAVE4_READERS + WAVE5_READERS, ["+east_asian_line_breaks"]),
     "asciidoc": ["-auto_identifiers", "+ascii_identifiers"],
@@ -311,6 +385,7 @@ WIKI_DOC = (
 
 # Extension changes for each writer, each one supported by its format.
 WRITER_SPECS = {
+    **dict.fromkeys(WAVE6_WRITERS, ["+east_asian_line_breaks"]),
     **dict.fromkeys(XML_WRITERS + EPUB_WRITERS + BIB_WRITERS, ()),
     **dict.fromkeys(WAVE4_WRITERS + WAVE5_WRITERS + SLIDE_WRITERS, ["+east_asian_line_breaks"]),
     "ipynb": ["-tex_math_dollars", "-raw_html"],
@@ -423,6 +498,7 @@ end"""
 # Binary EPUB output has timestamps and a random identifier. Compare the
 # document body after unpacking it with the EPUB reader.
 EPUB_DOC = "P.Pandoc{P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}"
+PPTX_DOC = "P.Pandoc{H(1, 'Head'), P.Para{P.Str'Sample'}}"
 XML_DOC = "P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'})"
 
 SLIDE_DOC = (
@@ -436,7 +512,7 @@ SLIDE_DOC = (
 def writer_document(name):
     if name in SLIDE_WRITERS:
         return SLIDE_DOC
-    if name in XML_WRITERS + WAVE4_WRITERS + WAVE5_WRITERS:
+    if name in XML_WRITERS + WAVE4_WRITERS + WAVE5_WRITERS + WAVE6_WRITERS:
         return XML_DOC
     return DOC
 
@@ -456,7 +532,22 @@ def write_probe(name, spec, options=""):
             "assert(bytes:sub(1, 2) == 'PK'); "
             "return P.Pandoc(P.read(bytes, 'docx').blocks)"
         )
+    if name == "pptx":
+        return (
+            f"local bytes = P.write({PPTX_DOC}, {lua_string(spec)}{options}); "
+            "assert(bytes:sub(1, 4) == 'PK\\003\\004'); "
+            "return P.Pandoc(P.read(bytes, 'pptx').blocks)"
+        )
     arguments = f"{doc}, {lua_string(spec)}{options}"
+    if name == "chunkedhtml":
+        # ZIP entry names are visible even when the contents are compressed.
+        return (
+            f"local bytes = P.write({arguments}); "
+            "assert(bytes:sub(1, 4) == 'PK\\003\\004'); "
+            "assert(bytes:find('index.html', 1, true)); "
+            "assert(bytes:find('sitemap.json', 1, true)); "
+            "return true"
+        )
     if name == "ipynb":
         # Cell identifiers are generated for each conversion.
         return f"""return (P.write({arguments}):gsub('"id": "[%x%-]+"', '"id": "UUID"'))"""
@@ -492,7 +583,8 @@ GROUPS["convert-read-djot"].append(
 )
 
 GROUPS["convert-final-newline"] = [
-    (f"end of {name}", f"return P.write({writer_document(name)}, {lua_string(name)}):sub(-2)") for name in WRITERS if name not in ["docx", "odt", *EPUB_WRITERS]
+    (f"end of {name}", f"return P.write({writer_document(name)}, {lua_string(name)}):sub(-2)")
+    for name in WRITERS if name not in ["docx", "odt", "pptx", "chunkedhtml", *EPUB_WRITERS]
 ]
 
 _DOC = "P.Pandoc{P.Para{P.Emph't', P.Space(), P.Str'\"q\"'}, P.Header(2, 'h')}"
@@ -609,7 +701,10 @@ KNOWN = (
                   "markdown_mmd", "markdown_phpextra", "markdown_strict", "markua", "plain"]]
     + [("I-LUA-30", "convert-final-newline", f"end of {name}")
        for name in ["asciidoc", "asciidoctor", "asciidoc_legacy", "dzslides", "s5",
-                    "slideous", "slidy"]]
+                    "slideous", "slidy", "context", "haddock", "muse", "t2t",
+                    "textile", "vimdoc"]]
+    + [("I-TAIL-02", "convert-write-ansi", "write ansi {number_sections = true}"),
+       ("I-TAIL-02", "convert-write-vimdoc", "write vimdoc {identifier_prefix = 'p-'}")]
     + [("I-DJOT-01", "convert-read-djot", label)
        for label in ["read djot+sourcepos", "read djot+sourcepos block quote"]]
     + [("I-LUA-30", "convert-arguments", label)
