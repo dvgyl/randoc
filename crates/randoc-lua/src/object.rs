@@ -159,6 +159,25 @@ impl<K: Kind> UserData for Object<K> {
     }
 }
 
+/// Adds the Lua metamethods registered for a typed userdata.
+pub(crate) fn typed_fields<T: UserData, F: UserDataFields<T>>(
+    fields: &mut F,
+    type_name: &'static str,
+    extra: &'static [&'static str],
+) {
+    for method in ["__index", "__newindex", "__tostring", "__pairs"]
+        .into_iter()
+        .chain(extra.iter().copied())
+    {
+        fields.add_meta_field_with(method, move |lua| {
+            let metamethods: Table =
+                lua.named_registry_value(&format!("randoc.typed.{type_name}"))?;
+            metamethods.get::<Value>(method)
+        });
+    }
+    fields.add_meta_field("__name", type_name);
+}
+
 /// Calls `f` with the base of an object. Returns `None` when `value` is not
 /// an object of this crate.
 pub(crate) fn with_node<R>(value: &Value, f: impl FnOnce(&Node) -> R) -> Option<R> {

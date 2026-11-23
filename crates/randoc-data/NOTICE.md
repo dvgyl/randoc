@@ -8,6 +8,19 @@ material, its source and its licence. The full licence texts follow.
 | The default templates and partials in `data/templates` | Pandoc 3.13, `data/templates` (dual-licensed GPL or BSD-3-Clause; Randoc uses the BSD-3-Clause option) | BSD-3-Clause |
 | The dzslides template in `data/dzslides` | Pandoc 3.13, `data/dzslides/template.html`, from https://github.com/paulrouget/dzslides | WTFPL |
 
+## Document labels and language aliases
+
+Randoc prepared `data/terms.tsv` and `data/babel_aliases.tsv` under
+`MIT OR Apache-2.0`. The labels use independent linguistic knowledge and
+standard LaTeX caption conventions. The aliases use documented language
+names. The Pandoc checks used only the command fixture and the installed
+Pandoc executable.
+
+- [Babel locale naming](https://latex3.github.io/babel/guides/locale-naming.html)
+- [Babel German language guide](https://latex3.github.io/babel/guides/locale-german.html)
+- [Babel user guide and language list](https://tug.ctan.org/macros/latex2e/required/babel/base/babel.pdf)
+- [Polyglossia manual, language names and tags](https://github.com/reutenauer/polyglossia/blob/master/doc/polyglossia.tex#L2721-L2845)
+
 ## Pandoc templates
 
 ```text

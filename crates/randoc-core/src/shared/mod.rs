@@ -30,6 +30,7 @@ mod nfc_tables;
 mod tables;
 pub mod sections;
 mod text;
+pub mod toc;
 
 pub use abbreviations::default_abbreviations;
 pub use emoji::{alias_from_emoji, emoji_from_alias, replace_emoji_with_aliases};

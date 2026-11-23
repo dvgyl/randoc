@@ -9,6 +9,7 @@ repository.workspace = true
 authors.workspace = true
 
 [dependencies]
+randoc-embed = { workspace = true }
 randoc-ast = { workspace = true }
 randoc-core = { workspace = true }
 randoc-archive = { workspace = true }

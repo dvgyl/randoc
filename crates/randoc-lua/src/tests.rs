@@ -1499,7 +1499,9 @@ fn child_runs_pipe_and_warn() {
             "pandoc.pipe('sh', {'-c', 'echo pipe-err >&2'}, '')\n\
              local _, _, e = pandoc.system.command('sh', {'-c', 'echo cmd-err >&2'})\n\
              io.stderr:write('captured ', e)\n\
-             warn('@on')\nwarn('two ', 'parts')\nwarn('@off')\nwarn('quiet')\n",
+             warn('@on')\nwarn('two ', 'parts')\nwarn('@off')\nwarn('quiet')\n\
+             warn('@on')\nlocal held = pandoc.log.silence(function() warn('held') end)\n\
+             assert(#held == 1 and #PANDOC_STATE.log == 2)\n",
         );
     }
 }
@@ -1514,8 +1516,9 @@ fn pipe_and_warn_write_the_standard_error_of_pandoc() {
     let stderr = String::from_utf8_lossy(&output.stderr);
     let expected = "pipe-err\ncaptured cmd-err\nLua warning: two parts\n\
         [WARNING] Scripting warning at child.lua line 5 column 1: two parts\n\
-        [WARNING] Scripting warning at child.lua line 7 column 1: quiet\n";
+        [WARNING] Scripting warning at child.lua line 7 column 1: quiet\nLua warning: held\n";
     assert!(stderr.contains(expected), "{stderr}");
+    assert!(!stderr.contains("column 1: held"), "{stderr}");
 }
 
 /// Opus lua-R3-03: Pandoc gives one U+FFFD for each byte that is not part
@@ -1855,4 +1858,58 @@ fn template_variables_at_the_depth_limit_pass() {
             assert!(filter_with_deep_variable(128, map).is_err(), "{map}");
         }
     });
+}
+
+#[test]
+fn log_holds_and_live_reads_work_in_both_modes() {
+    let source = br"
+local log = pandoc.log
+if require then assert(log == require 'pandoc.log') end
+assert(#PANDOC_STATE.log == 0)
+warn('before')
+local before = PANDOC_STATE.log
+assert(#before == 1 and before[1].message:match(': before$'))
+assert(pandoc.utils.type(before[1]) == 'LogMessage')
+assert(getmetatable(before[1]) == true)
+
+local held, a, b, c = log.silence(function(x, y)
+  warn('first')
+  local inner = log.silence(function()
+    warn('inner')
+    assert(#PANDOC_STATE.log == 1)
+  end)
+  assert(#inner == 1 and inner[1].message:match(': inner$'))
+  warn('second')
+  return x, nil, y
+end, 10, 20)
+assert(a == 10 and b == nil and c == 20)
+assert(#held == 2 and held[1].message:match(': second$') and held[2].message:match(': first$'))
+
+local marker = {}
+local ok, value = pcall(log.silence, function()
+  warn('discarded')
+  error(marker, 0)
+end)
+assert(not ok and value == marker)
+warn('after')
+local after = PANDOC_STATE.log
+assert(#after == 2 and after[1].message:match(': before$') and after[2].message:match(': after$'))
+assert(#before == 1 and #PANDOC_STATE.log == 2)
+";
+    for mode in [Mode::Full, Mode::Restricted] {
+        let mut environment = environment();
+        environment.mode = mode;
+        let mut doc = Pandoc::default();
+        let mut context = Context::pure();
+        let filter = LuaFilter {
+            path: "log.lua",
+            source,
+        };
+        apply_filter(&mut doc, &filter, &environment, &mut context).unwrap();
+        assert!(matches!(
+            context.log(),
+            [randoc_core::LogMessage::ScriptingWarning(before, _), randoc_core::LogMessage::ScriptingWarning(after, _)]
+                if before == "before" && after == "after"
+        ));
+    }
 }

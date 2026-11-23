@@ -2464,8 +2464,8 @@ mod tests {
     }
 
     #[test]
-    fn loads_document_translations_and_uses_english_for_missing_labels() {
-        use randoc::Term;
+    fn loads_document_translations_and_warns_for_missing_labels() {
+        use randoc::{LogMessage, Term};
 
         let files = [
             ("in.md", "---\nlang: zz-XY\n---\n\nSample\n"),
@@ -2478,15 +2478,27 @@ mod tests {
                 "Abstract: Regional abstract label\n",
             ),
         ];
-        let (result, context) = convert_files(&files, &["in.md"], |settings| {
+        let (result, mut context) = convert_files(&files, &["in.md"], |settings| {
             settings.from = Some("markdown".to_owned());
         });
         result.unwrap();
         assert_eq!(context.term(Term::Abstract), "Sample abstract label");
-        assert_eq!(context.term(Term::Figure), "Figure");
-        assert_eq!(context.term(Term::Table), "Table");
+        assert!(context.term(Term::Figure).is_empty());
+        assert!(context.term(Term::Figure).is_empty());
+        assert!(context.term(Term::Table).is_empty());
+        assert_eq!(
+            context
+                .log()
+                .iter()
+                .filter(|message| matches!(message, LogMessage::NoTranslation(_)))
+                .collect::<Vec<_>>(),
+            [
+                &LogMessage::NoTranslation("Figure".into()),
+                &LogMessage::NoTranslation("Table".into())
+            ],
+        );
 
-        let (result, context) = convert_files(&files, &["in.md"], |settings| {
+        let (result, mut context) = convert_files(&files, &["in.md"], |settings| {
             settings.from = Some("markdown".to_owned());
             settings
                 .variables

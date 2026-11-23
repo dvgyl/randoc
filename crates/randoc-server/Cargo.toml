@@ -1,0 +1,22 @@
+[package]
+name = "randoc-server"
+description = "HTTP conversion service for Randoc"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]
+randoc = { workspace = true }
+randoc-ast = { workspace = true }
+randoc-core = { workspace = true }
+randoc-archive = { workspace = true }
+randoc-data = { workspace = true }
+randoc-embed = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+[lints]
+workspace = true

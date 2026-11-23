@@ -1,9 +1,11 @@
-//! Data files of Pandoc 3.13 that Randoc embeds.
+//! Templates and document labels that Randoc embeds.
 //!
 //! The files are the Pandoc data templates (BSD-3-Clause option) and the
 //! dzslides template (WTFPL). Each file is embedded with `include_str!`.
 
-/// Every embedded file. Each entry is the path under `data/` and the content.
+pub mod terms;
+
+/// Every embedded template file. Each entry is the path under `data/` and the content.
 /// The slice is sorted by path.
 static FILES: &[(&str, &str)] = &[
     (

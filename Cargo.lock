@@ -371,11 +371,13 @@ dependencies = [
  "randoc-bibtex",
  "randoc-citeproc",
  "randoc-data",
+ "randoc-embed",
  "randoc-harness",
  "randoc-highlight",
  "randoc-layout",
  "randoc-lua",
  "randoc-pdf",
+ "randoc-server",
  "randoc-templates",
  "randoc-yaml",
  "serde",
@@ -399,6 +401,7 @@ version = "0.1.0"
 dependencies = [
  "nix",
  "randoc-ast",
+ "randoc-data",
  "randoc-layout",
  "randoc-templates",
  "serde_json",
@@ -434,6 +437,17 @@ dependencies = [
  "randoc-math",
  "randoc-templates",
  "serde_json",
+]
+
+[[package]]
+name = "randoc-embed"
+version = "0.1.0"
+dependencies = [
+ "flate2",
+ "randoc-archive",
+ "randoc-ast",
+ "randoc-core",
+ "randoc-tagsoup",
 ]
 
 [[package]]
@@ -491,6 +505,7 @@ dependencies = [
  "randoc-archive",
  "randoc-ast",
  "randoc-core",
+ "randoc-tagsoup",
  "serde_json",
  "toml",
 ]
@@ -527,6 +542,7 @@ version = "0.1.0"
 dependencies = [
  "randoc-ast",
  "randoc-core",
+ "randoc-data",
 ]
 
 [[package]]
@@ -559,6 +575,7 @@ dependencies = [
  "randoc",
  "randoc-archive",
  "randoc-ast",
+ "randoc-citeproc",
  "randoc-core",
  "randoc-layout",
  "randoc-native",
@@ -661,6 +678,7 @@ dependencies = [
  "randoc-archive",
  "randoc-ast",
  "randoc-core",
+ "randoc-embed",
  "serde_json",
 ]
 
@@ -713,12 +731,34 @@ dependencies = [
 ]
 
 [[package]]
+name = "randoc-server"
+version = "0.1.0"
+dependencies = [
+ "randoc",
+ "randoc-archive",
+ "randoc-ast",
+ "randoc-core",
+ "randoc-data",
+ "randoc-embed",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "randoc-tabular"
 version = "0.1.0"
 dependencies = [
  "randoc-ast",
  "randoc-core",
  "serde_json",
+]
+
+[[package]]
+name = "randoc-tagsoup"
+version = "0.1.0"
+dependencies = [
+ "randoc-ast",
+ "randoc-core",
 ]
 
 [[package]]

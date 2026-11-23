@@ -8,6 +8,7 @@ use std::cell::RefCell;
 
 use crate::construct::Call;
 use crate::convert::{self, ReaderLookup, WriterLookup};
+use crate::host::{self, Host};
 use crate::module;
 use crate::options::{default_reader_options, default_writer_options};
 use crate::os::Os;
@@ -28,6 +29,19 @@ pub struct LuaFilter<'a> {
 
 /// Runs the citation filter with the conversion's resource lookup and reader options.
 pub type Citeproc = fn(&mut Context, &mut Pandoc, &FilterEnvironment) -> randoc_core::Result<()>;
+
+/// Runs a JSON filter program with its arguments and input document.
+pub type JsonFilter =
+    fn(&mut Context, &Pandoc, &str, &[Text], &FilterEnvironment) -> randoc_core::Result<Pandoc>;
+
+/// Collects the references of a document for `pandoc.utils.references`.
+pub type References = fn(
+    &mut Context,
+    &Pandoc,
+    &FilterEnvironment,
+) -> randoc_core::Result<
+    Vec<randoc_citeproc::reference::Reference<Vec<randoc_citeproc::markup::Markup>>>,
+>;
 
 /// What a filter can see of the conversion that runs it.
 #[derive(Debug, Clone)]
@@ -67,6 +81,10 @@ pub struct FilterEnvironment {
     pub writers: WriterLookup,
     /// The citation filter used by `pandoc.utils.citeproc`.
     pub citeproc: Option<Citeproc>,
+    /// The runner for `pandoc.utils.run_json_filter`.
+    pub json_filter: Option<JsonFilter>,
+    /// The reference collector for `pandoc.utils.references`.
+    pub references: Option<References>,
     /// The conversion uses a restricted host for `--sandbox`.
     pub sandbox: bool,
 }
@@ -96,6 +114,8 @@ impl FilterEnvironment {
             readers: convert::no_reader,
             writers: convert::no_writer,
             citeproc: None,
+            json_filter: None,
+            references: None,
             sandbox: false,
         }
     }
@@ -288,27 +308,33 @@ pub(crate) fn in_scope<T>(
                 name: "compile",
                 arguments: &arguments,
             };
-            let result = match context.try_borrow_mut() {
-                Ok(mut context) => {
-                    let saved = (environment.sandbox && environment.mode == Mode::Full)
-                        .then(|| context.replace_host(Box::new(randoc_core::NativeHost)));
-                    let compiled =
-                        convert::without_system_access(environment.mode, &mut context, |context| {
-                            crate::template::compile_userdata(&call, context)
-                                .map(|value| vec![value])
-                        });
-                    if let Some(saved) = saved {
-                        context.replace_host(saved);
-                    }
-                    compiled
-                }
-                Err(_) => Err(PeekError::Thrown(BUSY.into())),
-            };
+            let host = Host::new(&cx, environment, &context);
+            let result = host.system(|context| {
+                crate::template::compile_userdata(&call, context).map(|value| vec![value])
+            });
             system_result(lua, result)
         })?;
         native
             .get::<Function>("document_functions")?
             .call::<()>((citeproc, compile_template))?;
+
+        let host_call = scope.create_function(|lua, arguments: Variadic<Value>| {
+            let cx = Cx { lua, max_depth };
+            let result = (|| {
+                let module = module::name_argument(&arguments, 0)?;
+                let name = module::name_argument(&arguments, 1)?;
+                let call = Call {
+                    cx: &cx,
+                    name: &name,
+                    arguments: arguments.get(2..).unwrap_or_default(),
+                };
+                host::call(&Host::new(&cx, environment, &context), &module, &call)
+            })();
+            system_result(lua, result)
+        })?;
+        native
+            .get::<Function>("host_functions")?
+            .call::<()>(host_call)?;
 
         // ADR 11: restricted mode has no function with file access. In
         // full mode the system functions use a native host of their own,
@@ -334,7 +360,7 @@ pub(crate) fn in_scope<T>(
 
 /// The error of `pandoc.read` or `pandoc.write` inside a reader or writer
 /// that the same state runs.
-const BUSY: &str =
+pub(crate) const BUSY: &str =
     "pandoc.read and pandoc.write cannot run inside a reader or writer of the same script";
 
 /// The message of an error of the runtime, without the prefix of its kind.
@@ -348,7 +374,7 @@ fn lua_error_text(error: &Error) -> String {
 /// The position of the Lua code that called `warn`, as Pandoc shows it:
 /// the chunk name without its `@`, the line, and column 1. Level 0 is the
 /// Rust function and level 1 the `warn` of the prelude.
-fn caller_position(lua: &Lua) -> Option<SourcePos> {
+pub(crate) fn caller_position(lua: &Lua) -> Option<SourcePos> {
     lua.inspect_stack(2, |debug| {
         let source = debug.source().source?.into_owned();
         let line = u32::try_from(debug.current_line()?).ok()?;
@@ -449,7 +475,9 @@ fn set_globals(
         module::string_list(lua, &environment.input_files)?,
     )?;
     state.set("output_file", environment.output_file.as_deref())?;
-    state.set("log", module::string_list(lua, &[])?)?;
+    let getters = lua.create_table()?;
+    let native: Table = lua.named_registry_value(module::NATIVE)?;
+    getters.set("log", native.get::<Function>("state_log")?)?;
     let headers = environment
         .request_headers
         .iter()
@@ -469,10 +497,11 @@ fn set_globals(
     // Pandoc makes each value again at each read, so a change to a list
     // that a script read does not change the state.
     let metatable = crate::push::metatable(lua, "CommonStateInterface")?;
-    let index: Function = lua
-        .load(STATE_INDEX)
-        .set_name("=[randoc]")
-        .call((state, lua.create_sequence_from(STATE_KEYS)?))?;
+    let index: Function = lua.load(STATE_INDEX).set_name("=[randoc]").call((
+        state,
+        lua.create_sequence_from(STATE_KEYS)?,
+        getters,
+    ))?;
     metatable.set("__index", index)?;
     let proxy = lua.create_table()?;
     proxy.set_metatable(Some(metatable))?;
@@ -493,9 +522,9 @@ const STATE_KEYS: [&str; 9] = [
 ];
 
 /// The `__index` function of `PANDOC_STATE`. It gets the table of values
-/// and the list of the field names.
+/// the list of field names, and the getter functions.
 const STATE_INDEX: &str = r#"
-local state, names = ...
+local state, names, getters = ...
 local known = {}
 for _, name in ipairs(names) do known[name] = true end
 local error, pairs, type, setmetatable, getmetatable = error, pairs, type, setmetatable, getmetatable
@@ -510,8 +539,9 @@ return function(_, key)
     error('string expected, got ' .. type(key), 0)
   end
   if not known[key] then error('Unknown key', 0) end
-  local value = state[key]
-  return copy(value)
+  local getter = getters[key]
+  if getter then return getter() end
+  return copy(state[key])
 end
 "#;
 

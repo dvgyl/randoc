@@ -7714,9 +7714,12 @@ local function probe(label, fn)
 end
 
 local function odt_content(bytes)
-  local ok, archive = pcall(function() return P.zip.Archive end)
-  if not ok then return P.read(bytes, 'odtcontentxml').blocks[1].text end
-  for _, entry in ipairs(archive(bytes).entries) do
+  local ok, archive = pcall(function() return P.zip.Archive(bytes) end)
+  if not ok then
+    if archive ~= 'pandoc.zip.Archive is not implemented in Randoc' then error(archive, 0) end
+    return P.read(bytes, 'odtcontentxml').blocks[1].text
+  end
+  for _, entry in ipairs(archive.entries) do
     if entry.path == 'content.xml' then return entry:contents() end
   end
   error('Missing content.xml')

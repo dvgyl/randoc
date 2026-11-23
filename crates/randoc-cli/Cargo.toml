@@ -15,8 +15,10 @@ path = "src/main.rs"
 [features]
 default = ["lua"]
 lua = ["dep:randoc-lua"]
+server = ["dep:randoc-server"]
 
 [dependencies]
+randoc-embed = { workspace = true }
 randoc = { workspace = true }
 randoc-archive = { workspace = true }
 randoc-bibtex = { workspace = true }
@@ -25,6 +27,7 @@ randoc-data = { workspace = true }
 randoc-highlight = { workspace = true }
 randoc-layout = { workspace = true }
 randoc-pdf = { workspace = true }
+randoc-server = { workspace = true, optional = true }
 randoc-templates = { workspace = true }
 randoc-yaml = { workspace = true }
 # Lua filters; a WebAssembly build turns the feature off (ADR 11).

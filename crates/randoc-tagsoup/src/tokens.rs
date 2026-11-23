@@ -14,7 +14,7 @@ use randoc_core::shared::{named_entity, show_string};
 
 /// One token of the input.
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub(crate) enum TokenKind {
+pub enum TokenKind {
     /// An open tag with its attributes in source order.
     Open(Text, Vec<(Text, Text)>),
     /// A close tag.
@@ -27,14 +27,15 @@ pub(crate) enum TokenKind {
 
 /// A token with the position of its first character.
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub(crate) struct Token {
-    pub(crate) kind: TokenKind,
+pub struct Token {
+    /// The token type and its content.
+    pub kind: TokenKind,
     /// The 1-based line.
-    pub(crate) line: u32,
+    pub line: u32,
     /// The 1-based column. A tab moves to the next multiple of 8, plus 1.
-    pub(crate) column: u32,
+    pub column: u32,
     /// Byte range of a markup token in the input.
-    pub(crate) bytes: std::ops::Range<usize>,
+    pub bytes: std::ops::Range<usize>,
 }
 
 /// The kind of tag that the state machine reads.
@@ -95,7 +96,7 @@ struct Lexer<'a> {
 }
 
 /// Splits `input` into tokens.
-pub(crate) fn tokenize(input: &str) -> Vec<Token> {
+pub fn tokenize(input: &str) -> Vec<Token> {
     let chars: Vec<char> = input.chars().collect();
     let mut lexer = Lexer {
         chars: &chars,
@@ -723,9 +724,12 @@ fn group_attributes(pieces: Vec<Piece>) -> Vec<(Text, Text)> {
     attributes
 }
 
-/// Renders tokens as HTML text, as the `renderTags` function of upstream does
-/// with the options that Pandoc uses.
-pub(crate) fn render_open(name: &str, attributes: &[(Text, Text)], out: &mut String) {
+/// Appends an open tag and its attributes to the output.
+pub fn render_open(name: &str, attributes: &[(Text, Text)], out: &mut String) {
+    render_open_with_end(name, attributes, "", out);
+}
+
+fn render_open_with_end(name: &str, attributes: &[(Text, Text)], end: &str, out: &mut String) {
     out.push('<');
     out.push_str(name);
     for (key, value) in attributes {
@@ -752,25 +756,67 @@ pub(crate) fn render_open(name: &str, attributes: &[(Text, Text)], out: &mut Str
     if name.starts_with('?') {
         out.push_str(" ?");
     }
+    out.push_str(end);
     out.push('>');
 }
 
+/// Selects the HTML tags that use special rendering rules.
+pub struct RenderOptions {
+    /// Tests a lowercase name for short empty tag syntax.
+    pub minimize: fn(&str) -> bool,
+    /// Tests a lowercase name for unescaped text content.
+    pub raw: fn(&str) -> bool,
+}
+
+/// Appends the rendered HTML tokens to the output.
+pub fn render(tokens: &[TokenKind], options: &RenderOptions, out: &mut String) {
+    let mut tokens = tokens.iter().peekable();
+    let mut raw_name = None;
+    while let Some(token) = tokens.next() {
+        match token {
+            TokenKind::Open(name, attributes) => {
+                let lowercase = name.to_ascii_lowercase();
+                if matches!(tokens.peek(), Some(TokenKind::Close(close)) if close == name)
+                    && (options.minimize)(&lowercase)
+                {
+                    render_open_with_end(name, attributes, " /", out);
+                    tokens.next();
+                } else {
+                    render_open(name, attributes, out);
+                    if raw_name.is_none() && (options.raw)(&lowercase) {
+                        raw_name = Some(name);
+                    }
+                }
+            }
+            TokenKind::Close(name) => {
+                if raw_name == Some(name) {
+                    raw_name = None;
+                }
+                render_close(name, out);
+            }
+            TokenKind::Text(text) if raw_name.is_some() => out.push_str(text),
+            TokenKind::Text(text) => escape_into(text, out),
+            TokenKind::Comment(text) => render_comment(text, out),
+        }
+    }
+}
+
 /// Renders a close tag.
-pub(crate) fn render_close(name: &str, out: &mut String) {
+pub fn render_close(name: &str, out: &mut String) {
     out.push_str("</");
     out.push_str(name);
     out.push('>');
 }
 
 /// Renders a comment. A `-->` inside the text becomes `-- >`.
-pub(crate) fn render_comment(text: &str, out: &mut String) {
+pub fn render_comment(text: &str, out: &mut String) {
     out.push_str("<!--");
     out.push_str(&text.replace("-->", "-- >"));
     out.push_str("-->");
 }
 
 /// Escapes text as the `escapeXML` function of upstream does.
-pub(crate) fn escape_into(text: &str, out: &mut String) {
+pub fn escape_into(text: &str, out: &mut String) {
     for c in text.chars() {
         match c {
             '&' => out.push_str("&amp;"),
@@ -785,7 +831,7 @@ pub(crate) fn escape_into(text: &str, out: &mut String) {
 
 /// Shows a token as the Haskell function `show` does for a `tagsoup` tag.
 /// Pandoc gives this text as its error message when it cannot read a token.
-pub(crate) fn show_token(kind: &TokenKind) -> String {
+pub fn show_token(kind: &TokenKind) -> String {
     let mut out = String::new();
     match kind {
         TokenKind::Open(name, attributes) => {

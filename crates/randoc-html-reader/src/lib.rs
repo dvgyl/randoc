@@ -10,7 +10,6 @@ mod iframe;
 mod parse;
 mod table;
 mod text;
-mod tokens;
 
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -23,7 +22,7 @@ use randoc_core::{
 };
 
 use crate::parse::{NOTE_REF_FORMAT, Parser, Stop};
-use crate::tokens::{Token, TokenKind};
+use randoc_tagsoup::{Token, TokenKind};
 
 /// Returns the reader when the format name is `html`.
 pub fn reader(format: &str) -> Option<Reader> {
@@ -67,7 +66,7 @@ fn read_document(
     limits: randoc_core::Limits,
     iframes: &mut iframe::Iframes<'_>,
 ) -> Result<(Pandoc, Vec<LogMessage>)> {
-    let mut tokens = tokens::tokenize(input);
+    let mut tokens = randoc_tagsoup::tokenize(input);
     canonicalize(&mut tokens);
     let extensions = options.extensions;
     let mut read_iframe = |src: &str, depth| iframes.read(src, options, depth);
@@ -83,7 +82,7 @@ fn read_document(
             Stop::Fail | Stop::Budget => Text::from("the document needs too much backtracking"),
             Stop::Fatal(index) => tokens
                 .get(index)
-                .map(|token| tokens::show_token(&token.kind))
+                .map(|token| randoc_tagsoup::show_token(&token.kind))
                 .unwrap_or_default(),
         })
     })?;
@@ -957,7 +956,7 @@ mod tests {
     /// Returns the parser steps for an input that repeats `unit` `count` times.
     fn steps(unit: &str, count: usize) -> u64 {
         let input = unit.repeat(count);
-        let mut tokens = tokens::tokenize(&input);
+        let mut tokens = randoc_tagsoup::tokenize(&input);
         canonicalize(&mut tokens);
         let extensions = Extensions::from_list(&[Extension::NativeDivs, Extension::NativeSpans]);
         let mut parser = Parser::new(
@@ -1004,7 +1003,7 @@ mod tests {
     /// code element and a formatting element.
     fn code_visits(count: usize) -> u64 {
         let input = format!("{}x{}", "<tt><b>".repeat(count), "</b></tt>".repeat(count));
-        let mut tokens = tokens::tokenize(&input);
+        let mut tokens = randoc_tagsoup::tokenize(&input);
         canonicalize(&mut tokens);
         let limits = randoc_core::Limits {
             max_nesting_depth: 4 * count,

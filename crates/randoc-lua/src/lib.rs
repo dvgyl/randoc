@@ -7,7 +7,7 @@
 //! ```
 //! use randoc_ast::{Block, Inline, Pandoc};
 //! use randoc_core::Context;
-//! use randoc_lua::{FilterEnvironment, LuaFilter, apply_filter};
+//! use randoc_lua::{FilterEnvironment, JsonFilter, LuaFilter, References, apply_filter};
 //!
 //! let mut doc = Pandoc {
 //!     meta: Default::default(),
@@ -32,8 +32,13 @@ mod construct;
 mod convert;
 mod filter;
 mod formats;
+mod host;
+mod image;
 mod json;
+mod layout;
+mod log;
 mod lpeg;
+mod mediabag;
 mod module;
 mod normalize;
 mod object;
@@ -43,12 +48,16 @@ mod path;
 mod peek;
 mod properties;
 mod push;
+mod references;
+mod run_filter;
 mod runtime;
 mod script;
 mod show;
+mod simple_table;
 #[cfg(test)]
 mod sources;
 mod steps;
+mod structure;
 mod system;
 mod template;
 #[cfg(test)]
@@ -56,8 +65,11 @@ mod tests;
 mod text;
 mod utils;
 mod walk;
+mod zip;
 
 pub use convert::{ReaderLookup, WriterLookup};
-pub use filter::{FilterEnvironment, LuaFilter, apply_filter, apply_filter_files};
+pub use filter::{
+    FilterEnvironment, JsonFilter, LuaFilter, References, apply_filter, apply_filter_files,
+};
 pub use runtime::{INSTRUCTION_LIMIT_MESSAGE, LuaRuntime, Mode, RuntimeLimits};
 pub use script::{CustomScript, Invocation, ScriptKind, read_script, run_script};

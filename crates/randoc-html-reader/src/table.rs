@@ -12,7 +12,7 @@ use crate::parse::{Parse, Parser, Stop};
 use crate::text::{
     attribute, clean_attributes, is_blank, is_haskell_space, read_decimal, read_integer, to_attr,
 };
-use crate::tokens::TokenKind;
+use randoc_tagsoup::TokenKind;
 
 /// The cost of a table for the budget of the document: one for each column
 /// specification, and one for each grid slot that no cell of the input

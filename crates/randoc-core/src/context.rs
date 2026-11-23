@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 use std::io;
 
@@ -1046,6 +1046,8 @@ pub struct Limits {
     pub max_archive_entries: usize,
     /// The largest size, in bytes, of one fetched resource.
     pub max_resource_size: u64,
+    /// The largest total size, in bytes, that resource embedding adds.
+    pub max_embedded_size: u64,
     /// The largest number of table cells and columns that a reader makes for
     /// one document without input text for each one. One span attribute can
     /// ask for them; Pandoc has no limit.
@@ -1062,6 +1064,7 @@ impl Default for Limits {
             max_archive_size: 4 << 30,
             max_archive_entries: 100_000,
             max_resource_size: 1 << 30,
+            max_embedded_size: 4 << 30,
             max_table_cells: 200_000,
             max_input_size: 4 << 30,
         }
@@ -1076,6 +1079,7 @@ impl Limits {
             max_archive_size: 256 << 20,
             max_archive_entries: 10_000,
             max_resource_size: 64 << 20,
+            max_embedded_size: 256 << 20,
             max_table_cells: 20_000,
             max_input_size: 64 << 20,
         }
@@ -1158,6 +1162,66 @@ pub enum Term {
     Important,
     /// Label for a caution.
     Caution,
+    /// Heading for a bibliography.
+    Bibliography,
+    /// Label for a chapter.
+    Chapter,
+    /// Label for a part.
+    Part,
+    /// Heading for the list of figures.
+    ListOfFigures,
+    /// Heading for the list of tables.
+    ListOfTables,
+    /// Heading for an index.
+    Index,
+    /// Heading for a preface.
+    Preface,
+    /// Label for a page.
+    Page,
+    /// Label for a cross-reference.
+    See,
+    /// Heading for a glossary.
+    Glossary,
+    /// Label for letter enclosures.
+    Encl,
+    /// Label for recipients of a letter copy.
+    Cc,
+    /// Label for the main recipients of a letter.
+    To,
+}
+
+impl Term {
+    /// Returns the exact key in a translation table.
+    pub fn key(self) -> &'static str {
+        match self {
+            Self::Abstract => "Abstract",
+            Self::Figure => "Figure",
+            Self::Table => "Table",
+            Self::Contents => "Contents",
+            Self::References => "References",
+            Self::Listing => "Listing",
+            Self::Appendix => "Appendix",
+            Self::Proof => "Proof",
+            Self::Note => "Note",
+            Self::Warning => "Warning",
+            Self::Tip => "Tip",
+            Self::Important => "Important",
+            Self::Caution => "Caution",
+            Self::Bibliography => "Bibliography",
+            Self::Chapter => "Chapter",
+            Self::Part => "Part",
+            Self::ListOfFigures => "ListOfFigures",
+            Self::ListOfTables => "ListOfTables",
+            Self::Index => "Index",
+            Self::Preface => "Preface",
+            Self::Page => "Page",
+            Self::See => "See",
+            Self::Glossary => "Glossary",
+            Self::Encl => "Encl",
+            Self::Cc => "Cc",
+            Self::To => "To",
+        }
+    }
 }
 
 /// The settings that all steps of one conversion share.
@@ -1214,6 +1278,8 @@ pub struct Context {
     /// The limits for hostile input.
     pub limits: Limits,
     log: Vec<LogMessage>,
+    held: Vec<Vec<LogMessage>>,
+    missing_terms: BTreeSet<&'static str>,
 }
 
 impl fmt::Debug for Context {
@@ -1228,29 +1294,23 @@ impl fmt::Debug for Context {
 }
 
 impl Context {
-    /// Returns the translation of a label or its English text.
-    pub fn term(&self, term: Term) -> Text {
-        let key = match term {
-            Term::Abstract => "Abstract",
-            Term::Figure => "Figure",
-            Term::Table => "Table",
-            Term::Contents => "Contents",
-            Term::References => "References",
-            Term::Listing => "Listing",
-            Term::Appendix => "Appendix",
-            Term::Proof => "Proof",
-            Term::Note => "Note",
-            Term::Warning => "Warning",
-            Term::Tip => "Tip",
-            Term::Important => "Important",
-            Term::Caution => "Caution",
+    /// Returns the translated label. Uses English when no table is set.
+    /// Reports each missing label in a configured table once and returns empty text.
+    pub fn term(&mut self, term: Term) -> Text {
+        let key = term.key();
+        let Some(translations) = &self.state.translations else {
+            return randoc_data::terms::term_table("en")
+                .and_then(|table| table.iter().find(|(name, _)| *name == key))
+                .map_or(key, |(_, value)| value)
+                .to_owned();
         };
-        self.state
-            .translations
-            .as_ref()
-            .and_then(|translations| translations.get(key))
-            .cloned()
-            .unwrap_or_else(|| key.to_owned())
+        if let Some(value) = translations.get(key) {
+            return value.clone();
+        }
+        if self.missing_terms.insert(key) {
+            self.report(LogMessage::NoTranslation(key.to_owned()));
+        }
+        Text::new()
     }
 
     /// Makes a context that uses `host` for system access.
@@ -1261,6 +1321,8 @@ impl Context {
             media: MediaBag::default(),
             limits: Limits::default(),
             log: Vec::new(),
+            held: Vec::new(),
+            missing_terms: BTreeSet::new(),
         }
     }
 
@@ -1286,8 +1348,23 @@ impl Context {
         std::mem::replace(&mut self.host, host)
     }
 
-    /// Records a message and shows it to the user when the verbosity level permits.
+    /// Starts a hold for new messages. Held messages stay out of the conversion log.
+    pub fn hold_messages(&mut self) {
+        self.held.push(Vec::new());
+    }
+
+    /// Ends the innermost hold and returns its messages in report order.
+    pub fn release_messages(&mut self) -> Vec<LogMessage> {
+        self.held.pop().unwrap_or_default()
+    }
+
+    /// Records a message and shows it when the verbosity level permits.
+    /// During a hold, adds the message to the innermost hold only.
     pub fn report(&mut self, message: LogMessage) {
+        if let Some(hold) = self.held.last_mut() {
+            hold.push(message);
+            return;
+        }
         if message.level() <= self.state.verbosity {
             self.host.show_log_message(&message);
         }
@@ -1318,6 +1395,52 @@ impl Context {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn nested_holds_keep_messages_in_report_order() {
+        use super::{Context, LogMessage};
+
+        let mut context = Context::pure();
+        let message = |label: &str| LogMessage::NoTranslation(label.into());
+        context.report(message("before"));
+        context.hold_messages();
+        context.report(message("outer first"));
+        context.hold_messages();
+        context.report(message("inner first"));
+        context.report(message("inner second"));
+        assert_eq!(
+            context.release_messages(),
+            [message("inner first"), message("inner second")]
+        );
+        context.report(message("outer second"));
+        assert_eq!(context.log(), [message("before")]);
+        assert_eq!(
+            context.release_messages(),
+            [message("outer first"), message("outer second")]
+        );
+        assert!(context.release_messages().is_empty());
+        context.report(message("after"));
+        assert_eq!(context.log(), [message("before"), message("after")]);
+    }
+
+    #[test]
+    fn term_uses_english_only_when_the_table_is_unset() {
+        use super::{Context, LogMessage, Term};
+
+        let mut context = Context::pure();
+        assert_eq!(context.term(Term::ListOfFigures), "List of Figures");
+        assert_eq!(context.term(Term::See), "see");
+        assert!(context.log().is_empty());
+
+        context.state.translations = Some([("Figure".into(), "Abbildung".into())].into());
+        assert_eq!(context.term(Term::Figure), "Abbildung");
+        assert!(context.term(Term::ListOfFigures).is_empty());
+        assert!(context.term(Term::ListOfFigures).is_empty());
+        assert_eq!(
+            context.log(),
+            [LogMessage::NoTranslation("ListOfFigures".into())]
+        );
+    }
+
     #[cfg(unix)]
     #[test]
     fn extract_media_replaces_a_hard_link_instead_of_writing_through_it() {

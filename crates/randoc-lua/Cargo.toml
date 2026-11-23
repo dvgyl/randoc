@@ -10,7 +10,9 @@ authors.workspace = true
 build = "build.rs"
 
 [dependencies]
+randoc-archive = { workspace = true }
 randoc-ast = { workspace = true }
+randoc-citeproc = { workspace = true }
 randoc-core = { workspace = true }
 randoc-layout = { workspace = true }
 randoc-native = { workspace = true }
@@ -24,7 +26,6 @@ mlua-sys = { workspace = true }
 # The tests of `pandoc.read` and `pandoc.write` use the registry of the
 # program. The crate itself must not depend on `randoc`.
 [dev-dependencies]
-randoc-archive = { workspace = true }
 randoc = { workspace = true }
 
 [build-dependencies]

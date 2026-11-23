@@ -84,12 +84,23 @@ pub(crate) fn install(lua: &Lua, max_depth: usize) -> mlua::Result<()> {
     lua.set_app_data(crate::peek::ActiveObjects::default());
     let native = lua.create_table()?;
     native.set("metatables", lua.create_table()?)?;
+    native.set("typed", lua.create_table()?)?;
     native.set("constructors", lua.create_sequence_from(CONSTRUCTORS)?)?;
     native.set("constants", lua.create_sequence_from(CONSTANTS)?)?;
     native.set("types", type_tables(lua)?)?;
     native.set(
         "typename",
         lua.create_function(|_, value: Value| Ok(with_node(&value, Node::type_name)))?,
+    )?;
+    native.set(
+        "userdata_name",
+        lua.create_function(|_, value: Value| {
+            let name = match value {
+                Value::UserData(userdata) => userdata.type_name().ok(),
+                _ => None,
+            };
+            Ok(name)
+        })?,
     )?;
     native.set(
         "cache",
@@ -125,6 +136,11 @@ pub(crate) fn install(lua: &Lua, max_depth: usize) -> mlua::Result<()> {
     for pair in metatables.pairs::<String, Table>() {
         let (name, metatable) = pair?;
         lua.set_named_registry_value(&format!("{METATABLE_PREFIX}{name}"), metatable)?;
+    }
+    let typed: Table = native.get("typed")?;
+    for pair in typed.pairs::<String, Table>() {
+        let (name, metatable) = pair?;
+        lua.set_named_registry_value(&format!("randoc.typed.{name}"), metatable)?;
     }
     lua.set_named_registry_value(METAMETHODS, native.get::<Table>("metamethods")?)?;
     lua.set_named_registry_value(CALL_TRACED, native.get::<Function>("call_traced")?)?;
@@ -207,7 +223,7 @@ fn argument(arguments: &[Value], index: usize) -> Value {
     arguments.get(index).cloned().unwrap_or_else(none)
 }
 
-fn name_argument(arguments: &[Value], index: usize) -> Peek<String> {
+pub(crate) fn name_argument(arguments: &[Value], index: usize) -> Peek<String> {
     match arguments.get(index) {
         Some(Value::String(name)) => Ok(name.text()),
         _ => Err(PeekError::Thrown("internal error: no name".to_string())),
@@ -342,7 +358,26 @@ fn dispatch(cx: &Cx, arguments: &[Value]) -> Peek<Vec<Value>> {
                 name: name.strip_prefix("structure_").unwrap_or(&name),
                 arguments: rest.get(1..).unwrap_or_default(),
             };
-            utils::call(&call, &name).and_then(one)
+            if name.starts_with("structure_") {
+                crate::structure::call(&call).and_then(one)
+            } else {
+                utils::call(&call, &name).and_then(one)
+            }
+        }
+        "structure" | "layout" | "image" | "simple_table" => {
+            let name = name_argument(rest, 0)?;
+            let call = Call {
+                cx,
+                name: &name,
+                arguments: rest.get(1..).unwrap_or_default(),
+            };
+            match operation.as_str() {
+                "structure" => crate::structure::call(&call),
+                "layout" => crate::layout::call(&call),
+                "image" => crate::image::call(&call),
+                _ => crate::simple_table::call(&call),
+            }
+            .and_then(one)
         }
         "template" => {
             let name = name_argument(rest, 0)?;

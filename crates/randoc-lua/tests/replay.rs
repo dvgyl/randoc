@@ -107,6 +107,86 @@ fn each_probe_of_the_module_matrix_gives_the_result_of_the_oracle() {
 }
 
 #[test]
+fn each_probe_of_the_structure_matrix_gives_the_result_of_the_oracle() {
+    replay(
+        include_str!("replay/structure.txt"),
+        include_str!("replay/structure-expected.txt"),
+        0,
+        |_| {},
+    );
+}
+
+#[test]
+fn each_probe_of_the_mediabag_matrix_gives_the_result_of_the_oracle() {
+    replay(
+        include_str!("replay/mediabag.txt"),
+        include_str!("replay/mediabag-expected.txt"),
+        0,
+        |_| {},
+    );
+}
+
+#[test]
+fn each_probe_of_the_log_matrix_gives_the_result_of_the_oracle() {
+    replay(
+        include_str!("replay/log.txt"),
+        include_str!("replay/log-expected.txt"),
+        0,
+        |_| {},
+    );
+}
+
+#[test]
+fn each_probe_of_the_layout_matrix_gives_the_result_of_the_oracle() {
+    replay(
+        include_str!("replay/layout.txt"),
+        include_str!("replay/layout-expected.txt"),
+        0,
+        |_| {},
+    );
+}
+
+#[test]
+fn each_probe_of_the_zip_matrix_gives_the_result_of_the_oracle() {
+    replay(
+        include_str!("replay/zip.txt"),
+        include_str!("replay/zip-expected.txt"),
+        0,
+        |_| {},
+    );
+}
+
+#[test]
+fn each_probe_of_the_image_matrix_gives_the_result_of_the_oracle() {
+    replay(
+        include_str!("replay/image.txt"),
+        include_str!("replay/image-expected.txt"),
+        0,
+        |_| {},
+    );
+}
+
+#[test]
+fn each_probe_of_the_simple_table_matrix_gives_the_result_of_the_oracle() {
+    replay(
+        include_str!("replay/simple-table.txt"),
+        include_str!("replay/simple-table-expected.txt"),
+        0,
+        |_| {},
+    );
+}
+
+#[test]
+fn each_probe_of_the_run_filter_matrix_gives_the_result_of_the_oracle() {
+    replay(
+        include_str!("replay/run-filter.txt"),
+        include_str!("replay/run-filter-expected.txt"),
+        0,
+        |_| {},
+    );
+}
+
+#[test]
 fn each_probe_of_the_system_matrix_gives_the_result_of_the_oracle() {
     replay(
         include_str!("replay/system.txt"),
@@ -117,7 +197,7 @@ fn each_probe_of_the_system_matrix_gives_the_result_of_the_oracle() {
 }
 
 // The oracle uses pandoc.zip. The replay uses the archive reader directly
-// until Randoc exposes the same Lua module.
+// until the Lua archive constructor can read ZIP data.
 struct OdtContentXml;
 
 impl BinaryReader for OdtContentXml {

@@ -24,7 +24,7 @@ use crate::text::{
     Inlines, TextMode, attribute, clean_attributes, escape_uri, is_blank, quoted_text_inlines,
     read_integer, style_property, text_inlines, to_attr,
 };
-use crate::tokens::{Token, TokenKind, escape_into, render_close, render_comment, render_open};
+use randoc_tagsoup::{Token, TokenKind, escape_into, render_close, render_comment, render_open};
 
 /// Why a rule stops.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

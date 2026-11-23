@@ -10,6 +10,7 @@
 -- of `hslua-objectorientation` 2.5.0 (MIT).
 local native = ...
 local call, typename, cache = native.call, native.typename, native.cache
+local userdata_name = native.userdata_name
 local error, type, rawget, rawset, rawequal, select, tostring, setmetatable, getmetatable =
   error, type, rawget, rawset, rawequal, select, tostring, setmetatable, getmetatable
 local xpcall, next, pairs, ipairs = xpcall, next, pairs, ipairs
@@ -27,10 +28,18 @@ end
 
 -- The type names of the proxies whose metatable is hidden (`__metatable`).
 local proxy_names = setmetatable({}, { __mode = 'k' })
+local protected_names = {}
+
+local function typed_name(value)
+  if type(value) == 'userdata' then
+    local name = userdata_name(value)
+    if protected_names[name] then return name end
+  end
+end
 
 -- The name of the type of a value, as `luaL_typeerror` shows it.
 local function described(value)
-  local name = typename(value) or proxy_names[value]
+  local name = typename(value) or proxy_names[value] or typed_name(value)
   if name then return name end
   local mt = getmetatable(value)
   if type(mt) == 'table' and type(rawget(mt, '__name')) == 'string' then
@@ -450,7 +459,7 @@ for kind, names in pairs { Inline = INLINE_KINDS, Block = BLOCK_KINDS } do
 end
 
 local function type_of(value)
-  local name = typename(value) or proxy_names[value]
+  local name = typename(value) or proxy_names[value] or typed_name(value)
   if name then return name end
   local mt = getmetatable(value)
   if type(mt) == 'table' then
@@ -487,13 +496,6 @@ for _, name in ipairs { 'blocks_to_inlines', 'make_sections', 'normalize_date', 
   pandoc.utils[name] = function(...) return utils_call(name, ...) end
 end
 pandoc.sha1 = pandoc.utils.sha1
-pandoc.structure = {
-  make_sections = function(...) return utils_call('structure_make_sections', ...) end,
-  slide_level = function(...) return utils_call('slide_level', ...) end,
-  unique_identifier = function(...) return utils_call('unique_identifier', ...) end,
-  split_into_chunks = missing_function('pandoc.structure.split_into_chunks'),
-  table_of_contents = missing_function('pandoc.structure.table_of_contents'),
-}
 
 -- `pandoc.path` and `pandoc.text`: ports of `hslua-module-path` 1.2.0 and
 -- `hslua-module-text` 1.2.0 (MIT).
@@ -548,6 +550,7 @@ local active_compile
 local document_installed = false
 local active_write
 local active_system
+local active_host
 local warn_installed = false
 local convert_installed = false
 local system_installed = false
@@ -716,6 +719,132 @@ function native.system_functions(system_call)
     return output
   end
 end
+function native.host_functions(host)
+  active_host = host
+end
+
+local function host_op(module, name)
+  return function(...) return check(active_host(module, name, ...)) end
+end
+
+local function pure_op(module, name)
+  return function(...) return check(call(module, name, ...)) end
+end
+
+local function operations(op, module, names)
+  local result = {}
+  for _, name in ipairs(names) do result[name] = op(module, name) end
+  return result
+end
+
+local function typed(name, spec)
+  local op = spec.host and host_op or pure_op
+  local module = spec.module
+  local methods = operations(op, module, spec.methods or {})
+  local get = op(module, 'get')
+  local mt = {
+    __index = function(self, key) return methods[key] or get(self, key) end,
+    __newindex = op(module, 'set'),
+    __tostring = op(module, 'tostring'),
+  }
+  function mt.__pairs(self)
+    local index = 0
+    return function()
+      index = index + 1
+      local key = spec.pairs_order and spec.pairs_order[index]
+      if key ~= nil then return key, mt.__index(self, key) end
+    end
+  end
+  for _, key in ipairs(spec.ops or {}) do mt[key] = op(module, key) end
+  native.typed[name] = mt
+  protected_names[name] = true
+end
+
+local doc_methods = {
+  'before_non_blank', 'braces', 'brackets', 'cblock', 'chomp', 'double_quotes',
+  'flush', 'hang', 'height', 'inside', 'is_empty', 'lblock', 'min_offset', 'nest',
+  'nestle', 'nowrap', 'offset', 'parens', 'prefixed', 'quotes', 'rblock', 'render',
+  'update_column', 'vfill',
+}
+typed('ChunkedDoc', { module = 'structure', pairs_order = { 'chunks', 'meta', 'toc' } })
+typed('Chunk', {
+  module = 'structure',
+  pairs_order = { 'contents', 'heading', 'id', 'level', 'next', 'number', 'path', 'prev',
+    'section_number', 'unlisted', 'up' },
+})
+typed('Doc', {
+  module = 'layout', methods = doc_methods, pairs_order = doc_methods,
+  ops = { '__concat', '__add', '__div', '__idiv', '__eq' },
+})
+typed('LogMessage', { module = 'log', host = true, ops = { '__tojson' } })
+typed('zip.Archive', {
+  module = 'zip', host = true, methods = { 'bytestring', 'extract' },
+  pairs_order = { 'entries', 'bytestring', 'extract' },
+})
+typed('zip.Entry', {
+  module = 'zip', host = true, methods = { 'contents', 'symlink' },
+  pairs_order = { 'modtime', 'path', 'contents', 'symlink' },
+})
+typed('SimpleTable', {
+  module = 'simple_table', ops = { '__eq' },
+  pairs_order = { 'aligns', 'caption', 'headers', 'rows', 't', 'widths' },
+})
+
+pandoc.structure = operations(pure_op, 'structure', {
+  'make_sections', 'slide_level', 'unique_identifier', 'split_into_chunks', 'table_of_contents',
+})
+pandoc.mediabag = operations(host_op, 'mediabag', {
+  'insert', 'lookup', 'list', 'delete', 'empty', 'make_data_uri', 'fetch', 'fill', 'write',
+})
+do
+  local items = host_op('mediabag', 'items')
+  function pandoc.mediabag.items()
+    local snapshot = items()
+    local function step(state)
+      state.i = state.i + 1
+      local entry = snapshot[state.i]
+      if entry then return entry[1], entry[2], entry[3] end
+    end
+    return step, { i = 0 }, nil
+  end
+end
+pandoc.log = operations(host_op, 'log', { 'info', 'warn' })
+native.state_log = host_op('log', 'list')
+do
+  local hold, release = host_op('log', 'hold'), host_op('log', 'release')
+  local pack, unpack, pcall = table.pack, table.unpack, pcall
+  function pandoc.log.silence(fn, ...)
+    if fn == nil then error('attempt to index a nil value', 0) end
+    hold()
+    local results = pack(pcall(fn, ...))
+    local messages = release()
+    if not results[1] then error(results[2], 0) end
+    return messages, unpack(results, 2, results.n)
+  end
+end
+pandoc.layout = operations(pure_op, 'layout', doc_methods)
+for _, name in ipairs {
+  'literal', 'after_break', 'blanklines', 'bold', 'italic', 'underlined', 'strikeout',
+  'fg', 'bg', 'concat', 'real_length',
+} do
+  pandoc.layout[name] = pure_op('layout', name)
+end
+do
+  local constants = operations(pure_op, 'layout', { 'empty', 'space', 'cr', 'blankline' })
+  setmetatable(pandoc.layout, { __index = function(_, key)
+    local constant = constants[key]
+    if constant then return constant() end
+  end })
+end
+pandoc.zip = operations(host_op, 'zip', { 'Archive', 'Entry', 'read_entry', 'zip' })
+pandoc.image = operations(pure_op, 'image', { 'format', 'size' })
+pandoc.SimpleTable = pure_op('simple_table', 'SimpleTable')
+pandoc.utils.to_simple_table = pure_op('simple_table', 'to_simple_table')
+pandoc.utils.from_simple_table = pure_op('simple_table', 'from_simple_table')
+pandoc.utils.run_lua_filter = host_op('filters', 'run_lua_filter')
+pandoc.utils.run_json_filter = host_op('filters', 'run_json_filter')
+pandoc.utils.references = host_op('references', 'references')
+
 pandoc.json = module_of('json', { 'decode', 'encode' })
 pandoc.format = module_of('format', { 'all_extensions', 'default_extensions', 'extensions', 'from_path' })
 pandoc.json.null = native.json_null
@@ -736,16 +865,11 @@ end
 
 for _, name in ipairs {
   'read', 'write', 'write_classic', 'with_state', 'ReaderOptions',
-  'WriterOptions', 'SimpleTable',
+  'WriterOptions',
 } do
   pandoc[name] = missing_function('pandoc.' .. name)
 end
-for _, name in ipairs {
-  'documentation', 'from_simple_table', 'references', 'run_json_filter',
-  'run_lua_filter', 'to_simple_table',
-} do
-  pandoc.utils[name] = missing_function('pandoc.utils.' .. name)
-end
+pandoc.utils.documentation = missing_function('pandoc.utils.documentation')
 pandoc.types.Sources = missing_function('pandoc.types.Sources')
 -- `pandoc.template`: `compile` and `apply` (row I-LUA-27). Compiled
 -- templates are opaque `userdata` (`LuaTemplate`) preserving resolved partials.
@@ -764,8 +888,7 @@ pandoc.template = {
 }
 
 local missing_modules = {
-  'cli', 'image', 'layout', 'log', 'mediabag', 'scaffolding',
-  'zip', 'readers', 'writers',
+  'cli', 'scaffolding', 'readers', 'writers',
 }
 for _, name in ipairs(missing_modules) do
   pandoc[name] = missing_module('pandoc.' .. name)
@@ -780,7 +903,10 @@ globals.getmetatable = function(...)
   if select('#', ...) == 0 then
     error("bad argument #1 to 'getmetatable' (value expected)", 2)
   end
-  if typename((...)) then return true end
+  local value = ...
+  if typename(value) or typed_name(value) then
+    return true
+  end
   return getmetatable(...)
 end
 globals.PANDOC_READER_OPTIONS = missing_module('PANDOC_READER_OPTIONS')
@@ -799,6 +925,9 @@ if type(package) == 'table' and type(package.loaded) == 'table' then
   loaded['pandoc.structure'] = pandoc.structure
   loaded['pandoc.format'] = pandoc.format
   loaded['pandoc.system'] = pandoc.system
+  for _, name in ipairs { 'mediabag', 'log', 'layout', 'zip', 'image' } do
+    loaded['pandoc.' .. name] = pandoc[name]
+  end
   for _, name in ipairs(missing_modules) do
     if name ~= 'readers' and name ~= 'writers' then
       loaded['pandoc.' .. name] = pandoc[name]

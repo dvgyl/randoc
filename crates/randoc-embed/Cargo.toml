@@ -1,0 +1,19 @@
+[package]
+name = "randoc-embed"
+description = "HTML resource embedding for Randoc"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]
+randoc-ast = { workspace = true }
+randoc-core = { workspace = true }
+randoc-archive = { workspace = true }
+randoc-tagsoup = { workspace = true }
+flate2 = { workspace = true }
+
+[lints]
+workspace = true
