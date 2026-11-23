@@ -148,11 +148,16 @@ const fn alphabet(
         other,
         wrap,
         inline_chars,
+        upright_bold: false,
     }
 }
 
 const NORMAL: Alphabet = alphabet("normal", "normal", Wrap::Plain, false);
 const BOLD: Alphabet = alphabet("bold-italic", "bold", Wrap::Strong, false);
+const UPRIGHT_BOLD: Alphabet = Alphabet {
+    upright_bold: true,
+    ..BOLD
+};
 const SCRIPT: Alphabet = alphabet("script", "script", Wrap::Plain, true);
 
 /// The math alphabets, sorted by name.
@@ -163,7 +168,7 @@ static ALPHABETS: &[(&str, Alphabet)] = &[
         "mathbb",
         alphabet("double-struck", "double-struck", Wrap::Plain, true),
     ),
-    ("mathbf", BOLD),
+    ("mathbf", UPRIGHT_BOLD),
     (
         "mathbfcal",
         alphabet("bold-script", "bold-script", Wrap::Strong, true),
@@ -1649,6 +1654,22 @@ impl Parser {
                     let Some(next) = self.peek() else {
                         return self.fail("unexpected eof");
                     };
+                    if next.is_ascii_alphabetic() {
+                        let start = self.pos;
+                        let name = self.control_name()?;
+                        if let Some(value) = text_word(&name) {
+                            text.push_str(value);
+                            if self.peek() == Some('{') && self.peek_at(1) == Some('}') {
+                                self.pos += 2;
+                            } else {
+                                while self.peek().is_some_and(is_tex_space) {
+                                    self.pos += 1;
+                                }
+                            }
+                            continue;
+                        }
+                        self.pos = start;
+                    }
                     let width = match next {
                         '$' | '%' | '{' | '}' | '&' | '_' | '#' | ' ' => {
                             text.push(next);
@@ -1928,6 +1949,15 @@ impl Parser {
             ));
         }
         Ok(())
+    }
+}
+
+/// A control word that adds a character to a text run.
+fn text_word(name: &str) -> Option<&'static str> {
+    match name {
+        "quad" => Some("\u{2000}"),
+        "ldots" => Some("…"),
+        _ => symbol(name).and_then(|(class, text)| (class == Class::Text).then_some(text)),
     }
 }
 

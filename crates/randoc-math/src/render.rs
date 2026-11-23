@@ -544,7 +544,7 @@ impl MathMl {
     }
 }
 
-fn has_limits(base: &Exp) -> bool {
+pub(crate) fn has_limits(base: &Exp) -> bool {
     match base {
         Exp::Sym(Class::Op, text) => LIMIT_OPS.contains(&text.as_str()),
         Exp::Sym(Class::FuncLimits, _) | Exp::Limits(_) => true,
@@ -850,4 +850,36 @@ fn merge(items: Vec<Inline>) -> Vec<Inline> {
         out.push(item);
     }
     out
+}
+
+pub(crate) fn prime_count(text: &str) -> usize {
+    text.chars()
+        .map(|c| match c {
+            '′' => Some(1),
+            '″' => Some(2),
+            '‴' => Some(3),
+            '⁗' => Some(4),
+            _ => None,
+        })
+        .sum::<Option<usize>>()
+        .unwrap_or(0)
+}
+
+pub(crate) fn accent_char(mark: &str) -> &str {
+    if mark == "→" { "\u{20d7}" } else { mark }
+}
+
+pub(crate) fn column_alignment(aligns: &Aligns, column: usize, rows: &[Row]) -> &'static str {
+    match aligns {
+        Aligns::All(align) => align,
+        Aligns::FirstRow(align) if rows.first().is_some_and(|row| column < row.len()) => align,
+        Aligns::FirstRow(_) => "center",
+        Aligns::Pairs if column.is_multiple_of(2) => "right",
+        Aligns::Pairs => "left",
+        Aligns::Cycle(turns) => turns
+            .get(column % turns.len().max(1))
+            .copied()
+            .unwrap_or("center"),
+        Aligns::Columns(columns) => columns.get(column).map_or("center", |(align, _)| *align),
+    }
 }

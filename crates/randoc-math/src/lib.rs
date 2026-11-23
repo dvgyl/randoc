@@ -10,7 +10,10 @@
 //! The rules come from the output of Pandoc 3.13. See `tools/probe.py` and
 //! `tests/oracle.tsv`.
 
+#![forbid(unsafe_code)]
+
 mod eqn;
+mod eqn_symbols;
 mod macros;
 mod omml;
 mod parse;
@@ -18,6 +21,7 @@ mod render;
 mod symbols;
 mod tree;
 mod typst;
+mod typst_symbols;
 mod unprintable;
 
 use randoc_ast::{Inline, MathType};
@@ -158,24 +162,31 @@ pub fn to_inlines(_kind: MathType, tex: &str, max_depth: usize) -> Result<Vec<In
     render::inlines(&items).map_err(|render::Unsupported| MathError::Unsupported)
 }
 
+// The shared parser uses the call stack. The writer limit keeps parsing
+// and rendering within a 2 MiB thread stack, even with a higher caller limit.
+const WRITER_DEPTH_LIMIT: usize = 256;
+
 /// Converts TeX to a Typst math body without dollar signs.
+/// The parser uses the smaller of `max_depth` and 256.
 pub fn to_typst(kind: MathType, tex: &str, max_depth: usize) -> Result<String, MathError> {
-    let items = parse(tex, max_depth)?;
+    let items = parse(tex, max_depth.min(WRITER_DEPTH_LIMIT))?;
     typst::render(&items, kind == MathType::DisplayMath)
         .map_err(|render::Unsupported| MathError::Unsupported)
 }
 
 /// Converts TeX to an Office Math Markup Language `<m:oMath>` element.
 /// The caller adds `<m:oMathPara>` for display math.
+/// The parser uses the smaller of `max_depth` and 256.
 pub fn to_omml(kind: MathType, tex: &str, max_depth: usize) -> Result<String, MathError> {
-    let items = parse(tex, max_depth)?;
+    let items = parse(tex, max_depth.min(WRITER_DEPTH_LIMIT))?;
     omml::render(&items, kind == MathType::DisplayMath)
         .map_err(|render::Unsupported| MathError::Unsupported)
 }
 
 /// Converts TeX to an eqn body without delimiters.
+/// The parser uses the smaller of `max_depth` and 256.
 pub fn to_eqn(kind: MathType, tex: &str, max_depth: usize) -> Result<String, MathError> {
-    let items = parse(tex, max_depth)?;
+    let items = parse(tex, max_depth.min(WRITER_DEPTH_LIMIT))?;
     eqn::render(&items, kind == MathType::DisplayMath)
         .map_err(|render::Unsupported| MathError::Unsupported)
 }

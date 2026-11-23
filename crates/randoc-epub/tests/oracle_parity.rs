@@ -121,13 +121,14 @@ fn check_files(directory: &Path, names: &[&str]) {
                     MathText::Tex(text) => {
                         tex_differences += usize::from(actual != &MathText::Tex(text.clone()));
                     }
-                    MathText::Fallback(text) => {
-                        assert_eq!(actual, &MathText::Tex(text.clone()));
+                    MathText::Fallback => {
+                        assert_eq!(actual, &MathText::RawLongDivision);
                         fallback_differences += 1;
                     }
+                    MathText::RawLongDivision => panic!("unexpected raw MathML from Pandoc"),
                 }
             }
-            assert_eq!(tex_differences, 10);
+            assert_eq!(tex_differences, 0);
             assert_eq!(fallback_differences, 1);
             eprintln!(
                 "{name}: {tex_differences} TeX text differences and {fallback_differences} MathML fallback difference"
@@ -144,22 +145,27 @@ fn check_files(directory: &Path, names: &[&str]) {
 #[derive(Debug, PartialEq)]
 enum MathText {
     Tex(String),
-    Fallback(String),
+    Fallback,
+    RawLongDivision,
 }
 
 fn math_text(doc: &mut Pandoc) -> Vec<MathText> {
     let mut texts = Vec::new();
     randoc_ast::walk::walk_inlines_mut(doc, |inline| match inline {
         Inline::Math(_, text) => texts.push(MathText::Tex(std::mem::take(text))),
-        Inline::Span(attr, content)
+        Inline::Span(attr, _)
             if attr.classes == ["math"]
                 && attr.get("xmlns") == Some("http://www.w3.org/1998/Math/MathML") =>
         {
-            let text: String = randoc_core::shared::stringify(content)
-                .chars()
-                .filter(|c| !c.is_whitespace())
-                .collect();
-            texts.push(MathText::Fallback(text));
+            texts.push(MathText::Fallback);
+            *inline = Inline::Math(MathType::InlineMath, String::new());
+        }
+        Inline::RawInline(format, text)
+            if format.as_str() == "html"
+                && text.starts_with("<math")
+                && text.contains("<mlongdiv") =>
+        {
+            texts.push(MathText::RawLongDivision);
             *inline = Inline::Math(MathType::InlineMath, String::new());
         }
         _ => {}

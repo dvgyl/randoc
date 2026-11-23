@@ -1,4 +1,4 @@
-//! The math expression tree. The parser makes it; both outputs read it.
+//! The TeX math expression tree shared by the renderers.
 
 /// The class of a symbol. The class decides the MathML element and the
 /// spaces in the inline list.
@@ -71,6 +71,8 @@ pub(crate) struct Alphabet {
     /// The inline list holds the characters of the alphabet, not the plain
     /// characters.
     pub(crate) inline_chars: bool,
+    /// The math alphabet uses upright bold in Typst and eqn.
+    pub(crate) upright_bold: bool,
 }
 
 /// The column alignment of a table.

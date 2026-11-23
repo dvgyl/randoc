@@ -11,25 +11,20 @@ inline	D	\\color{blue}{\\operatorname{\\mathrm{a\\sin}}}
 inline	D	\\color{blue}{\\operatorname{\\text{a b}}}
 inline	D	\\color{blue}{\\operatorname{a\\hat{x}}}
 inline	D	\\color{blue}{\\operatorname{a_b}}
-inline	D	\\displaystyle \\mbox{a\\quad b}
 inline	D	\\displaystyle \\operatorname{\\mathrm{a\\sin}}
 inline	D	\\displaystyle \\operatorname{\\text{a b}}
 inline	D	\\displaystyle \\operatorname{a\\hat{x}}
 inline	D	\\displaystyle \\operatorname{a_b}
-inline	D	\\displaystyle \\texttt{a\\quad b}
 inline	D	\\hyperref[a]{}
 inline	D	\\iddots
 inline	D	\\left[\\operatorname{\\mathrm{a\\sin}}\\right]
 inline	D	\\left[\\operatorname{\\text{a b}}\\right]
 inline	D	\\left[\\operatorname{a\\hat{x}}\\right]
 inline	D	\\left[\\operatorname{a_b}\\right]
-inline	D	\\left[\\textbf{a\\quad b}\\right]
-inline	D	\\mathbf{\\mbox{a\\quad b}}
 inline	D	\\mathbf{\\operatorname{\\mathrm{a\\sin}}}
 inline	D	\\mathbf{\\operatorname{\\text{a b}}}
 inline	D	\\mathbf{\\operatorname{a\\hat{x}}}
 inline	D	\\mathbf{\\operatorname{a_b}}
-inline	D	\\mathbf{\\textsf{a\\quad b}}
 inline	D	\\mathbin{\\hat{x}}
 inline	D	\\mathbin{x_1}
 inline	D	\\mathop{\\mathbf{su p}}
@@ -115,7 +110,6 @@ inline	D	\\mathsf{\\operatorname{\\mathrm{a\\sin}}}
 inline	D	\\mathsf{\\operatorname{\\text{a b}}}
 inline	D	\\mathsf{\\operatorname{a\\hat{x}}}
 inline	D	\\mathsf{\\operatorname{a_b}}
-inline	D	\\mbox{\\ldots}
 inline	D	\\mbox{a\\  %c\nb}
 inline	D	\\mbox{a\\! %c\nb}
 inline	D	\\mbox{a\\"o  b}
@@ -169,36 +163,9 @@ inline	D	\\mbox{a\\`a\t b}
 inline	D	\\mbox{a\\`ab}
 inline	D	\\mbox{a\\`a}
 inline	D	\\mbox{a\\`a~b}
-inline	D	\\mbox{a\\o  b}
 inline	D	\\mbox{a\\o %c\nb}
-inline	D	\\mbox{a\\o \\% b}
-inline	D	\\mbox{a\\o b}
-inline	D	\\mbox{a\\o {b}}
-inline	D	\\mbox{a\\o }
-inline	D	\\mbox{a\\o\n b}
-inline	D	\\mbox{a\\o\t b}
-inline	D	\\mbox{a\\o}
-inline	D	\\mbox{a\\o~b}
-inline	D	\\mbox{a\\quad  b}
 inline	D	\\mbox{a\\quad %c\nb}
-inline	D	\\mbox{a\\quad \\% b}
-inline	D	\\mbox{a\\quad b}
-inline	D	\\mbox{a\\quad {b}}
-inline	D	\\mbox{a\\quad }
-inline	D	\\mbox{a\\quad\n b}
-inline	D	\\mbox{a\\quad\t b}
-inline	D	\\mbox{a\\quad}
-inline	D	\\mbox{a\\quad~b}
-inline	D	\\mbox{a\\textbackslash  b}
 inline	D	\\mbox{a\\textbackslash %c\nb}
-inline	D	\\mbox{a\\textbackslash \\% b}
-inline	D	\\mbox{a\\textbackslash b}
-inline	D	\\mbox{a\\textbackslash {b}}
-inline	D	\\mbox{a\\textbackslash }
-inline	D	\\mbox{a\\textbackslash\n b}
-inline	D	\\mbox{a\\textbackslash\t b}
-inline	D	\\mbox{a\\textbackslash}
-inline	D	\\mbox{a\\textbackslash~b}
 inline	D	\\mbox{a\\{ %c\nb}
 inline	D	\\mbox{a\\} %c\nb}
 inline	D	\\mbox{a\\~  b}
@@ -263,10 +230,8 @@ inline	D	\\sum_{\\operatorname{\\mathrm{a\\sin}}}f(x)
 inline	D	\\sum_{\\operatorname{\\text{a b}}}f(x)
 inline	D	\\sum_{\\operatorname{a\\hat{x}}}f(x)
 inline	D	\\sum_{\\operatorname{a_b}}f(x)
-inline	D	\\sum_{\\text{a\\quad b}}f(x)
 inline	D	\\tag*{1}x
 inline	D	\\tag*{a}
-inline	D	\\textbf{\\ldots}
 inline	D	\\textbf{a\\  %c\nb}
 inline	D	\\textbf{a\\! %c\nb}
 inline	D	\\textbf{a\\"o  b}
@@ -320,36 +285,9 @@ inline	D	\\textbf{a\\`a\t b}
 inline	D	\\textbf{a\\`ab}
 inline	D	\\textbf{a\\`a}
 inline	D	\\textbf{a\\`a~b}
-inline	D	\\textbf{a\\o  b}
 inline	D	\\textbf{a\\o %c\nb}
-inline	D	\\textbf{a\\o \\% b}
-inline	D	\\textbf{a\\o b}
-inline	D	\\textbf{a\\o {b}}
-inline	D	\\textbf{a\\o }
-inline	D	\\textbf{a\\o\n b}
-inline	D	\\textbf{a\\o\t b}
-inline	D	\\textbf{a\\o}
-inline	D	\\textbf{a\\o~b}
-inline	D	\\textbf{a\\quad  b}
 inline	D	\\textbf{a\\quad %c\nb}
-inline	D	\\textbf{a\\quad \\% b}
-inline	D	\\textbf{a\\quad b}
-inline	D	\\textbf{a\\quad {b}}
-inline	D	\\textbf{a\\quad }
-inline	D	\\textbf{a\\quad\n b}
-inline	D	\\textbf{a\\quad\t b}
-inline	D	\\textbf{a\\quad}
-inline	D	\\textbf{a\\quad~b}
-inline	D	\\textbf{a\\textbackslash  b}
 inline	D	\\textbf{a\\textbackslash %c\nb}
-inline	D	\\textbf{a\\textbackslash \\% b}
-inline	D	\\textbf{a\\textbackslash b}
-inline	D	\\textbf{a\\textbackslash {b}}
-inline	D	\\textbf{a\\textbackslash }
-inline	D	\\textbf{a\\textbackslash\n b}
-inline	D	\\textbf{a\\textbackslash\t b}
-inline	D	\\textbf{a\\textbackslash}
-inline	D	\\textbf{a\\textbackslash~b}
 inline	D	\\textbf{a\\{ %c\nb}
 inline	D	\\textbf{a\\} %c\nb}
 inline	D	\\textbf{a\\~  b}
@@ -368,15 +306,11 @@ inline	D	\\text{$\\mathop{\\mathrm{s{up}}}_x$}
 inline	D	\\text{$\\mathop{\\text{s{up}}}_x$}
 inline	D	\\text{$x \\tag*{1} y$}
 inline	D	\\text{$x\\tag*{1}$}
-inline	D	\\text{\\ldots}
-inline	D	\\text{\\quad}
-inline	D	\\text{\\textbackslash}
 inline	D	\\text{a $\\operatorname{\\mathrm{a\\sin}}$ b}
 inline	D	\\text{a $\\operatorname{\\text{a b}}$ b}
 inline	D	\\text{a $\\operatorname{a\\hat{x}}$ b}
 inline	D	\\text{a $\\operatorname{a_b}$ b}
 inline	D	\\text{a $\\text{\n\n\t}$ b}
-inline	D	\\text{a $\\text{a\\quad b}$ b}
 inline	D	\\text{a\\  %c\nb}
 inline	D	\\text{a\\! %c\nb}
 inline	D	\\text{a\\"o  b}
@@ -430,36 +364,9 @@ inline	D	\\text{a\\`a\t b}
 inline	D	\\text{a\\`ab}
 inline	D	\\text{a\\`a}
 inline	D	\\text{a\\`a~b}
-inline	D	\\text{a\\o  b}
 inline	D	\\text{a\\o %c\nb}
-inline	D	\\text{a\\o \\% b}
-inline	D	\\text{a\\o b}
-inline	D	\\text{a\\o {b}}
-inline	D	\\text{a\\o }
-inline	D	\\text{a\\o\n b}
-inline	D	\\text{a\\o\t b}
-inline	D	\\text{a\\o}
-inline	D	\\text{a\\o~b}
-inline	D	\\text{a\\quad  b}
 inline	D	\\text{a\\quad %c\nb}
-inline	D	\\text{a\\quad \\% b}
-inline	D	\\text{a\\quad b}
-inline	D	\\text{a\\quad {b}}
-inline	D	\\text{a\\quad }
-inline	D	\\text{a\\quad\n b}
-inline	D	\\text{a\\quad\t b}
-inline	D	\\text{a\\quad}
-inline	D	\\text{a\\quad~b}
-inline	D	\\text{a\\textbackslash  b}
 inline	D	\\text{a\\textbackslash %c\nb}
-inline	D	\\text{a\\textbackslash \\% b}
-inline	D	\\text{a\\textbackslash b}
-inline	D	\\text{a\\textbackslash {b}}
-inline	D	\\text{a\\textbackslash }
-inline	D	\\text{a\\textbackslash\n b}
-inline	D	\\text{a\\textbackslash\t b}
-inline	D	\\text{a\\textbackslash}
-inline	D	\\text{a\\textbackslash~b}
 inline	D	\\text{a\\{ %c\nb}
 inline	D	\\text{a\\} %c\nb}
 inline	D	\\text{a\\~  b}
@@ -489,12 +396,10 @@ inline	D	a \\mathop{\\mathbf{s{up}}} b
 inline	D	a \\mathop{\\mathrm{su p}} b
 inline	D	a \\mathop{\\mathrm{s{up}}} b
 inline	D	a \\mathop{\\text{s{up}}} b
-inline	D	a+\\mbox{a\\quad b}
 inline	D	a+\\operatorname{\\mathrm{a\\sin}}
 inline	D	a+\\operatorname{\\text{a b}}
 inline	D	a+\\operatorname{a\\hat{x}}
 inline	D	a+\\operatorname{a_b}
-inline	D	a+\\textsf{a\\quad b}
 inline	D	a+b+c+d+e+f+g+h+i+j+k+l+m+n+\\mathop{\\sqrt{x}}
 inline	D	a+b+c+d+e+f+g+h+i+j+k+l+m+n+\\mathop{\\sqrt{x}} + y
 inline	D	a+b+c+d+e+f+g+h+i+j+k+l+m+n+\\operatorname{a_b}
@@ -567,14 +472,11 @@ inline	D	x_{\\operatorname{\\mathrm{a\\sin}}}
 inline	D	x_{\\operatorname{\\text{a b}}}
 inline	D	x_{\\operatorname{a\\hat{x}}}
 inline	D	x_{\\operatorname{a_b}}
-inline	D	x_{\\textsf{a\\quad b}}
 inline	D	{\\left(}
-inline	D	{\\mbox{a\\quad b}}
 inline	D	{\\operatorname{\\mathrm{a\\sin}}}
 inline	D	{\\operatorname{\\text{a b}}}
 inline	D	{\\operatorname{a\\hat{x}}}
 inline	D	{\\operatorname{a_b}}
-inline	D	{\\text{a\\quad b}}
 inline	D	
 inline	D	
 inline	D	
@@ -633,13 +535,11 @@ inline	I	\\color{blue}{\\operatorname{\\text{a b}}}
 inline	I	\\color{blue}{\\operatorname{a\\hat{x}}}
 inline	I	\\color{blue}{\\operatorname{a_b}}
 inline	I	\\c{a}{b}
-inline	I	\\displaystyle \\mbox{a\\quad b}
 inline	I	\\displaystyle \\num{5}
 inline	I	\\displaystyle \\operatorname{\\mathrm{a\\sin}}
 inline	I	\\displaystyle \\operatorname{\\text{a b}}
 inline	I	\\displaystyle \\operatorname{a\\hat{x}}
 inline	I	\\displaystyle \\operatorname{a_b}
-inline	I	\\displaystyle \\texttt{a\\quad b}
 inline	I	\\euro
 inline	I	\\hat{x}​
 inline	I	\\hat​{x}
@@ -671,15 +571,12 @@ inline	I	\\left[\\operatorname{\\mathrm{a\\sin}}\\right]
 inline	I	\\left[\\operatorname{\\text{a b}}\\right]
 inline	I	\\left[\\operatorname{a\\hat{x}}\\right]
 inline	I	\\left[\\operatorname{a_b}\\right]
-inline	I	\\left[\\textbf{a\\quad b}\\right]
-inline	I	\\mathbf{\\mbox{a\\quad b}}
 inline	I	\\mathbf{\\operatorname{) y^{\\leq a}}}
 inline	I	\\mathbf{\\operatorname{\\mathrm{a\\sin}}}
 inline	I	\\mathbf{\\operatorname{\\text{a b}}}
 inline	I	\\mathbf{\\operatorname{a\\hat{x}}}
 inline	I	\\mathbf{\\operatorname{a_b}}
 inline	I	\\mathbf{\\operatorname{x^{= =}}}
-inline	I	\\mathbf{\\textsf{a\\quad b}}
 inline	I	\\mathbf{v}​
 inline	I	\\mathbf​{v}
 inline	I	\\mathbin{\\hat{x}}
@@ -761,7 +658,6 @@ inline	I	\\mathsf{\\operatorname{\\text{a b}}}
 inline	I	\\mathsf{\\operatorname{a\\hat{x}}}
 inline	I	\\mathsf{\\operatorname{a_b}}
 inline	I	\\mbox{$$}
-inline	I	\\mbox{\\ldots}
 inline	I	\\mbox{a %c\nb}
 inline	I	\\mbox{a\\  %c\nb}
 inline	I	\\mbox{a\\! %c\nb}
@@ -816,36 +712,9 @@ inline	I	\\mbox{a\\`a\t b}
 inline	I	\\mbox{a\\`ab}
 inline	I	\\mbox{a\\`a}
 inline	I	\\mbox{a\\`a~b}
-inline	I	\\mbox{a\\o  b}
 inline	I	\\mbox{a\\o %c\nb}
-inline	I	\\mbox{a\\o \\% b}
-inline	I	\\mbox{a\\o b}
-inline	I	\\mbox{a\\o {b}}
-inline	I	\\mbox{a\\o }
-inline	I	\\mbox{a\\o\n b}
-inline	I	\\mbox{a\\o\t b}
-inline	I	\\mbox{a\\o}
-inline	I	\\mbox{a\\o~b}
-inline	I	\\mbox{a\\quad  b}
 inline	I	\\mbox{a\\quad %c\nb}
-inline	I	\\mbox{a\\quad \\% b}
-inline	I	\\mbox{a\\quad b}
-inline	I	\\mbox{a\\quad {b}}
-inline	I	\\mbox{a\\quad }
-inline	I	\\mbox{a\\quad\n b}
-inline	I	\\mbox{a\\quad\t b}
-inline	I	\\mbox{a\\quad}
-inline	I	\\mbox{a\\quad~b}
-inline	I	\\mbox{a\\textbackslash  b}
 inline	I	\\mbox{a\\textbackslash %c\nb}
-inline	I	\\mbox{a\\textbackslash \\% b}
-inline	I	\\mbox{a\\textbackslash b}
-inline	I	\\mbox{a\\textbackslash {b}}
-inline	I	\\mbox{a\\textbackslash }
-inline	I	\\mbox{a\\textbackslash\n b}
-inline	I	\\mbox{a\\textbackslash\t b}
-inline	I	\\mbox{a\\textbackslash}
-inline	I	\\mbox{a\\textbackslash~b}
 inline	I	\\mbox{a\\{ %c\nb}
 inline	I	\\mbox{a\\} %c\nb}
 inline	I	\\mbox{a\\~  b}
@@ -966,13 +835,11 @@ inline	I	\\sum_{\\operatorname{\\mathrm{a\\sin}}}f(x)
 inline	I	\\sum_{\\operatorname{\\text{a b}}}f(x)
 inline	I	\\sum_{\\operatorname{a\\hat{x}}}f(x)
 inline	I	\\sum_{\\operatorname{a_b}}f(x)
-inline	I	\\sum_{\\text{a\\quad b}}f(x)
 inline	I	\\sum_{i}​ a_i
 inline	I	\\sum_{i}​a_i
 inline	I	\\tag*{1}x
 inline	I	\\tag*{a}
 inline	I	\\textbf{$$}
-inline	I	\\textbf{\\ldots}
 inline	I	\\textbf{a %c\nb}
 inline	I	\\textbf{a\\  %c\nb}
 inline	I	\\textbf{a\\! %c\nb}
@@ -1027,36 +894,9 @@ inline	I	\\textbf{a\\`a\t b}
 inline	I	\\textbf{a\\`ab}
 inline	I	\\textbf{a\\`a}
 inline	I	\\textbf{a\\`a~b}
-inline	I	\\textbf{a\\o  b}
 inline	I	\\textbf{a\\o %c\nb}
-inline	I	\\textbf{a\\o \\% b}
-inline	I	\\textbf{a\\o b}
-inline	I	\\textbf{a\\o {b}}
-inline	I	\\textbf{a\\o }
-inline	I	\\textbf{a\\o\n b}
-inline	I	\\textbf{a\\o\t b}
-inline	I	\\textbf{a\\o}
-inline	I	\\textbf{a\\o~b}
-inline	I	\\textbf{a\\quad  b}
 inline	I	\\textbf{a\\quad %c\nb}
-inline	I	\\textbf{a\\quad \\% b}
-inline	I	\\textbf{a\\quad b}
-inline	I	\\textbf{a\\quad {b}}
-inline	I	\\textbf{a\\quad }
-inline	I	\\textbf{a\\quad\n b}
-inline	I	\\textbf{a\\quad\t b}
-inline	I	\\textbf{a\\quad}
-inline	I	\\textbf{a\\quad~b}
-inline	I	\\textbf{a\\textbackslash  b}
 inline	I	\\textbf{a\\textbackslash %c\nb}
-inline	I	\\textbf{a\\textbackslash \\% b}
-inline	I	\\textbf{a\\textbackslash b}
-inline	I	\\textbf{a\\textbackslash {b}}
-inline	I	\\textbf{a\\textbackslash }
-inline	I	\\textbf{a\\textbackslash\n b}
-inline	I	\\textbf{a\\textbackslash\t b}
-inline	I	\\textbf{a\\textbackslash}
-inline	I	\\textbf{a\\textbackslash~b}
 inline	I	\\textbf{a\\{ %c\nb}
 inline	I	\\textbf{a\\} %c\nb}
 inline	I	\\textbf{a\\~  b}
@@ -1084,16 +924,12 @@ inline	I	\\text{$\\mathop{\\mathrm{s{up}}}_x$}
 inline	I	\\text{$\\mathop{\\text{s{up}}}_x$}
 inline	I	\\text{$x \\tag*{1} y$}
 inline	I	\\text{$x\\tag*{1}$}
-inline	I	\\text{\\ldots}
-inline	I	\\text{\\quad}
-inline	I	\\text{\\textbackslash}
 inline	I	\\text{a $\\operatorname{\\mathrm{a\\sin}}$ b}
 inline	I	\\text{a $\\operatorname{\\text{a b}}$ b}
 inline	I	\\text{a $\\operatorname{a\\hat{x}}$ b}
 inline	I	\\text{a $\\operatorname{a_b}$ b}
 inline	I	\\text{a $\\text{ a}$ b}
 inline	I	\\text{a $\\text{\n\n\t}$ b}
-inline	I	\\text{a $\\text{a\\quad b}$ b}
 inline	I	\\text{a $\\vert$ b}
 inline	I	\\text{a %c\nb}
 inline	I	\\text{a\\  %c\nb}
@@ -1149,36 +985,9 @@ inline	I	\\text{a\\`a\t b}
 inline	I	\\text{a\\`ab}
 inline	I	\\text{a\\`a}
 inline	I	\\text{a\\`a~b}
-inline	I	\\text{a\\o  b}
 inline	I	\\text{a\\o %c\nb}
-inline	I	\\text{a\\o \\% b}
-inline	I	\\text{a\\o b}
-inline	I	\\text{a\\o {b}}
-inline	I	\\text{a\\o }
-inline	I	\\text{a\\o\n b}
-inline	I	\\text{a\\o\t b}
-inline	I	\\text{a\\o}
-inline	I	\\text{a\\o~b}
-inline	I	\\text{a\\quad  b}
 inline	I	\\text{a\\quad %c\nb}
-inline	I	\\text{a\\quad \\% b}
-inline	I	\\text{a\\quad b}
-inline	I	\\text{a\\quad {b}}
-inline	I	\\text{a\\quad }
-inline	I	\\text{a\\quad\n b}
-inline	I	\\text{a\\quad\t b}
-inline	I	\\text{a\\quad}
-inline	I	\\text{a\\quad~b}
-inline	I	\\text{a\\textbackslash  b}
 inline	I	\\text{a\\textbackslash %c\nb}
-inline	I	\\text{a\\textbackslash \\% b}
-inline	I	\\text{a\\textbackslash b}
-inline	I	\\text{a\\textbackslash {b}}
-inline	I	\\text{a\\textbackslash }
-inline	I	\\text{a\\textbackslash\n b}
-inline	I	\\text{a\\textbackslash\t b}
-inline	I	\\text{a\\textbackslash}
-inline	I	\\text{a\\textbackslash~b}
 inline	I	\\text{a\\{ %c\nb}
 inline	I	\\text{a\\} %c\nb}
 inline	I	\\text{a\\~  b}
@@ -1221,12 +1030,10 @@ inline	I	a \\not| b
 inline	I	a \\u b
 inline	I	a \\v b
 inline	I	a! \\hspace{1em} b
-inline	I	a+\\mbox{a\\quad b}
 inline	I	a+\\operatorname{\\mathrm{a\\sin}}
 inline	I	a+\\operatorname{\\text{a b}}
 inline	I	a+\\operatorname{a\\hat{x}}
 inline	I	a+\\operatorname{a_b}
-inline	I	a+\\textsf{a\\quad b}
 inline	I	a+b+c+d+e+f+g+h+i+j+k+l+m+n+\\mathop{\\sqrt{x}}
 inline	I	a+b+c+d+e+f+g+h+i+j+k+l+m+n+\\mathop{\\sqrt{x}} + y
 inline	I	a+b+c+d+e+f+g+h+i+j+k+l+m+n+\\operatorname{a_b}
@@ -1358,15 +1165,12 @@ inline	I	x_{\\operatorname{\\mathrm{a\\sin}}}
 inline	I	x_{\\operatorname{\\text{a b}}}
 inline	I	x_{\\operatorname{a\\hat{x}}}
 inline	I	x_{\\operatorname{a_b}}
-inline	I	x_{\\textsf{a\\quad b}}
 inline	I	{\\left(}
-inline	I	{\\mbox{a\\quad b}}
 inline	I	{\\operatorname{\\mathrm{a\\sin}}}
 inline	I	{\\operatorname{\\text{2 a}}}
 inline	I	{\\operatorname{\\text{a b}}}
 inline	I	{\\operatorname{a\\hat{x}}}
 inline	I	{\\operatorname{a_b}}
-inline	I	{\\text{a\\quad b}}
 inline	I	
 inline	I	
 inline	I	
@@ -1453,7 +1257,6 @@ inline-warning	D	\\begin{aligned}\\operatorname{a_b}&=y\\\\z&=1\\end{aligned}
 inline-warning	D	\\begin{aligned}\\scriptscriptstyle &=y\\\\z&=1\\end{aligned}
 inline-warning	D	\\begin{aligned}\\substack{\\text{a b}\\\\p&q\\\\z}&=y\\\\z&=1\\end{aligned}
 inline-warning	D	\\begin{aligned}\\substack{i\\ne j\\\\p&q\\\\z}&=y\\\\z&=1\\end{aligned}
-inline-warning	D	\\begin{aligned}\\textbf{a\\quad b}&=y\\\\z&=1\\end{aligned}
 inline-warning	D	\\begin{array}{rl}\\color{red}.75&=\\displaystyle 123.5\\\\x&=\\lVert%{\\n x\\rVert\\\\y&=192\\end{array}
 inline-warning	D	\\begin{array}{rl}\\color{red}.75&=\\displaystyle 123.5\\\\x&=\\text{a\\t b}\\\\y&=104\\end{array}
 inline-warning	D	\\begin{array}{rl}\\color{red}.75&=\\hat{\\not y}\\\\x&=\\text{a\\t b}\\\\y&=163\\end{array}
@@ -1588,8 +1391,6 @@ inline-warning	D	\\frac{\\substack{\\text{a b}\\\\p&q\\\\z}}{c}
 inline-warning	D	\\frac{\\substack{jk\\\\p&q\\\\z}}{c}
 inline-warning	D	\\frac{\\substack{x_a_b^2\\\\p&q\\\\z}}{c}
 inline-warning	D	\\frac{\\textstyle }{c}
-inline-warning	D	\\frac{\\texttt{a\\quad b}}{c}
-inline-warning	D	\\frac{\\text{a\\quad b}}{c}
 inline-warning	D	\\genfrac(){0pt}{0}{a}{b}
 inline-warning	D	\\genfrac{a}{b}
 inline-warning	D	\\genfrac{a}{b} + abcdefghijklmnopqrstuvwxyz0123456789
@@ -1623,9 +1424,7 @@ inline-warning	D	\\hat{\\operatorname{a_b}}
 inline-warning	D	\\hat{\\substack{\\displaystyle 713\\\\p&q\\\\z}}
 inline-warning	D	\\hat{\\substack{\\text{a b}\\\\p&q\\\\z}}
 inline-warning	D	\\hat{\\substack{x_a_b^2\\\\p&q\\\\z}}
-inline-warning	D	\\hat{\\textsf{a\\quad b}}
 inline-warning	D	\\hat{\\textstyle }
-inline-warning	D	\\hat{\\texttt{a\\quad b}}
 inline-warning	D	\\left(\\displaystyle\\right)
 inline-warning	D	\\left.\\frac{x}{y}\\right\n+b
 inline-warning	D	\\left.\\frac{x}{y}\\right\t+b
@@ -1793,7 +1592,6 @@ inline-warning	D	\\substack{\\operatorname{\\mathrm{a\\sin}}\\\\y}
 inline-warning	D	\\substack{\\operatorname{\\text{a b}}\\\\y}
 inline-warning	D	\\substack{\\operatorname{a\\hat{x}}\\\\y}
 inline-warning	D	\\substack{\\operatorname{a_b}\\\\y}
-inline-warning	D	\\substack{\\textbf{a\\quad b}\\\\y}
 inline-warning	D	\\substack{\\textstyle \\\\y}
 inline-warning	D	\\substack{a&b}
 inline-warning	D	\\substack{i\\ne j\\\\p&q\\\\z}
@@ -2038,7 +1836,6 @@ inline-warning	I	\\begin{aligned}\\operatorname{a_b}&=y\\\\z&=1\\end{aligned}
 inline-warning	I	\\begin{aligned}\\scriptscriptstyle &=y\\\\z&=1\\end{aligned}
 inline-warning	I	\\begin{aligned}\\substack{\\text{a b}\\\\p&q\\\\z}&=y\\\\z&=1\\end{aligned}
 inline-warning	I	\\begin{aligned}\\substack{i\\ne j\\\\p&q\\\\z}&=y\\\\z&=1\\end{aligned}
-inline-warning	I	\\begin{aligned}\\textbf{a\\quad b}&=y\\\\z&=1\\end{aligned}
 inline-warning	I	\\begin{array}{*{2}{c}}a&b&c\\\\d&e&f\\end{array}
 inline-warning	I	\\begin{array}{*{2}{c}}a\\end{array}
 inline-warning	I	\\begin{array}{2}a&b&c&d\\end{array}
@@ -2314,8 +2111,6 @@ inline-warning	I	\\frac{\\substack{\\text{a b}\\\\p&q\\\\z}}{c}
 inline-warning	I	\\frac{\\substack{jk\\\\p&q\\\\z}}{c}
 inline-warning	I	\\frac{\\substack{x_a_b^2\\\\p&q\\\\z}}{c}
 inline-warning	I	\\frac{\\textstyle }{c}
-inline-warning	I	\\frac{\\texttt{a\\quad b}}{c}
-inline-warning	I	\\frac{\\text{a\\quad b}}{c}
 inline-warning	I	\\frac{a -^{\\hat{y y +}}}{\\text{\\operatorname{\\leq}}}
 inline-warning	I	\\frac{a}​{b}
 inline-warning	I	\\frac{\\vartheta}{b}
@@ -2368,9 +2163,7 @@ inline-warning	I	\\hat{\\operatorname{a_b}}
 inline-warning	I	\\hat{\\substack{\\displaystyle 713\\\\p&q\\\\z}}
 inline-warning	I	\\hat{\\substack{\\text{a b}\\\\p&q\\\\z}}
 inline-warning	I	\\hat{\\substack{x_a_b^2\\\\p&q\\\\z}}
-inline-warning	I	\\hat{\\textsf{a\\quad b}}
 inline-warning	I	\\hat{\\textstyle }
-inline-warning	I	\\hat{\\texttt{a\\quad b}}
 inline-warning	I	\\hat{\\text{\\left(+\\right)}}
 inline-warning	I	\\hat{\\text{\\leq}}
 inline-warning	I	\\hat{\\text{\\operatorname{\\infty ( 2}}}
@@ -2645,7 +2438,6 @@ inline-warning	I	\\substack{\\operatorname{\\mathrm{a\\sin}}\\\\y}
 inline-warning	I	\\substack{\\operatorname{\\text{a b}}\\\\y}
 inline-warning	I	\\substack{\\operatorname{a\\hat{x}}\\\\y}
 inline-warning	I	\\substack{\\operatorname{a_b}\\\\y}
-inline-warning	I	\\substack{\\textbf{a\\quad b}\\\\y}
 inline-warning	I	\\substack{\\textstyle \\\\y}
 inline-warning	I	\\substack{a&b}
 inline-warning	I	\\substack{i\\ne j\\\\p&q\\\\z}
@@ -2923,7 +2715,6 @@ mathml	D	\\begin{aligned}\\operatorname{\\mathrm{a\\sin}}&=y\\\\z&=1\\end{aligne
 mathml	D	\\begin{aligned}\\operatorname{\\text{a b}}&=y\\\\z&=1\\end{aligned}
 mathml	D	\\begin{aligned}\\operatorname{a\\hat{x}}&=y\\\\z&=1\\end{aligned}
 mathml	D	\\begin{aligned}\\operatorname{a_b}&=y\\\\z&=1\\end{aligned}
-mathml	D	\\begin{aligned}\\textbf{a\\quad b}&=y\\\\z&=1\\end{aligned}
 mathml	D	\\begin{matrix}\\left(,;\\,x&z\\\\u&v\\end{matrix}
 mathml	D	\\begin{matrix}\\mathop{\\mathbf{su p}}_x\\end{matrix}
 mathml	D	\\begin{matrix}\\mathop{\\mathbf{s{up}}}_x\\end{matrix}
@@ -2939,12 +2730,10 @@ mathml	D	\\color{blue}{\\operatorname{\\mathrm{a\\sin}}}
 mathml	D	\\color{blue}{\\operatorname{\\text{a b}}}
 mathml	D	\\color{blue}{\\operatorname{a\\hat{x}}}
 mathml	D	\\color{blue}{\\operatorname{a_b}}
-mathml	D	\\displaystyle \\mbox{a\\quad b}
 mathml	D	\\displaystyle \\operatorname{\\mathrm{a\\sin}}
 mathml	D	\\displaystyle \\operatorname{\\text{a b}}
 mathml	D	\\displaystyle \\operatorname{a\\hat{x}}
 mathml	D	\\displaystyle \\operatorname{a_b}
-mathml	D	\\displaystyle \\texttt{a\\quad b}
 mathml	D	\\frac{\\mathop{\\mathbf{su p}}_x}{2}
 mathml	D	\\frac{\\mathop{\\mathbf{s{up}}}_x}{2}
 mathml	D	\\frac{\\mathop{\\mathrm{su p}}_x}{2}
@@ -2954,8 +2743,6 @@ mathml	D	\\frac{\\operatorname{\\mathrm{a\\sin}}}{c}
 mathml	D	\\frac{\\operatorname{\\text{a b}}}{c}
 mathml	D	\\frac{\\operatorname{a\\hat{x}}}{c}
 mathml	D	\\frac{\\operatorname{a_b}}{c}
-mathml	D	\\frac{\\texttt{a\\quad b}}{c}
-mathml	D	\\frac{\\text{a\\quad b}}{c}
 mathml	D	\\genfrac(){0pt}{0}{a}{b}
 mathml	D	\\genfrac{a}{b} + abcdefghijklmnopqrstuvwxyz0123456789
 mathml	D	\\genfrac{a}{b}\nx = 1\ny = 2\n
@@ -2966,21 +2753,16 @@ mathml	D	\\hat{\\operatorname{\\mathrm{a\\sin}}}
 mathml	D	\\hat{\\operatorname{\\text{a b}}}
 mathml	D	\\hat{\\operatorname{a\\hat{x}}}
 mathml	D	\\hat{\\operatorname{a_b}}
-mathml	D	\\hat{\\textsf{a\\quad b}}
-mathml	D	\\hat{\\texttt{a\\quad b}}
 mathml	D	\\hyperref[a]{}
 mathml	D	\\iddots
 mathml	D	\\left[\\operatorname{\\mathrm{a\\sin}}\\right]
 mathml	D	\\left[\\operatorname{\\text{a b}}\\right]
 mathml	D	\\left[\\operatorname{a\\hat{x}}\\right]
 mathml	D	\\left[\\operatorname{a_b}\\right]
-mathml	D	\\left[\\textbf{a\\quad b}\\right]
-mathml	D	\\mathbf{\\mbox{a\\quad b}}
 mathml	D	\\mathbf{\\operatorname{\\mathrm{a\\sin}}}
 mathml	D	\\mathbf{\\operatorname{\\text{a b}}}
 mathml	D	\\mathbf{\\operatorname{a\\hat{x}}}
 mathml	D	\\mathbf{\\operatorname{a_b}}
-mathml	D	\\mathbf{\\textsf{a\\quad b}}
 mathml	D	\\mathbin{\\hat{x}}
 mathml	D	\\mathbin{x_1}
 mathml	D	\\mathop{\\mathbf{su p}}
@@ -3074,7 +2856,6 @@ mathml	D	\\mathsf{\\operatorname{\\mathrm{a\\sin}}}
 mathml	D	\\mathsf{\\operatorname{\\text{a b}}}
 mathml	D	\\mathsf{\\operatorname{a\\hat{x}}}
 mathml	D	\\mathsf{\\operatorname{a_b}}
-mathml	D	\\mbox{\\ldots}
 mathml	D	\\mbox{a\\  %c\nb}
 mathml	D	\\mbox{a\\! %c\nb}
 mathml	D	\\mbox{a\\"o  b}
@@ -3128,36 +2909,9 @@ mathml	D	\\mbox{a\\`a\t b}
 mathml	D	\\mbox{a\\`ab}
 mathml	D	\\mbox{a\\`a}
 mathml	D	\\mbox{a\\`a~b}
-mathml	D	\\mbox{a\\o  b}
 mathml	D	\\mbox{a\\o %c\nb}
-mathml	D	\\mbox{a\\o \\% b}
-mathml	D	\\mbox{a\\o b}
-mathml	D	\\mbox{a\\o {b}}
-mathml	D	\\mbox{a\\o }
-mathml	D	\\mbox{a\\o\n b}
-mathml	D	\\mbox{a\\o\t b}
-mathml	D	\\mbox{a\\o}
-mathml	D	\\mbox{a\\o~b}
-mathml	D	\\mbox{a\\quad  b}
 mathml	D	\\mbox{a\\quad %c\nb}
-mathml	D	\\mbox{a\\quad \\% b}
-mathml	D	\\mbox{a\\quad b}
-mathml	D	\\mbox{a\\quad {b}}
-mathml	D	\\mbox{a\\quad }
-mathml	D	\\mbox{a\\quad\n b}
-mathml	D	\\mbox{a\\quad\t b}
-mathml	D	\\mbox{a\\quad}
-mathml	D	\\mbox{a\\quad~b}
-mathml	D	\\mbox{a\\textbackslash  b}
 mathml	D	\\mbox{a\\textbackslash %c\nb}
-mathml	D	\\mbox{a\\textbackslash \\% b}
-mathml	D	\\mbox{a\\textbackslash b}
-mathml	D	\\mbox{a\\textbackslash {b}}
-mathml	D	\\mbox{a\\textbackslash }
-mathml	D	\\mbox{a\\textbackslash\n b}
-mathml	D	\\mbox{a\\textbackslash\t b}
-mathml	D	\\mbox{a\\textbackslash}
-mathml	D	\\mbox{a\\textbackslash~b}
 mathml	D	\\mbox{a\\{ %c\nb}
 mathml	D	\\mbox{a\\} %c\nb}
 mathml	D	\\mbox{a\\~  b}
@@ -3221,7 +2975,6 @@ mathml	D	\\substack{\\operatorname{\\mathrm{a\\sin}}\\\\y}
 mathml	D	\\substack{\\operatorname{\\text{a b}}\\\\y}
 mathml	D	\\substack{\\operatorname{a\\hat{x}}\\\\y}
 mathml	D	\\substack{\\operatorname{a_b}\\\\y}
-mathml	D	\\substack{\\textbf{a\\quad b}\\\\y}
 mathml	D	\\sum '^a ' '
 mathml	D	\\sum '^a_2''
 mathml	D	\\sum '^a_b^{c}
@@ -3253,10 +3006,8 @@ mathml	D	\\sum_{\\operatorname{\\mathrm{a\\sin}}}f(x)
 mathml	D	\\sum_{\\operatorname{\\text{a b}}}f(x)
 mathml	D	\\sum_{\\operatorname{a\\hat{x}}}f(x)
 mathml	D	\\sum_{\\operatorname{a_b}}f(x)
-mathml	D	\\sum_{\\text{a\\quad b}}f(x)
 mathml	D	\\tag*{1}x
 mathml	D	\\tag*{a}
-mathml	D	\\textbf{\\ldots}
 mathml	D	\\textbf{a\\  %c\nb}
 mathml	D	\\textbf{a\\! %c\nb}
 mathml	D	\\textbf{a\\"o  b}
@@ -3310,36 +3061,9 @@ mathml	D	\\textbf{a\\`a\t b}
 mathml	D	\\textbf{a\\`ab}
 mathml	D	\\textbf{a\\`a}
 mathml	D	\\textbf{a\\`a~b}
-mathml	D	\\textbf{a\\o  b}
 mathml	D	\\textbf{a\\o %c\nb}
-mathml	D	\\textbf{a\\o \\% b}
-mathml	D	\\textbf{a\\o b}
-mathml	D	\\textbf{a\\o {b}}
-mathml	D	\\textbf{a\\o }
-mathml	D	\\textbf{a\\o\n b}
-mathml	D	\\textbf{a\\o\t b}
-mathml	D	\\textbf{a\\o}
-mathml	D	\\textbf{a\\o~b}
-mathml	D	\\textbf{a\\quad  b}
 mathml	D	\\textbf{a\\quad %c\nb}
-mathml	D	\\textbf{a\\quad \\% b}
-mathml	D	\\textbf{a\\quad b}
-mathml	D	\\textbf{a\\quad {b}}
-mathml	D	\\textbf{a\\quad }
-mathml	D	\\textbf{a\\quad\n b}
-mathml	D	\\textbf{a\\quad\t b}
-mathml	D	\\textbf{a\\quad}
-mathml	D	\\textbf{a\\quad~b}
-mathml	D	\\textbf{a\\textbackslash  b}
 mathml	D	\\textbf{a\\textbackslash %c\nb}
-mathml	D	\\textbf{a\\textbackslash \\% b}
-mathml	D	\\textbf{a\\textbackslash b}
-mathml	D	\\textbf{a\\textbackslash {b}}
-mathml	D	\\textbf{a\\textbackslash }
-mathml	D	\\textbf{a\\textbackslash\n b}
-mathml	D	\\textbf{a\\textbackslash\t b}
-mathml	D	\\textbf{a\\textbackslash}
-mathml	D	\\textbf{a\\textbackslash~b}
 mathml	D	\\textbf{a\\{ %c\nb}
 mathml	D	\\textbf{a\\} %c\nb}
 mathml	D	\\textbf{a\\~  b}
@@ -3358,14 +3082,10 @@ mathml	D	\\text{$\\mathop{\\mathrm{s{up}}}_x$}
 mathml	D	\\text{$\\mathop{\\text{s{up}}}_x$}
 mathml	D	\\text{$x \\tag*{1} y$}
 mathml	D	\\text{$x\\tag*{1}$}
-mathml	D	\\text{\\ldots}
-mathml	D	\\text{\\quad}
-mathml	D	\\text{\\textbackslash}
 mathml	D	\\text{a $\\operatorname{\\mathrm{a\\sin}}$ b}
 mathml	D	\\text{a $\\operatorname{\\text{a b}}$ b}
 mathml	D	\\text{a $\\operatorname{a\\hat{x}}$ b}
 mathml	D	\\text{a $\\operatorname{a_b}$ b}
-mathml	D	\\text{a $\\text{a\\quad b}$ b}
 mathml	D	\\text{a\\  %c\nb}
 mathml	D	\\text{a\\! %c\nb}
 mathml	D	\\text{a\\"o  b}
@@ -3419,36 +3139,9 @@ mathml	D	\\text{a\\`a\t b}
 mathml	D	\\text{a\\`ab}
 mathml	D	\\text{a\\`a}
 mathml	D	\\text{a\\`a~b}
-mathml	D	\\text{a\\o  b}
 mathml	D	\\text{a\\o %c\nb}
-mathml	D	\\text{a\\o \\% b}
-mathml	D	\\text{a\\o b}
-mathml	D	\\text{a\\o {b}}
-mathml	D	\\text{a\\o }
-mathml	D	\\text{a\\o\n b}
-mathml	D	\\text{a\\o\t b}
-mathml	D	\\text{a\\o}
-mathml	D	\\text{a\\o~b}
-mathml	D	\\text{a\\quad  b}
 mathml	D	\\text{a\\quad %c\nb}
-mathml	D	\\text{a\\quad \\% b}
-mathml	D	\\text{a\\quad b}
-mathml	D	\\text{a\\quad {b}}
-mathml	D	\\text{a\\quad }
-mathml	D	\\text{a\\quad\n b}
-mathml	D	\\text{a\\quad\t b}
-mathml	D	\\text{a\\quad}
-mathml	D	\\text{a\\quad~b}
-mathml	D	\\text{a\\textbackslash  b}
 mathml	D	\\text{a\\textbackslash %c\nb}
-mathml	D	\\text{a\\textbackslash \\% b}
-mathml	D	\\text{a\\textbackslash b}
-mathml	D	\\text{a\\textbackslash {b}}
-mathml	D	\\text{a\\textbackslash }
-mathml	D	\\text{a\\textbackslash\n b}
-mathml	D	\\text{a\\textbackslash\t b}
-mathml	D	\\text{a\\textbackslash}
-mathml	D	\\text{a\\textbackslash~b}
 mathml	D	\\text{a\\{ %c\nb}
 mathml	D	\\text{a\\} %c\nb}
 mathml	D	\\text{a\\~  b}
@@ -3478,12 +3171,10 @@ mathml	D	a \\mathop{\\mathbf{s{up}}} b
 mathml	D	a \\mathop{\\mathrm{su p}} b
 mathml	D	a \\mathop{\\mathrm{s{up}}} b
 mathml	D	a \\mathop{\\text{s{up}}} b
-mathml	D	a+\\mbox{a\\quad b}
 mathml	D	a+\\operatorname{\\mathrm{a\\sin}}
 mathml	D	a+\\operatorname{\\text{a b}}
 mathml	D	a+\\operatorname{a\\hat{x}}
 mathml	D	a+\\operatorname{a_b}
-mathml	D	a+\\textsf{a\\quad b}
 mathml	D	a+b+c+d+e+f+g+h+i+j+k+l+m+n+\\mathop{\\sqrt{x}}
 mathml	D	a+b+c+d+e+f+g+h+i+j+k+l+m+n+\\mathop{\\sqrt{x}} + y
 mathml	D	a+b+c+d+e+f+g+h+i+j+k+l+m+n+\\operatorname{a_b}
@@ -3556,14 +3247,11 @@ mathml	D	x_{\\operatorname{\\mathrm{a\\sin}}}
 mathml	D	x_{\\operatorname{\\text{a b}}}
 mathml	D	x_{\\operatorname{a\\hat{x}}}
 mathml	D	x_{\\operatorname{a_b}}
-mathml	D	x_{\\textsf{a\\quad b}}
 mathml	D	{\\left(}
-mathml	D	{\\mbox{a\\quad b}}
 mathml	D	{\\operatorname{\\mathrm{a\\sin}}}
 mathml	D	{\\operatorname{\\text{a b}}}
 mathml	D	{\\operatorname{a\\hat{x}}}
 mathml	D	{\\operatorname{a_b}}
-mathml	D	{\\text{a\\quad b}}
 mathml	D	
 mathml	D	
 mathml	D	
@@ -3618,7 +3306,6 @@ mathml	I	\\begin{aligned}\\operatorname{\\mathrm{a\\sin}}&=y\\\\z&=1\\end{aligne
 mathml	I	\\begin{aligned}\\operatorname{\\text{a b}}&=y\\\\z&=1\\end{aligned}
 mathml	I	\\begin{aligned}\\operatorname{a\\hat{x}}&=y\\\\z&=1\\end{aligned}
 mathml	I	\\begin{aligned}\\operatorname{a_b}&=y\\\\z&=1\\end{aligned}
-mathml	I	\\begin{aligned}\\textbf{a\\quad b}&=y\\\\z&=1\\end{aligned}
 mathml	I	\\begin{array}{*{2}{c}}a&b&c\\\\d&e&f\\end{array}
 mathml	I	\\begin{array}{*{2}{c}}a\\end{array}
 mathml	I	\\begin{cases}\\dotsb\\end{cases}
@@ -3661,13 +3348,11 @@ mathml	I	\\color{blue}{\\operatorname{\\text{a b}}}
 mathml	I	\\color{blue}{\\operatorname{a\\hat{x}}}
 mathml	I	\\color{blue}{\\operatorname{a_b}}
 mathml	I	\\c{a}{b}
-mathml	I	\\displaystyle \\mbox{a\\quad b}
 mathml	I	\\displaystyle \\num{5}
 mathml	I	\\displaystyle \\operatorname{\\mathrm{a\\sin}}
 mathml	I	\\displaystyle \\operatorname{\\text{a b}}
 mathml	I	\\displaystyle \\operatorname{a\\hat{x}}
 mathml	I	\\displaystyle \\operatorname{a_b}
-mathml	I	\\displaystyle \\texttt{a\\quad b}
 mathml	I	\\euro
 mathml	I	\\frac{}{b}
 mathml	I	\\frac{[​}{b}
@@ -3685,8 +3370,6 @@ mathml	I	\\frac{\\operatorname{\\text{a b}}}{c}
 mathml	I	\\frac{\\operatorname{a\\hat{x}}}{c}
 mathml	I	\\frac{\\operatorname{a_b}}{c}
 mathml	I	\\frac{\\rVert}{b}
-mathml	I	\\frac{\\texttt{a\\quad b}}{c}
-mathml	I	\\frac{\\text{a\\quad b}}{c}
 mathml	I	\\frac{a}​{b}
 mathml	I	\\frac{\\vartheta}{b}
 mathml	I	\\fracab
@@ -3710,8 +3393,6 @@ mathml	I	\\hat{\\operatorname{\\mathrm{a\\sin}}}
 mathml	I	\\hat{\\operatorname{\\text{a b}}}
 mathml	I	\\hat{\\operatorname{a\\hat{x}}}
 mathml	I	\\hat{\\operatorname{a_b}}
-mathml	I	\\hat{\\textsf{a\\quad b}}
-mathml	I	\\hat{\\texttt{a\\quad b}}
 mathml	I	\\hat{x}​
 mathml	I	\\hat​{x}
 mathml	I	\\hspace{1em}
@@ -3764,15 +3445,12 @@ mathml	I	\\left[\\operatorname{\\mathrm{a\\sin}}\\right]
 mathml	I	\\left[\\operatorname{\\text{a b}}\\right]
 mathml	I	\\left[\\operatorname{a\\hat{x}}\\right]
 mathml	I	\\left[\\operatorname{a_b}\\right]
-mathml	I	\\left[\\textbf{a\\quad b}\\right]
-mathml	I	\\mathbf{\\mbox{a\\quad b}}
 mathml	I	\\mathbf{\\operatorname{) y^{\\leq a}}}
 mathml	I	\\mathbf{\\operatorname{\\mathrm{a\\sin}}}
 mathml	I	\\mathbf{\\operatorname{\\text{a b}}}
 mathml	I	\\mathbf{\\operatorname{a\\hat{x}}}
 mathml	I	\\mathbf{\\operatorname{a_b}}
 mathml	I	\\mathbf{\\operatorname{x^{= =}}}
-mathml	I	\\mathbf{\\textsf{a\\quad b}}
 mathml	I	\\mathbf{v}​
 mathml	I	\\mathbf​{v}
 mathml	I	\\mathbin{\\hat{x}}
@@ -3862,7 +3540,6 @@ mathml	I	\\mathsf{\\operatorname{\\text{a b}}}
 mathml	I	\\mathsf{\\operatorname{a\\hat{x}}}
 mathml	I	\\mathsf{\\operatorname{a_b}}
 mathml	I	\\mbox{$$}
-mathml	I	\\mbox{\\ldots}
 mathml	I	\\mbox{a %c\nb}
 mathml	I	\\mbox{a\\  %c\nb}
 mathml	I	\\mbox{a\\! %c\nb}
@@ -3917,36 +3594,9 @@ mathml	I	\\mbox{a\\`a\t b}
 mathml	I	\\mbox{a\\`ab}
 mathml	I	\\mbox{a\\`a}
 mathml	I	\\mbox{a\\`a~b}
-mathml	I	\\mbox{a\\o  b}
 mathml	I	\\mbox{a\\o %c\nb}
-mathml	I	\\mbox{a\\o \\% b}
-mathml	I	\\mbox{a\\o b}
-mathml	I	\\mbox{a\\o {b}}
-mathml	I	\\mbox{a\\o }
-mathml	I	\\mbox{a\\o\n b}
-mathml	I	\\mbox{a\\o\t b}
-mathml	I	\\mbox{a\\o}
-mathml	I	\\mbox{a\\o~b}
-mathml	I	\\mbox{a\\quad  b}
 mathml	I	\\mbox{a\\quad %c\nb}
-mathml	I	\\mbox{a\\quad \\% b}
-mathml	I	\\mbox{a\\quad b}
-mathml	I	\\mbox{a\\quad {b}}
-mathml	I	\\mbox{a\\quad }
-mathml	I	\\mbox{a\\quad\n b}
-mathml	I	\\mbox{a\\quad\t b}
-mathml	I	\\mbox{a\\quad}
-mathml	I	\\mbox{a\\quad~b}
-mathml	I	\\mbox{a\\textbackslash  b}
 mathml	I	\\mbox{a\\textbackslash %c\nb}
-mathml	I	\\mbox{a\\textbackslash \\% b}
-mathml	I	\\mbox{a\\textbackslash b}
-mathml	I	\\mbox{a\\textbackslash {b}}
-mathml	I	\\mbox{a\\textbackslash }
-mathml	I	\\mbox{a\\textbackslash\n b}
-mathml	I	\\mbox{a\\textbackslash\t b}
-mathml	I	\\mbox{a\\textbackslash}
-mathml	I	\\mbox{a\\textbackslash~b}
 mathml	I	\\mbox{a\\{ %c\nb}
 mathml	I	\\mbox{a\\} %c\nb}
 mathml	I	\\mbox{a\\~  b}
@@ -4092,7 +3742,6 @@ mathml	I	\\substack{\\operatorname{\\mathrm{a\\sin}}\\\\y}
 mathml	I	\\substack{\\operatorname{\\text{a b}}\\\\y}
 mathml	I	\\substack{\\operatorname{a\\hat{x}}\\\\y}
 mathml	I	\\substack{\\operatorname{a_b}\\\\y}
-mathml	I	\\substack{\\textbf{a\\quad b}\\\\y}
 mathml	I	\\sum '^a '^a
 mathml	I	\\sum '^a'' '
 mathml	I	\\sum '^a''^a
@@ -4129,13 +3778,11 @@ mathml	I	\\sum_{\\operatorname{\\mathrm{a\\sin}}}f(x)
 mathml	I	\\sum_{\\operatorname{\\text{a b}}}f(x)
 mathml	I	\\sum_{\\operatorname{a\\hat{x}}}f(x)
 mathml	I	\\sum_{\\operatorname{a_b}}f(x)
-mathml	I	\\sum_{\\text{a\\quad b}}f(x)
 mathml	I	\\sum_{i}​ a_i
 mathml	I	\\sum_{i}​a_i
 mathml	I	\\tag*{1}x
 mathml	I	\\tag*{a}
 mathml	I	\\textbf{$$}
-mathml	I	\\textbf{\\ldots}
 mathml	I	\\textbf{a %c\nb}
 mathml	I	\\textbf{a\\  %c\nb}
 mathml	I	\\textbf{a\\! %c\nb}
@@ -4190,36 +3837,9 @@ mathml	I	\\textbf{a\\`a\t b}
 mathml	I	\\textbf{a\\`ab}
 mathml	I	\\textbf{a\\`a}
 mathml	I	\\textbf{a\\`a~b}
-mathml	I	\\textbf{a\\o  b}
 mathml	I	\\textbf{a\\o %c\nb}
-mathml	I	\\textbf{a\\o \\% b}
-mathml	I	\\textbf{a\\o b}
-mathml	I	\\textbf{a\\o {b}}
-mathml	I	\\textbf{a\\o }
-mathml	I	\\textbf{a\\o\n b}
-mathml	I	\\textbf{a\\o\t b}
-mathml	I	\\textbf{a\\o}
-mathml	I	\\textbf{a\\o~b}
-mathml	I	\\textbf{a\\quad  b}
 mathml	I	\\textbf{a\\quad %c\nb}
-mathml	I	\\textbf{a\\quad \\% b}
-mathml	I	\\textbf{a\\quad b}
-mathml	I	\\textbf{a\\quad {b}}
-mathml	I	\\textbf{a\\quad }
-mathml	I	\\textbf{a\\quad\n b}
-mathml	I	\\textbf{a\\quad\t b}
-mathml	I	\\textbf{a\\quad}
-mathml	I	\\textbf{a\\quad~b}
-mathml	I	\\textbf{a\\textbackslash  b}
 mathml	I	\\textbf{a\\textbackslash %c\nb}
-mathml	I	\\textbf{a\\textbackslash \\% b}
-mathml	I	\\textbf{a\\textbackslash b}
-mathml	I	\\textbf{a\\textbackslash {b}}
-mathml	I	\\textbf{a\\textbackslash }
-mathml	I	\\textbf{a\\textbackslash\n b}
-mathml	I	\\textbf{a\\textbackslash\t b}
-mathml	I	\\textbf{a\\textbackslash}
-mathml	I	\\textbf{a\\textbackslash~b}
 mathml	I	\\textbf{a\\{ %c\nb}
 mathml	I	\\textbf{a\\} %c\nb}
 mathml	I	\\textbf{a\\~  b}
@@ -4247,15 +3867,11 @@ mathml	I	\\text{$\\mathop{\\mathrm{s{up}}}_x$}
 mathml	I	\\text{$\\mathop{\\text{s{up}}}_x$}
 mathml	I	\\text{$x \\tag*{1} y$}
 mathml	I	\\text{$x\\tag*{1}$}
-mathml	I	\\text{\\ldots}
-mathml	I	\\text{\\quad}
-mathml	I	\\text{\\textbackslash}
 mathml	I	\\text{a $\\operatorname{\\mathrm{a\\sin}}$ b}
 mathml	I	\\text{a $\\operatorname{\\text{a b}}$ b}
 mathml	I	\\text{a $\\operatorname{a\\hat{x}}$ b}
 mathml	I	\\text{a $\\operatorname{a_b}$ b}
 mathml	I	\\text{a $\\text{ a}$ b}
-mathml	I	\\text{a $\\text{a\\quad b}$ b}
 mathml	I	\\text{a $\\vert$ b}
 mathml	I	\\text{a $​\\boxed{x}$ b}
 mathml	I	\\text{a $​\\xrightarrow{f}$ b}
@@ -4313,36 +3929,9 @@ mathml	I	\\text{a\\`a\t b}
 mathml	I	\\text{a\\`ab}
 mathml	I	\\text{a\\`a}
 mathml	I	\\text{a\\`a~b}
-mathml	I	\\text{a\\o  b}
 mathml	I	\\text{a\\o %c\nb}
-mathml	I	\\text{a\\o \\% b}
-mathml	I	\\text{a\\o b}
-mathml	I	\\text{a\\o {b}}
-mathml	I	\\text{a\\o }
-mathml	I	\\text{a\\o\n b}
-mathml	I	\\text{a\\o\t b}
-mathml	I	\\text{a\\o}
-mathml	I	\\text{a\\o~b}
-mathml	I	\\text{a\\quad  b}
 mathml	I	\\text{a\\quad %c\nb}
-mathml	I	\\text{a\\quad \\% b}
-mathml	I	\\text{a\\quad b}
-mathml	I	\\text{a\\quad {b}}
-mathml	I	\\text{a\\quad }
-mathml	I	\\text{a\\quad\n b}
-mathml	I	\\text{a\\quad\t b}
-mathml	I	\\text{a\\quad}
-mathml	I	\\text{a\\quad~b}
-mathml	I	\\text{a\\textbackslash  b}
 mathml	I	\\text{a\\textbackslash %c\nb}
-mathml	I	\\text{a\\textbackslash \\% b}
-mathml	I	\\text{a\\textbackslash b}
-mathml	I	\\text{a\\textbackslash {b}}
-mathml	I	\\text{a\\textbackslash }
-mathml	I	\\text{a\\textbackslash\n b}
-mathml	I	\\text{a\\textbackslash\t b}
-mathml	I	\\text{a\\textbackslash}
-mathml	I	\\text{a\\textbackslash~b}
 mathml	I	\\text{a\\{ %c\nb}
 mathml	I	\\text{a\\} %c\nb}
 mathml	I	\\text{a\\~  b}
@@ -4394,12 +3983,10 @@ mathml	I	a \\u b
 mathml	I	a \\underbar b
 mathml	I	a \\v b
 mathml	I	a! \\hspace{1em} b
-mathml	I	a+\\mbox{a\\quad b}
 mathml	I	a+\\operatorname{\\mathrm{a\\sin}}
 mathml	I	a+\\operatorname{\\text{a b}}
 mathml	I	a+\\operatorname{a\\hat{x}}
 mathml	I	a+\\operatorname{a_b}
-mathml	I	a+\\textsf{a\\quad b}
 mathml	I	a+b+c+d+e+f+g+h+i+j+k+l+m+n+\\mathop{\\sqrt{x}}
 mathml	I	a+b+c+d+e+f+g+h+i+j+k+l+m+n+\\mathop{\\sqrt{x}} + y
 mathml	I	a+b+c+d+e+f+g+h+i+j+k+l+m+n+\\operatorname{a_b}
@@ -4548,15 +4135,12 @@ mathml	I	x_{\\operatorname{\\mathrm{a\\sin}}}
 mathml	I	x_{\\operatorname{\\text{a b}}}
 mathml	I	x_{\\operatorname{a\\hat{x}}}
 mathml	I	x_{\\operatorname{a_b}}
-mathml	I	x_{\\textsf{a\\quad b}}
 mathml	I	{\\left(}
-mathml	I	{\\mbox{a\\quad b}}
 mathml	I	{\\operatorname{\\mathrm{a\\sin}}}
 mathml	I	{\\operatorname{\\text{2 a}}}
 mathml	I	{\\operatorname{\\text{a b}}}
 mathml	I	{\\operatorname{a\\hat{x}}}
 mathml	I	{\\operatorname{a_b}}
-mathml	I	{\\text{a\\quad b}}
 mathml	I	
 mathml	I	
 mathml	I	
