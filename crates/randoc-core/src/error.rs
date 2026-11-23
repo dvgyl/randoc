@@ -1,9 +1,38 @@
+//! Conversion errors and exit codes.
+
 use std::fmt;
 
 use randoc_ast::Text;
 
 /// The result type of Randoc operations.
 pub type Result<T> = std::result::Result<T, Error>;
+
+/// Returns the error of Pandoc for a failed file operation.
+pub fn io_error(path: &str, operation: &str, error: &std::io::Error) -> Error {
+    Error::Io(format!("{path}: {operation}: {}", io_detail(error)))
+}
+
+/// Returns the GHC text of an I/O error: the kind and the system message.
+fn io_detail(error: &std::io::Error) -> String {
+    use std::io::ErrorKind;
+    // The system message without the ` (os error N)` part of Rust.
+    let system = error.to_string();
+    let system = system
+        .rsplit_once(" (os error")
+        .map_or(system.as_str(), |(text, _)| text)
+        .to_owned();
+    match error.kind() {
+        ErrorKind::NotFound => "does not exist (No such file or directory)".to_owned(),
+        ErrorKind::IsADirectory => "inappropriate type (is a directory)".to_owned(),
+        ErrorKind::NotADirectory => format!("inappropriate type ({system})"),
+        ErrorKind::PermissionDenied | ErrorKind::ReadOnlyFilesystem => {
+            format!("permission denied ({system})")
+        }
+        ErrorKind::AlreadyExists => "already exists (File exists)".to_owned(),
+        ErrorKind::StorageFull => format!("resource exhausted ({system})"),
+        _ => format!("failed ({system})"),
+    }
+}
 
 /// A conversion error.
 ///

@@ -760,10 +760,10 @@
     },
     "mdoc": {
       "read": {
-        "passing": 0,
+        "passing": 36,
         "total": 40
       },
-      "status": "failing"
+      "status": "partial"
     },
     "mediawiki": {
       "status": "not_started"
@@ -1349,7 +1349,7 @@
     "output": {
       "status": "partial",
       "units": {
-        "passing": 15,
+        "passing": 16,
         "total": 18
       }
     },
@@ -1545,7 +1545,7 @@
     "toc": {
       "status": "partial",
       "units": {
-        "passing": 107,
+        "passing": 110,
         "total": 146
       }
     },
@@ -2027,9 +2027,9 @@
       "passing": 72
     },
     "input_formats": {
-      "failing": 8,
+      "failing": 7,
       "not_started": 27,
-      "partial": 5,
+      "partial": 6,
       "passing": 12
     },
     "options": {
@@ -2043,7 +2043,7 @@
       "passing": 12
     },
     "units": {
-      "passing": 63000,
+      "passing": 63049,
       "total": 63771
     }
   }

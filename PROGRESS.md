@@ -8,7 +8,7 @@ Historical handoffs from sessions 1–6 are archived in
 
 ## Current state of `main`
 
-- **33 Rust crates** in the workspace. Wave 1 adds Org, Rich Text Format
+- **38 Rust crates** in the workspace. Wave 1 adds Org, Rich Text Format
   (RTF), and four wiki readers. The command line and Lua share the format registry.
 - **Core conformance workstreams A–C** improve HTML highlighting layout,
   Markdown parsing and writing, CommonMark source positions, citation
@@ -17,9 +17,17 @@ Historical handoffs from sessions 1–6 are archived in
 - **Wave 2** adds XML document formats, EPUB, and bibliography formats.
   The command line and Lua use the same registry for these formats. The citation
   filter uses the bibliography readers for BibTeX, BibLaTeX, and RIS.
-- **Wave 3 preparation** adds registry stubs for Typst, roff, and the DOCX
-  writer. It also adds separate TeX math renderer files, a syntax highlighting
-  method, Typst input options, and runtime document label translations.
+- **Wave 3** adds Typst and man readers and writers, an mdoc reader,
+  an ms writer, and a DOCX writer. The CLI and Lua use the shared registry.
+  The math crate renders TeX as Typst, Office Math Markup Language (OMML),
+  and eqn with `to_typst`, `to_omml`, and `to_eqn`. The archive crate
+  now matches the oracle for the 10 MathML-to-TeX results that differed
+  in the EPUB features fixture. See [known issues](docs/ISSUES.md) for the remaining
+  long-division fallback and format differences.
+- **Wave 4 preparation** adds five stub crates for tabular formats,
+  Perl Plain Old Documentation (POD), AsciiDoc, Jupyter notebooks, and Djot. It also adds notebook reader
+  options, POD suffix detection, shared file errors and slide helpers,
+  and a fix for Beamer slide-level detection.
 - **Consolidated verification & measurement suites** from the `gpt/build` and
   `M1-*` workstreams under `tools/measure/` and `tools/{casegen,pivot,readers,errors,ast,custom-writers,server,extension-caps}/`, with Codex-specific `ops`/`guard`/`plan` tooling removed.
 - **Upgraded `randoc-harness`** with work-folder file diffing, symlink hashing,
@@ -33,7 +41,8 @@ Historical handoffs from sessions 1–6 are archived in
   tests, 10/11 corpus `.docx` docs), `odt`, `fodt` (54/54 Pandoc `odt`/`fodt`/`opendocument`
   tests, 8/8 corpus `.odt` docs), `rst` (16/16 Pandoc `rst` tests, 14/16 corpus
   read & write), `latex`, `org`, `rtf`, `mediawiki`, `dokuwiki`, `jira`, `creole`,
-  `docbook`, `jats`, `bits`, `fb2`, `epub`, `bibtex`, `biblatex`, and `ris`.
+  `docbook`, `jats`, `bits`, `fb2`, `epub`, `bibtex`, `biblatex`, `ris`,
+  `typst`, `man`, and `mdoc`.
 - **Writers:** `json`, `native`, `html`, `html4`, `csljson`, `markdown`,
   `gfm`, `commonmark`, `commonmark_x`, `plain` (+ variants, with standalone
   templates), `latex`, `beamer` (fragments + standalone templates, `$highlighting-macros$`, `$pdf-trailer-id$`),
@@ -41,7 +50,8 @@ Historical handoffs from sessions 1–6 are archived in
   `rst` (fragment + standalone `default.rst`, simple/grid/list tables, `+literate_haskell`),
   `org`, `rtf`, `mediawiki`, `dokuwiki`, `jira`, `docbook`, `docbook4`,
   `docbook5`, `jats`, `jats_archiving`, `jats_publishing`, `jats_articleauthoring`,
-  `fb2`, `tei`, `epub`, `epub2`, `epub3`, `bibtex`, and `biblatex`.
+  `fb2`, `tei`, `epub`, `epub2`, `epub3`, `bibtex`, `biblatex`, `typst`,
+  `man`, `ms`, and `docx`.
 - **CLI & infrastructure:** command-line option parsing, defaults files,
   resource search, `--extract-media`, `--citeproc` / `-C` (full CSL 1.0.2
   engine with DUCET 13.0.0 collation, sorting, disambiguation, collapsing,
@@ -54,17 +64,21 @@ Historical handoffs from sessions 1–6 are archived in
 
 ### Latest recorded baseline metrics
 
-- **Conformance harness (`spec/baseline.json`)** has 63,000 passing units
-  out of 64,191. The previous baseline had 62,889 passing units. This update
-  adds 111 passes with zero regressions. The harness reports 771 failures
-  outside the baseline and 420 skipped units.
-- **Capability matrix (`spec/capabilities.json`)**
-  - Input formats have 12 passing, 5 partial, 8 failing, and 27 not started.
-  - Output formats have 12 passing, 7 partial, 0 failing, and 58 not started.
-  - Extensions have 72 passing, 7 partial, 0 failing, and 11 not started.
-  - Options have 94 passing, 14 partial, 0 failing, and 1 not started.
+- **Conformance harness (`spec/baseline.json`)** has 63,049 passing units
+  out of 64,191. The previous baseline had 63,000 passing units.
+  This update adds 49 passes with zero regressions. The harness reports
+  722 failures outside the baseline and 420 skipped units.
+- **Capability matrix (`spec/capabilities.json`)** records results from the harness.
+  - Input formats have 12 passing, 6 partial, 7 failing, 27 not started.
+  - Output formats have 12 passing, 7 partial, 0 failing, 58 not started.
+  - Extensions have 72 passing, 7 partial, 0 failing, 11 not started.
+  - Options have 94 passing, 14 partial, 0 failing, 1 not started.
 - **Pandoc 3.13 test suite (`tools/pandoc-testsuite`):** The last suite-wide report counted 646 of 2,231 passing tests.
 - **Real-document corpus (`tools/corpus`):** The last corpus-wide report counted 162 of 690 passing units.
+- **Wave 3 oracle checks** cover the new formats in 81 Lua replay filters. The CLI replay adds 32 writer cases.
+  The mdoc reader matches 36 of 40 harness cases. Pandoc exits with an
+  internal parser error in the other four cases. The EPUB oracle tests
+  pass with one documented MathML fallback difference.
 - **Wave 2 oracle checks** cover the new readers and writers in the Lua
   replay. The harness adds 40 passing BITS cases and 40 passing RIS cases.
   See [known issues](docs/ISSUES.md) for remaining differences.
@@ -83,7 +97,8 @@ Historical handoffs from sessions 1–6 are archived in
 2. **Harden & close open gaps on existing crates:**
    - Connect `pandoc.utils.citeproc` (`I-LUA-04`).
 3. **Add next format families:**
-   - `typst`, `docx` writer, `man`/`mdoc`/`ms`, `pptx`/`xlsx`, `djot`, PDF engine driver, and `pandoc-server`.
+   - Tabular formats, POD, AsciiDoc, Jupyter notebooks, Djot,
+     `pptx`/`xlsx`, the PDF engine driver, and `pandoc-server`.
 
 ## Oracle & licence decisions
 

@@ -89,20 +89,7 @@ fn read_style_file(context: &mut Context, path: &str) -> Result<String, Error> {
             Err(too_large(path, limit))
         }
         Err(_) if !path.starts_with('/') => Err(Error::ResourceNotFound(path.to_owned())),
-        Err(error) => Err(Error::Io(format!(
-            "{path}: withBinaryFile: {}",
-            haskell_io_text(&error)
-        ))),
-    }
-}
-
-/// The text of `IOException` for the common error kinds.
-pub(crate) fn haskell_io_text(error: &std::io::Error) -> String {
-    match error.kind() {
-        std::io::ErrorKind::NotFound => "does not exist (No such file or directory)".to_owned(),
-        std::io::ErrorKind::IsADirectory => "inappropriate type (is a directory)".to_owned(),
-        std::io::ErrorKind::PermissionDenied => "permission denied (Permission denied)".to_owned(),
-        _ => error.to_string(),
+        Err(error) => Err(randoc_core::error::io_error(path, "withBinaryFile", &error)),
     }
 }
 

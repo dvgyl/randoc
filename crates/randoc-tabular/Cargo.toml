@@ -1,0 +1,19 @@
+[package]
+name = "randoc-tabular"
+description = "CSV and TSV formats support for Randoc"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]
+randoc-ast = { workspace = true }
+randoc-core = { workspace = true }
+
+[dev-dependencies]
+serde_json = { workspace = true }
+
+[lints]
+workspace = true

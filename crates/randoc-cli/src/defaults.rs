@@ -90,12 +90,12 @@ fn apply_file(
                 error_of_name.get_or_insert(error);
             }
             // Pandoc stops at a candidate that exists but cannot be read.
-            Err(error) => return Err(crate::convert::io_error(name, "withBinaryFile", &error)),
+            Err(error) => return Err(randoc::error::io_error(name, "withBinaryFile", &error)),
         }
     }
     let Some((path, bytes)) = found else {
         let error = error_of_name.unwrap_or_else(|| std::io::ErrorKind::NotFound.into());
-        return Err(crate::convert::io_error(name, "withBinaryFile", &error));
+        return Err(randoc::error::io_error(name, "withBinaryFile", &error));
     };
     let file = path
         .strip_prefix(&crate::convert::data_path(&data_dir, "defaults/"))

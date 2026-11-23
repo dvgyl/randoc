@@ -159,7 +159,7 @@ pub fn compile(
 /// (cli-R10-02).
 pub fn unreadable_absolute_path(name: &str, path: &str, error: &std::io::Error) -> Result<()> {
     if std::path::Path::new(name).is_absolute() && error.kind() != std::io::ErrorKind::NotFound {
-        return Err(crate::convert::io_error(path, "withBinaryFile", error));
+        return Err(randoc::error::io_error(path, "withBinaryFile", error));
     }
     Ok(())
 }

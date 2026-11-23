@@ -31,6 +31,11 @@ randoc-epub = { workspace = true }
 randoc-bibtex = { workspace = true }
 randoc-typst = { workspace = true }
 randoc-roff = { workspace = true }
+randoc-tabular = { workspace = true }
+randoc-pod = { workspace = true }
+randoc-asciidoc = { workspace = true }
+randoc-ipynb = { workspace = true }
+randoc-djot = { workspace = true }
 
 [lints]
 workspace = true

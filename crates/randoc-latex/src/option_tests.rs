@@ -461,6 +461,55 @@ text
 }
 
 #[test]
+fn slide_level_skips_the_div_after_a_qualifying_heading() {
+    use randoc_ast::{Block, Pandoc};
+
+    let doc = Pandoc {
+        blocks: vec![
+            Block::Header(
+                4,
+                Attr {
+                    id: "a".into(),
+                    ..Attr::default()
+                },
+                vec![text("A")],
+            ),
+            Block::Div(
+                Attr {
+                    classes: vec!["d".into()],
+                    ..Attr::default()
+                },
+                vec![
+                    Block::Header(
+                        2,
+                        Attr {
+                            id: "b".into(),
+                            ..Attr::default()
+                        },
+                        vec![text("B")],
+                    ),
+                    Block::Para(vec![text("q")]),
+                ],
+            ),
+        ],
+        ..Pandoc::default()
+    };
+    let text = crate::write_beamer(&doc, &options(), &mut Context::pure()).unwrap();
+    assert_eq!(
+        text,
+        r"\begin{frame}{A}
+\protect\phantomsection\label{a}
+\end{frame}
+
+\subsection{B}\label{b}
+
+\begin{frame}{B}
+q
+\end{frame}"
+    );
+}
+
+#[test]
 fn slide_level_1() {
     let doc = from_json(r###"{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[{"t":"Header","c":[1,["sec",[],[]],[{"t":"Str","c":"Sec"}]]},{"t":"Header","c":[2,["slide",[],[]],[{"t":"Str","c":"Slide"}]]},{"t":"BulletList","c":[[{"t":"Plain","c":[{"t":"Str","c":"a"}]}],[{"t":"Plain","c":[{"t":"Str","c":"b"}]}]]},{"t":"Header","c":[3,["sub",[],[]],[{"t":"Str","c":"Sub"}]]},{"t":"Para","c":[{"t":"Str","c":"text"}]},{"t":"Header","c":[2,["two",[],[]],[{"t":"Str","c":"Two"}]]},{"t":"OrderedList","c":[[1,{"t":"Decimal"},{"t":"Period"}],[[{"t":"Plain","c":[{"t":"Str","c":"x"}]}],[{"t":"Plain","c":[{"t":"Str","c":"y"}]}]]]}]}"###).unwrap();
     let mut options = options();

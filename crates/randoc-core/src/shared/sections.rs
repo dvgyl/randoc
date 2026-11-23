@@ -6,6 +6,71 @@ use randoc_ast::{Attr, Block, Inline, Text};
 
 use crate::{Error, Result};
 
+/// Finds the default slide level. A heading counts if content follows it
+/// in the same block list. The search skips that content block, including
+/// a div. It searches other divs and caps the result at level 6.
+pub fn slide_level<'a>(blocks: impl IntoIterator<Item = &'a Block>) -> i64 {
+    fn scan<'a>(
+        blocks: impl Iterator<Item = &'a Block>,
+        mut least: i64,
+        work: &mut Vec<(i64, &'a [Block])>,
+    ) -> i64 {
+        let mut blocks = blocks.peekable();
+        while let Some(block) = blocks.next() {
+            match block {
+                Block::Header(level, ..)
+                    if *level < least
+                        && blocks.peek().is_some_and(|next| {
+                            !matches!(next, Block::Header(..) | Block::HorizontalRule)
+                        }) =>
+                {
+                    least = *level;
+                    blocks.next();
+                }
+                Block::Div(_, content) => work.push((least, content)),
+                _ => {}
+            }
+        }
+        least
+    }
+
+    let mut work = Vec::new();
+    let mut lowest = scan(blocks.into_iter(), 6, &mut work);
+    while let Some((least, blocks)) = work.pop() {
+        lowest = lowest.min(scan(blocks.iter(), least, &mut work));
+    }
+    lowest
+}
+
+/// Replaces top-level horizontal rules with untitled slide headings.
+/// Adds an untitled heading when the document starts with slide content
+/// or has no blocks. Nested blocks stay as they are.
+/// A heading with a single NUL character marks an untitled slide.
+pub fn prepare_slides(mut blocks: Vec<Block>, level: i64, depth: usize) -> Result<Vec<Block>> {
+    if depth == 0 {
+        return Err(Error::App(
+            "the value is nested deeper than the limit of 0 levels".into(),
+        ));
+    }
+    let untitled = || Block::Header(level, Attr::default(), vec![Inline::Str("\0".into())]);
+    let starts_with_heading = |block: &Block| matches!(block, Block::Header(n, ..) if *n <= level);
+    let starts_slide = match blocks.first() {
+        Some(Block::HorizontalRule) => true,
+        Some(Block::Div(_, inner)) => inner.first().is_some_and(starts_with_heading),
+        Some(block) => starts_with_heading(block),
+        None => false,
+    };
+    for block in &mut blocks {
+        if matches!(block, Block::HorizontalRule) {
+            *block = untitled();
+        }
+    }
+    if !starts_slide {
+        blocks.insert(0, untitled());
+    }
+    Ok(blocks)
+}
+
 /// The largest distance of a numbered heading from the lowest heading
 /// level. A section number has one part for each level.
 const MAX_LEVEL_DISTANCE: usize = 1000;

@@ -341,10 +341,7 @@ fn read_resource(
             });
         }
         Err(error) if absolute => {
-            return Err(Error::Io(format!(
-                "{path}: withBinaryFile: {}",
-                crate::loader::haskell_io_text(&error)
-            )));
+            return Err(randoc_core::error::io_error(path, "withBinaryFile", &error));
         }
         Err(_) => return Err(Error::ResourceNotFound(path.to_owned())),
     };

@@ -4,6 +4,7 @@ use std::borrow::Cow;
 
 use randoc_ast::{Attr, Block, Inline};
 use randoc_core::Result;
+use randoc_core::shared::sections::slide_level;
 use randoc_layout::{Doc, literal, vsep};
 
 use crate::LatexWriter;
@@ -195,49 +196,12 @@ fn combine(heading: &Attr, div: &Attr) -> Attr {
     attr
 }
 
-/// A list of blocks that the slide level search walks.
-type BlockIter<'b> = Box<dyn Iterator<Item = &'b Block> + 'b>;
-
-/// The slide level: the lowest level of a heading that content follows in
-/// the same list of blocks. The lists of divs count, the lists of other
-/// blocks do not.
-fn slide_level(blocks: &[&Block], max_depth: usize) -> Result<i64> {
-    let mut level = 6;
-    // Each list of blocks, with the level of its last heading when the
-    // previous block is that heading.
-    let mut lists: Vec<(BlockIter<'_>, Option<i64>)> =
-        vec![(Box::new(blocks.iter().copied()), None)];
-    while let Some((list, previous)) = lists.last_mut() {
-        let Some(block) = list.next() else {
-            lists.pop();
-            continue;
-        };
-        let heading = match block {
-            Block::Header(n, _, _) => Some(*n),
-            _ => None,
-        };
-        if let (Some(n), None) = (*previous, heading)
-            && !matches!(block, Block::HorizontalRule)
-        {
-            level = level.min(n);
-        }
-        *previous = heading;
-        if let Block::Div(_, inner) = block {
-            if lists.len() > max_depth {
-                return Err(crate::too_deep());
-            }
-            lists.push((Box::new(inner.iter()), None));
-        }
-    }
-    Ok(level)
-}
-
 impl LatexWriter<'_> {
     /// Renders the blocks of a Beamer document.
     pub(crate) fn slides(&mut self, blocks: &[&Block]) -> Result<Doc> {
         let level = match self.options.slide_level {
             Some(level) => level,
-            None => slide_level(blocks, self.max_depth)?,
+            None => slide_level(blocks.iter().copied()),
         };
         if blocks.is_empty() {
             return self.untitled_frame(&[]);
@@ -469,18 +433,22 @@ impl LatexWriter<'_> {
         }
         let mut parts = parts.into_iter();
         let first = parts.next().unwrap_or_default();
-        let (contents, has_code) = self.frame_contents(&first)?;
-        let contents = language_and_direction(attr, contents);
-        let options = frame_options(attr, has_code);
-        self.empty_line = true;
-        let title_doc = self.inlines(title)?;
-        let label = self.block_anchor(&attr.id);
-        docs.push(
-            (literal(format!("\\begin{{frame}}{options}{{")) + title_doc + literal("}"))
-                .above(label)
-                .above(contents)
-                .above(literal("\\end{frame}")),
-        );
+        if matches!(title, [Inline::Str(marker)] if marker == "\0") {
+            docs.push(self.untitled_frame(&first)?);
+        } else {
+            let (contents, has_code) = self.frame_contents(&first)?;
+            let contents = language_and_direction(attr, contents);
+            let options = frame_options(attr, has_code);
+            self.empty_line = true;
+            let title_doc = self.inlines(title)?;
+            let label = self.block_anchor(&attr.id);
+            docs.push(
+                (literal(format!("\\begin{{frame}}{options}{{")) + title_doc + literal("}"))
+                    .above(label)
+                    .above(contents)
+                    .above(literal("\\end{frame}")),
+            );
+        }
         for part in parts {
             docs.push(self.untitled_frame(&part)?);
         }

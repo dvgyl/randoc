@@ -6,7 +6,10 @@
 
 use mlua::{ObjectLike, Value};
 use randoc_ast::{Block, Inline};
-use randoc_core::shared::{auto_identifier, sections::make_sections};
+use randoc_core::shared::{
+    auto_identifier,
+    sections::{make_sections, slide_level},
+};
 use randoc_core::{Extension, Extensions};
 
 use crate::construct::Call;
@@ -564,35 +567,4 @@ fn document_blocks(cx: &Cx, value: &Value) -> Peek<Vec<Block>> {
         return Ok(cx.pandoc(value).map_err(PeekError::thrown)?.blocks);
     }
     cx.blocks_fuzzy(value)
-}
-
-/// The slide level: the lowest level of a heading that a block other than
-/// a heading or a rule follows; at most 6. The block after such a heading
-/// is skipped, also when it is a `Div`. The search continues inside each
-/// other `Div`, and a heading level found there does not change the search
-/// after the `Div` (oracle matrix group `slide-level`).
-fn slide_level(blocks: &[Block]) -> i64 {
-    let mut lowest = 6;
-    let mut work = vec![(6, blocks)];
-    while let Some((mut least, mut rest)) = work.pop() {
-        loop {
-            match rest {
-                [Block::Header(level, ..), next, tail @ ..]
-                    if *level < least
-                        && !matches!(next, Block::Header(..) | Block::HorizontalRule) =>
-                {
-                    least = *level;
-                    rest = tail;
-                }
-                [Block::Div(_, content), tail @ ..] => {
-                    work.push((least, content));
-                    rest = tail;
-                }
-                [_, tail @ ..] => rest = tail,
-                [] => break,
-            }
-        }
-        lowest = lowest.min(least);
-    }
-    lowest
 }

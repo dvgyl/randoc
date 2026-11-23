@@ -277,15 +277,18 @@ checksum = "f8dcc9c7d52a811697d2151c701e0d08956f92b0e24136cf4cf27b57a6a0d9bf"
 name = "randoc"
 version = "0.1.0"
 dependencies = [
+ "randoc-asciidoc",
  "randoc-ast",
  "randoc-bibtex",
  "randoc-citeproc",
  "randoc-commonmark",
  "randoc-core",
+ "randoc-djot",
  "randoc-docx",
  "randoc-epub",
  "randoc-html",
  "randoc-html-reader",
+ "randoc-ipynb",
  "randoc-latex",
  "randoc-latex-reader",
  "randoc-markdown",
@@ -293,9 +296,11 @@ dependencies = [
  "randoc-native",
  "randoc-odt",
  "randoc-org",
+ "randoc-pod",
  "randoc-roff",
  "randoc-rst",
  "randoc-rtf",
+ "randoc-tabular",
  "randoc-typst",
  "randoc-wiki",
  "randoc-xmlformats",
@@ -312,6 +317,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "randoc-asciidoc"
+version = "0.1.0"
+dependencies = [
+ "randoc-ast",
+ "randoc-core",
+ "randoc-data",
+ "randoc-html-reader",
+ "randoc-layout",
+ "randoc-templates",
+ "serde_json",
+]
+
+[[package]]
 name = "randoc-ast"
 version = "0.1.0"
 
@@ -319,6 +337,7 @@ version = "0.1.0"
 name = "randoc-bibtex"
 version = "0.1.0"
 dependencies = [
+ "randoc-archive",
  "randoc-ast",
  "randoc-citeproc",
  "randoc-core",
@@ -382,6 +401,18 @@ dependencies = [
 [[package]]
 name = "randoc-data"
 version = "0.1.0"
+
+[[package]]
+name = "randoc-djot"
+version = "0.1.0"
+dependencies = [
+ "randoc-ast",
+ "randoc-core",
+ "randoc-data",
+ "randoc-layout",
+ "randoc-templates",
+ "serde_json",
+]
 
 [[package]]
 name = "randoc-docx"
@@ -456,6 +487,19 @@ dependencies = [
  "randoc-core",
  "serde_json",
  "toml",
+]
+
+[[package]]
+name = "randoc-ipynb"
+version = "0.1.0"
+dependencies = [
+ "randoc-archive",
+ "randoc-ast",
+ "randoc-commonmark",
+ "randoc-core",
+ "randoc-markdown-writer",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
@@ -572,6 +616,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "randoc-pod"
+version = "0.1.0"
+dependencies = [
+ "randoc-ast",
+ "randoc-core",
+ "serde_json",
+]
+
+[[package]]
 name = "randoc-roff"
 version = "0.1.0"
 dependencies = [
@@ -607,6 +660,15 @@ dependencies = [
  "randoc-layout",
  "randoc-native",
  "randoc-templates",
+ "serde_json",
+]
+
+[[package]]
+name = "randoc-tabular"
+version = "0.1.0"
+dependencies = [
+ "randoc-ast",
+ "randoc-core",
  "serde_json",
 ]
 

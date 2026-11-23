@@ -255,6 +255,8 @@ pub(crate) fn read(
         })?
         .unwrap_or_default();
     options.extensions = format.extensions;
+    options.ipynb_output = randoc_core::IpynbOutput::Best;
+    options.output_format = None;
     call.optional(3, "read_env", |value| read_env(cx, value))?;
     let Some(reader) = lookup(&format.name) else {
         return Err(thrown(&Error::UnknownReader(format.name)));

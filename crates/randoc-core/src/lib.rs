@@ -8,13 +8,13 @@
 //! not change the types here. See `docs/ARCHITECTURE.md`.
 
 mod context;
-mod error;
+pub mod error;
 mod extensions;
 #[rustfmt::skip]
 mod extensions_data;
 mod format;
 mod logging;
-mod options;
+pub mod options;
 pub mod shared;
 
 pub use context::{
@@ -30,7 +30,8 @@ pub use format::{
 };
 pub use logging::{LogMessage, SourcePos, Verbosity};
 pub use options::{
-    CaptionPosition, CiteMethod, HighlightMethod, HtmlMathMethod, LoadedFile, ObfuscationMethod,
-    ReaderOptions, ReferenceLocation, TopLevelDivision, TrackChanges, WrapOption, WriterOptions,
+    CaptionPosition, CiteMethod, HighlightMethod, HtmlMathMethod, IpynbOutput, LoadedFile,
+    ObfuscationMethod, ReaderOptions, ReferenceLocation, TopLevelDivision, TrackChanges,
+    WrapOption, WriterOptions,
 };
 pub use randoc_ast::Text;

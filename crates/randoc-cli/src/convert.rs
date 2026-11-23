@@ -5,6 +5,7 @@ use std::collections::{BTreeMap, BTreeSet, VecDeque};
 use std::io::{IsTerminal, Read};
 
 use randoc::ast::{Block, Inline, Meta, MetaValue, Pandoc};
+use randoc::error::io_error;
 use randoc::{
     Context, Error, Extension, FormatSpec, HighlightMethod, LogMessage, Output, Reader,
     ReaderOptions, Result, Source, Sources, Verbosity, WrapOption, WriterOptions, formats,
@@ -69,11 +70,6 @@ fn read_theme(
         .ok_or_else(|| Error::Option(format!("Could not read highlighting theme {style}")))
 }
 
-/// Returns the error of Pandoc for a failed file operation.
-pub fn io_error(path: &str, operation: &str, error: &std::io::Error) -> Error {
-    Error::Io(format!("{path}: {operation}: {}", io_detail(error)))
-}
-
 /// Returns the error of Pandoc for a failed write of a file. The system
 /// refuses to open a folder for a write, so GHC gives the system text
 /// `Is a directory`; for a read, GHC gives its own text `is a directory`.
@@ -84,28 +80,6 @@ fn write_error(path: &str, operation: &str, error: &std::io::Error) -> Error {
         ))
     } else {
         io_error(path, operation, error)
-    }
-}
-
-/// Returns the GHC text of an I/O error: the kind and the system message.
-fn io_detail(error: &std::io::Error) -> String {
-    use std::io::ErrorKind;
-    // The system message without the ` (os error N)` part of Rust.
-    let system = error.to_string();
-    let system = system
-        .rsplit_once(" (os error")
-        .map_or(system.as_str(), |(text, _)| text)
-        .to_owned();
-    match error.kind() {
-        ErrorKind::NotFound => "does not exist (No such file or directory)".to_owned(),
-        ErrorKind::IsADirectory => "inappropriate type (is a directory)".to_owned(),
-        ErrorKind::NotADirectory => format!("inappropriate type ({system})"),
-        ErrorKind::PermissionDenied | ErrorKind::ReadOnlyFilesystem => {
-            format!("permission denied ({system})")
-        }
-        ErrorKind::AlreadyExists => "already exists (File exists)".to_owned(),
-        ErrorKind::StorageFull => format!("resource exhausted ({system})"),
-        _ => format!("failed ({system})"),
     }
 }
 
@@ -125,7 +99,7 @@ pub fn format_from_extension(path: &str) -> Option<&'static str> {
 /// The file extensions that Pandoc 3.13 knows and their formats. Each entry
 /// is checked with the oracle; a digit extension (`.1` to `.9`) is `man`.
 #[rustfmt::skip]
-const EXTENSION_FORMATS: [(&str, &str); 54] = [
+const EXTENSION_FORMATS: [(&str, &str); 55] = [
     ("adoc", "asciidoc"), ("asciidoc", "asciidoc"), ("bib", "biblatex"), ("context", "context"),
     ("ctx", "context"), ("csv", "csv"), ("db", "docbook"), ("dj", "djot"), ("docx", "docx"),
     ("dokuwiki", "dokuwiki"), ("epub", "epub"), ("fb2", "fb2"), ("fodt", "fodt"),
@@ -134,7 +108,7 @@ const EXTENSION_FORMATS: [(&str, &str); 54] = [
     ("markdown", "markdown"), ("md", "markdown"), ("mkd", "markdown"), ("mkdn", "markdown"),
     ("mdwn", "markdown"), ("mdown", "markdown"), ("text", "markdown"), ("txt", "markdown"),
     ("markua", "markua"), ("ms", "ms"), ("roff", "ms"), ("muse", "muse"), ("native", "native"),
-    ("odt", "odt"), ("opml", "opml"), ("org", "org"), ("pdf", "pdf"), ("pptx", "pptx"),
+    ("odt", "odt"), ("opml", "opml"), ("org", "org"), ("pdf", "pdf"), ("pod", "pod"), ("pptx", "pptx"),
     ("ris", "ris"), ("rst", "rst"), ("rtf", "rtf"), ("s5", "s5"), ("t2t", "t2t"), ("tei", "tei"),
     ("texi", "texinfo"), ("texinfo", "texinfo"), ("textile", "textile"), ("tsv", "tsv"),
     ("typ", "typst"), ("wiki", "mediawiki"), ("xlsx", "xlsx"), ("xml", "xml"),
@@ -782,6 +756,7 @@ fn reader_options(settings: &Settings, extensions: randoc::Extensions) -> Reader
     options.track_changes = settings.track_changes;
     options.strip_comments = settings.strip_comments;
     options.typst_inputs = settings.typst_inputs.clone();
+    options.ipynb_output = settings.ipynb_output;
     options
 }
 
@@ -1904,6 +1879,7 @@ fn convert(
         .extensions
         .disable(Extension::EastAsianLineBreaks);
     let to_spec = format_spec(&to)?;
+    reader_options.output_format = Some(to_spec.name.clone());
     if to_spec.name == "pdf" {
         return Err(subsystem::missing(Subsystem::Pdf));
     }

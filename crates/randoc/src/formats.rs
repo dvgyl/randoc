@@ -33,6 +33,11 @@ const READERS: &[ReaderLookup] = &[
     randoc_bibtex::reader,
     randoc_typst::reader,
     randoc_roff::reader,
+    randoc_tabular::reader,
+    randoc_pod::reader,
+    randoc_asciidoc::reader,
+    randoc_ipynb::reader,
+    randoc_djot::reader,
 ];
 
 /// The writer lookup of each format crate. Add one line for a new crate.
@@ -55,6 +60,11 @@ const WRITERS: &[WriterLookup] = &[
     randoc_typst::writer,
     randoc_roff::writer,
     randoc_docx::writer,
+    randoc_tabular::writer,
+    randoc_pod::writer,
+    randoc_asciidoc::writer,
+    randoc_ipynb::writer,
+    randoc_djot::writer,
 ];
 
 /// Returns the reader for a format name without extension changes, for example `markdown`.

@@ -3,6 +3,7 @@
 //! The command-line options and the defaults files fill the same structure.
 
 use randoc::ast::MetaValue;
+pub use randoc::options::IpynbOutput;
 use randoc::{
     CaptionPosition, CiteMethod, HtmlMathMethod, ObfuscationMethod, ReferenceLocation,
     TopLevelDivision, TrackChanges, Verbosity, WrapOption,
@@ -18,18 +19,6 @@ pub enum Eol {
     /// The line ending of the platform.
     #[default]
     Native,
-}
-
-/// The cell output of a Jupyter notebook that the writer keeps.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-pub enum IpynbOutput {
-    /// All outputs.
-    All,
-    /// No output.
-    None,
-    /// The best output for the target format.
-    #[default]
-    Best,
 }
 
 /// A filter to run on the document.

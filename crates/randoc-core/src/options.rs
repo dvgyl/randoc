@@ -1,3 +1,5 @@
+//! Reader and writer options.
+
 use std::collections::BTreeSet;
 
 use randoc_ast::Text;
@@ -15,6 +17,18 @@ pub enum TrackChanges {
     RejectChanges,
     /// Keep each change as a span with a class.
     AllChanges,
+}
+
+/// The cell output of a Jupyter notebook that the reader keeps.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum IpynbOutput {
+    /// All outputs.
+    All,
+    /// No output.
+    None,
+    /// The best output for the target format.
+    #[default]
+    Best,
 }
 
 /// The options of a reader. The fields match the reader options of Pandoc.
@@ -45,6 +59,10 @@ pub struct ReaderOptions {
     pub strip_comments: bool,
     /// The name and value pairs for Typst inputs.
     pub typst_inputs: Vec<(Text, Text)>,
+    /// The Jupyter notebook cell outputs to keep.
+    pub ipynb_output: IpynbOutput,
+    /// The base writer name, if the destination format is known.
+    pub output_format: Option<Text>,
 }
 
 impl Default for ReaderOptions {
@@ -63,6 +81,8 @@ impl Default for ReaderOptions {
             track_changes: TrackChanges::default(),
             strip_comments: false,
             typst_inputs: Vec::new(),
+            ipynb_output: IpynbOutput::default(),
+            output_format: None,
         }
     }
 }
