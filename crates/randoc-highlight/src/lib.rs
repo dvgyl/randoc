@@ -4,6 +4,7 @@
 //! The crate reads KDE syntax definitions, splits code into typed tokens and
 //! formats the tokens as HTML or LaTeX with a highlight style.
 
+mod clean;
 mod html;
 mod latex;
 mod regex;

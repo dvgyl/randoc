@@ -4,6 +4,7 @@ use std::collections::BTreeMap;
 use std::path::Path;
 use std::sync::OnceLock;
 
+use crate::clean;
 use crate::syntax::{self, Syntax};
 use crate::token::{SourceLine, TokenType};
 use crate::xml;
@@ -71,17 +72,21 @@ impl Registry {
         Registry::default()
     }
 
-    /// The registry of the embedded definitions. The first call parses them.
+    /// The registry of the embedded definitions and the clean-room
+    /// languages of the crate. The first call parses them.
     ///
     /// ```
     /// let registry = randoc_highlight::Registry::embedded();
     /// assert_eq!(registry.lookup("rs").map(|s| s.name()), Some("Rust"));
+    /// assert_eq!(registry.lookup("js").map(|s| s.name()), Some("JavaScript"));
     /// ```
     pub fn embedded() -> &'static Registry {
         static EMBEDDED_REGISTRY: OnceLock<Registry> = OnceLock::new();
         EMBEDDED_REGISTRY.get_or_init(|| {
             let mut registry = Registry::new();
-            let mut parsed = Vec::new();
+            // The embedded definitions include contexts of the clean-room
+            // languages, so both go into one resolution.
+            let mut parsed = clean::all();
             for part in EMBEDDED.split('\u{c}').skip(1) {
                 let (name, text) = part.split_once('\n').unwrap_or((part, ""));
                 // The embedded files are tested to parse; a failure leaves the language out.
@@ -213,7 +218,7 @@ impl Registry {
             self.syntaxes.insert(s.name.clone(), s);
         }
         let mut all: Vec<Syntax> = std::mem::take(&mut self.syntaxes).into_values().collect();
-        syntax::resolve_keywords(&mut all);
+        syntax::resolve_keywords(&mut all, clean::EXTERNAL_LISTS);
         self.syntaxes = all.into_iter().map(|s| (s.name.clone(), s)).collect();
     }
 
@@ -507,7 +512,10 @@ mod tests {
         }
         assert_eq!(failures, Vec::<String>::new());
         assert_eq!(count, 63);
-        assert_eq!(Registry::embedded().syntaxes().count(), 63);
+        assert_eq!(
+            Registry::embedded().syntaxes().count(),
+            63 + clean::all().len()
+        );
     }
 
     #[test]

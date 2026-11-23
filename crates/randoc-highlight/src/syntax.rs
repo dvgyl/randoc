@@ -78,7 +78,7 @@ pub(crate) struct Re {
 }
 
 impl Re {
-    fn new(source: String, case_sensitive: bool, minimal: bool) -> Re {
+    pub(crate) fn new(source: String, case_sensitive: bool, minimal: bool) -> Re {
         let compiled = regex::compile(&source, case_sensitive, minimal).map(|re| {
             let groups = regex::capturing_groups(&re);
             (re, groups)
@@ -215,7 +215,7 @@ impl Syntax {
 }
 
 /// The delimiters of a word when the definition does not change them.
-fn standard_delims() -> BTreeSet<char> {
+pub(crate) fn standard_delims() -> BTreeSet<char> {
     " \n\t.():!+,-<=>%&*/;?[]^{|}~\\".chars().collect()
 }
 
@@ -597,18 +597,44 @@ fn to_token_type(t: &str) -> TokenType {
         .unwrap_or(TokenType::Normal)
 }
 
+/// The words of a keyword list of a syntax that the registry does not
+/// have. An `include` item can name the list; a list of a syntax in the
+/// registry with the same names wins.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub(crate) struct ExternalList {
+    pub(crate) syntax: &'static str,
+    pub(crate) list: &'static str,
+    pub(crate) words: &'static [&'static str],
+}
+
 /// Resolves the keyword lists of each syntax in `syntaxes`, with the
 /// `include` items of the lists, as `resolveKeywords` does. The rules that
 /// name one list with one case mode share one word set.
-pub(crate) fn resolve_keywords(syntaxes: &mut [Syntax]) {
-    resolve_keywords_with_limit(syntaxes, MAX_RESOLVED_BYTES);
+pub(crate) fn resolve_keywords(syntaxes: &mut [Syntax], external: &[ExternalList]) {
+    resolve_keywords_with_limit(syntaxes, external, MAX_RESOLVED_BYTES);
 }
 
-fn resolve_keywords_with_limit(syntaxes: &mut [Syntax], mut byte_budget: usize) {
-    let lists: HashMap<String, BTreeMap<String, Vec<ListItem>>> = syntaxes
+fn resolve_keywords_with_limit(
+    syntaxes: &mut [Syntax],
+    external: &[ExternalList],
+    mut byte_budget: usize,
+) {
+    let mut lists: HashMap<String, BTreeMap<String, Vec<ListItem>>> = syntaxes
         .iter()
         .map(|s| (s.name.clone(), s.lists.clone()))
         .collect();
+    for e in external {
+        lists
+            .entry(e.syntax.to_string())
+            .or_default()
+            .entry(e.list.to_string())
+            .or_insert_with(|| {
+                e.words
+                    .iter()
+                    .map(|w| ListItem::Item((*w).to_string()))
+                    .collect()
+            });
+    }
     for syntax in syntaxes.iter_mut() {
         let mut resolved: HashMap<(String, bool), Arc<WordSet>> = HashMap::new();
         let mut word_budget = MAX_RESOLVED_WORDS;
@@ -870,7 +896,7 @@ mod tests {
             panic!("parse failed");
         };
         let mut all = vec![a, u];
-        resolve_keywords(&mut all);
+        resolve_keywords(&mut all, &[]);
         let rules = &all[0].contexts["A"].rules;
         let Matcher::Keyword(_, KeywordList::Resolved(words)) = &rules[0].matcher else {
             panic!("not resolved")
@@ -884,6 +910,46 @@ mod tests {
         ));
         let insensitive = WordSet::CaseInsensitive(BTreeSet::from([fold_case("Straße")]));
         assert!(insensitive.contains("STRASSE"));
+    }
+
+    /// An `include` of a list of a syntax that the registry does not have
+    /// takes the words of the external list; a syntax with that list wins.
+    #[test]
+    fn external_lists_fill_lists_of_missing_syntaxes() {
+        let a = definition(
+            "<context name=\"A\"><keyword String=\"kw\" attribute=\"K\"/></context>",
+            "<list name=\"kw\"><include>cmds##Missing</include><include>more##U</include></list>",
+        );
+        let u = "<language name=\"U\"><highlighting><list name=\"more\"><item>own</item></list>\
+                 <contexts><context name=\"x\"/></contexts></highlighting></language>";
+        let (Ok(a), Ok(u)) = (
+            parse(&a),
+            xml::parse(u).and_then(|r| document_to_syntax("u.xml", &r)),
+        ) else {
+            panic!("parse failed");
+        };
+        let external = [
+            ExternalList {
+                syntax: "Missing",
+                list: "cmds",
+                words: &["cat"],
+            },
+            ExternalList {
+                syntax: "U",
+                list: "more",
+                words: &["shadowed"],
+            },
+        ];
+        let mut all = vec![a, u];
+        resolve_keywords(&mut all, &external);
+        let Matcher::Keyword(_, KeywordList::Resolved(words)) =
+            &all[0].contexts["A"].rules[0].matcher
+        else {
+            panic!("not resolved")
+        };
+        assert!(words.contains("cat"));
+        assert!(words.contains("own"));
+        assert!(!words.contains("shadowed"));
     }
 
     /// Each list is expanded once, so many lists that include one large
@@ -907,7 +973,7 @@ mod tests {
             panic!("parse failed")
         };
         let mut all = vec![syntax];
-        resolve_keywords(&mut all);
+        resolve_keywords(&mut all, &[]);
         let rules = &all[0].contexts["A"].rules;
         let sizes: Vec<usize> = rules
             .iter()
@@ -959,7 +1025,7 @@ mod tests {
             )
             .unwrap(),
         ];
-        resolve_keywords_with_limit(&mut registry, 5);
+        resolve_keywords_with_limit(&mut registry, &[], 5);
         for (syntax, word, expected) in [
             (&registry[0], "first", true),
             (&registry[1], "other", false),
@@ -989,7 +1055,7 @@ mod tests {
             panic!("parse failed")
         };
         let mut all = vec![syntax];
-        resolve_keywords(&mut all);
+        resolve_keywords(&mut all, &[]);
         let rules = &all[0].contexts["A"].rules;
         let populated = rules
             .iter()

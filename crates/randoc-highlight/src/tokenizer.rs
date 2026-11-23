@@ -76,6 +76,25 @@ pub(crate) fn tokenize(
     Tokenizer::new(registry, syntax, text, max_depth)?.run(text)
 }
 
+/// The largest regular expression work of one line of `text`, in matcher
+/// steps per byte of the line. The budget tests of the clean-room languages
+/// use it, with the context stack limit of the writers (128).
+#[cfg(test)]
+pub(crate) fn worst_regex_steps_per_byte(
+    registry: &Registry,
+    syntax: &Syntax,
+    text: &str,
+) -> Result<usize, String> {
+    let mut tk = Tokenizer::new(registry, syntax, text, 128)?;
+    let mut worst = 0;
+    for (i, l) in lines(text).enumerate() {
+        let before = tk.regex_steps;
+        tk.tokenize_line(l, i + 1)?;
+        worst = worst.max((tk.regex_steps - before) / (l.len() + 1));
+    }
+    Ok(worst)
+}
+
 /// The lines of a text as `Data.ByteString.lines` gives them: a final
 /// newline gives no extra empty line, and `\r` stays in the line.
 fn lines(text: &str) -> impl Iterator<Item = &str> {
@@ -90,7 +109,7 @@ fn is_space_byte(b: u8) -> bool {
 }
 
 /// Haskell `lookupContext`: an empty name means the starting context.
-fn lookup_context<'s>(syntax: &'s Syntax, name: &str) -> Option<&'s Context> {
+pub(crate) fn lookup_context<'s>(syntax: &'s Syntax, name: &str) -> Option<&'s Context> {
     if name.is_empty() {
         if syntax.starting_context.is_empty() {
             None
@@ -1769,13 +1788,7 @@ mod tests {
                 failures.push(format!("{}: {e}", syntax.name()));
             }
         }
-        // Only definitions that include a syntax outside the embedded set
-        // fail, with the skylighting error.
-        let other = failures
-            .iter()
-            .filter(|f| !f.contains("requires undefined context"))
-            .count();
-        assert_eq!((other, failures.len()), (0, 4), "{failures:#?}");
+        assert_eq!(failures, Vec::<String>::new());
     }
 
     #[test]
