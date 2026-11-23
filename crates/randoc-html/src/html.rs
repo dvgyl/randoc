@@ -12,9 +12,9 @@ use randoc_core::{
 use std::cell::RefCell;
 use std::collections::{HashMap, HashSet};
 
-use crate::Version;
 use crate::attributes::{HTML4_HEADING_ATTRIBUTES, HTML5_ATTRIBUTES, SECTION_ATTRIBUTES};
 use crate::standalone::{TocEntry, without_links_and_notes};
+use crate::{EpubChapter, Version};
 use randoc_layout::{Doc, cr, empty, flush, space};
 
 use crate::shared::{Dimension, escape_attribute, escape_text};
@@ -95,6 +95,55 @@ pub(crate) fn write_blocks(
     context: &mut Context,
     version: Version,
 ) -> Result<Text> {
+    render_fragment(blocks, options, context, version).map(|(body, _)| body)
+}
+
+pub(crate) fn write_epub_chapter(
+    blocks: &[Block],
+    options: &WriterOptions,
+    context: &mut Context,
+    version: Version,
+) -> Result<EpubChapter> {
+    let (body, highlighted) = render_fragment(blocks, options, context, version)?;
+    let highlighting_css = match &options.highlight_style {
+        Some(style) if highlighted => Some(randoc_highlight::style_css(
+            &crate::highlight::load_style(style, options.highlight_theme.as_ref(), context)?,
+        )),
+        _ => None,
+    };
+    let mut chapter = EpubChapter {
+        highlighting_css,
+        ..EpubChapter::default()
+    };
+    let mut rest = body.as_str();
+    while let Some((_, after_open)) = rest.split_once('<') {
+        if let Some(comment) = after_open.strip_prefix("!--") {
+            rest = comment.split_once("-->").map_or("", |(_, tail)| tail);
+            continue;
+        }
+        let end = after_open.find(|c: char| c == '>' || c.is_ascii_whitespace() || c == '/');
+        let Some(end) = end else { break };
+        match &after_open[..end] {
+            "math" => chapter.has_math = true,
+            "svg" => chapter.has_svg = true,
+            "script" => chapter.has_script = true,
+            _ => {}
+        }
+        let Some((_, tail)) = after_open.split_once('>') else {
+            break;
+        };
+        rest = tail;
+    }
+    chapter.body = body;
+    Ok(chapter)
+}
+
+fn render_fragment(
+    blocks: &[Block],
+    options: &WriterOptions,
+    context: &mut Context,
+    version: Version,
+) -> Result<(Text, bool)> {
     let mut writer = Html::new(
         options,
         version,
@@ -109,8 +158,8 @@ pub(crate) fn write_blocks(
         body += notes;
     }
     let width = match options.wrap_text {
-        WrapOption::WrapAuto => usize::try_from(options.columns).ok(),
-        WrapOption::WrapNone | WrapOption::WrapPreserve => None,
+        WrapOption::WrapAuto if !writer.epub() => usize::try_from(options.columns).ok(),
+        _ => None,
     };
     let mut out = body.render(width);
     out.truncate(out.trim_end_matches('\n').len());
@@ -120,7 +169,7 @@ pub(crate) fn write_blocks(
     if options.prefer_ascii {
         out = ascii_references(&out);
     }
-    Ok(out)
+    Ok((out, writer.wrote_highlighting))
 }
 
 /// An attribute list in output order.
@@ -206,7 +255,11 @@ impl<'a> Html<'a> {
             max_depth,
             notes: Vec::new(),
             pending_from: 0,
-            section_numbers: options.number_offset.clone(),
+            section_numbers: if matches!(version, Version::Epub2 | Version::Epub3) {
+                Vec::new()
+            } else {
+                options.number_offset.clone()
+            },
             flushed: 0,
             note_groups: 0,
             block_level: 0,
@@ -231,8 +284,24 @@ impl<'a> Html<'a> {
 }
 
 impl Html<'_> {
+    fn epub(&self) -> bool {
+        matches!(self.version, Version::Epub2 | Version::Epub3)
+    }
+
+    fn section_divs(&self) -> bool {
+        self.epub() || self.options.section_divs
+    }
+
+    fn reference_location(&self) -> ReferenceLocation {
+        if self.epub() {
+            ReferenceLocation::EndOfDocument
+        } else {
+            self.options.reference_location
+        }
+    }
+
     pub(crate) fn html5(&self) -> bool {
-        self.version == Version::Html5
+        matches!(self.version, Version::Html5 | Version::Epub3)
     }
 
     /// Returns the next depth, or an error when the document is too deep.
@@ -269,7 +338,10 @@ impl Html<'_> {
         let mut seen = Seen::default();
         let mut out = Attrs::new();
         for (key, value) in pairs {
-            if key.is_empty() {
+            if key.is_empty()
+                || (self.version == Version::Epub2
+                    && matches!(key.as_str(), "number" | "epub:type"))
+            {
                 continue;
             }
             if !seen.insert(key.as_str()) {
@@ -284,21 +356,23 @@ impl Html<'_> {
     }
 
     fn attribute_name(&self, key: &str) -> String {
-        if self.html5() && !is_html5_attribute(key) {
+        if self.html5()
+            && !is_html5_attribute(key)
+            && !(self.version == Version::Epub3 && key == "epub:type")
+        {
             format!("data-{key}")
         } else {
             key.to_owned()
         }
     }
 
-    /// Returns an identifier with the identifier prefix. HTML4 requires a
-    /// letter first, so Pandoc puts `id_` before another first character.
+    /// Returns the prefixed identifier for this format.
     pub(crate) fn prefixed(&self, id: &str) -> String {
-        let prefix = &self.options.identifier_prefix;
-        if !self.html5() && id.chars().next().is_some_and(|c| !c.is_alphabetic()) {
-            return format!("{prefix}id_{id}");
-        }
-        format!("{prefix}{id}")
+        crate::prefixed_id(
+            &self.options.identifier_prefix,
+            id,
+            !self.html5() || self.epub(),
+        )
     }
 
     /// Returns the `href` of a link to an identifier in this document.
@@ -604,7 +678,7 @@ impl Html<'_> {
             .attributes
             .iter()
             .any(|(key, value)| is_section_key(key, value));
-        if self.options.section_divs || moves {
+        if self.section_divs() || moves {
             let section_attr = Attr::new(
                 attr.id.clone(),
                 self.section_classes(level, &attr.classes, &[]),
@@ -664,7 +738,10 @@ impl Html<'_> {
         number: Option<&SectionNumber>,
         inlines: &[Inline],
     ) -> Result<()> {
-        if self.toc_hidden || !(self.options.table_of_contents && self.options.template.is_some()) {
+        if self.epub()
+            || self.toc_hidden
+            || !(self.options.table_of_contents && self.options.template.is_some())
+        {
             self.toc_open.push(usize::MAX);
             return Ok(());
         }
@@ -683,7 +760,7 @@ impl Html<'_> {
 
     fn section_classes(&self, level: i64, header: &[Text], div: &[Text]) -> Vec<Text> {
         let mut classes = Vec::new();
-        if self.options.section_divs {
+        if self.section_divs() {
             if !self.html5() {
                 classes.push(Text::from("section"));
             }
@@ -754,7 +831,7 @@ impl Html<'_> {
         // With an offset that is not zero, Pandoc counts from level 1 and a
         // heading of level 0 or lower gets an empty number. Without one, it
         // counts from the smallest level of the document.
-        let absolute = self.options.number_offset.iter().any(|offset| *offset != 0);
+        let absolute = !self.epub() && self.options.number_offset.iter().any(|offset| *offset != 0);
         let base = if absolute { 1 } else { self.min_level };
         if absolute && level < 1 {
             return Some(String::new());
@@ -1186,7 +1263,7 @@ impl Html<'_> {
         let div_classes = div.classes.get(1..).unwrap_or_default();
         let classes = unique_classes(&self.section_classes(level, &[], div_classes));
         let number = self.loose_number(heading);
-        let collapses = !self.options.section_divs
+        let collapses = !self.section_divs()
             && (heading.id.is_empty() || div.id.is_empty() || heading.id == div.id)
             && heading.classes == div_classes
             && heading.attributes == div.attributes;
@@ -1243,7 +1320,14 @@ impl Html<'_> {
     }
 
     fn raw_accepted(&self, format: &Format) -> bool {
-        format == "html" || format == "html4" || (self.html5() && format == "html5")
+        format == "html"
+            || format == "html4"
+            || (self.html5() && format == "html5")
+            || match self.version {
+                Version::Epub2 => format == "epub" || format == "epub2",
+                Version::Epub3 => format == "epub" || format == "epub3",
+                _ => false,
+            }
     }
 
     fn raw(&self, format: &Format, text: &str) -> Doc {
@@ -1427,6 +1511,30 @@ impl Html<'_> {
         };
         let pending = pending.to_vec();
         self.pending_from = self.notes.len();
+        if matches!(self.version, Version::Epub2 | Version::Epub3) {
+            let modern = self.version == Version::Epub3;
+            let mut body = lit("<hr />");
+            self.flushed += pending.len();
+            for (number, note) in pending {
+                let mut attrs = Vec::new();
+                if modern {
+                    attrs.push(("epub:type".into(), "footnote".into()));
+                    attrs.push(("role".into(), "doc-footnote".into()));
+                }
+                attrs.push(("id".into(), self.prefixed(&format!("fn{number}"))));
+                body += cr();
+                body += self.block_element(if modern { "aside" } else { "div" }, &attrs, note);
+            }
+            let mut attrs = Vec::new();
+            if modern {
+                attrs.push(("id".into(), self.prefixed("footnotes")));
+            }
+            attrs.push(("class".into(), "footnotes footnotes-end-of-document".into()));
+            if modern {
+                attrs.push(("epub:type".into(), "footnotes".into()));
+            }
+            return Ok(self.block_element(if modern { "section" } else { "div" }, &attrs, body));
+        }
         let start = self.flushed + 1;
         self.flushed += pending.len();
         self.note_groups += 1;
@@ -1490,7 +1598,7 @@ impl Html<'_> {
     /// does for `--reference-location=section`.
     /// The section must have a block, and no subsection.
     fn flush_leaf_section_notes(&mut self, doc: &mut Doc, children: &[Block]) -> Result<()> {
-        if self.options.reference_location != ReferenceLocation::EndOfSection {
+        if self.reference_location() != ReferenceLocation::EndOfSection {
             return Ok(());
         }
         // A section with subsections or without any block does not write its
@@ -1506,7 +1614,7 @@ impl Html<'_> {
     /// there, only a div with the class `section` first, or a div that holds
     /// one, is a subsection.
     fn flush_loose_section_notes(&mut self, doc: &mut Doc, children: &[Block]) -> Result<()> {
-        if self.options.reference_location != ReferenceLocation::EndOfSection {
+        if self.reference_location() != ReferenceLocation::EndOfSection {
             return Ok(());
         }
         if children.is_empty() || holds_a_section_div(children) {
@@ -1524,7 +1632,7 @@ impl Html<'_> {
         location: ReferenceLocation,
         extra_id: &str,
     ) -> Result<()> {
-        if self.options.reference_location != location {
+        if self.reference_location() != location {
             return Ok(());
         }
         let notes = self.footnote_section(location, extra_id)?;
@@ -1547,13 +1655,42 @@ impl Html<'_> {
         let backlink = self.backlink(number);
         // The text of a note is not part of an obfuscated e-mail link.
         let obfuscating = std::mem::replace(&mut self.obfuscating, false);
-        let content = self.note_content(blocks, backlink, depth);
+        let content = match self.version {
+            Version::Epub3 => self.blocks(blocks, depth),
+            Version::Epub2 => self.epub2_note_content(blocks, backlink, depth),
+            _ => self.note_content(blocks, backlink, depth),
+        };
         self.obfuscating = obfuscating;
         let content = content?;
         self.notes.truncate(pending);
         self.pending_from = pending_from;
         self.notes.push((number, content));
         Ok(self.note_ref(number))
+    }
+
+    fn epub2_note_content(
+        &mut self,
+        blocks: &[Block],
+        mut label: Doc,
+        depth: usize,
+    ) -> Result<Doc> {
+        label += lit(". ");
+        if let Some((Block::Para(inlines) | Block::Plain(inlines), rest)) = blocks.split_first() {
+            label += self.inlines(inlines, depth)?;
+            let mut result = self.inline_element("p", &[], label);
+            if !rest.is_empty() {
+                result += cr();
+                result += self.blocks(rest, depth)?;
+            }
+            Ok(result)
+        } else {
+            let mut result = self.inline_element("p", &[], label);
+            if !blocks.is_empty() {
+                result += cr();
+                result += self.blocks(blocks, depth)?;
+            }
+            Ok(result)
+        }
     }
 
     fn backlink(&self, number: usize) -> Doc {
@@ -1567,7 +1704,12 @@ impl Html<'_> {
         if self.html5() {
             attrs.push(("role".to_owned(), "doc-backlink".to_owned()));
         }
-        self.inline_element("a", &attrs, lit("\u{21A9}\u{FE0E}"))
+        let label = if self.version == Version::Epub2 {
+            number.to_string()
+        } else {
+            "\u{21A9}\u{FE0E}".to_owned()
+        };
+        self.inline_element("a", &attrs, lit(&label))
     }
 
     fn note_content(&mut self, blocks: &[Block], backlink: Doc, depth: usize) -> Result<Doc> {
@@ -1607,6 +1749,9 @@ impl Html<'_> {
             ("class".to_owned(), "footnote-ref".to_owned()),
             ("id".to_owned(), self.prefixed(&format!("fnref{number}"))),
         ];
+        if self.version == Version::Epub3 {
+            attrs.push(("epub:type".to_owned(), "noteref".to_owned()));
+        }
         if self.html5() {
             attrs.push(("role".to_owned(), "doc-noteref".to_owned()));
         }
@@ -1616,8 +1761,12 @@ impl Html<'_> {
         } else {
             number
         };
-        let sup = self.inline_element("sup", &[], lit(&number));
-        self.inline_element("a", &attrs, sup)
+        let body = if matches!(self.version, Version::Epub2 | Version::Epub3) {
+            lit(&number)
+        } else {
+            self.inline_element("sup", &[], lit(&number))
+        };
+        self.inline_element("a", &attrs, body)
     }
 
     // ----- inlines -----

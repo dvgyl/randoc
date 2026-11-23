@@ -37,6 +37,60 @@ use randoc_core::Writer;
 pub(crate) enum Version {
     Html4,
     Html5,
+    Epub2,
+    Epub3,
+}
+
+/// The EPUB version that determines the chapter markup.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum EpubVersion {
+    /// XHTML 1.1 with EPUB 2 footnotes.
+    Epub2,
+    /// XHTML with EPUB 3 semantic attributes.
+    Epub3,
+}
+
+/// The rendered chapter and the properties for its package entry.
+#[derive(Debug, Default)]
+pub struct EpubChapter {
+    /// The XHTML fragment for the chapter body.
+    pub body: randoc_core::Text,
+    /// The CSS for highlighted code in this chapter.
+    pub highlighting_css: Option<randoc_core::Text>,
+    /// The body contains MathML.
+    pub has_math: bool,
+    /// The body contains inline SVG.
+    pub has_svg: bool,
+    /// The body contains a script.
+    pub has_script: bool,
+}
+
+/// Returns the prefixed EPUB identifier. Adds `id_` before an identifier
+/// that starts with a character other than a letter.
+pub fn epub_identifier(prefix: &str, id: &str) -> String {
+    prefixed_id(prefix, id, true)
+}
+
+fn prefixed_id(prefix: &str, id: &str, requires_letter: bool) -> String {
+    if requires_letter && id.chars().next().is_some_and(|c| !c.is_alphabetic()) {
+        format!("{prefix}id_{id}")
+    } else {
+        format!("{prefix}{id}")
+    }
+}
+
+/// Renders one EPUB chapter with its own footnotes and highlighting.
+pub fn write_epub_chapter(
+    blocks: &[randoc_ast::Block],
+    options: &randoc_core::WriterOptions,
+    context: &mut randoc_core::Context,
+    version: EpubVersion,
+) -> randoc_core::Result<EpubChapter> {
+    let version = match version {
+        EpubVersion::Epub2 => Version::Epub2,
+        EpubVersion::Epub3 => Version::Epub3,
+    };
+    html::write_epub_chapter(blocks, options, context, version)
 }
 
 /// Returns the writer for `html`, `html5` or `html4`.
@@ -83,6 +137,60 @@ mod tests {
         let html = render_blocks(&blocks, &options, &mut context).unwrap();
         // `pandoc -f json -t html` gives these bytes and a final newline.
         assert_eq!(html, "<div id=\"d\">\n<p>a&lt;b</p>\n</div>");
+    }
+
+    #[test]
+    fn renders_epub_footnotes_and_marks_chapter_resources() {
+        use randoc_ast::{Attr, Block, Format, Inline, MathType, Target};
+        use randoc_core::{Context, WriterOptions};
+        let blocks = [
+            Block::Header(
+                1,
+                Attr::new("one", Vec::new(), Vec::new()),
+                vec![Inline::Str("One".into())],
+            ),
+            Block::Para(vec![
+                Inline::Note(vec![Block::Para(vec![Inline::Str("Note".into())])]),
+                Inline::Math(MathType::InlineMath, "x^2".into()),
+                Inline::Image(
+                    Attr::default(),
+                    Vec::new(),
+                    Target::new("https://example.test/image.png", ""),
+                ),
+            ]),
+            Block::RawBlock(Format::new("html"), "<svg></svg><script></script>".into()),
+        ];
+        for version in [EpubVersion::Epub2, EpubVersion::Epub3] {
+            let result = write_epub_chapter(
+                &blocks,
+                &WriterOptions::default(),
+                &mut Context::pure(),
+                version,
+            )
+            .unwrap();
+            assert!(result.has_math && result.has_svg && result.has_script);
+            assert!(result.body.contains("href=\"#fn1\""));
+            assert!(!result.body.contains("<sup>1</sup>"));
+            match version {
+                EpubVersion::Epub2 => {
+                    assert!(
+                        result
+                            .body
+                            .contains("<div id=\"one\" class=\"section level1\">")
+                    );
+                    assert!(result.body.contains("class=\"footnote-back\">1</a>. Note"));
+                }
+                EpubVersion::Epub3 => {
+                    assert!(
+                        result
+                            .body
+                            .contains("<section id=\"one\" class=\"level1\">")
+                    );
+                    assert!(result.body.contains("epub:type=\"noteref\""));
+                    assert!(result.body.contains("<aside epub:type=\"footnote\""));
+                }
+            }
+        }
     }
 
     /// Write units with a known divergence. See `docs/ISSUES.md`, I-HTML-01 and

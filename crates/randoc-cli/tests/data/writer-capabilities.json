@@ -131,6 +131,262 @@
    "stderr": ""
   },
   {
+   "writer": "biblatex",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "biblatex"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "writer": "biblatex",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "biblatex"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "writer": "biblatex",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "biblatex",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "writer": "biblatex",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "biblatex",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "writer": "biblatex",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "biblatex",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "biblatex",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "biblatex",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "biblatex",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "biblatex",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "biblatex",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "biblatex",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "bibtex",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "bibtex"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "writer": "bibtex",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "bibtex"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "writer": "bibtex",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "bibtex",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "writer": "bibtex",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "bibtex",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "writer": "bibtex",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "bibtex",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "bibtex",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "bibtex",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "bibtex",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "bibtex",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "bibtex",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "bibtex",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
    "writer": "commonmark",
    "request": "none",
    "document": "titled",
@@ -515,6 +771,390 @@
    "stderr": ""
   },
   {
+   "writer": "docbook",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "docbook"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<para>\n  Body\n</para>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "docbook",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "docbook"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "\n",
+   "stderr": ""
+  },
+  {
+   "writer": "docbook",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "docbook",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<!DOCTYPE article>\n<article\n  xmlns=\"http://docbook.org/ns/docbook\" version=\"5.0\"\n  xmlns:mml=\"http://www.w3.org/1998/Math/MathML\"\n  xmlns:xlink=\"http://www.w3.org/1999/xlink\" >\n  <info>\n    <title>Title</title>\n  </info>\n  <para>\n    Body\n  </para>\n</article>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "docbook",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "docbook",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<!DOCTYPE article>\n<article\n  xmlns=\"http://docbook.org/ns/docbook\" version=\"5.0\"\n  xmlns:mml=\"http://www.w3.org/1998/Math/MathML\"\n  xmlns:xlink=\"http://www.w3.org/1999/xlink\" >\n  <info>\n    <title></title>\n  </info>\n  \n</article>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "docbook",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "docbook",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<para>\n  Body\n</para>",
+   "stderr": ""
+  },
+  {
+   "writer": "docbook",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "docbook",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "docbook",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "docbook",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<para>\n  Body\n</para>",
+   "stderr": ""
+  },
+  {
+   "writer": "docbook",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "docbook",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "docbook4",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "docbook4"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<para>\n  Body\n</para>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "docbook4",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "docbook4"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "\n",
+   "stderr": ""
+  },
+  {
+   "writer": "docbook4",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "docbook4",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<!DOCTYPE article PUBLIC \"-//OASIS//DTD DocBook EBNF Module V1.1CR1//EN\"\n                  \"http://www.oasis-open.org/docbook/xml/mathml/1.1CR1/dbmathml.dtd\">\n<article>\n  <articleinfo>\n    <title>Title</title>\n  </articleinfo>\n  <para>\n    Body\n  </para>\n</article>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "docbook4",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "docbook4",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<!DOCTYPE article PUBLIC \"-//OASIS//DTD DocBook EBNF Module V1.1CR1//EN\"\n                  \"http://www.oasis-open.org/docbook/xml/mathml/1.1CR1/dbmathml.dtd\">\n<article>\n  <articleinfo>\n    <title></title>\n  </articleinfo>\n  \n</article>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "docbook4",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "docbook4",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<para>\n  Body\n</para>",
+   "stderr": ""
+  },
+  {
+   "writer": "docbook4",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "docbook4",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "docbook4",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "docbook4",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<para>\n  Body\n</para>",
+   "stderr": ""
+  },
+  {
+   "writer": "docbook4",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "docbook4",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "docbook5",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "docbook5"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<para>\n  Body\n</para>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "docbook5",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "docbook5"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "\n",
+   "stderr": ""
+  },
+  {
+   "writer": "docbook5",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "docbook5",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<!DOCTYPE article>\n<article\n  xmlns=\"http://docbook.org/ns/docbook\" version=\"5.0\"\n  xmlns:mml=\"http://www.w3.org/1998/Math/MathML\"\n  xmlns:xlink=\"http://www.w3.org/1999/xlink\" >\n  <info>\n    <title>Title</title>\n  </info>\n  <para>\n    Body\n  </para>\n</article>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "docbook5",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "docbook5",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<!DOCTYPE article>\n<article\n  xmlns=\"http://docbook.org/ns/docbook\" version=\"5.0\"\n  xmlns:mml=\"http://www.w3.org/1998/Math/MathML\"\n  xmlns:xlink=\"http://www.w3.org/1999/xlink\" >\n  <info>\n    <title></title>\n  </info>\n  \n</article>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "docbook5",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "docbook5",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<para>\n  Body\n</para>",
+   "stderr": ""
+  },
+  {
+   "writer": "docbook5",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "docbook5",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "docbook5",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "docbook5",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<para>\n  Body\n</para>",
+   "stderr": ""
+  },
+  {
+   "writer": "docbook5",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "docbook5",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
    "writer": "dokuwiki",
    "request": "none",
    "document": "titled",
@@ -640,6 +1280,518 @@
    "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
    "exit": 0,
    "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "epub",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "epub"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:epub=\"http://www.idpf.org/2007/ops\" lang=\"C\" xml:lang=\"C\">\n<head>\n  <meta charset=\"utf-8\" />\n  <meta name=\"generator\" content=\"pandoc\" />\n  <title>ch001.xhtml</title>\n  <style>\n  </style>\n  <link rel=\"stylesheet\" type=\"text/css\" href=\"../styles/stylesheet1.css\" />\n</head>\n<body epub:type=\"bodymatter\">\n<section id=\"title\" class=\"level1 unnumbered\">\n<h1 class=\"unnumbered\">Title</h1>\n<p>Body</p>\n</section>\n</body>\n</html>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "epub",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "epub"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:epub=\"http://www.idpf.org/2007/ops\" lang=\"C\" xml:lang=\"C\">\n<head>\n  <meta charset=\"utf-8\" />\n  <meta name=\"generator\" content=\"pandoc\" />\n  <title>ch001.xhtml</title>\n  <style>\n  </style>\n  <link rel=\"stylesheet\" type=\"text/css\" href=\"../styles/stylesheet1.css\" />\n</head>\n<body epub:type=\"bodymatter\">\n<section id=\"section\" class=\"level1 unnumbered\">\n<h1 class=\"unnumbered\"></h1>\n</section>\n</body>\n</html>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "epub",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "epub",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:epub=\"http://www.idpf.org/2007/ops\" lang=\"C\" xml:lang=\"C\">\n<head>\n  <meta charset=\"utf-8\" />\n  <meta name=\"generator\" content=\"pandoc\" />\n  <title>ch001.xhtml</title>\n  <style>\n  </style>\n  <link rel=\"stylesheet\" type=\"text/css\" href=\"../styles/stylesheet1.css\" />\n</head>\n<body epub:type=\"bodymatter\">\n<section id=\"title\" class=\"level1 unnumbered\">\n<h1 class=\"unnumbered\">Title</h1>\n<p>Body</p>\n</section>\n</body>\n</html>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "epub",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "epub",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:epub=\"http://www.idpf.org/2007/ops\" lang=\"C\" xml:lang=\"C\">\n<head>\n  <meta charset=\"utf-8\" />\n  <meta name=\"generator\" content=\"pandoc\" />\n  <title>ch001.xhtml</title>\n  <style>\n  </style>\n  <link rel=\"stylesheet\" type=\"text/css\" href=\"../styles/stylesheet1.css\" />\n</head>\n<body epub:type=\"bodymatter\">\n<section id=\"section\" class=\"level1 unnumbered\">\n<h1 class=\"unnumbered\"></h1>\n</section>\n</body>\n</html>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "epub",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "epub",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<section id=\"title\" class=\"level1 unnumbered\">\n<h1 class=\"unnumbered\">Title</h1>\n<p>Body</p>\n</section>",
+   "stderr": ""
+  },
+  {
+   "writer": "epub",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "epub",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|<section id=\"section\" class=\"level1 unnumbered\">\n<h1 class=\"unnumbered\"></h1>\n</section>",
+   "stderr": ""
+  },
+  {
+   "writer": "epub",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "epub",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<section id=\"title\" class=\"level1 unnumbered\">\n<h1 class=\"unnumbered\">Title</h1>\n<p>Body</p>\n</section>",
+   "stderr": ""
+  },
+  {
+   "writer": "epub",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "epub",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|<section id=\"section\" class=\"level1 unnumbered\">\n<h1 class=\"unnumbered\"></h1>\n</section>",
+   "stderr": ""
+  },
+  {
+   "writer": "epub2",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "epub2"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"C\" xml:lang=\"C\">\n<head>\n  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n  <meta http-equiv=\"Content-Style-Type\" content=\"text/css\" />\n  <meta name=\"generator\" content=\"pandoc\" />\n  <title>ch001.xhtml</title>\n  <style type=\"text/css\">\n  </style>\n  <link rel=\"stylesheet\" type=\"text/css\" href=\"../styles/stylesheet1.css\" />\n</head>\n<body>\n<div id=\"title\" class=\"section level1 unnumbered\">\n<h1 class=\"unnumbered\">Title</h1>\n<p>Body</p>\n</div>\n</body>\n</html>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "epub2",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "epub2"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"C\" xml:lang=\"C\">\n<head>\n  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n  <meta http-equiv=\"Content-Style-Type\" content=\"text/css\" />\n  <meta name=\"generator\" content=\"pandoc\" />\n  <title>ch001.xhtml</title>\n  <style type=\"text/css\">\n  </style>\n  <link rel=\"stylesheet\" type=\"text/css\" href=\"../styles/stylesheet1.css\" />\n</head>\n<body>\n<div id=\"section\" class=\"section level1 unnumbered\">\n<h1 class=\"unnumbered\"></h1>\n</div>\n</body>\n</html>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "epub2",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "epub2",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"C\" xml:lang=\"C\">\n<head>\n  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n  <meta http-equiv=\"Content-Style-Type\" content=\"text/css\" />\n  <meta name=\"generator\" content=\"pandoc\" />\n  <title>ch001.xhtml</title>\n  <style type=\"text/css\">\n  </style>\n  <link rel=\"stylesheet\" type=\"text/css\" href=\"../styles/stylesheet1.css\" />\n</head>\n<body>\n<div id=\"title\" class=\"section level1 unnumbered\">\n<h1 class=\"unnumbered\">Title</h1>\n<p>Body</p>\n</div>\n</body>\n</html>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "epub2",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "epub2",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"C\" xml:lang=\"C\">\n<head>\n  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n  <meta http-equiv=\"Content-Style-Type\" content=\"text/css\" />\n  <meta name=\"generator\" content=\"pandoc\" />\n  <title>ch001.xhtml</title>\n  <style type=\"text/css\">\n  </style>\n  <link rel=\"stylesheet\" type=\"text/css\" href=\"../styles/stylesheet1.css\" />\n</head>\n<body>\n<div id=\"section\" class=\"section level1 unnumbered\">\n<h1 class=\"unnumbered\"></h1>\n</div>\n</body>\n</html>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "epub2",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "epub2",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<div id=\"title\" class=\"section level1 unnumbered\">\n<h1 class=\"unnumbered\">Title</h1>\n<p>Body</p>\n</div>",
+   "stderr": ""
+  },
+  {
+   "writer": "epub2",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "epub2",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|<div id=\"section\" class=\"section level1 unnumbered\">\n<h1 class=\"unnumbered\"></h1>\n</div>",
+   "stderr": ""
+  },
+  {
+   "writer": "epub2",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "epub2",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<div id=\"title\" class=\"section level1 unnumbered\">\n<h1 class=\"unnumbered\">Title</h1>\n<p>Body</p>\n</div>",
+   "stderr": ""
+  },
+  {
+   "writer": "epub2",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "epub2",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|<div id=\"section\" class=\"section level1 unnumbered\">\n<h1 class=\"unnumbered\"></h1>\n</div>",
+   "stderr": ""
+  },
+  {
+   "writer": "epub3",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "epub3"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:epub=\"http://www.idpf.org/2007/ops\" lang=\"C\" xml:lang=\"C\">\n<head>\n  <meta charset=\"utf-8\" />\n  <meta name=\"generator\" content=\"pandoc\" />\n  <title>ch001.xhtml</title>\n  <style>\n  </style>\n  <link rel=\"stylesheet\" type=\"text/css\" href=\"../styles/stylesheet1.css\" />\n</head>\n<body epub:type=\"bodymatter\">\n<section id=\"title\" class=\"level1 unnumbered\">\n<h1 class=\"unnumbered\">Title</h1>\n<p>Body</p>\n</section>\n</body>\n</html>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "epub3",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "epub3"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:epub=\"http://www.idpf.org/2007/ops\" lang=\"C\" xml:lang=\"C\">\n<head>\n  <meta charset=\"utf-8\" />\n  <meta name=\"generator\" content=\"pandoc\" />\n  <title>ch001.xhtml</title>\n  <style>\n  </style>\n  <link rel=\"stylesheet\" type=\"text/css\" href=\"../styles/stylesheet1.css\" />\n</head>\n<body epub:type=\"bodymatter\">\n<section id=\"section\" class=\"level1 unnumbered\">\n<h1 class=\"unnumbered\"></h1>\n</section>\n</body>\n</html>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "epub3",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "epub3",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:epub=\"http://www.idpf.org/2007/ops\" lang=\"C\" xml:lang=\"C\">\n<head>\n  <meta charset=\"utf-8\" />\n  <meta name=\"generator\" content=\"pandoc\" />\n  <title>ch001.xhtml</title>\n  <style>\n  </style>\n  <link rel=\"stylesheet\" type=\"text/css\" href=\"../styles/stylesheet1.css\" />\n</head>\n<body epub:type=\"bodymatter\">\n<section id=\"title\" class=\"level1 unnumbered\">\n<h1 class=\"unnumbered\">Title</h1>\n<p>Body</p>\n</section>\n</body>\n</html>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "epub3",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "epub3",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:epub=\"http://www.idpf.org/2007/ops\" lang=\"C\" xml:lang=\"C\">\n<head>\n  <meta charset=\"utf-8\" />\n  <meta name=\"generator\" content=\"pandoc\" />\n  <title>ch001.xhtml</title>\n  <style>\n  </style>\n  <link rel=\"stylesheet\" type=\"text/css\" href=\"../styles/stylesheet1.css\" />\n</head>\n<body epub:type=\"bodymatter\">\n<section id=\"section\" class=\"level1 unnumbered\">\n<h1 class=\"unnumbered\"></h1>\n</section>\n</body>\n</html>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "epub3",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "epub3",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<section id=\"title\" class=\"level1 unnumbered\">\n<h1 class=\"unnumbered\">Title</h1>\n<p>Body</p>\n</section>",
+   "stderr": ""
+  },
+  {
+   "writer": "epub3",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "epub3",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|<section id=\"section\" class=\"level1 unnumbered\">\n<h1 class=\"unnumbered\"></h1>\n</section>",
+   "stderr": ""
+  },
+  {
+   "writer": "epub3",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "epub3",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<section id=\"title\" class=\"level1 unnumbered\">\n<h1 class=\"unnumbered\">Title</h1>\n<p>Body</p>\n</section>",
+   "stderr": ""
+  },
+  {
+   "writer": "epub3",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "epub3",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|<section id=\"section\" class=\"level1 unnumbered\">\n<h1 class=\"unnumbered\"></h1>\n</section>",
+   "stderr": ""
+  },
+  {
+   "writer": "fb2",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "fb2"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre><book-title>Title</book-title></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p>Title</p></title><section><p>Body</p></section></body></FictionBook>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "fb2",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "fb2"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title></body></FictionBook>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "fb2",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "fb2",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre><book-title>Title</book-title></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p>Title</p></title><section><p>Body</p></section></body></FictionBook>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "fb2",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "fb2",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title></body></FictionBook>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "fb2",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "fb2",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre><book-title>Title</book-title></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p>Title</p></title><section><p>Body</p></section></body></FictionBook>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "fb2",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "fb2",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title></body></FictionBook>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "fb2",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "fb2",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre><book-title>Title</book-title></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p>Title</p></title><section><p>Body</p></section></body></FictionBook>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "fb2",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "fb2",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title></body></FictionBook>\n",
    "stderr": ""
   },
   {
@@ -1274,6 +2426,518 @@
     "json",
     "-t",
     "html5",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "jats",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<p>Body</p>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "jats",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "\n",
+   "stderr": ""
+  },
+  {
+   "writer": "jats",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<!DOCTYPE article PUBLIC \"-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2 20190208//EN\"\n                  \"JATS-archivearticle1.dtd\">\n<article xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" dtd-version=\"1.2\" article-type=\"other\">\n<front>\n<journal-meta>\n<journal-id></journal-id>\n<journal-title-group>\n</journal-title-group>\n<issn></issn>\n<publisher>\n<publisher-name></publisher-name>\n</publisher>\n</journal-meta>\n<article-meta>\n<title-group>\n<article-title>Title</article-title>\n</title-group>\n<permissions>\n</permissions>\n</article-meta>\n</front>\n<body>\n<p>Body</p>\n</body>\n<back>\n</back>\n</article>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "jats",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<!DOCTYPE article PUBLIC \"-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2 20190208//EN\"\n                  \"JATS-archivearticle1.dtd\">\n<article xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" dtd-version=\"1.2\" article-type=\"other\">\n<front>\n<journal-meta>\n<journal-id></journal-id>\n<journal-title-group>\n</journal-title-group>\n<issn></issn>\n<publisher>\n<publisher-name></publisher-name>\n</publisher>\n</journal-meta>\n<article-meta>\n<permissions>\n</permissions>\n</article-meta>\n</front>\n<body>\n\n</body>\n<back>\n</back>\n</article>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "jats",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<p>Body</p>",
+   "stderr": ""
+  },
+  {
+   "writer": "jats",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "jats",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<p>Body</p>",
+   "stderr": ""
+  },
+  {
+   "writer": "jats",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "jats_archiving",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats_archiving"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<p>Body</p>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "jats_archiving",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats_archiving"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "\n",
+   "stderr": ""
+  },
+  {
+   "writer": "jats_archiving",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats_archiving",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<!DOCTYPE article PUBLIC \"-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2 20190208//EN\"\n                  \"JATS-archivearticle1.dtd\">\n<article xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" dtd-version=\"1.2\" article-type=\"other\">\n<front>\n<journal-meta>\n<journal-id></journal-id>\n<journal-title-group>\n</journal-title-group>\n<issn></issn>\n<publisher>\n<publisher-name></publisher-name>\n</publisher>\n</journal-meta>\n<article-meta>\n<title-group>\n<article-title>Title</article-title>\n</title-group>\n<permissions>\n</permissions>\n</article-meta>\n</front>\n<body>\n<p>Body</p>\n</body>\n<back>\n</back>\n</article>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "jats_archiving",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats_archiving",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<!DOCTYPE article PUBLIC \"-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2 20190208//EN\"\n                  \"JATS-archivearticle1.dtd\">\n<article xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" dtd-version=\"1.2\" article-type=\"other\">\n<front>\n<journal-meta>\n<journal-id></journal-id>\n<journal-title-group>\n</journal-title-group>\n<issn></issn>\n<publisher>\n<publisher-name></publisher-name>\n</publisher>\n</journal-meta>\n<article-meta>\n<permissions>\n</permissions>\n</article-meta>\n</front>\n<body>\n\n</body>\n<back>\n</back>\n</article>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "jats_archiving",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats_archiving",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<p>Body</p>",
+   "stderr": ""
+  },
+  {
+   "writer": "jats_archiving",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats_archiving",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "jats_archiving",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats_archiving",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<p>Body</p>",
+   "stderr": ""
+  },
+  {
+   "writer": "jats_archiving",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats_archiving",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "jats_articleauthoring",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats_articleauthoring"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<p>Body</p>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "jats_articleauthoring",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats_articleauthoring"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "\n",
+   "stderr": ""
+  },
+  {
+   "writer": "jats_articleauthoring",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats_articleauthoring",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<!DOCTYPE article PUBLIC \"-//NLM//DTD JATS (Z39.96) Article Authoring DTD v1.2 20190208//EN\"\n                  \"JATS-articleauthoring1.dtd\">\n<article xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" dtd-version=\"1.2\" article-type=\"other\">\n<front>\n<article-meta>\n<title-group>\n<article-title>Title</article-title>\n</title-group>\n<permissions>\n</permissions>\n<abstract>\n\n</abstract>\n</article-meta>\n</front>\n<body>\n<p>Body</p>\n</body>\n<back>\n</back>\n</article>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "jats_articleauthoring",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats_articleauthoring",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<!DOCTYPE article PUBLIC \"-//NLM//DTD JATS (Z39.96) Article Authoring DTD v1.2 20190208//EN\"\n                  \"JATS-articleauthoring1.dtd\">\n<article xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" dtd-version=\"1.2\" article-type=\"other\">\n<front>\n<article-meta>\n<permissions>\n</permissions>\n<abstract>\n\n</abstract>\n</article-meta>\n</front>\n<body>\n\n</body>\n<back>\n</back>\n</article>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "jats_articleauthoring",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats_articleauthoring",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<p>Body</p>",
+   "stderr": ""
+  },
+  {
+   "writer": "jats_articleauthoring",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats_articleauthoring",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "jats_articleauthoring",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats_articleauthoring",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<p>Body</p>",
+   "stderr": ""
+  },
+  {
+   "writer": "jats_articleauthoring",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats_articleauthoring",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "jats_publishing",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats_publishing"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<p>Body</p>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "jats_publishing",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats_publishing"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "\n",
+   "stderr": ""
+  },
+  {
+   "writer": "jats_publishing",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats_publishing",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<!DOCTYPE article PUBLIC \"-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v1.2 20190208//EN\"\n                  \"JATS-publishing1.dtd\">\n<article xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" dtd-version=\"1.2\" article-type=\"other\">\n<front>\n<journal-meta>\n<journal-id></journal-id>\n<journal-title-group>\n</journal-title-group>\n<issn></issn>\n<publisher>\n<publisher-name></publisher-name>\n</publisher>\n</journal-meta>\n<article-meta>\n<title-group>\n<article-title>Title</article-title>\n</title-group>\n<permissions>\n</permissions>\n</article-meta>\n</front>\n<body>\n<p>Body</p>\n</body>\n<back>\n</back>\n</article>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "jats_publishing",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats_publishing",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<!DOCTYPE article PUBLIC \"-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v1.2 20190208//EN\"\n                  \"JATS-publishing1.dtd\">\n<article xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" dtd-version=\"1.2\" article-type=\"other\">\n<front>\n<journal-meta>\n<journal-id></journal-id>\n<journal-title-group>\n</journal-title-group>\n<issn></issn>\n<publisher>\n<publisher-name></publisher-name>\n</publisher>\n</journal-meta>\n<article-meta>\n<permissions>\n</permissions>\n</article-meta>\n</front>\n<body>\n\n</body>\n<back>\n</back>\n</article>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "jats_publishing",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats_publishing",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<p>Body</p>",
+   "stderr": ""
+  },
+  {
+   "writer": "jats_publishing",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats_publishing",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "jats_publishing",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats_publishing",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<p>Body</p>",
+   "stderr": ""
+  },
+  {
+   "writer": "jats_publishing",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "jats_publishing",
     "-s",
     "--template=t"
    ],
@@ -3450,6 +5114,134 @@
     "json",
     "-t",
     "rtf",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "tei",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "tei"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<p>Body</p>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "tei",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "tei"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "\n",
+   "stderr": ""
+  },
+  {
+   "writer": "tei",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "tei",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<TEI xmlns=\"http://www.tei-c.org/ns/1.0\">\n<teiHeader>\n  <fileDesc>\n    <titleStmt>\n      <title>Title</title>\n    </titleStmt>\n    <publicationStmt>\n    </publicationStmt>\n    <sourceDesc>\n      <p>Produced by pandoc.</p>\n    </sourceDesc>\n  </fileDesc>\n</teiHeader>\n<text>\n<body>\n<p>Body</p>\n</body>\n</text>\n</TEI>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "tei",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "tei",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<TEI xmlns=\"http://www.tei-c.org/ns/1.0\">\n<teiHeader>\n  <fileDesc>\n    <titleStmt>\n      <title></title>\n    </titleStmt>\n    <publicationStmt>\n    </publicationStmt>\n    <sourceDesc>\n      <p>Produced by pandoc.</p>\n    </sourceDesc>\n  </fileDesc>\n</teiHeader>\n<text>\n<body>\n\n</body>\n</text>\n</TEI>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "tei",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "tei",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<p>Body</p>",
+   "stderr": ""
+  },
+  {
+   "writer": "tei",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "tei",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "tei",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "tei",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<p>Body</p>",
+   "stderr": ""
+  },
+  {
+   "writer": "tei",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "tei",
     "-s",
     "--template=t"
    ],

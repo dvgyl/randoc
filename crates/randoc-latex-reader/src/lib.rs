@@ -88,6 +88,25 @@ mod tests {
     use crate::parse::Parser;
 
     #[test]
+    fn bibliography_field_rejects_unclosed_math() {
+        assert!(parse_field_inlines("$x", FieldOptions::default(), &Limits::default()).is_err());
+    }
+
+    #[test]
+    fn bibliography_field_consumes_definitions_without_expanding_macros() {
+        let text = r"\global\def\Z{z}\gdef\Y{\Z\Z}\edef\X{\Y\Y}\xdef\W{\X\X}\let\V=\W\newcommand{\U}{\V\V}\providecommand{\T}{\U\U}\newenvironment{foo}{\T}{end}\renewenvironment{foo}{\T}{end}\DeclareMathOperator{\S}{sin}\T \renewcommand{\emph}[1]{Z}\emph{e}";
+        let raw = |text: &str| Inline::RawInline(randoc_ast::Format::new("latex"), text.into());
+        assert_eq!(
+            parse_field_inlines(text, FieldOptions::default(), &Limits::default()).unwrap(),
+            vec![
+                raw("\\T "),
+                raw(r"\renewcommand{\emph}[1]{Z}"),
+                Inline::Emph(vec![Inline::Str("e".into())]),
+            ]
+        );
+    }
+
+    #[test]
     fn bibliography_field_keeps_case_protection_on_braced_words() {
         let source = r"{ABC} {lower} {The cat} {{École}} {\emph{hello}} \emph{world}";
         let options = FieldOptions {

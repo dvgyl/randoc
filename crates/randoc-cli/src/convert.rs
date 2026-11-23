@@ -2119,7 +2119,9 @@ fn convert(
     }
     let bytes = match writer.write(&doc, &writer_options, context)? {
         Output::Text(mut text) => {
-            if !settings.is_standalone() && !text.ends_with('\n') {
+            let empty_bibliography =
+                text.is_empty() && matches!(to_spec.name.as_str(), "bibtex" | "biblatex");
+            if !settings.is_standalone() && !empty_bibliography && !text.ends_with('\n') {
                 text.push('\n');
             }
             if settings.eol == Eol::Crlf {
@@ -2368,6 +2370,16 @@ mod tests {
         let result = convert(&settings, &inputs, "/u", &mut context)
             .map(|bytes| String::from_utf8_lossy(&bytes).into_owned());
         (result, context)
+    }
+
+    #[test]
+    fn empty_bibliography_writes_zero_bytes() {
+        for format in ["bibtex", "biblatex"] {
+            let (result, _) = convert_files(&[("in.json", EMPTY)], &["in.json"], |settings| {
+                settings.to = Some(format.to_owned());
+            });
+            assert_eq!(result.unwrap(), "");
+        }
     }
 
     #[test]

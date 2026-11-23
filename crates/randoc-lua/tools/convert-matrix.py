@@ -29,18 +29,25 @@ _matrix = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_matrix)
 DOCS, HELPER, FOOTER, lua_string = _matrix.DOCS, _matrix.HELPER, _matrix.FOOTER, _matrix.lua_string
 
-READERS = [
+XML_READERS = ["bits", "docbook", "fb2", "jats"]
+XML_WRITERS = ["docbook", "docbook4", "docbook5", "fb2", "jats", "jats_archiving",
+               "jats_articleauthoring", "jats_publishing", "tei"]
+EPUB_WRITERS = ["epub", "epub2", "epub3"]
+BIB_WRITERS = ["biblatex", "bibtex"]
+WAVE2_READERS = XML_READERS + BIB_WRITERS + ["epub", "ris"]
+
+READERS = sorted([
     "commonmark", "commonmark_x", "creole", "csljson", "docx", "dokuwiki", "fodt", "gfm", "html",
     "jira", "json", "latex", "markdown",
     "markdown_github", "markdown_mmd", "markdown_phpextra", "markdown_strict", "mediawiki",
     "native", "odt", "org", "rst", "rtf",
-]
-WRITERS = [
+] + WAVE2_READERS)
+WRITERS = sorted([
     "beamer", "commonmark", "commonmark_x", "csljson", "dokuwiki", "fodt", "gfm", "html", "html4",
     "html5", "jira", "json",
     "latex", "markdown", "markdown_github", "markdown_mmd", "markdown_phpextra",
     "markdown_strict", "markua", "mediawiki", "native", "odt", "opendocument", "org", "plain", "rst", "rtf",
-]
+] + XML_WRITERS + EPUB_WRITERS + BIB_WRITERS)
 
 MARKDOWN = (
     "# A head {#top}\n\nSome *emph*, **strong**, \"quotes\" -- and --- dashes...\n"
@@ -133,7 +140,50 @@ def odt():
     return buffer.getvalue()
 
 
-INPUT = {"csljson": CSLJSON, "docx": docx(), "html": HTML, "json": JSON, "latex": LATEX,
+def epub():
+    """A small EPUB 3 with a fixed identifier and dates."""
+    ns = 'xmlns="http://www.w3.org/1999/xhtml"'
+    parts = {
+        "mimetype": "application/epub+zip",
+        "META-INF/container.xml":
+            '<container xmlns="urn:oasis:names:tc:opendocument:xmlns:container" version="1.0">'
+            '<rootfiles><rootfile full-path="book.opf" media-type="application/oebps-package+xml"/>'
+            '</rootfiles></container>',
+        "book.opf":
+            '<package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="id">'
+            '<metadata xmlns:dc="http://purl.org/dc/elements/1.1/">'
+            '<dc:identifier id="id">urn:example:lua-replay</dc:identifier>'
+            '<dc:title>Sample</dc:title><dc:language>en</dc:language>'
+            '<meta property="dcterms:modified">2000-01-01T00:00:00Z</meta></metadata>'
+            '<manifest><item id="chapter" href="chapter.xhtml" media-type="application/xhtml+xml"/>'
+            '<item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/>'
+            '</manifest><spine><itemref idref="chapter"/></spine></package>',
+        "chapter.xhtml": f'<html {ns}><head><title>Sample</title></head>'
+                         '<body><p>Some <em>emphasis</em>.</p></body></html>',
+        "nav.xhtml": f'<html {ns} xmlns:epub="http://www.idpf.org/2007/ops">'
+                     '<head><title>Contents</title></head><body>'
+                     '<nav epub:type="toc"><ol><li><a href="chapter.xhtml">Sample</a></li>'
+                     '</ol></nav></body></html>',
+    }
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w", zipfile.ZIP_STORED) as archive:
+        for name, content in parts.items():
+            archive.writestr(zipfile.ZipInfo(name, (1980, 1, 1, 0, 0, 0)), content)
+    return buffer.getvalue()
+
+
+BIB = "@book{example, title={The title}, author={Fam, Giv}, year={2020}}"
+ARTICLE = '<article><body><sec id="head"><title>Head</title><p>Some <italic>emphasis</italic>.</p></sec></body></article>'
+
+
+INPUT = {"biblatex": BIB, "bibtex": BIB, "bits": ARTICLE, "jats": ARTICLE,
+         "docbook": '<article xmlns="http://docbook.org/ns/docbook"><section xml:id="head">'
+                    '<title>Head</title><para>Some <emphasis>emphasis</em>.</para></section></article>',
+         "epub": epub(),
+         "fb2": '<FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0"><body>'
+                '<section><p>Some <emphasis>emphasis</em>.</p></section></body></FictionBook>',
+         "ris": "TY  - BOOK\nID  - example\nTI  - The title\nAU  - Fam, Giv\nPY  - 2020\nER  - \n",
+         "csljson": CSLJSON, "docx": docx(), "html": HTML, "json": JSON, "latex": LATEX,
          "native": NATIVE, "fodt": FODT, "odt": odt(), "rst": RST,
          "creole": "= Head =\n\nSome //emph// and **strong**.\n\n* item\n",
          "dokuwiki": "====== Head ======\n\nSome //emph// and **strong**.\n\n  * item\n",
@@ -144,6 +194,7 @@ INPUT = {"csljson": CSLJSON, "docx": docx(), "html": HTML, "json": JSON, "latex"
 
 # Extension changes for each reader, each one supported by its format.
 READER_SPECS = {
+    **dict.fromkeys(WAVE2_READERS, ()),
     "creole": ["+east_asian_line_breaks"],
     "dokuwiki": ["-smart", "+raw_html", "+tex_math_dollars"],
     "jira": ["+east_asian_line_breaks"],
@@ -213,6 +264,7 @@ WIKI_DOC = (
 
 # Extension changes for each writer, each one supported by its format.
 WRITER_SPECS = {
+    **dict.fromkeys(XML_WRITERS + EPUB_WRITERS + BIB_WRITERS, ()),
     "dokuwiki": ["-smart", "+raw_html", "+tex_math_dollars"],
     "jira": ["+east_asian_line_breaks"],
     "mediawiki": ["-auto_identifiers", "+smart"],
@@ -314,8 +366,22 @@ FODT_BODY = """local function fodt_body(xml)
 end"""
 
 
+
+# Binary EPUB output has timestamps and a random identifier. Compare the
+# document body after unpacking it with the EPUB reader.
+EPUB_DOC = "P.Pandoc{P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}"
+XML_DOC = "P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'})"
+
 def write_probe(name, spec, options=""):
     doc = WIKI_DOC if name in ("dokuwiki", "jira", "mediawiki") and (options or spec != name) else DOC
+    if name in EPUB_WRITERS:
+        return (
+            f"local bytes = P.write({EPUB_DOC}, {lua_string(spec)}{options}); "
+            "assert(bytes:sub(1, 2) == 'PK'); "
+            "return P.Pandoc(P.read(bytes, 'epub').blocks)"
+        )
+    if name in XML_WRITERS:
+        doc = XML_DOC
     arguments = f"{doc}, {lua_string(spec)}{options}"
     if name == "odt":
         return f"return odt_content(P.write({arguments}))"
@@ -345,7 +411,7 @@ for _name in WRITERS:
     GROUPS[f"convert-write-{_name}"] = write_probes(_name) + write_option_probes(_name)
 
 GROUPS["convert-final-newline"] = [
-    (f"end of {name}", f"return P.write({DOC}, {lua_string(name)}):sub(-2)") for name in WRITERS if name != "odt"
+    (f"end of {name}", f"return P.write({XML_DOC if name in XML_WRITERS else DOC}, {lua_string(name)}):sub(-2)") for name in WRITERS if name not in ["odt", *EPUB_WRITERS]
 ]
 
 _DOC = "P.Pandoc{P.Para{P.Emph't', P.Space(), P.Str'\"q\"'}, P.Header(2, 'h')}"
@@ -482,6 +548,10 @@ KNOWN = (
        ("I-WIKI-04", "convert-write-jira", "write jira"),
        ("I-WIKI-05", "convert-write-mediawiki", "write mediawiki"),
        ("I-WIKI-05", "convert-final-newline", "end of mediawiki")]
+    + [("I-XML-01", f"convert-write-{name}", f"write {name} {{identifier_prefix = 'p-'}}")
+       for name in XML_WRITERS if name != "fb2"]
+    + [("I-XML-02", f"convert-write-{name}", f"write {name} {{number_sections = true}}")
+       for name in XML_WRITERS if name.startswith("jats")]
     + [("I-LUA-32", "convert-arguments", "read spec table bad list"),
        ("I-LUA-32", "convert-arguments", "read list heading")]
 )

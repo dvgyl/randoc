@@ -6,7 +6,8 @@ Usage: writer_capabilities.py PANDOC OUT.json
 Each writer runs with no option, -s, --template, and both options. Each
 command reads a titled document and an empty document. The default
 templates of these writers are present in randoc-data. For OpenDocument,
-record the document body without the default styles. Each oracle process has memory and time limits.
+record the document body without the default styles. For EPUB, record the
+first chapter in the archive. Each oracle process has memory and time limits.
 """
 
 import io
@@ -19,12 +20,15 @@ import tempfile
 from zipfile import ZipFile
 
 
-FORMATS = [
+EPUB_FORMATS = {"epub", "epub2", "epub3"}
+FORMATS = sorted([
     "beamer", "commonmark", "commonmark_x", "csljson", "dokuwiki", "fodt", "gfm",
     "html", "html4", "html5", "jira", "json", "latex", "markdown", "markdown_github",
     "markdown_mmd", "markdown_phpextra", "markdown_strict", "markua", "mediawiki",
     "native", "odt", "opendocument", "org", "plain", "rst", "rtf",
-]
+    "biblatex", "bibtex", "docbook", "docbook4", "docbook5", "fb2", "jats",
+    "jats_archiving", "jats_articleauthoring", "jats_publishing", "tei",
+] + list(EPUB_FORMATS))
 ODF_FORMATS = {"fodt", "odt", "opendocument"}
 REQUESTS = [
     ("none", []),
@@ -53,6 +57,9 @@ def document_body(writer, data):
     if writer == "odt":
         with ZipFile(io.BytesIO(data)) as archive:
             data = archive.read("content.xml")
+    if writer in EPUB_FORMATS:
+        with ZipFile(io.BytesIO(data)) as archive:
+            data = archive.read("EPUB/text/ch001.xhtml")
     text = data.decode("utf-8")
     if writer in ODF_FORMATS and "<office:body>" in text:
         return text.split("<office:body>", 1)[1].split("</office:body>", 1)[0]
@@ -74,7 +81,8 @@ def record(oracle, root):
     (root / "t-odf").write_text(ODF_TEMPLATE, encoding="utf-8")
     home = root / "home"
     home.mkdir(exist_ok=True)
-    environment = dict(os.environ, HOME=str(home), XDG_DATA_HOME=str(home / "share"))
+    environment = dict(os.environ, HOME=str(home), XDG_DATA_HOME=str(home / "share"),
+                       LC_ALL="C", LANG="C")
     records = []
     for writer in FORMATS:
         for request, options in REQUESTS:

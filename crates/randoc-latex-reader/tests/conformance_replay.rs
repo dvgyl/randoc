@@ -172,8 +172,8 @@ mod tests {
         println!(
             "Total: {kept} kept, {regressed} regressed, {fixed} fixed, {failed} still failing"
         );
-        assert_eq!(kept + regressed, 6315);
-        assert_eq!(fixed + failed, 917);
+        assert_eq!(kept + regressed, 7232);
+        assert_eq!(fixed + failed, 0);
         assert_eq!(regressed, 0);
     }
 }

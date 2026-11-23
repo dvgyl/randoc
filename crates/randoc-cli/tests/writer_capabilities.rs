@@ -30,11 +30,24 @@ struct Record {
     stderr: String,
 }
 
+fn is_epub(writer: &str) -> bool {
+    matches!(writer, "epub" | "epub2" | "epub3")
+}
+
 /// Reads the document body of OpenDocument output. The default styles depend
 /// on the reference document, so the replay compares the body separately.
+/// For EPUB, compare the first chapter. The archive has a random identifier
+/// and format-specific default styles.
 fn document_body(writer: &str, data: Vec<u8>) -> Vec<u8> {
     use randoc_archive::zip::{Archive, ArchiveLimits};
 
+    if is_epub(writer) {
+        let mut archive = Archive::open(&data, ArchiveLimits::default()).expect("EPUB output");
+        return archive
+            .read("EPUB/text/ch001.xhtml")
+            .expect("read ch001.xhtml")
+            .expect("EPUB has a first chapter");
+    }
     let data = if writer == "odt" {
         let mut archive = Archive::open(&data, ArchiveLimits::default()).expect("ODT output");
         archive
@@ -95,6 +108,8 @@ fn standalone_output_preserves_the_oracle_result_or_reports_the_scope_gap() {
             .current_dir(&root)
             .env_clear()
             .env("PATH", std::env::var("PATH").unwrap_or_default())
+            .env("LANG", "C")
+            .env("LC_ALL", "C")
             .env("HOME", &home)
             .env("XDG_DATA_HOME", home.join("share"))
             .stdin(Stdio::piped())
@@ -126,6 +141,18 @@ fn standalone_output_preserves_the_oracle_result_or_reports_the_scope_gap() {
             && record.document == "titled"
         {
             assert_eq!(expected.1.pop(), Some(b'\n'));
+        }
+        // A custom EPUB chapter has an empty template title and a final
+        // newline. See I-EPUB-03 in docs/ISSUES.md.
+        if is_epub(&record.writer) && matches!(record.request.as_str(), "template" | "both") {
+            if record.document == "titled" {
+                let body = expected
+                    .1
+                    .strip_prefix(b"marker:Title|")
+                    .expect("the EPUB title");
+                expected.1 = [b"marker:|".as_slice(), body].concat();
+            }
+            expected.1.push(b'\n');
         }
         let stdout = if output.status.success() {
             document_body(&record.writer, output.stdout)

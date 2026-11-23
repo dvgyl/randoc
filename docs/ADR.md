@@ -675,3 +675,11 @@ They were written afterwards from the merge records in `MERGE_LOG.md`.
   without a tailoring. A later unit can build tailorings from CLDR
   `common/collation/*.xml` (Unicode License) and test each against the
   oracle.
+
+## ADR 22: Use W3C entity mappings for DocBook
+
+The DocBook reader uses the W3C combined XML entity set for names that
+the shared HTML entity table does not cover. The derived table contains
+names and their Unicode values. The W3C grant permits use, reproduction,
+and creation of derivative works. See the
+[W3C entity set notice](../third_party/licences/w3centities-f.txt).

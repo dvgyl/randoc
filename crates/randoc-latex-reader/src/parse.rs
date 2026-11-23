@@ -374,6 +374,11 @@ impl<'c> Parser<'c> {
 
     pub(crate) fn field_inlines(&mut self, options: FieldOptions) -> R<Vec<Inline>> {
         self.field = Some(options);
+        self.skip_spaces();
+        while let Some(name) = self.field_definition_name() {
+            self.consume_field_definition(&name)?;
+            self.skip_spaces();
+        }
         let result = self.inlines(Until::Close)?.trimmed();
         if self.peek_raw().is_some() {
             return Err(self.unexpected());
@@ -2157,6 +2162,9 @@ impl<'c> Parser<'c> {
                 let Some(target) = self.bump() else {
                     return Ok(());
                 };
+                if self.field.is_some() {
+                    return Ok(());
+                }
                 let definition = match &target.kind {
                     Kind::Word(word) => self.macros.get(word).cloned(),
                     _ => None,
@@ -2179,15 +2187,23 @@ impl<'c> Parser<'c> {
                         Kind::Newline | Kind::Par => return Err(self.unexpected_word()),
                         Kind::Param(n) => {
                             parameters = usize::from(n).max(parameters);
-                            delimiters.push(Vec::new());
+                            if self.field.is_none() {
+                                delimiters.push(Vec::new());
+                            }
                         }
                         _ => {
-                            if let Some(part) = delimiters.last_mut() {
+                            if self.field.is_none()
+                                && let Some(part) = delimiters.last_mut()
+                            {
                                 part.push(tok.clone());
                             }
                         }
                     }
                     self.bump();
+                }
+                let body = self.argument_tokens().unwrap_or_default();
+                if self.field.is_some() {
+                    return Ok(());
                 }
                 // Delimiters of other characters only; others keep the
                 // rule of undelimited parameters.
@@ -2196,7 +2212,6 @@ impl<'c> Parser<'c> {
                         .iter()
                         .flatten()
                         .all(|tok| matches!(tok.kind, Kind::Other(_)));
-                let body = self.argument_tokens().unwrap_or_default();
                 let delimiters = delimited.then(|| {
                     self.next_delimiter_id += 1;
                     Arc::new(Delimiters {
@@ -2221,6 +2236,9 @@ impl<'c> Parser<'c> {
                 let (parameters, default) = self.parameter_specification();
                 let begin = self.argument_tokens().unwrap_or_default();
                 let end = self.argument_tokens().unwrap_or_default();
+                if self.field.is_some() {
+                    return Ok(());
+                }
                 if command == "newenvironment" && self.environments.contains_key(&name) {
                     return Ok(());
                 }
@@ -2240,16 +2258,17 @@ impl<'c> Parser<'c> {
                 let name = self.defined_name();
                 let (parameters, default) = self.parameter_specification();
                 let mut body = self.argument_tokens().unwrap_or_default();
+                if self.field.is_some() {
+                    return Ok(());
+                }
                 if command == "DeclareMathOperator" {
                     let op = tokens_text(&body);
                     body = tokenize(&format!("\\mathop{{\\mathrm{{{op}}}}}"));
                 }
                 let exists = self.macros.contains_key(&name);
                 if exists && command == "newcommand" {
-                    if self.field.is_none() {
-                        self.context
-                            .report(LogMessage::MacroAlreadyDefined(format!("\\{name}"), pos));
-                    }
+                    self.context
+                        .report(LogMessage::MacroAlreadyDefined(format!("\\{name}"), pos));
                     return Ok(());
                 }
                 if exists && command == "providecommand" {
@@ -2267,6 +2286,24 @@ impl<'c> Parser<'c> {
                     global,
                 );
             }
+        }
+        Ok(())
+    }
+
+    fn field_definition_name(&self) -> Option<Text> {
+        if self.field.is_some()
+            && let Some(Kind::Word(name)) = self.peek_raw().map(|tok| &tok.kind)
+            && is_definition(name)
+        {
+            return Some(name.clone());
+        }
+        None
+    }
+
+    fn consume_field_definition(&mut self, name: &str) -> R<()> {
+        if let Some(tok) = self.bump() {
+            let pos = SourcePos::new(self.source_name.as_str(), tok.line, tok.column);
+            self.definition(name, pos)?;
         }
         Ok(())
     }
@@ -3220,6 +3257,14 @@ impl<'c> Parser<'c> {
     }
 
     fn inline(&mut self, out: &mut Inlines, until: Until) -> R<()> {
+        if let Some(name) = self.field_definition_name() {
+            self.start_record();
+            let result = self.consume_field_definition(&name);
+            let raw = self.stop_record();
+            result?;
+            out.push(Inline::RawInline(Format::new("latex"), raw));
+            return Ok(());
+        }
         if let Some(Tok {
             kind: Kind::Word(name),
             ..
@@ -3278,6 +3323,9 @@ impl<'c> Parser<'c> {
             }
             Kind::Dollar => self.dollar_math(out)?,
             Kind::Tab => out.push_str("&"),
+            Kind::Param(_) if self.field.is_some() && tok.text.len() > 1 => {
+                return Err(self.error_at(&tok, "unexpected macro parameter"));
+            }
             Kind::Param(_) => out.push_str("#"),
             Kind::Sup => out.push_str("^"),
             Kind::Sub => out.push_str("_"),
@@ -3443,6 +3491,8 @@ impl<'c> Parser<'c> {
             let text = self.math_until(|kind| *kind == Kind::Dollar)?;
             if self.peek_raw().is_some_and(|tok| tok.kind == Kind::Dollar) {
                 self.bump();
+            } else if self.field.is_some() {
+                return Err(self.unexpected());
             }
             out.push(Inline::Math(MathType::DisplayMath, text));
         } else {
@@ -3460,6 +3510,9 @@ impl<'c> Parser<'c> {
             self.round(&mut rounds)?;
             self.expand()?;
             let Some(tok) = self.bump() else {
+                if self.field.is_some() {
+                    return Err(self.unexpected());
+                }
                 break;
             };
             if closes(&tok.kind) {
@@ -3542,7 +3595,7 @@ impl<'c> Parser<'c> {
         else {
             // Pandoc gives the character of a symbol accent, and the
             // combining mark of the other accents.
-            if grouped {
+            if grouped || self.field.is_some() {
                 match accent {
                     '~' | '\'' | '`' | '^' => out.push_str(&accent.to_string()),
                     _ => out.push_str(&combining.to_string()),

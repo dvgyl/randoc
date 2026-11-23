@@ -103,8 +103,8 @@ impl Html<'_> {
         let id = self.prefixed(id);
         let opts = self.format_options(attr, &id, &highlighted.language);
         let version = match self.version {
-            Version::Html4 => HtmlVersion::Html4,
-            Version::Html5 => HtmlVersion::Html5,
+            Version::Html4 | Version::Epub2 => HtmlVersion::Html4,
+            Version::Html5 | Version::Epub3 => HtmlVersion::Html5,
         };
         let block = randoc_highlight::html_block(&opts, &highlighted.lines, version);
         let mut div = block.div;
