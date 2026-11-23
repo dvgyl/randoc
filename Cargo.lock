@@ -291,16 +291,19 @@ dependencies = [
  "randoc-ipynb",
  "randoc-latex",
  "randoc-latex-reader",
+ "randoc-light",
  "randoc-markdown",
  "randoc-markdown-writer",
  "randoc-native",
  "randoc-odt",
+ "randoc-office",
  "randoc-org",
  "randoc-pod",
  "randoc-roff",
  "randoc-rst",
  "randoc-rtf",
  "randoc-tabular",
+ "randoc-tail-writers",
  "randoc-typst",
  "randoc-wiki",
  "randoc-xmlformats",
@@ -370,6 +373,7 @@ dependencies = [
  "randoc-highlight",
  "randoc-layout",
  "randoc-lua",
+ "randoc-pdf",
  "randoc-templates",
  "randoc-yaml",
  "serde",
@@ -528,6 +532,22 @@ name = "randoc-layout"
 version = "0.1.0"
 
 [[package]]
+name = "randoc-light"
+version = "0.1.0"
+dependencies = [
+ "randoc-archive",
+ "randoc-ast",
+ "randoc-core",
+ "randoc-data",
+ "randoc-html",
+ "randoc-layout",
+ "randoc-markdown",
+ "randoc-markdown-writer",
+ "randoc-templates",
+ "serde_json",
+]
+
+[[package]]
 name = "randoc-lua"
 version = "0.1.0"
 dependencies = [
@@ -603,6 +623,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "randoc-office"
+version = "0.1.0"
+dependencies = [
+ "randoc-archive",
+ "randoc-ast",
+ "randoc-core",
+ "randoc-data",
+ "randoc-highlight",
+ "randoc-layout",
+ "randoc-math",
+ "randoc-templates",
+ "serde_json",
+]
+
+[[package]]
 name = "randoc-org"
 version = "0.1.0"
 dependencies = [
@@ -612,6 +647,16 @@ dependencies = [
  "randoc-layout",
  "randoc-native",
  "randoc-templates",
+ "serde_json",
+]
+
+[[package]]
+name = "randoc-pdf"
+version = "0.1.0"
+dependencies = [
+ "randoc-archive",
+ "randoc-ast",
+ "randoc-core",
  "serde_json",
 ]
 
@@ -669,6 +714,22 @@ version = "0.1.0"
 dependencies = [
  "randoc-ast",
  "randoc-core",
+ "serde_json",
+]
+
+[[package]]
+name = "randoc-tail-writers"
+version = "0.1.0"
+dependencies = [
+ "randoc-archive",
+ "randoc-ast",
+ "randoc-core",
+ "randoc-data",
+ "randoc-highlight",
+ "randoc-html",
+ "randoc-layout",
+ "randoc-math",
+ "randoc-templates",
  "serde_json",
 ]
 

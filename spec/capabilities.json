@@ -639,10 +639,10 @@
     },
     "csv": {
       "read": {
-        "passing": 0,
+        "passing": 40,
         "total": 40
       },
-      "status": "failing"
+      "status": "passing"
     },
     "djot": {
       "status": "not_started"
@@ -658,10 +658,10 @@
     },
     "endnotexml": {
       "read": {
-        "passing": 0,
+        "passing": 40,
         "total": 40
       },
-      "status": "failing"
+      "status": "passing"
     },
     "epub": {
       "status": "not_started"
@@ -793,10 +793,10 @@
     },
     "pod": {
       "read": {
-        "passing": 0,
+        "passing": 40,
         "total": 40
       },
-      "status": "failing"
+      "status": "passing"
     },
     "pptx": {
       "status": "not_started"
@@ -830,34 +830,34 @@
     },
     "tikiwiki": {
       "read": {
-        "passing": 0,
+        "passing": 40,
         "total": 40
       },
-      "status": "failing"
+      "status": "passing"
     },
     "tsv": {
       "read": {
-        "passing": 0,
+        "passing": 40,
         "total": 40
       },
-      "status": "failing"
+      "status": "passing"
     },
     "twiki": {
       "read": {
-        "passing": 0,
+        "passing": 40,
         "total": 40
       },
-      "status": "failing"
+      "status": "passing"
     },
     "typst": {
       "status": "not_started"
     },
     "vimwiki": {
       "read": {
-        "passing": 0,
+        "passing": 40,
         "total": 40
       },
-      "status": "failing"
+      "status": "passing"
     },
     "xlsx": {
       "status": "not_started"
@@ -1053,9 +1053,9 @@
       }
     },
     "extract-media": {
-      "status": "partial",
+      "status": "passing",
       "units": {
-        "passing": 4,
+        "passing": 5,
         "total": 5
       }
     },
@@ -1545,7 +1545,7 @@
     "toc": {
       "status": "partial",
       "units": {
-        "passing": 110,
+        "passing": 121,
         "total": 146
       }
     },
@@ -2027,15 +2027,14 @@
       "passing": 72
     },
     "input_formats": {
-      "failing": 7,
       "not_started": 27,
       "partial": 6,
-      "passing": 12
+      "passing": 19
     },
     "options": {
       "not_started": 1,
-      "partial": 14,
-      "passing": 94
+      "partial": 13,
+      "passing": 95
     },
     "output_formats": {
       "not_started": 58,
@@ -2043,7 +2042,7 @@
       "passing": 12
     },
     "units": {
-      "passing": 63049,
+      "passing": 63375,
       "total": 63771
     }
   }

@@ -184,6 +184,8 @@ pub(crate) fn template_name(format: &str) -> String {
         "markdown_strict" | "markdown_phpextra" | "markdown_github" | "markdown_mmd" => "markdown",
         "asciidoctor" | "asciidoc_legacy" => "asciidoc",
         "beamer" => "beamer",
+        "bbcode_fluxbb" | "bbcode_hubzilla" | "bbcode_phpbb" | "bbcode_steam"
+        | "bbcode_xenforo" => "bbcode",
         other => other,
     };
     if name.is_empty() {

@@ -40,6 +40,10 @@ members = [
     "crates/randoc-asciidoc",
     "crates/randoc-ipynb",
     "crates/randoc-djot",
+    "crates/randoc-light",
+    "crates/randoc-tail-writers",
+    "crates/randoc-office",
+    "crates/randoc-pdf",
 ]
 # Each fuzz crate is its own workspace because it needs the nightly toolchain.
 # Cargo has no glob for this list. A path that does not exist yet does no harm.
@@ -110,6 +114,10 @@ randoc-pod = { path = "crates/randoc-pod", version = "0.1.0" }
 randoc-asciidoc = { path = "crates/randoc-asciidoc", version = "0.1.0" }
 randoc-ipynb = { path = "crates/randoc-ipynb", version = "0.1.0" }
 randoc-djot = { path = "crates/randoc-djot", version = "0.1.0" }
+randoc-light = { path = "crates/randoc-light", version = "0.1.0" }
+randoc-tail-writers = { path = "crates/randoc-tail-writers", version = "0.1.0" }
+randoc-office = { path = "crates/randoc-office", version = "0.1.0" }
+randoc-pdf = { path = "crates/randoc-pdf", version = "0.1.0" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 toml = "1"

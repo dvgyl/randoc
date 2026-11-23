@@ -1,8 +1,10 @@
 use std::collections::{HashMap, HashSet};
 
-use randoc_ast::walk::{query_blocks, query_inlines, walk_blocks_mut, walk_inlines_mut};
+use randoc_ast::walk::{query_blocks, walk_blocks_mut};
 use randoc_ast::{Attr, Block, Inline};
-use randoc_core::shared::{auto_identifier, sections::make_sections, stringify};
+use randoc_core::shared::{
+    auto_identifier, chunks::rewrite_chunk_links, sections::make_sections, stringify,
+};
 use randoc_core::{Result, WriterOptions};
 
 use randoc_html::epub_identifier;
@@ -99,7 +101,14 @@ pub(super) fn split(
             chapter.blocks.push(block);
         }
     }
-    rewrite_links(&mut chapters, options);
+    let paths: Vec<_> = (0..chapters.len()).map(name).collect();
+    rewrite_chunk_links(
+        paths
+            .iter()
+            .zip(&mut chapters)
+            .map(|(path, chapter)| (path.as_str(), &mut chapter.blocks)),
+        |id| epub_identifier(&options.identifier_prefix, id),
+    );
     Ok((chapters, headings))
 }
 
@@ -173,39 +182,4 @@ fn matter(attr: &Attr) -> &'static str {
         }
     }
     "bodymatter"
-}
-
-fn rewrite_links(chapters: &mut [Chapter], options: &WriterOptions) {
-    let mut ids = HashMap::new();
-    for (index, chapter) in chapters.iter_mut().enumerate() {
-        let mut record = |attr: &Attr| {
-            if !attr.id.is_empty() {
-                ids.entry(attr.id.clone()).or_insert(index);
-            }
-        };
-        walk_blocks_mut(&mut chapter.blocks, |block| {
-            tree::block_attrs(block, |attr| record(attr))
-        });
-        query_inlines(&chapter.blocks, |inline| match inline {
-            Inline::Code(attr, _)
-            | Inline::Span(attr, _)
-            | Inline::Image(attr, _, _)
-            | Inline::Link(attr, _, _) => record(attr),
-            _ => {}
-        });
-    }
-    for chapter in chapters {
-        walk_inlines_mut(&mut chapter.blocks, |inline| {
-            if let Inline::Link(_, _, target) = inline
-                && let Some(id) = target.url.strip_prefix('#')
-                && let Some(&owner) = ids.get(id)
-            {
-                target.url = format!(
-                    "{}#{}",
-                    name(owner),
-                    epub_identifier(&options.identifier_prefix, id)
-                );
-            }
-        });
-    }
 }

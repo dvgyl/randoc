@@ -958,7 +958,7 @@ fn set(
         "pdf-engine" => s.pdf_engine = opt_path(decoded, path),
         "pdf-engine-opt" | "pdf-engine-opts" => {
             if let Decoded::Texts(list) | Decoded::OptTexts(Some(list)) = decoded {
-                s.pdf_engine_opts.extend(list);
+                s.pdf_engine_opts = list;
             }
         }
         "reference-doc" => s.reference_doc = opt_path(decoded, path),
@@ -1602,6 +1602,25 @@ verbosity: ERROR\nfail-if-warnings: true\nlog-file: l\n";
             result.unwrap_err().to_string(),
             "Error: Circular defaults file reference in 'b.yaml'"
         );
+    }
+
+    #[test]
+    fn pdf_engine_options_replace_earlier_defaults() {
+        for (value, expected) in [
+            ("pdf-engine-opt: -new", vec!["-new"]),
+            ("pdf-engine-opts: [-one, -two]", vec!["-one", "-two"]),
+            ("pdf-engine-opts: []", vec![]),
+        ] {
+            let current = format!("defaults: base.yaml\n{value}\n");
+            let (settings, _) = load(
+                &[
+                    ("base.yaml", "pdf-engine-opts: [-old]\n"),
+                    ("current.yaml", &current),
+                ],
+                "current.yaml",
+            );
+            assert_eq!(settings.unwrap().pdf_engine_opts, expected);
+        }
     }
 
     /// Codex review round 7, cli-R7-01: a chain of defaults files that each

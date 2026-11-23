@@ -1641,7 +1641,7 @@ fn is_html_format(name: &str) -> bool {
 fn is_binary_format(name: &str) -> bool {
     matches!(
         name,
-        "docx" | "odt" | "epub" | "epub2" | "epub3" | "pptx" | "pdf" | "xlsx"
+        "chunkedhtml" | "docx" | "odt" | "epub" | "epub2" | "epub3" | "pptx" | "pdf" | "xlsx"
     )
 }
 

@@ -38,6 +38,9 @@ const READERS: &[ReaderLookup] = &[
     randoc_asciidoc::reader,
     randoc_ipynb::reader,
     randoc_djot::reader,
+    randoc_light::reader,
+    randoc_tail_writers::reader,
+    randoc_office::reader,
 ];
 
 /// The writer lookup of each format crate. Add one line for a new crate.
@@ -65,6 +68,9 @@ const WRITERS: &[WriterLookup] = &[
     randoc_asciidoc::writer,
     randoc_ipynb::writer,
     randoc_djot::writer,
+    randoc_light::writer,
+    randoc_tail_writers::writer,
+    randoc_office::writer,
 ];
 
 /// Returns the reader for a format name without extension changes, for example `markdown`.

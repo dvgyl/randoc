@@ -18,6 +18,7 @@
 mod abbreviations;
 #[rustfmt::skip]
 mod abbreviation_table;
+pub mod chunks;
 mod emoji;
 mod entities;
 mod identifiers;

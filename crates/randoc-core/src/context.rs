@@ -42,6 +42,21 @@ pub struct PathTimes {
     pub accessed: Timestamp,
 }
 
+/// The program and settings for one child process.
+#[derive(Debug)]
+pub struct ProcessRequest<'a> {
+    /// The program name or path.
+    pub program: &'a str,
+    /// The command-line arguments, without the program name.
+    pub arguments: &'a [Text],
+    /// The bytes to write to standard input.
+    pub input: &'a [u8],
+    /// The child working directory. `None` uses the host directory.
+    pub working_directory: Option<&'a str>,
+    /// Child environment changes. A value of `None` removes the variable.
+    pub environment: &'a [(Text, Option<Text>)],
+}
+
 /// The result of a process that ran to its end.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ProcessOutput {
@@ -224,6 +239,17 @@ pub trait Host: Send {
         _input: &[u8],
     ) -> io::Result<ProcessOutput> {
         Err(not_available(program))
+    }
+
+    /// Runs a child process with an optional working directory and environment.
+    ///
+    /// Hosts that implement only `run_process` accept requests with no overrides.
+    fn run_process_with(&mut self, request: &ProcessRequest<'_>) -> io::Result<ProcessOutput> {
+        if request.working_directory.is_none() && request.environment.is_empty() {
+            self.run_process(request.program, request.arguments, request.input)
+        } else {
+            Err(not_available(request.program))
+        }
     }
 
     /// Makes a new directory in `parent` whose name starts with `template`,
@@ -709,15 +735,33 @@ impl Host for NativeHost {
         arguments: &[Text],
         input: &[u8],
     ) -> io::Result<ProcessOutput> {
+        self.run_process_with(&ProcessRequest {
+            program,
+            arguments,
+            input,
+            working_directory: None,
+            environment: &[],
+        })
+    }
+
+    fn run_process_with(&mut self, request: &ProcessRequest<'_>) -> io::Result<ProcessOutput> {
         use std::io::Write;
         use std::process::{Command, Stdio};
-        let mut command = Command::new(program);
+        let mut command = Command::new(request.program);
         command
-            .args(arguments)
+            .args(request.arguments)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped());
-        for (name, value) in environment_changes().iter() {
+        if let Some(directory) = request.working_directory {
+            command.current_dir(directory);
+        }
+        for (name, value) in environment_changes().iter().chain(
+            request
+                .environment
+                .iter()
+                .map(|(name, value)| (name, value)),
+        ) {
             match value {
                 Some(value) => command.env(name, value),
                 None => command.env_remove(name),
@@ -725,6 +769,7 @@ impl Host for NativeHost {
         }
         let mut child = command.spawn()?;
         let stdin = child.stdin.take();
+        let input = request.input;
         let output = std::thread::scope(|scope| {
             // A separate writer, so that a process that writes much output
             // before it reads all of its input does not block both sides.
@@ -1238,6 +1283,47 @@ mod tests {
 
     use super::*;
     use crate::logging::SourcePos;
+
+    #[cfg(unix)]
+    #[test]
+    fn process_overrides_apply_only_to_the_child() {
+        let parent_dir = std::env::current_dir().unwrap();
+        let child_dir = std::env::temp_dir().canonicalize().unwrap();
+        let request = ProcessRequest {
+            program: "/bin/sh",
+            arguments: &[
+                "-c".into(),
+                r#"pwd -P; printf '%s\n' "$RANDOC_CHILD_TEST" "${RANDOC_CHILD_REMOVED-unset}"; /bin/cat"#.into(),
+            ],
+            input: b"input",
+            working_directory: child_dir.to_str(),
+            environment: &[
+                ("RANDOC_CHILD_TEST".into(), Some("child".into())),
+                ("RANDOC_CHILD_REMOVED".into(), None),
+            ],
+        };
+        let mut host = NativeHost;
+        host.set_environment_variable("RANDOC_CHILD_TEST", Some("host"))
+            .unwrap();
+        host.set_environment_variable("RANDOC_CHILD_REMOVED", Some("host"))
+            .unwrap();
+        let output = host.run_process_with(&request).unwrap();
+        assert_eq!(output.exit_code, 0);
+        assert_eq!(
+            output.stdout,
+            format!("{}\nchild\nunset\ninput", child_dir.display()).as_bytes()
+        );
+        assert_eq!(
+            host.environment_variable("RANDOC_CHILD_TEST").as_deref(),
+            Some("host")
+        );
+        assert_eq!(
+            host.environment_variable("RANDOC_CHILD_REMOVED").as_deref(),
+            Some("host")
+        );
+        assert_eq!(std::env::current_dir().unwrap(), parent_dir);
+        assert!(PureHost::default().run_process_with(&request).is_err());
+    }
 
     #[derive(Default)]
     struct RecordingHost {

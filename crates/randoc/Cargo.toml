@@ -36,6 +36,9 @@ randoc-pod = { workspace = true }
 randoc-asciidoc = { workspace = true }
 randoc-ipynb = { workspace = true }
 randoc-djot = { workspace = true }
+randoc-light = { workspace = true }
+randoc-tail-writers = { workspace = true }
+randoc-office = { workspace = true }
 
 [lints]
 workspace = true
