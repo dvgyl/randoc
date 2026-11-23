@@ -8,6 +8,7 @@ command reads a titled document and an empty document. The default
 templates of these writers are present in randoc-data. For OpenDocument,
 record the document body without the default styles. For EPUB, record the
 first chapter in the archive. For DOCX, record the body paragraph text.
+For Jupyter notebooks, replace the generated cell identifiers.
 Each oracle process has memory and time limits.
 """
 
@@ -15,6 +16,7 @@ import io
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 import tempfile
@@ -31,6 +33,8 @@ FORMATS = sorted([
     "biblatex", "bibtex", "docbook", "docbook4", "docbook5", "fb2", "jats",
     "jats_archiving", "jats_articleauthoring", "jats_publishing", "tei",
     "docx", "man", "ms", "typst",
+    "asciidoc", "asciidoctor", "asciidoc_legacy", "ipynb", "djot", "xwiki", "zimwiki",
+    "revealjs", "slidy", "dzslides", "slideous", "s5",
 ] + list(EPUB_FORMATS))
 ODF_FORMATS = {"fodt", "odt", "opendocument"}
 REQUESTS = [
@@ -80,6 +84,8 @@ def document_body(writer, data):
         with ZipFile(io.BytesIO(data)) as archive:
             data = archive.read("EPUB/text/ch001.xhtml")
     text = data.decode("utf-8")
+    if writer == "ipynb":
+        text = re.sub(r'^(   "id": ")[0-9a-f-]{36}"$', r'\g<1>UUID"', text, flags=re.MULTILINE)
     if writer in ODF_FORMATS and "<office:body>" in text:
         return text.split("<office:body>", 1)[1].split("</office:body>", 1)[0]
     return text

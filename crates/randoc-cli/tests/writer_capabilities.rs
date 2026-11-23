@@ -39,6 +39,7 @@ fn is_epub(writer: &str) -> bool {
 /// on the reference document, so the replay compares the body separately.
 /// For EPUB, compare the first chapter. The archive has a random identifier
 /// and format-specific default styles. For DOCX, compare the body text.
+/// For Jupyter notebooks, replace the generated cell identifiers.
 fn document_body(writer: &str, data: Vec<u8>) -> Vec<u8> {
     use randoc_archive::zip::{Archive, ArchiveLimits};
 
@@ -75,6 +76,28 @@ fn document_body(writer: &str, data: Vec<u8>) -> Vec<u8> {
             })
             .collect::<Vec<_>>()
             .join("\n")
+            .into_bytes();
+    }
+    if writer == "ipynb" {
+        let text = String::from_utf8(data).expect("UTF-8 notebook");
+        return text
+            .split_inclusive('\n')
+            .map(|line| {
+                if let Some(id) = line
+                    .strip_prefix("   \"id\": \"")
+                    .and_then(|rest| rest.strip_suffix("\"\n"))
+                {
+                    assert_eq!(id.len(), 36);
+                    assert!(
+                        id.bytes()
+                            .all(|byte| byte.is_ascii_hexdigit() || byte == b'-')
+                    );
+                    "   \"id\": \"UUID\"\n"
+                } else {
+                    line
+                }
+            })
+            .collect::<String>()
             .into_bytes();
     }
     let data = if writer == "odt" {
@@ -164,13 +187,20 @@ fn standalone_output_preserves_the_oracle_result_or_reports_the_scope_gap() {
                 record.stderr.into_bytes(),
             )
         };
-        // These writers omit the final newline after a titled document with
-        // this custom template. See I-CLI-36 in docs/ISSUES.md.
-        if matches!(
-            record.writer.as_str(),
-            "mediawiki" | "org" | "rst" | "typst"
-        ) && matches!(record.request.as_str(), "template" | "both")
-            && record.document == "titled"
+        // These custom-template cases omit the final newline. See I-CLI-36.
+        if matches!(record.request.as_str(), "template" | "both")
+            && (record.writer == "djot"
+                || record.document == "titled"
+                    && matches!(
+                        record.writer.as_str(),
+                        "asciidoc"
+                            | "asciidoc_legacy"
+                            | "asciidoctor"
+                            | "mediawiki"
+                            | "org"
+                            | "rst"
+                            | "typst"
+                    ))
         {
             assert_eq!(expected.1.pop(), Some(b'\n'));
         }

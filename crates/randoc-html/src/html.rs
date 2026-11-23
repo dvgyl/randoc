@@ -5,14 +5,16 @@ use randoc_ast::{
     QuoteType, Target,
 };
 use randoc_core::{
-    Context, Error, Extension, HtmlMathMethod, LogMessage, ObfuscationMethod, ReferenceLocation,
-    Result, Text, WrapOption, WriterOptions,
+    Context, Error, Extension, HighlightMethod, HtmlMathMethod, LogMessage, ObfuscationMethod,
+    ReferenceLocation, Result, Text, WrapOption, WriterOptions,
 };
 
+use std::borrow::Borrow;
 use std::cell::RefCell;
 use std::collections::{HashMap, HashSet};
 
 use crate::attributes::{HTML4_HEADING_ATTRIBUTES, HTML5_ATTRIBUTES, SECTION_ATTRIBUTES};
+use crate::slides::{self, SlideFormat, Slides};
 use crate::standalone::{TocEntry, without_links_and_notes};
 use crate::{EpubChapter, Version};
 use randoc_layout::{Doc, cr, empty, flush, space};
@@ -21,26 +23,60 @@ use crate::shared::{Dimension, escape_attribute, escape_text};
 use crate::shared::{lit, words};
 use randoc_core::shared::{stringify, stringify_blocks};
 
+mod slide_render;
+
 /// Renders a document: through the template of the options, or as an HTML
 /// fragment without a final newline when the options have no template.
+#[cfg(test)]
 pub(crate) fn write(
     doc: &Pandoc,
     options: &WriterOptions,
     context: &mut Context,
     version: Version,
 ) -> Result<Text> {
+    write_with_slides(doc, options, context, version, None)
+}
+
+pub(crate) fn write_with_slides(
+    doc: &Pandoc,
+    options: &WriterOptions,
+    context: &mut Context,
+    version: Version,
+    format: Option<SlideFormat>,
+) -> Result<Text> {
+    let min_level = min_heading_level(&doc.blocks);
     let mut writer = Html::new(
         options,
         version,
         context.limits.max_nesting_depth,
-        min_heading_level(&doc.blocks),
+        min_level.unwrap_or(1),
     );
+    let slides = format.map(|format| Slides {
+        format,
+        level: options
+            .slide_level
+            .unwrap_or_else(|| randoc_core::shared::sections::slide_level(&doc.blocks)),
+    });
+    writer.slides = slides;
     writer.registry = crate::highlight::load_registry(options)?;
     let mut template_context = match options.template {
         Some(_) => Some(writer.meta_context(&doc.meta)?),
         None => None,
     };
-    let mut body = writer.section_blocks(&doc.blocks, 0)?;
+    let mut body = if let Some(slides) = slides {
+        let untitled = Block::Header(
+            slides.level,
+            Attr::default(),
+            vec![Inline::Str("\0".into())],
+        );
+        let blocks = slides.prepare(&doc.blocks, &untitled, writer.max_depth)?;
+        if blocks.iter().any(|block| std::ptr::eq(*block, &untitled)) {
+            writer.min_level = min_level.map_or(slides.level, |level| level.min(slides.level));
+        }
+        writer.section_units(&blocks, None, 0, "\n", &[])?
+    } else {
+        writer.section_blocks(&doc.blocks, 0)?
+    };
     // The notes that no section has taken go at the end of the document. A
     // section that does not write its notes drops them (`flush_leaf_section_notes`).
     let notes = writer.footnote_section(ReferenceLocation::EndOfDocument, "")?;
@@ -55,6 +91,7 @@ pub(crate) fn write(
     let mut out = match (&options.template, template_context.as_mut()) {
         (Some(template), Some(fields)) => {
             writer.add_writer_fields(fields, &doc.meta, body)?;
+            writer.add_slide_fields(fields, context)?;
             if writer.wrote_highlighting
                 && let Some(style) = &options.highlight_style
             {
@@ -148,7 +185,7 @@ fn render_fragment(
         options,
         version,
         context.limits.max_nesting_depth,
-        min_heading_level(blocks),
+        min_heading_level(blocks).unwrap_or(1),
     );
     writer.registry = crate::highlight::load_registry(options)?;
     let mut body = writer.section_blocks(blocks, 0)?;
@@ -180,6 +217,11 @@ pub(crate) struct Html<'a> {
     pub(crate) options: &'a WriterOptions,
     pub(crate) version: Version,
     pub(crate) max_depth: usize,
+    pub(crate) slides: Option<Slides>,
+    /// Number of title sections that enclose the current Reveal.js section.
+    slide_group_depth: usize,
+    /// Incremental flags of enclosing divisions and list-only quotes.
+    incremental_flags: Vec<bool>,
     /// The number and the rendered content of each note, in order. The notes
     /// from `pending_from` on are not yet in the output.
     notes: Vec<(usize, Doc)>,
@@ -222,6 +264,7 @@ pub(crate) struct Html<'a> {
     /// The headings of the section path, for the table of contents. The
     /// writer collects them only for a template with `--toc`.
     pub(crate) toc_entries: Vec<TocEntry>,
+    pub(crate) writing_toc: bool,
     /// The indexes in `toc_entries` of the sections that the writer renders now.
     toc_open: Vec<usize>,
     /// `true` inside a div that is not a section and holds more than one
@@ -253,6 +296,9 @@ impl<'a> Html<'a> {
             options,
             version,
             max_depth,
+            slides: None,
+            slide_group_depth: 0,
+            incremental_flags: Vec::new(),
             notes: Vec::new(),
             pending_from: 0,
             section_numbers: if matches!(version, Version::Epub2 | Version::Epub3) {
@@ -272,6 +318,7 @@ impl<'a> Html<'a> {
             warnings: RefCell::new(Vec::new()),
             leading_levels: RefCell::new(HashMap::new()),
             toc_entries: Vec::new(),
+            writing_toc: false,
             toc_hidden: false,
             toc_open: Vec::new(),
             wrote_q_tags: false,
@@ -377,7 +424,11 @@ impl Html<'_> {
 
     /// Returns the `href` of a link to an identifier in this document.
     pub(crate) fn fragment_href(&self, id: &str) -> String {
-        self.url(&format!("#{}", self.prefixed(id)))
+        if self.revealjs() {
+            format!("#/{id}")
+        } else {
+            self.url(&format!("#{}", self.prefixed(id)))
+        }
     }
 
     /// Returns the start tag of an element: `<name attr="value">`.
@@ -510,14 +561,14 @@ impl Html<'_> {
     /// not change when the list is a part of a larger list, so the children
     /// of a section reuse the spans of their parent. One pass with a stack
     /// keeps the time linear.
-    fn section_spans(&self, blocks: &[Block]) -> Vec<usize> {
+    fn section_spans<B: Borrow<Block>>(&self, blocks: &[B]) -> Vec<usize> {
         let mut ends = vec![blocks.len(); blocks.len()];
         // The open sections, from the outermost to the innermost.
         let mut open: Vec<(usize, i64)> = Vec::new();
         for (index, block) in blocks.iter().enumerate() {
             #[cfg(test)]
             crate::table::steps::add(1);
-            let Some(level) = self.leading_heading_level(block) else {
+            let Some(level) = self.leading_heading_level(block.borrow()) else {
                 continue;
             };
             while let Some(&(start, open_level)) = open.last() {
@@ -565,9 +616,9 @@ impl Html<'_> {
     /// section. `extra` are attributes after the own attributes of each unit
     /// (the attributes of a wrapper div). `spans` are the section spans of
     /// `blocks` when the caller has them.
-    fn section_units(
+    fn section_units<B: Borrow<Block>>(
         &mut self,
-        blocks: &[Block],
+        blocks: &[B],
         spans: Option<&[usize]>,
         depth: usize,
         separator: &str,
@@ -585,7 +636,7 @@ impl Html<'_> {
         let mut doc = empty();
         let mut first = true;
         let mut index = 0;
-        while let Some(block) = blocks.get(index) {
+        while let Some(block) = blocks.get(index).map(Borrow::borrow) {
             if !self.block_present(block) {
                 index += 1;
                 continue;
@@ -649,9 +700,9 @@ impl Html<'_> {
 
     /// Renders a heading and the blocks of its section. Without a section
     /// element, `extra` goes to the heading and to each unit of the section.
-    fn header_section(
+    fn header_section<B: Borrow<Block>>(
         &mut self,
-        section: &LooseSection<'_>,
+        section: &LooseSection<'_, B>,
         depth: usize,
         extra: &[(String, String)],
     ) -> Result<Doc> {
@@ -674,6 +725,24 @@ impl Html<'_> {
             .cloned()
             .collect();
         let header_attr = Attr::new("", attr.classes.clone(), header_pairs);
+        if let Some(slides) = self.slides.filter(|slides| level <= slides.level) {
+            let section_attr = Attr::new(
+                attr.id.clone(),
+                self.section_classes(level, &attr.classes, &[]),
+                Vec::new(),
+            );
+            let mut attrs = self.numbered_attrs(
+                &section_attr,
+                number.as_ref().and_then(|n| n.added.as_deref()),
+            );
+            attrs.extend(self.key_values(&attr.attributes));
+            attrs.extend(extra.iter().cloned());
+            let slide = LooseSection {
+                heading: &header_attr,
+                ..*section
+            };
+            return self.slide_section(slides, &slide, &attrs, number.as_ref(), depth);
+        }
         let moves = attr
             .attributes
             .iter()
@@ -695,9 +764,9 @@ impl Html<'_> {
             if self.block_level == 0 {
                 self.flush_notes(&mut body, ReferenceLocation::EndOfBlock, "")?;
             }
-            let children = self.section_units(children_blocks, rest_spans, depth, "\n", &[])?;
+            let children = self.section_children(children_blocks, rest_spans, depth, &[])?;
             self.toc_open.pop();
-            then_section_children(&mut body, children, children_blocks);
+            self.then_section_children(&mut body, children, children_blocks);
             self.flush_leaf_section_notes(&mut body, children_blocks)?;
             let name = if self.html5() { "section" } else { "div" };
             let added = number.as_ref().and_then(|n| n.added.as_deref());
@@ -718,11 +787,29 @@ impl Html<'_> {
         if self.block_level == 0 {
             self.flush_notes(&mut header, ReferenceLocation::EndOfBlock, &attr.id)?;
         }
-        let children = self.section_units(children_blocks, rest_spans, depth, "\n", extra)?;
+        let children = self.section_children(children_blocks, rest_spans, depth, extra)?;
         self.toc_open.pop();
-        then_section_children(&mut header, children, children_blocks);
+        self.then_section_children(&mut header, children, children_blocks);
         self.flush_leaf_section_notes(&mut header, children_blocks)?;
         Ok(header)
+    }
+
+    fn has_section_blocks<B: Borrow<Block>>(&self, blocks: &[B]) -> bool {
+        if self.slides.is_some() {
+            blocks.iter().any(|block| !slides::is_pause(block.borrow()))
+        } else {
+            !blocks.is_empty()
+        }
+    }
+
+    /// Adds the children on a new line. A block that gives no HTML still
+    /// ends the heading line. Slide pauses do not count as blocks.
+    fn then_section_children<B: Borrow<Block>>(&self, doc: &mut Doc, children: Doc, blocks: &[B]) {
+        if children.is_empty() && self.has_section_blocks(blocks) {
+            *doc += lit("\n");
+        } else {
+            then_lines(doc, children);
+        }
     }
 
     /// Records a section heading for the table of contents. The caller pops
@@ -739,6 +826,7 @@ impl Html<'_> {
         inlines: &[Inline],
     ) -> Result<()> {
         if self.epub()
+            || (self.slides.is_some() && slides::untitled(inlines))
             || self.toc_hidden
             || !(self.options.table_of_contents && self.options.template.is_some())
         {
@@ -753,14 +841,27 @@ impl Html<'_> {
             number: number.map(|n| n.shown.clone()),
             unlisted: classes.iter().any(|c| c == "unlisted"),
             inlines,
-            parent: self.toc_open.iter().rev().nth(1).copied(),
+            parent: self
+                .toc_open
+                .iter()
+                .rev()
+                .nth(1)
+                .copied()
+                .filter(|p| self.slides.is_none() || *p != usize::MAX),
         });
         Ok(())
     }
 
     fn section_classes(&self, level: i64, header: &[Text], div: &[Text]) -> Vec<Text> {
         let mut classes = Vec::new();
-        if self.section_divs() {
+        let slide = self.slides.filter(|slides| level <= slides.level);
+        if let Some(slides) = slide {
+            if level < slides.level {
+                classes.push(Text::from("title-slide"));
+            }
+            classes.push(Text::from("slide"));
+        }
+        if self.section_divs() || slide.is_some() {
             if !self.html5() {
                 classes.push(Text::from("section"));
             }
@@ -896,24 +997,46 @@ impl Html<'_> {
             &section.id
         };
         self.open_toc_entry(level, id, &header.classes, number.as_ref(), inlines)?;
+        if let Some(slides) = self.slides.filter(|slides| level <= slides.level) {
+            let slide = LooseSection {
+                level,
+                heading: header,
+                inlines,
+                rest,
+                rest_spans: None,
+            };
+            let attrs = self.div_section_attrs(section, level, number.as_ref(), extra);
+            return self.slide_section(slides, &slide, &attrs, number.as_ref(), depth);
+        }
         let mut body = self.header(level, header, Attrs::new(), number.as_ref(), inlines, depth)?;
         if self.block_level == 0 {
             self.flush_notes(&mut body, ReferenceLocation::EndOfBlock, "")?;
         }
-        let children = self.section_blocks(rest, depth)?;
+        let children = self.section_children(rest, None, depth, &[])?;
         self.toc_open.pop();
-        then_section_children(&mut body, children, rest);
+        self.then_section_children(&mut body, children, rest);
         self.flush_leaf_section_notes(&mut body, rest)?;
         let name = if self.html5() { "section" } else { "div" };
+        let attrs = self.div_section_attrs(section, level, number.as_ref(), extra);
+        Ok(self.block_element(name, &attrs, body))
+    }
+
+    fn div_section_attrs(
+        &self,
+        section: &SectionAttr,
+        level: i64,
+        number: Option<&SectionNumber>,
+        extra: &[(String, String)],
+    ) -> Attrs {
         let classes = self.section_classes(level, &section.classes, &[]);
         let own = Attr::new(section.id.clone(), classes, section.div_pairs.clone());
-        let mut attrs = self.attrs(&own);
-        if let Some(number) = number.and_then(|n| n.added) {
-            attrs.push((self.number_key().to_owned(), number));
+        let mut attrs = self.numbered_attrs(&own, None);
+        if let Some(added) = number.and_then(|n| n.added.as_ref()) {
+            attrs.push((self.number_key().to_owned(), added.clone()));
         }
         attrs.extend(self.key_values(&section.heading_pairs));
         attrs.extend(extra.iter().cloned());
-        Ok(self.block_element(name, &attrs, body))
+        attrs
     }
 
     /// Returns the element and the attributes of a heading. HTML5 writes an
@@ -981,7 +1104,11 @@ impl Html<'_> {
     /// blocks with a forced line break and leaves out a block that gives no
     /// HTML, for example an empty paragraph.
     pub(crate) fn blocks(&mut self, blocks: &[Block], depth: usize) -> Result<Doc> {
-        self.lines(blocks, depth, "\n", &[])
+        if self.slides.is_some() && blocks.iter().any(slides::is_pause) {
+            self.block_content(blocks, depth, "\n", &[])
+        } else {
+            self.lines(blocks, depth, "\n", &[])
+        }
     }
 
     /// As `blocks`, with `separator` between the blocks and `extra` after
@@ -1024,6 +1151,13 @@ impl Html<'_> {
                         && self.options.extensions.contains(Extension::EmptyParagraphs))
             }
             Block::RawBlock(format, _) => self.raw_accepted(format),
+            Block::Div(attr, content) if self.slides.is_some() && attr.has_class("notes") => {
+                self.html5()
+                    || matches!(
+                        div_part(attr, content, self.options.number_sections),
+                        DivPart::Heading(_) | DivPart::Section(..)
+                    )
+            }
             _ => true,
         }
     }
@@ -1074,6 +1208,9 @@ impl Html<'_> {
                 self.inline_element("div", &attrs, body)
             }
             Block::CodeBlock(attr, code) => {
+                if self.revealjs() && self.options.highlight_method == HighlightMethod::Idiomatic {
+                    return Ok(self.revealjs_code_block(attr, code, &extra));
+                }
                 let id = if attr.id.is_empty() {
                     self.code_blocks += 1;
                     format!("cb{}", self.code_blocks)
@@ -1097,6 +1234,15 @@ impl Html<'_> {
             }
             Block::RawBlock(format, text) => self.raw(format, text),
             Block::BlockQuote(blocks) => {
+                if self.slides.is_some()
+                    && let [list @ (Block::OrderedList(..) | Block::BulletList(_))] =
+                        blocks.as_slice()
+                {
+                    self.push_incremental(!self.incremental);
+                    let result = self.render_block(list, depth, extra);
+                    self.pop_incremental();
+                    return result;
+                }
                 let body = self.blocks(blocks, depth)?;
                 self.block_element("blockquote", &extra, body)
             }
@@ -1109,12 +1255,12 @@ impl Html<'_> {
                 for (term, definitions) in items {
                     body += cr();
                     let term = self.inlines(term, depth)?;
-                    body += self.inline_element("dt", &[], term);
+                    body += self.inline_element("dt", &self.list_item_class(), term);
                     body += lit("\n");
                     for definition in definitions {
                         body += cr();
                         let content = self.blocks(definition, depth)?;
-                        body += self.block_element("dd", &[], content);
+                        body += self.block_element("dd", &self.list_item_class(), content);
                     }
                     body += lit("\n");
                 }
@@ -1190,17 +1336,19 @@ impl Html<'_> {
             };
         }
         let outer = self.block_level;
+        let notes = self.slides.is_some() && attr.has_class("notes");
+        if notes && !self.html5() {
+            return Ok(empty());
+        }
         if !attr.has_class("section") {
             self.block_level += 1;
         }
         let outer_plain = self.plain_paragraphs;
         self.plain_paragraphs = outer_plain || has_div_rule(attr, DivRule::Entry);
-        let outer_incremental = self.incremental;
-        if attr.has_class("incremental") {
-            self.incremental = true;
-        } else if attr.has_class("nonincremental") {
-            self.incremental = false;
-        }
+        let incremental = !notes
+            && (attr.has_class("incremental")
+                || (!attr.has_class("nonincremental") && self.incremental));
+        self.push_incremental(incremental);
         let separator = if has_div_rule(attr, DivRule::Columns) {
             ""
         } else {
@@ -1210,17 +1358,47 @@ impl Html<'_> {
         // when the div holds one unit: one block, or one heading with its
         // section (`src/toc.jsonl`).
         let hidden = self.toc_hidden;
-        self.toc_hidden = hidden || self.section_unit_count(content) != 1;
-        let body = if sections {
-            self.section_units(content, None, depth, separator, &[])
-        } else {
-            self.lines(content, depth, separator, &[])
+        if self.options.table_of_contents && self.options.template.is_some() {
+            self.toc_hidden = hidden || self.section_unit_count(content) != 1;
+        }
+        let pauses = self.slides.is_some() && content.iter().any(slides::is_pause);
+        let body = match (sections, pauses) {
+            (true, true) => self.section_content(content, None, depth, separator, &[]),
+            (true, false) => self.section_units(content, None, depth, separator, &[]),
+            (false, true) => self.block_content(content, depth, separator, &[]),
+            (false, false) => self.lines(content, depth, separator, &[]),
         };
         self.toc_hidden = hidden;
         self.block_level = outer;
         self.plain_paragraphs = outer_plain;
-        self.incremental = outer_incremental;
+        self.pop_incremental();
         let body = body?;
+        if notes {
+            let mut attrs = self.attrs(attr);
+            attrs.extend(extra);
+            if self.revealjs() {
+                return Ok(self.block_element("aside", &attrs, body));
+            }
+            attrs.push(("role".into(), "note".into()));
+            return Ok(self.block_element("div", &attrs, body));
+        }
+        let attr = if self.slides.is_some()
+            && (attr.has_class("incremental") || attr.has_class("nonincremental"))
+        {
+            let mut attr = attr.clone();
+            attr.classes
+                .retain(|class| !matches!(class.as_str(), "incremental" | "nonincremental"));
+            if attr.id.is_empty()
+                && attr.classes.is_empty()
+                && attr.attributes.is_empty()
+                && extra.is_empty()
+            {
+                return Ok(body);
+            }
+            std::borrow::Cow::Owned(attr)
+        } else {
+            std::borrow::Cow::Borrowed(attr)
+        };
         let (name, attr) = if attr.has_class("section") && self.html5() {
             let classes = attr
                 .classes
@@ -1233,7 +1411,7 @@ impl Html<'_> {
                 Attr::new(attr.id.clone(), classes, attr.attributes.clone()),
             )
         } else {
-            ("div", attr.clone())
+            ("div", attr.into_owned())
         };
         let mut attrs = self.div_attrs(&attr);
         attrs.extend(extra);
@@ -1278,16 +1456,20 @@ impl Html<'_> {
             inner_extra.clone_from(&extra);
         }
         let mut body = self.header(level, heading, trailing, number.as_ref(), inlines, depth)?;
-        let mut inner = self.lines(rest, depth, "\n", &inner_extra)?;
+        let mut inner = if self.slides.is_some() && rest.iter().any(slides::is_pause) {
+            self.block_content(rest, depth, "\n", &inner_extra)?
+        } else {
+            self.lines(rest, depth, "\n", &inner_extra)?
+        };
         self.flush_loose_section_notes(&mut inner, rest)?;
         if collapses {
-            if !rest.is_empty() {
+            if self.has_section_blocks(rest) {
                 body += lit("\n");
                 body += inner;
             }
             return Ok(body);
         }
-        then_section_children(&mut body, inner, rest);
+        self.then_section_children(&mut body, inner, rest);
         let name = if self.html5() { "section" } else { "div" };
         let mut attrs = self.attrs(&Attr::new(div.id.clone(), classes, div.attributes.clone()));
         attrs.extend(extra);
@@ -1323,6 +1505,7 @@ impl Html<'_> {
         format == "html"
             || format == "html4"
             || (self.html5() && format == "html5")
+            || (self.slides.is_some() && SlideFormat::from_name(format.as_str()).is_some())
             || match self.version {
                 Version::Epub2 => format == "epub" || format == "epub2",
                 Version::Epub3 => format == "epub" || format == "epub3",
@@ -1343,14 +1526,14 @@ impl Html<'_> {
         for item in items {
             body += cr();
             let content = self.task_item(item, depth)?;
-            body += self.inline_element("li", &[], content);
+            body += self.inline_element("li", &self.list_item_class(), content);
         }
         Ok(body)
     }
 
     /// Returns the first attribute of a list: the class `incremental`, or none.
     fn list_class(&self) -> Attrs {
-        if self.incremental {
+        if self.incremental && !self.revealjs() {
             vec![("class".to_owned(), "incremental".to_owned())]
         } else {
             Attrs::new()
@@ -1403,9 +1586,13 @@ impl Html<'_> {
         if matches!(first, Block::Para(_)) {
             doc = self.inline_element("p", &[], doc);
         }
-        for block in rest {
-            doc += cr();
-            doc += self.block(block, depth)?;
+        if self.slides.is_some() {
+            then_lines(&mut doc, self.blocks(rest, depth)?);
+        } else {
+            for block in rest {
+                doc += cr();
+                doc += self.block(block, depth)?;
+            }
         }
         Ok(doc)
     }
@@ -1566,7 +1753,11 @@ impl Html<'_> {
             ReferenceLocation::EndOfSection => ("section", "aside", "doc-footnote"),
             ReferenceLocation::EndOfBlock => ("block", "aside", "doc-footnote"),
         };
-        let class = format!("footnotes footnotes-end-of-{suffix}");
+        let class = if self.slides.is_some() && !self.html5() {
+            "footnotes slide".to_owned()
+        } else {
+            format!("footnotes footnotes-end-of-{suffix}")
+        };
         if !self.html5() {
             let mut attrs = vec![("class".to_owned(), class)];
             if !extra_id.is_empty() {
@@ -1597,13 +1788,19 @@ impl Html<'_> {
     /// Adds the pending notes at the end of a section without subsections, as Pandoc
     /// does for `--reference-location=section`.
     /// The section must have a block, and no subsection.
-    fn flush_leaf_section_notes(&mut self, doc: &mut Doc, children: &[Block]) -> Result<()> {
+    fn flush_leaf_section_notes<B: Borrow<Block>>(
+        &mut self,
+        doc: &mut Doc,
+        children: &[B],
+    ) -> Result<()> {
         if self.reference_location() != ReferenceLocation::EndOfSection {
             return Ok(());
         }
         // A section with subsections or without any block does not write its
         // notes. A block that gives no HTML still counts, as in Pandoc.
-        if children.is_empty() || children.iter().any(|b| section_level(b).is_some()) {
+        if !self.has_section_blocks(children)
+            || children.iter().any(|b| section_level(b.borrow()).is_some())
+        {
             self.drop_pending_notes();
             return Ok(());
         }
@@ -1617,7 +1814,7 @@ impl Html<'_> {
         if self.reference_location() != ReferenceLocation::EndOfSection {
             return Ok(());
         }
-        if children.is_empty() || holds_a_section_div(children) {
+        if !self.has_section_blocks(children) || holds_a_section_div(children) {
             self.drop_pending_notes();
             return Ok(());
         }
@@ -1744,7 +1941,11 @@ impl Html<'_> {
         let mut attrs = vec![
             (
                 "href".to_owned(),
-                self.fragment_href(&format!("fn{number}")),
+                if self.revealjs() {
+                    format!("#/{}", self.prefixed(&format!("fn{number}")))
+                } else {
+                    self.fragment_href(&format!("fn{number}"))
+                },
             ),
             ("class".to_owned(), "footnote-ref".to_owned()),
             ("id".to_owned(), self.prefixed(&format!("fnref{number}"))),
@@ -2029,7 +2230,14 @@ impl Html<'_> {
             _ => self.url(&target.url),
         };
         let mut attrs = vec![("href".to_owned(), href)];
-        attrs.extend(self.attrs(attr));
+        let mut own = self.attrs(attr);
+        if self.revealjs()
+            && self.writing_toc
+            && let Some((_, id)) = own.iter_mut().find(|(key, _)| key == "id")
+        {
+            id.insert(0, '/');
+        }
+        attrs.extend(own);
         if !target.title.is_empty() && !mailto {
             attrs.push(("title".to_owned(), target.title.clone()));
         }
@@ -2311,12 +2519,12 @@ struct LeadingHeading<'a> {
 }
 
 /// A div with the class `section` first and a heading first, outside the section path.
-struct LooseSection<'a> {
+struct LooseSection<'a, B = Block> {
     level: i64,
     heading: &'a Attr,
     inlines: &'a [Inline],
     /// The blocks of the div after the heading.
-    rest: &'a [Block],
+    rest: &'a [B],
     /// The section spans of `rest`, when the caller has them.
     rest_spans: Option<&'a [usize]>,
 }
@@ -2514,9 +2722,9 @@ fn csl_styles(classes: &[Text]) -> String {
     .collect()
 }
 
-/// Returns the smallest heading level in the document, or 1 without headings.
+/// Returns the smallest heading level in the document, if there is a heading.
 /// The walk uses a stack, so it does not recurse.
-fn min_heading_level(blocks: &[Block]) -> i64 {
+fn min_heading_level(blocks: &[Block]) -> Option<i64> {
     let mut min: Option<i64> = None;
     let mut stack: Vec<&Block> = blocks.iter().collect();
     let mut inline_stack: Vec<&Inline> = Vec::new();
@@ -2584,17 +2792,7 @@ fn min_heading_level(blocks: &[Block]) -> i64 {
             Block::CodeBlock(..) | Block::RawBlock(..) | Block::HorizontalRule => {}
         }
     }
-    min.unwrap_or(1)
-}
-
-/// Adds the children of a section on a new line. When the section has
-/// blocks that give no HTML, Pandoc still ends the heading line.
-fn then_section_children(doc: &mut Doc, children: Doc, blocks: &[Block]) {
-    if children.is_empty() && !blocks.is_empty() {
-        *doc += lit("\n");
-    } else {
-        then_lines(doc, children);
-    }
+    min
 }
 
 /// Adds `next` on a new line, when `next` is not empty.

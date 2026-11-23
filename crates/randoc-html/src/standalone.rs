@@ -12,12 +12,13 @@ use std::cell::RefCell;
 use randoc_ast::{Attr, Block, Citation, Inline, Meta, MetaValue, Target};
 use randoc_core::shared::meta_context::{meta_to_context, normalize_date};
 use randoc_core::shared::{stringify, stringify_blocks, stringify_meta};
-use randoc_core::{CaptionPosition, Error, HtmlMathMethod, Result};
+use randoc_core::{CaptionPosition, Context, Error, HighlightMethod, HtmlMathMethod, Result};
 use randoc_layout::Doc;
 use randoc_templates::{Context as TemplateContext, Val};
 
 use crate::html::Html;
 use crate::shared::{escape_attribute, lit};
+use crate::slides::{self, SlideFormat};
 
 /// A heading of the section path, in document order.
 #[derive(Debug)]
@@ -58,6 +59,9 @@ impl Html<'_> {
     ) -> Result<()> {
         let mut fields: Vec<(&str, Val)> = vec![("body", Val::Simple(body))];
         if self.options.table_of_contents
+            && !self
+                .slides
+                .is_some_and(|slide| slide.format == SlideFormat::S5)
             && let Some(toc) = self.table_of_contents()?
         {
             fields.push(("toc", Val::Simple(toc.clone())));
@@ -107,7 +111,10 @@ impl Html<'_> {
             fields.push(("description-meta", text(description)));
         }
         fields.push(("abstract-title", Val::text("Abstract")));
-        fields.push(("document-css", Val::Bool(context.get("css").is_none())));
+        fields.push((
+            "document-css",
+            Val::Bool(self.slides.is_none() && context.get("css").is_none()),
+        ));
         fields.push(("quotes", Val::Bool(self.wrote_q_tags)));
         if let Some(math) = self.math_variable() {
             fields.push(("math", Val::Simple(math)));
@@ -142,6 +149,65 @@ impl Html<'_> {
         Ok(())
     }
 
+    pub(crate) fn add_slide_fields(
+        &self,
+        fields: &mut TemplateContext,
+        context: &mut Context,
+    ) -> Result<()> {
+        for (key, url) in [
+            ("revealjs-url", "https://unpkg.com/reveal.js@^6"),
+            ("slidy-url", "https://www.w3.org/Talks/Tools/Slidy2"),
+            ("slideous-url", "slideous"),
+            ("s5-url", "s5/default"),
+        ] {
+            fields.0.entry(key.into()).or_insert_with(|| Val::text(url));
+        }
+        match self.slides.map(|slides| slides.format) {
+            Some(SlideFormat::DzSlides) if fields.get("dzslides-core").is_none() => {
+                fields.insert("dzslides-core", Val::text(slides::dzslides_core(context)?));
+            }
+            Some(SlideFormat::RevealJs) => {
+                if let HtmlMathMethod::MathJax(url) = &self.options.html_math_method {
+                    fields
+                        .0
+                        .entry("mathjaxurl".into())
+                        .or_insert_with(|| Val::text(url));
+                }
+                if self.options.highlight_method == HighlightMethod::Idiomatic {
+                    fields
+                        .0
+                        .entry("highlight-js".into())
+                        .or_insert(Val::Bool(true));
+                }
+                for (key, value) in REVEAL_DEFAULTS {
+                    fields
+                        .0
+                        .entry((*key).into())
+                        .or_insert_with(|| match *value {
+                            "true" => Val::Bool(true),
+                            "false" => Val::Bool(false),
+                            _ => Val::text(*value),
+                        });
+                }
+                let auto = match fields.get("scrollProgress") {
+                    None | Some(Val::Null) => true,
+                    Some(Val::Simple(doc)) => doc.render(None) == "auto",
+                    _ => false,
+                };
+                fields
+                    .0
+                    .entry("scrollProgressAuto".into())
+                    .or_insert(Val::Bool(auto));
+                if matches!(fields.get("scrollSnap"), Some(Val::Simple(doc)) if doc.render(None) == "false")
+                {
+                    fields.insert("scrollSnap", Val::Bool(false));
+                }
+            }
+            _ => {}
+        }
+        Ok(())
+    }
+
     /// The `math` variable: the script elements of MathJax and KaTeX, when
     /// the document has math.
     fn math_variable(&self) -> Option<Doc> {
@@ -149,19 +215,28 @@ impl Html<'_> {
             return None;
         }
         match &self.options.html_math_method {
-            HtmlMathMethod::MathJax(url) => Some(self.open_close(
-                "script",
-                &[
-                    ("defer", ""),
-                    ("src", url.as_str()),
-                    ("type", "text/javascript"),
-                ],
-            )),
+            HtmlMathMethod::MathJax(_) if self.revealjs() => None,
+            HtmlMathMethod::MathJax(url) => {
+                let body = if self
+                    .slides
+                    .is_some_and(|slide| slide.format == SlideFormat::Slideous)
+                {
+                    r#"MathJax.Hub.Queue(["Typeset",MathJax.Hub]);"#
+                } else {
+                    ""
+                };
+                Some(self.script(
+                    &[
+                        ("defer", ""),
+                        ("src", url.as_str()),
+                        ("type", "text/javascript"),
+                    ],
+                    body,
+                ))
+            }
             HtmlMathMethod::KaTex(url) => {
-                let mut doc = self.open_close(
-                    "script",
-                    &[("defer", ""), ("src", &format!("{url}katex.min.js"))],
-                );
+                let mut doc =
+                    self.script(&[("defer", ""), ("src", &format!("{url}katex.min.js"))], "");
                 doc += lit("\n");
                 doc += lit(KATEX_SCRIPT);
                 doc += lit("\n");
@@ -179,14 +254,12 @@ impl Html<'_> {
         }
     }
 
-    fn open_close(&self, name: &str, attrs: &[(&str, &str)]) -> Doc {
+    fn script(&self, attrs: &[(&str, &str)], body: &str) -> Doc {
         let attrs: Vec<(String, String)> = attrs
             .iter()
             .map(|(k, v)| ((*k).to_owned(), (*v).to_owned()))
             .collect();
-        let mut doc = self.open(name, &attrs);
-        doc += lit(&format!("</{name}>"));
-        doc
+        self.inline_element("script", &attrs, lit(body))
     }
 
     /// Renders the table of contents: a bullet list of the listed headings
@@ -241,7 +314,10 @@ impl Html<'_> {
             .iter()
             .filter_map(|r| items.get_mut(*r).and_then(Option::take))
             .collect();
-        self.blocks(&[Block::BulletList(list)], 0).map(Some)
+        self.writing_toc = true;
+        let toc = self.blocks(&[Block::BulletList(list)], 0);
+        self.writing_toc = false;
+        toc.map(Some)
     }
 
     /// The content of one item: a link to the section with the number and
@@ -269,6 +345,55 @@ impl Html<'_> {
         )])
     }
 }
+
+/// Default values of the Reveal.js configuration fields in Pandoc 3.13.
+const REVEAL_DEFAULTS: &[(&str, &str)] = &[
+    ("autoPlayMedia", "null"),
+    ("autoSlide", "0"),
+    ("autoSlideMethod", "null"),
+    ("autoSlideStoppable", "true"),
+    ("backgroundTransition", "fade"),
+    ("center", "true"),
+    ("controls", "true"),
+    ("controlsBackArrows", "faded"),
+    ("controlsLayout", "bottom-right"),
+    ("controlsTutorial", "true"),
+    ("defaultTiming", "null"),
+    ("disableLayout", "false"),
+    ("display", "block"),
+    ("embedded", "false"),
+    ("fragmentInURL", "true"),
+    ("fragments", "true"),
+    ("hash", "true"),
+    ("hashOneBasedIndex", "false"),
+    ("help", "true"),
+    ("hideCursorTime", "5000"),
+    ("hideInactiveCursor", "true"),
+    ("history", "false"),
+    ("keyboard", "true"),
+    ("loop", "false"),
+    ("mobileViewDistance", "2"),
+    ("mouseWheel", "false"),
+    ("navigationMode", "default"),
+    ("overview", "true"),
+    ("pause", "true"),
+    ("preloadIframes", "null"),
+    ("previewLinks", "false"),
+    ("progress", "true"),
+    ("respondToHashChanges", "true"),
+    ("rtl", "false"),
+    ("scrollActivationWidth", "0"),
+    ("scrollLayout", "full"),
+    ("scrollSnap", "mandatory"),
+    ("showNotes", "false"),
+    ("showSlideNumber", "all"),
+    ("shuffle", "false"),
+    ("slideNumber", "false"),
+    ("touch", "true"),
+    ("transition", "slide"),
+    ("transitionSpeed", "default"),
+    ("viewDistance", "3"),
+];
 
 /// The text that the reference (Pandoc 3.13) writes after the KaTeX script
 /// element for `--katex`, observed in its output (480 bytes). Whether a

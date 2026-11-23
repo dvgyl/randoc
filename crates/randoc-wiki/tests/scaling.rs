@@ -47,3 +47,31 @@ fn unmatched_delimiter_scan_scales_with_input_size() {
         );
     }
 }
+
+#[test]
+fn additional_readers_scan_unmatched_delimiters_once() {
+    for (format, unit) in [
+        ("tikiwiki", "((open "),
+        ("twiki", "%MACRO{open "),
+        ("twiki", "._x_"),
+        ("twiki", "-_x_"),
+        ("twiki", "+_x_"),
+        ("twiki", "@_x_"),
+        ("vimwiki", "{{$\n"),
+    ] {
+        let small = unit.repeat(2_000);
+        let large = unit.repeat(8_000);
+        let reference = (0..3)
+            .map(|_| elapsed(format, &small))
+            .min()
+            .unwrap_or_default();
+        let test = (0..3)
+            .map(|_| elapsed(format, &large))
+            .min()
+            .unwrap_or_default();
+        assert!(
+            test < reference * 9 + Duration::from_millis(150),
+            "{format} {unit:?}: {reference:?} and {test:?}"
+        );
+    }
+}

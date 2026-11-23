@@ -1,7 +1,7 @@
 # The oracle matrix of pandoc.read and pandoc.write.
 # `tools/convert-matrix.py` writes this file. Do not edit it.
-# readers: biblatex bibtex bits commonmark commonmark_x creole csljson docbook docx dokuwiki epub fb2 fodt gfm html jats jira json latex man markdown markdown_github markdown_mmd markdown_phpextra markdown_strict mdoc mediawiki native odt org ris rst rtf typst
-# writers: beamer biblatex bibtex commonmark commonmark_x csljson docbook docbook4 docbook5 docx dokuwiki epub epub2 epub3 fb2 fodt gfm html html4 html5 jats jats_archiving jats_articleauthoring jats_publishing jira json latex man markdown markdown_github markdown_mmd markdown_phpextra markdown_strict markua mediawiki ms native odt opendocument org plain rst rtf tei typst
+# readers: asciidoc biblatex bibtex bits commonmark commonmark_x creole csljson csv djot docbook docx dokuwiki endnotexml epub fb2 fodt gfm html ipynb jats jira json latex man markdown markdown_github markdown_mmd markdown_phpextra markdown_strict mdoc mediawiki native odt org pod ris rst rtf tikiwiki tsv twiki typst vimwiki
+# writers: asciidoc asciidoc_legacy asciidoctor beamer biblatex bibtex commonmark commonmark_x csljson djot docbook docbook4 docbook5 docx dokuwiki dzslides epub epub2 epub3 fb2 fodt gfm html html4 html5 ipynb jats jats_archiving jats_articleauthoring jats_publishing jira json latex man markdown markdown_github markdown_mmd markdown_phpextra markdown_strict markua mediawiki ms native odt opendocument org plain revealjs rst rtf s5 slideous slidy tei typst xwiki zimwiki
 # known I-LUA-30 convert-final-newline end of commonmark
 # known I-LUA-30 convert-final-newline end of commonmark_x
 # known I-LUA-30 convert-final-newline end of gfm
@@ -12,6 +12,15 @@
 # known I-LUA-30 convert-final-newline end of markdown_strict
 # known I-LUA-30 convert-final-newline end of markua
 # known I-LUA-30 convert-final-newline end of plain
+# known I-LUA-30 convert-final-newline end of asciidoc
+# known I-LUA-30 convert-final-newline end of asciidoctor
+# known I-LUA-30 convert-final-newline end of asciidoc_legacy
+# known I-LUA-30 convert-final-newline end of dzslides
+# known I-LUA-30 convert-final-newline end of s5
+# known I-LUA-30 convert-final-newline end of slideous
+# known I-LUA-30 convert-final-newline end of slidy
+# known I-DJOT-01 convert-read-djot read djot+sourcepos
+# known I-DJOT-01 convert-read-djot read djot+sourcepos block quote
 # known I-LUA-30 convert-arguments write default format
 # known I-LUA-30 convert-arguments write spec table markdown list
 # known I-LUA-31 convert-read-markdown read markdown {tab_stop = 2}
@@ -91,6 +100,72 @@
 {"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[]}
 @@@ doc small
 {"pandoc-api-version":[1,23,1,2],"meta":{"title":{"t":"MetaInlines","c":[{"t":"Str","c":"Probe"}]}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"one"}]}]}
+@@@ filter convert-read-asciidoc empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('read asciidoc', function() return P.read('== Head\010\010Some _emphasis_ and *strong*.\010\010* Item\010', 'asciidoc') end)
+  probe('read asciidoc-auto_identifiers', function() return P.read('== Head\010\010Some _emphasis_ and *strong*.\010\010* Item\010', 'asciidoc-auto_identifiers') end)
+  probe('read asciidoc+ascii_identifiers', function() return P.read('== Head\010\010Some _emphasis_ and *strong*.\010\010* Item\010', 'asciidoc+ascii_identifiers') end)
+  probe('read asciidoc {columns = 20}', function() return P.read('== Head\010\010Some _emphasis_ and *strong*.\010\010* Item\010', 'asciidoc', {columns = 20}) end)
+  probe('read asciidoc {tab_stop = 2}', function() return P.read('== Head\010\010Some _emphasis_ and *strong*.\010\010* Item\010', 'asciidoc', {tab_stop = 2}) end)
+  probe('read asciidoc {tab_stop = 8}', function() return P.read('== Head\010\010Some _emphasis_ and *strong*.\010\010* Item\010', 'asciidoc', {tab_stop = 8}) end)
+  probe('read asciidoc {indented_code_classes = {\039lua\039, \039x\039}}', function() return P.read('== Head\010\010Some _emphasis_ and *strong*.\010\010* Item\010', 'asciidoc', {indented_code_classes = {'lua', 'x'}}) end)
+  probe('read asciidoc {default_image_extension = \039png\039}', function() return P.read('== Head\010\010Some _emphasis_ and *strong*.\010\010* Item\010', 'asciidoc', {default_image_extension = 'png'}) end)
+  probe('read asciidoc {strip_comments = true}', function() return P.read('== Head\010\010Some _emphasis_ and *strong*.\010\010* Item\010', 'asciidoc', {strip_comments = true}) end)
+  probe('read asciidoc {standalone = true}', function() return P.read('== Head\010\010Some _emphasis_ and *strong*.\010\010* Item\010', 'asciidoc', {standalone = true}) end)
+  probe('read asciidoc {abbreviations = {[\039Mr.\039] = true}}', function() return P.read('== Head\010\010Some _emphasis_ and *strong*.\010\010* Item\010', 'asciidoc', {abbreviations = {['Mr.'] = true}}) end)
+  probe('read asciidoc {abbreviations = {}}', function() return P.read('== Head\010\010Some _emphasis_ and *strong*.\010\010* Item\010', 'asciidoc', {abbreviations = {}}) end)
+  probe('read asciidoc {track_changes = \039all-changes\039}', function() return P.read('== Head\010\010Some _emphasis_ and *strong*.\010\010* Item\010', 'asciidoc', {track_changes = 'all-changes'}) end)
+  probe('read asciidoc PANDOC_READER_OPTIONS', function() return P.read('== Head\010\010Some _emphasis_ and *strong*.\010\010* Item\010', 'asciidoc', PANDOC_READER_OPTIONS) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
 @@@ filter convert-read-biblatex empty small
 
 local P = pandoc
@@ -547,6 +622,138 @@ function Pandoc(document)
   return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
 end
 
+@@@ filter convert-read-csv empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('read csv', function() return P.read('name,value\010"sample, quoted",3\010', 'csv') end)
+  probe('read csv+east_asian_line_breaks', function() return P.read('name,value\010"sample, quoted",3\010', 'csv+east_asian_line_breaks') end)
+  probe('read csv {columns = 20}', function() return P.read('name,value\010"sample, quoted",3\010', 'csv', {columns = 20}) end)
+  probe('read csv {tab_stop = 2}', function() return P.read('name,value\010"sample, quoted",3\010', 'csv', {tab_stop = 2}) end)
+  probe('read csv {tab_stop = 8}', function() return P.read('name,value\010"sample, quoted",3\010', 'csv', {tab_stop = 8}) end)
+  probe('read csv {indented_code_classes = {\039lua\039, \039x\039}}', function() return P.read('name,value\010"sample, quoted",3\010', 'csv', {indented_code_classes = {'lua', 'x'}}) end)
+  probe('read csv {default_image_extension = \039png\039}', function() return P.read('name,value\010"sample, quoted",3\010', 'csv', {default_image_extension = 'png'}) end)
+  probe('read csv {strip_comments = true}', function() return P.read('name,value\010"sample, quoted",3\010', 'csv', {strip_comments = true}) end)
+  probe('read csv {standalone = true}', function() return P.read('name,value\010"sample, quoted",3\010', 'csv', {standalone = true}) end)
+  probe('read csv {abbreviations = {[\039Mr.\039] = true}}', function() return P.read('name,value\010"sample, quoted",3\010', 'csv', {abbreviations = {['Mr.'] = true}}) end)
+  probe('read csv {abbreviations = {}}', function() return P.read('name,value\010"sample, quoted",3\010', 'csv', {abbreviations = {}}) end)
+  probe('read csv {track_changes = \039all-changes\039}', function() return P.read('name,value\010"sample, quoted",3\010', 'csv', {track_changes = 'all-changes'}) end)
+  probe('read csv PANDOC_READER_OPTIONS', function() return P.read('name,value\010"sample, quoted",3\010', 'csv', PANDOC_READER_OPTIONS) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter convert-read-djot empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('read djot', function() return P.read('# Head\010\010Some _emphasis_ and *strong*.\010\010- Item\010', 'djot') end)
+  probe('read djot+sourcepos', function() return P.read('# Head\010\010Some _emphasis_ and *strong*.\010\010- Item\010', 'djot+sourcepos') end)
+  probe('read djot+east_asian_line_breaks', function() return P.read('# Head\010\010Some _emphasis_ and *strong*.\010\010- Item\010', 'djot+east_asian_line_breaks') end)
+  probe('read djot {columns = 20}', function() return P.read('# Head\010\010Some _emphasis_ and *strong*.\010\010- Item\010', 'djot', {columns = 20}) end)
+  probe('read djot {tab_stop = 2}', function() return P.read('# Head\010\010Some _emphasis_ and *strong*.\010\010- Item\010', 'djot', {tab_stop = 2}) end)
+  probe('read djot {tab_stop = 8}', function() return P.read('# Head\010\010Some _emphasis_ and *strong*.\010\010- Item\010', 'djot', {tab_stop = 8}) end)
+  probe('read djot {indented_code_classes = {\039lua\039, \039x\039}}', function() return P.read('# Head\010\010Some _emphasis_ and *strong*.\010\010- Item\010', 'djot', {indented_code_classes = {'lua', 'x'}}) end)
+  probe('read djot {default_image_extension = \039png\039}', function() return P.read('# Head\010\010Some _emphasis_ and *strong*.\010\010- Item\010', 'djot', {default_image_extension = 'png'}) end)
+  probe('read djot {strip_comments = true}', function() return P.read('# Head\010\010Some _emphasis_ and *strong*.\010\010- Item\010', 'djot', {strip_comments = true}) end)
+  probe('read djot {standalone = true}', function() return P.read('# Head\010\010Some _emphasis_ and *strong*.\010\010- Item\010', 'djot', {standalone = true}) end)
+  probe('read djot {abbreviations = {[\039Mr.\039] = true}}', function() return P.read('# Head\010\010Some _emphasis_ and *strong*.\010\010- Item\010', 'djot', {abbreviations = {['Mr.'] = true}}) end)
+  probe('read djot {abbreviations = {}}', function() return P.read('# Head\010\010Some _emphasis_ and *strong*.\010\010- Item\010', 'djot', {abbreviations = {}}) end)
+  probe('read djot {track_changes = \039all-changes\039}', function() return P.read('# Head\010\010Some _emphasis_ and *strong*.\010\010- Item\010', 'djot', {track_changes = 'all-changes'}) end)
+  probe('read djot PANDOC_READER_OPTIONS', function() return P.read('# Head\010\010Some _emphasis_ and *strong*.\010\010- Item\010', 'djot', PANDOC_READER_OPTIONS) end)
+  probe('read djot+sourcepos block quote', function() return P.read('> A\n> B\n', 'djot+sourcepos') end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
 @@@ filter convert-read-docbook empty small
 
 local P = pandoc
@@ -737,6 +944,71 @@ local function run(document)
   probe('read dokuwiki {abbreviations = {}}', function() return P.read('====== Head ======\010\010Some //emph// and **strong**.\010\010  * item\010', 'dokuwiki', {abbreviations = {}}) end)
   probe('read dokuwiki {track_changes = \039all-changes\039}', function() return P.read('====== Head ======\010\010Some //emph// and **strong**.\010\010  * item\010', 'dokuwiki', {track_changes = 'all-changes'}) end)
   probe('read dokuwiki PANDOC_READER_OPTIONS', function() return P.read('====== Head ======\010\010Some //emph// and **strong**.\010\010  * item\010', 'dokuwiki', PANDOC_READER_OPTIONS) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter convert-read-endnotexml empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('read endnotexml', function() return P.read('<xml><records><record><ref-type name="Book">6</ref-type><titles><title>The title</title></titles><dates><year>2020</year></dates></record></records></xml>', 'endnotexml') end)
+  probe('read endnotexml+east_asian_line_breaks', function() return P.read('<xml><records><record><ref-type name="Book">6</ref-type><titles><title>The title</title></titles><dates><year>2020</year></dates></record></records></xml>', 'endnotexml+east_asian_line_breaks') end)
+  probe('read endnotexml {columns = 20}', function() return P.read('<xml><records><record><ref-type name="Book">6</ref-type><titles><title>The title</title></titles><dates><year>2020</year></dates></record></records></xml>', 'endnotexml', {columns = 20}) end)
+  probe('read endnotexml {tab_stop = 2}', function() return P.read('<xml><records><record><ref-type name="Book">6</ref-type><titles><title>The title</title></titles><dates><year>2020</year></dates></record></records></xml>', 'endnotexml', {tab_stop = 2}) end)
+  probe('read endnotexml {tab_stop = 8}', function() return P.read('<xml><records><record><ref-type name="Book">6</ref-type><titles><title>The title</title></titles><dates><year>2020</year></dates></record></records></xml>', 'endnotexml', {tab_stop = 8}) end)
+  probe('read endnotexml {indented_code_classes = {\039lua\039, \039x\039}}', function() return P.read('<xml><records><record><ref-type name="Book">6</ref-type><titles><title>The title</title></titles><dates><year>2020</year></dates></record></records></xml>', 'endnotexml', {indented_code_classes = {'lua', 'x'}}) end)
+  probe('read endnotexml {default_image_extension = \039png\039}', function() return P.read('<xml><records><record><ref-type name="Book">6</ref-type><titles><title>The title</title></titles><dates><year>2020</year></dates></record></records></xml>', 'endnotexml', {default_image_extension = 'png'}) end)
+  probe('read endnotexml {strip_comments = true}', function() return P.read('<xml><records><record><ref-type name="Book">6</ref-type><titles><title>The title</title></titles><dates><year>2020</year></dates></record></records></xml>', 'endnotexml', {strip_comments = true}) end)
+  probe('read endnotexml {standalone = true}', function() return P.read('<xml><records><record><ref-type name="Book">6</ref-type><titles><title>The title</title></titles><dates><year>2020</year></dates></record></records></xml>', 'endnotexml', {standalone = true}) end)
+  probe('read endnotexml {abbreviations = {[\039Mr.\039] = true}}', function() return P.read('<xml><records><record><ref-type name="Book">6</ref-type><titles><title>The title</title></titles><dates><year>2020</year></dates></record></records></xml>', 'endnotexml', {abbreviations = {['Mr.'] = true}}) end)
+  probe('read endnotexml {abbreviations = {}}', function() return P.read('<xml><records><record><ref-type name="Book">6</ref-type><titles><title>The title</title></titles><dates><year>2020</year></dates></record></records></xml>', 'endnotexml', {abbreviations = {}}) end)
+  probe('read endnotexml {track_changes = \039all-changes\039}', function() return P.read('<xml><records><record><ref-type name="Book">6</ref-type><titles><title>The title</title></titles><dates><year>2020</year></dates></record></records></xml>', 'endnotexml', {track_changes = 'all-changes'}) end)
+  probe('read endnotexml PANDOC_READER_OPTIONS', function() return P.read('<xml><records><record><ref-type name="Book">6</ref-type><titles><title>The title</title></titles><dates><year>2020</year></dates></record></records></xml>', 'endnotexml', PANDOC_READER_OPTIONS) end)
 end
 
 function Pandoc(document)
@@ -1068,6 +1340,72 @@ local function run(document)
   probe('read html {abbreviations = {}}', function() return P.read('<h1 id="x">Head</h1><p>Some <em>emph</em> &amp; "q" -- d</p><!-- c --><div class="c">in <span>div</span></div><table><tr><td>1</td></tr></table>', 'html', {abbreviations = {}}) end)
   probe('read html {track_changes = \039all-changes\039}', function() return P.read('<h1 id="x">Head</h1><p>Some <em>emph</em> &amp; "q" -- d</p><!-- c --><div class="c">in <span>div</span></div><table><tr><td>1</td></tr></table>', 'html', {track_changes = 'all-changes'}) end)
   probe('read html PANDOC_READER_OPTIONS', function() return P.read('<h1 id="x">Head</h1><p>Some <em>emph</em> &amp; "q" -- d</p><!-- c --><div class="c">in <span>div</span></div><table><tr><td>1</td></tr></table>', 'html', PANDOC_READER_OPTIONS) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter convert-read-ipynb empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('read ipynb', function() return P.read('{"nbformat": 4, "nbformat_minor": 5, "metadata": {"language_info": {"name": "python"}}, "cells": [{"id": "intro", "cell_type": "markdown", "metadata": {}, "source": ["# Head\092n", "\092n", "Some *emphasis* and $x^2$."]}, {"id": "code", "cell_type": "code", "metadata": {}, "source": "print(3)", "execution_count": 1, "outputs": [{"output_type": "stream", "name": "stdout", "text": "3\092n"}]}]}', 'ipynb') end)
+  probe('read ipynb+smart', function() return P.read('{"nbformat": 4, "nbformat_minor": 5, "metadata": {"language_info": {"name": "python"}}, "cells": [{"id": "intro", "cell_type": "markdown", "metadata": {}, "source": ["# Head\092n", "\092n", "Some *emphasis* and $x^2$."]}, {"id": "code", "cell_type": "code", "metadata": {}, "source": "print(3)", "execution_count": 1, "outputs": [{"output_type": "stream", "name": "stdout", "text": "3\092n"}]}]}', 'ipynb+smart') end)
+  probe('read ipynb-tex_math_dollars', function() return P.read('{"nbformat": 4, "nbformat_minor": 5, "metadata": {"language_info": {"name": "python"}}, "cells": [{"id": "intro", "cell_type": "markdown", "metadata": {}, "source": ["# Head\092n", "\092n", "Some *emphasis* and $x^2$."]}, {"id": "code", "cell_type": "code", "metadata": {}, "source": "print(3)", "execution_count": 1, "outputs": [{"output_type": "stream", "name": "stdout", "text": "3\092n"}]}]}', 'ipynb-tex_math_dollars') end)
+  probe('read ipynb {columns = 20}', function() return P.read('{"nbformat": 4, "nbformat_minor": 5, "metadata": {"language_info": {"name": "python"}}, "cells": [{"id": "intro", "cell_type": "markdown", "metadata": {}, "source": ["# Head\092n", "\092n", "Some *emphasis* and $x^2$."]}, {"id": "code", "cell_type": "code", "metadata": {}, "source": "print(3)", "execution_count": 1, "outputs": [{"output_type": "stream", "name": "stdout", "text": "3\092n"}]}]}', 'ipynb', {columns = 20}) end)
+  probe('read ipynb {tab_stop = 2}', function() return P.read('{"nbformat": 4, "nbformat_minor": 5, "metadata": {"language_info": {"name": "python"}}, "cells": [{"id": "intro", "cell_type": "markdown", "metadata": {}, "source": ["# Head\092n", "\092n", "Some *emphasis* and $x^2$."]}, {"id": "code", "cell_type": "code", "metadata": {}, "source": "print(3)", "execution_count": 1, "outputs": [{"output_type": "stream", "name": "stdout", "text": "3\092n"}]}]}', 'ipynb', {tab_stop = 2}) end)
+  probe('read ipynb {tab_stop = 8}', function() return P.read('{"nbformat": 4, "nbformat_minor": 5, "metadata": {"language_info": {"name": "python"}}, "cells": [{"id": "intro", "cell_type": "markdown", "metadata": {}, "source": ["# Head\092n", "\092n", "Some *emphasis* and $x^2$."]}, {"id": "code", "cell_type": "code", "metadata": {}, "source": "print(3)", "execution_count": 1, "outputs": [{"output_type": "stream", "name": "stdout", "text": "3\092n"}]}]}', 'ipynb', {tab_stop = 8}) end)
+  probe('read ipynb {indented_code_classes = {\039lua\039, \039x\039}}', function() return P.read('{"nbformat": 4, "nbformat_minor": 5, "metadata": {"language_info": {"name": "python"}}, "cells": [{"id": "intro", "cell_type": "markdown", "metadata": {}, "source": ["# Head\092n", "\092n", "Some *emphasis* and $x^2$."]}, {"id": "code", "cell_type": "code", "metadata": {}, "source": "print(3)", "execution_count": 1, "outputs": [{"output_type": "stream", "name": "stdout", "text": "3\092n"}]}]}', 'ipynb', {indented_code_classes = {'lua', 'x'}}) end)
+  probe('read ipynb {default_image_extension = \039png\039}', function() return P.read('{"nbformat": 4, "nbformat_minor": 5, "metadata": {"language_info": {"name": "python"}}, "cells": [{"id": "intro", "cell_type": "markdown", "metadata": {}, "source": ["# Head\092n", "\092n", "Some *emphasis* and $x^2$."]}, {"id": "code", "cell_type": "code", "metadata": {}, "source": "print(3)", "execution_count": 1, "outputs": [{"output_type": "stream", "name": "stdout", "text": "3\092n"}]}]}', 'ipynb', {default_image_extension = 'png'}) end)
+  probe('read ipynb {strip_comments = true}', function() return P.read('{"nbformat": 4, "nbformat_minor": 5, "metadata": {"language_info": {"name": "python"}}, "cells": [{"id": "intro", "cell_type": "markdown", "metadata": {}, "source": ["# Head\092n", "\092n", "Some *emphasis* and $x^2$."]}, {"id": "code", "cell_type": "code", "metadata": {}, "source": "print(3)", "execution_count": 1, "outputs": [{"output_type": "stream", "name": "stdout", "text": "3\092n"}]}]}', 'ipynb', {strip_comments = true}) end)
+  probe('read ipynb {standalone = true}', function() return P.read('{"nbformat": 4, "nbformat_minor": 5, "metadata": {"language_info": {"name": "python"}}, "cells": [{"id": "intro", "cell_type": "markdown", "metadata": {}, "source": ["# Head\092n", "\092n", "Some *emphasis* and $x^2$."]}, {"id": "code", "cell_type": "code", "metadata": {}, "source": "print(3)", "execution_count": 1, "outputs": [{"output_type": "stream", "name": "stdout", "text": "3\092n"}]}]}', 'ipynb', {standalone = true}) end)
+  probe('read ipynb {abbreviations = {[\039Mr.\039] = true}}', function() return P.read('{"nbformat": 4, "nbformat_minor": 5, "metadata": {"language_info": {"name": "python"}}, "cells": [{"id": "intro", "cell_type": "markdown", "metadata": {}, "source": ["# Head\092n", "\092n", "Some *emphasis* and $x^2$."]}, {"id": "code", "cell_type": "code", "metadata": {}, "source": "print(3)", "execution_count": 1, "outputs": [{"output_type": "stream", "name": "stdout", "text": "3\092n"}]}]}', 'ipynb', {abbreviations = {['Mr.'] = true}}) end)
+  probe('read ipynb {abbreviations = {}}', function() return P.read('{"nbformat": 4, "nbformat_minor": 5, "metadata": {"language_info": {"name": "python"}}, "cells": [{"id": "intro", "cell_type": "markdown", "metadata": {}, "source": ["# Head\092n", "\092n", "Some *emphasis* and $x^2$."]}, {"id": "code", "cell_type": "code", "metadata": {}, "source": "print(3)", "execution_count": 1, "outputs": [{"output_type": "stream", "name": "stdout", "text": "3\092n"}]}]}', 'ipynb', {abbreviations = {}}) end)
+  probe('read ipynb {track_changes = \039all-changes\039}', function() return P.read('{"nbformat": 4, "nbformat_minor": 5, "metadata": {"language_info": {"name": "python"}}, "cells": [{"id": "intro", "cell_type": "markdown", "metadata": {}, "source": ["# Head\092n", "\092n", "Some *emphasis* and $x^2$."]}, {"id": "code", "cell_type": "code", "metadata": {}, "source": "print(3)", "execution_count": 1, "outputs": [{"output_type": "stream", "name": "stdout", "text": "3\092n"}]}]}', 'ipynb', {track_changes = 'all-changes'}) end)
+  probe('read ipynb PANDOC_READER_OPTIONS', function() return P.read('{"nbformat": 4, "nbformat_minor": 5, "metadata": {"language_info": {"name": "python"}}, "cells": [{"id": "intro", "cell_type": "markdown", "metadata": {}, "source": ["# Head\092n", "\092n", "Some *emphasis* and $x^2$."]}, {"id": "code", "cell_type": "code", "metadata": {}, "source": "print(3)", "execution_count": 1, "outputs": [{"output_type": "stream", "name": "stdout", "text": "3\092n"}]}]}', 'ipynb', PANDOC_READER_OPTIONS) end)
 end
 
 function Pandoc(document)
@@ -2065,6 +2403,71 @@ function Pandoc(document)
   return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
 end
 
+@@@ filter convert-read-pod empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('read pod', function() return P.read('=head1 Head\010\010Some I<emphasis> and C<code>.\010\010=cut\010', 'pod') end)
+  probe('read pod+east_asian_line_breaks', function() return P.read('=head1 Head\010\010Some I<emphasis> and C<code>.\010\010=cut\010', 'pod+east_asian_line_breaks') end)
+  probe('read pod {columns = 20}', function() return P.read('=head1 Head\010\010Some I<emphasis> and C<code>.\010\010=cut\010', 'pod', {columns = 20}) end)
+  probe('read pod {tab_stop = 2}', function() return P.read('=head1 Head\010\010Some I<emphasis> and C<code>.\010\010=cut\010', 'pod', {tab_stop = 2}) end)
+  probe('read pod {tab_stop = 8}', function() return P.read('=head1 Head\010\010Some I<emphasis> and C<code>.\010\010=cut\010', 'pod', {tab_stop = 8}) end)
+  probe('read pod {indented_code_classes = {\039lua\039, \039x\039}}', function() return P.read('=head1 Head\010\010Some I<emphasis> and C<code>.\010\010=cut\010', 'pod', {indented_code_classes = {'lua', 'x'}}) end)
+  probe('read pod {default_image_extension = \039png\039}', function() return P.read('=head1 Head\010\010Some I<emphasis> and C<code>.\010\010=cut\010', 'pod', {default_image_extension = 'png'}) end)
+  probe('read pod {strip_comments = true}', function() return P.read('=head1 Head\010\010Some I<emphasis> and C<code>.\010\010=cut\010', 'pod', {strip_comments = true}) end)
+  probe('read pod {standalone = true}', function() return P.read('=head1 Head\010\010Some I<emphasis> and C<code>.\010\010=cut\010', 'pod', {standalone = true}) end)
+  probe('read pod {abbreviations = {[\039Mr.\039] = true}}', function() return P.read('=head1 Head\010\010Some I<emphasis> and C<code>.\010\010=cut\010', 'pod', {abbreviations = {['Mr.'] = true}}) end)
+  probe('read pod {abbreviations = {}}', function() return P.read('=head1 Head\010\010Some I<emphasis> and C<code>.\010\010=cut\010', 'pod', {abbreviations = {}}) end)
+  probe('read pod {track_changes = \039all-changes\039}', function() return P.read('=head1 Head\010\010Some I<emphasis> and C<code>.\010\010=cut\010', 'pod', {track_changes = 'all-changes'}) end)
+  probe('read pod PANDOC_READER_OPTIONS', function() return P.read('=head1 Head\010\010Some I<emphasis> and C<code>.\010\010=cut\010', 'pod', PANDOC_READER_OPTIONS) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
 @@@ filter convert-read-ris empty small
 
 local P = pandoc
@@ -2261,6 +2664,202 @@ function Pandoc(document)
   return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
 end
 
+@@@ filter convert-read-tikiwiki empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('read tikiwiki', function() return P.read('!Head\010\010Some \039\039emphasis\039\039 and __strong__.\010\010* Item\010', 'tikiwiki') end)
+  probe('read tikiwiki-auto_identifiers', function() return P.read('!Head\010\010Some \039\039emphasis\039\039 and __strong__.\010\010* Item\010', 'tikiwiki-auto_identifiers') end)
+  probe('read tikiwiki {columns = 20}', function() return P.read('!Head\010\010Some \039\039emphasis\039\039 and __strong__.\010\010* Item\010', 'tikiwiki', {columns = 20}) end)
+  probe('read tikiwiki {tab_stop = 2}', function() return P.read('!Head\010\010Some \039\039emphasis\039\039 and __strong__.\010\010* Item\010', 'tikiwiki', {tab_stop = 2}) end)
+  probe('read tikiwiki {tab_stop = 8}', function() return P.read('!Head\010\010Some \039\039emphasis\039\039 and __strong__.\010\010* Item\010', 'tikiwiki', {tab_stop = 8}) end)
+  probe('read tikiwiki {indented_code_classes = {\039lua\039, \039x\039}}', function() return P.read('!Head\010\010Some \039\039emphasis\039\039 and __strong__.\010\010* Item\010', 'tikiwiki', {indented_code_classes = {'lua', 'x'}}) end)
+  probe('read tikiwiki {default_image_extension = \039png\039}', function() return P.read('!Head\010\010Some \039\039emphasis\039\039 and __strong__.\010\010* Item\010', 'tikiwiki', {default_image_extension = 'png'}) end)
+  probe('read tikiwiki {strip_comments = true}', function() return P.read('!Head\010\010Some \039\039emphasis\039\039 and __strong__.\010\010* Item\010', 'tikiwiki', {strip_comments = true}) end)
+  probe('read tikiwiki {standalone = true}', function() return P.read('!Head\010\010Some \039\039emphasis\039\039 and __strong__.\010\010* Item\010', 'tikiwiki', {standalone = true}) end)
+  probe('read tikiwiki {abbreviations = {[\039Mr.\039] = true}}', function() return P.read('!Head\010\010Some \039\039emphasis\039\039 and __strong__.\010\010* Item\010', 'tikiwiki', {abbreviations = {['Mr.'] = true}}) end)
+  probe('read tikiwiki {abbreviations = {}}', function() return P.read('!Head\010\010Some \039\039emphasis\039\039 and __strong__.\010\010* Item\010', 'tikiwiki', {abbreviations = {}}) end)
+  probe('read tikiwiki {track_changes = \039all-changes\039}', function() return P.read('!Head\010\010Some \039\039emphasis\039\039 and __strong__.\010\010* Item\010', 'tikiwiki', {track_changes = 'all-changes'}) end)
+  probe('read tikiwiki PANDOC_READER_OPTIONS', function() return P.read('!Head\010\010Some \039\039emphasis\039\039 and __strong__.\010\010* Item\010', 'tikiwiki', PANDOC_READER_OPTIONS) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter convert-read-tsv empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('read tsv', function() return P.read('name\009value\010"sample"\0093\010', 'tsv') end)
+  probe('read tsv+east_asian_line_breaks', function() return P.read('name\009value\010"sample"\0093\010', 'tsv+east_asian_line_breaks') end)
+  probe('read tsv {columns = 20}', function() return P.read('name\009value\010"sample"\0093\010', 'tsv', {columns = 20}) end)
+  probe('read tsv {tab_stop = 2}', function() return P.read('name\009value\010"sample"\0093\010', 'tsv', {tab_stop = 2}) end)
+  probe('read tsv {tab_stop = 8}', function() return P.read('name\009value\010"sample"\0093\010', 'tsv', {tab_stop = 8}) end)
+  probe('read tsv {indented_code_classes = {\039lua\039, \039x\039}}', function() return P.read('name\009value\010"sample"\0093\010', 'tsv', {indented_code_classes = {'lua', 'x'}}) end)
+  probe('read tsv {default_image_extension = \039png\039}', function() return P.read('name\009value\010"sample"\0093\010', 'tsv', {default_image_extension = 'png'}) end)
+  probe('read tsv {strip_comments = true}', function() return P.read('name\009value\010"sample"\0093\010', 'tsv', {strip_comments = true}) end)
+  probe('read tsv {standalone = true}', function() return P.read('name\009value\010"sample"\0093\010', 'tsv', {standalone = true}) end)
+  probe('read tsv {abbreviations = {[\039Mr.\039] = true}}', function() return P.read('name\009value\010"sample"\0093\010', 'tsv', {abbreviations = {['Mr.'] = true}}) end)
+  probe('read tsv {abbreviations = {}}', function() return P.read('name\009value\010"sample"\0093\010', 'tsv', {abbreviations = {}}) end)
+  probe('read tsv {track_changes = \039all-changes\039}', function() return P.read('name\009value\010"sample"\0093\010', 'tsv', {track_changes = 'all-changes'}) end)
+  probe('read tsv PANDOC_READER_OPTIONS', function() return P.read('name\009value\010"sample"\0093\010', 'tsv', PANDOC_READER_OPTIONS) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter convert-read-twiki empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('read twiki', function() return P.read('---+ Head\010\010Some _emphasis_ and *strong*.\010\010   * Item\010', 'twiki') end)
+  probe('read twiki-auto_identifiers', function() return P.read('---+ Head\010\010Some _emphasis_ and *strong*.\010\010   * Item\010', 'twiki-auto_identifiers') end)
+  probe('read twiki+smart', function() return P.read('---+ Head\010\010Some _emphasis_ and *strong*.\010\010   * Item\010', 'twiki+smart') end)
+  probe('read twiki {columns = 20}', function() return P.read('---+ Head\010\010Some _emphasis_ and *strong*.\010\010   * Item\010', 'twiki', {columns = 20}) end)
+  probe('read twiki {tab_stop = 2}', function() return P.read('---+ Head\010\010Some _emphasis_ and *strong*.\010\010   * Item\010', 'twiki', {tab_stop = 2}) end)
+  probe('read twiki {tab_stop = 8}', function() return P.read('---+ Head\010\010Some _emphasis_ and *strong*.\010\010   * Item\010', 'twiki', {tab_stop = 8}) end)
+  probe('read twiki {indented_code_classes = {\039lua\039, \039x\039}}', function() return P.read('---+ Head\010\010Some _emphasis_ and *strong*.\010\010   * Item\010', 'twiki', {indented_code_classes = {'lua', 'x'}}) end)
+  probe('read twiki {default_image_extension = \039png\039}', function() return P.read('---+ Head\010\010Some _emphasis_ and *strong*.\010\010   * Item\010', 'twiki', {default_image_extension = 'png'}) end)
+  probe('read twiki {strip_comments = true}', function() return P.read('---+ Head\010\010Some _emphasis_ and *strong*.\010\010   * Item\010', 'twiki', {strip_comments = true}) end)
+  probe('read twiki {standalone = true}', function() return P.read('---+ Head\010\010Some _emphasis_ and *strong*.\010\010   * Item\010', 'twiki', {standalone = true}) end)
+  probe('read twiki {abbreviations = {[\039Mr.\039] = true}}', function() return P.read('---+ Head\010\010Some _emphasis_ and *strong*.\010\010   * Item\010', 'twiki', {abbreviations = {['Mr.'] = true}}) end)
+  probe('read twiki {abbreviations = {}}', function() return P.read('---+ Head\010\010Some _emphasis_ and *strong*.\010\010   * Item\010', 'twiki', {abbreviations = {}}) end)
+  probe('read twiki {track_changes = \039all-changes\039}', function() return P.read('---+ Head\010\010Some _emphasis_ and *strong*.\010\010   * Item\010', 'twiki', {track_changes = 'all-changes'}) end)
+  probe('read twiki PANDOC_READER_OPTIONS', function() return P.read('---+ Head\010\010Some _emphasis_ and *strong*.\010\010   * Item\010', 'twiki', PANDOC_READER_OPTIONS) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
 @@@ filter convert-read-typst empty small
 
 local P = pandoc
@@ -2320,6 +2919,296 @@ local function run(document)
   probe('read typst {abbreviations = {}}', function() return P.read('= Head\010\010Some _emphasis_, *strong text*, and $x^2$.\010\010- Item\010', 'typst', {abbreviations = {}}) end)
   probe('read typst {track_changes = \039all-changes\039}', function() return P.read('= Head\010\010Some _emphasis_, *strong text*, and $x^2$.\010\010- Item\010', 'typst', {track_changes = 'all-changes'}) end)
   probe('read typst PANDOC_READER_OPTIONS', function() return P.read('= Head\010\010Some _emphasis_, *strong text*, and $x^2$.\010\010- Item\010', 'typst', PANDOC_READER_OPTIONS) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter convert-read-vimwiki empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('read vimwiki', function() return P.read('= Head =\010\010Some _emphasis_ and *strong*.\010\010* Item\010', 'vimwiki') end)
+  probe('read vimwiki-auto_identifiers', function() return P.read('= Head =\010\010Some _emphasis_ and *strong*.\010\010* Item\010', 'vimwiki-auto_identifiers') end)
+  probe('read vimwiki {columns = 20}', function() return P.read('= Head =\010\010Some _emphasis_ and *strong*.\010\010* Item\010', 'vimwiki', {columns = 20}) end)
+  probe('read vimwiki {tab_stop = 2}', function() return P.read('= Head =\010\010Some _emphasis_ and *strong*.\010\010* Item\010', 'vimwiki', {tab_stop = 2}) end)
+  probe('read vimwiki {tab_stop = 8}', function() return P.read('= Head =\010\010Some _emphasis_ and *strong*.\010\010* Item\010', 'vimwiki', {tab_stop = 8}) end)
+  probe('read vimwiki {indented_code_classes = {\039lua\039, \039x\039}}', function() return P.read('= Head =\010\010Some _emphasis_ and *strong*.\010\010* Item\010', 'vimwiki', {indented_code_classes = {'lua', 'x'}}) end)
+  probe('read vimwiki {default_image_extension = \039png\039}', function() return P.read('= Head =\010\010Some _emphasis_ and *strong*.\010\010* Item\010', 'vimwiki', {default_image_extension = 'png'}) end)
+  probe('read vimwiki {strip_comments = true}', function() return P.read('= Head =\010\010Some _emphasis_ and *strong*.\010\010* Item\010', 'vimwiki', {strip_comments = true}) end)
+  probe('read vimwiki {standalone = true}', function() return P.read('= Head =\010\010Some _emphasis_ and *strong*.\010\010* Item\010', 'vimwiki', {standalone = true}) end)
+  probe('read vimwiki {abbreviations = {[\039Mr.\039] = true}}', function() return P.read('= Head =\010\010Some _emphasis_ and *strong*.\010\010* Item\010', 'vimwiki', {abbreviations = {['Mr.'] = true}}) end)
+  probe('read vimwiki {abbreviations = {}}', function() return P.read('= Head =\010\010Some _emphasis_ and *strong*.\010\010* Item\010', 'vimwiki', {abbreviations = {}}) end)
+  probe('read vimwiki {track_changes = \039all-changes\039}', function() return P.read('= Head =\010\010Some _emphasis_ and *strong*.\010\010* Item\010', 'vimwiki', {track_changes = 'all-changes'}) end)
+  probe('read vimwiki PANDOC_READER_OPTIONS', function() return P.read('= Head =\010\010Some _emphasis_ and *strong*.\010\010* Item\010', 'vimwiki', PANDOC_READER_OPTIONS) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter convert-write-asciidoc empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('write asciidoc', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc'):gsub('\n+$', '')) end)
+  probe('write asciidoc+east_asian_line_breaks', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc+east_asian_line_breaks'):gsub('\n+$', '')) end)
+  probe('write asciidoc {columns = 30}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc', {columns = 30}):gsub('\n+$', '')) end)
+  probe('write asciidoc {wrap_text = \039wrap-none\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc', {wrap_text = 'wrap-none'}):gsub('\n+$', '')) end)
+  probe('write asciidoc {wrap_text = \039wrap-preserve\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc', {wrap_text = 'wrap-preserve'}):gsub('\n+$', '')) end)
+  probe('write asciidoc {reference_links = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc', {reference_links = true}):gsub('\n+$', '')) end)
+  probe('write asciidoc {reference_location = \039end-of-section\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc', {reference_location = 'end-of-section'}):gsub('\n+$', '')) end)
+  probe('write asciidoc {setext_headers = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc', {setext_headers = true}):gsub('\n+$', '')) end)
+  probe('write asciidoc {number_sections = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc', {number_sections = true}):gsub('\n+$', '')) end)
+  probe('write asciidoc {section_divs = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc', {section_divs = true}):gsub('\n+$', '')) end)
+  probe('write asciidoc {identifier_prefix = \039p-\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc', {identifier_prefix = 'p-'}):gsub('\n+$', '')) end)
+  probe('write asciidoc {html_q_tags = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc', {html_q_tags = true}):gsub('\n+$', '')) end)
+  probe('write asciidoc {email_obfuscation = \039references\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc', {email_obfuscation = 'references'}):gsub('\n+$', '')) end)
+  probe('write asciidoc {top_level_division = \039top-level-chapter\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc', {top_level_division = 'top-level-chapter'}):gsub('\n+$', '')) end)
+  probe('write asciidoc {tab_stop = 2}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc', {tab_stop = 2}):gsub('\n+$', '')) end)
+  probe('write asciidoc {prefer_ascii = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc', {prefer_ascii = true}):gsub('\n+$', '')) end)
+  probe('write asciidoc {slide_level = 1}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc', {slide_level = 1}):gsub('\n+$', '')) end)
+  probe('write asciidoc {incremental = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc', {incremental = true}):gsub('\n+$', '')) end)
+  probe('write asciidoc {list_tables = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc', {list_tables = true}):gsub('\n+$', '')) end)
+  probe('write asciidoc {table_of_contents = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc', {table_of_contents = true}):gsub('\n+$', '')) end)
+  probe('write asciidoc {number_offset = {3, 1}}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc', {number_offset = {3, 1}}):gsub('\n+$', '')) end)
+  probe('write asciidoc {dpi = 300}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc', {dpi = 300}):gsub('\n+$', '')) end)
+  probe('write asciidoc PANDOC_WRITER_OPTIONS', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc', PANDOC_WRITER_OPTIONS):gsub('\n+$', '')) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter convert-write-asciidoc_legacy empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('write asciidoc_legacy', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc_legacy'):gsub('\n+$', '')) end)
+  probe('write asciidoc_legacy+east_asian_line_breaks', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc_legacy+east_asian_line_breaks'):gsub('\n+$', '')) end)
+  probe('write asciidoc_legacy {columns = 30}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc_legacy', {columns = 30}):gsub('\n+$', '')) end)
+  probe('write asciidoc_legacy {wrap_text = \039wrap-none\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc_legacy', {wrap_text = 'wrap-none'}):gsub('\n+$', '')) end)
+  probe('write asciidoc_legacy {wrap_text = \039wrap-preserve\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc_legacy', {wrap_text = 'wrap-preserve'}):gsub('\n+$', '')) end)
+  probe('write asciidoc_legacy {reference_links = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc_legacy', {reference_links = true}):gsub('\n+$', '')) end)
+  probe('write asciidoc_legacy {reference_location = \039end-of-section\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc_legacy', {reference_location = 'end-of-section'}):gsub('\n+$', '')) end)
+  probe('write asciidoc_legacy {setext_headers = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc_legacy', {setext_headers = true}):gsub('\n+$', '')) end)
+  probe('write asciidoc_legacy {number_sections = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc_legacy', {number_sections = true}):gsub('\n+$', '')) end)
+  probe('write asciidoc_legacy {section_divs = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc_legacy', {section_divs = true}):gsub('\n+$', '')) end)
+  probe('write asciidoc_legacy {identifier_prefix = \039p-\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc_legacy', {identifier_prefix = 'p-'}):gsub('\n+$', '')) end)
+  probe('write asciidoc_legacy {html_q_tags = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc_legacy', {html_q_tags = true}):gsub('\n+$', '')) end)
+  probe('write asciidoc_legacy {email_obfuscation = \039references\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc_legacy', {email_obfuscation = 'references'}):gsub('\n+$', '')) end)
+  probe('write asciidoc_legacy {top_level_division = \039top-level-chapter\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc_legacy', {top_level_division = 'top-level-chapter'}):gsub('\n+$', '')) end)
+  probe('write asciidoc_legacy {tab_stop = 2}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc_legacy', {tab_stop = 2}):gsub('\n+$', '')) end)
+  probe('write asciidoc_legacy {prefer_ascii = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc_legacy', {prefer_ascii = true}):gsub('\n+$', '')) end)
+  probe('write asciidoc_legacy {slide_level = 1}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc_legacy', {slide_level = 1}):gsub('\n+$', '')) end)
+  probe('write asciidoc_legacy {incremental = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc_legacy', {incremental = true}):gsub('\n+$', '')) end)
+  probe('write asciidoc_legacy {list_tables = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc_legacy', {list_tables = true}):gsub('\n+$', '')) end)
+  probe('write asciidoc_legacy {table_of_contents = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc_legacy', {table_of_contents = true}):gsub('\n+$', '')) end)
+  probe('write asciidoc_legacy {number_offset = {3, 1}}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc_legacy', {number_offset = {3, 1}}):gsub('\n+$', '')) end)
+  probe('write asciidoc_legacy {dpi = 300}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc_legacy', {dpi = 300}):gsub('\n+$', '')) end)
+  probe('write asciidoc_legacy PANDOC_WRITER_OPTIONS', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc_legacy', PANDOC_WRITER_OPTIONS):gsub('\n+$', '')) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter convert-write-asciidoctor empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('write asciidoctor', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoctor'):gsub('\n+$', '')) end)
+  probe('write asciidoctor+east_asian_line_breaks', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoctor+east_asian_line_breaks'):gsub('\n+$', '')) end)
+  probe('write asciidoctor {columns = 30}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoctor', {columns = 30}):gsub('\n+$', '')) end)
+  probe('write asciidoctor {wrap_text = \039wrap-none\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoctor', {wrap_text = 'wrap-none'}):gsub('\n+$', '')) end)
+  probe('write asciidoctor {wrap_text = \039wrap-preserve\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoctor', {wrap_text = 'wrap-preserve'}):gsub('\n+$', '')) end)
+  probe('write asciidoctor {reference_links = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoctor', {reference_links = true}):gsub('\n+$', '')) end)
+  probe('write asciidoctor {reference_location = \039end-of-section\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoctor', {reference_location = 'end-of-section'}):gsub('\n+$', '')) end)
+  probe('write asciidoctor {setext_headers = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoctor', {setext_headers = true}):gsub('\n+$', '')) end)
+  probe('write asciidoctor {number_sections = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoctor', {number_sections = true}):gsub('\n+$', '')) end)
+  probe('write asciidoctor {section_divs = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoctor', {section_divs = true}):gsub('\n+$', '')) end)
+  probe('write asciidoctor {identifier_prefix = \039p-\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoctor', {identifier_prefix = 'p-'}):gsub('\n+$', '')) end)
+  probe('write asciidoctor {html_q_tags = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoctor', {html_q_tags = true}):gsub('\n+$', '')) end)
+  probe('write asciidoctor {email_obfuscation = \039references\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoctor', {email_obfuscation = 'references'}):gsub('\n+$', '')) end)
+  probe('write asciidoctor {top_level_division = \039top-level-chapter\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoctor', {top_level_division = 'top-level-chapter'}):gsub('\n+$', '')) end)
+  probe('write asciidoctor {tab_stop = 2}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoctor', {tab_stop = 2}):gsub('\n+$', '')) end)
+  probe('write asciidoctor {prefer_ascii = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoctor', {prefer_ascii = true}):gsub('\n+$', '')) end)
+  probe('write asciidoctor {slide_level = 1}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoctor', {slide_level = 1}):gsub('\n+$', '')) end)
+  probe('write asciidoctor {incremental = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoctor', {incremental = true}):gsub('\n+$', '')) end)
+  probe('write asciidoctor {list_tables = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoctor', {list_tables = true}):gsub('\n+$', '')) end)
+  probe('write asciidoctor {table_of_contents = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoctor', {table_of_contents = true}):gsub('\n+$', '')) end)
+  probe('write asciidoctor {number_offset = {3, 1}}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoctor', {number_offset = {3, 1}}):gsub('\n+$', '')) end)
+  probe('write asciidoctor {dpi = 300}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoctor', {dpi = 300}):gsub('\n+$', '')) end)
+  probe('write asciidoctor PANDOC_WRITER_OPTIONS', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoctor', PANDOC_WRITER_OPTIONS):gsub('\n+$', '')) end)
 end
 
 function Pandoc(document)
@@ -2779,6 +3668,81 @@ function Pandoc(document)
   return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
 end
 
+@@@ filter convert-write-djot empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('write djot', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'djot'):gsub('\n+$', '')) end)
+  probe('write djot+east_asian_line_breaks', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'djot+east_asian_line_breaks'):gsub('\n+$', '')) end)
+  probe('write djot {columns = 30}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'djot', {columns = 30}):gsub('\n+$', '')) end)
+  probe('write djot {wrap_text = \039wrap-none\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'djot', {wrap_text = 'wrap-none'}):gsub('\n+$', '')) end)
+  probe('write djot {wrap_text = \039wrap-preserve\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'djot', {wrap_text = 'wrap-preserve'}):gsub('\n+$', '')) end)
+  probe('write djot {reference_links = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'djot', {reference_links = true}):gsub('\n+$', '')) end)
+  probe('write djot {reference_location = \039end-of-section\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'djot', {reference_location = 'end-of-section'}):gsub('\n+$', '')) end)
+  probe('write djot {setext_headers = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'djot', {setext_headers = true}):gsub('\n+$', '')) end)
+  probe('write djot {number_sections = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'djot', {number_sections = true}):gsub('\n+$', '')) end)
+  probe('write djot {section_divs = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'djot', {section_divs = true}):gsub('\n+$', '')) end)
+  probe('write djot {identifier_prefix = \039p-\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'djot', {identifier_prefix = 'p-'}):gsub('\n+$', '')) end)
+  probe('write djot {html_q_tags = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'djot', {html_q_tags = true}):gsub('\n+$', '')) end)
+  probe('write djot {email_obfuscation = \039references\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'djot', {email_obfuscation = 'references'}):gsub('\n+$', '')) end)
+  probe('write djot {top_level_division = \039top-level-chapter\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'djot', {top_level_division = 'top-level-chapter'}):gsub('\n+$', '')) end)
+  probe('write djot {tab_stop = 2}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'djot', {tab_stop = 2}):gsub('\n+$', '')) end)
+  probe('write djot {prefer_ascii = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'djot', {prefer_ascii = true}):gsub('\n+$', '')) end)
+  probe('write djot {slide_level = 1}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'djot', {slide_level = 1}):gsub('\n+$', '')) end)
+  probe('write djot {incremental = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'djot', {incremental = true}):gsub('\n+$', '')) end)
+  probe('write djot {list_tables = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'djot', {list_tables = true}):gsub('\n+$', '')) end)
+  probe('write djot {table_of_contents = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'djot', {table_of_contents = true}):gsub('\n+$', '')) end)
+  probe('write djot {number_offset = {3, 1}}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'djot', {number_offset = {3, 1}}):gsub('\n+$', '')) end)
+  probe('write djot {dpi = 300}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'djot', {dpi = 300}):gsub('\n+$', '')) end)
+  probe('write djot PANDOC_WRITER_OPTIONS', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'djot', PANDOC_WRITER_OPTIONS):gsub('\n+$', '')) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
 @@@ filter convert-write-docbook empty small
 
 local P = pandoc
@@ -3147,6 +4111,81 @@ local function run(document)
   probe('write dokuwiki {number_offset = {3, 1}}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'dokuwiki', {number_offset = {3, 1}}):gsub('\n+$', '')) end)
   probe('write dokuwiki {dpi = 300}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'dokuwiki', {dpi = 300}):gsub('\n+$', '')) end)
   probe('write dokuwiki PANDOC_WRITER_OPTIONS', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}}, {title = P.Inlines'The title'}), 'dokuwiki', PANDOC_WRITER_OPTIONS):gsub('\n+$', '')) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter convert-write-dzslides empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('write dzslides', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'dzslides'):gsub('\n+$', '')) end)
+  probe('write dzslides+east_asian_line_breaks', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'dzslides+east_asian_line_breaks'):gsub('\n+$', '')) end)
+  probe('write dzslides {columns = 30}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'dzslides', {columns = 30}):gsub('\n+$', '')) end)
+  probe('write dzslides {wrap_text = \039wrap-none\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'dzslides', {wrap_text = 'wrap-none'}):gsub('\n+$', '')) end)
+  probe('write dzslides {wrap_text = \039wrap-preserve\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'dzslides', {wrap_text = 'wrap-preserve'}):gsub('\n+$', '')) end)
+  probe('write dzslides {reference_links = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'dzslides', {reference_links = true}):gsub('\n+$', '')) end)
+  probe('write dzslides {reference_location = \039end-of-section\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'dzslides', {reference_location = 'end-of-section'}):gsub('\n+$', '')) end)
+  probe('write dzslides {setext_headers = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'dzslides', {setext_headers = true}):gsub('\n+$', '')) end)
+  probe('write dzslides {number_sections = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'dzslides', {number_sections = true}):gsub('\n+$', '')) end)
+  probe('write dzslides {section_divs = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'dzslides', {section_divs = true}):gsub('\n+$', '')) end)
+  probe('write dzslides {identifier_prefix = \039p-\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'dzslides', {identifier_prefix = 'p-'}):gsub('\n+$', '')) end)
+  probe('write dzslides {html_q_tags = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'dzslides', {html_q_tags = true}):gsub('\n+$', '')) end)
+  probe('write dzslides {email_obfuscation = \039references\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'dzslides', {email_obfuscation = 'references'}):gsub('\n+$', '')) end)
+  probe('write dzslides {top_level_division = \039top-level-chapter\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'dzslides', {top_level_division = 'top-level-chapter'}):gsub('\n+$', '')) end)
+  probe('write dzslides {tab_stop = 2}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'dzslides', {tab_stop = 2}):gsub('\n+$', '')) end)
+  probe('write dzslides {prefer_ascii = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'dzslides', {prefer_ascii = true}):gsub('\n+$', '')) end)
+  probe('write dzslides {slide_level = 1}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'dzslides', {slide_level = 1}):gsub('\n+$', '')) end)
+  probe('write dzslides {incremental = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'dzslides', {incremental = true}):gsub('\n+$', '')) end)
+  probe('write dzslides {list_tables = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'dzslides', {list_tables = true}):gsub('\n+$', '')) end)
+  probe('write dzslides {table_of_contents = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'dzslides', {table_of_contents = true}):gsub('\n+$', '')) end)
+  probe('write dzslides {number_offset = {3, 1}}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'dzslides', {number_offset = {3, 1}}):gsub('\n+$', '')) end)
+  probe('write dzslides {dpi = 300}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'dzslides', {dpi = 300}):gsub('\n+$', '')) end)
+  probe('write dzslides PANDOC_WRITER_OPTIONS', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'dzslides', PANDOC_WRITER_OPTIONS):gsub('\n+$', '')) end)
 end
 
 function Pandoc(document)
@@ -3837,6 +4876,82 @@ local function run(document)
   probe('write html5 {number_offset = {3, 1}}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'html5', {number_offset = {3, 1}}):gsub('\n+$', '')) end)
   probe('write html5 {dpi = 300}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'html5', {dpi = 300}):gsub('\n+$', '')) end)
   probe('write html5 PANDOC_WRITER_OPTIONS', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'html5', PANDOC_WRITER_OPTIONS):gsub('\n+$', '')) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter convert-write-ipynb empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('write ipynb', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'ipynb'):gsub('"id": "[%x%-]+"', '"id": "UUID"')) end)
+  probe('write ipynb-tex_math_dollars', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'ipynb-tex_math_dollars'):gsub('"id": "[%x%-]+"', '"id": "UUID"')) end)
+  probe('write ipynb-raw_html', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'ipynb-raw_html'):gsub('"id": "[%x%-]+"', '"id": "UUID"')) end)
+  probe('write ipynb {columns = 30}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'ipynb', {columns = 30}):gsub('"id": "[%x%-]+"', '"id": "UUID"')) end)
+  probe('write ipynb {wrap_text = \039wrap-none\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'ipynb', {wrap_text = 'wrap-none'}):gsub('"id": "[%x%-]+"', '"id": "UUID"')) end)
+  probe('write ipynb {wrap_text = \039wrap-preserve\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'ipynb', {wrap_text = 'wrap-preserve'}):gsub('"id": "[%x%-]+"', '"id": "UUID"')) end)
+  probe('write ipynb {reference_links = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'ipynb', {reference_links = true}):gsub('"id": "[%x%-]+"', '"id": "UUID"')) end)
+  probe('write ipynb {reference_location = \039end-of-section\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'ipynb', {reference_location = 'end-of-section'}):gsub('"id": "[%x%-]+"', '"id": "UUID"')) end)
+  probe('write ipynb {setext_headers = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'ipynb', {setext_headers = true}):gsub('"id": "[%x%-]+"', '"id": "UUID"')) end)
+  probe('write ipynb {number_sections = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'ipynb', {number_sections = true}):gsub('"id": "[%x%-]+"', '"id": "UUID"')) end)
+  probe('write ipynb {section_divs = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'ipynb', {section_divs = true}):gsub('"id": "[%x%-]+"', '"id": "UUID"')) end)
+  probe('write ipynb {identifier_prefix = \039p-\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'ipynb', {identifier_prefix = 'p-'}):gsub('"id": "[%x%-]+"', '"id": "UUID"')) end)
+  probe('write ipynb {html_q_tags = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'ipynb', {html_q_tags = true}):gsub('"id": "[%x%-]+"', '"id": "UUID"')) end)
+  probe('write ipynb {email_obfuscation = \039references\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'ipynb', {email_obfuscation = 'references'}):gsub('"id": "[%x%-]+"', '"id": "UUID"')) end)
+  probe('write ipynb {top_level_division = \039top-level-chapter\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'ipynb', {top_level_division = 'top-level-chapter'}):gsub('"id": "[%x%-]+"', '"id": "UUID"')) end)
+  probe('write ipynb {tab_stop = 2}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'ipynb', {tab_stop = 2}):gsub('"id": "[%x%-]+"', '"id": "UUID"')) end)
+  probe('write ipynb {prefer_ascii = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'ipynb', {prefer_ascii = true}):gsub('"id": "[%x%-]+"', '"id": "UUID"')) end)
+  probe('write ipynb {slide_level = 1}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'ipynb', {slide_level = 1}):gsub('"id": "[%x%-]+"', '"id": "UUID"')) end)
+  probe('write ipynb {incremental = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'ipynb', {incremental = true}):gsub('"id": "[%x%-]+"', '"id": "UUID"')) end)
+  probe('write ipynb {list_tables = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'ipynb', {list_tables = true}):gsub('"id": "[%x%-]+"', '"id": "UUID"')) end)
+  probe('write ipynb {table_of_contents = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'ipynb', {table_of_contents = true}):gsub('"id": "[%x%-]+"', '"id": "UUID"')) end)
+  probe('write ipynb {number_offset = {3, 1}}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'ipynb', {number_offset = {3, 1}}):gsub('"id": "[%x%-]+"', '"id": "UUID"')) end)
+  probe('write ipynb {dpi = 300}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'ipynb', {dpi = 300}):gsub('"id": "[%x%-]+"', '"id": "UUID"')) end)
+  probe('write ipynb PANDOC_WRITER_OPTIONS', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'ipynb', PANDOC_WRITER_OPTIONS):gsub('"id": "[%x%-]+"', '"id": "UUID"')) end)
 end
 
 function Pandoc(document)
@@ -5441,6 +6556,81 @@ function Pandoc(document)
   return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
 end
 
+@@@ filter convert-write-revealjs empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('write revealjs', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'revealjs'):gsub('\n+$', '')) end)
+  probe('write revealjs+east_asian_line_breaks', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'revealjs+east_asian_line_breaks'):gsub('\n+$', '')) end)
+  probe('write revealjs {columns = 30}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'revealjs', {columns = 30}):gsub('\n+$', '')) end)
+  probe('write revealjs {wrap_text = \039wrap-none\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'revealjs', {wrap_text = 'wrap-none'}):gsub('\n+$', '')) end)
+  probe('write revealjs {wrap_text = \039wrap-preserve\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'revealjs', {wrap_text = 'wrap-preserve'}):gsub('\n+$', '')) end)
+  probe('write revealjs {reference_links = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'revealjs', {reference_links = true}):gsub('\n+$', '')) end)
+  probe('write revealjs {reference_location = \039end-of-section\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'revealjs', {reference_location = 'end-of-section'}):gsub('\n+$', '')) end)
+  probe('write revealjs {setext_headers = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'revealjs', {setext_headers = true}):gsub('\n+$', '')) end)
+  probe('write revealjs {number_sections = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'revealjs', {number_sections = true}):gsub('\n+$', '')) end)
+  probe('write revealjs {section_divs = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'revealjs', {section_divs = true}):gsub('\n+$', '')) end)
+  probe('write revealjs {identifier_prefix = \039p-\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'revealjs', {identifier_prefix = 'p-'}):gsub('\n+$', '')) end)
+  probe('write revealjs {html_q_tags = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'revealjs', {html_q_tags = true}):gsub('\n+$', '')) end)
+  probe('write revealjs {email_obfuscation = \039references\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'revealjs', {email_obfuscation = 'references'}):gsub('\n+$', '')) end)
+  probe('write revealjs {top_level_division = \039top-level-chapter\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'revealjs', {top_level_division = 'top-level-chapter'}):gsub('\n+$', '')) end)
+  probe('write revealjs {tab_stop = 2}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'revealjs', {tab_stop = 2}):gsub('\n+$', '')) end)
+  probe('write revealjs {prefer_ascii = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'revealjs', {prefer_ascii = true}):gsub('\n+$', '')) end)
+  probe('write revealjs {slide_level = 1}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'revealjs', {slide_level = 1}):gsub('\n+$', '')) end)
+  probe('write revealjs {incremental = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'revealjs', {incremental = true}):gsub('\n+$', '')) end)
+  probe('write revealjs {list_tables = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'revealjs', {list_tables = true}):gsub('\n+$', '')) end)
+  probe('write revealjs {table_of_contents = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'revealjs', {table_of_contents = true}):gsub('\n+$', '')) end)
+  probe('write revealjs {number_offset = {3, 1}}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'revealjs', {number_offset = {3, 1}}):gsub('\n+$', '')) end)
+  probe('write revealjs {dpi = 300}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'revealjs', {dpi = 300}):gsub('\n+$', '')) end)
+  probe('write revealjs PANDOC_WRITER_OPTIONS', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'revealjs', PANDOC_WRITER_OPTIONS):gsub('\n+$', '')) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
 @@@ filter convert-write-rst empty small
 
 local P = pandoc
@@ -5586,6 +6776,231 @@ local function run(document)
   probe('write rtf {number_offset = {3, 1}}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rtf', {number_offset = {3, 1}}):gsub('\n+$', '')) end)
   probe('write rtf {dpi = 300}', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rtf', {dpi = 300}):gsub('\n+$', '')) end)
   probe('write rtf PANDOC_WRITER_OPTIONS', function() return (P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rtf', PANDOC_WRITER_OPTIONS):gsub('\n+$', '')) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter convert-write-s5 empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('write s5', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 's5'):gsub('\n+$', '')) end)
+  probe('write s5+east_asian_line_breaks', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 's5+east_asian_line_breaks'):gsub('\n+$', '')) end)
+  probe('write s5 {columns = 30}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 's5', {columns = 30}):gsub('\n+$', '')) end)
+  probe('write s5 {wrap_text = \039wrap-none\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 's5', {wrap_text = 'wrap-none'}):gsub('\n+$', '')) end)
+  probe('write s5 {wrap_text = \039wrap-preserve\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 's5', {wrap_text = 'wrap-preserve'}):gsub('\n+$', '')) end)
+  probe('write s5 {reference_links = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 's5', {reference_links = true}):gsub('\n+$', '')) end)
+  probe('write s5 {reference_location = \039end-of-section\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 's5', {reference_location = 'end-of-section'}):gsub('\n+$', '')) end)
+  probe('write s5 {setext_headers = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 's5', {setext_headers = true}):gsub('\n+$', '')) end)
+  probe('write s5 {number_sections = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 's5', {number_sections = true}):gsub('\n+$', '')) end)
+  probe('write s5 {section_divs = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 's5', {section_divs = true}):gsub('\n+$', '')) end)
+  probe('write s5 {identifier_prefix = \039p-\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 's5', {identifier_prefix = 'p-'}):gsub('\n+$', '')) end)
+  probe('write s5 {html_q_tags = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 's5', {html_q_tags = true}):gsub('\n+$', '')) end)
+  probe('write s5 {email_obfuscation = \039references\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 's5', {email_obfuscation = 'references'}):gsub('\n+$', '')) end)
+  probe('write s5 {top_level_division = \039top-level-chapter\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 's5', {top_level_division = 'top-level-chapter'}):gsub('\n+$', '')) end)
+  probe('write s5 {tab_stop = 2}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 's5', {tab_stop = 2}):gsub('\n+$', '')) end)
+  probe('write s5 {prefer_ascii = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 's5', {prefer_ascii = true}):gsub('\n+$', '')) end)
+  probe('write s5 {slide_level = 1}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 's5', {slide_level = 1}):gsub('\n+$', '')) end)
+  probe('write s5 {incremental = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 's5', {incremental = true}):gsub('\n+$', '')) end)
+  probe('write s5 {list_tables = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 's5', {list_tables = true}):gsub('\n+$', '')) end)
+  probe('write s5 {table_of_contents = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 's5', {table_of_contents = true}):gsub('\n+$', '')) end)
+  probe('write s5 {number_offset = {3, 1}}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 's5', {number_offset = {3, 1}}):gsub('\n+$', '')) end)
+  probe('write s5 {dpi = 300}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 's5', {dpi = 300}):gsub('\n+$', '')) end)
+  probe('write s5 PANDOC_WRITER_OPTIONS', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 's5', PANDOC_WRITER_OPTIONS):gsub('\n+$', '')) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter convert-write-slideous empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('write slideous', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slideous'):gsub('\n+$', '')) end)
+  probe('write slideous+east_asian_line_breaks', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slideous+east_asian_line_breaks'):gsub('\n+$', '')) end)
+  probe('write slideous {columns = 30}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slideous', {columns = 30}):gsub('\n+$', '')) end)
+  probe('write slideous {wrap_text = \039wrap-none\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slideous', {wrap_text = 'wrap-none'}):gsub('\n+$', '')) end)
+  probe('write slideous {wrap_text = \039wrap-preserve\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slideous', {wrap_text = 'wrap-preserve'}):gsub('\n+$', '')) end)
+  probe('write slideous {reference_links = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slideous', {reference_links = true}):gsub('\n+$', '')) end)
+  probe('write slideous {reference_location = \039end-of-section\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slideous', {reference_location = 'end-of-section'}):gsub('\n+$', '')) end)
+  probe('write slideous {setext_headers = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slideous', {setext_headers = true}):gsub('\n+$', '')) end)
+  probe('write slideous {number_sections = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slideous', {number_sections = true}):gsub('\n+$', '')) end)
+  probe('write slideous {section_divs = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slideous', {section_divs = true}):gsub('\n+$', '')) end)
+  probe('write slideous {identifier_prefix = \039p-\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slideous', {identifier_prefix = 'p-'}):gsub('\n+$', '')) end)
+  probe('write slideous {html_q_tags = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slideous', {html_q_tags = true}):gsub('\n+$', '')) end)
+  probe('write slideous {email_obfuscation = \039references\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slideous', {email_obfuscation = 'references'}):gsub('\n+$', '')) end)
+  probe('write slideous {top_level_division = \039top-level-chapter\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slideous', {top_level_division = 'top-level-chapter'}):gsub('\n+$', '')) end)
+  probe('write slideous {tab_stop = 2}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slideous', {tab_stop = 2}):gsub('\n+$', '')) end)
+  probe('write slideous {prefer_ascii = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slideous', {prefer_ascii = true}):gsub('\n+$', '')) end)
+  probe('write slideous {slide_level = 1}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slideous', {slide_level = 1}):gsub('\n+$', '')) end)
+  probe('write slideous {incremental = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slideous', {incremental = true}):gsub('\n+$', '')) end)
+  probe('write slideous {list_tables = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slideous', {list_tables = true}):gsub('\n+$', '')) end)
+  probe('write slideous {table_of_contents = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slideous', {table_of_contents = true}):gsub('\n+$', '')) end)
+  probe('write slideous {number_offset = {3, 1}}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slideous', {number_offset = {3, 1}}):gsub('\n+$', '')) end)
+  probe('write slideous {dpi = 300}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slideous', {dpi = 300}):gsub('\n+$', '')) end)
+  probe('write slideous PANDOC_WRITER_OPTIONS', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slideous', PANDOC_WRITER_OPTIONS):gsub('\n+$', '')) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter convert-write-slidy empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('write slidy', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slidy'):gsub('\n+$', '')) end)
+  probe('write slidy+east_asian_line_breaks', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slidy+east_asian_line_breaks'):gsub('\n+$', '')) end)
+  probe('write slidy {columns = 30}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slidy', {columns = 30}):gsub('\n+$', '')) end)
+  probe('write slidy {wrap_text = \039wrap-none\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slidy', {wrap_text = 'wrap-none'}):gsub('\n+$', '')) end)
+  probe('write slidy {wrap_text = \039wrap-preserve\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slidy', {wrap_text = 'wrap-preserve'}):gsub('\n+$', '')) end)
+  probe('write slidy {reference_links = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slidy', {reference_links = true}):gsub('\n+$', '')) end)
+  probe('write slidy {reference_location = \039end-of-section\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slidy', {reference_location = 'end-of-section'}):gsub('\n+$', '')) end)
+  probe('write slidy {setext_headers = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slidy', {setext_headers = true}):gsub('\n+$', '')) end)
+  probe('write slidy {number_sections = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slidy', {number_sections = true}):gsub('\n+$', '')) end)
+  probe('write slidy {section_divs = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slidy', {section_divs = true}):gsub('\n+$', '')) end)
+  probe('write slidy {identifier_prefix = \039p-\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slidy', {identifier_prefix = 'p-'}):gsub('\n+$', '')) end)
+  probe('write slidy {html_q_tags = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slidy', {html_q_tags = true}):gsub('\n+$', '')) end)
+  probe('write slidy {email_obfuscation = \039references\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slidy', {email_obfuscation = 'references'}):gsub('\n+$', '')) end)
+  probe('write slidy {top_level_division = \039top-level-chapter\039}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slidy', {top_level_division = 'top-level-chapter'}):gsub('\n+$', '')) end)
+  probe('write slidy {tab_stop = 2}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slidy', {tab_stop = 2}):gsub('\n+$', '')) end)
+  probe('write slidy {prefer_ascii = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slidy', {prefer_ascii = true}):gsub('\n+$', '')) end)
+  probe('write slidy {slide_level = 1}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slidy', {slide_level = 1}):gsub('\n+$', '')) end)
+  probe('write slidy {incremental = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slidy', {incremental = true}):gsub('\n+$', '')) end)
+  probe('write slidy {list_tables = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slidy', {list_tables = true}):gsub('\n+$', '')) end)
+  probe('write slidy {table_of_contents = true}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slidy', {table_of_contents = true}):gsub('\n+$', '')) end)
+  probe('write slidy {number_offset = {3, 1}}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slidy', {number_offset = {3, 1}}):gsub('\n+$', '')) end)
+  probe('write slidy {dpi = 300}', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slidy', {dpi = 300}):gsub('\n+$', '')) end)
+  probe('write slidy PANDOC_WRITER_OPTIONS', function() return (P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slidy', PANDOC_WRITER_OPTIONS):gsub('\n+$', '')) end)
 end
 
 function Pandoc(document)
@@ -5743,6 +7158,156 @@ function Pandoc(document)
   return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
 end
 
+@@@ filter convert-write-xwiki empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('write xwiki', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'xwiki'):gsub('\n+$', '')) end)
+  probe('write xwiki+east_asian_line_breaks', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'xwiki+east_asian_line_breaks'):gsub('\n+$', '')) end)
+  probe('write xwiki {columns = 30}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'xwiki', {columns = 30}):gsub('\n+$', '')) end)
+  probe('write xwiki {wrap_text = \039wrap-none\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'xwiki', {wrap_text = 'wrap-none'}):gsub('\n+$', '')) end)
+  probe('write xwiki {wrap_text = \039wrap-preserve\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'xwiki', {wrap_text = 'wrap-preserve'}):gsub('\n+$', '')) end)
+  probe('write xwiki {reference_links = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'xwiki', {reference_links = true}):gsub('\n+$', '')) end)
+  probe('write xwiki {reference_location = \039end-of-section\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'xwiki', {reference_location = 'end-of-section'}):gsub('\n+$', '')) end)
+  probe('write xwiki {setext_headers = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'xwiki', {setext_headers = true}):gsub('\n+$', '')) end)
+  probe('write xwiki {number_sections = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'xwiki', {number_sections = true}):gsub('\n+$', '')) end)
+  probe('write xwiki {section_divs = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'xwiki', {section_divs = true}):gsub('\n+$', '')) end)
+  probe('write xwiki {identifier_prefix = \039p-\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'xwiki', {identifier_prefix = 'p-'}):gsub('\n+$', '')) end)
+  probe('write xwiki {html_q_tags = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'xwiki', {html_q_tags = true}):gsub('\n+$', '')) end)
+  probe('write xwiki {email_obfuscation = \039references\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'xwiki', {email_obfuscation = 'references'}):gsub('\n+$', '')) end)
+  probe('write xwiki {top_level_division = \039top-level-chapter\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'xwiki', {top_level_division = 'top-level-chapter'}):gsub('\n+$', '')) end)
+  probe('write xwiki {tab_stop = 2}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'xwiki', {tab_stop = 2}):gsub('\n+$', '')) end)
+  probe('write xwiki {prefer_ascii = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'xwiki', {prefer_ascii = true}):gsub('\n+$', '')) end)
+  probe('write xwiki {slide_level = 1}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'xwiki', {slide_level = 1}):gsub('\n+$', '')) end)
+  probe('write xwiki {incremental = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'xwiki', {incremental = true}):gsub('\n+$', '')) end)
+  probe('write xwiki {list_tables = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'xwiki', {list_tables = true}):gsub('\n+$', '')) end)
+  probe('write xwiki {table_of_contents = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'xwiki', {table_of_contents = true}):gsub('\n+$', '')) end)
+  probe('write xwiki {number_offset = {3, 1}}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'xwiki', {number_offset = {3, 1}}):gsub('\n+$', '')) end)
+  probe('write xwiki {dpi = 300}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'xwiki', {dpi = 300}):gsub('\n+$', '')) end)
+  probe('write xwiki PANDOC_WRITER_OPTIONS', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'xwiki', PANDOC_WRITER_OPTIONS):gsub('\n+$', '')) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
+@@@ filter convert-write-zimwiki empty small
+
+local P = pandoc
+local log = {}
+local function t(s) return P.Str(s) end
+local function H(level, text, attr) return P.Header(level, {t(text)}, attr or P.Attr()) end
+local function cell(text) return P.Cell{P.Plain{t(text)}} end
+local function show(value, depth)
+  depth = depth or 0
+  local kind = type(value)
+  -- Not `%q`: its escapes depend on the C locale (row I-LUA-13).
+  if kind == 'string' then
+    return '"' .. value:gsub('[\0-\31\127"\\]', function(c) return '\\' .. c:byte() end) .. '"'
+  end
+  if kind == 'number' then return math.type(value) .. ':' .. tostring(value) end
+  if kind == 'table' and depth < 6 then
+    local mt = getmetatable(value)
+    local name = mt and rawget(mt, '__name')
+    if name == 'Inlines' or name == 'Blocks' then return name .. ' ' .. tostring(value) end
+    local keys = {}
+    for key in pairs(value) do keys[#keys + 1] = key end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    local parts = {}
+    for _, key in ipairs(keys) do
+      parts[#parts + 1] = show(key, depth + 1) .. '=' .. show(value[key], depth + 1)
+    end
+    return (name and (tostring(name) .. ' ') or '') .. '{' .. table.concat(parts, ', ') .. '}'
+  end
+  if kind == 'userdata' then return P.utils.type(value) .. ' ' .. tostring(value) end
+  if kind == 'function' then return 'function' end
+  return tostring(value)
+end
+local function probe(label, fn)
+  local results = table.pack(pcall(fn))
+  local parts = {}
+  for i = 2, results.n do parts[#parts + 1] = show(results[i]) end
+  -- Pandoc raises some errors as `PandocError` objects (row I-LUA-10):
+  -- the text of an error is compared, not its type.
+  if not results[1] then parts = {show(tostring(results[2]))} end
+  local line = label .. (results[1] and ' => ' or ' !! ') .. table.concat(parts, ' | ')
+  -- Addresses differ from run to run.
+  log[#log + 1] = (line:gsub('0x%x%x%x%x+', 'ADDR'))
+end
+
+local function run(document)
+  probe('write zimwiki', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'zimwiki'):gsub('\n+$', '')) end)
+  probe('write zimwiki+east_asian_line_breaks', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'zimwiki+east_asian_line_breaks'):gsub('\n+$', '')) end)
+  probe('write zimwiki {columns = 30}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'zimwiki', {columns = 30}):gsub('\n+$', '')) end)
+  probe('write zimwiki {wrap_text = \039wrap-none\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'zimwiki', {wrap_text = 'wrap-none'}):gsub('\n+$', '')) end)
+  probe('write zimwiki {wrap_text = \039wrap-preserve\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'zimwiki', {wrap_text = 'wrap-preserve'}):gsub('\n+$', '')) end)
+  probe('write zimwiki {reference_links = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'zimwiki', {reference_links = true}):gsub('\n+$', '')) end)
+  probe('write zimwiki {reference_location = \039end-of-section\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'zimwiki', {reference_location = 'end-of-section'}):gsub('\n+$', '')) end)
+  probe('write zimwiki {setext_headers = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'zimwiki', {setext_headers = true}):gsub('\n+$', '')) end)
+  probe('write zimwiki {number_sections = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'zimwiki', {number_sections = true}):gsub('\n+$', '')) end)
+  probe('write zimwiki {section_divs = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'zimwiki', {section_divs = true}):gsub('\n+$', '')) end)
+  probe('write zimwiki {identifier_prefix = \039p-\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'zimwiki', {identifier_prefix = 'p-'}):gsub('\n+$', '')) end)
+  probe('write zimwiki {html_q_tags = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'zimwiki', {html_q_tags = true}):gsub('\n+$', '')) end)
+  probe('write zimwiki {email_obfuscation = \039references\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'zimwiki', {email_obfuscation = 'references'}):gsub('\n+$', '')) end)
+  probe('write zimwiki {top_level_division = \039top-level-chapter\039}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'zimwiki', {top_level_division = 'top-level-chapter'}):gsub('\n+$', '')) end)
+  probe('write zimwiki {tab_stop = 2}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'zimwiki', {tab_stop = 2}):gsub('\n+$', '')) end)
+  probe('write zimwiki {prefer_ascii = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'zimwiki', {prefer_ascii = true}):gsub('\n+$', '')) end)
+  probe('write zimwiki {slide_level = 1}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'zimwiki', {slide_level = 1}):gsub('\n+$', '')) end)
+  probe('write zimwiki {incremental = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'zimwiki', {incremental = true}):gsub('\n+$', '')) end)
+  probe('write zimwiki {list_tables = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'zimwiki', {list_tables = true}):gsub('\n+$', '')) end)
+  probe('write zimwiki {table_of_contents = true}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'zimwiki', {table_of_contents = true}):gsub('\n+$', '')) end)
+  probe('write zimwiki {number_offset = {3, 1}}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'zimwiki', {number_offset = {3, 1}}):gsub('\n+$', '')) end)
+  probe('write zimwiki {dpi = 300}', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'zimwiki', {dpi = 300}):gsub('\n+$', '')) end)
+  probe('write zimwiki PANDOC_WRITER_OPTIONS', function() return (P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'zimwiki', PANDOC_WRITER_OPTIONS):gsub('\n+$', '')) end)
+end
+
+function Pandoc(document)
+  run(document)
+  return P.Pandoc({P.CodeBlock(table.concat(log, '\n'))})
+end
+
 @@@ filter convert-final-newline empty small
 
 local P = pandoc
@@ -5788,22 +7353,28 @@ local function probe(label, fn)
 end
 
 local function run(document)
+  probe('end of asciidoc', function() return P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc'):sub(-2) end)
+  probe('end of asciidoc_legacy', function() return P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoc_legacy'):sub(-2) end)
+  probe('end of asciidoctor', function() return P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'asciidoctor'):sub(-2) end)
   probe('end of beamer', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'beamer'):sub(-2) end)
   probe('end of biblatex', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'biblatex'):sub(-2) end)
   probe('end of bibtex', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'bibtex'):sub(-2) end)
   probe('end of commonmark', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'commonmark'):sub(-2) end)
   probe('end of commonmark_x', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'commonmark_x'):sub(-2) end)
   probe('end of csljson', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'csljson'):sub(-2) end)
+  probe('end of djot', function() return P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'djot'):sub(-2) end)
   probe('end of docbook', function() return P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'docbook'):sub(-2) end)
   probe('end of docbook4', function() return P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'docbook4'):sub(-2) end)
   probe('end of docbook5', function() return P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'docbook5'):sub(-2) end)
   probe('end of dokuwiki', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'dokuwiki'):sub(-2) end)
+  probe('end of dzslides', function() return P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'dzslides'):sub(-2) end)
   probe('end of fb2', function() return P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'fb2'):sub(-2) end)
   probe('end of fodt', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'fodt'):sub(-2) end)
   probe('end of gfm', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'gfm'):sub(-2) end)
   probe('end of html', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'html'):sub(-2) end)
   probe('end of html4', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'html4'):sub(-2) end)
   probe('end of html5', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'html5'):sub(-2) end)
+  probe('end of ipynb', function() return P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'ipynb'):sub(-2) end)
   probe('end of jats', function() return P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'jats'):sub(-2) end)
   probe('end of jats_archiving', function() return P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'jats_archiving'):sub(-2) end)
   probe('end of jats_articleauthoring', function() return P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'jats_articleauthoring'):sub(-2) end)
@@ -5824,10 +7395,16 @@ local function run(document)
   probe('end of opendocument', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'opendocument'):sub(-2) end)
   probe('end of org', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'org'):sub(-2) end)
   probe('end of plain', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'plain'):sub(-2) end)
+  probe('end of revealjs', function() return P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'revealjs'):sub(-2) end)
   probe('end of rst', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rst'):sub(-2) end)
   probe('end of rtf', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'rtf'):sub(-2) end)
+  probe('end of s5', function() return P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 's5'):sub(-2) end)
+  probe('end of slideous', function() return P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slideous'):sub(-2) end)
+  probe('end of slidy', function() return P.write(P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, {title = P.Inlines'Sample'}), 'slidy'):sub(-2) end)
   probe('end of tei', function() return P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'tei'):sub(-2) end)
   probe('end of typst', function() return P.write(P.Pandoc({H(1, 'Head one', P.Attr('top')), P.Para{P.Emph't', P.Space(), P.Str'"q"', P.Space(), P.Link('link', 'https://example.org', 'T'), P.Space(), P.Link('mail', 'mailto:me@example.org'), P.Space(), P.Code('c'), P.Space(), P.Note{P.Para'note'}, P.Space(), P.Math('InlineMath', 'x^2'), P.Space(), P.Quoted('DoubleQuote', 'qq'), P.Space(), P.Strikeout's', P.Space(), P.Str'a long line of words that the writer wraps at the column limit of the options'}, H(2, 'Head two'), P.BulletList{{P.Plain'one'}, {P.Plain'two'}}, P.CodeBlock('code', P.Attr('', {'nolang'})), P.HorizontalRule(), P.Div(P.Para'in div', P.Attr('d', {'c'})), P.Table(P.Caption{P.Plain'cap'}, {{P.AlignDefault, P.ColWidthDefault}}, P.TableHead{}, {{attr = P.Attr(), body = {P.Row{P.Cell'cell'}}, head = {}, row_head_columns = 0}}, P.TableFoot{})}, {title = P.Inlines'The title', references = {{id = 'k', type = 'book', title = 'T'}}}), 'typst'):sub(-2) end)
+  probe('end of xwiki', function() return P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'xwiki'):sub(-2) end)
+  probe('end of zimwiki', function() return P.write(P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'}), 'zimwiki'):sub(-2) end)
 end
 
 function Pandoc(document)
@@ -5948,7 +7525,7 @@ local function run(document)
   probe('write spec table html map', function() return P.write(P.Pandoc{P.Para{P.Emph't', P.Space(), P.Str'"q"'}, P.Header(2, 'h')}, {format = 'html', extensions = {smart = false}}) end)
   probe('write spec table markdown list', function() return P.write(P.Pandoc{P.Para{P.Emph't', P.Space(), P.Str'"q"'}, P.Header(2, 'h')}, {format = 'markdown', extensions = {'smart'}}) end)
   probe('write unknown', function() return P.write(P.Pandoc{P.Para{P.Emph't', P.Space(), P.Str'"q"'}, P.Header(2, 'h')}, 'nosuch') end)
-  probe('write reader name', function() return P.write(P.Pandoc{P.Para{P.Emph't', P.Space(), P.Str'"q"'}, P.Header(2, 'h')}, 'csv') end)
+  probe('write reader name', function() return P.write(P.Pandoc{P.Para{P.Emph't', P.Space(), P.Str'"q"'}, P.Header(2, 'h')}, 'pod') end)
   probe('write upper', function() return P.write(P.Pandoc{P.Para{P.Emph't', P.Space(), P.Str'"q"'}, P.Header(2, 'h')}, 'HTML') end)
   probe('write string', function() return P.write('x') end)
   probe('write block', function() return P.write(P.Para'x', 'native') end)

@@ -13,13 +13,13 @@ exclude = ["src/*.jsonl", "src/digests.json"]
 [dependencies]
 randoc-ast = { workspace = true }
 randoc-core = { workspace = true }
+randoc-data = { workspace = true }
 randoc-highlight = { workspace = true }
 randoc-layout = { workspace = true }
 randoc-math = { workspace = true }
 randoc-templates = { workspace = true }
 
 [dev-dependencies]
-randoc-data = { workspace = true }
 serde_json = { workspace = true }
 
 [lints]

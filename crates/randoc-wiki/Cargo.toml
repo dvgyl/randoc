@@ -1,6 +1,6 @@
 [package]
 name = "randoc-wiki"
-description = "Wiki format readers and writers (mediawiki, dokuwiki, jira, creole) for Randoc"
+description = "Wiki format readers and writers (mediawiki, dokuwiki, jira, creole, tikiwiki, twiki, vimwiki, xwiki, zimwiki) for Randoc"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true

@@ -18,6 +18,7 @@ The replay test runs the matrix in full mode and in restricted mode.
 
 import importlib.util
 import io
+import json
 import os
 import zipfile
 
@@ -35,19 +36,25 @@ XML_WRITERS = ["docbook", "docbook4", "docbook5", "fb2", "jats", "jats_archiving
 EPUB_WRITERS = ["epub", "epub2", "epub3"]
 BIB_WRITERS = ["biblatex", "bibtex"]
 WAVE2_READERS = XML_READERS + BIB_WRITERS + ["epub", "ris"]
+WAVE4_READERS = ["csv", "tsv", "pod", "endnotexml", "asciidoc", "ipynb", "djot"]
+WAVE4_WRITERS = ["asciidoc", "asciidoctor", "asciidoc_legacy", "ipynb", "djot"]
+WAVE5_READERS = ["tikiwiki", "twiki", "vimwiki"]
+WAVE5_WRITERS = ["xwiki", "zimwiki"]
+SLIDE_WRITERS = ["revealjs", "slidy", "dzslides", "slideous", "s5"]
 
 READERS = sorted([
     "commonmark", "commonmark_x", "creole", "csljson", "docx", "dokuwiki", "fodt", "gfm", "html",
     "jira", "json", "latex", "markdown",
     "markdown_github", "markdown_mmd", "markdown_phpextra", "markdown_strict", "mediawiki",
     "native", "odt", "org", "rst", "rtf",
-] + WAVE2_READERS + ["man", "mdoc", "typst"])
+] + WAVE2_READERS + WAVE4_READERS + WAVE5_READERS + ["man", "mdoc", "typst"])
 WRITERS = sorted([
     "beamer", "commonmark", "commonmark_x", "csljson", "dokuwiki", "fodt", "gfm", "html", "html4",
     "html5", "jira", "json",
     "latex", "markdown", "markdown_github", "markdown_mmd", "markdown_phpextra",
     "markdown_strict", "markua", "mediawiki", "native", "odt", "opendocument", "org", "plain", "rst", "rtf",
-] + XML_WRITERS + EPUB_WRITERS + BIB_WRITERS + ["docx", "man", "ms", "typst"])
+] + XML_WRITERS + EPUB_WRITERS + BIB_WRITERS + WAVE4_WRITERS
+  + WAVE5_WRITERS + SLIDE_WRITERS + ["docx", "man", "ms", "typst"])
 
 MARKDOWN = (
     "# A head {#top}\n\nSome *emph*, **strong**, \"quotes\" -- and --- dashes...\n"
@@ -176,7 +183,33 @@ BIB = "@book{example, title={The title}, author={Fam, Giv}, year={2020}}"
 ARTICLE = '<article><body><sec id="head"><title>Head</title><p>Some <italic>emphasis</italic>.</p></sec></body></article>'
 
 
-INPUT = {"biblatex": BIB, "bibtex": BIB, "bits": ARTICLE, "jats": ARTICLE,
+NOTEBOOK = json.dumps({
+    "nbformat": 4,
+    "nbformat_minor": 5,
+    "metadata": {"language_info": {"name": "python"}},
+    "cells": [
+        {"id": "intro", "cell_type": "markdown", "metadata": {},
+         "source": ["# Head\n", "\n", "Some *emphasis* and $x^2$."]},
+        {"id": "code", "cell_type": "code", "metadata": {}, "source": "print(3)",
+         "execution_count": 1, "outputs": [
+             {"output_type": "stream", "name": "stdout", "text": "3\n"},
+         ]},
+    ],
+})
+
+INPUT = {"csv": 'name,value\n"sample, quoted",3\n',
+         "tsv": 'name\tvalue\n"sample"\t3\n',
+         "pod": "=head1 Head\n\nSome I<emphasis> and C<code>.\n\n=cut\n",
+         "endnotexml": '<xml><records><record><ref-type name="Book">6</ref-type>'
+                        '<titles><title>The title</title></titles>'
+                        '<dates><year>2020</year></dates></record></records></xml>',
+         "asciidoc": "== Head\n\nSome _emphasis_ and *strong*.\n\n* Item\n",
+         "ipynb": NOTEBOOK,
+         "djot": "# Head\n\nSome _emphasis_ and *strong*.\n\n- Item\n",
+         "tikiwiki": "!Head\n\nSome ''emphasis'' and __strong__.\n\n* Item\n",
+         "twiki": "---+ Head\n\nSome _emphasis_ and *strong*.\n\n   * Item\n",
+         "vimwiki": "= Head =\n\nSome _emphasis_ and *strong*.\n\n* Item\n",
+         "biblatex": BIB, "bibtex": BIB, "bits": ARTICLE, "jats": ARTICLE,
          "docbook": '<article xmlns="http://docbook.org/ns/docbook"><section xml:id="head">'
                     '<title>Head</title><para>Some <emphasis>emphasis</em>.</para></section></article>',
          "epub": epub(),
@@ -199,6 +232,13 @@ INPUT = {"biblatex": BIB, "bibtex": BIB, "bits": ARTICLE, "jats": ARTICLE,
 # Extension changes for each reader, each one supported by its format.
 READER_SPECS = {
     **dict.fromkeys(WAVE2_READERS, ()),
+    **dict.fromkeys(WAVE4_READERS + WAVE5_READERS, ["+east_asian_line_breaks"]),
+    "asciidoc": ["-auto_identifiers", "+ascii_identifiers"],
+    "djot": ["+sourcepos", "+east_asian_line_breaks"],
+    "ipynb": ["+smart", "-tex_math_dollars"],
+    "tikiwiki": ["-auto_identifiers"],
+    "twiki": ["-auto_identifiers", "+smart"],
+    "vimwiki": ["-auto_identifiers"],
     "creole": ["+east_asian_line_breaks"],
     "dokuwiki": ["-smart", "+raw_html", "+tex_math_dollars"],
     "jira": ["+east_asian_line_breaks"],
@@ -272,6 +312,8 @@ WIKI_DOC = (
 # Extension changes for each writer, each one supported by its format.
 WRITER_SPECS = {
     **dict.fromkeys(XML_WRITERS + EPUB_WRITERS + BIB_WRITERS, ()),
+    **dict.fromkeys(WAVE4_WRITERS + WAVE5_WRITERS + SLIDE_WRITERS, ["+east_asian_line_breaks"]),
+    "ipynb": ["-tex_math_dollars", "-raw_html"],
     "docx": ["+empty_paragraphs", "+styles"],
     "man": ["-auto_identifiers"],
     "ms": ["+east_asian_line_breaks"],
@@ -383,8 +425,24 @@ end"""
 EPUB_DOC = "P.Pandoc{P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}"
 XML_DOC = "P.Pandoc({H(1, 'Head', P.Attr('head')), P.Para{P.Str'Sample', P.Space(), P.Emph'text'}}, {title = P.Inlines'Sample'})"
 
+SLIDE_DOC = (
+    "P.Pandoc({H(1, 'Part', P.Attr('part')), H(2, 'Slide', P.Attr('slide')), "
+    "P.Para{P.Str'Sample', P.Space(), P.Emph'text'}, "
+    "P.BulletList{{P.Plain'first'}, {P.Plain'second'}}, H(2, 'End')}, "
+    "{title = P.Inlines'Sample'})"
+)
+
+
+def writer_document(name):
+    if name in SLIDE_WRITERS:
+        return SLIDE_DOC
+    if name in XML_WRITERS + WAVE4_WRITERS + WAVE5_WRITERS:
+        return XML_DOC
+    return DOC
+
+
 def write_probe(name, spec, options=""):
-    doc = WIKI_DOC if name in ("dokuwiki", "jira", "mediawiki") and (options or spec != name) else DOC
+    doc = WIKI_DOC if name in ("dokuwiki", "jira", "mediawiki") and (options or spec != name) else writer_document(name)
     if name in EPUB_WRITERS:
         return (
             f"local bytes = P.write({EPUB_DOC}, {lua_string(spec)}{options}); "
@@ -398,9 +456,10 @@ def write_probe(name, spec, options=""):
             "assert(bytes:sub(1, 2) == 'PK'); "
             "return P.Pandoc(P.read(bytes, 'docx').blocks)"
         )
-    if name in XML_WRITERS:
-        doc = XML_DOC
     arguments = f"{doc}, {lua_string(spec)}{options}"
+    if name == "ipynb":
+        # Cell identifiers are generated for each conversion.
+        return f"""return (P.write({arguments}):gsub('"id": "[%x%-]+"', '"id": "UUID"'))"""
     if name == "odt":
         return f"return odt_content(P.write({arguments}))"
     if name == "fodt":
@@ -428,8 +487,12 @@ for _name in READERS:
 for _name in WRITERS:
     GROUPS[f"convert-write-{_name}"] = write_probes(_name) + write_option_probes(_name)
 
+GROUPS["convert-read-djot"].append(
+    ("read djot+sourcepos block quote", "return P.read('> A\\n> B\\n', 'djot+sourcepos')")
+)
+
 GROUPS["convert-final-newline"] = [
-    (f"end of {name}", f"return P.write({XML_DOC if name in XML_WRITERS else DOC}, {lua_string(name)}):sub(-2)") for name in WRITERS if name not in ["docx", "odt", *EPUB_WRITERS]
+    (f"end of {name}", f"return P.write({writer_document(name)}, {lua_string(name)}):sub(-2)") for name in WRITERS if name not in ["docx", "odt", *EPUB_WRITERS]
 ]
 
 _DOC = "P.Pandoc{P.Para{P.Emph't', P.Space(), P.Str'\"q\"'}, P.Header(2, 'h')}"
@@ -502,7 +565,7 @@ GROUPS["convert-arguments"] = [
     ("write spec table html map", f"return P.write({_DOC}, {{format = 'html', extensions = {{smart = false}}}})"),
     ("write spec table markdown list", f"return P.write({_DOC}, {{format = 'markdown', extensions = {{'smart'}}}})"),
     ("write unknown", f"return P.write({_DOC}, 'nosuch')"),
-    ("write reader name", f"return P.write({_DOC}, 'csv')"),
+    ("write reader name", f"return P.write({_DOC}, 'pod')"),
     ("write upper", f"return P.write({_DOC}, 'HTML')"),
     ("write string", "return P.write('x')"),
     ("write block", "return P.write(P.Para'x', 'native')"),
@@ -544,6 +607,11 @@ KNOWN = (
     [("I-LUA-30", "convert-final-newline", f"end of {name}")
      for name in ["commonmark", "commonmark_x", "gfm", "markdown", "markdown_github",
                   "markdown_mmd", "markdown_phpextra", "markdown_strict", "markua", "plain"]]
+    + [("I-LUA-30", "convert-final-newline", f"end of {name}")
+       for name in ["asciidoc", "asciidoctor", "asciidoc_legacy", "dzslides", "s5",
+                    "slideous", "slidy"]]
+    + [("I-DJOT-01", "convert-read-djot", label)
+       for label in ["read djot+sourcepos", "read djot+sourcepos block quote"]]
     + [("I-LUA-30", "convert-arguments", label)
        for label in ["write default format", "write spec table markdown list"]]
     + [("I-LUA-31", f"convert-read-{name}", f"read {name} {options}")

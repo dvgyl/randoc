@@ -1,4 +1,4 @@
-//! The HTML writer of Randoc: the formats `html`, `html5` and `html4`.
+//! Writers for HTML documents and HTML slide decks.
 //!
 //! The writer gives the same bytes as `pandoc -t html` in Pandoc 3.13 for
 //! fragment output (no template). The program adds the final newline.
@@ -25,6 +25,7 @@ mod digests;
 mod highlight;
 mod html;
 pub mod shared;
+mod slides;
 mod standalone;
 mod table;
 
@@ -93,18 +94,22 @@ pub fn write_epub_chapter(
     html::write_epub_chapter(blocks, options, context, version)
 }
 
-/// Returns the writer for `html`, `html5` or `html4`.
+/// Returns the writer for an HTML document or slide deck.
 pub fn writer(format: &str) -> Option<Writer> {
-    let version = match format {
-        "html" | "html5" => Version::Html5,
-        "html4" => Version::Html4,
-        _ => return None,
+    use slides::SlideFormat;
+    let (version, slides) = match format {
+        "html" | "html5" => (Version::Html5, None),
+        "html4" => (Version::Html4, None),
+        name => {
+            let slides = SlideFormat::from_name(name)?;
+            (slides.version(), Some(slides))
+        }
     };
     Some(Writer::Text(Arc::new(randoc_core::TemplateWriter(
         move |doc: &randoc_ast::Pandoc,
               options: &randoc_core::WriterOptions,
               context: &mut randoc_core::Context| {
-            html::write(doc, options, context, version)
+            html::write_with_slides(doc, options, context, version, slides)
         },
     ))))
 }
@@ -272,7 +277,7 @@ mod tests {
     }
 
     #[test]
-    fn knows_the_three_html_formats_only() {
+    fn recognizes_html_documents_and_rejects_other_formats() {
         assert!(writer("html").is_some());
         assert!(writer("html5").is_some());
         assert!(writer("html4").is_some());

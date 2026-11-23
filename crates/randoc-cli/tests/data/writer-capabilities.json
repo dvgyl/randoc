@@ -4,6 +4,390 @@
  "docx_template": "<w:document xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\"><w:body><w:p><w:r><w:t>marker:</w:t></w:r>$title$</w:p>$body$$sectpr$</w:body></w:document>",
  "records": [
   {
+   "writer": "asciidoc",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "asciidoc"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "asciidoc",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "asciidoc"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "\n",
+   "stderr": ""
+  },
+  {
+   "writer": "asciidoc",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "asciidoc",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "= Title\n\nBody\n",
+   "stderr": ""
+  },
+  {
+   "writer": "asciidoc",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "asciidoc",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "writer": "asciidoc",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "asciidoc",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "asciidoc",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "asciidoc",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "asciidoc",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "asciidoc",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "asciidoc",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "asciidoc",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "asciidoc_legacy",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "asciidoc_legacy"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "asciidoc_legacy",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "asciidoc_legacy"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "\n",
+   "stderr": ""
+  },
+  {
+   "writer": "asciidoc_legacy",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "asciidoc_legacy",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "= Title\n\nBody\n",
+   "stderr": ""
+  },
+  {
+   "writer": "asciidoc_legacy",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "asciidoc_legacy",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "writer": "asciidoc_legacy",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "asciidoc_legacy",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "asciidoc_legacy",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "asciidoc_legacy",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "asciidoc_legacy",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "asciidoc_legacy",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "asciidoc_legacy",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "asciidoc_legacy",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "asciidoctor",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "asciidoctor"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "Body\n",
+   "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+  },
+  {
+   "writer": "asciidoctor",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "asciidoctor"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "\n",
+   "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+  },
+  {
+   "writer": "asciidoctor",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "asciidoctor",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "= Title\n\nBody\n",
+   "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+  },
+  {
+   "writer": "asciidoctor",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "asciidoctor",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "",
+   "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+  },
+  {
+   "writer": "asciidoctor",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "asciidoctor",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body\n",
+   "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+  },
+  {
+   "writer": "asciidoctor",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "asciidoctor",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+  },
+  {
+   "writer": "asciidoctor",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "asciidoctor",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body\n",
+   "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+  },
+  {
+   "writer": "asciidoctor",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "asciidoctor",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+  },
+  {
    "writer": "beamer",
    "request": "none",
    "document": "titled",
@@ -772,6 +1156,134 @@
    "stderr": ""
   },
   {
+   "writer": "djot",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "djot"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "djot",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "djot"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "\n",
+   "stderr": ""
+  },
+  {
+   "writer": "djot",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "djot",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "# Title\n\nBody\n",
+   "stderr": ""
+  },
+  {
+   "writer": "djot",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "djot",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "writer": "djot",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "djot",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "djot",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "djot",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|\n",
+   "stderr": ""
+  },
+  {
+   "writer": "djot",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "djot",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "djot",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "djot",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|\n",
+   "stderr": ""
+  },
+  {
    "writer": "docbook",
    "request": "none",
    "document": "titled",
@@ -1409,6 +1921,134 @@
    "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
    "exit": 0,
    "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "dzslides",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "dzslides"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<section class=\"slide level6\">\n\n<p>Body</p>\n</section>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "dzslides",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "dzslides"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<section class=\"slide level6\">\n\n</section>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "dzslides",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "dzslides",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<!DOCTYPE html>\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"generator\" content=\"pandoc\">\n  <title>Title</title>\n  <style>\n    /* Default styles provided by pandoc.\n    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.\n    */\n    span.smallcaps{font-variant: small-caps;}\n    div.columns{display: flex; gap: 1.5em;}\n    div.column{flex: auto;}\n    @media screen {\n    div.columns{gap: min(4vw, 1.5em);}\n    div.column{overflow-x: auto;}\n    }\n    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}\n    /* The extra [class] is a hack that increases specificity enough to\n       override a similar rule in reveal.js */\n    ul.task-list[class]{list-style: none;}\n    ul.task-list li input[type=\"checkbox\"] {\n      font-size: inherit;\n      width: 0.8em;\n      margin: 0 0.8em 0.2em -1.6em;\n      vertical-align: middle;\n    }\n  </style>\n<link href='https://fonts.googleapis.com/css?family=Oswald' rel='stylesheet'>\n\n<style>\n  html, .view body { background-color: black; counter-reset: slideidx; }\n  body, .view section { background-color: white; border-radius: 12px }\n  /* A section is a slide. It's size is 800x600, and this will never change */\n  section, .view head > title {\n      /* The font from Google */\n      font-family: 'Oswald', arial, serif;\n      font-size: 30px;\n  }\n\n  .view section:after {\n    counter-increment: slideidx;\n    content: counter(slideidx, decimal-leading-zero);\n    position: absolute; bottom: -80px; right: 100px;\n    color: white;\n  }\n\n  .view head > title {\n    color: white;\n    text-align: center;\n    margin: 1em 0 1em 0;\n  }\n\n  h1, h2 {\n    margin-top: 200px;\n    text-align: center;\n    font-size: 80px;\n  }\n  h3 {\n    margin: 100px 0 50px 100px;\n  }\n\n  ul {\n      margin: 50px 200px;\n  }\n  li > ul {\n      margin: 15px 50px;\n  }\n\n  p {\n    margin: 75px;\n    font-size: 50px;\n  }\n\n  blockquote {\n    height: 100%;\n    background-color: black;\n    color: white;\n    font-size: 60px;\n    padding: 50px;\n  }\n  blockquote:before {\n    content: open-quote;\n  }\n  blockquote:after {\n    content: close-quote;\n  }\n\n  /* Figures are displayed full-page, with the caption\n     on top of the image/video */\n  figure {\n    background-color: black;\n    width: 100%;\n    height: 100%;\n  }\n  figure > * {\n    position: absolute;\n  }\n  figure > img, figure > video {\n    width: 100%; height: 100%;\n  }\n  figcaption {\n    margin: 70px;\n    font-size: 50px;\n  }\n\n  footer {\n    position: absolute;\n    bottom: 0;\n    width: 100%;\n    padding: 40px;\n    text-align: right;\n    background-color: #F3F4F8;\n    border-top: 1px solid #CCC;\n  }\n\n  /* Transition effect */\n  /* Feel free to change the transition effect for original\n     animations. See here:\n     https://developer.mozilla.org/en/CSS/CSS_transitions\n     How to use CSS3 Transitions: */\n  section {\n    -moz-transition: left 400ms linear 0s;\n    -webkit-transition: left 400ms linear 0s;\n    -ms-transition: left 400ms linear 0s;\n    transition: left 400ms linear 0s;\n  }\n  .view section {\n    -moz-transition: none;\n    -webkit-transition: none;\n    -ms-transition: none;\n    transition: none;\n  }\n\n  .view section[aria-selected] {\n    border: 5px red solid;\n  }\n\n  /* Before */\n  section { left: -150%; }\n  /* Now */\n  section[aria-selected] { left: 0; }\n  /* After */\n  section[aria-selected] ~ section { left: +150%; }\n\n  /* Incremental elements */\n\n  /* By default, visible */\n  .incremental > * { opacity: 1; }\n\n  /* The current item */\n  .incremental > *[aria-selected] { opacity: 1; }\n\n  /* The items to-be-selected */\n  .incremental > *[aria-selected] ~ * { opacity: 0; }\n\n  /* The progressbar, at the bottom of the slides, show the global\n     progress of the presentation. */\n  #progress-bar {\n    height: 2px;\n    background: #AAA;\n  }\n</style>\n</head>\n<body>\n<section class=\"title\">\n  <h1 class=\"title\">Title</h1>\n  <footer>\n    \n  </footer>\n</section>\n<section class=\"slide level6\">\n\n<p>Body</p>\n</section>\n<!-- {{{{ dzslides core\n#\n#\n#     __  __  __       .  __   ___  __\n#    |  \\  / /__` |    | |  \\ |__  /__`\n#    |__/ /_ .__/ |___ | |__/ |___ .__/ core :\u20ac\n#\n#\n# The following block of code is not supposed to be edited.\n# But if you want to change the behavior of these slides,\n# feel free to hack it!\n#\n-->\n\n<div id=\"progress-bar\"></div>\n\n<!-- Default Style -->\n<style>\n  * { margin: 0; padding: 0; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }\n  [role=\"note\"] { display: none; }\n  body {\n    width: 800px; height: 600px;\n    margin-left: -400px; margin-top: -300px;\n    position: absolute; top: 50%; left: 50%;\n    overflow: hidden;\n    display: none;\n  }\n  .view body {\n    position: static;\n    margin: 0; padding: 0;\n    width: 100%; height: 100%;\n    display: inline-block;\n    overflow: visible; overflow-x: hidden;\n    /* undo Dz.onresize */\n    transform: none !important;\n    -moz-transform: none !important;\n    -webkit-transform: none !important;\n    -o-transform: none !important;\n    -ms-transform: none !important;\n  }\n  .view head, .view head > title { display: block }\n  section {\n    position: absolute;\n    pointer-events: none;\n    width: 100%; height: 100%;\n  }\n  .view section {\n    pointer-events: auto;\n    position: static;\n    width: 800px; height: 600px;\n    margin: -150px -200px;\n    float: left;\n\n    transform: scale(.4);\n    -moz-transform: scale(.4);\n    -webkit-transform: scale(.4);\n    -o-transform: scale(.4);\n    -ms-transform: scale(.4);\n  }\n  .view section > * { pointer-events: none; }\n  section[aria-selected] { pointer-events: auto; }\n  html { overflow: hidden; }\n  html.view { overflow: visible; }\n  body.loaded { display: block; }\n  .incremental {visibility: hidden; }\n  .incremental[active] {visibility: visible; }\n  #progress-bar{\n    bottom: 0;\n    position: absolute;\n    -moz-transition: width 400ms linear 0s;\n    -webkit-transition: width 400ms linear 0s;\n    -ms-transition: width 400ms linear 0s;\n    transition: width 400ms linear 0s;\n  }\n  .view #progress-bar {\n    display: none;\n  }\n</style>\n\n<script>\n  var Dz = {\n    remoteWindows: [],\n    idx: -1,\n    step: 0,\n    html: null,\n    slides: null,\n    progressBar : null,\n    params: {\n      autoplay: \"1\"\n    }\n  };\n\n  Dz.init = function() {\n    document.body.className = \"loaded\";\n    this.slides = Array.prototype.slice.call($$(\"body > section\"));\n    this.progressBar = $(\"#progress-bar\");\n    this.html = document.body.parentNode;\n    this.setupParams();\n    this.onhashchange();\n    this.setupTouchEvents();\n    this.onresize();\n    this.setupView();\n  }\n\n  Dz.setupParams = function() {\n    var p = window.location.search.substr(1).split('&');\n    p.forEach(function(e, i, a) {\n      var keyVal = e.split('=');\n      Dz.params[keyVal[0]] = decodeURIComponent(keyVal[1]);\n    });\n  // Specific params handling\n    if (!+this.params.autoplay)\n      $$.forEach($$(\"video\"), function(v){ v.controls = true });\n  }\n\n  Dz.onkeydown = function(aEvent) {\n    // Don't intercept keyboard shortcuts\n    if (aEvent.altKey\n      || aEvent.ctrlKey\n      || aEvent.metaKey\n      || aEvent.shiftKey) {\n      return;\n    }\n    if ( aEvent.keyCode == 37 // left arrow\n      || aEvent.keyCode == 38 // up arrow\n      || aEvent.keyCode == 33 // page up\n    ) {\n      aEvent.preventDefault();\n      this.back();\n    }\n    if ( aEvent.keyCode == 39 // right arrow\n      || aEvent.keyCode == 40 // down arrow\n      || aEvent.keyCode == 34 // page down\n    ) {\n      aEvent.preventDefault();\n      this.forward();\n    }\n    if (aEvent.keyCode == 35) { // end\n      aEvent.preventDefault();\n      this.goEnd();\n    }\n    if (aEvent.keyCode == 36) { // home\n      aEvent.preventDefault();\n      this.goStart();\n    }\n    if (aEvent.keyCode == 32) { // space\n      aEvent.preventDefault();\n      this.toggleContent();\n    }\n    if (aEvent.keyCode == 70) { // f\n      aEvent.preventDefault();\n      this.goFullscreen();\n    }\n    if (aEvent.keyCode == 79) { // o\n      aEvent.preventDefault();\n      this.toggleView();\n    }\n  }\n\n  /* Touch Events */\n\n  Dz.setupTouchEvents = function() {\n    var orgX, newX;\n    var tracking = false;\n\n    var db = document.body;\n    db.addEventListener(\"touchstart\", start.bind(this), false);\n    db.addEventListener(\"touchmove\", move.bind(this), false);\n\n    function start(aEvent) {\n      aEvent.preventDefault();\n      tracking = true;\n      orgX = aEvent.changedTouches[0].pageX;\n    }\n\n    function move(aEvent) {\n      if (!tracking) return;\n      newX = aEvent.changedTouches[0].pageX;\n      if (orgX - newX > 100) {\n        tracking = false;\n        this.forward();\n      } else {\n        if (orgX - newX < -100) {\n          tracking = false;\n          this.back();\n        }\n      }\n    }\n  }\n\n  Dz.setupView = function() {\n    document.body.addEventListener(\"click\", function ( e ) {\n      if (!Dz.html.classList.contains(\"view\")) return;\n      if (!e.target || e.target.nodeName != \"SECTION\") return;\n\n      Dz.html.classList.remove(\"view\");\n      Dz.setCursor(Dz.slides.indexOf(e.target) + 1);\n    }, false);\n  }\n\n  /* Adapt the size of the slides to the window */\n\n  Dz.onresize = function() {\n    var db = document.body;\n    var sx = db.clientWidth / window.innerWidth;\n    var sy = db.clientHeight / window.innerHeight;\n    var transform = \"scale(\" + (1/Math.max(sx, sy)) + \")\";\n\n    db.style.MozTransform = transform;\n    db.style.WebkitTransform = transform;\n    db.style.OTransform = transform;\n    db.style.msTransform = transform;\n    db.style.transform = transform;\n  }\n\n\n  Dz.getNotes = function(aIdx) {\n    var s = $(\"section:nth-of-type(\" + aIdx + \")\");\n    var d = s.$(\"[role='note']\");\n    return d ? d.innerHTML : \"\";\n  }\n\n  Dz.onmessage = function(aEvent) {\n    var argv = aEvent.data.split(\" \"), argc = argv.length;\n    argv.forEach(function(e, i, a) { a[i] = decodeURIComponent(e) });\n    var win = aEvent.source;\n    if (argv[0] === \"REGISTER\" && argc === 1) {\n      this.remoteWindows.push(win);\n      this.postMsg(win, \"REGISTERED\", document.title, this.slides.length);\n      this.postMsg(win, \"CURSOR\", this.idx + \".\" + this.step);\n      return;\n    }\n    if (argv[0] === \"BACK\" && argc === 1)\n      this.back();\n    if (argv[0] === \"FORWARD\" && argc === 1)\n      this.forward();\n    if (argv[0] === \"START\" && argc === 1)\n      this.goStart();\n    if (argv[0] === \"END\" && argc === 1)\n      this.goEnd();\n    if (argv[0] === \"TOGGLE_CONTENT\" && argc === 1)\n      this.toggleContent();\n    if (argv[0] === \"SET_CURSOR\" && argc === 2)\n      window.location.hash = \"#\" + argv[1];\n    if (argv[0] === \"GET_CURSOR\" && argc === 1)\n      this.postMsg(win, \"CURSOR\", this.idx + \".\" + this.step);\n    if (argv[0] === \"GET_NOTES\" && argc === 1)\n      this.postMsg(win, \"NOTES\", this.getNotes(this.idx));\n  }\n\n  Dz.toggleContent = function() {\n    // If a Video is present in this new slide, play it.\n    // If a Video is present in the previous slide, stop it.\n    var s = $(\"section[aria-selected]\");\n    if (s) {\n      var video = s.$(\"video\");\n      if (video) {\n        if (video.ended || video.paused) {\n          video.play();\n        } else {\n          video.pause();\n        }\n      }\n    }\n  }\n\n  Dz.setCursor = function(aIdx, aStep) {\n    // If the user change the slide number in the URL bar, jump\n    // to this slide.\n    aStep = (aStep != 0 && typeof aStep !== \"undefined\") ? \".\" + aStep : \".0\";\n    window.location.hash = \"#\" + aIdx + aStep;\n  }\n\n  Dz.onhashchange = function() {\n    var cursor = window.location.hash.split(\"#\"),\n        newidx = 1,\n        newstep = 0;\n    if (cursor.length == 2) {\n      newidx = ~~cursor[1].split(\".\")[0];\n      newstep = ~~cursor[1].split(\".\")[1];\n      if (newstep > Dz.slides[newidx - 1].$$('.incremental > *').length) {\n        newstep = 0;\n        newidx++;\n      }\n    }\n    this.setProgress(newidx, newstep);\n    if (newidx != this.idx) {\n      this.setSlide(newidx);\n    }\n    if (newstep != this.step) {\n      this.setIncremental(newstep);\n    }\n    for (var i = 0; i < this.remoteWindows.length; i++) {\n      this.postMsg(this.remoteWindows[i], \"CURSOR\", this.idx + \".\" + this.step);\n    }\n  }\n\n  Dz.back = function() {\n    if (this.idx == 1 && this.step == 0) {\n      return;\n    }\n    if (this.step == 0) {\n      this.setCursor(this.idx - 1,\n                     this.slides[this.idx - 2].$$('.incremental > *').length);\n    } else {\n      this.setCursor(this.idx, this.step - 1);\n    }\n  }\n\n  Dz.forward = function() {\n    if (this.idx >= this.slides.length &&\n        this.step >= this.slides[this.idx - 1].$$('.incremental > *').length) {\n        return;\n    }\n    if (this.step >= this.slides[this.idx - 1].$$('.incremental > *').length) {\n      this.setCursor(this.idx + 1, 0);\n    } else {\n      this.setCursor(this.idx, this.step + 1);\n    }\n  }\n\n  Dz.goStart = function() {\n    this.setCursor(1, 0);\n  }\n\n  Dz.goEnd = function() {\n    var lastIdx = this.slides.length;\n    var lastStep = this.slides[lastIdx - 1].$$('.incremental > *').length;\n    this.setCursor(lastIdx, lastStep);\n  }\n\n  Dz.toggleView = function() {\n    this.html.classList.toggle(\"view\");\n\n    if (this.html.classList.contains(\"view\")) {\n      $(\"section[aria-selected]\").scrollIntoView(true);\n    }\n  }\n\n  Dz.setSlide = function(aIdx) {\n    this.idx = aIdx;\n    var old = $(\"section[aria-selected]\");\n    var next = $(\"section:nth-of-type(\"+ this.idx +\")\");\n    if (old) {\n      old.removeAttribute(\"aria-selected\");\n      var video = old.$(\"video\");\n      if (video) {\n        video.pause();\n      }\n    }\n    if (next) {\n      next.setAttribute(\"aria-selected\", \"true\");\n      if (this.html.classList.contains(\"view\")) {\n        next.scrollIntoView();\n      }\n      var video = next.$(\"video\");\n      if (video && !!+this.params.autoplay) {\n        video.play();\n      }\n    } else {\n      // That should not happen\n      this.idx = -1;\n      // console.warn(\"Slide doesn't exist.\");\n    }\n  }\n\n  Dz.setIncremental = function(aStep) {\n    this.step = aStep;\n    var old = this.slides[this.idx - 1].$('.incremental > *[aria-selected]');\n    if (old) {\n      old.removeAttribute('aria-selected');\n    }\n    var incrementals = $$('.incremental');\n    if (this.step <= 0) {\n      $$.forEach(incrementals, function(aNode) {\n        aNode.removeAttribute('active');\n      });\n      return;\n    }\n    var next = this.slides[this.idx - 1].$$('.incremental > *')[this.step - 1];\n    if (next) {\n      next.setAttribute('aria-selected', true);\n      next.parentNode.setAttribute('active', true);\n      var found = false;\n      $$.forEach(incrementals, function(aNode) {\n        if (aNode != next.parentNode)\n          if (found)\n            aNode.removeAttribute('active');\n          else\n            aNode.setAttribute('active', true);\n        else\n          found = true;\n      });\n    } else {\n      setCursor(this.idx, 0);\n    }\n    return next;\n  }\n\n  Dz.goFullscreen = function() {\n    var html = $('html'),\n        requestFullscreen = html.requestFullscreen || html.requestFullScreen || html.mozRequestFullScreen || html.webkitRequestFullScreen;\n    if (requestFullscreen) {\n      requestFullscreen.apply(html);\n    }\n  }\n  \n  Dz.setProgress = function(aIdx, aStep) {\n    var slide = $(\"section:nth-of-type(\"+ aIdx +\")\");\n    if (!slide)\n      return;\n    var steps = slide.$$('.incremental > *').length + 1,\n        slideSize = 100 / (this.slides.length - 1),\n        stepSize = slideSize / steps;\n    this.progressBar.style.width = ((aIdx - 1) * slideSize + aStep * stepSize) + '%';\n  }\n  \n  Dz.postMsg = function(aWin, aMsg) { // [arg0, [arg1...]]\n    aMsg = [aMsg];\n    for (var i = 2; i < arguments.length; i++)\n      aMsg.push(encodeURIComponent(arguments[i]));\n    aWin.postMessage(aMsg.join(\" \"), \"*\");\n  }\n  \n  function init() {\n    Dz.init();\n    window.onkeydown = Dz.onkeydown.bind(Dz);\n    window.onresize = Dz.onresize.bind(Dz);\n    window.onhashchange = Dz.onhashchange.bind(Dz);\n    window.onmessage = Dz.onmessage.bind(Dz);\n  }\n\n  window.onload = init;\n</script>\n\n\n<script> // Helpers\n  if (!Function.prototype.bind) {\n    Function.prototype.bind = function (oThis) {\n\n      // closest thing possible to the ECMAScript 5 internal IsCallable\n      // function \n      if (typeof this !== \"function\")\n      throw new TypeError(\n        \"Function.prototype.bind - what is trying to be fBound is not callable\"\n      );\n\n      var aArgs = Array.prototype.slice.call(arguments, 1),\n          fToBind = this,\n          fNOP = function () {},\n          fBound = function () {\n            return fToBind.apply( this instanceof fNOP ? this : oThis || window,\n                   aArgs.concat(Array.prototype.slice.call(arguments)));\n          };\n\n      fNOP.prototype = this.prototype;\n      fBound.prototype = new fNOP();\n\n      return fBound;\n    };\n  }\n\n  var $ = (HTMLElement.prototype.$ = function(aQuery) {\n    return this.querySelector(aQuery);\n  }).bind(document);\n\n  var $$ = (HTMLElement.prototype.$$ = function(aQuery) {\n    return this.querySelectorAll(aQuery);\n  }).bind(document);\n\n  $$.forEach = function(nodeList, fun) {\n    Array.prototype.forEach.call(nodeList, fun);\n  }\n\n</script>\n<!-- vim: set fdm=marker: }}} -->\n</body>\n</html>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "dzslides",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "dzslides",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<!DOCTYPE html>\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"generator\" content=\"pandoc\">\n  <title>-</title>\n  <style>\n    /* Default styles provided by pandoc.\n    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.\n    */\n    span.smallcaps{font-variant: small-caps;}\n    div.columns{display: flex; gap: 1.5em;}\n    div.column{flex: auto;}\n    @media screen {\n    div.columns{gap: min(4vw, 1.5em);}\n    div.column{overflow-x: auto;}\n    }\n    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}\n    /* The extra [class] is a hack that increases specificity enough to\n       override a similar rule in reveal.js */\n    ul.task-list[class]{list-style: none;}\n    ul.task-list li input[type=\"checkbox\"] {\n      font-size: inherit;\n      width: 0.8em;\n      margin: 0 0.8em 0.2em -1.6em;\n      vertical-align: middle;\n    }\n  </style>\n<link href='https://fonts.googleapis.com/css?family=Oswald' rel='stylesheet'>\n\n<style>\n  html, .view body { background-color: black; counter-reset: slideidx; }\n  body, .view section { background-color: white; border-radius: 12px }\n  /* A section is a slide. It's size is 800x600, and this will never change */\n  section, .view head > title {\n      /* The font from Google */\n      font-family: 'Oswald', arial, serif;\n      font-size: 30px;\n  }\n\n  .view section:after {\n    counter-increment: slideidx;\n    content: counter(slideidx, decimal-leading-zero);\n    position: absolute; bottom: -80px; right: 100px;\n    color: white;\n  }\n\n  .view head > title {\n    color: white;\n    text-align: center;\n    margin: 1em 0 1em 0;\n  }\n\n  h1, h2 {\n    margin-top: 200px;\n    text-align: center;\n    font-size: 80px;\n  }\n  h3 {\n    margin: 100px 0 50px 100px;\n  }\n\n  ul {\n      margin: 50px 200px;\n  }\n  li > ul {\n      margin: 15px 50px;\n  }\n\n  p {\n    margin: 75px;\n    font-size: 50px;\n  }\n\n  blockquote {\n    height: 100%;\n    background-color: black;\n    color: white;\n    font-size: 60px;\n    padding: 50px;\n  }\n  blockquote:before {\n    content: open-quote;\n  }\n  blockquote:after {\n    content: close-quote;\n  }\n\n  /* Figures are displayed full-page, with the caption\n     on top of the image/video */\n  figure {\n    background-color: black;\n    width: 100%;\n    height: 100%;\n  }\n  figure > * {\n    position: absolute;\n  }\n  figure > img, figure > video {\n    width: 100%; height: 100%;\n  }\n  figcaption {\n    margin: 70px;\n    font-size: 50px;\n  }\n\n  footer {\n    position: absolute;\n    bottom: 0;\n    width: 100%;\n    padding: 40px;\n    text-align: right;\n    background-color: #F3F4F8;\n    border-top: 1px solid #CCC;\n  }\n\n  /* Transition effect */\n  /* Feel free to change the transition effect for original\n     animations. See here:\n     https://developer.mozilla.org/en/CSS/CSS_transitions\n     How to use CSS3 Transitions: */\n  section {\n    -moz-transition: left 400ms linear 0s;\n    -webkit-transition: left 400ms linear 0s;\n    -ms-transition: left 400ms linear 0s;\n    transition: left 400ms linear 0s;\n  }\n  .view section {\n    -moz-transition: none;\n    -webkit-transition: none;\n    -ms-transition: none;\n    transition: none;\n  }\n\n  .view section[aria-selected] {\n    border: 5px red solid;\n  }\n\n  /* Before */\n  section { left: -150%; }\n  /* Now */\n  section[aria-selected] { left: 0; }\n  /* After */\n  section[aria-selected] ~ section { left: +150%; }\n\n  /* Incremental elements */\n\n  /* By default, visible */\n  .incremental > * { opacity: 1; }\n\n  /* The current item */\n  .incremental > *[aria-selected] { opacity: 1; }\n\n  /* The items to-be-selected */\n  .incremental > *[aria-selected] ~ * { opacity: 0; }\n\n  /* The progressbar, at the bottom of the slides, show the global\n     progress of the presentation. */\n  #progress-bar {\n    height: 2px;\n    background: #AAA;\n  }\n</style>\n</head>\n<body>\n<section class=\"slide level6\">\n\n</section>\n<!-- {{{{ dzslides core\n#\n#\n#     __  __  __       .  __   ___  __\n#    |  \\  / /__` |    | |  \\ |__  /__`\n#    |__/ /_ .__/ |___ | |__/ |___ .__/ core :\u20ac\n#\n#\n# The following block of code is not supposed to be edited.\n# But if you want to change the behavior of these slides,\n# feel free to hack it!\n#\n-->\n\n<div id=\"progress-bar\"></div>\n\n<!-- Default Style -->\n<style>\n  * { margin: 0; padding: 0; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }\n  [role=\"note\"] { display: none; }\n  body {\n    width: 800px; height: 600px;\n    margin-left: -400px; margin-top: -300px;\n    position: absolute; top: 50%; left: 50%;\n    overflow: hidden;\n    display: none;\n  }\n  .view body {\n    position: static;\n    margin: 0; padding: 0;\n    width: 100%; height: 100%;\n    display: inline-block;\n    overflow: visible; overflow-x: hidden;\n    /* undo Dz.onresize */\n    transform: none !important;\n    -moz-transform: none !important;\n    -webkit-transform: none !important;\n    -o-transform: none !important;\n    -ms-transform: none !important;\n  }\n  .view head, .view head > title { display: block }\n  section {\n    position: absolute;\n    pointer-events: none;\n    width: 100%; height: 100%;\n  }\n  .view section {\n    pointer-events: auto;\n    position: static;\n    width: 800px; height: 600px;\n    margin: -150px -200px;\n    float: left;\n\n    transform: scale(.4);\n    -moz-transform: scale(.4);\n    -webkit-transform: scale(.4);\n    -o-transform: scale(.4);\n    -ms-transform: scale(.4);\n  }\n  .view section > * { pointer-events: none; }\n  section[aria-selected] { pointer-events: auto; }\n  html { overflow: hidden; }\n  html.view { overflow: visible; }\n  body.loaded { display: block; }\n  .incremental {visibility: hidden; }\n  .incremental[active] {visibility: visible; }\n  #progress-bar{\n    bottom: 0;\n    position: absolute;\n    -moz-transition: width 400ms linear 0s;\n    -webkit-transition: width 400ms linear 0s;\n    -ms-transition: width 400ms linear 0s;\n    transition: width 400ms linear 0s;\n  }\n  .view #progress-bar {\n    display: none;\n  }\n</style>\n\n<script>\n  var Dz = {\n    remoteWindows: [],\n    idx: -1,\n    step: 0,\n    html: null,\n    slides: null,\n    progressBar : null,\n    params: {\n      autoplay: \"1\"\n    }\n  };\n\n  Dz.init = function() {\n    document.body.className = \"loaded\";\n    this.slides = Array.prototype.slice.call($$(\"body > section\"));\n    this.progressBar = $(\"#progress-bar\");\n    this.html = document.body.parentNode;\n    this.setupParams();\n    this.onhashchange();\n    this.setupTouchEvents();\n    this.onresize();\n    this.setupView();\n  }\n\n  Dz.setupParams = function() {\n    var p = window.location.search.substr(1).split('&');\n    p.forEach(function(e, i, a) {\n      var keyVal = e.split('=');\n      Dz.params[keyVal[0]] = decodeURIComponent(keyVal[1]);\n    });\n  // Specific params handling\n    if (!+this.params.autoplay)\n      $$.forEach($$(\"video\"), function(v){ v.controls = true });\n  }\n\n  Dz.onkeydown = function(aEvent) {\n    // Don't intercept keyboard shortcuts\n    if (aEvent.altKey\n      || aEvent.ctrlKey\n      || aEvent.metaKey\n      || aEvent.shiftKey) {\n      return;\n    }\n    if ( aEvent.keyCode == 37 // left arrow\n      || aEvent.keyCode == 38 // up arrow\n      || aEvent.keyCode == 33 // page up\n    ) {\n      aEvent.preventDefault();\n      this.back();\n    }\n    if ( aEvent.keyCode == 39 // right arrow\n      || aEvent.keyCode == 40 // down arrow\n      || aEvent.keyCode == 34 // page down\n    ) {\n      aEvent.preventDefault();\n      this.forward();\n    }\n    if (aEvent.keyCode == 35) { // end\n      aEvent.preventDefault();\n      this.goEnd();\n    }\n    if (aEvent.keyCode == 36) { // home\n      aEvent.preventDefault();\n      this.goStart();\n    }\n    if (aEvent.keyCode == 32) { // space\n      aEvent.preventDefault();\n      this.toggleContent();\n    }\n    if (aEvent.keyCode == 70) { // f\n      aEvent.preventDefault();\n      this.goFullscreen();\n    }\n    if (aEvent.keyCode == 79) { // o\n      aEvent.preventDefault();\n      this.toggleView();\n    }\n  }\n\n  /* Touch Events */\n\n  Dz.setupTouchEvents = function() {\n    var orgX, newX;\n    var tracking = false;\n\n    var db = document.body;\n    db.addEventListener(\"touchstart\", start.bind(this), false);\n    db.addEventListener(\"touchmove\", move.bind(this), false);\n\n    function start(aEvent) {\n      aEvent.preventDefault();\n      tracking = true;\n      orgX = aEvent.changedTouches[0].pageX;\n    }\n\n    function move(aEvent) {\n      if (!tracking) return;\n      newX = aEvent.changedTouches[0].pageX;\n      if (orgX - newX > 100) {\n        tracking = false;\n        this.forward();\n      } else {\n        if (orgX - newX < -100) {\n          tracking = false;\n          this.back();\n        }\n      }\n    }\n  }\n\n  Dz.setupView = function() {\n    document.body.addEventListener(\"click\", function ( e ) {\n      if (!Dz.html.classList.contains(\"view\")) return;\n      if (!e.target || e.target.nodeName != \"SECTION\") return;\n\n      Dz.html.classList.remove(\"view\");\n      Dz.setCursor(Dz.slides.indexOf(e.target) + 1);\n    }, false);\n  }\n\n  /* Adapt the size of the slides to the window */\n\n  Dz.onresize = function() {\n    var db = document.body;\n    var sx = db.clientWidth / window.innerWidth;\n    var sy = db.clientHeight / window.innerHeight;\n    var transform = \"scale(\" + (1/Math.max(sx, sy)) + \")\";\n\n    db.style.MozTransform = transform;\n    db.style.WebkitTransform = transform;\n    db.style.OTransform = transform;\n    db.style.msTransform = transform;\n    db.style.transform = transform;\n  }\n\n\n  Dz.getNotes = function(aIdx) {\n    var s = $(\"section:nth-of-type(\" + aIdx + \")\");\n    var d = s.$(\"[role='note']\");\n    return d ? d.innerHTML : \"\";\n  }\n\n  Dz.onmessage = function(aEvent) {\n    var argv = aEvent.data.split(\" \"), argc = argv.length;\n    argv.forEach(function(e, i, a) { a[i] = decodeURIComponent(e) });\n    var win = aEvent.source;\n    if (argv[0] === \"REGISTER\" && argc === 1) {\n      this.remoteWindows.push(win);\n      this.postMsg(win, \"REGISTERED\", document.title, this.slides.length);\n      this.postMsg(win, \"CURSOR\", this.idx + \".\" + this.step);\n      return;\n    }\n    if (argv[0] === \"BACK\" && argc === 1)\n      this.back();\n    if (argv[0] === \"FORWARD\" && argc === 1)\n      this.forward();\n    if (argv[0] === \"START\" && argc === 1)\n      this.goStart();\n    if (argv[0] === \"END\" && argc === 1)\n      this.goEnd();\n    if (argv[0] === \"TOGGLE_CONTENT\" && argc === 1)\n      this.toggleContent();\n    if (argv[0] === \"SET_CURSOR\" && argc === 2)\n      window.location.hash = \"#\" + argv[1];\n    if (argv[0] === \"GET_CURSOR\" && argc === 1)\n      this.postMsg(win, \"CURSOR\", this.idx + \".\" + this.step);\n    if (argv[0] === \"GET_NOTES\" && argc === 1)\n      this.postMsg(win, \"NOTES\", this.getNotes(this.idx));\n  }\n\n  Dz.toggleContent = function() {\n    // If a Video is present in this new slide, play it.\n    // If a Video is present in the previous slide, stop it.\n    var s = $(\"section[aria-selected]\");\n    if (s) {\n      var video = s.$(\"video\");\n      if (video) {\n        if (video.ended || video.paused) {\n          video.play();\n        } else {\n          video.pause();\n        }\n      }\n    }\n  }\n\n  Dz.setCursor = function(aIdx, aStep) {\n    // If the user change the slide number in the URL bar, jump\n    // to this slide.\n    aStep = (aStep != 0 && typeof aStep !== \"undefined\") ? \".\" + aStep : \".0\";\n    window.location.hash = \"#\" + aIdx + aStep;\n  }\n\n  Dz.onhashchange = function() {\n    var cursor = window.location.hash.split(\"#\"),\n        newidx = 1,\n        newstep = 0;\n    if (cursor.length == 2) {\n      newidx = ~~cursor[1].split(\".\")[0];\n      newstep = ~~cursor[1].split(\".\")[1];\n      if (newstep > Dz.slides[newidx - 1].$$('.incremental > *').length) {\n        newstep = 0;\n        newidx++;\n      }\n    }\n    this.setProgress(newidx, newstep);\n    if (newidx != this.idx) {\n      this.setSlide(newidx);\n    }\n    if (newstep != this.step) {\n      this.setIncremental(newstep);\n    }\n    for (var i = 0; i < this.remoteWindows.length; i++) {\n      this.postMsg(this.remoteWindows[i], \"CURSOR\", this.idx + \".\" + this.step);\n    }\n  }\n\n  Dz.back = function() {\n    if (this.idx == 1 && this.step == 0) {\n      return;\n    }\n    if (this.step == 0) {\n      this.setCursor(this.idx - 1,\n                     this.slides[this.idx - 2].$$('.incremental > *').length);\n    } else {\n      this.setCursor(this.idx, this.step - 1);\n    }\n  }\n\n  Dz.forward = function() {\n    if (this.idx >= this.slides.length &&\n        this.step >= this.slides[this.idx - 1].$$('.incremental > *').length) {\n        return;\n    }\n    if (this.step >= this.slides[this.idx - 1].$$('.incremental > *').length) {\n      this.setCursor(this.idx + 1, 0);\n    } else {\n      this.setCursor(this.idx, this.step + 1);\n    }\n  }\n\n  Dz.goStart = function() {\n    this.setCursor(1, 0);\n  }\n\n  Dz.goEnd = function() {\n    var lastIdx = this.slides.length;\n    var lastStep = this.slides[lastIdx - 1].$$('.incremental > *').length;\n    this.setCursor(lastIdx, lastStep);\n  }\n\n  Dz.toggleView = function() {\n    this.html.classList.toggle(\"view\");\n\n    if (this.html.classList.contains(\"view\")) {\n      $(\"section[aria-selected]\").scrollIntoView(true);\n    }\n  }\n\n  Dz.setSlide = function(aIdx) {\n    this.idx = aIdx;\n    var old = $(\"section[aria-selected]\");\n    var next = $(\"section:nth-of-type(\"+ this.idx +\")\");\n    if (old) {\n      old.removeAttribute(\"aria-selected\");\n      var video = old.$(\"video\");\n      if (video) {\n        video.pause();\n      }\n    }\n    if (next) {\n      next.setAttribute(\"aria-selected\", \"true\");\n      if (this.html.classList.contains(\"view\")) {\n        next.scrollIntoView();\n      }\n      var video = next.$(\"video\");\n      if (video && !!+this.params.autoplay) {\n        video.play();\n      }\n    } else {\n      // That should not happen\n      this.idx = -1;\n      // console.warn(\"Slide doesn't exist.\");\n    }\n  }\n\n  Dz.setIncremental = function(aStep) {\n    this.step = aStep;\n    var old = this.slides[this.idx - 1].$('.incremental > *[aria-selected]');\n    if (old) {\n      old.removeAttribute('aria-selected');\n    }\n    var incrementals = $$('.incremental');\n    if (this.step <= 0) {\n      $$.forEach(incrementals, function(aNode) {\n        aNode.removeAttribute('active');\n      });\n      return;\n    }\n    var next = this.slides[this.idx - 1].$$('.incremental > *')[this.step - 1];\n    if (next) {\n      next.setAttribute('aria-selected', true);\n      next.parentNode.setAttribute('active', true);\n      var found = false;\n      $$.forEach(incrementals, function(aNode) {\n        if (aNode != next.parentNode)\n          if (found)\n            aNode.removeAttribute('active');\n          else\n            aNode.setAttribute('active', true);\n        else\n          found = true;\n      });\n    } else {\n      setCursor(this.idx, 0);\n    }\n    return next;\n  }\n\n  Dz.goFullscreen = function() {\n    var html = $('html'),\n        requestFullscreen = html.requestFullscreen || html.requestFullScreen || html.mozRequestFullScreen || html.webkitRequestFullScreen;\n    if (requestFullscreen) {\n      requestFullscreen.apply(html);\n    }\n  }\n  \n  Dz.setProgress = function(aIdx, aStep) {\n    var slide = $(\"section:nth-of-type(\"+ aIdx +\")\");\n    if (!slide)\n      return;\n    var steps = slide.$$('.incremental > *').length + 1,\n        slideSize = 100 / (this.slides.length - 1),\n        stepSize = slideSize / steps;\n    this.progressBar.style.width = ((aIdx - 1) * slideSize + aStep * stepSize) + '%';\n  }\n  \n  Dz.postMsg = function(aWin, aMsg) { // [arg0, [arg1...]]\n    aMsg = [aMsg];\n    for (var i = 2; i < arguments.length; i++)\n      aMsg.push(encodeURIComponent(arguments[i]));\n    aWin.postMessage(aMsg.join(\" \"), \"*\");\n  }\n  \n  function init() {\n    Dz.init();\n    window.onkeydown = Dz.onkeydown.bind(Dz);\n    window.onresize = Dz.onresize.bind(Dz);\n    window.onhashchange = Dz.onhashchange.bind(Dz);\n    window.onmessage = Dz.onmessage.bind(Dz);\n  }\n\n  window.onload = init;\n</script>\n\n\n<script> // Helpers\n  if (!Function.prototype.bind) {\n    Function.prototype.bind = function (oThis) {\n\n      // closest thing possible to the ECMAScript 5 internal IsCallable\n      // function \n      if (typeof this !== \"function\")\n      throw new TypeError(\n        \"Function.prototype.bind - what is trying to be fBound is not callable\"\n      );\n\n      var aArgs = Array.prototype.slice.call(arguments, 1),\n          fToBind = this,\n          fNOP = function () {},\n          fBound = function () {\n            return fToBind.apply( this instanceof fNOP ? this : oThis || window,\n                   aArgs.concat(Array.prototype.slice.call(arguments)));\n          };\n\n      fNOP.prototype = this.prototype;\n      fBound.prototype = new fNOP();\n\n      return fBound;\n    };\n  }\n\n  var $ = (HTMLElement.prototype.$ = function(aQuery) {\n    return this.querySelector(aQuery);\n  }).bind(document);\n\n  var $$ = (HTMLElement.prototype.$$ = function(aQuery) {\n    return this.querySelectorAll(aQuery);\n  }).bind(document);\n\n  $$.forEach = function(nodeList, fun) {\n    Array.prototype.forEach.call(nodeList, fun);\n  }\n\n</script>\n<!-- vim: set fdm=marker: }}} -->\n</body>\n</html>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "dzslides",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "dzslides",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<section class=\"slide level6\">\n\n<p>Body</p>\n</section>",
+   "stderr": ""
+  },
+  {
+   "writer": "dzslides",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "dzslides",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|<section class=\"slide level6\">\n\n</section>",
+   "stderr": ""
+  },
+  {
+   "writer": "dzslides",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "dzslides",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<section class=\"slide level6\">\n\n<p>Body</p>\n</section>",
+   "stderr": ""
+  },
+  {
+   "writer": "dzslides",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "dzslides",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|<section class=\"slide level6\">\n\n</section>",
    "stderr": ""
   },
   {
@@ -2561,6 +3201,134 @@
    "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
    "exit": 0,
    "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "ipynb",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "ipynb"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"Body\"\n   ],\n   \"id\": \"UUID\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+   "stderr": ""
+  },
+  {
+   "writer": "ipynb",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "ipynb"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "{\n \"cells\": [],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+   "stderr": ""
+  },
+  {
+   "writer": "ipynb",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "ipynb",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"Body\"\n   ],\n   \"id\": \"UUID\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+   "stderr": ""
+  },
+  {
+   "writer": "ipynb",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "ipynb",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "{\n \"cells\": [],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+   "stderr": ""
+  },
+  {
+   "writer": "ipynb",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "ipynb",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"Body\"\n   ],\n   \"id\": \"UUID\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+   "stderr": ""
+  },
+  {
+   "writer": "ipynb",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "ipynb",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "{\n \"cells\": [],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+   "stderr": ""
+  },
+  {
+   "writer": "ipynb",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "ipynb",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"Body\"\n   ],\n   \"id\": \"UUID\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+   "stderr": ""
+  },
+  {
+   "writer": "ipynb",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "ipynb",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "{\n \"cells\": [],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
    "stderr": ""
   },
   {
@@ -5252,6 +6020,134 @@
    "stderr": ""
   },
   {
+   "writer": "revealjs",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "revealjs"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<section class=\"slide level6\">\n\n<p>Body</p>\n</section>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "revealjs",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "revealjs"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<section class=\"slide level6\">\n\n</section>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "revealjs",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "revealjs",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"generator\" content=\"pandoc\">\n  <title>Title</title>\n  <meta name=\"apple-mobile-web-app-capable\" content=\"yes\">\n  <meta name=\"apple-mobile-web-app-status-bar-style\" content=\"black-translucent\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui\">\n  <link rel=\"stylesheet\" href=\"https://unpkg.com/reveal.js@^6/dist/reset.css\">\n  <link rel=\"stylesheet\" href=\"https://unpkg.com/reveal.js@^6/dist/reveal.css\">\n  <style>\n    .reveal .sourceCode {  /* see #7635 */\n      overflow: visible;\n    }\n    /* Default styles provided by pandoc.\n    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.\n    */\n    span.smallcaps{font-variant: small-caps;}\n    div.columns{display: flex; gap: 1.5em;}\n    div.column{flex: auto;}\n    @media screen {\n    div.columns{gap: min(4vw, 1.5em);}\n    div.column{overflow-x: auto;}\n    }\n    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}\n    /* The extra [class] is a hack that increases specificity enough to\n       override a similar rule in reveal.js */\n    ul.task-list[class]{list-style: none;}\n    ul.task-list li input[type=\"checkbox\"] {\n      font-size: inherit;\n      width: 0.8em;\n      margin: 0 0.8em 0.2em -1.6em;\n      vertical-align: middle;\n    }\n  </style>\n  <link rel=\"stylesheet\" href=\"https://unpkg.com/reveal.js@^6/dist/theme/black.css\" id=\"theme\">\n</head>\n<body>\n  <div class=\"reveal\">\n    <div class=\"slides\">\n\n<section id=\"title-slide\">\n  <h1 class=\"title\">Title</h1>\n</section>\n\n<section class=\"slide level6\">\n\n<p>Body</p>\n</section>\n    </div>\n  </div>\n\n  <script src=\"https://unpkg.com/reveal.js@^6/dist/reveal.js\"></script>\n\n  <!-- reveal.js plugins -->\n  <script src=\"https://unpkg.com/reveal.js@^6/dist/plugin/notes.js\"></script>\n  <script src=\"https://unpkg.com/reveal.js@^6/dist/plugin/search.js\"></script>\n  <script src=\"https://unpkg.com/reveal.js@^6/dist/plugin/zoom.js\"></script>\n\n  <script>\n\n      // Full list of configuration options available at:\n      // https://revealjs.com/config/\n      Reveal.initialize({\n        // Display controls in the bottom right corner\n        controls: true,\n\n        // Help the user learn the controls by providing hints, for example by\n        // bouncing the down arrow when they first encounter a vertical slide\n        controlsTutorial: true,\n\n        // Determines where controls appear, \"edges\" or \"bottom-right\"\n        controlsLayout: 'bottom-right',\n\n        // Visibility rule for backwards navigation arrows; \"faded\", \"hidden\"\n        // or \"visible\"\n        controlsBackArrows: 'faded',\n\n        // Display a presentation progress bar\n        progress: true,\n\n        // Display the page number of the current slide\n        slideNumber: false,\n\n        // 'all', 'print', or 'speaker'\n        showSlideNumber: 'all',\n\n        // Add the current slide number to the URL hash so that reloading the\n        // page/copying the URL will return you to the same slide\n        hash: true,\n\n        // Start with 1 for the hash rather than 0\n        hashOneBasedIndex: false,\n\n        // Flags if we should monitor the hash and change slides accordingly\n        respondToHashChanges: true,\n\n        // Push each slide change to the browser history\n        history: false,\n\n        // Enable keyboard shortcuts for navigation\n        keyboard: true,\n\n        // Enable the slide overview mode\n        overview: true,\n\n        // Disables the default reveal.js slide layout (scaling and centering)\n        // so that you can use custom CSS layout\n        disableLayout: false,\n\n        // Vertical centering of slides\n        center: true,\n\n        // Enables touch navigation on devices with touch input\n        touch: true,\n\n        // Loop the presentation\n        loop: false,\n\n        // Change the presentation direction to be RTL\n        rtl: false,\n\n        // see https://revealjs.com/vertical-slides/#navigation-mode\n        navigationMode: 'default',\n\n        // Randomizes the order of slides each time the presentation loads\n        shuffle: false,\n\n        // Turns fragments on and off globally\n        fragments: true,\n\n        // Flags whether to include the current fragment in the URL,\n        // so that reloading brings you to the same fragment position\n        fragmentInURL: true,\n\n        // Flags if the presentation is running in an embedded mode,\n        // i.e. contained within a limited portion of the screen\n        embedded: false,\n\n        // Flags if we should show a help overlay when the questionmark\n        // key is pressed\n        help: true,\n\n        // Flags if it should be possible to pause the presentation (blackout)\n        pause: true,\n\n        // Flags if speaker notes should be visible to all viewers\n        showNotes: false,\n\n        // Global override for autoplaying embedded media (null/true/false)\n        autoPlayMedia: null,\n\n        // Global override for preloading lazy-loaded iframes (null/true/false)\n        preloadIframes: null,\n\n        // Number of milliseconds between automatically proceeding to the\n        // next slide, disabled when set to 0, this value can be overwritten\n        // by using a data-autoslide attribute on your slides\n        autoSlide: 0,\n\n        // Stop auto-sliding after user input\n        autoSlideStoppable: true,\n\n        // Use this method for navigation when auto-sliding\n        autoSlideMethod: null,\n\n        // Specify the average time in seconds that you think you will spend\n        // presenting each slide. This is used to show a pacing timer in the\n        // speaker view\n        defaultTiming: null,\n\n        // Enable slide navigation via mouse wheel\n        mouseWheel: false,\n\n        // The display mode that will be used to show slides\n        display: 'block',\n\n        // Hide cursor if inactive\n        hideInactiveCursor: true,\n\n        // Time before the cursor is hidden (in ms)\n        hideCursorTime: 5000,\n\n        // Opens links in an iframe preview overlay\n        previewLinks: false,\n\n        // Transition style (none/fade/slide/convex/concave/zoom)\n        transition: 'slide',\n\n        // Transition speed (default/fast/slow)\n        transitionSpeed: 'default',\n\n        // Transition style for full page slide backgrounds\n        // (none/fade/slide/convex/concave/zoom)\n        backgroundTransition: 'fade',\n\n        // Number of slides away from the current that are visible\n        viewDistance: 3,\n\n        // Number of slides away from the current that are visible on mobile\n        // devices. It is advisable to set this to a lower number than\n        // viewDistance in order to save resources.\n        mobileViewDistance: 2,\n\n        // reveal.js plugins\n        plugins: [\n          RevealNotes,\n          RevealSearch,\n          RevealZoom\n        ]\n      });\n    </script>\n    </body>\n</html>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "revealjs",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "revealjs",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"generator\" content=\"pandoc\">\n  <title>-</title>\n  <meta name=\"apple-mobile-web-app-capable\" content=\"yes\">\n  <meta name=\"apple-mobile-web-app-status-bar-style\" content=\"black-translucent\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui\">\n  <link rel=\"stylesheet\" href=\"https://unpkg.com/reveal.js@^6/dist/reset.css\">\n  <link rel=\"stylesheet\" href=\"https://unpkg.com/reveal.js@^6/dist/reveal.css\">\n  <style>\n    .reveal .sourceCode {  /* see #7635 */\n      overflow: visible;\n    }\n    /* Default styles provided by pandoc.\n    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.\n    */\n    span.smallcaps{font-variant: small-caps;}\n    div.columns{display: flex; gap: 1.5em;}\n    div.column{flex: auto;}\n    @media screen {\n    div.columns{gap: min(4vw, 1.5em);}\n    div.column{overflow-x: auto;}\n    }\n    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}\n    /* The extra [class] is a hack that increases specificity enough to\n       override a similar rule in reveal.js */\n    ul.task-list[class]{list-style: none;}\n    ul.task-list li input[type=\"checkbox\"] {\n      font-size: inherit;\n      width: 0.8em;\n      margin: 0 0.8em 0.2em -1.6em;\n      vertical-align: middle;\n    }\n  </style>\n  <link rel=\"stylesheet\" href=\"https://unpkg.com/reveal.js@^6/dist/theme/black.css\" id=\"theme\">\n</head>\n<body>\n  <div class=\"reveal\">\n    <div class=\"slides\">\n\n\n<section class=\"slide level6\">\n\n</section>\n    </div>\n  </div>\n\n  <script src=\"https://unpkg.com/reveal.js@^6/dist/reveal.js\"></script>\n\n  <!-- reveal.js plugins -->\n  <script src=\"https://unpkg.com/reveal.js@^6/dist/plugin/notes.js\"></script>\n  <script src=\"https://unpkg.com/reveal.js@^6/dist/plugin/search.js\"></script>\n  <script src=\"https://unpkg.com/reveal.js@^6/dist/plugin/zoom.js\"></script>\n\n  <script>\n\n      // Full list of configuration options available at:\n      // https://revealjs.com/config/\n      Reveal.initialize({\n        // Display controls in the bottom right corner\n        controls: true,\n\n        // Help the user learn the controls by providing hints, for example by\n        // bouncing the down arrow when they first encounter a vertical slide\n        controlsTutorial: true,\n\n        // Determines where controls appear, \"edges\" or \"bottom-right\"\n        controlsLayout: 'bottom-right',\n\n        // Visibility rule for backwards navigation arrows; \"faded\", \"hidden\"\n        // or \"visible\"\n        controlsBackArrows: 'faded',\n\n        // Display a presentation progress bar\n        progress: true,\n\n        // Display the page number of the current slide\n        slideNumber: false,\n\n        // 'all', 'print', or 'speaker'\n        showSlideNumber: 'all',\n\n        // Add the current slide number to the URL hash so that reloading the\n        // page/copying the URL will return you to the same slide\n        hash: true,\n\n        // Start with 1 for the hash rather than 0\n        hashOneBasedIndex: false,\n\n        // Flags if we should monitor the hash and change slides accordingly\n        respondToHashChanges: true,\n\n        // Push each slide change to the browser history\n        history: false,\n\n        // Enable keyboard shortcuts for navigation\n        keyboard: true,\n\n        // Enable the slide overview mode\n        overview: true,\n\n        // Disables the default reveal.js slide layout (scaling and centering)\n        // so that you can use custom CSS layout\n        disableLayout: false,\n\n        // Vertical centering of slides\n        center: true,\n\n        // Enables touch navigation on devices with touch input\n        touch: true,\n\n        // Loop the presentation\n        loop: false,\n\n        // Change the presentation direction to be RTL\n        rtl: false,\n\n        // see https://revealjs.com/vertical-slides/#navigation-mode\n        navigationMode: 'default',\n\n        // Randomizes the order of slides each time the presentation loads\n        shuffle: false,\n\n        // Turns fragments on and off globally\n        fragments: true,\n\n        // Flags whether to include the current fragment in the URL,\n        // so that reloading brings you to the same fragment position\n        fragmentInURL: true,\n\n        // Flags if the presentation is running in an embedded mode,\n        // i.e. contained within a limited portion of the screen\n        embedded: false,\n\n        // Flags if we should show a help overlay when the questionmark\n        // key is pressed\n        help: true,\n\n        // Flags if it should be possible to pause the presentation (blackout)\n        pause: true,\n\n        // Flags if speaker notes should be visible to all viewers\n        showNotes: false,\n\n        // Global override for autoplaying embedded media (null/true/false)\n        autoPlayMedia: null,\n\n        // Global override for preloading lazy-loaded iframes (null/true/false)\n        preloadIframes: null,\n\n        // Number of milliseconds between automatically proceeding to the\n        // next slide, disabled when set to 0, this value can be overwritten\n        // by using a data-autoslide attribute on your slides\n        autoSlide: 0,\n\n        // Stop auto-sliding after user input\n        autoSlideStoppable: true,\n\n        // Use this method for navigation when auto-sliding\n        autoSlideMethod: null,\n\n        // Specify the average time in seconds that you think you will spend\n        // presenting each slide. This is used to show a pacing timer in the\n        // speaker view\n        defaultTiming: null,\n\n        // Enable slide navigation via mouse wheel\n        mouseWheel: false,\n\n        // The display mode that will be used to show slides\n        display: 'block',\n\n        // Hide cursor if inactive\n        hideInactiveCursor: true,\n\n        // Time before the cursor is hidden (in ms)\n        hideCursorTime: 5000,\n\n        // Opens links in an iframe preview overlay\n        previewLinks: false,\n\n        // Transition style (none/fade/slide/convex/concave/zoom)\n        transition: 'slide',\n\n        // Transition speed (default/fast/slow)\n        transitionSpeed: 'default',\n\n        // Transition style for full page slide backgrounds\n        // (none/fade/slide/convex/concave/zoom)\n        backgroundTransition: 'fade',\n\n        // Number of slides away from the current that are visible\n        viewDistance: 3,\n\n        // Number of slides away from the current that are visible on mobile\n        // devices. It is advisable to set this to a lower number than\n        // viewDistance in order to save resources.\n        mobileViewDistance: 2,\n\n        // reveal.js plugins\n        plugins: [\n          RevealNotes,\n          RevealSearch,\n          RevealZoom\n        ]\n      });\n    </script>\n    </body>\n</html>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "revealjs",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "revealjs",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<section class=\"slide level6\">\n\n<p>Body</p>\n</section>",
+   "stderr": ""
+  },
+  {
+   "writer": "revealjs",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "revealjs",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|<section class=\"slide level6\">\n\n</section>",
+   "stderr": ""
+  },
+  {
+   "writer": "revealjs",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "revealjs",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<section class=\"slide level6\">\n\n<p>Body</p>\n</section>",
+   "stderr": ""
+  },
+  {
+   "writer": "revealjs",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "revealjs",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|<section class=\"slide level6\">\n\n</section>",
+   "stderr": ""
+  },
+  {
    "writer": "rst",
    "request": "none",
    "document": "titled",
@@ -5508,6 +6404,390 @@
    "stderr": ""
   },
   {
+   "writer": "s5",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "s5"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<div class=\"slide section level6\">\n\n<p>Body</p>\n</div>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "s5",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "s5"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<div class=\"slide section level6\">\n\n</div>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "s5",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "s5",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n  <meta http-equiv=\"Content-Style-Type\" content=\"text/css\" />\n  <meta name=\"generator\" content=\"pandoc\" />\n  <title>Title</title>\n  <style type=\"text/css\">\n    /* Default styles provided by pandoc.\n    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.\n    */\n    span.smallcaps{font-variant: small-caps;}\n    div.columns{display: flex; gap: 1.5em;}\n    div.column{flex: auto;}\n    @media screen {\n    div.columns{gap: min(4vw, 1.5em);}\n    div.column{overflow-x: auto;}\n    }\n    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}\n    /* The extra [class] is a hack that increases specificity enough to\n       override a similar rule in reveal.js */\n    ul.task-list[class]{list-style: none;}\n    ul.task-list li input[type=\"checkbox\"] {\n      font-size: inherit;\n      width: 0.8em;\n      margin: 0 0.8em 0.2em -1.6em;\n      vertical-align: middle;\n    }\n  </style>\n  <!-- configuration parameters -->\n  <meta name=\"defaultView\" content=\"slideshow\" />\n  <meta name=\"controlVis\" content=\"hidden\" />\n  <!-- style sheet links -->\n  <link rel=\"stylesheet\" href=\"s5/default/slides.css\" type=\"text/css\" media=\"projection\" id=\"slideProj\" />\n  <link rel=\"stylesheet\" href=\"s5/default/outline.css\" type=\"text/css\" media=\"screen\" id=\"outlineStyle\" />\n  <link rel=\"stylesheet\" href=\"s5/default/print.css\" type=\"text/css\" media=\"print\" id=\"slidePrint\" />\n  <link rel=\"stylesheet\" href=\"s5/default/opera.css\" type=\"text/css\" media=\"projection\" id=\"operaFix\" />\n  <!-- S5 JS -->\n  <script src=\"s5/default/slides.js\" type=\"text/javascript\"></script>\n</head>\n<body>\n<div class=\"layout\">\n<div id=\"controls\"></div>\n<div id=\"currentSlide\"></div>\n<div id=\"header\"></div>\n<div id=\"footer\">\n  <h1></h1>\n  <h2>Title</h2>\n</div>\n</div>\n<div class=\"presentation\">\n<div class=\"title-slide slide\">\n  <h1 class=\"title\">Title</h1>\n</div>\n<div class=\"slide section level6\">\n\n<p>Body</p>\n</div>\n</div>\n</body>\n</html>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "s5",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "s5",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n  <meta http-equiv=\"Content-Style-Type\" content=\"text/css\" />\n  <meta name=\"generator\" content=\"pandoc\" />\n  <title>-</title>\n  <style type=\"text/css\">\n    /* Default styles provided by pandoc.\n    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.\n    */\n    span.smallcaps{font-variant: small-caps;}\n    div.columns{display: flex; gap: 1.5em;}\n    div.column{flex: auto;}\n    @media screen {\n    div.columns{gap: min(4vw, 1.5em);}\n    div.column{overflow-x: auto;}\n    }\n    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}\n    /* The extra [class] is a hack that increases specificity enough to\n       override a similar rule in reveal.js */\n    ul.task-list[class]{list-style: none;}\n    ul.task-list li input[type=\"checkbox\"] {\n      font-size: inherit;\n      width: 0.8em;\n      margin: 0 0.8em 0.2em -1.6em;\n      vertical-align: middle;\n    }\n  </style>\n  <!-- configuration parameters -->\n  <meta name=\"defaultView\" content=\"slideshow\" />\n  <meta name=\"controlVis\" content=\"hidden\" />\n  <!-- style sheet links -->\n  <link rel=\"stylesheet\" href=\"s5/default/slides.css\" type=\"text/css\" media=\"projection\" id=\"slideProj\" />\n  <link rel=\"stylesheet\" href=\"s5/default/outline.css\" type=\"text/css\" media=\"screen\" id=\"outlineStyle\" />\n  <link rel=\"stylesheet\" href=\"s5/default/print.css\" type=\"text/css\" media=\"print\" id=\"slidePrint\" />\n  <link rel=\"stylesheet\" href=\"s5/default/opera.css\" type=\"text/css\" media=\"projection\" id=\"operaFix\" />\n  <!-- S5 JS -->\n  <script src=\"s5/default/slides.js\" type=\"text/javascript\"></script>\n</head>\n<body>\n<div class=\"layout\">\n<div id=\"controls\"></div>\n<div id=\"currentSlide\"></div>\n<div id=\"header\"></div>\n<div id=\"footer\">\n  <h1></h1>\n  <h2></h2>\n</div>\n</div>\n<div class=\"presentation\">\n<div class=\"slide section level6\">\n\n</div>\n</div>\n</body>\n</html>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "s5",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "s5",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<div class=\"slide section level6\">\n\n<p>Body</p>\n</div>",
+   "stderr": ""
+  },
+  {
+   "writer": "s5",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "s5",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|<div class=\"slide section level6\">\n\n</div>",
+   "stderr": ""
+  },
+  {
+   "writer": "s5",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "s5",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<div class=\"slide section level6\">\n\n<p>Body</p>\n</div>",
+   "stderr": ""
+  },
+  {
+   "writer": "s5",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "s5",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|<div class=\"slide section level6\">\n\n</div>",
+   "stderr": ""
+  },
+  {
+   "writer": "slideous",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "slideous"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<div class=\"slide section level6\">\n\n<p>Body</p>\n</div>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "slideous",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "slideous"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<div class=\"slide section level6\">\n\n</div>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "slideous",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "slideous",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n  <meta http-equiv=\"Content-Style-Type\" content=\"text/css\" />\n  <meta name=\"generator\" content=\"pandoc\" />\n  <title>Title</title>\n  <style type=\"text/css\">\n    /* Default styles provided by pandoc.\n    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.\n    */\n    span.smallcaps{font-variant: small-caps;}\n    div.columns{display: flex; gap: 1.5em;}\n    div.column{flex: auto;}\n    @media screen {\n    div.columns{gap: min(4vw, 1.5em);}\n    div.column{overflow-x: auto;}\n    }\n    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}\n    /* The extra [class] is a hack that increases specificity enough to\n       override a similar rule in reveal.js */\n    ul.task-list[class]{list-style: none;}\n    ul.task-list li input[type=\"checkbox\"] {\n      font-size: inherit;\n      width: 0.8em;\n      margin: 0 0.8em 0.2em -1.6em;\n      vertical-align: middle;\n    }\n  </style>\n  <link rel=\"stylesheet\" type=\"text/css\" media=\"screen, projection, print\"\n    href=\"slideous/slideous.css\" />\n  <script src=\"slideous/slideous.js\"\n    charset=\"utf-8\" type=\"text/javascript\"></script>\n</head>\n<body>\n<div id=\"statusbar\">\n<span style=\"float:right;\">\n<span style=\"margin-right:4em;font-weight:bold;\"><span id=\"slideidx\"></span> of {$slidecount}</span>\n<button id=\"homebutton\" title=\"first slide\">1</button>\n<button id=\"prevslidebutton\" title=\"previous slide\">&laquo;</button>\n<button id=\"previtembutton\" title=\"previous item\">&lsaquo;</button>\n<button id=\"nextitembutton\" title=\"next item\">&rsaquo;</button>\n<button id=\"nextslidebutton\" title=\"next slide\">&raquo;</button>\n<button id=\"endbutton\" title=\"last slide\">{$slidecount}</button>\n<button id=\"incfontbutton\" title=\"content\">A+</button>\n<button id=\"decfontbutton\" title=\"first slide\">A-</button>\n<select id=\"tocbox\" size=\"1\"><option></option></select>\n</span>\n<span id=\"eos\">&frac12;</span>\n<span title=\"{$location}, {$date}\">{$title}, {$author}</span>\n</div>\n<div class=\"slide titlepage\">\n  <h1 class=\"title\">Title</h1>\n</div>\n<div class=\"slide section level6\">\n\n<p>Body</p>\n</div>\n</body>\n</html>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "slideous",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "slideous",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n  <meta http-equiv=\"Content-Style-Type\" content=\"text/css\" />\n  <meta name=\"generator\" content=\"pandoc\" />\n  <title>-</title>\n  <style type=\"text/css\">\n    /* Default styles provided by pandoc.\n    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.\n    */\n    span.smallcaps{font-variant: small-caps;}\n    div.columns{display: flex; gap: 1.5em;}\n    div.column{flex: auto;}\n    @media screen {\n    div.columns{gap: min(4vw, 1.5em);}\n    div.column{overflow-x: auto;}\n    }\n    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}\n    /* The extra [class] is a hack that increases specificity enough to\n       override a similar rule in reveal.js */\n    ul.task-list[class]{list-style: none;}\n    ul.task-list li input[type=\"checkbox\"] {\n      font-size: inherit;\n      width: 0.8em;\n      margin: 0 0.8em 0.2em -1.6em;\n      vertical-align: middle;\n    }\n  </style>\n  <link rel=\"stylesheet\" type=\"text/css\" media=\"screen, projection, print\"\n    href=\"slideous/slideous.css\" />\n  <script src=\"slideous/slideous.js\"\n    charset=\"utf-8\" type=\"text/javascript\"></script>\n</head>\n<body>\n<div id=\"statusbar\">\n<span style=\"float:right;\">\n<span style=\"margin-right:4em;font-weight:bold;\"><span id=\"slideidx\"></span> of {$slidecount}</span>\n<button id=\"homebutton\" title=\"first slide\">1</button>\n<button id=\"prevslidebutton\" title=\"previous slide\">&laquo;</button>\n<button id=\"previtembutton\" title=\"previous item\">&lsaquo;</button>\n<button id=\"nextitembutton\" title=\"next item\">&rsaquo;</button>\n<button id=\"nextslidebutton\" title=\"next slide\">&raquo;</button>\n<button id=\"endbutton\" title=\"last slide\">{$slidecount}</button>\n<button id=\"incfontbutton\" title=\"content\">A+</button>\n<button id=\"decfontbutton\" title=\"first slide\">A-</button>\n<select id=\"tocbox\" size=\"1\"><option></option></select>\n</span>\n<span id=\"eos\">&frac12;</span>\n<span title=\"{$location}, {$date}\">{$title}, {$author}</span>\n</div>\n<div class=\"slide section level6\">\n\n</div>\n</body>\n</html>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "slideous",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "slideous",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<div class=\"slide section level6\">\n\n<p>Body</p>\n</div>",
+   "stderr": ""
+  },
+  {
+   "writer": "slideous",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "slideous",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|<div class=\"slide section level6\">\n\n</div>",
+   "stderr": ""
+  },
+  {
+   "writer": "slideous",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "slideous",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<div class=\"slide section level6\">\n\n<p>Body</p>\n</div>",
+   "stderr": ""
+  },
+  {
+   "writer": "slideous",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "slideous",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|<div class=\"slide section level6\">\n\n</div>",
+   "stderr": ""
+  },
+  {
+   "writer": "slidy",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "slidy"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<div class=\"slide section level6\">\n\n<p>Body</p>\n</div>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "slidy",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "slidy"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<div class=\"slide section level6\">\n\n</div>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "slidy",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "slidy",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n  <meta http-equiv=\"Content-Style-Type\" content=\"text/css\" />\n  <meta name=\"generator\" content=\"pandoc\" />\n  <title>Title</title>\n  <style type=\"text/css\">\n    /* Default styles provided by pandoc.\n    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.\n    */\n    span.smallcaps{font-variant: small-caps;}\n    div.columns{display: flex; gap: 1.5em;}\n    div.column{flex: auto;}\n    @media screen {\n    div.columns{gap: min(4vw, 1.5em);}\n    div.column{overflow-x: auto;}\n    }\n    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}\n    /* The extra [class] is a hack that increases specificity enough to\n       override a similar rule in reveal.js */\n    ul.task-list[class]{list-style: none;}\n    ul.task-list li input[type=\"checkbox\"] {\n      font-size: inherit;\n      width: 0.8em;\n      margin: 0 0.8em 0.2em -1.6em;\n      vertical-align: middle;\n    }\n  </style>\n  <link rel=\"stylesheet\" type=\"text/css\" media=\"screen, projection, print\"\n    href=\"https://www.w3.org/Talks/Tools/Slidy2/styles/slidy.css\" />\n  <script src=\"https://www.w3.org/Talks/Tools/Slidy2/scripts/slidy.js\"\n    charset=\"utf-8\" type=\"text/javascript\"></script>\n</head>\n<body>\n<div class=\"slide titlepage\">\n  <h1 class=\"title\">Title</h1>\n</div>\n<div class=\"slide section level6\">\n\n<p>Body</p>\n</div>\n</body>\n</html>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "slidy",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "slidy",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n  <meta http-equiv=\"Content-Style-Type\" content=\"text/css\" />\n  <meta name=\"generator\" content=\"pandoc\" />\n  <title>-</title>\n  <style type=\"text/css\">\n    /* Default styles provided by pandoc.\n    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.\n    */\n    span.smallcaps{font-variant: small-caps;}\n    div.columns{display: flex; gap: 1.5em;}\n    div.column{flex: auto;}\n    @media screen {\n    div.columns{gap: min(4vw, 1.5em);}\n    div.column{overflow-x: auto;}\n    }\n    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}\n    /* The extra [class] is a hack that increases specificity enough to\n       override a similar rule in reveal.js */\n    ul.task-list[class]{list-style: none;}\n    ul.task-list li input[type=\"checkbox\"] {\n      font-size: inherit;\n      width: 0.8em;\n      margin: 0 0.8em 0.2em -1.6em;\n      vertical-align: middle;\n    }\n  </style>\n  <link rel=\"stylesheet\" type=\"text/css\" media=\"screen, projection, print\"\n    href=\"https://www.w3.org/Talks/Tools/Slidy2/styles/slidy.css\" />\n  <script src=\"https://www.w3.org/Talks/Tools/Slidy2/scripts/slidy.js\"\n    charset=\"utf-8\" type=\"text/javascript\"></script>\n</head>\n<body>\n<div class=\"slide section level6\">\n\n</div>\n</body>\n</html>\n",
+   "stderr": ""
+  },
+  {
+   "writer": "slidy",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "slidy",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<div class=\"slide section level6\">\n\n<p>Body</p>\n</div>",
+   "stderr": ""
+  },
+  {
+   "writer": "slidy",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "slidy",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|<div class=\"slide section level6\">\n\n</div>",
+   "stderr": ""
+  },
+  {
+   "writer": "slidy",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "slidy",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|<div class=\"slide section level6\">\n\n<p>Body</p>\n</div>",
+   "stderr": ""
+  },
+  {
+   "writer": "slidy",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "slidy",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|<div class=\"slide section level6\">\n\n</div>",
+   "stderr": ""
+  },
+  {
    "writer": "tei",
    "request": "none",
    "document": "titled",
@@ -5755,6 +7035,262 @@
     "json",
     "-t",
     "typst",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "xwiki",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "xwiki"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "xwiki",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "xwiki"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "\n",
+   "stderr": ""
+  },
+  {
+   "writer": "xwiki",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "xwiki",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "xwiki",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "xwiki",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "",
+   "stderr": ""
+  },
+  {
+   "writer": "xwiki",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "xwiki",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body",
+   "stderr": ""
+  },
+  {
+   "writer": "xwiki",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "xwiki",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "xwiki",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "xwiki",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body",
+   "stderr": ""
+  },
+  {
+   "writer": "xwiki",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "xwiki",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "zimwiki",
+   "request": "none",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "zimwiki"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "Body\n",
+   "stderr": ""
+  },
+  {
+   "writer": "zimwiki",
+   "request": "none",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "zimwiki"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "\n",
+   "stderr": ""
+  },
+  {
+   "writer": "zimwiki",
+   "request": "standalone",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "zimwiki",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "Content-Type: text/x-zim-wiki\nWiki-Format: zim 0.4\n\nBody\n",
+   "stderr": ""
+  },
+  {
+   "writer": "zimwiki",
+   "request": "standalone",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "zimwiki",
+    "-s"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "Content-Type: text/x-zim-wiki\nWiki-Format: zim 0.4\n\n",
+   "stderr": ""
+  },
+  {
+   "writer": "zimwiki",
+   "request": "template",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "zimwiki",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body",
+   "stderr": ""
+  },
+  {
+   "writer": "zimwiki",
+   "request": "template",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "zimwiki",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}",
+   "exit": 0,
+   "stdout": "marker:|",
+   "stderr": ""
+  },
+  {
+   "writer": "zimwiki",
+   "request": "both",
+   "document": "titled",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "zimwiki",
+    "-s",
+    "--template=t"
+   ],
+   "stdin": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Title\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]}",
+   "exit": 0,
+   "stdout": "marker:Title|Body",
+   "stderr": ""
+  },
+  {
+   "writer": "zimwiki",
+   "request": "both",
+   "document": "empty",
+   "args": [
+    "-f",
+    "json",
+    "-t",
+    "zimwiki",
     "-s",
     "--template=t"
    ],
