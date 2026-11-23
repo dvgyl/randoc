@@ -553,3 +553,90 @@ fn writer_date_and_name_probes() {
     }
     report("Writer date and name probes", 2, failures);
 }
+
+fn python(script: &str, argument: &Path) -> Value {
+    let result = Command::new("python3")
+        .args(["-B", "-c", script])
+        .arg(argument)
+        .current_dir(root())
+        .output()
+        .unwrap();
+    assert!(
+        result.status.success(),
+        "{}",
+        String::from_utf8_lossy(&result.stderr)
+    );
+    serde_json::from_slice(&result.stdout).unwrap()
+}
+
+fn replay(format: &str) {
+    let cases = root().join(format!("conformance/cases/reader-baseline/{format}.toml"));
+    let expected = root().join(format!(
+        "conformance/expected/reader-baseline/{format}.json"
+    ));
+    let cases = python(
+        r#"
+import json, sys, tomllib
+with open(sys.argv[1], "rb") as source:
+    print(json.dumps(tomllib.load(source)["case"]))
+"#,
+        &cases,
+    );
+    let expected: Value = serde_json::from_slice(&fs::read(expected).unwrap()).unwrap();
+    let cases = cases.as_array().unwrap();
+    assert_eq!(cases.len(), 40);
+    assert_eq!(expected["units"].as_object().unwrap().len(), cases.len());
+    let mut failures = Vec::new();
+    for case in cases {
+        let id = case["id"].as_str().unwrap();
+        let unit = &expected["units"][format!("{id}#read")];
+        if let Some(diff) = check(
+            case["input"].as_str().unwrap(),
+            format,
+            unit["exit"].as_i64().unwrap() as i32,
+            unit["stdout"].as_str().unwrap().as_bytes(),
+            unit["stderr"].as_str().unwrap().as_bytes(),
+        ) {
+            failures.push(format!("{id} {diff}"));
+        }
+    }
+    report(format, cases.len(), failures);
+}
+
+fn check(input: &str, format: &str, exit: i32, stdout: &[u8], stderr: &[u8]) -> Option<String> {
+    match read(input, format) {
+        Ok(doc) if exit == 0 && stderr.is_empty() => compare(&json::to_json(&doc), stdout),
+        Err(error) if error.exit_code() == exit && stdout.is_empty() => {
+            (format!("{error}\n").as_bytes() != stderr)
+                .then(|| format!("{error} != {}", String::from_utf8_lossy(stderr)))
+        }
+        Ok(_) => Some(format!("Randoc returned a document. Oracle exit {exit}")),
+        Err(error) => Some(format!(
+            "{error} (exit {}) vs oracle exit {exit}",
+            error.exit_code()
+        )),
+    }
+}
+
+#[test]
+#[ignore = "requires the conformance fixtures"]
+fn endnote_conformance() {
+    replay("endnotexml");
+}
+
+#[test]
+#[ignore = "requires the Pandoc executable and the EndNote fixture"]
+fn endnote_old_fixture() {
+    let suite = env_path("RANDOC_PANDOC_SRC").join("test");
+    let input = fs::read_to_string(suite.join("endnotexml-reader.xml")).unwrap();
+    let native = fs::read_to_string(suite.join("endnotexml-reader.native")).unwrap();
+    let expected = oracle(&["-f", "native", "-t", "json"], &native, &suite);
+    assert!(expected.status.success());
+    assert!(expected.stderr.is_empty());
+    let mut failures = Vec::new();
+    if let Some(diff) = check(&input, "endnotexml", 0, &expected.stdout, &[]) {
+        failures.push(diff);
+    }
+    report("EndNote old fixture", 1, failures);
+    assert!(check_read(&input, "endnotexml", "csljson", &suite).is_none());
+}

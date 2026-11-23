@@ -3,6 +3,7 @@
 #![forbid(unsafe_code)]
 
 mod bib;
+mod endnote;
 mod names;
 mod ris;
 mod syntax;
@@ -26,6 +27,7 @@ pub fn reader(format: &str) -> Option<Reader> {
         "bibtex" => BibFormat::BibTeX,
         "biblatex" => BibFormat::BibLaTeX,
         "ris" => BibFormat::Ris,
+        "endnotexml" => return Some(Reader::Text(Arc::new(endnote::read))),
         _ => return None,
     };
     Some(Reader::Text(Arc::new(
