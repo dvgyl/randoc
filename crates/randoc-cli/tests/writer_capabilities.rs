@@ -15,6 +15,7 @@ use serde::Deserialize;
 struct Matrix {
     template: String,
     odf_template: String,
+    docx_template: String,
     records: Vec<Record>,
 }
 
@@ -37,7 +38,7 @@ fn is_epub(writer: &str) -> bool {
 /// Reads the document body of OpenDocument output. The default styles depend
 /// on the reference document, so the replay compares the body separately.
 /// For EPUB, compare the first chapter. The archive has a random identifier
-/// and format-specific default styles.
+/// and format-specific default styles. For DOCX, compare the body text.
 fn document_body(writer: &str, data: Vec<u8>) -> Vec<u8> {
     use randoc_archive::zip::{Archive, ArchiveLimits};
 
@@ -47,6 +48,34 @@ fn document_body(writer: &str, data: Vec<u8>) -> Vec<u8> {
             .read("EPUB/text/ch001.xhtml")
             .expect("read ch001.xhtml")
             .expect("EPUB has a first chapter");
+    }
+    if writer == "docx" {
+        use randoc_archive::xml::{self, XmlLimits, XmlOptions};
+        const W: &str = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+
+        let mut archive = Archive::open(&data, ArchiveLimits::default()).expect("DOCX output");
+        let document = archive
+            .read("word/document.xml")
+            .expect("read word/document.xml")
+            .expect("DOCX has a document part");
+        let source = std::str::from_utf8(&document).expect("UTF-8 document part");
+        let xml = xml::parse(source, &XmlLimits::default(), XmlOptions::default())
+            .expect("parse the document part");
+        return xml
+            .root
+            .child(W, "body")
+            .expect("DOCX has a body")
+            .children_ns(W, "p")
+            .map(|paragraph| {
+                paragraph
+                    .children_ns(W, "r")
+                    .flat_map(|run| run.children_ns(W, "t"))
+                    .map(|text| text.text())
+                    .collect::<String>()
+            })
+            .collect::<Vec<_>>()
+            .join("\n")
+            .into_bytes();
     }
     let data = if writer == "odt" {
         let mut archive = Archive::open(&data, ArchiveLimits::default()).expect("ODT output");
@@ -91,6 +120,7 @@ fn standalone_output_preserves_the_oracle_result_or_reports_the_scope_gap() {
     std::fs::write(root.join("t"), &matrix.template).expect("the template exists");
     std::fs::write(root.join("t-odf"), &matrix.odf_template)
         .expect("the OpenDocument template exists");
+    std::fs::write(root.join("t-docx"), &matrix.docx_template).expect("the DOCX template exists");
     let mut differences = Vec::new();
     let mut checked = BTreeSet::new();
     for record in matrix.records {
@@ -136,8 +166,10 @@ fn standalone_output_preserves_the_oracle_result_or_reports_the_scope_gap() {
         };
         // These writers omit the final newline after a titled document with
         // this custom template. See I-CLI-36 in docs/ISSUES.md.
-        if matches!(record.writer.as_str(), "mediawiki" | "org" | "rst")
-            && matches!(record.request.as_str(), "template" | "both")
+        if matches!(
+            record.writer.as_str(),
+            "mediawiki" | "org" | "rst" | "typst"
+        ) && matches!(record.request.as_str(), "template" | "both")
             && record.document == "titled"
         {
             assert_eq!(expected.1.pop(), Some(b'\n'));

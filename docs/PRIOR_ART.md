@@ -72,6 +72,7 @@ the repository; the behaviour was found with the oracle.
 | Default templates and the dzslides template | Pandoc 3.13 `data/templates`, `data/dzslides` | BSD-3-Clause option; WTFPL | Data, unchanged | `crates/randoc-data` | ADR 5 |
 | Number formatting of `show` for `Double`, `Char`, `String` | GHC 9.12.2 (`GHC.Internal.Float`) | BSD-3-Clause (GHC licence) | Port | `crates/randoc-ast/src/json/haskell.rs` | ADR 6 |
 | DocBook XML entity mappings | [W3C combined XML entity set](https://www.w3.org/2003/entities/2007/w3centities-f.ent) | W3C permissive derivative-work grant | Data | `crates/randoc-xmlformats/src/entities.rs` | ADR 22 |
+| Typst symbol and emoji mappings (2,457 entries) | [`typst/codex` v0.1.1](https://github.com/typst/codex/tree/v0.1.1) | [Apache-2.0](https://github.com/typst/codex/blob/v0.1.1/LICENSE) | Data | `crates/randoc-typst/src/reader/symbols.rs` | ADR 23 |
 | HTML entity table | `commonmark` 0.3.1 of `commonmark-hs` | BSD-3-Clause | Data | `crates/randoc-core/src/shared/tables.rs` | ADR 7 |
 | ASCII table of CommonMark identifiers | `commonmark-extensions` 0.2.7.3 | BSD-3-Clause | Data | same file | ADR 7 |
 | Emoji tables | `emojis` 0.1.5; GitHub `gemoji` data | BSD-3-Clause; MIT | Data | same file; `crates/randoc-layout/src/tables.rs` | ADR 7 |

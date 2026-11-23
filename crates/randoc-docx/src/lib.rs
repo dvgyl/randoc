@@ -1,4 +1,4 @@
-//! Pandoc 3.13 compatible DOCX reader built on `randoc-archive`.
+//! Pandoc 3.13 compatible DOCX reader and writer built on `randoc-archive`.
 
 #![forbid(unsafe_code)]
 
@@ -26,8 +26,11 @@ pub fn reader(format: &str) -> Option<Reader> {
 }
 
 /// Returns the DOCX writer when the format is supported.
-pub fn writer(_format: &str) -> Option<Writer> {
-    None
+pub fn writer(format: &str) -> Option<Writer> {
+    match format {
+        "docx" => Some(Writer::Binary(Arc::new(writer::DocxWriter))),
+        _ => None,
+    }
 }
 
 struct DocxReader;

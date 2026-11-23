@@ -1,15 +1,23 @@
-//! Format registry entries for Typst.
+//! Reads and writes Typst documents.
 
 #![forbid(unsafe_code)]
 
-use randoc_core::{Reader, Writer};
+mod reader;
+mod writer;
 
-/// Returns the reader for a supported format.
-pub fn reader(_format: &str) -> Option<Reader> {
-    None
+use std::sync::Arc;
+
+use randoc_core::{Reader, TemplateWriter, Writer};
+
+/// Returns the reader for Typst.
+pub fn reader(format: &str) -> Option<Reader> {
+    (format == "typst").then(|| Reader::Text(Arc::new(reader::read)))
 }
 
-/// Returns the writer for a supported format.
-pub fn writer(_format: &str) -> Option<Writer> {
-    None
+/// Returns the writer for Typst.
+pub fn writer(format: &str) -> Option<Writer> {
+    (format == "typst").then(|| Writer::Text(Arc::new(TemplateWriter(writer::write))))
 }
+
+#[cfg(test)]
+mod tests;

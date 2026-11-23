@@ -1,0 +1,6 @@
+Typst file access
+
+Randoc permits relative paths for include, import, and read. These paths are
+relative to the source file and use the caller's file access rules. Randoc
+rejects absolute paths, parent-directory components, and @package paths.
+Pandoc 3.13 can accept paths that Randoc rejects.

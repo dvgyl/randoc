@@ -41,13 +41,13 @@ READERS = sorted([
     "jira", "json", "latex", "markdown",
     "markdown_github", "markdown_mmd", "markdown_phpextra", "markdown_strict", "mediawiki",
     "native", "odt", "org", "rst", "rtf",
-] + WAVE2_READERS)
+] + WAVE2_READERS + ["man", "mdoc", "typst"])
 WRITERS = sorted([
     "beamer", "commonmark", "commonmark_x", "csljson", "dokuwiki", "fodt", "gfm", "html", "html4",
     "html5", "jira", "json",
     "latex", "markdown", "markdown_github", "markdown_mmd", "markdown_phpextra",
     "markdown_strict", "markua", "mediawiki", "native", "odt", "opendocument", "org", "plain", "rst", "rtf",
-] + XML_WRITERS + EPUB_WRITERS + BIB_WRITERS)
+] + XML_WRITERS + EPUB_WRITERS + BIB_WRITERS + ["docx", "man", "ms", "typst"])
 
 MARKDOWN = (
     "# A head {#top}\n\nSome *emph*, **strong**, \"quotes\" -- and --- dashes...\n"
@@ -182,6 +182,10 @@ INPUT = {"biblatex": BIB, "bibtex": BIB, "bits": ARTICLE, "jats": ARTICLE,
          "epub": epub(),
          "fb2": '<FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0"><body>'
                 '<section><p>Some <emphasis>emphasis</em>.</p></section></body></FictionBook>',
+         "man": ".TH SAMPLE 1\n.SH NAME\nSample \\- example\n.SH DESCRIPTION\nSome \\fIemphasis\\fP.\n",
+         "mdoc": ".Dd January 1, 2020\n.Dt SAMPLE 1\n.Os\n.Sh NAME\n.Nm sample\n.Nd example\n"
+                 ".Sh DESCRIPTION\nSome\n.Em emphasis .\n",
+         "typst": "= Head\n\nSome _emphasis_, *strong text*, and $x^2$.\n\n- Item\n",
          "ris": "TY  - BOOK\nID  - example\nTI  - The title\nAU  - Fam, Giv\nPY  - 2020\nER  - \n",
          "csljson": CSLJSON, "docx": docx(), "html": HTML, "json": JSON, "latex": LATEX,
          "native": NATIVE, "fodt": FODT, "odt": odt(), "rst": RST,
@@ -212,6 +216,9 @@ READER_SPECS = {
     "markdown_mmd": ["+smart", "-pipe_tables"],
     "markdown_phpextra": ["+smart", "-footnotes"],
     "markdown_strict": ["+smart", "+pipe_tables", "+footnotes"],
+    "man": ["-auto_identifiers"],
+    "mdoc": ["+east_asian_line_breaks"],
+    "typst": ["-smart", "-citations"],
     "native": [],
     "json": [],
     "csljson": [],
@@ -265,6 +272,10 @@ WIKI_DOC = (
 # Extension changes for each writer, each one supported by its format.
 WRITER_SPECS = {
     **dict.fromkeys(XML_WRITERS + EPUB_WRITERS + BIB_WRITERS, ()),
+    "docx": ["+empty_paragraphs", "+styles"],
+    "man": ["-auto_identifiers"],
+    "ms": ["+east_asian_line_breaks"],
+    "typst": ["-smart", "-citations"],
     "dokuwiki": ["-smart", "+raw_html", "+tex_math_dollars"],
     "jira": ["+east_asian_line_breaks"],
     "mediawiki": ["-auto_identifiers", "+smart"],
@@ -380,6 +391,13 @@ def write_probe(name, spec, options=""):
             "assert(bytes:sub(1, 2) == 'PK'); "
             "return P.Pandoc(P.read(bytes, 'epub').blocks)"
         )
+    if name == "docx":
+        # A package contains timestamps. Check the ZIP signature and read its body.
+        return (
+            f"local bytes = P.write({XML_DOC}, {lua_string(spec)}{options}); "
+            "assert(bytes:sub(1, 2) == 'PK'); "
+            "return P.Pandoc(P.read(bytes, 'docx').blocks)"
+        )
     if name in XML_WRITERS:
         doc = XML_DOC
     arguments = f"{doc}, {lua_string(spec)}{options}"
@@ -411,7 +429,7 @@ for _name in WRITERS:
     GROUPS[f"convert-write-{_name}"] = write_probes(_name) + write_option_probes(_name)
 
 GROUPS["convert-final-newline"] = [
-    (f"end of {name}", f"return P.write({XML_DOC if name in XML_WRITERS else DOC}, {lua_string(name)}):sub(-2)") for name in WRITERS if name not in ["odt", *EPUB_WRITERS]
+    (f"end of {name}", f"return P.write({XML_DOC if name in XML_WRITERS else DOC}, {lua_string(name)}):sub(-2)") for name in WRITERS if name not in ["docx", "odt", *EPUB_WRITERS]
 ]
 
 _DOC = "P.Pandoc{P.Para{P.Emph't', P.Space(), P.Str'\"q\"'}, P.Header(2, 'h')}"

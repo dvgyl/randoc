@@ -683,3 +683,10 @@ the shared HTML entity table does not cover. The derived table contains
 names and their Unicode values. The W3C grant permits use, reproduction,
 and creation of derivative works. See the
 [W3C entity set notice](../third_party/licences/w3centities-f.txt).
+
+## ADR 23: Use Codex symbol and emoji mappings for Typst
+
+The Typst reader uses 2,457 mappings from `typst/codex` v0.1.1. The table
+maps Typst names to Unicode characters. Codex uses the Apache-2.0 licence.
+See the [upstream licence](https://github.com/typst/codex/blob/v0.1.1/LICENSE)
+and the [local licence](../third_party/licences/typst-codex.txt).

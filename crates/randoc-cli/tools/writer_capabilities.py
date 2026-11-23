@@ -7,7 +7,8 @@ Each writer runs with no option, -s, --template, and both options. Each
 command reads a titled document and an empty document. The default
 templates of these writers are present in randoc-data. For OpenDocument,
 record the document body without the default styles. For EPUB, record the
-first chapter in the archive. Each oracle process has memory and time limits.
+first chapter in the archive. For DOCX, record the body paragraph text.
+Each oracle process has memory and time limits.
 """
 
 import io
@@ -17,6 +18,7 @@ from pathlib import Path
 import subprocess
 import sys
 import tempfile
+from xml.etree import ElementTree
 from zipfile import ZipFile
 
 
@@ -28,6 +30,7 @@ FORMATS = sorted([
     "native", "odt", "opendocument", "org", "plain", "rst", "rtf",
     "biblatex", "bibtex", "docbook", "docbook4", "docbook5", "fb2", "jats",
     "jats_archiving", "jats_articleauthoring", "jats_publishing", "tei",
+    "docx", "man", "ms", "typst",
 ] + list(EPUB_FORMATS))
 ODF_FORMATS = {"fodt", "odt", "opendocument"}
 REQUESTS = [
@@ -53,7 +56,23 @@ ODF_TEMPLATE = (
 )
 
 
+DOCX_NS = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+DOCX_TEMPLATE = (
+    f'<w:document xmlns:w="{DOCX_NS}"><w:body>'
+    '<w:p><w:r><w:t>marker:</w:t></w:r>$title$</w:p>'
+    '$body$$sectpr$</w:body></w:document>'
+)
+
+
 def document_body(writer, data):
+    if writer == "docx":
+        with ZipFile(io.BytesIO(data)) as archive:
+            xml = ElementTree.fromstring(archive.read("word/document.xml"))
+        ns = {"w": DOCX_NS}
+        return "\n".join(
+            "".join(text.text or "" for text in para.findall("w:r/w:t", ns))
+            for para in xml.findall("w:body/w:p", ns)
+        )
     if writer == "odt":
         with ZipFile(io.BytesIO(data)) as archive:
             data = archive.read("content.xml")
@@ -71,7 +90,8 @@ def main():
     with tempfile.TemporaryDirectory(prefix="randoc-writers-") as folder:
         records = record(oracle, Path(folder))
     Path(destination).write_text(json.dumps({
-        "template": TEMPLATE, "odf_template": ODF_TEMPLATE, "records": records,
+        "template": TEMPLATE, "odf_template": ODF_TEMPLATE,
+        "docx_template": DOCX_TEMPLATE, "records": records,
     }, indent=1) + "\n", encoding="utf-8")
     print(f"Recorded {len(records)} commands for {len(FORMATS)} writers.", flush=True)
 
@@ -79,6 +99,7 @@ def main():
 def record(oracle, root):
     (root / "t").write_text(TEMPLATE, encoding="utf-8")
     (root / "t-odf").write_text(ODF_TEMPLATE, encoding="utf-8")
+    (root / "t-docx").write_text(DOCX_TEMPLATE, encoding="utf-8")
     home = root / "home"
     home.mkdir(exist_ok=True)
     environment = dict(os.environ, HOME=str(home), XDG_DATA_HOME=str(home / "share"),
@@ -88,6 +109,8 @@ def record(oracle, root):
         for request, options in REQUESTS:
             if writer in ODF_FORMATS:
                 options = ["--template=t-odf" if arg == "--template=t" else arg for arg in options]
+            if writer == "docx":
+                options = ["--template=t-docx" if arg == "--template=t" else arg for arg in options]
             args = ["-f", "json", "-t", writer] + options
             for name, document in DOCUMENTS:
                 stdin = json.dumps(document, separators=(",", ":"))

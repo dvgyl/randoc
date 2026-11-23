@@ -1,6 +1,6 @@
 [package]
 name = "randoc-docx"
-description = "DOCX reader for Randoc"
+description = "DOCX reader and writer for Randoc"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
