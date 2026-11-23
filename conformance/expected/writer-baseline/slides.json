@@ -1,0 +1,995 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "bullet-list#e2e:dzslides": {
+      "key": "3797855399472147",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<ul>\n<li>Check cap.\n<ul>\n<li>Log 24.</li>\n</ul></li>\n<li>Check ring.</li>\n</ul>\n</section>\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:revealjs": {
+      "key": "c3ff9c8eee887a1d",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<ul>\n<li>Check cap.\n<ul>\n<li>Log 24.</li>\n</ul></li>\n<li>Check ring.</li>\n</ul>\n</section>\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:s5": {
+      "key": "b64af200c5599d6d",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<ul>\n<li>Check cap.\n<ul>\n<li>Log 24.</li>\n</ul></li>\n<li>Check ring.</li>\n</ul>\n</div>\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:slideous": {
+      "key": "839b7a5b1c7643cd",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<ul>\n<li>Check cap.\n<ul>\n<li>Log 24.</li>\n</ul></li>\n<li>Check ring.</li>\n</ul>\n</div>\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:slidy": {
+      "key": "1cd693ac1c25efb5",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<ul>\n<li>Check cap.\n<ul>\n<li>Log 24.</li>\n</ul></li>\n<li>Check ring.</li>\n</ul>\n</div>\n",
+      "stderr": ""
+    },
+    "bullet-list#read": {
+      "key": "9e098330db0f60f1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cap.\"}]},{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Log\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"24.\"}]}]]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ring.\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "bullet-list#write:dzslides": {
+      "key": "055fec66935d5132",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<ul>\n<li>Check cap.\n<ul>\n<li>Log 24.</li>\n</ul></li>\n<li>Check ring.</li>\n</ul>\n</section>\n",
+      "stderr": ""
+    },
+    "bullet-list#write:revealjs": {
+      "key": "991044d829a73d34",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<ul>\n<li>Check cap.\n<ul>\n<li>Log 24.</li>\n</ul></li>\n<li>Check ring.</li>\n</ul>\n</section>\n",
+      "stderr": ""
+    },
+    "bullet-list#write:s5": {
+      "key": "621c6187903dfe60",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<ul>\n<li>Check cap.\n<ul>\n<li>Log 24.</li>\n</ul></li>\n<li>Check ring.</li>\n</ul>\n</div>\n",
+      "stderr": ""
+    },
+    "bullet-list#write:slideous": {
+      "key": "3abd34f0bfea7a08",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<ul>\n<li>Check cap.\n<ul>\n<li>Log 24.</li>\n</ul></li>\n<li>Check ring.</li>\n</ul>\n</div>\n",
+      "stderr": ""
+    },
+    "bullet-list#write:slidy": {
+      "key": "1eb06810f1a3dfde",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<ul>\n<li>Check cap.\n<ul>\n<li>Log 24.</li>\n</ul></li>\n<li>Check ring.</li>\n</ul>\n</div>\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:dzslides": {
+      "key": "da9e55112faea68f",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<table id=\"check-table\">\n<caption>Lens check values</caption>\n<thead>\n<tr>\n<th style=\"text-align: left;\">Item</th>\n<th style=\"text-align: right;\">Value</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td style=\"text-align: left;\">cap</td>\n<td style=\"text-align: right;\">24</td>\n</tr>\n</tbody>\n</table>\n</section>\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:revealjs": {
+      "key": "689b493d1c11f8e1",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<table id=\"check-table\">\n<caption>Lens check values</caption>\n<thead>\n<tr>\n<th style=\"text-align: left;\">Item</th>\n<th style=\"text-align: right;\">Value</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td style=\"text-align: left;\">cap</td>\n<td style=\"text-align: right;\">24</td>\n</tr>\n</tbody>\n</table>\n</section>\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:s5": {
+      "key": "c75215822cd5d571",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<table id=\"check-table\">\n<caption>Lens check values</caption>\n<thead>\n<tr>\n<th align=\"left\">Item</th>\n<th align=\"right\">Value</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td align=\"left\">cap</td>\n<td align=\"right\">24</td>\n</tr>\n</tbody>\n</table>\n</div>\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:slideous": {
+      "key": "81a9be6604be0f51",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<table id=\"check-table\">\n<caption>Lens check values</caption>\n<thead>\n<tr>\n<th align=\"left\">Item</th>\n<th align=\"right\">Value</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td align=\"left\">cap</td>\n<td align=\"right\">24</td>\n</tr>\n</tbody>\n</table>\n</div>\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:slidy": {
+      "key": "5fd3de65fdd12be9",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<table id=\"check-table\">\n<caption>Lens check values</caption>\n<thead>\n<tr>\n<th align=\"left\">Item</th>\n<th align=\"right\">Value</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td align=\"left\">cap</td>\n<td align=\"right\">24</td>\n</tr>\n</tbody>\n</table>\n</div>\n",
+      "stderr": ""
+    },
+    "captioned-table#read": {
+      "key": "c73ea7969ca98dfd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"check-table\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Lens\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"values\"}]}]],[[{\"t\":\"AlignLeft\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignRight\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Item\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Value\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"cap\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"24\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "captioned-table#write:dzslides": {
+      "key": "bb466100145d8bad",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<table id=\"check-table\">\n<caption>Lens check values</caption>\n<thead>\n<tr>\n<th style=\"text-align: left;\">Item</th>\n<th style=\"text-align: right;\">Value</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td style=\"text-align: left;\">cap</td>\n<td style=\"text-align: right;\">24</td>\n</tr>\n</tbody>\n</table>\n</section>\n",
+      "stderr": ""
+    },
+    "captioned-table#write:revealjs": {
+      "key": "bac94b7a5fc4105f",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<table id=\"check-table\">\n<caption>Lens check values</caption>\n<thead>\n<tr>\n<th style=\"text-align: left;\">Item</th>\n<th style=\"text-align: right;\">Value</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td style=\"text-align: left;\">cap</td>\n<td style=\"text-align: right;\">24</td>\n</tr>\n</tbody>\n</table>\n</section>\n",
+      "stderr": ""
+    },
+    "captioned-table#write:s5": {
+      "key": "92bf1d51ab22a2db",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<table id=\"check-table\">\n<caption>Lens check values</caption>\n<thead>\n<tr>\n<th align=\"left\">Item</th>\n<th align=\"right\">Value</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td align=\"left\">cap</td>\n<td align=\"right\">24</td>\n</tr>\n</tbody>\n</table>\n</div>\n",
+      "stderr": ""
+    },
+    "captioned-table#write:slideous": {
+      "key": "78319c42d6fbec83",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<table id=\"check-table\">\n<caption>Lens check values</caption>\n<thead>\n<tr>\n<th align=\"left\">Item</th>\n<th align=\"right\">Value</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td align=\"left\">cap</td>\n<td align=\"right\">24</td>\n</tr>\n</tbody>\n</table>\n</div>\n",
+      "stderr": ""
+    },
+    "captioned-table#write:slidy": {
+      "key": "95d346c7edcb9cf9",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<table id=\"check-table\">\n<caption>Lens check values</caption>\n<thead>\n<tr>\n<th align=\"left\">Item</th>\n<th align=\"right\">Value</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td align=\"left\">cap</td>\n<td align=\"right\">24</td>\n</tr>\n</tbody>\n</table>\n</div>\n",
+      "stderr": ""
+    },
+    "code-block#e2e:dzslides": {
+      "key": "2428a44beadce93b",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<div class=\"sourceCode\" id=\"sample-code\"><pre\nclass=\"sourceCode python\"><code class=\"sourceCode python\"><span id=\"sample-code-1\"><a href=\"#sample-code-1\" aria-hidden=\"true\" tabindex=\"-1\"></a>value <span class=\"op\">=</span> <span class=\"dv\">24</span></span>\n<span id=\"sample-code-2\"><a href=\"#sample-code-2\" aria-hidden=\"true\" tabindex=\"-1\"></a><span class=\"bu\">print</span>(value <span class=\"op\">&lt;</span> <span class=\"dv\">25</span>)</span></code></pre></div>\n<pre><code>cap\n  ring\n</code></pre>\n</section>\n",
+      "stderr": ""
+    },
+    "code-block#e2e:revealjs": {
+      "key": "d7d943808a28ac81",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<div class=\"sourceCode\" id=\"sample-code\"><pre\nclass=\"sourceCode python\"><code class=\"sourceCode python\"><span id=\"sample-code-1\"><a href=\"#sample-code-1\" aria-hidden=\"true\" tabindex=\"-1\"></a>value <span class=\"op\">=</span> <span class=\"dv\">24</span></span>\n<span id=\"sample-code-2\"><a href=\"#sample-code-2\" aria-hidden=\"true\" tabindex=\"-1\"></a><span class=\"bu\">print</span>(value <span class=\"op\">&lt;</span> <span class=\"dv\">25</span>)</span></code></pre></div>\n<pre><code>cap\n  ring\n</code></pre>\n</section>\n",
+      "stderr": ""
+    },
+    "code-block#e2e:s5": {
+      "key": "a470870e66a06131",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<div class=\"sourceCode\" id=\"sample-code\"><pre\nclass=\"sourceCode python\"><code class=\"sourceCode python\"><span id=\"sample-code-1\"><a href=\"#sample-code-1\" tabindex=\"-1\"></a>value <span class=\"op\">=</span> <span class=\"dv\">24</span></span>\n<span id=\"sample-code-2\"><a href=\"#sample-code-2\" tabindex=\"-1\"></a><span class=\"bu\">print</span>(value <span class=\"op\">&lt;</span> <span class=\"dv\">25</span>)</span></code></pre></div>\n<pre><code>cap\n  ring\n</code></pre>\n</div>\n",
+      "stderr": ""
+    },
+    "code-block#e2e:slideous": {
+      "key": "b1a1e486e0340ad1",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<div class=\"sourceCode\" id=\"sample-code\"><pre\nclass=\"sourceCode python\"><code class=\"sourceCode python\"><span id=\"sample-code-1\"><a href=\"#sample-code-1\" tabindex=\"-1\"></a>value <span class=\"op\">=</span> <span class=\"dv\">24</span></span>\n<span id=\"sample-code-2\"><a href=\"#sample-code-2\" tabindex=\"-1\"></a><span class=\"bu\">print</span>(value <span class=\"op\">&lt;</span> <span class=\"dv\">25</span>)</span></code></pre></div>\n<pre><code>cap\n  ring\n</code></pre>\n</div>\n",
+      "stderr": ""
+    },
+    "code-block#e2e:slidy": {
+      "key": "6a4dc6bb4c5201e9",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<div class=\"sourceCode\" id=\"sample-code\"><pre\nclass=\"sourceCode python\"><code class=\"sourceCode python\"><span id=\"sample-code-1\"><a href=\"#sample-code-1\" tabindex=\"-1\"></a>value <span class=\"op\">=</span> <span class=\"dv\">24</span></span>\n<span id=\"sample-code-2\"><a href=\"#sample-code-2\" tabindex=\"-1\"></a><span class=\"bu\">print</span>(value <span class=\"op\">&lt;</span> <span class=\"dv\">25</span>)</span></code></pre></div>\n<pre><code>cap\n  ring\n</code></pre>\n</div>\n",
+      "stderr": ""
+    },
+    "code-block#read": {
+      "key": "2df2633fbcf6386d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"sample-code\",[\"python\"],[]],\"value = 24\\nprint(value < 25)\"]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"cap\\n  ring\\n\"]}]}\n",
+      "stderr": ""
+    },
+    "code-block#write:dzslides": {
+      "key": "6b194e71b2d6c5c4",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<div class=\"sourceCode\" id=\"sample-code\"><pre\nclass=\"sourceCode python\"><code class=\"sourceCode python\"><span id=\"sample-code-1\"><a href=\"#sample-code-1\" aria-hidden=\"true\" tabindex=\"-1\"></a>value <span class=\"op\">=</span> <span class=\"dv\">24</span></span>\n<span id=\"sample-code-2\"><a href=\"#sample-code-2\" aria-hidden=\"true\" tabindex=\"-1\"></a><span class=\"bu\">print</span>(value <span class=\"op\">&lt;</span> <span class=\"dv\">25</span>)</span></code></pre></div>\n<pre><code>cap\n  ring\n</code></pre>\n</section>\n",
+      "stderr": ""
+    },
+    "code-block#write:revealjs": {
+      "key": "5afe6ab9ff9103aa",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<div class=\"sourceCode\" id=\"sample-code\"><pre\nclass=\"sourceCode python\"><code class=\"sourceCode python\"><span id=\"sample-code-1\"><a href=\"#sample-code-1\" aria-hidden=\"true\" tabindex=\"-1\"></a>value <span class=\"op\">=</span> <span class=\"dv\">24</span></span>\n<span id=\"sample-code-2\"><a href=\"#sample-code-2\" aria-hidden=\"true\" tabindex=\"-1\"></a><span class=\"bu\">print</span>(value <span class=\"op\">&lt;</span> <span class=\"dv\">25</span>)</span></code></pre></div>\n<pre><code>cap\n  ring\n</code></pre>\n</section>\n",
+      "stderr": ""
+    },
+    "code-block#write:s5": {
+      "key": "172a38e6ea30cbb6",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<div class=\"sourceCode\" id=\"sample-code\"><pre\nclass=\"sourceCode python\"><code class=\"sourceCode python\"><span id=\"sample-code-1\"><a href=\"#sample-code-1\" tabindex=\"-1\"></a>value <span class=\"op\">=</span> <span class=\"dv\">24</span></span>\n<span id=\"sample-code-2\"><a href=\"#sample-code-2\" tabindex=\"-1\"></a><span class=\"bu\">print</span>(value <span class=\"op\">&lt;</span> <span class=\"dv\">25</span>)</span></code></pre></div>\n<pre><code>cap\n  ring\n</code></pre>\n</div>\n",
+      "stderr": ""
+    },
+    "code-block#write:slideous": {
+      "key": "7b0a7fa4d380c3ce",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<div class=\"sourceCode\" id=\"sample-code\"><pre\nclass=\"sourceCode python\"><code class=\"sourceCode python\"><span id=\"sample-code-1\"><a href=\"#sample-code-1\" tabindex=\"-1\"></a>value <span class=\"op\">=</span> <span class=\"dv\">24</span></span>\n<span id=\"sample-code-2\"><a href=\"#sample-code-2\" tabindex=\"-1\"></a><span class=\"bu\">print</span>(value <span class=\"op\">&lt;</span> <span class=\"dv\">25</span>)</span></code></pre></div>\n<pre><code>cap\n  ring\n</code></pre>\n</div>\n",
+      "stderr": ""
+    },
+    "code-block#write:slidy": {
+      "key": "6757b7a55f497d80",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<div class=\"sourceCode\" id=\"sample-code\"><pre\nclass=\"sourceCode python\"><code class=\"sourceCode python\"><span id=\"sample-code-1\"><a href=\"#sample-code-1\" tabindex=\"-1\"></a>value <span class=\"op\">=</span> <span class=\"dv\">24</span></span>\n<span id=\"sample-code-2\"><a href=\"#sample-code-2\" tabindex=\"-1\"></a><span class=\"bu\">print</span>(value <span class=\"op\">&lt;</span> <span class=\"dv\">25</span>)</span></code></pre></div>\n<pre><code>cap\n  ring\n</code></pre>\n</div>\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:dzslides": {
+      "key": "befa9891e96b464a",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<dl>\n<dt>Limit</dt>\n<dd>\nHighest permitted 24.\n</dd>\n<dd>\nSee the log.\n</dd>\n<dt>Zero</dt>\n<dd>\nStart value.\n</dd>\n</dl>\n</section>\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:revealjs": {
+      "key": "74c7614cd38dce88",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<dl>\n<dt>Limit</dt>\n<dd>\nHighest permitted 24.\n</dd>\n<dd>\nSee the log.\n</dd>\n<dt>Zero</dt>\n<dd>\nStart value.\n</dd>\n</dl>\n</section>\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:s5": {
+      "key": "d1a1ca1e2d1ebe38",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<dl>\n<dt>Limit</dt>\n<dd>\nHighest permitted 24.\n</dd>\n<dd>\nSee the log.\n</dd>\n<dt>Zero</dt>\n<dd>\nStart value.\n</dd>\n</dl>\n</div>\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:slideous": {
+      "key": "d112760fded02058",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<dl>\n<dt>Limit</dt>\n<dd>\nHighest permitted 24.\n</dd>\n<dd>\nSee the log.\n</dd>\n<dt>Zero</dt>\n<dd>\nStart value.\n</dd>\n</dl>\n</div>\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:slidy": {
+      "key": "3638a9b1d725ac40",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<dl>\n<dt>Limit</dt>\n<dd>\nHighest permitted 24.\n</dd>\n<dd>\nSee the log.\n</dd>\n<dt>Zero</dt>\n<dd>\nStart value.\n</dd>\n</dl>\n</div>\n",
+      "stderr": ""
+    },
+    "definition-list#read": {
+      "key": "f0cf498e72c95e4c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"Limit\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Highest\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"permitted\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"24.\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"See\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log.\"}]}]]],[[{\"t\":\"Str\",\"c\":\"Zero\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Start\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"value.\"}]}]]]]}]}\n",
+      "stderr": ""
+    },
+    "definition-list#write:dzslides": {
+      "key": "73c13776d422b579",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<dl>\n<dt>Limit</dt>\n<dd>\nHighest permitted 24.\n</dd>\n<dd>\nSee the log.\n</dd>\n<dt>Zero</dt>\n<dd>\nStart value.\n</dd>\n</dl>\n</section>\n",
+      "stderr": ""
+    },
+    "definition-list#write:revealjs": {
+      "key": "3174aa1235b9108b",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<dl>\n<dt>Limit</dt>\n<dd>\nHighest permitted 24.\n</dd>\n<dd>\nSee the log.\n</dd>\n<dt>Zero</dt>\n<dd>\nStart value.\n</dd>\n</dl>\n</section>\n",
+      "stderr": ""
+    },
+    "definition-list#write:s5": {
+      "key": "b7ac0f1d7bdc91df",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<dl>\n<dt>Limit</dt>\n<dd>\nHighest permitted 24.\n</dd>\n<dd>\nSee the log.\n</dd>\n<dt>Zero</dt>\n<dd>\nStart value.\n</dd>\n</dl>\n</div>\n",
+      "stderr": ""
+    },
+    "definition-list#write:slideous": {
+      "key": "031cc12a869d4ad7",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<dl>\n<dt>Limit</dt>\n<dd>\nHighest permitted 24.\n</dd>\n<dd>\nSee the log.\n</dd>\n<dt>Zero</dt>\n<dd>\nStart value.\n</dd>\n</dl>\n</div>\n",
+      "stderr": ""
+    },
+    "definition-list#write:slidy": {
+      "key": "bd3b40f0c7020e2d",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<dl>\n<dt>Limit</dt>\n<dd>\nHighest permitted 24.\n</dd>\n<dd>\nSee the log.\n</dd>\n<dt>Zero</dt>\n<dd>\nStart value.\n</dd>\n</dl>\n</div>\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:dzslides": {
+      "key": "3108a167d39e8daa",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<div id=\"check-panel\" class=\"inspection\" lang=\"en\">\n<p><span id=\"check-step\" class=\"label\" title=\"Check location\">Lens\ncheck</span> cap</p>\n</div>\n</section>\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:revealjs": {
+      "key": "53711d47e311b050",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<div id=\"check-panel\" class=\"inspection\" lang=\"en\">\n<p><span id=\"check-step\" class=\"label\" title=\"Check location\">Lens\ncheck</span> cap</p>\n</div>\n</section>\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:s5": {
+      "key": "4565584e99f2c3e0",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<div id=\"check-panel\" class=\"inspection\" lang=\"en\">\n<p><span id=\"check-step\" class=\"label\" title=\"Check location\">Lens\ncheck</span> cap</p>\n</div>\n</div>\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:slideous": {
+      "key": "aa1d69edaa1d1940",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<div id=\"check-panel\" class=\"inspection\" lang=\"en\">\n<p><span id=\"check-step\" class=\"label\" title=\"Check location\">Lens\ncheck</span> cap</p>\n</div>\n</div>\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:slidy": {
+      "key": "fe674be27c8a1998",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<div id=\"check-panel\" class=\"inspection\" lang=\"en\">\n<p><span id=\"check-step\" class=\"label\" title=\"Check location\">Lens\ncheck</span> cap</p>\n</div>\n</div>\n",
+      "stderr": ""
+    },
+    "div-and-span#read": {
+      "key": "18a77bd59b9ce934",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"check-panel\",[\"inspection\"],[[\"lang\",\"en\"]]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"check-step\",[\"label\"],[[\"title\",\"Check location\"]]],[{\"t\":\"Str\",\"c\":\"Lens\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cap\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "div-and-span#write:dzslides": {
+      "key": "452cca09ff285638",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<div id=\"check-panel\" class=\"inspection\" lang=\"en\">\n<p><span id=\"check-step\" class=\"label\" title=\"Check location\">Lens\ncheck</span> cap</p>\n</div>\n</section>\n",
+      "stderr": ""
+    },
+    "div-and-span#write:revealjs": {
+      "key": "92d8306072d7a0d6",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<div id=\"check-panel\" class=\"inspection\" lang=\"en\">\n<p><span id=\"check-step\" class=\"label\" title=\"Check location\">Lens\ncheck</span> cap</p>\n</div>\n</section>\n",
+      "stderr": ""
+    },
+    "div-and-span#write:s5": {
+      "key": "ee544d237e848c2a",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<div id=\"check-panel\" class=\"inspection\" lang=\"en\">\n<p><span id=\"check-step\" class=\"label\" title=\"Check location\">Lens\ncheck</span> cap</p>\n</div>\n</div>\n",
+      "stderr": ""
+    },
+    "div-and-span#write:slideous": {
+      "key": "edeb74071c0c0b42",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<div id=\"check-panel\" class=\"inspection\" lang=\"en\">\n<p><span id=\"check-step\" class=\"label\" title=\"Check location\">Lens\ncheck</span> cap</p>\n</div>\n</div>\n",
+      "stderr": ""
+    },
+    "div-and-span#write:slidy": {
+      "key": "57ac09ea77c3d4ac",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<div id=\"check-panel\" class=\"inspection\" lang=\"en\">\n<p><span id=\"check-step\" class=\"label\" title=\"Check location\">Lens\ncheck</span> cap</p>\n</div>\n</div>\n",
+      "stderr": ""
+    },
+    "headings#e2e:dzslides": {
+      "key": "d21552e6aaf1be9c",
+      "exit": 0,
+      "stdout": "<section id=\"cap\" class=\"slide level1\">\n<h1>Lens check</h1>\n<p>Start here.</p>\n<h2 class=\"unnumbered\" id=\"details\">Readings</h2>\n<p>Check ring.</p>\n</section>\n",
+      "stderr": ""
+    },
+    "headings#e2e:revealjs": {
+      "key": "9b9c49512d7200f6",
+      "exit": 0,
+      "stdout": "<section id=\"cap\" class=\"slide level1\">\n<h1>Lens check</h1>\n<p>Start here.</p>\n<h2 class=\"unnumbered\" id=\"details\">Readings</h2>\n<p>Check ring.</p>\n</section>\n",
+      "stderr": ""
+    },
+    "headings#e2e:s5": {
+      "key": "c49f9e694c318b86",
+      "exit": 0,
+      "stdout": "<div id=\"cap\" class=\"slide section level1\">\n<h1>Lens check</h1>\n<p>Start here.</p>\n<h2 class=\"unnumbered\" id=\"details\">Readings</h2>\n<p>Check ring.</p>\n</div>\n",
+      "stderr": ""
+    },
+    "headings#e2e:slideous": {
+      "key": "ba86ec347453e526",
+      "exit": 0,
+      "stdout": "<div id=\"cap\" class=\"slide section level1\">\n<h1>Lens check</h1>\n<p>Start here.</p>\n<h2 class=\"unnumbered\" id=\"details\">Readings</h2>\n<p>Check ring.</p>\n</div>\n",
+      "stderr": ""
+    },
+    "headings#e2e:slidy": {
+      "key": "2fd1093fadf3a81e",
+      "exit": 0,
+      "stdout": "<div id=\"cap\" class=\"slide section level1\">\n<h1>Lens check</h1>\n<p>Start here.</p>\n<h2 class=\"unnumbered\" id=\"details\">Readings</h2>\n<p>Check ring.</p>\n</div>\n",
+      "stderr": ""
+    },
+    "headings#read": {
+      "key": "489f9af6f7886572",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"cap\",[],[]],[{\"t\":\"Str\",\"c\":\"Lens\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Start\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"here.\"}]},{\"t\":\"Header\",\"c\":[2,[\"details\",[\"unnumbered\"],[]],[{\"t\":\"Str\",\"c\":\"Readings\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ring.\"}]}]}\n",
+      "stderr": ""
+    },
+    "headings#write:dzslides": {
+      "key": "fc9c2ad193127d63",
+      "exit": 0,
+      "stdout": "<section id=\"cap\" class=\"slide level1\">\n<h1>Lens check</h1>\n<p>Start here.</p>\n<h2 class=\"unnumbered\" id=\"details\">Readings</h2>\n<p>Check ring.</p>\n</section>\n",
+      "stderr": ""
+    },
+    "headings#write:revealjs": {
+      "key": "54aff4940cce6cad",
+      "exit": 0,
+      "stdout": "<section id=\"cap\" class=\"slide level1\">\n<h1>Lens check</h1>\n<p>Start here.</p>\n<h2 class=\"unnumbered\" id=\"details\">Readings</h2>\n<p>Check ring.</p>\n</section>\n",
+      "stderr": ""
+    },
+    "headings#write:s5": {
+      "key": "44282349f8efa119",
+      "exit": 0,
+      "stdout": "<div id=\"cap\" class=\"slide section level1\">\n<h1>Lens check</h1>\n<p>Start here.</p>\n<h2 class=\"unnumbered\" id=\"details\">Readings</h2>\n<p>Check ring.</p>\n</div>\n",
+      "stderr": ""
+    },
+    "headings#write:slideous": {
+      "key": "d13e8cb32a936c31",
+      "exit": 0,
+      "stdout": "<div id=\"cap\" class=\"slide section level1\">\n<h1>Lens check</h1>\n<p>Start here.</p>\n<h2 class=\"unnumbered\" id=\"details\">Readings</h2>\n<p>Check ring.</p>\n</div>\n",
+      "stderr": ""
+    },
+    "headings#write:slidy": {
+      "key": "2d58c3e5f9a38e3f",
+      "exit": 0,
+      "stdout": "<div id=\"cap\" class=\"slide section level1\">\n<h1>Lens check</h1>\n<p>Start here.</p>\n<h2 class=\"unnumbered\" id=\"details\">Readings</h2>\n<p>Check ring.</p>\n</div>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:dzslides": {
+      "key": "fada1c95429dc296",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<p>Before the cap check.</p>\n</section>\n<section class=\"slide level6\">\n\n<p>After the ring check.</p>\n</section>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:revealjs": {
+      "key": "b0227f0f7ff0f164",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<p>Before the cap check.</p>\n</section>\n<section class=\"slide level6\">\n\n<p>After the ring check.</p>\n</section>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:s5": {
+      "key": "ec3f2cbb41ab63b4",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p>Before the cap check.</p>\n</div>\n<div class=\"slide section level6\">\n\n<p>After the ring check.</p>\n</div>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:slideous": {
+      "key": "54ca6aaeedd48dd4",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p>Before the cap check.</p>\n</div>\n<div class=\"slide section level6\">\n\n<p>After the ring check.</p>\n</div>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:slidy": {
+      "key": "a7d29ba693e12cbc",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p>Before the cap check.</p>\n</div>\n<div class=\"slide section level6\">\n\n<p>After the ring check.</p>\n</div>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#read": {
+      "key": "1912076da334dd68",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cap\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check.\"}]},{\"t\":\"HorizontalRule\"},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"After\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ring\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check.\"}]}]}\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:dzslides": {
+      "key": "f6e7fb5593012adc",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<p>Before the cap check.</p>\n</section>\n<section class=\"slide level6\">\n\n<p>After the ring check.</p>\n</section>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:revealjs": {
+      "key": "341acf4341a15f0a",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<p>Before the cap check.</p>\n</section>\n<section class=\"slide level6\">\n\n<p>After the ring check.</p>\n</section>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:s5": {
+      "key": "b041cb399ee20b0e",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p>Before the cap check.</p>\n</div>\n<div class=\"slide section level6\">\n\n<p>After the ring check.</p>\n</div>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:slideous": {
+      "key": "959c2f1b04d70f16",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p>Before the cap check.</p>\n</div>\n<div class=\"slide section level6\">\n\n<p>After the ring check.</p>\n</div>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:slidy": {
+      "key": "3d41e197a03a5110",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p>Before the cap check.</p>\n</div>\n<div class=\"slide section level6\">\n\n<p>After the ring check.</p>\n</div>\n",
+      "stderr": ""
+    },
+    "image#e2e:dzslides": {
+      "key": "0c951aa5d8736e31",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<p><img\nsrc=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\"\ntitle=\"Blue pixel\" id=\"sample\" width=\"24\" alt=\"Lens check sample\" /></p>\n</section>\n",
+      "stderr": ""
+    },
+    "image#e2e:revealjs": {
+      "key": "3ecace96b02b77a7",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<p><img\ndata-src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\"\ntitle=\"Blue pixel\" id=\"sample\" width=\"24\" alt=\"Lens check sample\" /></p>\n</section>\n",
+      "stderr": ""
+    },
+    "image#e2e:s5": {
+      "key": "36d4083a85b0b537",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p><img\nsrc=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\"\ntitle=\"Blue pixel\" id=\"sample\" width=\"24\" alt=\"Lens check sample\" /></p>\n</div>\n",
+      "stderr": ""
+    },
+    "image#e2e:slideous": {
+      "key": "8b6d918614ef9bd7",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p><img\nsrc=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\"\ntitle=\"Blue pixel\" id=\"sample\" width=\"24\" alt=\"Lens check sample\" /></p>\n</div>\n",
+      "stderr": ""
+    },
+    "image#e2e:slidy": {
+      "key": "1eeb32adeea57eaf",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p><img\nsrc=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\"\ntitle=\"Blue pixel\" id=\"sample\" width=\"24\" alt=\"Lens check sample\" /></p>\n</div>\n",
+      "stderr": ""
+    },
+    "image#read": {
+      "key": "6fd736b1bdf5b66b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Image\",\"c\":[[\"sample\",[],[[\"width\",\"24px\"]]],[{\"t\":\"Str\",\"c\":\"Lens\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sample\"}],[\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\",\"Blue pixel\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "image#write:dzslides": {
+      "key": "c955d2bf522a2555",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<p><img\nsrc=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\"\ntitle=\"Blue pixel\" id=\"sample\" width=\"24\" alt=\"Lens check sample\" /></p>\n</section>\n",
+      "stderr": ""
+    },
+    "image#write:revealjs": {
+      "key": "d347f2f34d13435b",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<p><img\ndata-src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\"\ntitle=\"Blue pixel\" id=\"sample\" width=\"24\" alt=\"Lens check sample\" /></p>\n</section>\n",
+      "stderr": ""
+    },
+    "image#write:s5": {
+      "key": "fabc2292b82d1dbf",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p><img\nsrc=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\"\ntitle=\"Blue pixel\" id=\"sample\" width=\"24\" alt=\"Lens check sample\" /></p>\n</div>\n",
+      "stderr": ""
+    },
+    "image#write:slideous": {
+      "key": "c319470df84ab327",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p><img\nsrc=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\"\ntitle=\"Blue pixel\" id=\"sample\" width=\"24\" alt=\"Lens check sample\" /></p>\n</div>\n",
+      "stderr": ""
+    },
+    "image#write:slidy": {
+      "key": "0a378eb6062b44e9",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p><img\nsrc=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\"\ntitle=\"Blue pixel\" id=\"sample\" width=\"24\" alt=\"Lens check sample\" /></p>\n</div>\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:dzslides": {
+      "key": "9d35e3a49eaeadb1",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<p><em>cap</em> <strong>ring</strong> <code>a_b + 2</code>\n<del>retired</del> H<sub>2</sub>O m<sup>2</sup></p>\n</section>\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:revealjs": {
+      "key": "0abc9757fb1c210f",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<p><em>cap</em> <strong>ring</strong> <code>a_b + 2</code>\n<del>retired</del> H<sub>2</sub>O m<sup>2</sup></p>\n</section>\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:s5": {
+      "key": "438f3e5ffe3ef55f",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p><em>cap</em> <strong>ring</strong> <code>a_b + 2</code>\n<del>retired</del> H<sub>2</sub>O m<sup>2</sup></p>\n</div>\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:slideous": {
+      "key": "2db27bc4f6aa43ff",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p><em>cap</em> <strong>ring</strong> <code>a_b + 2</code>\n<del>retired</del> H<sub>2</sub>O m<sup>2</sup></p>\n</div>\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:slidy": {
+      "key": "813d1638dd221a67",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p><em>cap</em> <strong>ring</strong> <code>a_b + 2</code>\n<del>retired</del> H<sub>2</sub>O m<sup>2</sup></p>\n</div>\n",
+      "stderr": ""
+    },
+    "inline-styles#read": {
+      "key": "08fff29f4b7019ab",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"cap\"}]},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"ring\"}]},{\"t\":\"Space\"},{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"a_b + 2\"]},{\"t\":\"Space\"},{\"t\":\"Strikeout\",\"c\":[{\"t\":\"Str\",\"c\":\"retired\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"H\"},{\"t\":\"Subscript\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]},{\"t\":\"Str\",\"c\":\"O\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"m\"},{\"t\":\"Superscript\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "inline-styles#write:dzslides": {
+      "key": "995a3592a2783674",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<p><em>cap</em> <strong>ring</strong> <code>a_b + 2</code>\n<del>retired</del> H<sub>2</sub>O m<sup>2</sup></p>\n</section>\n",
+      "stderr": ""
+    },
+    "inline-styles#write:revealjs": {
+      "key": "e40f622088b8007a",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<p><em>cap</em> <strong>ring</strong> <code>a_b + 2</code>\n<del>retired</del> H<sub>2</sub>O m<sup>2</sup></p>\n</section>\n",
+      "stderr": ""
+    },
+    "inline-styles#write:s5": {
+      "key": "b5a1b6f82585f49e",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p><em>cap</em> <strong>ring</strong> <code>a_b + 2</code>\n<del>retired</del> H<sub>2</sub>O m<sup>2</sup></p>\n</div>\n",
+      "stderr": ""
+    },
+    "inline-styles#write:slideous": {
+      "key": "c4e14830166c65d6",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p><em>cap</em> <strong>ring</strong> <code>a_b + 2</code>\n<del>retired</del> H<sub>2</sub>O m<sup>2</sup></p>\n</div>\n",
+      "stderr": ""
+    },
+    "inline-styles#write:slidy": {
+      "key": "dcec6113d9072248",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p><em>cap</em> <strong>ring</strong> <code>a_b + 2</code>\n<del>retired</del> H<sub>2</sub>O m<sup>2</sup></p>\n</div>\n",
+      "stderr": ""
+    },
+    "links#e2e:dzslides": {
+      "key": "af76ab4c65697b9d",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<p><a href=\"https://example.invalid/log?mode=day&amp;view=full\"\ntitle=\"Open log\">Read the cap log</a> <a href=\"#ring\">section</a></p>\n</section>\n<section id=\"ring\" class=\"title-slide slide level2\">\n<h2>Log entry</h2>\n\n</section>\n",
+      "stderr": ""
+    },
+    "links#e2e:revealjs": {
+      "key": "efb9dc19da26153b",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<p><a href=\"https://example.invalid/log?mode=day&amp;view=full\"\ntitle=\"Open log\">Read the cap log</a> <a href=\"#/ring\">section</a></p>\n</section>\n<section id=\"ring\" class=\"title-slide slide level2\">\n<h2>Log entry</h2>\n\n</section>\n",
+      "stderr": ""
+    },
+    "links#e2e:s5": {
+      "key": "2f0e89d619bfeaeb",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p><a href=\"https://example.invalid/log?mode=day&amp;view=full\"\ntitle=\"Open log\">Read the cap log</a> <a href=\"#ring\">section</a></p>\n</div>\n<div id=\"ring\" class=\"title-slide slide section level2\">\n<h2>Log entry</h2>\n\n</div>\n",
+      "stderr": ""
+    },
+    "links#e2e:slideous": {
+      "key": "dd41cb68b2db79cb",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p><a href=\"https://example.invalid/log?mode=day&amp;view=full\"\ntitle=\"Open log\">Read the cap log</a> <a href=\"#ring\">section</a></p>\n</div>\n<div id=\"ring\" class=\"title-slide slide section level2\">\n<h2>Log entry</h2>\n\n</div>\n",
+      "stderr": ""
+    },
+    "links#e2e:slidy": {
+      "key": "f37e5d0931653893",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p><a href=\"https://example.invalid/log?mode=day&amp;view=full\"\ntitle=\"Open log\">Read the cap log</a> <a href=\"#ring\">section</a></p>\n</div>\n<div id=\"ring\" class=\"title-slide slide section level2\">\n<h1>Log entry</h1>\n\n</div>\n",
+      "stderr": ""
+    },
+    "links#read": {
+      "key": "9428e6c3915a4067",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cap\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log\"}],[\"https://example.invalid/log?mode=day&view=full\",\"Open log\"]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"section\"}],[\"#ring\",\"\"]]}]},{\"t\":\"Header\",\"c\":[2,[\"ring\",[],[]],[{\"t\":\"Str\",\"c\":\"Log\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"entry\"}]]}]}\n",
+      "stderr": ""
+    },
+    "links#write:dzslides": {
+      "key": "ecb0edeeb4548110",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<p><a href=\"https://example.invalid/log?mode=day&amp;view=full\"\ntitle=\"Open log\">Read the cap log</a> <a href=\"#ring\">section</a></p>\n</section>\n<section id=\"ring\" class=\"title-slide slide level2\">\n<h2>Log entry</h2>\n\n</section>\n",
+      "stderr": ""
+    },
+    "links#write:revealjs": {
+      "key": "9aa7908c22098286",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<p><a href=\"https://example.invalid/log?mode=day&amp;view=full\"\ntitle=\"Open log\">Read the cap log</a> <a href=\"#/ring\">section</a></p>\n</section>\n<section id=\"ring\" class=\"title-slide slide level2\">\n<h2>Log entry</h2>\n\n</section>\n",
+      "stderr": ""
+    },
+    "links#write:s5": {
+      "key": "2a5bb156396567ea",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p><a href=\"https://example.invalid/log?mode=day&amp;view=full\"\ntitle=\"Open log\">Read the cap log</a> <a href=\"#ring\">section</a></p>\n</div>\n<div id=\"ring\" class=\"title-slide slide section level2\">\n<h2>Log entry</h2>\n\n</div>\n",
+      "stderr": ""
+    },
+    "links#write:slideous": {
+      "key": "b6a54ae7259da672",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p><a href=\"https://example.invalid/log?mode=day&amp;view=full\"\ntitle=\"Open log\">Read the cap log</a> <a href=\"#ring\">section</a></p>\n</div>\n<div id=\"ring\" class=\"title-slide slide section level2\">\n<h2>Log entry</h2>\n\n</div>\n",
+      "stderr": ""
+    },
+    "links#write:slidy": {
+      "key": "895393b1d99bc574",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p><a href=\"https://example.invalid/log?mode=day&amp;view=full\"\ntitle=\"Open log\">Read the cap log</a> <a href=\"#ring\">section</a></p>\n</div>\n<div id=\"ring\" class=\"title-slide slide section level2\">\n<h1>Log entry</h1>\n\n</div>\n",
+      "stderr": ""
+    },
+    "notes#e2e:dzslides": {
+      "key": "89cb6b0ec0c3401d",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<p>cap<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> ring<a href=\"#fn2\"\nclass=\"footnote-ref\" id=\"fnref2\" role=\"doc-noteref\"><sup>2</sup></a></p>\n</section>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>Use the lower mark.</p>\n<p><em>Check the scale.</em><a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn2\"><p>Use the upper mark.<a href=\"#fnref2\"\nclass=\"footnote-back\" role=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "notes#e2e:revealjs": {
+      "key": "0d88dd78013cb357",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<p>cap<a href=\"#/fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> ring<a href=\"#/fn2\"\nclass=\"footnote-ref\" id=\"fnref2\" role=\"doc-noteref\"><sup>2</sup></a></p>\n</section>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>Use the lower mark.</p>\n<p><em>Check the scale.</em><a href=\"#/fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn2\"><p>Use the upper mark.<a href=\"#/fnref2\"\nclass=\"footnote-back\" role=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "notes#e2e:s5": {
+      "key": "f634f452b00f26e7",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p>cap<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a>\nring<a href=\"#fn2\" class=\"footnote-ref\" id=\"fnref2\"><sup>2</sup></a></p>\n</div>\n<div class=\"footnotes slide\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>Use the lower mark.</p>\n<p><em>Check the scale.</em><a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn2\"><p>Use the upper mark.<a href=\"#fnref2\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "notes#e2e:slideous": {
+      "key": "47c2049b91276507",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p>cap<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a>\nring<a href=\"#fn2\" class=\"footnote-ref\" id=\"fnref2\"><sup>2</sup></a></p>\n</div>\n<div class=\"footnotes slide\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>Use the lower mark.</p>\n<p><em>Check the scale.</em><a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn2\"><p>Use the upper mark.<a href=\"#fnref2\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "notes#e2e:slidy": {
+      "key": "d659a98758aed01f",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p>cap<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a>\nring<a href=\"#fn2\" class=\"footnote-ref\" id=\"fnref2\"><sup>2</sup></a></p>\n</div>\n<div class=\"footnotes slide\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>Use the lower mark.</p>\n<p><em>Check the scale.</em><a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn2\"><p>Use the upper mark.<a href=\"#fnref2\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "notes#read": {
+      "key": "3b134cc63f9d55ab",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"cap\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"lower\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"scale.\"}]}]}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ring\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"upper\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark.\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "notes#write:dzslides": {
+      "key": "21f64a6f7014bcc9",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<p>cap<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> ring<a href=\"#fn2\"\nclass=\"footnote-ref\" id=\"fnref2\" role=\"doc-noteref\"><sup>2</sup></a></p>\n</section>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>Use the lower mark.</p>\n<p><em>Check the scale.</em><a href=\"#fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn2\"><p>Use the upper mark.<a href=\"#fnref2\"\nclass=\"footnote-back\" role=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "notes#write:revealjs": {
+      "key": "1bed9c215f308a93",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<p>cap<a href=\"#/fn1\" class=\"footnote-ref\" id=\"fnref1\"\nrole=\"doc-noteref\"><sup>1</sup></a> ring<a href=\"#/fn2\"\nclass=\"footnote-ref\" id=\"fnref2\" role=\"doc-noteref\"><sup>2</sup></a></p>\n</section>\n<section id=\"footnotes\" class=\"footnotes footnotes-end-of-document\"\nrole=\"doc-endnotes\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>Use the lower mark.</p>\n<p><em>Check the scale.</em><a href=\"#/fnref1\" class=\"footnote-back\"\nrole=\"doc-backlink\">↩︎</a></p></li>\n<li id=\"fn2\"><p>Use the upper mark.<a href=\"#/fnref2\"\nclass=\"footnote-back\" role=\"doc-backlink\">↩︎</a></p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "notes#write:s5": {
+      "key": "4b33b1559c73de4f",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p>cap<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a>\nring<a href=\"#fn2\" class=\"footnote-ref\" id=\"fnref2\"><sup>2</sup></a></p>\n</div>\n<div class=\"footnotes slide\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>Use the lower mark.</p>\n<p><em>Check the scale.</em><a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn2\"><p>Use the upper mark.<a href=\"#fnref2\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "notes#write:slideous": {
+      "key": "7ae2fdcecb39df87",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p>cap<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a>\nring<a href=\"#fn2\" class=\"footnote-ref\" id=\"fnref2\"><sup>2</sup></a></p>\n</div>\n<div class=\"footnotes slide\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>Use the lower mark.</p>\n<p><em>Check the scale.</em><a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn2\"><p>Use the upper mark.<a href=\"#fnref2\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "notes#write:slidy": {
+      "key": "c657cca42b7d6ff5",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p>cap<a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\"><sup>1</sup></a>\nring<a href=\"#fn2\" class=\"footnote-ref\" id=\"fnref2\"><sup>2</sup></a></p>\n</div>\n<div class=\"footnotes slide\">\n<hr />\n<ol>\n<li id=\"fn1\"><p>Use the lower mark.</p>\n<p><em>Check the scale.</em><a href=\"#fnref1\"\nclass=\"footnote-back\">↩︎</a></p></li>\n<li id=\"fn2\"><p>Use the upper mark.<a href=\"#fnref2\"\nclass=\"footnote-back\">↩︎</a></p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:dzslides": {
+      "key": "c7c7a4ffa0078933",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<ol start=\"4\" type=\"I\">\n<li><p>Open cap.</p>\n<p>Wait for the signal.</p></li>\n<li><p>Close ring.</p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:revealjs": {
+      "key": "e729a8acd24a633d",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<ol start=\"4\" type=\"I\">\n<li><p>Open cap.</p>\n<p>Wait for the signal.</p></li>\n<li><p>Close ring.</p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:s5": {
+      "key": "a7ad9472e60d9d6d",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<ol start=\"4\" style=\"list-style-type: upper-roman\">\n<li><p>Open cap.</p>\n<p>Wait for the signal.</p></li>\n<li><p>Close ring.</p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:slideous": {
+      "key": "8f2eff5baa0b384d",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<ol start=\"4\" style=\"list-style-type: upper-roman\">\n<li><p>Open cap.</p>\n<p>Wait for the signal.</p></li>\n<li><p>Close ring.</p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:slidy": {
+      "key": "d06349511d287b65",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<ol start=\"4\" style=\"list-style-type: upper-roman\">\n<li><p>Open cap.</p>\n<p>Wait for the signal.</p></li>\n<li><p>Close ring.</p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "ordered-list#read": {
+      "key": "0a34588eedfc8f81",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[4,{\"t\":\"UpperRoman\"},{\"t\":\"OneParen\"}],[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Open\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cap.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Wait\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"for\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"signal.\"}]}],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Close\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ring.\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "ordered-list#write:dzslides": {
+      "key": "1ad3a69418d24687",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<ol start=\"4\" type=\"I\">\n<li><p>Open cap.</p>\n<p>Wait for the signal.</p></li>\n<li><p>Close ring.</p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "ordered-list#write:revealjs": {
+      "key": "73f60c7b9b3cfa11",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<ol start=\"4\" type=\"I\">\n<li><p>Open cap.</p>\n<p>Wait for the signal.</p></li>\n<li><p>Close ring.</p></li>\n</ol>\n</section>\n",
+      "stderr": ""
+    },
+    "ordered-list#write:s5": {
+      "key": "0f475e4ff24578dd",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<ol start=\"4\" style=\"list-style-type: upper-roman\">\n<li><p>Open cap.</p>\n<p>Wait for the signal.</p></li>\n<li><p>Close ring.</p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "ordered-list#write:slideous": {
+      "key": "e97425270d0ff185",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<ol start=\"4\" style=\"list-style-type: upper-roman\">\n<li><p>Open cap.</p>\n<p>Wait for the signal.</p></li>\n<li><p>Close ring.</p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "ordered-list#write:slidy": {
+      "key": "a2681b2bb34a5753",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<ol start=\"4\" style=\"list-style-type: upper-roman\">\n<li><p>Open cap.</p>\n<p>Wait for the signal.</p></li>\n<li><p>Close ring.</p></li>\n</ol>\n</div>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:dzslides": {
+      "key": "9e6cb278eb30724c",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<p>Lens check log.</p>\n<p>Read slowly. Stop.<br />\nCafé &amp; &lt;check&gt;</p>\n</section>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:revealjs": {
+      "key": "9d615728fadeba86",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<p>Lens check log.</p>\n<p>Read slowly. Stop.<br />\nCafé &amp; &lt;check&gt;</p>\n</section>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:s5": {
+      "key": "c03f7795eaaf7296",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p>Lens check log.</p>\n<p>Read slowly. Stop.<br />\nCafé &amp; &lt;check&gt;</p>\n</div>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:slideous": {
+      "key": "f3d82088d8d194b6",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p>Lens check log.</p>\n<p>Read slowly. Stop.<br />\nCafé &amp; &lt;check&gt;</p>\n</div>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:slidy": {
+      "key": "f1ed609108c15fde",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p>Lens check log.</p>\n<p>Read slowly. Stop.<br />\nCafé &amp; &lt;check&gt;</p>\n</div>\n",
+      "stderr": ""
+    },
+    "paragraphs#read": {
+      "key": "d2489dfd5507e112",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lens\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"slowly.\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"Stop.\"},{\"t\":\"LineBreak\"},{\"t\":\"Str\",\"c\":\"Café & <check>\"}]}]}\n",
+      "stderr": ""
+    },
+    "paragraphs#write:dzslides": {
+      "key": "7dd30f49ea7401b5",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<p>Lens check log.</p>\n<p>Read slowly. Stop.<br />\nCafé &amp; &lt;check&gt;</p>\n</section>\n",
+      "stderr": ""
+    },
+    "paragraphs#write:revealjs": {
+      "key": "9870819483e76173",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<p>Lens check log.</p>\n<p>Read slowly. Stop.<br />\nCafé &amp; &lt;check&gt;</p>\n</section>\n",
+      "stderr": ""
+    },
+    "paragraphs#write:s5": {
+      "key": "479f56c454e72267",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p>Lens check log.</p>\n<p>Read slowly. Stop.<br />\nCafé &amp; &lt;check&gt;</p>\n</div>\n",
+      "stderr": ""
+    },
+    "paragraphs#write:slideous": {
+      "key": "7d07140f946832df",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p>Lens check log.</p>\n<p>Read slowly. Stop.<br />\nCafé &amp; &lt;check&gt;</p>\n</div>\n",
+      "stderr": ""
+    },
+    "paragraphs#write:slidy": {
+      "key": "2f769a41c733ab19",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<p>Lens check log.</p>\n<p>Read slowly. Stop.<br />\nCafé &amp; &lt;check&gt;</p>\n</div>\n",
+      "stderr": ""
+    },
+    "quote#e2e:dzslides": {
+      "key": "e768b9b44247fbda",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<blockquote>\n<p>“Check cap.”</p>\n<p>Record the result.</p>\n</blockquote>\n<p>Continue the test.</p>\n</section>\n",
+      "stderr": ""
+    },
+    "quote#e2e:revealjs": {
+      "key": "db31e4c771d00b64",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<blockquote>\n<p>“Check cap.”</p>\n<p>Record the result.</p>\n</blockquote>\n<p>Continue the test.</p>\n</section>\n",
+      "stderr": ""
+    },
+    "quote#e2e:s5": {
+      "key": "8756db3d2e80ac54",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<blockquote>\n<p>“Check cap.”</p>\n<p>Record the result.</p>\n</blockquote>\n<p>Continue the test.</p>\n</div>\n",
+      "stderr": ""
+    },
+    "quote#e2e:slideous": {
+      "key": "622cd4bdbf683574",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<blockquote>\n<p>“Check cap.”</p>\n<p>Record the result.</p>\n</blockquote>\n<p>Continue the test.</p>\n</div>\n",
+      "stderr": ""
+    },
+    "quote#e2e:slidy": {
+      "key": "7810869f7c6bce0c",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<blockquote>\n<p>“Check cap.”</p>\n<p>Record the result.</p>\n</blockquote>\n<p>Continue the test.</p>\n</div>\n",
+      "stderr": ""
+    },
+    "quote#read": {
+      "key": "2374fddb3d8f4008",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cap.\"}]]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Record\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"result.\"}]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Continue\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test.\"}]}]}\n",
+      "stderr": ""
+    },
+    "quote#write:dzslides": {
+      "key": "1548a68ccc824032",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<blockquote>\n<p>“Check cap.”</p>\n<p>Record the result.</p>\n</blockquote>\n<p>Continue the test.</p>\n</section>\n",
+      "stderr": ""
+    },
+    "quote#write:revealjs": {
+      "key": "d9dd8353f0ce5060",
+      "exit": 0,
+      "stdout": "<section class=\"slide level6\">\n\n<blockquote>\n<p>“Check cap.”</p>\n<p>Record the result.</p>\n</blockquote>\n<p>Continue the test.</p>\n</section>\n",
+      "stderr": ""
+    },
+    "quote#write:s5": {
+      "key": "8414671e3078c0e4",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<blockquote>\n<p>“Check cap.”</p>\n<p>Record the result.</p>\n</blockquote>\n<p>Continue the test.</p>\n</div>\n",
+      "stderr": ""
+    },
+    "quote#write:slideous": {
+      "key": "8eb7fdea9d05047c",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<blockquote>\n<p>“Check cap.”</p>\n<p>Record the result.</p>\n</blockquote>\n<p>Continue the test.</p>\n</div>\n",
+      "stderr": ""
+    },
+    "quote#write:slidy": {
+      "key": "70d8834f84cd04f6",
+      "exit": 0,
+      "stdout": "<div class=\"slide section level6\">\n\n<blockquote>\n<p>“Check cap.”</p>\n<p>Record the result.</p>\n</blockquote>\n<p>Continue the test.</p>\n</div>\n",
+      "stderr": ""
+    },
+    "standalone-slide-deck#e2e:dzslides": {
+      "key": "ce9beba3cf40647c",
+      "exit": 0,
+      "stdout": "<!doctype html>\n<html lang=\"en\">\n<head>\n<title>Lens check</title>\n</head>\n<body>\n<section id=\"lens-check\" class=\"title-slide slide level1\">\n<h1>Lens check</h1>\n\n</section>\n<section id=\"remove-cap\" class=\"slide level2\">\n<h2>Remove the cap</h2>\n<ul class=\"incremental\">\n<li>Turn the ring.</li>\n<li>Lift the cap.</li>\n</ul>\n</section>\n<section class=\"slide level2\">\n\n<p>Put the cap on the tray.</p>\n</section>\n<section id=\"fit-cap\" class=\"slide level2\">\n<h2>Install the cap</h2>\n<p>Turn the ring to the mark.</p>\n</section>\n</body>\n</html>\n",
+      "stderr": ""
+    },
+    "standalone-slide-deck#e2e:revealjs": {
+      "key": "999e50ce102927c6",
+      "exit": 0,
+      "stdout": "<!doctype html>\n<html lang=\"en\">\n<head>\n<title>Lens check</title>\n</head>\n<body>\n<section>\n<section id=\"lens-check\" class=\"title-slide slide level1\">\n<h1>Lens check</h1>\n\n</section>\n<section id=\"remove-cap\" class=\"slide level2\">\n<h2>Remove the cap</h2>\n<ul>\n<li class=\"fragment\">Turn the ring.</li>\n<li class=\"fragment\">Lift the cap.</li>\n</ul>\n</section>\n<section class=\"slide level2\">\n\n<p>Put the cap on the tray.</p>\n</section>\n<section id=\"fit-cap\" class=\"slide level2\">\n<h2>Install the cap</h2>\n<p>Turn the ring to the mark.</p>\n</section></section>\n</body>\n</html>\n",
+      "stderr": ""
+    },
+    "standalone-slide-deck#e2e:s5": {
+      "key": "cc3505563decc896",
+      "exit": 0,
+      "stdout": "<!doctype html>\n<html lang=\"en\">\n<head>\n<title>Lens check</title>\n</head>\n<body>\n<div id=\"lens-check\" class=\"title-slide slide section level1\">\n<h1>Lens check</h1>\n\n</div>\n<div id=\"remove-cap\" class=\"slide section level2\">\n<h2>Remove the cap</h2>\n<ul class=\"incremental\">\n<li>Turn the ring.</li>\n<li>Lift the cap.</li>\n</ul>\n</div>\n<div class=\"slide section level2\">\n\n<p>Put the cap on the tray.</p>\n</div>\n<div id=\"fit-cap\" class=\"slide section level2\">\n<h2>Install the cap</h2>\n<p>Turn the ring to the mark.</p>\n</div>\n</body>\n</html>\n",
+      "stderr": ""
+    },
+    "standalone-slide-deck#e2e:slideous": {
+      "key": "b7987c58ff43ab36",
+      "exit": 0,
+      "stdout": "<!doctype html>\n<html lang=\"en\">\n<head>\n<title>Lens check</title>\n</head>\n<body>\n<div id=\"lens-check\" class=\"title-slide slide section level1\">\n<h1>Lens check</h1>\n\n</div>\n<div id=\"remove-cap\" class=\"slide section level2\">\n<h2>Remove the cap</h2>\n<ul class=\"incremental\">\n<li>Turn the ring.</li>\n<li>Lift the cap.</li>\n</ul>\n</div>\n<div class=\"slide section level2\">\n\n<p>Put the cap on the tray.</p>\n</div>\n<div id=\"fit-cap\" class=\"slide section level2\">\n<h2>Install the cap</h2>\n<p>Turn the ring to the mark.</p>\n</div>\n</body>\n</html>\n",
+      "stderr": ""
+    },
+    "standalone-slide-deck#e2e:slidy": {
+      "key": "0255777ef323600e",
+      "exit": 0,
+      "stdout": "<!doctype html>\n<html lang=\"en\">\n<head>\n<title>Lens check</title>\n</head>\n<body>\n<div id=\"lens-check\" class=\"title-slide slide section level1\">\n<h1>Lens check</h1>\n\n</div>\n<div id=\"remove-cap\" class=\"slide section level2\">\n<h1>Remove the cap</h1>\n<ul class=\"incremental\">\n<li>Turn the ring.</li>\n<li>Lift the cap.</li>\n</ul>\n</div>\n<div class=\"slide section level2\">\n\n<p>Put the cap on the tray.</p>\n</div>\n<div id=\"fit-cap\" class=\"slide section level2\">\n<h1>Install the cap</h1>\n<p>Turn the ring to the mark.</p>\n</div>\n</body>\n</html>\n",
+      "stderr": ""
+    },
+    "standalone-slide-deck#read": {
+      "key": "11ad9ac24a034062",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"title\":{\"t\":\"MetaString\",\"c\":\"Lens check\"}},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"lens-check\",[],[]],[{\"t\":\"Str\",\"c\":\"Lens\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"}]]},{\"t\":\"Header\",\"c\":[2,[\"remove-cap\",[],[]],[{\"t\":\"Str\",\"c\":\"Remove\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cap\"}]]},{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Turn\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ring.\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Lift\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cap.\"}]}]]},{\"t\":\"HorizontalRule\"},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Put\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cap\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"on\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tray.\"}]},{\"t\":\"Header\",\"c\":[2,[\"fit-cap\",[],[]],[{\"t\":\"Str\",\"c\":\"Install\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cap\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Turn\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ring\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"to\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark.\"}]}]}",
+      "stderr": ""
+    },
+    "standalone-slide-deck#write:dzslides": {
+      "key": "c6c19eed0283c5e2",
+      "exit": 0,
+      "stdout": "<!doctype html>\n<html lang=\"en\">\n<head>\n<title>Lens check</title>\n</head>\n<body>\n<section id=\"lens-check\" class=\"title-slide slide level1\">\n<h1>Lens check</h1>\n\n</section>\n<section id=\"remove-cap\" class=\"slide level2\">\n<h2>Remove the cap</h2>\n<ul class=\"incremental\">\n<li>Turn the ring.</li>\n<li>Lift the cap.</li>\n</ul>\n</section>\n<section class=\"slide level2\">\n\n<p>Put the cap on the tray.</p>\n</section>\n<section id=\"fit-cap\" class=\"slide level2\">\n<h2>Install the cap</h2>\n<p>Turn the ring to the mark.</p>\n</section>\n</body>\n</html>\n",
+      "stderr": ""
+    },
+    "standalone-slide-deck#write:revealjs": {
+      "key": "4d720760ea4c7d7c",
+      "exit": 0,
+      "stdout": "<!doctype html>\n<html lang=\"en\">\n<head>\n<title>Lens check</title>\n</head>\n<body>\n<section>\n<section id=\"lens-check\" class=\"title-slide slide level1\">\n<h1>Lens check</h1>\n\n</section>\n<section id=\"remove-cap\" class=\"slide level2\">\n<h2>Remove the cap</h2>\n<ul>\n<li class=\"fragment\">Turn the ring.</li>\n<li class=\"fragment\">Lift the cap.</li>\n</ul>\n</section>\n<section class=\"slide level2\">\n\n<p>Put the cap on the tray.</p>\n</section>\n<section id=\"fit-cap\" class=\"slide level2\">\n<h2>Install the cap</h2>\n<p>Turn the ring to the mark.</p>\n</section></section>\n</body>\n</html>\n",
+      "stderr": ""
+    },
+    "standalone-slide-deck#write:s5": {
+      "key": "765890915179a308",
+      "exit": 0,
+      "stdout": "<!doctype html>\n<html lang=\"en\">\n<head>\n<title>Lens check</title>\n</head>\n<body>\n<div id=\"lens-check\" class=\"title-slide slide section level1\">\n<h1>Lens check</h1>\n\n</div>\n<div id=\"remove-cap\" class=\"slide section level2\">\n<h2>Remove the cap</h2>\n<ul class=\"incremental\">\n<li>Turn the ring.</li>\n<li>Lift the cap.</li>\n</ul>\n</div>\n<div class=\"slide section level2\">\n\n<p>Put the cap on the tray.</p>\n</div>\n<div id=\"fit-cap\" class=\"slide section level2\">\n<h2>Install the cap</h2>\n<p>Turn the ring to the mark.</p>\n</div>\n</body>\n</html>\n",
+      "stderr": ""
+    },
+    "standalone-slide-deck#write:slideous": {
+      "key": "ac21e85958d765e0",
+      "exit": 0,
+      "stdout": "<!doctype html>\n<html lang=\"en\">\n<head>\n<title>Lens check</title>\n</head>\n<body>\n<div id=\"lens-check\" class=\"title-slide slide section level1\">\n<h1>Lens check</h1>\n\n</div>\n<div id=\"remove-cap\" class=\"slide section level2\">\n<h2>Remove the cap</h2>\n<ul class=\"incremental\">\n<li>Turn the ring.</li>\n<li>Lift the cap.</li>\n</ul>\n</div>\n<div class=\"slide section level2\">\n\n<p>Put the cap on the tray.</p>\n</div>\n<div id=\"fit-cap\" class=\"slide section level2\">\n<h2>Install the cap</h2>\n<p>Turn the ring to the mark.</p>\n</div>\n</body>\n</html>\n",
+      "stderr": ""
+    },
+    "standalone-slide-deck#write:slidy": {
+      "key": "8356284ff0a08c9e",
+      "exit": 0,
+      "stdout": "<!doctype html>\n<html lang=\"en\">\n<head>\n<title>Lens check</title>\n</head>\n<body>\n<div id=\"lens-check\" class=\"title-slide slide section level1\">\n<h1>Lens check</h1>\n\n</div>\n<div id=\"remove-cap\" class=\"slide section level2\">\n<h1>Remove the cap</h1>\n<ul class=\"incremental\">\n<li>Turn the ring.</li>\n<li>Lift the cap.</li>\n</ul>\n</div>\n<div class=\"slide section level2\">\n\n<p>Put the cap on the tray.</p>\n</div>\n<div id=\"fit-cap\" class=\"slide section level2\">\n<h1>Install the cap</h1>\n<p>Turn the ring to the mark.</p>\n</div>\n</body>\n</html>\n",
+      "stderr": ""
+    }
+  }
+}

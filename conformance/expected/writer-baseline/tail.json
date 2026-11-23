@@ -1,0 +1,929 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "bullet-list#e2e:ansi": {
+      "key": "b46fe57296662029",
+      "exit": 0,
+      "stdout": "• Check blade.\n\n  • Log 12.\n\n• Check guard.\u001b[0m\u001b]8;;\u001b\\\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:context": {
+      "key": "5de77e55beb599fc",
+      "exit": 0,
+      "stdout": "\\startitemize[packed]\n\\item\n  Check blade.\n  \\startitemize[packed]\n  \\item\n    Log 12.\n  \\stopitemize\n\\item\n  Check guard.\n\\stopitemize\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:icml": {
+      "key": "c5a3d1847da50d3b",
+      "exit": 0,
+      "stdout": "<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/BulList &gt; first\" NumberingContinue=\"false\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Check blade.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/BulList &gt; BulList &gt; first\" NumberingContinue=\"false\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Log 12.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/BulList\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Check guard.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:texinfo": {
+      "key": "b153de0b6c71da12",
+      "exit": 0,
+      "stdout": "@node Top\n@top Top\n\n@itemize\n@item\nCheck blade.\n@itemize\n@item\nLog 12.\n@end itemize\n\n@item\nCheck guard.\n@end itemize\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:xml": {
+      "key": "af56c1685075ccfe",
+      "exit": 0,
+      "stdout": "<BulletList>\n  <item>\n    <Plain>Check blade.</Plain>\n    <BulletList>\n      <item>\n        <Plain>Log 12.</Plain>\n      </item>\n    </BulletList>\n  </item>\n  <item>\n    <Plain>Check guard.</Plain>\n  </item>\n</BulletList>\n",
+      "stderr": ""
+    },
+    "bullet-list#read": {
+      "key": "6959ba319a9180e0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"blade.\"}]},{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Log\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"12.\"}]}]]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"guard.\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "bullet-list#write:ansi": {
+      "key": "87dd6f70d6d76a56",
+      "exit": 0,
+      "stdout": "• Check blade.\n\n  • Log 12.\n\n• Check guard.\u001b[0m\u001b]8;;\u001b\\\n",
+      "stderr": ""
+    },
+    "bullet-list#write:context": {
+      "key": "9a38730b692542c7",
+      "exit": 0,
+      "stdout": "\\startitemize[packed]\n\\item\n  Check blade.\n  \\startitemize[packed]\n  \\item\n    Log 12.\n  \\stopitemize\n\\item\n  Check guard.\n\\stopitemize\n",
+      "stderr": ""
+    },
+    "bullet-list#write:icml": {
+      "key": "aeb5449e1094384c",
+      "exit": 0,
+      "stdout": "<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/BulList &gt; first\" NumberingContinue=\"false\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Check blade.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/BulList &gt; BulList &gt; first\" NumberingContinue=\"false\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Log 12.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/BulList\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Check guard.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n",
+      "stderr": ""
+    },
+    "bullet-list#write:texinfo": {
+      "key": "65a01f5d5150ba39",
+      "exit": 0,
+      "stdout": "@node Top\n@top Top\n\n@itemize\n@item\nCheck blade.\n@itemize\n@item\nLog 12.\n@end itemize\n\n@item\nCheck guard.\n@end itemize\n",
+      "stderr": ""
+    },
+    "bullet-list#write:xml": {
+      "key": "79bb29ee118dd601",
+      "exit": 0,
+      "stdout": "<BulletList>\n  <item>\n    <Plain>Check blade.</Plain>\n    <BulletList>\n      <item>\n        <Plain>Log 12.</Plain>\n      </item>\n    </BulletList>\n  </item>\n  <item>\n    <Plain>Check guard.</Plain>\n  </item>\n</BulletList>\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:ansi": {
+      "key": "0944d682b5476e5f",
+      "exit": 0,
+      "stdout": "Item                                Value\n─────────────────────────────────── ───────────────────────────────────\nblade                               12\n─────────────────────────────────── ───────────────────────────────────\n\n  Fan check values\u001b[0m\u001b]8;;\u001b\\\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:context": {
+      "key": "8890e8c24e58c144",
+      "exit": 0,
+      "stdout": "\\startplacetable[title={Fan check values},reference={check-table}]\n\\startxtable\n\\startxtablehead[head]\n\\startxrowgroup[lastrow]\n\\startxrow\n\\startxcell[align=right] Item \\stopxcell\n\\startxcell[align=left] Value \\stopxcell\n\\stopxrow\n\\stopxrowgroup\n\\stopxtablehead\n\\startxtablebody[body]\n\\startxrowgroup[lastrow]\n\\startxrow\n\\startxcell[align=right] blade \\stopxcell\n\\startxcell[align=left] 12 \\stopxcell\n\\stopxrow\n\\stopxrowgroup\n\\stopxtablebody\n\\startxtablefoot[foot]\n\\stopxtablefoot\n\\stopxtable\n\\stopplacetable\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:icml": {
+      "key": "802decb66bf01e41",
+      "exit": 0,
+      "stdout": "<Table AppliedTableStyle=\"TableStyle/Table\" HeaderRowCount=\"1\" BodyRowCount=\"1\" ColumnCount=\"2\">\n  <Column Name=\"0\" />\n  <Column Name=\"1\" />\n  <Cell Name=\"0:0\" AppliedCellStyle=\"CellStyle/Cell\">\n    <ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/TablePar &gt; TableHeader &gt; LeftAlign\">\n      <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n        <Content>Item</Content>\n      </CharacterStyleRange>\n    </ParagraphStyleRange>\n  </Cell>\n  <Cell Name=\"1:0\" AppliedCellStyle=\"CellStyle/Cell\">\n    <ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/TablePar &gt; TableHeader &gt; RightAlign\">\n      <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n        <Content>Value</Content>\n      </CharacterStyleRange>\n    </ParagraphStyleRange>\n  </Cell>\n  <Cell Name=\"0:1\" AppliedCellStyle=\"CellStyle/Cell\">\n    <ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/TablePar &gt; LeftAlign\">\n      <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n        <Content>blade</Content>\n      </CharacterStyleRange>\n    </ParagraphStyleRange>\n  </Cell>\n  <Cell Name=\"1:1\" AppliedCellStyle=\"CellStyle/Cell\">\n    <ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/TablePar &gt; RightAlign\">\n      <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n        <Content>12</Content>\n      </CharacterStyleRange>\n    </ParagraphStyleRange>\n  </Cell>\n</Table>\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/TableCaption\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Fan check values</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:texinfo": {
+      "key": "6ca3eaca2ebbb742",
+      "exit": 0,
+      "stdout": "@node Top\n@top Top\n\n@float Table\n@multitable {blade} {Value} \n@headitem \nItem\n @tab Value\n@item \nblade\n @tab 12\n@end multitable\n@caption{Fan check values}\n@end float\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:xml": {
+      "key": "b6ac7c5a1b1e690e",
+      "exit": 0,
+      "stdout": "<Table id=\"check-table\">\n  <Caption>\n    <Plain>Fan check values</Plain>\n  </Caption>\n  <colspecs>\n    <ColSpec alignment=\"AlignLeft\" col-width=\"0\" />\n    <ColSpec alignment=\"AlignRight\" col-width=\"0\" />\n  </colspecs>\n  <TableHead>\n    <Row>\n      <Cell alignment=\"AlignDefault\">\n        <Plain>Item</Plain>\n      </Cell>\n      <Cell alignment=\"AlignDefault\">\n        <Plain>Value</Plain>\n      </Cell>\n    </Row>\n  </TableHead>\n  <TableBody row-head-columns=\"0\">\n    <header />\n    <body>\n      <Row>\n        <Cell alignment=\"AlignDefault\">\n          <Plain>blade</Plain>\n        </Cell>\n        <Cell alignment=\"AlignDefault\">\n          <Plain>12</Plain>\n        </Cell>\n      </Row>\n    </body>\n  </TableBody>\n  <TableFoot />\n</Table>\n",
+      "stderr": ""
+    },
+    "captioned-table#read": {
+      "key": "5a0217255d45a0a8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"check-table\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Fan\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"values\"}]}]],[[{\"t\":\"AlignLeft\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignRight\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Item\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Value\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"blade\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"12\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "captioned-table#write:ansi": {
+      "key": "8b0fae129810b6d3",
+      "exit": 0,
+      "stdout": "Item                                Value\n─────────────────────────────────── ───────────────────────────────────\nblade                               12\n─────────────────────────────────── ───────────────────────────────────\n\n  Fan check values\u001b[0m\u001b]8;;\u001b\\\n",
+      "stderr": ""
+    },
+    "captioned-table#write:context": {
+      "key": "cf0023818ec19ac2",
+      "exit": 0,
+      "stdout": "\\startplacetable[title={Fan check values},reference={check-table}]\n\\startxtable\n\\startxtablehead[head]\n\\startxrowgroup[lastrow]\n\\startxrow\n\\startxcell[align=right] Item \\stopxcell\n\\startxcell[align=left] Value \\stopxcell\n\\stopxrow\n\\stopxrowgroup\n\\stopxtablehead\n\\startxtablebody[body]\n\\startxrowgroup[lastrow]\n\\startxrow\n\\startxcell[align=right] blade \\stopxcell\n\\startxcell[align=left] 12 \\stopxcell\n\\stopxrow\n\\stopxrowgroup\n\\stopxtablebody\n\\startxtablefoot[foot]\n\\stopxtablefoot\n\\stopxtable\n\\stopplacetable\n",
+      "stderr": ""
+    },
+    "captioned-table#write:icml": {
+      "key": "aa4b297fc1384679",
+      "exit": 0,
+      "stdout": "<Table AppliedTableStyle=\"TableStyle/Table\" HeaderRowCount=\"1\" BodyRowCount=\"1\" ColumnCount=\"2\">\n  <Column Name=\"0\" />\n  <Column Name=\"1\" />\n  <Cell Name=\"0:0\" AppliedCellStyle=\"CellStyle/Cell\">\n    <ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/TablePar &gt; TableHeader &gt; LeftAlign\">\n      <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n        <Content>Item</Content>\n      </CharacterStyleRange>\n    </ParagraphStyleRange>\n  </Cell>\n  <Cell Name=\"1:0\" AppliedCellStyle=\"CellStyle/Cell\">\n    <ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/TablePar &gt; TableHeader &gt; RightAlign\">\n      <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n        <Content>Value</Content>\n      </CharacterStyleRange>\n    </ParagraphStyleRange>\n  </Cell>\n  <Cell Name=\"0:1\" AppliedCellStyle=\"CellStyle/Cell\">\n    <ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/TablePar &gt; LeftAlign\">\n      <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n        <Content>blade</Content>\n      </CharacterStyleRange>\n    </ParagraphStyleRange>\n  </Cell>\n  <Cell Name=\"1:1\" AppliedCellStyle=\"CellStyle/Cell\">\n    <ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/TablePar &gt; RightAlign\">\n      <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n        <Content>12</Content>\n      </CharacterStyleRange>\n    </ParagraphStyleRange>\n  </Cell>\n</Table>\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/TableCaption\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Fan check values</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n",
+      "stderr": ""
+    },
+    "captioned-table#write:texinfo": {
+      "key": "7039bd182c2238ec",
+      "exit": 0,
+      "stdout": "@node Top\n@top Top\n\n@float Table\n@multitable {blade} {Value} \n@headitem \nItem\n @tab Value\n@item \nblade\n @tab 12\n@end multitable\n@caption{Fan check values}\n@end float\n",
+      "stderr": ""
+    },
+    "captioned-table#write:xml": {
+      "key": "5248fc731e79a744",
+      "exit": 0,
+      "stdout": "<Table id=\"check-table\">\n  <Caption>\n    <Plain>Fan check values</Plain>\n  </Caption>\n  <colspecs>\n    <ColSpec alignment=\"AlignLeft\" col-width=\"0\" />\n    <ColSpec alignment=\"AlignRight\" col-width=\"0\" />\n  </colspecs>\n  <TableHead>\n    <Row>\n      <Cell alignment=\"AlignDefault\">\n        <Plain>Item</Plain>\n      </Cell>\n      <Cell alignment=\"AlignDefault\">\n        <Plain>Value</Plain>\n      </Cell>\n    </Row>\n  </TableHead>\n  <TableBody row-head-columns=\"0\">\n    <header />\n    <body>\n      <Row>\n        <Cell alignment=\"AlignDefault\">\n          <Plain>blade</Plain>\n        </Cell>\n        <Cell alignment=\"AlignDefault\">\n          <Plain>12</Plain>\n        </Cell>\n      </Row>\n    </body>\n  </TableBody>\n  <TableFoot />\n</Table>\n",
+      "stderr": ""
+    },
+    "code-block#e2e:ansi": {
+      "key": "293ac6e38b92a4af",
+      "exit": 0,
+      "stdout": "    \u001b[0m\u001b[0m\u001b[22;23;24m\u001b[0m\u001b[22;23;24mvalue \u001b[0m\u001b[22;23;24m\u001b[90;22;23;24m=\u001b[0m\u001b[22;23;24m\u001b[0m\u001b[22;23;24m \u001b[0m\u001b[22;23;24m\u001b[36;22;23;24m12\u001b[0m\u001b[22;23;24m\n    \u001b[32;22;23;24mprint\u001b[0m\u001b[22;23;24m\u001b[0m\u001b[22;23;24m(value \u001b[0m\u001b[22;23;24m\u001b[90;22;23;24m<\u001b[0m\u001b[22;23;24m\u001b[0m\u001b[22;23;24m \u001b[0m\u001b[22;23;24m\u001b[36;22;23;24m25\u001b[0m\u001b[22;23;24m\u001b[0m\u001b[22;23;24m)\u001b[0m\u001b[22;23;24m\u001b[0m\n\n    \u001b[22m\u001b[23m\u001b[31m\u001b[49m\u001b[24m\u001b[29mblade\u001b[0m\n    \u001b[22m\u001b[23m\u001b[31m\u001b[49m\u001b[24m\u001b[29m  guard\u001b[0m\n\u001b[0m\u001b]8;;\u001b\\\n",
+      "stderr": ""
+    },
+    "code-block#e2e:context": {
+      "key": "a3ea5b227a9eec22",
+      "exit": 0,
+      "stdout": "\\starthighlighting\n/BTEX\\NormalTok{value }\\OperatorTok{=} \\DecValTok{12}/ETEX\n/BTEX\\BuiltInTok{print}\\NormalTok{(value }\\OperatorTok{<} \\DecValTok{25}\\NormalTok{)}/ETEX\n\\stophighlighting\n\n\\starttyping\nblade\n  guard\n\\stoptyping\n",
+      "stderr": ""
+    },
+    "code-block#e2e:icml": {
+      "key": "f170506b548f63d1",
+      "exit": 0,
+      "stdout": "<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/CodeBlock\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>value = 12\nprint(value &lt; 25)</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/CodeBlock\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>blade\n  guard\n    </Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n",
+      "stderr": ""
+    },
+    "code-block#e2e:texinfo": {
+      "key": "3818136d4c482d80",
+      "exit": 0,
+      "stdout": "@node Top\n@top Top\n\n@verbatim\nvalue = 12\nprint(value < 25)\n@end verbatim\n\n@verbatim\nblade\n  guard\n@end verbatim\n",
+      "stderr": ""
+    },
+    "code-block#e2e:xml": {
+      "key": "8de5332a51ac89d4",
+      "exit": 0,
+      "stdout": "<CodeBlock id=\"sample-code\" class=\"python\">value = 12\nprint(value &lt; 25)</CodeBlock><CodeBlock>blade\n  guard\n</CodeBlock>\n",
+      "stderr": ""
+    },
+    "code-block#read": {
+      "key": "7825e89da5af4cee",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"sample-code\",[\"python\"],[]],\"value = 12\\nprint(value < 25)\"]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"blade\\n  guard\\n\"]}]}\n",
+      "stderr": ""
+    },
+    "code-block#write:ansi": {
+      "key": "69ebd011385b7d46",
+      "exit": 0,
+      "stdout": "    \u001b[0m\u001b[0m\u001b[22;23;24m\u001b[0m\u001b[22;23;24mvalue \u001b[0m\u001b[22;23;24m\u001b[90;22;23;24m=\u001b[0m\u001b[22;23;24m\u001b[0m\u001b[22;23;24m \u001b[0m\u001b[22;23;24m\u001b[36;22;23;24m12\u001b[0m\u001b[22;23;24m\n    \u001b[32;22;23;24mprint\u001b[0m\u001b[22;23;24m\u001b[0m\u001b[22;23;24m(value \u001b[0m\u001b[22;23;24m\u001b[90;22;23;24m<\u001b[0m\u001b[22;23;24m\u001b[0m\u001b[22;23;24m \u001b[0m\u001b[22;23;24m\u001b[36;22;23;24m25\u001b[0m\u001b[22;23;24m\u001b[0m\u001b[22;23;24m)\u001b[0m\u001b[22;23;24m\u001b[0m\n\n    \u001b[22m\u001b[23m\u001b[31m\u001b[49m\u001b[24m\u001b[29mblade\u001b[0m\n    \u001b[22m\u001b[23m\u001b[31m\u001b[49m\u001b[24m\u001b[29m  guard\u001b[0m\n\u001b[0m\u001b]8;;\u001b\\\n",
+      "stderr": ""
+    },
+    "code-block#write:context": {
+      "key": "3c19428043d01cc3",
+      "exit": 0,
+      "stdout": "\\starthighlighting\n/BTEX\\NormalTok{value }\\OperatorTok{=} \\DecValTok{12}/ETEX\n/BTEX\\BuiltInTok{print}\\NormalTok{(value }\\OperatorTok{<} \\DecValTok{25}\\NormalTok{)}/ETEX\n\\stophighlighting\n\n\\starttyping\nblade\n  guard\n\\stoptyping\n",
+      "stderr": ""
+    },
+    "code-block#write:icml": {
+      "key": "8ba5931aceea62f0",
+      "exit": 0,
+      "stdout": "<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/CodeBlock\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>value = 12\nprint(value &lt; 25)</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/CodeBlock\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>blade\n  guard\n    </Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n",
+      "stderr": ""
+    },
+    "code-block#write:texinfo": {
+      "key": "545fe3de0c2c6699",
+      "exit": 0,
+      "stdout": "@node Top\n@top Top\n\n@verbatim\nvalue = 12\nprint(value < 25)\n@end verbatim\n\n@verbatim\nblade\n  guard\n@end verbatim\n",
+      "stderr": ""
+    },
+    "code-block#write:xml": {
+      "key": "cc1cd5c064865cf1",
+      "exit": 0,
+      "stdout": "<CodeBlock id=\"sample-code\" class=\"python\">value = 12\nprint(value &lt; 25)</CodeBlock><CodeBlock>blade\n  guard\n</CodeBlock>\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:ansi": {
+      "key": "791e224a0937d92a",
+      "exit": 0,
+      "stdout": "\u001b[1m\u001b[23m\u001b[39m\u001b[49m\u001b[24m\u001b[29mLimit\u001b[0m Highest permitted 12.\n\n      See the log.\n\n \u001b[1m\u001b[23m\u001b[39m\u001b[49m\u001b[24m\u001b[29mZero\u001b[0m Start value.\n\u001b[0m\u001b]8;;\u001b\\\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:context": {
+      "key": "94357b7e1979654f",
+      "exit": 0,
+      "stdout": "\\startdescription{Limit}\n  Highest permitted 12.\n\n  See the log.\n\\stopdescription\n\n\\startdescription{Zero}\n  Start value.\n\\stopdescription\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:icml": {
+      "key": "61b9191e5b15ca04",
+      "exit": 0,
+      "stdout": "<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/DefListTerm\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Limit</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/DefListDef\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Highest permitted 12.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/DefListDef\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>See the log.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/DefListTerm\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Zero</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/DefListDef\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Start value.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:texinfo": {
+      "key": "b4861437a756590d",
+      "exit": 0,
+      "stdout": "@node Top\n@top Top\n\n@table @asis\n@item Limit\n\nHighest permitted 12.\nSee the log.\n@item Zero\n\nStart value.\n@end table\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:xml": {
+      "key": "71f0c0492d7016c9",
+      "exit": 0,
+      "stdout": "<DefinitionList>\n  <item>\n    <term>Limit</term>\n    <def>\n      <Plain>Highest permitted 12.</Plain>\n    </def>\n    <def>\n      <Plain>See the log.</Plain>\n    </def>\n  </item>\n  <item>\n    <term>Zero</term>\n    <def>\n      <Plain>Start value.</Plain>\n    </def>\n  </item>\n</DefinitionList>\n",
+      "stderr": ""
+    },
+    "definition-list#read": {
+      "key": "c11923b20da74533",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"Limit\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Highest\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"permitted\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"12.\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"See\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log.\"}]}]]],[[{\"t\":\"Str\",\"c\":\"Zero\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Start\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"value.\"}]}]]]]}]}\n",
+      "stderr": ""
+    },
+    "definition-list#write:ansi": {
+      "key": "00a69103a189789d",
+      "exit": 0,
+      "stdout": "\u001b[1m\u001b[23m\u001b[39m\u001b[49m\u001b[24m\u001b[29mLimit\u001b[0m Highest permitted 12.\n\n      See the log.\n\n \u001b[1m\u001b[23m\u001b[39m\u001b[49m\u001b[24m\u001b[29mZero\u001b[0m Start value.\n\u001b[0m\u001b]8;;\u001b\\\n",
+      "stderr": ""
+    },
+    "definition-list#write:context": {
+      "key": "20b5419c24f963d0",
+      "exit": 0,
+      "stdout": "\\startdescription{Limit}\n  Highest permitted 12.\n\n  See the log.\n\\stopdescription\n\n\\startdescription{Zero}\n  Start value.\n\\stopdescription\n",
+      "stderr": ""
+    },
+    "definition-list#write:icml": {
+      "key": "be8cd0cc2e10dcb7",
+      "exit": 0,
+      "stdout": "<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/DefListTerm\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Limit</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/DefListDef\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Highest permitted 12.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/DefListDef\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>See the log.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/DefListTerm\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Zero</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/DefListDef\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Start value.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n",
+      "stderr": ""
+    },
+    "definition-list#write:texinfo": {
+      "key": "61b0baa74204d8a6",
+      "exit": 0,
+      "stdout": "@node Top\n@top Top\n\n@table @asis\n@item Limit\n\nHighest permitted 12.\nSee the log.\n@item Zero\n\nStart value.\n@end table\n",
+      "stderr": ""
+    },
+    "definition-list#write:xml": {
+      "key": "3b7d4ff02a84d83e",
+      "exit": 0,
+      "stdout": "<DefinitionList>\n  <item>\n    <term>Limit</term>\n    <def>\n      <Plain>Highest permitted 12.</Plain>\n    </def>\n    <def>\n      <Plain>See the log.</Plain>\n    </def>\n  </item>\n  <item>\n    <term>Zero</term>\n    <def>\n      <Plain>Start value.</Plain>\n    </def>\n  </item>\n</DefinitionList>\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:ansi": {
+      "key": "bff397fbac9e37d1",
+      "exit": 0,
+      "stdout": "Fan check blade\u001b[0m\u001b]8;;\u001b\\\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:context": {
+      "key": "892f685f724ed996",
+      "exit": 0,
+      "stdout": "\\start\\language[en]\n\\reference[check-panel]{}%\n\\reference[check-step]{}Fan check blade\n\n\\stop\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:icml": {
+      "key": "08e0e3aeef5f8a97",
+      "exit": 0,
+      "stdout": "<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <HyperlinkTextDestination Self=\"HyperlinkTextDestination/#check-step\" Name=\"Destination\" DestinationUniqueKey=\"1\" />\n    <Content>Fan check</Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content> blade</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:texinfo": {
+      "key": "0d93066697bf6a60",
+      "exit": 0,
+      "stdout": "@node Top\n@top Top\n\nFan check blade\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:xml": {
+      "key": "ff8c9d6ebceaf8cc",
+      "exit": 0,
+      "stdout": "<Div id=\"check-panel\" class=\"inspection\" lang=\"en\">\n  <Para><Span id=\"check-step\" class=\"label\" title=\"Check location\">Fan check</Span> blade</Para>\n</Div>\n",
+      "stderr": ""
+    },
+    "div-and-span#read": {
+      "key": "f3091325cb2a7d0a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"check-panel\",[\"inspection\"],[[\"lang\",\"en\"]]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"check-step\",[\"label\"],[[\"title\",\"Check location\"]]],[{\"t\":\"Str\",\"c\":\"Fan\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"blade\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "div-and-span#write:ansi": {
+      "key": "74c081d5363768ab",
+      "exit": 0,
+      "stdout": "Fan check blade\u001b[0m\u001b]8;;\u001b\\\n",
+      "stderr": ""
+    },
+    "div-and-span#write:context": {
+      "key": "822690cddec27e94",
+      "exit": 0,
+      "stdout": "\\start\\language[en]\n\\reference[check-panel]{}%\n\\reference[check-step]{}Fan check blade\n\n\\stop\n",
+      "stderr": ""
+    },
+    "div-and-span#write:icml": {
+      "key": "b29b33a20bf80d49",
+      "exit": 0,
+      "stdout": "<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <HyperlinkTextDestination Self=\"HyperlinkTextDestination/#check-step\" Name=\"Destination\" DestinationUniqueKey=\"1\" />\n    <Content>Fan check</Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content> blade</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n",
+      "stderr": ""
+    },
+    "div-and-span#write:texinfo": {
+      "key": "e43c466cf70b6d56",
+      "exit": 0,
+      "stdout": "@node Top\n@top Top\n\nFan check blade\n",
+      "stderr": ""
+    },
+    "div-and-span#write:xml": {
+      "key": "0807ac47b075e0be",
+      "exit": 0,
+      "stdout": "<Div id=\"check-panel\" class=\"inspection\" lang=\"en\">\n  <Para><Span id=\"check-step\" class=\"label\" title=\"Check location\">Fan check</Span> blade</Para>\n</Div>\n",
+      "stderr": ""
+    },
+    "headings#e2e:ansi": {
+      "key": "e8b9938d4fec046d",
+      "exit": 0,
+      "stdout": "\u001b[1m\u001b[23m\u001b[39m\u001b[49m\u001b[24m\u001b[29mFAN CHECK\u001b[0m\n\nStart here.\n\n\u001b[1m\u001b[23m\u001b[39m\u001b[49m\u001b[24m\u001b[29mReadings\u001b[0m\n\nCheck guard.\u001b[0m\u001b]8;;\u001b\\\n",
+      "stderr": ""
+    },
+    "headings#e2e:context": {
+      "key": "a0a57cc7002bd2f4",
+      "exit": 0,
+      "stdout": "\\startsectionlevel[title={Fan check},reference={blade}]\n\nStart here.\n\n\\startsectionlevel[title={Readings},reference={details},number=no,incrementnumber=no]\n\nCheck guard.\n\n\\stopsectionlevel\n\n\\stopsectionlevel\n",
+      "stderr": ""
+    },
+    "headings#e2e:icml": {
+      "key": "527e834bd5351733",
+      "exit": 0,
+      "stdout": "<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Header1\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <HyperlinkTextDestination Self=\"HyperlinkTextDestination/#blade\" Name=\"Destination\" DestinationUniqueKey=\"1\" />\n    <Content>Fan check</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Start here.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Header2 (unnumbered)\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <HyperlinkTextDestination Self=\"HyperlinkTextDestination/#details\" Name=\"Destination\" DestinationUniqueKey=\"1\" />\n    <Content>Readings</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Check guard.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n",
+      "stderr": ""
+    },
+    "headings#e2e:texinfo": {
+      "key": "2e0837b153eab966",
+      "exit": 0,
+      "stdout": "@node Top\n@top Top\n\n@menu\n* Fan check::\n@end menu\n\n@node Fan check\n@chapter Fan check\nStart here.\n\n@menu\n* Readings::\n@end menu\n\n@node Readings\n@section Readings\nCheck guard.\n",
+      "stderr": ""
+    },
+    "headings#e2e:xml": {
+      "key": "1c35abaea07282ca",
+      "exit": 0,
+      "stdout": "<Header id=\"blade\" level=\"1\">Fan check</Header><Para>Start here.</Para><Header id=\"details\" class=\"unnumbered\" level=\"2\">Readings</Header><Para>Check guard.</Para>\n",
+      "stderr": ""
+    },
+    "headings#read": {
+      "key": "f5d1a4aa21e314d0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"blade\",[],[]],[{\"t\":\"Str\",\"c\":\"Fan\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Start\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"here.\"}]},{\"t\":\"Header\",\"c\":[2,[\"details\",[\"unnumbered\"],[]],[{\"t\":\"Str\",\"c\":\"Readings\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"guard.\"}]}]}\n",
+      "stderr": ""
+    },
+    "headings#write:ansi": {
+      "key": "2ff286ceb553f134",
+      "exit": 0,
+      "stdout": "\u001b[1m\u001b[23m\u001b[39m\u001b[49m\u001b[24m\u001b[29mFAN CHECK\u001b[0m\n\nStart here.\n\n\u001b[1m\u001b[23m\u001b[39m\u001b[49m\u001b[24m\u001b[29mReadings\u001b[0m\n\nCheck guard.\u001b[0m\u001b]8;;\u001b\\\n",
+      "stderr": ""
+    },
+    "headings#write:context": {
+      "key": "a3823f85b861313d",
+      "exit": 0,
+      "stdout": "\\startsectionlevel[title={Fan check},reference={blade}]\n\nStart here.\n\n\\startsectionlevel[title={Readings},reference={details},number=no,incrementnumber=no]\n\nCheck guard.\n\n\\stopsectionlevel\n\n\\stopsectionlevel\n",
+      "stderr": ""
+    },
+    "headings#write:icml": {
+      "key": "f189ce8b6e327c06",
+      "exit": 0,
+      "stdout": "<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Header1\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <HyperlinkTextDestination Self=\"HyperlinkTextDestination/#blade\" Name=\"Destination\" DestinationUniqueKey=\"1\" />\n    <Content>Fan check</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Start here.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Header2 (unnumbered)\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <HyperlinkTextDestination Self=\"HyperlinkTextDestination/#details\" Name=\"Destination\" DestinationUniqueKey=\"1\" />\n    <Content>Readings</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Check guard.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n",
+      "stderr": ""
+    },
+    "headings#write:texinfo": {
+      "key": "b984e35abf906453",
+      "exit": 0,
+      "stdout": "@node Top\n@top Top\n\n@menu\n* Fan check::\n@end menu\n\n@node Fan check\n@chapter Fan check\nStart here.\n\n@menu\n* Readings::\n@end menu\n\n@node Readings\n@section Readings\nCheck guard.\n",
+      "stderr": ""
+    },
+    "headings#write:xml": {
+      "key": "dab17b6b749adf5b",
+      "exit": 0,
+      "stdout": "<Header id=\"blade\" level=\"1\">Fan check</Header><Para>Start here.</Para><Header id=\"details\" class=\"unnumbered\" level=\"2\">Readings</Header><Para>Check guard.</Para>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:ansi": {
+      "key": "246f94bf53e1fea3",
+      "exit": 0,
+      "stdout": "Before the blade check.\n\n────────────────────\n\nAfter the guard check.\u001b[0m\u001b]8;;\u001b\\\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:context": {
+      "key": "9ec1ef41cd0cbd3e",
+      "exit": 0,
+      "stdout": "Before the blade check.\n\n\\thinrule\n\nAfter the guard check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:icml": {
+      "key": "f9496d6b6b363ae5",
+      "exit": 0,
+      "stdout": "<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Before the blade check.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>After the guard check.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:texinfo": {
+      "key": "6f1d7ddea8bc6004",
+      "exit": 0,
+      "stdout": "@node Top\n@top Top\n\nBefore the blade check.\n\n@iftex\n@bigskip@hrule@bigskip\n@end iftex\n@ifnottex\n------------------------------------------------------------------------\n@end ifnottex\n\nAfter the guard check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:xml": {
+      "key": "d2cb48afe2ae8738",
+      "exit": 0,
+      "stdout": "<Para>Before the blade check.</Para><HorizontalRule /><Para>After the guard check.</Para>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#read": {
+      "key": "5ade91e56a615c7a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"blade\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check.\"}]},{\"t\":\"HorizontalRule\"},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"After\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"guard\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check.\"}]}]}\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:ansi": {
+      "key": "132554830e4e84df",
+      "exit": 0,
+      "stdout": "Before the blade check.\n\n────────────────────\n\nAfter the guard check.\u001b[0m\u001b]8;;\u001b\\\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:context": {
+      "key": "b81831ec64166e66",
+      "exit": 0,
+      "stdout": "Before the blade check.\n\n\\thinrule\n\nAfter the guard check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:icml": {
+      "key": "996941617b7f84f9",
+      "exit": 0,
+      "stdout": "<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Before the blade check.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>After the guard check.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:texinfo": {
+      "key": "76ecb85be70f9aa4",
+      "exit": 0,
+      "stdout": "@node Top\n@top Top\n\nBefore the blade check.\n\n@iftex\n@bigskip@hrule@bigskip\n@end iftex\n@ifnottex\n------------------------------------------------------------------------\n@end ifnottex\n\nAfter the guard check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:xml": {
+      "key": "5155cd4ae7e417ec",
+      "exit": 0,
+      "stdout": "<Para>Before the blade check.</Para><HorizontalRule /><Para>After the guard check.</Para>\n",
+      "stderr": ""
+    },
+    "image#e2e:ansi": {
+      "key": "dcaf1fd355573646",
+      "exit": 0,
+      "stdout": "[image: Fan check sample]\u001b[0m\u001b]8;;\u001b\\\n",
+      "stderr": ""
+    },
+    "image#e2e:context": {
+      "key": "3390d849e5483dd1",
+      "exit": 0,
+      "stdout": "{\\externalfigure[data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC][width=0.25in]}\n",
+      "stderr": ""
+    },
+    "image#e2e:icml": {
+      "key": "34de107d21143e38",
+      "exit": 0,
+      "stdout": "<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Rectangle Self=\"uec\" StrokeWeight=\"0\" ItemTransform=\"18 0 0 18 0.5 -0.5\">\n      <Properties>\n        <PathGeometry>\n          <GeometryPathType PathOpen=\"false\">\n            <PathPointArray>\n              <PathPointType Anchor=\"-0.5 -0.5\" LeftDirection=\"-0.5 -0.5\" RightDirection=\"-0.5 -0.5\" />\n              <PathPointType Anchor=\"-0.5 0.5\" LeftDirection=\"-0.5 0.5\" RightDirection=\"-0.5 0.5\" />\n              <PathPointType Anchor=\"0.5 0.5\" LeftDirection=\"0.5 0.5\" RightDirection=\"0.5 0.5\" />\n              <PathPointType Anchor=\"0.5 -0.5\" LeftDirection=\"0.5 -0.5\" RightDirection=\"0.5 -0.5\" />\n            </PathPointArray>\n          </GeometryPathType>\n        </PathGeometry>\n      </Properties>\n      <Image Self=\"ue6\" ItemTransform=\"18 0 0 18 -0.5 -0.5\">\n        <Properties>\n          <Profile type=\"string\">\n            $ID/Embedded\n          </Profile>\n          <GraphicBounds Left=\"0\" Top=\"0\" Right=\"0.05556\" Bottom=\"0.05556\" />\n          <Contents>\n            <![CDATA[iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC]]>\n          </Contents>\n        </Properties>\n      </Image>\n    </Rectangle>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n",
+      "stderr": ""
+    },
+    "image#e2e:texinfo": {
+      "key": "18e53b9223a03f57",
+      "exit": 0,
+      "stdout": "@node Top\n@top Top\n\n@image{data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC,0.25in,,Fan\ncheck sample,}\n",
+      "stderr": ""
+    },
+    "image#e2e:xml": {
+      "key": "f6369981f12f1f03",
+      "exit": 0,
+      "stdout": "<Para><Image id=\"sample\" width=\"24px\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\" title=\"Blue pixel\">Fan check sample</Image></Para>\n",
+      "stderr": ""
+    },
+    "image#read": {
+      "key": "82cbab3e591f9df5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Image\",\"c\":[[\"sample\",[],[[\"width\",\"24px\"]]],[{\"t\":\"Str\",\"c\":\"Fan\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sample\"}],[\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\",\"Blue pixel\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "image#write:ansi": {
+      "key": "d49bd766b1e94746",
+      "exit": 0,
+      "stdout": "[image: Fan check sample]\u001b[0m\u001b]8;;\u001b\\\n",
+      "stderr": ""
+    },
+    "image#write:context": {
+      "key": "be32b26e08c30025",
+      "exit": 0,
+      "stdout": "{\\externalfigure[data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC][width=0.25in]}\n",
+      "stderr": ""
+    },
+    "image#write:icml": {
+      "key": "d4957244981b2a58",
+      "exit": 0,
+      "stdout": "<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Rectangle Self=\"uec\" StrokeWeight=\"0\" ItemTransform=\"18 0 0 18 0.5 -0.5\">\n      <Properties>\n        <PathGeometry>\n          <GeometryPathType PathOpen=\"false\">\n            <PathPointArray>\n              <PathPointType Anchor=\"-0.5 -0.5\" LeftDirection=\"-0.5 -0.5\" RightDirection=\"-0.5 -0.5\" />\n              <PathPointType Anchor=\"-0.5 0.5\" LeftDirection=\"-0.5 0.5\" RightDirection=\"-0.5 0.5\" />\n              <PathPointType Anchor=\"0.5 0.5\" LeftDirection=\"0.5 0.5\" RightDirection=\"0.5 0.5\" />\n              <PathPointType Anchor=\"0.5 -0.5\" LeftDirection=\"0.5 -0.5\" RightDirection=\"0.5 -0.5\" />\n            </PathPointArray>\n          </GeometryPathType>\n        </PathGeometry>\n      </Properties>\n      <Image Self=\"ue6\" ItemTransform=\"18 0 0 18 -0.5 -0.5\">\n        <Properties>\n          <Profile type=\"string\">\n            $ID/Embedded\n          </Profile>\n          <GraphicBounds Left=\"0\" Top=\"0\" Right=\"0.05556\" Bottom=\"0.05556\" />\n          <Contents>\n            <![CDATA[iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC]]>\n          </Contents>\n        </Properties>\n      </Image>\n    </Rectangle>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n",
+      "stderr": ""
+    },
+    "image#write:texinfo": {
+      "key": "ae0ad43daec65c8b",
+      "exit": 0,
+      "stdout": "@node Top\n@top Top\n\n@image{data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC,0.25in,,Fan\ncheck sample,}\n",
+      "stderr": ""
+    },
+    "image#write:xml": {
+      "key": "fb5f57255fbbb013",
+      "exit": 0,
+      "stdout": "<Para><Image id=\"sample\" width=\"24px\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\" title=\"Blue pixel\">Fan check sample</Image></Para>\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:ansi": {
+      "key": "94c1c9cd29f7b87e",
+      "exit": 0,
+      "stdout": "\u001b[22m\u001b[3m\u001b[39m\u001b[49m\u001b[24m\u001b[29mblade\u001b[0m \u001b[1m\u001b[23m\u001b[39m\u001b[49m\u001b[24m\u001b[29mguard\u001b[0m \u001b[22m\u001b[23m\u001b[31m\u001b[47m\u001b[24m\u001b[29m a_b + 2 \u001b[0m \u001b[22m\u001b[23m\u001b[39m\u001b[49m\u001b[24m\u001b[9mretired\u001b[0m H₂O m²\u001b[0m\u001b]8;;\u001b\\\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:context": {
+      "key": "aeba4fda8ab5899f",
+      "exit": 0,
+      "stdout": "{\\em blade} {\\bf guard} \\type{a_b + 2} \\overstrikes{retired} H\\low{2}O\nm\\high{2}\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:icml": {
+      "key": "8d88cca8cc8e18e0",
+      "exit": 0,
+      "stdout": "<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"CharacterStyle/Italic\">\n    <Content>blade</Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content> </Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"CharacterStyle/Bold\">\n    <Content>guard</Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content> </Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"CharacterStyle/Code\">\n    <Content>a_b + 2</Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content> </Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"CharacterStyle/Strikeout\">\n    <Content>retired</Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content> H</Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"CharacterStyle/Subscript\">\n    <Content>2</Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>O m</Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"CharacterStyle/Superscript\">\n    <Content>2</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:texinfo": {
+      "key": "dbea210fd4c8539d",
+      "exit": 0,
+      "stdout": "@node Top\n@top Top\n\n@emph{blade} @strong{guard} @code{a_b + 2} @textstrikeout{retired}\nH@sub{2}O m@sup{2}\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:xml": {
+      "key": "12e8b7d2d846d329",
+      "exit": 0,
+      "stdout": "<Para><Emph>blade</Emph> <Strong>guard</Strong> <Code>a_b + 2</Code> <Strikeout>retired</Strikeout> H<Subscript>2</Subscript>O m<Superscript>2</Superscript></Para>\n",
+      "stderr": ""
+    },
+    "inline-styles#read": {
+      "key": "fe2f93b9f6115c93",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"blade\"}]},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"guard\"}]},{\"t\":\"Space\"},{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"a_b + 2\"]},{\"t\":\"Space\"},{\"t\":\"Strikeout\",\"c\":[{\"t\":\"Str\",\"c\":\"retired\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"H\"},{\"t\":\"Subscript\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]},{\"t\":\"Str\",\"c\":\"O\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"m\"},{\"t\":\"Superscript\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "inline-styles#write:ansi": {
+      "key": "0894f17c31a43c2b",
+      "exit": 0,
+      "stdout": "\u001b[22m\u001b[3m\u001b[39m\u001b[49m\u001b[24m\u001b[29mblade\u001b[0m \u001b[1m\u001b[23m\u001b[39m\u001b[49m\u001b[24m\u001b[29mguard\u001b[0m \u001b[22m\u001b[23m\u001b[31m\u001b[47m\u001b[24m\u001b[29m a_b + 2 \u001b[0m \u001b[22m\u001b[23m\u001b[39m\u001b[49m\u001b[24m\u001b[9mretired\u001b[0m H₂O m²\u001b[0m\u001b]8;;\u001b\\\n",
+      "stderr": ""
+    },
+    "inline-styles#write:context": {
+      "key": "33980c8f50f2ffac",
+      "exit": 0,
+      "stdout": "{\\em blade} {\\bf guard} \\type{a_b + 2} \\overstrikes{retired} H\\low{2}O\nm\\high{2}\n",
+      "stderr": ""
+    },
+    "inline-styles#write:icml": {
+      "key": "48f86cc787d589e1",
+      "exit": 0,
+      "stdout": "<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"CharacterStyle/Italic\">\n    <Content>blade</Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content> </Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"CharacterStyle/Bold\">\n    <Content>guard</Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content> </Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"CharacterStyle/Code\">\n    <Content>a_b + 2</Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content> </Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"CharacterStyle/Strikeout\">\n    <Content>retired</Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content> H</Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"CharacterStyle/Subscript\">\n    <Content>2</Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>O m</Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"CharacterStyle/Superscript\">\n    <Content>2</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n",
+      "stderr": ""
+    },
+    "inline-styles#write:texinfo": {
+      "key": "393632b610df30c6",
+      "exit": 0,
+      "stdout": "@node Top\n@top Top\n\n@emph{blade} @strong{guard} @code{a_b + 2} @textstrikeout{retired}\nH@sub{2}O m@sup{2}\n",
+      "stderr": ""
+    },
+    "inline-styles#write:xml": {
+      "key": "6b80e447e045966e",
+      "exit": 0,
+      "stdout": "<Para><Emph>blade</Emph> <Strong>guard</Strong> <Code>a_b + 2</Code> <Strikeout>retired</Strikeout> H<Subscript>2</Subscript>O m<Superscript>2</Superscript></Para>\n",
+      "stderr": ""
+    },
+    "links#e2e:ansi": {
+      "key": "ad6e7720267af6e0",
+      "exit": 0,
+      "stdout": "\u001b[22m\u001b[23m\u001b[36m\u001b[49m\u001b[4m\u001b[29m\u001b]8;;https://example.invalid/log?mode=day&view=full\u001b\\Read the blade log\u001b[0m\u001b]8;;\u001b\\ \u001b[22m\u001b[23m\u001b[36m\u001b[49m\u001b[4m\u001b[29m\u001b]8;;#guard\u001b\\section\u001b[0m\u001b]8;;\u001b\\\n\n\u001b[1m\u001b[23m\u001b[39m\u001b[49m\u001b[24m\u001b[29mLog entry\u001b[0m\n\u001b[0m\u001b]8;;\u001b\\\n",
+      "stderr": ""
+    },
+    "links#e2e:context": {
+      "key": "362c93db13a46d1b",
+      "exit": 0,
+      "stdout": "\\goto{Read the blade\nlog}[url(https://example.invalid/log?mode=day&view=full)]\n\\goto{section}[guard]\n\n\\startsectionlevel[title={Log entry},reference={guard}]\n\n\\stopsectionlevel\n",
+      "stderr": ""
+    },
+    "links#e2e:icml": {
+      "key": "2ac9d6ff9010071a",
+      "exit": 0,
+      "stdout": "<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Paragraph\">\n  <HyperlinkTextSource Self=\"htss-1\" Name=\"Open log\" Hidden=\"false\">\n    <CharacterStyleRange AppliedCharacterStyle=\"CharacterStyle/Link\">\n      <Content>Read the blade log</Content>\n    </CharacterStyleRange>\n  </HyperlinkTextSource>\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content> </Content>\n  </CharacterStyleRange>\n  <HyperlinkTextSource Self=\"htss-2\" Name=\"\" Hidden=\"false\">\n    <CharacterStyleRange AppliedCharacterStyle=\"CharacterStyle/Link\">\n      <Content>section</Content>\n    </CharacterStyleRange>\n  </HyperlinkTextSource>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Header2\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <HyperlinkTextDestination Self=\"HyperlinkTextDestination/#guard\" Name=\"Destination\" DestinationUniqueKey=\"1\" />\n    <Content>Log entry</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n",
+      "stderr": ""
+    },
+    "links#e2e:texinfo": {
+      "key": "37f37ac8876b2aa9",
+      "exit": 0,
+      "stdout": "@node Top\n@top Top\n\n@uref{https://example.invalid/log?mode=day&view=full,Read the blade log}\n@ref{Log entry,,section}\n\n@node Log entry\n@section Log entry\n",
+      "stderr": ""
+    },
+    "links#e2e:xml": {
+      "key": "5f9157597d96e395",
+      "exit": 0,
+      "stdout": "<Para><Link href=\"https://example.invalid/log?mode=day&amp;view=full\" title=\"Open log\">Read the blade log</Link> <Link href=\"#guard\">section</Link></Para><Header id=\"guard\" level=\"2\">Log entry</Header>\n",
+      "stderr": ""
+    },
+    "links#read": {
+      "key": "9610da284f92525f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"blade\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log\"}],[\"https://example.invalid/log?mode=day&view=full\",\"Open log\"]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"section\"}],[\"#guard\",\"\"]]}]},{\"t\":\"Header\",\"c\":[2,[\"guard\",[],[]],[{\"t\":\"Str\",\"c\":\"Log\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"entry\"}]]}]}\n",
+      "stderr": ""
+    },
+    "links#write:ansi": {
+      "key": "265f228a82d6f325",
+      "exit": 0,
+      "stdout": "\u001b[22m\u001b[23m\u001b[36m\u001b[49m\u001b[4m\u001b[29m\u001b]8;;https://example.invalid/log?mode=day&view=full\u001b\\Read the blade log\u001b[0m\u001b]8;;\u001b\\ \u001b[22m\u001b[23m\u001b[36m\u001b[49m\u001b[4m\u001b[29m\u001b]8;;#guard\u001b\\section\u001b[0m\u001b]8;;\u001b\\\n\n\u001b[1m\u001b[23m\u001b[39m\u001b[49m\u001b[24m\u001b[29mLog entry\u001b[0m\n\u001b[0m\u001b]8;;\u001b\\\n",
+      "stderr": ""
+    },
+    "links#write:context": {
+      "key": "224ccb15b6526192",
+      "exit": 0,
+      "stdout": "\\goto{Read the blade\nlog}[url(https://example.invalid/log?mode=day&view=full)]\n\\goto{section}[guard]\n\n\\startsectionlevel[title={Log entry},reference={guard}]\n\n\\stopsectionlevel\n",
+      "stderr": ""
+    },
+    "links#write:icml": {
+      "key": "a1d87eace544f07b",
+      "exit": 0,
+      "stdout": "<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Paragraph\">\n  <HyperlinkTextSource Self=\"htss-1\" Name=\"Open log\" Hidden=\"false\">\n    <CharacterStyleRange AppliedCharacterStyle=\"CharacterStyle/Link\">\n      <Content>Read the blade log</Content>\n    </CharacterStyleRange>\n  </HyperlinkTextSource>\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content> </Content>\n  </CharacterStyleRange>\n  <HyperlinkTextSource Self=\"htss-2\" Name=\"\" Hidden=\"false\">\n    <CharacterStyleRange AppliedCharacterStyle=\"CharacterStyle/Link\">\n      <Content>section</Content>\n    </CharacterStyleRange>\n  </HyperlinkTextSource>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Header2\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <HyperlinkTextDestination Self=\"HyperlinkTextDestination/#guard\" Name=\"Destination\" DestinationUniqueKey=\"1\" />\n    <Content>Log entry</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n",
+      "stderr": ""
+    },
+    "links#write:texinfo": {
+      "key": "5155e0ea7ce0569c",
+      "exit": 0,
+      "stdout": "@node Top\n@top Top\n\n@uref{https://example.invalid/log?mode=day&view=full,Read the blade log}\n@ref{Log entry,,section}\n\n@node Log entry\n@section Log entry\n",
+      "stderr": ""
+    },
+    "links#write:xml": {
+      "key": "b3c07fabd204ba04",
+      "exit": 0,
+      "stdout": "<Para><Link href=\"https://example.invalid/log?mode=day&amp;view=full\" title=\"Open log\">Read the blade log</Link> <Link href=\"#guard\">section</Link></Para><Header id=\"guard\" level=\"2\">Log entry</Header>\n",
+      "stderr": ""
+    },
+    "notes#e2e:ansi": {
+      "key": "5d8549850cdeae56",
+      "exit": 0,
+      "stdout": "blade¹ guard²\n\n                          ────────────────────\n\n  1. Use the lower mark.\n\n     \u001b[22m\u001b[3m\u001b[39m\u001b[49m\u001b[24m\u001b[29mCheck the scale.\u001b[0m\n\n  2. Use the upper mark.\u001b[0m\u001b]8;;\u001b\\\n",
+      "stderr": ""
+    },
+    "notes#e2e:context": {
+      "key": "22323a172cc8614f",
+      "exit": 0,
+      "stdout": "blade\\footnote{Use the lower mark.\n\n  {\\em Check the scale.}} guard\\footnote{Use the upper mark.}\n",
+      "stderr": ""
+    },
+    "notes#e2e:icml": {
+      "key": "79001497fa61be94",
+      "exit": 0,
+      "stdout": "<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>blade</Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\" Position=\"Superscript\">\n    <Footnote>\n      <ParagraphStyleRange>\n        <CharacterStyleRange>\n          <Content><?ACE 4?></Content>\n        </CharacterStyleRange>\n      </ParagraphStyleRange>\n      <ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Footnote &gt; Paragraph\">\n        <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n          <Content>\tUse the lower mark.</Content>\n        </CharacterStyleRange>\n      </ParagraphStyleRange>\n      <Br />\n      <ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Footnote &gt; Paragraph\">\n        <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n          <Content>\t</Content>\n        </CharacterStyleRange>\n        <CharacterStyleRange AppliedCharacterStyle=\"CharacterStyle/Italic\">\n          <Content>Check the scale.</Content>\n        </CharacterStyleRange>\n      </ParagraphStyleRange>\n    </Footnote>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content> guard</Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\" Position=\"Superscript\">\n    <Footnote>\n      <ParagraphStyleRange>\n        <CharacterStyleRange>\n          <Content><?ACE 4?></Content>\n        </CharacterStyleRange>\n      </ParagraphStyleRange>\n      <ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Footnote &gt; Paragraph\">\n        <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n          <Content>\tUse the upper mark.</Content>\n        </CharacterStyleRange>\n      </ParagraphStyleRange>\n    </Footnote>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n",
+      "stderr": ""
+    },
+    "notes#e2e:texinfo": {
+      "key": "198f28145bb19019",
+      "exit": 0,
+      "stdout": "@node Top\n@top Top\n\nblade@footnote{Use the lower mark.\n\n@emph{Check the scale.}} guard@footnote{Use the upper mark.}\n",
+      "stderr": ""
+    },
+    "notes#e2e:xml": {
+      "key": "7479980e1c36671d",
+      "exit": 0,
+      "stdout": "<Para>blade<Note>\n  <Para>Use the lower mark.</Para>\n  <Para><Emph>Check the scale.</Emph></Para>\n</Note> guard<Note>\n  <Para>Use the upper mark.</Para>\n</Note></Para>\n",
+      "stderr": ""
+    },
+    "notes#read": {
+      "key": "60a625867230db9b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"blade\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"lower\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"scale.\"}]}]}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"guard\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"upper\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark.\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "notes#write:ansi": {
+      "key": "61d11d173858f95c",
+      "exit": 0,
+      "stdout": "blade¹ guard²\n\n                          ────────────────────\n\n  1. Use the lower mark.\n\n     \u001b[22m\u001b[3m\u001b[39m\u001b[49m\u001b[24m\u001b[29mCheck the scale.\u001b[0m\n\n  2. Use the upper mark.\u001b[0m\u001b]8;;\u001b\\\n",
+      "stderr": ""
+    },
+    "notes#write:context": {
+      "key": "34a521693e3c7999",
+      "exit": 0,
+      "stdout": "blade\\footnote{Use the lower mark.\n\n  {\\em Check the scale.}} guard\\footnote{Use the upper mark.}\n",
+      "stderr": ""
+    },
+    "notes#write:icml": {
+      "key": "87288a8a43057e0a",
+      "exit": 0,
+      "stdout": "<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>blade</Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\" Position=\"Superscript\">\n    <Footnote>\n      <ParagraphStyleRange>\n        <CharacterStyleRange>\n          <Content><?ACE 4?></Content>\n        </CharacterStyleRange>\n      </ParagraphStyleRange>\n      <ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Footnote &gt; Paragraph\">\n        <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n          <Content>\tUse the lower mark.</Content>\n        </CharacterStyleRange>\n      </ParagraphStyleRange>\n      <Br />\n      <ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Footnote &gt; Paragraph\">\n        <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n          <Content>\t</Content>\n        </CharacterStyleRange>\n        <CharacterStyleRange AppliedCharacterStyle=\"CharacterStyle/Italic\">\n          <Content>Check the scale.</Content>\n        </CharacterStyleRange>\n      </ParagraphStyleRange>\n    </Footnote>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content> guard</Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\" Position=\"Superscript\">\n    <Footnote>\n      <ParagraphStyleRange>\n        <CharacterStyleRange>\n          <Content><?ACE 4?></Content>\n        </CharacterStyleRange>\n      </ParagraphStyleRange>\n      <ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Footnote &gt; Paragraph\">\n        <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n          <Content>\tUse the upper mark.</Content>\n        </CharacterStyleRange>\n      </ParagraphStyleRange>\n    </Footnote>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n",
+      "stderr": ""
+    },
+    "notes#write:texinfo": {
+      "key": "31f18ea50ed5764b",
+      "exit": 0,
+      "stdout": "@node Top\n@top Top\n\nblade@footnote{Use the lower mark.\n\n@emph{Check the scale.}} guard@footnote{Use the upper mark.}\n",
+      "stderr": ""
+    },
+    "notes#write:xml": {
+      "key": "5baa3d72f2adee93",
+      "exit": 0,
+      "stdout": "<Para>blade<Note>\n  <Para>Use the lower mark.</Para>\n  <Para><Emph>Check the scale.</Emph></Para>\n</Note> guard<Note>\n  <Para>Use the upper mark.</Para>\n</Note></Para>\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:ansi": {
+      "key": "db066db2584eb6dc",
+      "exit": 0,
+      "stdout": "IV) Open blade.\n\n    Wait for the signal.\n\n V) Close guard.\n\u001b[0m\u001b]8;;\u001b\\\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:context": {
+      "key": "cf92a84f902a6cbd",
+      "exit": 0,
+      "stdout": "\\startenumerate[R][start=4,stopper=)]\n\\item\n  Open blade.\n\n  Wait for the signal.\n\\item\n  Close guard.\n\\stopenumerate\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:icml": {
+      "key": "e2c9e557f7eeb7e2",
+      "exit": 0,
+      "stdout": "<ParagraphStyleRange NumberingStartAt=\"4\" AppliedParagraphStyle=\"ParagraphStyle/NumList &gt; first &gt; beginsWith-4 &gt; upperRoman &gt; Paragraph\" NumberingContinue=\"false\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Open blade.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/NumList &gt; subParagraph &gt; Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>\tWait for the signal.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/NumList &gt; beginsWith-4 &gt; upperRoman &gt; Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Close guard.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:texinfo": {
+      "key": "0c876d55553689ef",
+      "exit": 0,
+      "stdout": "@node Top\n@top Top\n\n@enumerate 4\n@item\nOpen blade.\n\nWait for the signal.\n\n@item\nClose guard.\n\n@end enumerate\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:xml": {
+      "key": "337d6a22d537c443",
+      "exit": 0,
+      "stdout": "<OrderedList start=\"4\" number-style=\"UpperRoman\" number-delim=\"OneParen\">\n  <item>\n    <Para>Open blade.</Para>\n    <Para>Wait for the signal.</Para>\n  </item>\n  <item>\n    <Para>Close guard.</Para>\n  </item>\n</OrderedList>\n",
+      "stderr": ""
+    },
+    "ordered-list#read": {
+      "key": "fd2dc0d48c8ea459",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[4,{\"t\":\"UpperRoman\"},{\"t\":\"OneParen\"}],[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Open\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"blade.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Wait\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"for\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"signal.\"}]}],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Close\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"guard.\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "ordered-list#write:ansi": {
+      "key": "5950fed66de88614",
+      "exit": 0,
+      "stdout": "IV) Open blade.\n\n    Wait for the signal.\n\n V) Close guard.\n\u001b[0m\u001b]8;;\u001b\\\n",
+      "stderr": ""
+    },
+    "ordered-list#write:context": {
+      "key": "9ef1fdb40cb6ebbf",
+      "exit": 0,
+      "stdout": "\\startenumerate[R][start=4,stopper=)]\n\\item\n  Open blade.\n\n  Wait for the signal.\n\\item\n  Close guard.\n\\stopenumerate\n",
+      "stderr": ""
+    },
+    "ordered-list#write:icml": {
+      "key": "9ba76d2d0da333e6",
+      "exit": 0,
+      "stdout": "<ParagraphStyleRange NumberingStartAt=\"4\" AppliedParagraphStyle=\"ParagraphStyle/NumList &gt; first &gt; beginsWith-4 &gt; upperRoman &gt; Paragraph\" NumberingContinue=\"false\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Open blade.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/NumList &gt; subParagraph &gt; Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>\tWait for the signal.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/NumList &gt; beginsWith-4 &gt; upperRoman &gt; Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Close guard.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n",
+      "stderr": ""
+    },
+    "ordered-list#write:texinfo": {
+      "key": "746de964e15f5065",
+      "exit": 0,
+      "stdout": "@node Top\n@top Top\n\n@enumerate 4\n@item\nOpen blade.\n\nWait for the signal.\n\n@item\nClose guard.\n\n@end enumerate\n",
+      "stderr": ""
+    },
+    "ordered-list#write:xml": {
+      "key": "36fce91b47f44a4d",
+      "exit": 0,
+      "stdout": "<OrderedList start=\"4\" number-style=\"UpperRoman\" number-delim=\"OneParen\">\n  <item>\n    <Para>Open blade.</Para>\n    <Para>Wait for the signal.</Para>\n  </item>\n  <item>\n    <Para>Close guard.</Para>\n  </item>\n</OrderedList>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:ansi": {
+      "key": "fdd108194d8ccfef",
+      "exit": 0,
+      "stdout": "Fan check log.\n\nRead slowly. Stop.\nCafé & <check>\u001b[0m\u001b]8;;\u001b\\\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:context": {
+      "key": "07c367cd6e3e5482",
+      "exit": 0,
+      "stdout": "Fan check log.\n\nRead slowly. Stop.\\crlf\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:icml": {
+      "key": "00fc0b95df2310a9",
+      "exit": 0,
+      "stdout": "<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Fan check log.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Read slowly. Stop.</Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>&#x2028;</Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Café &amp; &lt;check&gt;</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:texinfo": {
+      "key": "117a70686ad4e160",
+      "exit": 0,
+      "stdout": "@node Top\n@top Top\n\nFan check log.\n\nRead slowly. Stop.@*\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:xml": {
+      "key": "45db8f098bafee4c",
+      "exit": 0,
+      "stdout": "<Para>Fan check log.</Para><Para>Read slowly.\nStop.<LineBreak /><Str content=\"Café &amp; &lt;check&gt;\" /></Para>\n",
+      "stderr": ""
+    },
+    "paragraphs#read": {
+      "key": "29249f25c1a90286",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Fan\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"slowly.\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"Stop.\"},{\"t\":\"LineBreak\"},{\"t\":\"Str\",\"c\":\"Café & <check>\"}]}]}\n",
+      "stderr": ""
+    },
+    "paragraphs#write:ansi": {
+      "key": "28f4ac819bda0f96",
+      "exit": 0,
+      "stdout": "Fan check log.\n\nRead slowly. Stop.\nCafé & <check>\u001b[0m\u001b]8;;\u001b\\\n",
+      "stderr": ""
+    },
+    "paragraphs#write:context": {
+      "key": "9ed825d086302f67",
+      "exit": 0,
+      "stdout": "Fan check log.\n\nRead slowly. Stop.\\crlf\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#write:icml": {
+      "key": "dd85f8477512b0bc",
+      "exit": 0,
+      "stdout": "<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Fan check log.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Read slowly. Stop.</Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>&#x2028;</Content>\n  </CharacterStyleRange>\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Café &amp; &lt;check&gt;</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n",
+      "stderr": ""
+    },
+    "paragraphs#write:texinfo": {
+      "key": "3308d9b688e643f1",
+      "exit": 0,
+      "stdout": "@node Top\n@top Top\n\nFan check log.\n\nRead slowly. Stop.@*\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#write:xml": {
+      "key": "d7f38425d4935629",
+      "exit": 0,
+      "stdout": "<Para>Fan check log.</Para><Para>Read slowly.\nStop.<LineBreak /><Str content=\"Café &amp; &lt;check&gt;\" /></Para>\n",
+      "stderr": ""
+    },
+    "quote#e2e:ansi": {
+      "key": "130582addbc5d2fb",
+      "exit": 0,
+      "stdout": "│ “Check blade.”\n│\n│ Record the result.\n\nContinue the test.\u001b[0m\u001b]8;;\u001b\\\n",
+      "stderr": ""
+    },
+    "quote#e2e:context": {
+      "key": "91ae93150fc53708",
+      "exit": 0,
+      "stdout": "\\startblockquote\n\\quotation{Check blade.}\n\nRecord the result.\n\\stopblockquote\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#e2e:icml": {
+      "key": "f99e7cbc3f51f4e5",
+      "exit": 0,
+      "stdout": "<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Blockquote &gt; Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>“Check blade.”</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Blockquote &gt; Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Record the result.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Continue the test.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n",
+      "stderr": ""
+    },
+    "quote#e2e:texinfo": {
+      "key": "bc6536da64317b3e",
+      "exit": 0,
+      "stdout": "@node Top\n@top Top\n\n@quotation\n``Check blade.''\n\nRecord the result.\n@end quotation\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#e2e:xml": {
+      "key": "d236795d6ea77a92",
+      "exit": 0,
+      "stdout": "<BlockQuote>\n  <Para><Quoted quote-type=\"DoubleQuote\">Check blade.</Quoted></Para>\n  <Para>Record the result.</Para>\n</BlockQuote><Para>Continue the test.</Para>\n",
+      "stderr": ""
+    },
+    "quote#read": {
+      "key": "72b6786162d35a94",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"blade.\"}]]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Record\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"result.\"}]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Continue\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test.\"}]}]}\n",
+      "stderr": ""
+    },
+    "quote#write:ansi": {
+      "key": "b0db157a3b12314b",
+      "exit": 0,
+      "stdout": "│ “Check blade.”\n│\n│ Record the result.\n\nContinue the test.\u001b[0m\u001b]8;;\u001b\\\n",
+      "stderr": ""
+    },
+    "quote#write:context": {
+      "key": "57d48f8a54c7a67a",
+      "exit": 0,
+      "stdout": "\\startblockquote\n\\quotation{Check blade.}\n\nRecord the result.\n\\stopblockquote\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#write:icml": {
+      "key": "eb255f005affcf8d",
+      "exit": 0,
+      "stdout": "<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Blockquote &gt; Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>“Check blade.”</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Blockquote &gt; Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Record the result.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n<Br />\n<ParagraphStyleRange AppliedParagraphStyle=\"ParagraphStyle/Paragraph\">\n  <CharacterStyleRange AppliedCharacterStyle=\"$ID/NormalCharacterStyle\">\n    <Content>Continue the test.</Content>\n  </CharacterStyleRange>\n</ParagraphStyleRange>\n",
+      "stderr": ""
+    },
+    "quote#write:texinfo": {
+      "key": "3e440070386cee38",
+      "exit": 0,
+      "stdout": "@node Top\n@top Top\n\n@quotation\n``Check blade.''\n\nRecord the result.\n@end quotation\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#write:xml": {
+      "key": "4d0b3f82f7a40c60",
+      "exit": 0,
+      "stdout": "<BlockQuote>\n  <Para><Quoted quote-type=\"DoubleQuote\">Check blade.</Quoted></Para>\n  <Para>Record the result.</Para>\n</BlockQuote><Para>Continue the test.</Para>\n",
+      "stderr": ""
+    }
+  }
+}

@@ -1,0 +1,130 @@
+from = "native"
+to = ["mediawiki", "dokuwiki", "jira", "xwiki", "zimwiki"]
+
+[[case]]
+id = "paragraphs"
+input = '''
+[ Para [Str "Gate", Space, Str "check", Space, Str "log."]
+, Para [Str "Read", Space, Str "slowly.", SoftBreak, Str "Stop.", LineBreak, Str "Café & <check>"]
+]
+'''
+
+[[case]]
+id = "headings"
+input = '''
+[ Header 1 ("latch", [], []) [Str "Gate", Space, Str "check"]
+, Para [Str "Start", Space, Str "here."]
+, Header 2 ("details", ["unnumbered"], []) [Str "Readings"]
+, Para [Str "Check", Space, Str "hinge."]
+]
+'''
+
+[[case]]
+id = "inline-styles"
+input = '''
+[ Para [Emph [Str "latch"], Space, Strong [Str "hinge"], Space, Code ("", [], []) "a_b + 2", Space, Strikeout [Str "retired"], Space, Str "H", Subscript [Str "2"], Str "O", Space, Str "m", Superscript [Str "2"]]
+]
+'''
+
+[[case]]
+id = "links"
+input = '''
+[ Para [Link ("", [], []) [Str "Read", Space, Str "the", Space, Str "latch", Space, Str "log"] ("https://example.invalid/log?mode=day&view=full", "Open log"), Space, Link ("", [], []) [Str "section"] ("#hinge", "")]
+, Header 2 ("hinge", [], []) [Str "Log", Space, Str "entry"]
+]
+'''
+
+[[case]]
+id = "image"
+input = '''
+[ Para [Image ("sample", [], [("width", "24px")]) [Str "Gate", Space, Str "check", Space, Str "sample"] ("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC", "Blue pixel")]
+]
+'''
+
+[[case]]
+id = "bullet-list"
+input = '''
+[ BulletList
+    [ [Plain [Str "Check", Space, Str "latch."],
+       BulletList [[Plain [Str "Log", Space, Str "9."]]]]
+    , [Plain [Str "Check", Space, Str "hinge."]]
+    ]
+]
+'''
+
+[[case]]
+id = "ordered-list"
+input = '''
+[ OrderedList (4, UpperRoman, OneParen)
+    [ [Para [Str "Open", Space, Str "latch."], Para [Str "Wait", Space, Str "for", Space, Str "the", Space, Str "signal."]]
+    , [Para [Str "Close", Space, Str "hinge."]]
+    ]
+]
+'''
+
+[[case]]
+id = "definition-list"
+input = '''
+[ DefinitionList
+    [ ([Str "Limit"], [[Plain [Str "Highest", Space, Str "permitted", Space, Str "9."]],
+                       [Plain [Str "See", Space, Str "the", Space, Str "log."]]])
+    , ([Str "Zero"], [[Plain [Str "Start", Space, Str "value."]]])
+    ]
+]
+'''
+
+[[case]]
+id = "quote"
+input = '''
+[ BlockQuote [Para [Quoted DoubleQuote [Str "Check", Space, Str "latch."]], Para [Str "Record", Space, Str "the", Space, Str "result."]]
+, Para [Str "Continue", Space, Str "the", Space, Str "test."]
+]
+'''
+
+[[case]]
+id = "code-block"
+input = '''
+[ CodeBlock ("sample-code", ["python"], []) "value = 9\nprint(value < 25)"
+, CodeBlock ("", [], []) "latch\n  hinge\n"
+]
+'''
+
+[[case]]
+id = "horizontal-rule"
+input = '''
+[ Para [Str "Before", Space, Str "the", Space, Str "latch", Space, Str "check."]
+, HorizontalRule
+, Para [Str "After", Space, Str "the", Space, Str "hinge", Space, Str "check."]
+]
+'''
+
+[[case]]
+id = "captioned-table"
+input = '''
+[ Table ("check-table", [], [])
+    (Caption Nothing [Plain [Str "Gate", Space, Str "check", Space, Str "values"]])
+    [(AlignLeft, ColWidthDefault), (AlignRight, ColWidthDefault)]
+    (TableHead ( "", [], [] ) [Row ( "", [], [] ) [Cell ( "", [], [] ) AlignDefault ( RowSpan 1 ) ( ColSpan 1 ) [Plain [Str "Item"]], Cell ( "", [], [] ) AlignDefault ( RowSpan 1 ) ( ColSpan 1 ) [Plain [Str "Value"]]]])
+    [TableBody ( "", [], [] ) ( RowHeadColumns 0 ) []
+      [Row ( "", [], [] ) [Cell ( "", [], [] ) AlignDefault ( RowSpan 1 ) ( ColSpan 1 ) [Plain [Str "latch"]], Cell ( "", [], [] ) AlignDefault ( RowSpan 1 ) ( ColSpan 1 ) [Plain [Str "9"]]]]]
+    (TableFoot ( "", [], [] ) [])
+]
+'''
+
+[[case]]
+id = "notes"
+input = '''
+[ Para [Str "latch", Note [Para [Str "Use", Space, Str "the", Space, Str "lower", Space, Str "mark."],
+                             Para [Emph [Str "Check", Space, Str "the", Space, Str "scale."]]],
+        Space, Str "hinge", Note [Para [Str "Use", Space, Str "the", Space, Str "upper", Space, Str "mark."]]]
+]
+'''
+
+[[case]]
+id = "div-and-span"
+input = '''
+[ Div ("check-panel", ["inspection"], [("lang", "en")])
+    [Para [Span ("check-step", ["label"], [("title", "Check location")])
+            [Str "Gate", Space, Str "check"], Space, Str "latch"]]
+]
+'''

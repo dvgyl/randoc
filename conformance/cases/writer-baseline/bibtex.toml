@@ -1,0 +1,198 @@
+from = "native"
+to = ["bibtex", "biblatex"]
+
+[[case]]
+id = "journal-article"
+input = '''
+Pandoc (Meta {unMeta = fromList [
+  ("references", MetaList [
+      MetaMap (fromList [("id", MetaString "wren-rings"), ("type", MetaString "article-journal"), ("title", MetaInlines [Str "Salt", Space, Emph [Str "marks"], Space, Str "and", Space, Str "steel"]), ("author", MetaList [MetaMap (fromList [("given", MetaString "Nora"), ("family", MetaString "Wren")]), MetaMap (fromList [("literal", MetaString "West Pier Survey Team")])]), ("issued", MetaMap (fromList [("date-parts", MetaList [MetaList [MetaString "2024", MetaString "3", MetaString "9"]])])), ("container-title", MetaString "Journal of Shelf Surveys"), ("volume", MetaString "7"), ("issue", MetaString "2"), ("page", MetaString "17–24"), ("DOI", MetaString "10.5555/salt.724")])
+  ])
+]})
+[ Para [Str "Pier", Space, Str "survey", Space, Str "log."]
+, Para [Str "Read", Space, Str "slowly.", SoftBreak, Str "Stop.", LineBreak, Str "Café & <check>"]
+]
+'''
+
+[[case]]
+id = "book-chapter"
+input = '''
+Pandoc (Meta {unMeta = fromList [
+  ("references", MetaList [
+      MetaMap (fromList [("id", MetaString "mora-hinges"), ("type", MetaString "chapter"), ("title", MetaString "Hinges at North Dock"), ("author", MetaList [MetaMap (fromList [("given", MetaString "Ivo"), ("family", MetaString "Mora")])]), ("editor", MetaList [MetaMap (fromList [("given", MetaString "Rina"), ("family", MetaString "Vale")])]), ("issued", MetaMap (fromList [("date-parts", MetaList [MetaList [MetaString "2020"]])])), ("container-title", MetaString "Dock Repairs"), ("publisher", MetaString "Alder Press"), ("publisher-place", MetaString "Bath"), ("page", MetaString "41-53")])
+  ])
+]})
+[ Header 1 ("hinge", [], []) [Str "Pier", Space, Str "survey"]
+, Para [Str "Start", Space, Str "here."]
+, Header 2 ("details", ["unnumbered"], []) [Str "Readings"]
+, Para [Str "Check", Space, Str "pin."]
+]
+'''
+
+[[case]]
+id = "book-with-name-parts"
+input = '''
+Pandoc (Meta {unMeta = fromList [
+  ("references", MetaList [
+      MetaMap (fromList [("id", MetaString "velasquez-coating"), ("type", MetaString "book"), ("title", MetaString "Copper & Cedar"), ("author", MetaList [MetaMap (fromList [("given", MetaString "Inés"), ("family", MetaString "Velásquez"), ("suffix", MetaString "Jr.")]), MetaMap (fromList [("given", MetaString "Ari"), ("family", MetaString "Dale"), ("non-dropping-particle", MetaString "van")])]), ("translator", MetaList [MetaMap (fromList [("given", MetaString "Eda"), ("family", MetaString "Stone")])]), ("edition", MetaString "3"), ("issued", MetaMap (fromList [("date-parts", MetaList [MetaList [MetaString "2019"]])])), ("publisher", MetaString "Spindle Press"), ("ISBN", MetaString "978-0-00-000137-2")])
+  ])
+]})
+[ Para [Emph [Str "hinge"], Space, Strong [Str "pin"], Space, Code ("", [], []) "a_b + 2", Space, Strikeout [Str "retired"], Space, Str "H", Subscript [Str "2"], Str "O", Space, Str "m", Superscript [Str "2"]]
+]
+'''
+
+[[case]]
+id = "webpage-with-access-date"
+input = '''
+Pandoc (Meta {unMeta = fromList [
+  ("references", MetaList [
+      MetaMap (fromList [("id", MetaString "gate-log"), ("type", MetaString "webpage"), ("title", MetaString "Gate Service Log"), ("author", MetaList [MetaMap (fromList [("literal", MetaString "Mill Gate Office")])]), ("URL", MetaString "https://example.invalid/log?bay=4&view=full"), ("issued", MetaMap (fromList [("date-parts", MetaList [MetaList [MetaString "2022", MetaString "8"]])])), ("accessed", MetaMap (fromList [("date-parts", MetaList [MetaList [MetaString "2025", MetaString "1", MetaString "6"]])]))])
+  ])
+]})
+[ Para [Link ("", [], []) [Str "Read", Space, Str "the", Space, Str "hinge", Space, Str "log"] ("https://example.invalid/log?mode=day&view=full", "Open log"), Space, Link ("", [], []) [Str "section"] ("#pin", "")]
+, Header 2 ("pin", [], []) [Str "Log", Space, Str "entry"]
+]
+'''
+
+[[case]]
+id = "technical-report"
+input = '''
+Pandoc (Meta {unMeta = fromList [
+  ("references", MetaList [
+      MetaMap (fromList [("id", MetaString "clamp-tests"), ("type", MetaString "report"), ("title", MetaString "Clamp Tests on Wet Timber"), ("author", MetaList [MetaMap (fromList [("given", MetaString "Nora"), ("family", MetaString "Wren")]), MetaMap (fromList [("literal", MetaString "West Pier Survey Team")])]), ("number", MetaString "MP-19"), ("genre", MetaString "Inspection report"), ("publisher", MetaString "Marsh Lab"), ("issued", MetaMap (fromList [("date-parts", MetaList [MetaList [MetaString "2021", MetaString "11"]])]))])
+  ])
+]})
+[ BulletList
+    [ [Plain [Str "Check", Space, Str "hinge."],
+       BulletList [[Plain [Str "Log", Space, Str "21."]]]]
+    , [Plain [Str "Check", Space, Str "pin."]]
+    ]
+]
+'''
+
+[[case]]
+id = "conference-paper"
+input = '''
+Pandoc (Meta {unMeta = fromList [
+  ("references", MetaList [
+      MetaMap (fromList [("id", MetaString "beam-joints"), ("type", MetaString "paper-conference"), ("title", MetaString "Beam Joints"), ("author", MetaList [MetaMap (fromList [("given", MetaString "Nora"), ("family", MetaString "Wren")]), MetaMap (fromList [("literal", MetaString "West Pier Survey Team")])]), ("issued", MetaMap (fromList [("date-parts", MetaList [MetaList [MetaString "2018", MetaString "5"]])])), ("container-title", MetaString "Pier Engineering Forum"), ("event-place", MetaString "York"), ("page", MetaString "4-8")])
+  ])
+]})
+[ OrderedList (4, UpperRoman, OneParen)
+    [ [Para [Str "Open", Space, Str "hinge."], Para [Str "Wait", Space, Str "for", Space, Str "the", Space, Str "signal."]]
+    , [Para [Str "Close", Space, Str "pin."]]
+    ]
+]
+'''
+
+[[case]]
+id = "thesis"
+input = '''
+Pandoc (Meta {unMeta = fromList [
+  ("references", MetaList [
+      MetaMap (fromList [("id", MetaString "flow-study"), ("type", MetaString "thesis"), ("title", MetaString "Flow Under a Closed Sluice"), ("author", MetaList [MetaMap (fromList [("given", MetaString "Nora"), ("family", MetaString "Wren")]), MetaMap (fromList [("literal", MetaString "West Pier Survey Team")])]), ("issued", MetaMap (fromList [("date-parts", MetaList [MetaList [MetaString "2017"]])])), ("genre", MetaString "PhD thesis"), ("publisher", MetaString "Fen College"), ("publisher-place", MetaString "Ely")])
+  ])
+]})
+[ DefinitionList
+    [ ([Str "Limit"], [[Plain [Str "Highest", Space, Str "permitted", Space, Str "21."]],
+                       [Plain [Str "See", Space, Str "the", Space, Str "log."]]])
+    , ([Str "Zero"], [[Plain [Str "Start", Space, Str "value."]]])
+    ]
+]
+'''
+
+[[case]]
+id = "unpublished-work"
+input = '''
+Pandoc (Meta {unMeta = fromList [
+  ("references", MetaList [
+      MetaMap (fromList [("id", MetaString "field-memo"), ("type", MetaString "manuscript"), ("title", MetaString "Valve Inspection Notes"), ("author", MetaList [MetaMap (fromList [("given", MetaString "Nora"), ("family", MetaString "Wren")]), MetaMap (fromList [("literal", MetaString "West Pier Survey Team")])]), ("issued", MetaMap (fromList [("date-parts", MetaList [MetaList [MetaString "2016"]])])), ("note", MetaString "Working draft")])
+  ])
+]})
+[ BlockQuote [Para [Quoted DoubleQuote [Str "Check", Space, Str "hinge."]], Para [Str "Record", Space, Str "the", Space, Str "result."]]
+, Para [Str "Continue", Space, Str "the", Space, Str "test."]
+]
+'''
+
+[[case]]
+id = "dataset"
+input = '''
+Pandoc (Meta {unMeta = fromList [
+  ("references", MetaList [
+      MetaMap (fromList [("id", MetaString "pin-samples"), ("type", MetaString "dataset"), ("title", MetaString "Dry Pin Measurements"), ("author", MetaList [MetaMap (fromList [("literal", MetaString "South Bench Lab")])]), ("issued", MetaMap (fromList [("date-parts", MetaList [MetaList [MetaString "2023"]])])), ("version", MetaString "2"), ("URL", MetaString "https://example.invalid/pins")])
+  ])
+]})
+[ CodeBlock ("sample-code", ["python"], []) "value = 21\nprint(value < 25)"
+, CodeBlock ("", [], []) "hinge\n  pin\n"
+]
+'''
+
+[[case]]
+id = "reference-order"
+input = '''
+Pandoc (Meta {unMeta = fromList [
+  ("references", MetaList [
+      MetaMap (fromList [("id", MetaString "gate-log"), ("type", MetaString "webpage"), ("title", MetaString "Gate Service Log"), ("author", MetaList [MetaMap (fromList [("literal", MetaString "Mill Gate Office")])]), ("URL", MetaString "https://example.invalid/log?bay=4&view=full"), ("issued", MetaMap (fromList [("date-parts", MetaList [MetaList [MetaString "2022", MetaString "8"]])])), ("accessed", MetaMap (fromList [("date-parts", MetaList [MetaList [MetaString "2025", MetaString "1", MetaString "6"]])]))]),
+      MetaMap (fromList [("id", MetaString "wren-rings"), ("type", MetaString "article-journal"), ("title", MetaInlines [Str "Salt", Space, Emph [Str "marks"], Space, Str "and", Space, Str "steel"]), ("author", MetaList [MetaMap (fromList [("given", MetaString "Nora"), ("family", MetaString "Wren")]), MetaMap (fromList [("literal", MetaString "West Pier Survey Team")])]), ("issued", MetaMap (fromList [("date-parts", MetaList [MetaList [MetaString "2024", MetaString "3", MetaString "9"]])])), ("container-title", MetaString "Journal of Shelf Surveys"), ("volume", MetaString "7"), ("issue", MetaString "2"), ("page", MetaString "17–24"), ("DOI", MetaString "10.5555/salt.724")]),
+      MetaMap (fromList [("id", MetaString "velasquez-coating"), ("type", MetaString "book"), ("title", MetaString "Copper & Cedar"), ("author", MetaList [MetaMap (fromList [("given", MetaString "Inés"), ("family", MetaString "Velásquez"), ("suffix", MetaString "Jr.")]), MetaMap (fromList [("given", MetaString "Ari"), ("family", MetaString "Dale"), ("non-dropping-particle", MetaString "van")])]), ("translator", MetaList [MetaMap (fromList [("given", MetaString "Eda"), ("family", MetaString "Stone")])]), ("edition", MetaString "3"), ("issued", MetaMap (fromList [("date-parts", MetaList [MetaList [MetaString "2019"]])])), ("publisher", MetaString "Spindle Press"), ("ISBN", MetaString "978-0-00-000137-2")])
+  ])
+]})
+[ Para [Str "Before", Space, Str "the", Space, Str "hinge", Space, Str "check."]
+, HorizontalRule
+, Para [Str "After", Space, Str "the", Space, Str "pin", Space, Str "check."]
+]
+'''
+
+[[case]]
+id = "body-citation"
+input = '''
+Pandoc (Meta {unMeta = fromList [
+  ("references", MetaList [
+      MetaMap (fromList [("id", MetaString "wren-rings"), ("type", MetaString "article-journal"), ("title", MetaInlines [Str "Salt", Space, Emph [Str "marks"], Space, Str "and", Space, Str "steel"]), ("author", MetaList [MetaMap (fromList [("given", MetaString "Nora"), ("family", MetaString "Wren")]), MetaMap (fromList [("literal", MetaString "West Pier Survey Team")])]), ("issued", MetaMap (fromList [("date-parts", MetaList [MetaList [MetaString "2024", MetaString "3", MetaString "9"]])])), ("container-title", MetaString "Journal of Shelf Surveys"), ("volume", MetaString "7"), ("issue", MetaString "2"), ("page", MetaString "17–24"), ("DOI", MetaString "10.5555/salt.724")]),
+      MetaMap (fromList [("id", MetaString "mora-hinges"), ("type", MetaString "chapter"), ("title", MetaString "Hinges at North Dock"), ("author", MetaList [MetaMap (fromList [("given", MetaString "Ivo"), ("family", MetaString "Mora")])]), ("editor", MetaList [MetaMap (fromList [("given", MetaString "Rina"), ("family", MetaString "Vale")])]), ("issued", MetaMap (fromList [("date-parts", MetaList [MetaList [MetaString "2020"]])])), ("container-title", MetaString "Dock Repairs"), ("publisher", MetaString "Alder Press"), ("publisher-place", MetaString "Bath"), ("page", MetaString "41-53")])
+  ])
+]})
+[ Para [Cite [Citation {citationId = "mora-hinges", citationPrefix = [], citationSuffix = [], citationMode = NormalCitation, citationNoteNum = 0, citationHash = 0}] [Str "[Mora]"]]
+]
+'''
+
+[[case]]
+id = "table-and-image-in-body"
+input = '''
+Pandoc (Meta {unMeta = fromList [
+  ("references", MetaList [
+      MetaMap (fromList [("id", MetaString "clamp-tests"), ("type", MetaString "report"), ("title", MetaString "Clamp Tests on Wet Timber"), ("author", MetaList [MetaMap (fromList [("given", MetaString "Nora"), ("family", MetaString "Wren")]), MetaMap (fromList [("literal", MetaString "West Pier Survey Team")])]), ("number", MetaString "MP-19"), ("genre", MetaString "Inspection report"), ("publisher", MetaString "Marsh Lab"), ("issued", MetaMap (fromList [("date-parts", MetaList [MetaList [MetaString "2021", MetaString "11"]])]))])
+  ])
+]})
+[ Table ("clamps", [], [])
+    (Caption Nothing [Plain [Str "Clamp", Space, Str "results"]])
+    [(AlignLeft, ColWidthDefault), (AlignRight, ColWidthDefault)]
+    (TableHead ( "", [], [] ) [Row ( "", [], [] ) [Cell ( "", [], [] ) AlignDefault ( RowSpan 1 ) ( ColSpan 1 ) [Plain [Str "Part"]], Cell ( "", [], [] ) AlignDefault ( RowSpan 1 ) ( ColSpan 1 ) [Plain [Str "Load"]]]])
+    [TableBody ( "", [], [] ) ( RowHeadColumns 0 ) []
+      [Row ( "", [], [] ) [Cell ( "", [], [] ) AlignDefault ( RowSpan 1 ) ( ColSpan 1 ) [Plain [Str "Pin"]], Cell ( "", [], [] ) AlignDefault ( RowSpan 1 ) ( ColSpan 1 ) [Plain [Str "9"]]]]]
+    (TableFoot ( "", [], [] ) [])
+, Para [Image ("", [], []) [Str "Sample"] ("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC", "")]
+]
+'''
+
+[[case]]
+id = "notes-and-attributes-in-body"
+input = '''
+Pandoc (Meta {unMeta = fromList [
+  ("references", MetaList [
+      MetaMap (fromList [("id", MetaString "flow-study"), ("type", MetaString "thesis"), ("title", MetaString "Flow Under a Closed Sluice"), ("author", MetaList [MetaMap (fromList [("given", MetaString "Nora"), ("family", MetaString "Wren")]), MetaMap (fromList [("literal", MetaString "West Pier Survey Team")])]), ("issued", MetaMap (fromList [("date-parts", MetaList [MetaList [MetaString "2017"]])])), ("genre", MetaString "PhD thesis"), ("publisher", MetaString "Fen College"), ("publisher-place", MetaString "Ely")])
+  ])
+]})
+[ Div ("appendix", [], []) [Para [Span ("site", [], []) [Str "Pier"], Note [Para [Str "See", Space, Str "the", Space, Str "field", Space, Str "log."]]]]
+]
+'''
+
+[[case]]
+id = "empty-references"
+input = '''
+Pandoc (Meta {unMeta = fromList [
+  ("references", MetaList [])
+]})
+[ Para [Str "The", Space, Str "log", Space, Str "has", Space, Str "no", Space, Str "references."]
+]
+'''

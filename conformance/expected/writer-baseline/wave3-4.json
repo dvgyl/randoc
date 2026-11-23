@@ -1,0 +1,1115 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "bullet-list#e2e:asciidoc": {
+      "key": "c4a4c7138bd4e164",
+      "exit": 0,
+      "stdout": "[[lamp-bullet-list]]\n* Check bulb.\n** Log 23.\n* Check base.\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:asciidoc_legacy": {
+      "key": "96129e4ffe10b097",
+      "exit": 0,
+      "stdout": "[[lamp-bullet-list]]\n* Check bulb.\n** Log 23.\n* Check base.\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:asciidoctor": {
+      "key": "c84675a8b446d0ba",
+      "exit": 0,
+      "stdout": "[[lamp-bullet-list]]\n* Check bulb.\n** Log 23.\n* Check base.\n",
+      "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+    },
+    "bullet-list#e2e:djot": {
+      "key": "0b88566a0d412dfa",
+      "exit": 0,
+      "stdout": "{#lamp-bullet-list .cell .markdown}\n:::\n- Check bulb.\n\n  - Log 23.\n- Check base.\n\n:::\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:ipynb": {
+      "key": "871c32d82d22a364",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"- Check bulb.\\n\",\n    \"  - Log 23.\\n\",\n    \"- Check base.\"\n   ],\n   \"id\": \"lamp-bullet-list\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:typst": {
+      "key": "9c5519054253ebd2",
+      "exit": 0,
+      "stdout": "#block[\n- Check bulb.\n  - Log 23.\n- Check base.\n\n] <lamp-bullet-list>\n",
+      "stderr": ""
+    },
+    "bullet-list#read": {
+      "key": "f06ebf6d3bf8fafb",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"lamp-bullet-list\",[\"cell\",\"markdown\"],[]],[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"bulb.\"}]},{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Log\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"23.\"}]}]]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"base.\"}]}]]}]]}]}\n",
+      "stderr": ""
+    },
+    "bullet-list#write:asciidoc": {
+      "key": "8e11f1de07001d16",
+      "exit": 0,
+      "stdout": "[[lamp-bullet-list]]\n* Check bulb.\n** Log 23.\n* Check base.\n",
+      "stderr": ""
+    },
+    "bullet-list#write:asciidoc_legacy": {
+      "key": "ccf2c99a5e9ec403",
+      "exit": 0,
+      "stdout": "[[lamp-bullet-list]]\n* Check bulb.\n** Log 23.\n* Check base.\n",
+      "stderr": ""
+    },
+    "bullet-list#write:asciidoctor": {
+      "key": "785453805ece845a",
+      "exit": 0,
+      "stdout": "[[lamp-bullet-list]]\n* Check bulb.\n** Log 23.\n* Check base.\n",
+      "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+    },
+    "bullet-list#write:djot": {
+      "key": "920d469d5021e1dc",
+      "exit": 0,
+      "stdout": "{#lamp-bullet-list .cell .markdown}\n:::\n- Check bulb.\n\n  - Log 23.\n- Check base.\n\n:::\n",
+      "stderr": ""
+    },
+    "bullet-list#write:ipynb": {
+      "key": "3a3a99387ff54570",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"- Check bulb.\\n\",\n    \"  - Log 23.\\n\",\n    \"- Check base.\"\n   ],\n   \"id\": \"lamp-bullet-list\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "bullet-list#write:typst": {
+      "key": "40500cdd23f4afca",
+      "exit": 0,
+      "stdout": "#block[\n- Check bulb.\n  - Log 23.\n- Check base.\n\n] <lamp-bullet-list>\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:asciidoc": {
+      "key": "fbcab6f831cb193d",
+      "exit": 0,
+      "stdout": "[[lamp-captioned-table]]\n.Lamp check values\n[cols=\"<,>\",options=\"header\",]\n|===\n|Item |Value\n|bulb |23\n|===\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:asciidoc_legacy": {
+      "key": "dce301f3b45132f0",
+      "exit": 0,
+      "stdout": "[[lamp-captioned-table]]\n.Lamp check values\n[cols=\"<,>\",options=\"header\",]\n|===\n|Item |Value\n|bulb |23\n|===\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:asciidoctor": {
+      "key": "c170d303ad220173",
+      "exit": 0,
+      "stdout": "[[lamp-captioned-table]]\n.Lamp check values\n[cols=\"<,>\",options=\"header\",]\n|===\n|Item |Value\n|bulb |23\n|===\n",
+      "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+    },
+    "captioned-table#e2e:djot": {
+      "key": "cbd933b3934b68b3",
+      "exit": 0,
+      "stdout": "{#lamp-captioned-table .cell .markdown}\n:::\n{#check-table}\n| Item | Value |\n|:-----|------:|\n| bulb |    23 |\n\n^ Lamp check values\n\n:::\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:ipynb": {
+      "key": "1af55fb0ee2c7f3d",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"| Item | Value |\\n\",\n    \"|:-----|------:|\\n\",\n    \"| bulb |    23 |\\n\",\n    \"\\n\",\n    \"Lamp check values {#check-table}\"\n   ],\n   \"id\": \"lamp-captioned-table\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:typst": {
+      "key": "e311a3dbdd1cd5fb",
+      "exit": 0,
+      "stdout": "#block[\n#figure(\n  align(center)[#table(\n    columns: 2,\n    align: (left,right,),\n    table.header([Item], [Value],),\n    table.hline(),\n    [bulb], [23],\n  )]\n  , caption: [Lamp check values]\n  , kind: table\n  )\n<check-table>\n\n] <lamp-captioned-table>\n",
+      "stderr": ""
+    },
+    "captioned-table#read": {
+      "key": "21daa6072109515c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"lamp-captioned-table\",[\"cell\",\"markdown\"],[]],[{\"t\":\"Table\",\"c\":[[\"check-table\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Lamp\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"values\"}]}]],[[{\"t\":\"AlignLeft\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignRight\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Item\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Value\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"bulb\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"23\"}]}]]]]]]],[[\"\",[],[]],[]]]}]]}]}\n",
+      "stderr": ""
+    },
+    "captioned-table#write:asciidoc": {
+      "key": "3bb7d96d3e186b20",
+      "exit": 0,
+      "stdout": "[[lamp-captioned-table]]\n.Lamp check values\n[cols=\"<,>\",options=\"header\",]\n|===\n|Item |Value\n|bulb |23\n|===\n",
+      "stderr": ""
+    },
+    "captioned-table#write:asciidoc_legacy": {
+      "key": "21a83e55f5a6bb95",
+      "exit": 0,
+      "stdout": "[[lamp-captioned-table]]\n.Lamp check values\n[cols=\"<,>\",options=\"header\",]\n|===\n|Item |Value\n|bulb |23\n|===\n",
+      "stderr": ""
+    },
+    "captioned-table#write:asciidoctor": {
+      "key": "8a94dd4f14eb8844",
+      "exit": 0,
+      "stdout": "[[lamp-captioned-table]]\n.Lamp check values\n[cols=\"<,>\",options=\"header\",]\n|===\n|Item |Value\n|bulb |23\n|===\n",
+      "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+    },
+    "captioned-table#write:djot": {
+      "key": "ba1006d9b39e620a",
+      "exit": 0,
+      "stdout": "{#lamp-captioned-table .cell .markdown}\n:::\n{#check-table}\n| Item | Value |\n|:-----|------:|\n| bulb |    23 |\n\n^ Lamp check values\n\n:::\n",
+      "stderr": ""
+    },
+    "captioned-table#write:ipynb": {
+      "key": "c833db9e4377700e",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"| Item | Value |\\n\",\n    \"|:-----|------:|\\n\",\n    \"| bulb |    23 |\\n\",\n    \"\\n\",\n    \"Lamp check values {#check-table}\"\n   ],\n   \"id\": \"lamp-captioned-table\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "captioned-table#write:typst": {
+      "key": "6786d813510879b4",
+      "exit": 0,
+      "stdout": "#block[\n#figure(\n  align(center)[#table(\n    columns: 2,\n    align: (left,right,),\n    table.header([Item], [Value],),\n    table.hline(),\n    [bulb], [23],\n  )]\n  , caption: [Lamp check values]\n  , kind: table\n  )\n<check-table>\n\n] <lamp-captioned-table>\n",
+      "stderr": ""
+    },
+    "code-block#e2e:asciidoc": {
+      "key": "47088270fba2fe1d",
+      "exit": 0,
+      "stdout": "[[lamp-code-block]]\n[source,python]\n----\nvalue = 23\nprint(value < 25)\n----\n\n....\nbulb\n  base\n....\n",
+      "stderr": ""
+    },
+    "code-block#e2e:asciidoc_legacy": {
+      "key": "5f4c0deff611400c",
+      "exit": 0,
+      "stdout": "[[lamp-code-block]]\n[source,python]\n----\nvalue = 23\nprint(value < 25)\n----\n\n....\nbulb\n  base\n....\n",
+      "stderr": ""
+    },
+    "code-block#e2e:asciidoctor": {
+      "key": "bc54629fdc4a7ecf",
+      "exit": 0,
+      "stdout": "[[lamp-code-block]]\n[source,python]\n----\nvalue = 23\nprint(value < 25)\n----\n\n....\nbulb\n  base\n....\n",
+      "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+    },
+    "code-block#e2e:djot": {
+      "key": "4094c5a1ceb1558f",
+      "exit": 0,
+      "stdout": "{#lamp-code-block .cell .markdown}\n:::\n{#sample-code .python}\n```\nvalue = 23\nprint(value < 25)\n```\n\n```\nbulb\n  base\n```\n\n:::\n",
+      "stderr": ""
+    },
+    "code-block#e2e:ipynb": {
+      "key": "eea607165222d41d",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"``` python\\n\",\n    \"value = 23\\n\",\n    \"print(value < 25)\\n\",\n    \"```\\n\",\n    \"\\n\",\n    \"    bulb\\n\",\n    \"      base\"\n   ],\n   \"id\": \"lamp-code-block\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "code-block#e2e:typst": {
+      "key": "2c050ee16fce6f77",
+      "exit": 0,
+      "stdout": "#block[\n```python\nvalue = 23\nprint(value < 25)\n```\n\n```\nbulb\n  base\n```\n\n] <lamp-code-block>\n",
+      "stderr": ""
+    },
+    "code-block#read": {
+      "key": "92d185bd47fa9f58",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"lamp-code-block\",[\"cell\",\"markdown\"],[]],[{\"t\":\"CodeBlock\",\"c\":[[\"sample-code\",[\"python\"],[]],\"value = 23\\nprint(value < 25)\"]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"bulb\\n  base\\n\"]}]]}]}\n",
+      "stderr": ""
+    },
+    "code-block#write:asciidoc": {
+      "key": "f53c4d05b908b764",
+      "exit": 0,
+      "stdout": "[[lamp-code-block]]\n[source,python]\n----\nvalue = 23\nprint(value < 25)\n----\n\n....\nbulb\n  base\n....\n",
+      "stderr": ""
+    },
+    "code-block#write:asciidoc_legacy": {
+      "key": "b94999b6d2c966f7",
+      "exit": 0,
+      "stdout": "[[lamp-code-block]]\n[source,python]\n----\nvalue = 23\nprint(value < 25)\n----\n\n....\nbulb\n  base\n....\n",
+      "stderr": ""
+    },
+    "code-block#write:asciidoctor": {
+      "key": "59adbcc10f63aa80",
+      "exit": 0,
+      "stdout": "[[lamp-code-block]]\n[source,python]\n----\nvalue = 23\nprint(value < 25)\n----\n\n....\nbulb\n  base\n....\n",
+      "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+    },
+    "code-block#write:djot": {
+      "key": "0d5aad00cb28151a",
+      "exit": 0,
+      "stdout": "{#lamp-code-block .cell .markdown}\n:::\n{#sample-code .python}\n```\nvalue = 23\nprint(value < 25)\n```\n\n```\nbulb\n  base\n```\n\n:::\n",
+      "stderr": ""
+    },
+    "code-block#write:ipynb": {
+      "key": "573eef422b7310b6",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"``` python\\n\",\n    \"value = 23\\n\",\n    \"print(value < 25)\\n\",\n    \"```\\n\",\n    \"\\n\",\n    \"    bulb\\n\",\n    \"      base\"\n   ],\n   \"id\": \"lamp-code-block\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "code-block#write:typst": {
+      "key": "0d9795f6c67c64f0",
+      "exit": 0,
+      "stdout": "#block[\n```python\nvalue = 23\nprint(value < 25)\n```\n\n```\nbulb\n  base\n```\n\n] <lamp-code-block>\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:asciidoc": {
+      "key": "cee5291abf2292f5",
+      "exit": 0,
+      "stdout": "[[lamp-definition-list]]\nLimit::\n  Highest permitted 23.\n  +\n  See the log.\nZero::\n  Start value.\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:asciidoc_legacy": {
+      "key": "7cdda25606f51732",
+      "exit": 0,
+      "stdout": "[[lamp-definition-list]]\nLimit::\n  Highest permitted 23.\n  +\n  See the log.\nZero::\n  Start value.\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:asciidoctor": {
+      "key": "884458ef04ea691f",
+      "exit": 0,
+      "stdout": "[[lamp-definition-list]]\nLimit::\n  Highest permitted 23.\n  +\n  See the log.\nZero::\n  Start value.\n",
+      "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+    },
+    "definition-list#e2e:djot": {
+      "key": "389c33714bcb66df",
+      "exit": 0,
+      "stdout": "{#lamp-definition-list .cell .markdown}\n:::\n: Limit\n\n  Highest permitted 23.\n\n  See the log.\n: Zero\n\n  Start value.\n\n:::\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:ipynb": {
+      "key": "328eee7b037034f5",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"Limit  \\n\",\n    \"Highest permitted 23.\\n\",\n    \"\\n\",\n    \"See the log.\\n\",\n    \"\\n\",\n    \"Zero  \\n\",\n    \"Start value.\"\n   ],\n   \"id\": \"lamp-definition-list\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:typst": {
+      "key": "e72e8b73644b0ff7",
+      "exit": 0,
+      "stdout": "#block[\n/ Limit: #block[\nHighest permitted 23.\n\nSee the log.\n]\n/ Zero: Start value.\n\n] <lamp-definition-list>\n",
+      "stderr": ""
+    },
+    "definition-list#read": {
+      "key": "4927ec9f75b76d96",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"lamp-definition-list\",[\"cell\",\"markdown\"],[]],[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"Limit\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Highest\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"permitted\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"23.\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"See\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log.\"}]}]]],[[{\"t\":\"Str\",\"c\":\"Zero\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Start\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"value.\"}]}]]]]}]]}]}\n",
+      "stderr": ""
+    },
+    "definition-list#write:asciidoc": {
+      "key": "a18d407896b975e6",
+      "exit": 0,
+      "stdout": "[[lamp-definition-list]]\nLimit::\n  Highest permitted 23.\n  +\n  See the log.\nZero::\n  Start value.\n",
+      "stderr": ""
+    },
+    "definition-list#write:asciidoc_legacy": {
+      "key": "afa1975e7498c033",
+      "exit": 0,
+      "stdout": "[[lamp-definition-list]]\nLimit::\n  Highest permitted 23.\n  +\n  See the log.\nZero::\n  Start value.\n",
+      "stderr": ""
+    },
+    "definition-list#write:asciidoctor": {
+      "key": "5e5d445ab65d175a",
+      "exit": 0,
+      "stdout": "[[lamp-definition-list]]\nLimit::\n  Highest permitted 23.\n  +\n  See the log.\nZero::\n  Start value.\n",
+      "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+    },
+    "definition-list#write:djot": {
+      "key": "6ef18b34966123b0",
+      "exit": 0,
+      "stdout": "{#lamp-definition-list .cell .markdown}\n:::\n: Limit\n\n  Highest permitted 23.\n\n  See the log.\n: Zero\n\n  Start value.\n\n:::\n",
+      "stderr": ""
+    },
+    "definition-list#write:ipynb": {
+      "key": "5f079ff7a5de9034",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"Limit  \\n\",\n    \"Highest permitted 23.\\n\",\n    \"\\n\",\n    \"See the log.\\n\",\n    \"\\n\",\n    \"Zero  \\n\",\n    \"Start value.\"\n   ],\n   \"id\": \"lamp-definition-list\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "definition-list#write:typst": {
+      "key": "ea7654c53b6290aa",
+      "exit": 0,
+      "stdout": "#block[\n/ Limit: #block[\nHighest permitted 23.\n\nSee the log.\n]\n/ Zero: Start value.\n\n] <lamp-definition-list>\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:asciidoc": {
+      "key": "9559a25d5f9feba2",
+      "exit": 0,
+      "stdout": "[[lamp-div-and-span]]\n[[check-panel]]\n[#check-step .label]#Lamp check# bulb\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:asciidoc_legacy": {
+      "key": "4b6fb8c48a4a1d3d",
+      "exit": 0,
+      "stdout": "[[lamp-div-and-span]]\n[[check-panel]]\n[#check-step .label]#Lamp check# bulb\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:asciidoctor": {
+      "key": "5834ab650cf9e234",
+      "exit": 0,
+      "stdout": "[[lamp-div-and-span]]\n[[check-panel]]\n[#check-step .label]#Lamp check# bulb\n",
+      "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+    },
+    "div-and-span#e2e:djot": {
+      "key": "dee9d6ed12f5d0f4",
+      "exit": 0,
+      "stdout": "{#lamp-div-and-span .cell .markdown}\n::::\n{#check-panel .inspection lang=\"en\"}\n:::\n[Lamp check]{#check-step .label title=\"Check location\"} bulb\n\n:::\n\n::::\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:ipynb": {
+      "key": "8d6f96ac6ff65da2",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"<span id=\\\"check-step\\\" class=\\\"label\\\" title=\\\"Check location\\\">Lamp\\n\",\n    \"check</span> bulb\"\n   ],\n   \"id\": \"lamp-div-and-span\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:typst": {
+      "key": "91700773358eb87c",
+      "exit": 0,
+      "stdout": "#block[\n#block[\n#set text(lang: \"en\");\n​Lamp check<check-step> bulb\n\n] <check-panel>\n] <lamp-div-and-span>\n",
+      "stderr": ""
+    },
+    "div-and-span#read": {
+      "key": "866c4f8210319bb9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"lamp-div-and-span\",[\"cell\",\"markdown\"],[]],[{\"t\":\"Div\",\"c\":[[\"check-panel\",[\"inspection\"],[[\"lang\",\"en\"]]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"check-step\",[\"label\"],[[\"title\",\"Check location\"]]],[{\"t\":\"Str\",\"c\":\"Lamp\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"bulb\"}]}]]}]]}]}\n",
+      "stderr": ""
+    },
+    "div-and-span#write:asciidoc": {
+      "key": "f8264d9fb690a2a0",
+      "exit": 0,
+      "stdout": "[[lamp-div-and-span]]\n[[check-panel]]\n[#check-step .label]#Lamp check# bulb\n",
+      "stderr": ""
+    },
+    "div-and-span#write:asciidoc_legacy": {
+      "key": "09a427e37b6c8dd1",
+      "exit": 0,
+      "stdout": "[[lamp-div-and-span]]\n[[check-panel]]\n[#check-step .label]#Lamp check# bulb\n",
+      "stderr": ""
+    },
+    "div-and-span#write:asciidoctor": {
+      "key": "02d687248f13b024",
+      "exit": 0,
+      "stdout": "[[lamp-div-and-span]]\n[[check-panel]]\n[#check-step .label]#Lamp check# bulb\n",
+      "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+    },
+    "div-and-span#write:djot": {
+      "key": "f038b628c0c978f2",
+      "exit": 0,
+      "stdout": "{#lamp-div-and-span .cell .markdown}\n::::\n{#check-panel .inspection lang=\"en\"}\n:::\n[Lamp check]{#check-step .label title=\"Check location\"} bulb\n\n:::\n\n::::\n",
+      "stderr": ""
+    },
+    "div-and-span#write:ipynb": {
+      "key": "b7b64541128db106",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"<span id=\\\"check-step\\\" class=\\\"label\\\" title=\\\"Check location\\\">Lamp\\n\",\n    \"check</span> bulb\"\n   ],\n   \"id\": \"lamp-div-and-span\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "div-and-span#write:typst": {
+      "key": "1fc60b144aaaea54",
+      "exit": 0,
+      "stdout": "#block[\n#block[\n#set text(lang: \"en\");\n​Lamp check<check-step> bulb\n\n] <check-panel>\n] <lamp-div-and-span>\n",
+      "stderr": ""
+    },
+    "headings#e2e:asciidoc": {
+      "key": "c130ac47d7c5ea0e",
+      "exit": 0,
+      "stdout": "[[lamp-headings]]\n[[bulb]]\n== Lamp check\n\nStart here.\n\n[[details]]\n=== Readings\n\nCheck base.\n",
+      "stderr": ""
+    },
+    "headings#e2e:asciidoc_legacy": {
+      "key": "c9422078559f3151",
+      "exit": 0,
+      "stdout": "[[lamp-headings]]\n[[bulb]]\n== Lamp check\n\nStart here.\n\n[[details]]\n=== Readings\n\nCheck base.\n",
+      "stderr": ""
+    },
+    "headings#e2e:asciidoctor": {
+      "key": "2d99e8e40fd971c4",
+      "exit": 0,
+      "stdout": "[[lamp-headings]]\n[[bulb]]\n== Lamp check\n\nStart here.\n\n[[details]]\n=== Readings\n\nCheck base.\n",
+      "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+    },
+    "headings#e2e:djot": {
+      "key": "f68b2c3690673d04",
+      "exit": 0,
+      "stdout": "{#lamp-headings .cell .markdown}\n:::\n{#bulb}\n# Lamp check\n\nStart here.\n\n{#details .unnumbered}\n## Readings\n\nCheck base.\n\n:::\n",
+      "stderr": ""
+    },
+    "headings#e2e:ipynb": {
+      "key": "5abfa85a5dde9c0e",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"# Lamp check\\n\",\n    \"\\n\",\n    \"Start here.\\n\",\n    \"\\n\",\n    \"## Readings\\n\",\n    \"\\n\",\n    \"Check base.\"\n   ],\n   \"id\": \"lamp-headings\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "headings#e2e:typst": {
+      "key": "54de6cb793156eac",
+      "exit": 0,
+      "stdout": "#block[\n= Lamp check\n<bulb>\nStart here.\n\n#heading(level: 2, numbering: none)[Readings]\n<details>\nCheck base.\n\n] <lamp-headings>\n",
+      "stderr": ""
+    },
+    "headings#read": {
+      "key": "e5b92cf8d665b795",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"lamp-headings\",[\"cell\",\"markdown\"],[]],[{\"t\":\"Header\",\"c\":[1,[\"bulb\",[],[]],[{\"t\":\"Str\",\"c\":\"Lamp\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Start\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"here.\"}]},{\"t\":\"Header\",\"c\":[2,[\"details\",[\"unnumbered\"],[]],[{\"t\":\"Str\",\"c\":\"Readings\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"base.\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "headings#write:asciidoc": {
+      "key": "ad3bc7fd4bf0f9ab",
+      "exit": 0,
+      "stdout": "[[lamp-headings]]\n[[bulb]]\n== Lamp check\n\nStart here.\n\n[[details]]\n=== Readings\n\nCheck base.\n",
+      "stderr": ""
+    },
+    "headings#write:asciidoc_legacy": {
+      "key": "05c5e0825f94190e",
+      "exit": 0,
+      "stdout": "[[lamp-headings]]\n[[bulb]]\n== Lamp check\n\nStart here.\n\n[[details]]\n=== Readings\n\nCheck base.\n",
+      "stderr": ""
+    },
+    "headings#write:asciidoctor": {
+      "key": "1efa702125ad0087",
+      "exit": 0,
+      "stdout": "[[lamp-headings]]\n[[bulb]]\n== Lamp check\n\nStart here.\n\n[[details]]\n=== Readings\n\nCheck base.\n",
+      "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+    },
+    "headings#write:djot": {
+      "key": "afacd5b044d3d0c1",
+      "exit": 0,
+      "stdout": "{#lamp-headings .cell .markdown}\n:::\n{#bulb}\n# Lamp check\n\nStart here.\n\n{#details .unnumbered}\n## Readings\n\nCheck base.\n\n:::\n",
+      "stderr": ""
+    },
+    "headings#write:ipynb": {
+      "key": "4709ccdcdddf9c8d",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"# Lamp check\\n\",\n    \"\\n\",\n    \"Start here.\\n\",\n    \"\\n\",\n    \"## Readings\\n\",\n    \"\\n\",\n    \"Check base.\"\n   ],\n   \"id\": \"lamp-headings\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "headings#write:typst": {
+      "key": "318b6692817b1bb7",
+      "exit": 0,
+      "stdout": "#block[\n= Lamp check\n<bulb>\nStart here.\n\n#heading(level: 2, numbering: none)[Readings]\n<details>\nCheck base.\n\n] <lamp-headings>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:asciidoc": {
+      "key": "8c9c0f8fdd636b90",
+      "exit": 0,
+      "stdout": "[[lamp-horizontal-rule]]\nBefore the bulb check.\n\n'''''\n\nAfter the base check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:asciidoc_legacy": {
+      "key": "e4d293cc12fd354b",
+      "exit": 0,
+      "stdout": "[[lamp-horizontal-rule]]\nBefore the bulb check.\n\n'''''\n\nAfter the base check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:asciidoctor": {
+      "key": "2360a5f02fef6fb2",
+      "exit": 0,
+      "stdout": "[[lamp-horizontal-rule]]\nBefore the bulb check.\n\n'''''\n\nAfter the base check.\n",
+      "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+    },
+    "horizontal-rule#e2e:djot": {
+      "key": "e1c5fd7377090cf2",
+      "exit": 0,
+      "stdout": "{#lamp-horizontal-rule .cell .markdown}\n:::\nBefore the bulb check.\n\n* * * *\n\nAfter the base check.\n\n:::\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:ipynb": {
+      "key": "cbe5df7cda8d5d90",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"Before the bulb check.\\n\",\n    \"\\n\",\n    \"------------------------------------------------------------------------\\n\",\n    \"\\n\",\n    \"After the base check.\"\n   ],\n   \"id\": \"lamp-horizontal-rule\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:typst": {
+      "key": "86c9ffbf81584a1a",
+      "exit": 0,
+      "stdout": "#block[\nBefore the bulb check.\n\n#divider()\n\nAfter the base check.\n\n] <lamp-horizontal-rule>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#read": {
+      "key": "6d8a231478925c47",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"lamp-horizontal-rule\",[\"cell\",\"markdown\"],[]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"bulb\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check.\"}]},{\"t\":\"HorizontalRule\"},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"After\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"base\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check.\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:asciidoc": {
+      "key": "2b115f967c50732b",
+      "exit": 0,
+      "stdout": "[[lamp-horizontal-rule]]\nBefore the bulb check.\n\n'''''\n\nAfter the base check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:asciidoc_legacy": {
+      "key": "dce91afb869e62d6",
+      "exit": 0,
+      "stdout": "[[lamp-horizontal-rule]]\nBefore the bulb check.\n\n'''''\n\nAfter the base check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:asciidoctor": {
+      "key": "b8169cb17514568f",
+      "exit": 0,
+      "stdout": "[[lamp-horizontal-rule]]\nBefore the bulb check.\n\n'''''\n\nAfter the base check.\n",
+      "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+    },
+    "horizontal-rule#write:djot": {
+      "key": "5967d04ac03f9ee9",
+      "exit": 0,
+      "stdout": "{#lamp-horizontal-rule .cell .markdown}\n:::\nBefore the bulb check.\n\n* * * *\n\nAfter the base check.\n\n:::\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:ipynb": {
+      "key": "ab68e34f09c0074d",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"Before the bulb check.\\n\",\n    \"\\n\",\n    \"------------------------------------------------------------------------\\n\",\n    \"\\n\",\n    \"After the base check.\"\n   ],\n   \"id\": \"lamp-horizontal-rule\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:typst": {
+      "key": "6513ba2d0c82f9df",
+      "exit": 0,
+      "stdout": "#block[\nBefore the bulb check.\n\n#divider()\n\nAfter the base check.\n\n] <lamp-horizontal-rule>\n",
+      "stderr": ""
+    },
+    "image#e2e:asciidoc": {
+      "key": "fea6bd4ec2be1c85",
+      "exit": 0,
+      "stdout": "[[lamp-image]]\nimage:data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC[Lamp\ncheck sample,title=\"Blue pixel\",width=24]\n",
+      "stderr": ""
+    },
+    "image#e2e:asciidoc_legacy": {
+      "key": "b14746a16a68bd8a",
+      "exit": 0,
+      "stdout": "[[lamp-image]]\nimage:data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC[Lamp\ncheck sample,title=\"Blue pixel\",width=24]\n",
+      "stderr": ""
+    },
+    "image#e2e:asciidoctor": {
+      "key": "d3567ae2e3c1f13f",
+      "exit": 0,
+      "stdout": "[[lamp-image]]\nimage:data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC[Lamp\ncheck sample,title=\"Blue pixel\",width=24]\n",
+      "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+    },
+    "image#e2e:djot": {
+      "key": "3f01fca3173068ff",
+      "exit": 0,
+      "stdout": "{#lamp-image .cell .markdown}\n:::\n![Lamp check\nsample](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC){title=\"Blue pixel\"\n#sample width=\"24px\"}\n\n:::\n",
+      "stderr": ""
+    },
+    "image#e2e:ipynb": {
+      "key": "734d06680e576e85",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"<img\\n\",\n    \"src=\\\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\\\"\\n\",\n    \"title=\\\"Blue pixel\\\" id=\\\"sample\\\" width=\\\"24\\\" alt=\\\"Lamp check sample\\\" />\"\n   ],\n   \"id\": \"lamp-image\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "image#e2e:typst": {
+      "key": "98afde1c0d1b3427",
+      "exit": 0,
+      "stdout": "#block[\n#box(image(bytes((137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,1,0,0,0,1,8,2,0,0,0,144,119,83,222,0,0,0,12,73,68,65,84,120,156,99,80,142,172,7,0,1,158,0,252,211,240,222,113,0,0,0,0,73,69,78,68,174,66,96,130)), width: 0.25in, alt: \"Lamp check sample\"))\n\n] <lamp-image>\n",
+      "stderr": ""
+    },
+    "image#read": {
+      "key": "d3044324e04f5336",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"lamp-image\",[\"cell\",\"markdown\"],[]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Image\",\"c\":[[\"sample\",[],[[\"width\",\"24px\"]]],[{\"t\":\"Str\",\"c\":\"Lamp\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sample\"}],[\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\",\"Blue pixel\"]]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "image#write:asciidoc": {
+      "key": "8bdf8113c72e8ecb",
+      "exit": 0,
+      "stdout": "[[lamp-image]]\nimage:data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC[Lamp\ncheck sample,title=\"Blue pixel\",width=24]\n",
+      "stderr": ""
+    },
+    "image#write:asciidoc_legacy": {
+      "key": "0862c4bfdc301c4e",
+      "exit": 0,
+      "stdout": "[[lamp-image]]\nimage:data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC[Lamp\ncheck sample,title=\"Blue pixel\",width=24]\n",
+      "stderr": ""
+    },
+    "image#write:asciidoctor": {
+      "key": "d9c42426449f604f",
+      "exit": 0,
+      "stdout": "[[lamp-image]]\nimage:data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC[Lamp\ncheck sample,title=\"Blue pixel\",width=24]\n",
+      "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+    },
+    "image#write:djot": {
+      "key": "503cc1822d37a3b5",
+      "exit": 0,
+      "stdout": "{#lamp-image .cell .markdown}\n:::\n![Lamp check\nsample](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC){title=\"Blue pixel\"\n#sample width=\"24px\"}\n\n:::\n",
+      "stderr": ""
+    },
+    "image#write:ipynb": {
+      "key": "cd2e75ed67993359",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"<img\\n\",\n    \"src=\\\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\\\"\\n\",\n    \"title=\\\"Blue pixel\\\" id=\\\"sample\\\" width=\\\"24\\\" alt=\\\"Lamp check sample\\\" />\"\n   ],\n   \"id\": \"lamp-image\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "image#write:typst": {
+      "key": "46de5e1d488c4abf",
+      "exit": 0,
+      "stdout": "#block[\n#box(image(bytes((137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,1,0,0,0,1,8,2,0,0,0,144,119,83,222,0,0,0,12,73,68,65,84,120,156,99,80,142,172,7,0,1,158,0,252,211,240,222,113,0,0,0,0,73,69,78,68,174,66,96,130)), width: 0.25in, alt: \"Lamp check sample\"))\n\n] <lamp-image>\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:asciidoc": {
+      "key": "cf553288235e84e3",
+      "exit": 0,
+      "stdout": "[[lamp-inline-styles]]\n_bulb_ *base* `a++_++b {plus} 2` [line-through]#retired# H~2~O m^2^\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:asciidoc_legacy": {
+      "key": "1bb9236698cb330c",
+      "exit": 0,
+      "stdout": "[[lamp-inline-styles]]\n_bulb_ *base* `a_b + 2` [line-through]#retired# H~2~O m^2^\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:asciidoctor": {
+      "key": "e1495eea33bacdf1",
+      "exit": 0,
+      "stdout": "[[lamp-inline-styles]]\n_bulb_ *base* `a++_++b {plus} 2` [line-through]#retired# H~2~O m^2^\n",
+      "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+    },
+    "inline-styles#e2e:djot": {
+      "key": "94f02fea725e96b1",
+      "exit": 0,
+      "stdout": "{#lamp-inline-styles .cell .markdown}\n:::\n_bulb_ *base* `a_b + 2` {-retired-} H~2~O m^2^\n\n:::\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:ipynb": {
+      "key": "68e42e9aa97736e3",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"*bulb* **base** `a_b + 2` ~~retired~~ H<sub>2</sub>O m<sup>2</sup>\"\n   ],\n   \"id\": \"lamp-inline-styles\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:typst": {
+      "key": "99b355dc53c96b99",
+      "exit": 0,
+      "stdout": "#block[\n#emph[bulb] #strong[base] `a_b + 2` #strike[retired] H#sub[2]O\nm#super[2]\n\n] <lamp-inline-styles>\n",
+      "stderr": ""
+    },
+    "inline-styles#read": {
+      "key": "067ba6869311cee8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"lamp-inline-styles\",[\"cell\",\"markdown\"],[]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"bulb\"}]},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"base\"}]},{\"t\":\"Space\"},{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"a_b + 2\"]},{\"t\":\"Space\"},{\"t\":\"Strikeout\",\"c\":[{\"t\":\"Str\",\"c\":\"retired\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"H\"},{\"t\":\"Subscript\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]},{\"t\":\"Str\",\"c\":\"O\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"m\"},{\"t\":\"Superscript\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "inline-styles#write:asciidoc": {
+      "key": "b0364af339cecbfd",
+      "exit": 0,
+      "stdout": "[[lamp-inline-styles]]\n_bulb_ *base* `a++_++b {plus} 2` [line-through]#retired# H~2~O m^2^\n",
+      "stderr": ""
+    },
+    "inline-styles#write:asciidoc_legacy": {
+      "key": "524fdcb05b71f60a",
+      "exit": 0,
+      "stdout": "[[lamp-inline-styles]]\n_bulb_ *base* `a_b + 2` [line-through]#retired# H~2~O m^2^\n",
+      "stderr": ""
+    },
+    "inline-styles#write:asciidoctor": {
+      "key": "a477d7b5bca16369",
+      "exit": 0,
+      "stdout": "[[lamp-inline-styles]]\n_bulb_ *base* `a++_++b {plus} 2` [line-through]#retired# H~2~O m^2^\n",
+      "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+    },
+    "inline-styles#write:djot": {
+      "key": "2b1e5920da51144f",
+      "exit": 0,
+      "stdout": "{#lamp-inline-styles .cell .markdown}\n:::\n_bulb_ *base* `a_b + 2` {-retired-} H~2~O m^2^\n\n:::\n",
+      "stderr": ""
+    },
+    "inline-styles#write:ipynb": {
+      "key": "eafa1b981ed146bb",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"*bulb* **base** `a_b + 2` ~~retired~~ H<sub>2</sub>O m<sup>2</sup>\"\n   ],\n   \"id\": \"lamp-inline-styles\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "inline-styles#write:typst": {
+      "key": "514b5027fb8f1039",
+      "exit": 0,
+      "stdout": "#block[\n#emph[bulb] #strong[base] `a_b + 2` #strike[retired] H#sub[2]O\nm#super[2]\n\n] <lamp-inline-styles>\n",
+      "stderr": ""
+    },
+    "links#e2e:asciidoc": {
+      "key": "7249208c02ae2808",
+      "exit": 0,
+      "stdout": "[[lamp-links]]\nhttps://example.invalid/log?mode=day&view=full[Read the bulb log]\nlink:#base[section]\n\n[[base]]\n=== Log entry\n",
+      "stderr": ""
+    },
+    "links#e2e:asciidoc_legacy": {
+      "key": "6d48e09e9f7e595f",
+      "exit": 0,
+      "stdout": "[[lamp-links]]\nhttps://example.invalid/log?mode=day&view=full[Read the bulb log]\nlink:#base[section]\n\n[[base]]\n=== Log entry\n",
+      "stderr": ""
+    },
+    "links#e2e:asciidoctor": {
+      "key": "81e10ece53b0ec86",
+      "exit": 0,
+      "stdout": "[[lamp-links]]\nhttps://example.invalid/log?mode=day&view=full[Read the bulb log]\nlink:#base[section]\n\n[[base]]\n=== Log entry\n",
+      "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+    },
+    "links#e2e:djot": {
+      "key": "833b30fdda432546",
+      "exit": 0,
+      "stdout": "{#lamp-links .cell .markdown}\n:::\n[Read the bulb\nlog](https://example.invalid/log?mode=day&view=full){title=\"Open log\"}\n[section](#base)\n\n{#base}\n## Log entry\n\n:::\n",
+      "stderr": ""
+    },
+    "links#e2e:ipynb": {
+      "key": "7acb4f380d6eba08",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"[Read the bulb\\n\",\n    \"log](https://example.invalid/log?mode=day&view=full \\\"Open log\\\")\\n\",\n    \"[section](#base)\\n\",\n    \"\\n\",\n    \"## Log entry\"\n   ],\n   \"id\": \"lamp-links\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "links#e2e:typst": {
+      "key": "a56b5bfe4648fcce",
+      "exit": 0,
+      "stdout": "#block[\n#link(\"https://example.invalid/log?mode=day&view=full\")[Read the bulb log]\n#link(<base>)[section]\n\n== Log entry\n<base>\n] <lamp-links>\n",
+      "stderr": ""
+    },
+    "links#read": {
+      "key": "1de011548d37f73b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"lamp-links\",[\"cell\",\"markdown\"],[]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"bulb\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log\"}],[\"https://example.invalid/log?mode=day&view=full\",\"Open log\"]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"section\"}],[\"#base\",\"\"]]}]},{\"t\":\"Header\",\"c\":[2,[\"base\",[],[]],[{\"t\":\"Str\",\"c\":\"Log\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"entry\"}]]}]]}]}\n",
+      "stderr": ""
+    },
+    "links#write:asciidoc": {
+      "key": "f5cdcc8c9c9141e5",
+      "exit": 0,
+      "stdout": "[[lamp-links]]\nhttps://example.invalid/log?mode=day&view=full[Read the bulb log]\nlink:#base[section]\n\n[[base]]\n=== Log entry\n",
+      "stderr": ""
+    },
+    "links#write:asciidoc_legacy": {
+      "key": "f43e60b1228b5008",
+      "exit": 0,
+      "stdout": "[[lamp-links]]\nhttps://example.invalid/log?mode=day&view=full[Read the bulb log]\nlink:#base[section]\n\n[[base]]\n=== Log entry\n",
+      "stderr": ""
+    },
+    "links#write:asciidoctor": {
+      "key": "ff48c25923025a51",
+      "exit": 0,
+      "stdout": "[[lamp-links]]\nhttps://example.invalid/log?mode=day&view=full[Read the bulb log]\nlink:#base[section]\n\n[[base]]\n=== Log entry\n",
+      "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+    },
+    "links#write:djot": {
+      "key": "5a4d50d17af7fa13",
+      "exit": 0,
+      "stdout": "{#lamp-links .cell .markdown}\n:::\n[Read the bulb\nlog](https://example.invalid/log?mode=day&view=full){title=\"Open log\"}\n[section](#base)\n\n{#base}\n## Log entry\n\n:::\n",
+      "stderr": ""
+    },
+    "links#write:ipynb": {
+      "key": "046787aeeb1d926f",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"[Read the bulb\\n\",\n    \"log](https://example.invalid/log?mode=day&view=full \\\"Open log\\\")\\n\",\n    \"[section](#base)\\n\",\n    \"\\n\",\n    \"## Log entry\"\n   ],\n   \"id\": \"lamp-links\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "links#write:typst": {
+      "key": "c0de23687c1b7f81",
+      "exit": 0,
+      "stdout": "#block[\n#link(\"https://example.invalid/log?mode=day&view=full\")[Read the bulb log]\n#link(<base>)[section]\n\n== Log entry\n<base>\n] <lamp-links>\n",
+      "stderr": ""
+    },
+    "notebook-cell-kinds#e2e:ipynb": {
+      "key": "164d313815e0f319",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"Read the voltage.\"\n   ],\n   \"id\": \"lamp-instructions\"\n  },\n  {\n   \"cell_type\": \"code\",\n   \"execution_count\": 3,\n   \"metadata\": {},\n   \"outputs\": [],\n   \"source\": [\n    \"print(23)\"\n   ],\n   \"id\": \"lamp-reading\"\n  },\n  {\n   \"cell_type\": \"raw\",\n   \"metadata\": {\n    \"raw_mimetype\": \"text/html\"\n   },\n   \"source\": [\n    \"<p>Reading complete.</p>\"\n   ],\n   \"id\": \"lamp-raw\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "notebook-cell-kinds#read": {
+      "key": "aa7e56f58cf12f9a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"lamp-instructions\",[\"cell\",\"markdown\"],[]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"voltage.\"}]}]]},{\"t\":\"Div\",\"c\":[[\"lamp-reading\",[\"cell\",\"code\"],[[\"execution_count\",\"3\"]]],[{\"t\":\"CodeBlock\",\"c\":[[\"\",[\"python\"],[]],\"print(23)\"]}]]},{\"t\":\"Div\",\"c\":[[\"lamp-raw\",[\"cell\",\"raw\"],[]],[{\"t\":\"RawBlock\",\"c\":[\"html\",\"<p>Reading complete.</p>\"]}]]}]}\n",
+      "stderr": ""
+    },
+    "notebook-cell-kinds#write:ipynb": {
+      "key": "bf9e04317514f293",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"Read the voltage.\"\n   ],\n   \"id\": \"lamp-instructions\"\n  },\n  {\n   \"cell_type\": \"code\",\n   \"execution_count\": 3,\n   \"metadata\": {},\n   \"outputs\": [],\n   \"source\": [\n    \"print(23)\"\n   ],\n   \"id\": \"lamp-reading\"\n  },\n  {\n   \"cell_type\": \"raw\",\n   \"metadata\": {\n    \"raw_mimetype\": \"text/html\"\n   },\n   \"source\": [\n    \"<p>Reading complete.</p>\"\n   ],\n   \"id\": \"lamp-raw\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "notes#e2e:asciidoc": {
+      "key": "f7b6ccf64b6256df",
+      "exit": 0,
+      "stdout": "[[lamp-notes]]\nbulb[multiblock footnote omitted] basefootnote:[Use the upper mark.]\n",
+      "stderr": ""
+    },
+    "notes#e2e:asciidoc_legacy": {
+      "key": "69653c5628e23fc0",
+      "exit": 0,
+      "stdout": "[[lamp-notes]]\nbulb[multiblock footnote omitted] basefootnote:[Use the upper mark.]\n",
+      "stderr": ""
+    },
+    "notes#e2e:asciidoctor": {
+      "key": "cb91ae93e0f70d95",
+      "exit": 0,
+      "stdout": "[[lamp-notes]]\nbulb[multiblock footnote omitted] basefootnote:[Use the upper mark.]\n",
+      "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+    },
+    "notes#e2e:djot": {
+      "key": "ec59f3b2ce1bad55",
+      "exit": 0,
+      "stdout": "{#lamp-notes .cell .markdown}\n:::\nbulb[^1] base[^2]\n\n:::\n\n[^1]: Use the lower mark.\n\n    _Check the scale._\n\n[^2]: Use the upper mark.\n",
+      "stderr": ""
+    },
+    "notes#e2e:ipynb": {
+      "key": "2deb9c2905efd8df",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"bulb[1] base[2]\\n\",\n    \"\\n\",\n    \"[1] Use the lower mark.\\n\",\n    \"\\n\",\n    \"*Check the scale.*\\n\",\n    \"\\n\",\n    \"[2] Use the upper mark.\"\n   ],\n   \"id\": \"lamp-notes\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "notes#e2e:typst": {
+      "key": "3928df1a4387352d",
+      "exit": 0,
+      "stdout": "#block[\nbulb#footnote[Use the lower mark.\n\n#emph[Check the scale.]] base#footnote[Use the upper mark.]\n\n] <lamp-notes>\n",
+      "stderr": ""
+    },
+    "notes#read": {
+      "key": "bcfefeb48fe9ef7c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"lamp-notes\",[\"cell\",\"markdown\"],[]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"bulb\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"lower\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"scale.\"}]}]}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"base\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"upper\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark.\"}]}]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "notes#write:asciidoc": {
+      "key": "a99aeff7723c1102",
+      "exit": 0,
+      "stdout": "[[lamp-notes]]\nbulb[multiblock footnote omitted] basefootnote:[Use the upper mark.]\n",
+      "stderr": ""
+    },
+    "notes#write:asciidoc_legacy": {
+      "key": "887dbc42209cd943",
+      "exit": 0,
+      "stdout": "[[lamp-notes]]\nbulb[multiblock footnote omitted] basefootnote:[Use the upper mark.]\n",
+      "stderr": ""
+    },
+    "notes#write:asciidoctor": {
+      "key": "a2e35ab5599d7c86",
+      "exit": 0,
+      "stdout": "[[lamp-notes]]\nbulb[multiblock footnote omitted] basefootnote:[Use the upper mark.]\n",
+      "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+    },
+    "notes#write:djot": {
+      "key": "8657a93a9bd877c4",
+      "exit": 0,
+      "stdout": "{#lamp-notes .cell .markdown}\n:::\nbulb[^1] base[^2]\n\n:::\n\n[^1]: Use the lower mark.\n\n    _Check the scale._\n\n[^2]: Use the upper mark.\n",
+      "stderr": ""
+    },
+    "notes#write:ipynb": {
+      "key": "426ceb82a8aad218",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"bulb[1] base[2]\\n\",\n    \"\\n\",\n    \"[1] Use the lower mark.\\n\",\n    \"\\n\",\n    \"*Check the scale.*\\n\",\n    \"\\n\",\n    \"[2] Use the upper mark.\"\n   ],\n   \"id\": \"lamp-notes\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "notes#write:typst": {
+      "key": "3994bc6ebb0bf7f6",
+      "exit": 0,
+      "stdout": "#block[\nbulb#footnote[Use the lower mark.\n\n#emph[Check the scale.]] base#footnote[Use the upper mark.]\n\n] <lamp-notes>\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:asciidoc": {
+      "key": "240191ebe184c404",
+      "exit": 0,
+      "stdout": "[[lamp-ordered-list]]\n[upperroman, start=4]\n. Open bulb.\n+\nWait for the signal.\n. Close base.\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:asciidoc_legacy": {
+      "key": "61fbd2aaa8565aad",
+      "exit": 0,
+      "stdout": "[[lamp-ordered-list]]\n[upperroman, start=4]\n. Open bulb.\n+\nWait for the signal.\n. Close base.\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:asciidoctor": {
+      "key": "4d7722bef585025a",
+      "exit": 0,
+      "stdout": "[[lamp-ordered-list]]\n[upperroman, start=4]\n. Open bulb.\n+\nWait for the signal.\n. Close base.\n",
+      "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+    },
+    "ordered-list#e2e:djot": {
+      "key": "b5467cee3075421a",
+      "exit": 0,
+      "stdout": "{#lamp-ordered-list .cell .markdown}\n:::\nIV) Open bulb.\n\n    Wait for the signal.\n\nV) Close base.\n\n:::\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:ipynb": {
+      "key": "a51eb6758428ba04",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"1.  Open bulb.\\n\",\n    \"\\n\",\n    \"    Wait for the signal.\\n\",\n    \"\\n\",\n    \"2.  Close base.\"\n   ],\n   \"id\": \"lamp-ordered-list\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:typst": {
+      "key": "0b0d0118a0192032",
+      "exit": 0,
+      "stdout": "#block[\n#block[\n#set enum(numbering: \"I)\", start: 4)\n+ Open bulb.\n\n  Wait for the signal.\n\n+ Close base.\n]\n\n] <lamp-ordered-list>\n",
+      "stderr": ""
+    },
+    "ordered-list#read": {
+      "key": "108f0e51f6376f89",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"lamp-ordered-list\",[\"cell\",\"markdown\"],[]],[{\"t\":\"OrderedList\",\"c\":[[4,{\"t\":\"UpperRoman\"},{\"t\":\"OneParen\"}],[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Open\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"bulb.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Wait\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"for\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"signal.\"}]}],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Close\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"base.\"}]}]]]}]]}]}\n",
+      "stderr": ""
+    },
+    "ordered-list#write:asciidoc": {
+      "key": "ead7503f372a5ccc",
+      "exit": 0,
+      "stdout": "[[lamp-ordered-list]]\n[upperroman, start=4]\n. Open bulb.\n+\nWait for the signal.\n. Close base.\n",
+      "stderr": ""
+    },
+    "ordered-list#write:asciidoc_legacy": {
+      "key": "482647b68303f789",
+      "exit": 0,
+      "stdout": "[[lamp-ordered-list]]\n[upperroman, start=4]\n. Open bulb.\n+\nWait for the signal.\n. Close base.\n",
+      "stderr": ""
+    },
+    "ordered-list#write:asciidoctor": {
+      "key": "1dd1aa7575c2c590",
+      "exit": 0,
+      "stdout": "[[lamp-ordered-list]]\n[upperroman, start=4]\n. Open bulb.\n+\nWait for the signal.\n. Close base.\n",
+      "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+    },
+    "ordered-list#write:djot": {
+      "key": "2c3a706ee2ecb78e",
+      "exit": 0,
+      "stdout": "{#lamp-ordered-list .cell .markdown}\n:::\nIV) Open bulb.\n\n    Wait for the signal.\n\nV) Close base.\n\n:::\n",
+      "stderr": ""
+    },
+    "ordered-list#write:ipynb": {
+      "key": "d22acaadd6601ee2",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"1.  Open bulb.\\n\",\n    \"\\n\",\n    \"    Wait for the signal.\\n\",\n    \"\\n\",\n    \"2.  Close base.\"\n   ],\n   \"id\": \"lamp-ordered-list\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "ordered-list#write:typst": {
+      "key": "701393680ead7e00",
+      "exit": 0,
+      "stdout": "#block[\n#block[\n#set enum(numbering: \"I)\", start: 4)\n+ Open bulb.\n\n  Wait for the signal.\n\n+ Close base.\n]\n\n] <lamp-ordered-list>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:asciidoc": {
+      "key": "19a5bc91f6b8ae68",
+      "exit": 0,
+      "stdout": "[[lamp-paragraphs]]\nLamp check log.\n\nRead slowly. Stop. +\nCafé & ++<++check++>++\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:asciidoc_legacy": {
+      "key": "7370ed3798be117b",
+      "exit": 0,
+      "stdout": "[[lamp-paragraphs]]\nLamp check log.\n\nRead slowly. Stop. +\nCafé & ++<++check++>++\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:asciidoctor": {
+      "key": "b8101238cadf5eba",
+      "exit": 0,
+      "stdout": "[[lamp-paragraphs]]\nLamp check log.\n\nRead slowly. Stop. +\nCafé & ++<++check++>++\n",
+      "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+    },
+    "paragraphs#e2e:djot": {
+      "key": "f2f9f6a265d72cfa",
+      "exit": 0,
+      "stdout": "{#lamp-paragraphs .cell .markdown}\n:::\nLamp check log.\n\nRead slowly. Stop.\\\nCafé & \\<check\\>\n\n:::\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:ipynb": {
+      "key": "09fbea79eaca9068",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"Lamp check log.\\n\",\n    \"\\n\",\n    \"Read slowly. Stop.  \\n\",\n    \"Café & \\\\<check\\\\>\"\n   ],\n   \"id\": \"lamp-paragraphs\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:typst": {
+      "key": "8de69ddb37a08582",
+      "exit": 0,
+      "stdout": "#block[\nLamp check log.\n\nRead slowly. Stop. \\ Café & \\<check\\>\n\n] <lamp-paragraphs>\n",
+      "stderr": ""
+    },
+    "paragraphs#read": {
+      "key": "93a1562aecba1787",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"lamp-paragraphs\",[\"cell\",\"markdown\"],[]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lamp\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"slowly.\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"Stop.\"},{\"t\":\"LineBreak\"},{\"t\":\"Str\",\"c\":\"Café & <check>\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "paragraphs#write:asciidoc": {
+      "key": "b7d6a8e7338da88a",
+      "exit": 0,
+      "stdout": "[[lamp-paragraphs]]\nLamp check log.\n\nRead slowly. Stop. +\nCafé & ++<++check++>++\n",
+      "stderr": ""
+    },
+    "paragraphs#write:asciidoc_legacy": {
+      "key": "0d799ac56e02d793",
+      "exit": 0,
+      "stdout": "[[lamp-paragraphs]]\nLamp check log.\n\nRead slowly. Stop. +\nCafé & ++<++check++>++\n",
+      "stderr": ""
+    },
+    "paragraphs#write:asciidoctor": {
+      "key": "a131a4f5b78d057e",
+      "exit": 0,
+      "stdout": "[[lamp-paragraphs]]\nLamp check log.\n\nRead slowly. Stop. +\nCafé & ++<++check++>++\n",
+      "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+    },
+    "paragraphs#write:djot": {
+      "key": "76a03538feeab14c",
+      "exit": 0,
+      "stdout": "{#lamp-paragraphs .cell .markdown}\n:::\nLamp check log.\n\nRead slowly. Stop.\\\nCafé & \\<check\\>\n\n:::\n",
+      "stderr": ""
+    },
+    "paragraphs#write:ipynb": {
+      "key": "7ebb422abfbdc110",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"Lamp check log.\\n\",\n    \"\\n\",\n    \"Read slowly. Stop.  \\n\",\n    \"Café & \\\\<check\\\\>\"\n   ],\n   \"id\": \"lamp-paragraphs\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "paragraphs#write:typst": {
+      "key": "2797112bb4c09aee",
+      "exit": 0,
+      "stdout": "#block[\nLamp check log.\n\nRead slowly. Stop. \\ Café & \\<check\\>\n\n] <lamp-paragraphs>\n",
+      "stderr": ""
+    },
+    "quote#e2e:asciidoc": {
+      "key": "b16394e4a3ea9b1b",
+      "exit": 0,
+      "stdout": "[[lamp-quote]]\n____\n\"`Check bulb.`\"\n\nRecord the result.\n____\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#e2e:asciidoc_legacy": {
+      "key": "86574125c3cc0970",
+      "exit": 0,
+      "stdout": "[[lamp-quote]]\n____\n``Check bulb.''\n\nRecord the result.\n____\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#e2e:asciidoctor": {
+      "key": "48e1c17fb8c89f6d",
+      "exit": 0,
+      "stdout": "[[lamp-quote]]\n____\n\"`Check bulb.`\"\n\nRecord the result.\n____\n\nContinue the test.\n",
+      "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+    },
+    "quote#e2e:djot": {
+      "key": "cdd92bfb86332aad",
+      "exit": 0,
+      "stdout": "{#lamp-quote .cell .markdown}\n:::\n> \"Check bulb.\"\n>\n> Record the result.\n\nContinue the test.\n\n:::\n",
+      "stderr": ""
+    },
+    "quote#e2e:ipynb": {
+      "key": "65bd633c5446cd1b",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"> “Check bulb.”\\n\",\n    \">\\n\",\n    \"> Record the result.\\n\",\n    \"\\n\",\n    \"Continue the test.\"\n   ],\n   \"id\": \"lamp-quote\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "quote#e2e:typst": {
+      "key": "ae68460522ef4895",
+      "exit": 0,
+      "stdout": "#block[\n#quote(block: true)[\n\"Check bulb.\"\n\nRecord the result.\n]\n\nContinue the test.\n\n] <lamp-quote>\n",
+      "stderr": ""
+    },
+    "quote#read": {
+      "key": "acb1b61d6c38f9d4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"lamp-quote\",[\"cell\",\"markdown\"],[]],[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"bulb.\"}]]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Record\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"result.\"}]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Continue\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test.\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "quote#write:asciidoc": {
+      "key": "e6928300972aef43",
+      "exit": 0,
+      "stdout": "[[lamp-quote]]\n____\n\"`Check bulb.`\"\n\nRecord the result.\n____\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#write:asciidoc_legacy": {
+      "key": "d9ee958f0d7feb3c",
+      "exit": 0,
+      "stdout": "[[lamp-quote]]\n____\n``Check bulb.''\n\nRecord the result.\n____\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#write:asciidoctor": {
+      "key": "fd2b91d659f78f97",
+      "exit": 0,
+      "stdout": "[[lamp-quote]]\n____\n\"`Check bulb.`\"\n\nRecord the result.\n____\n\nContinue the test.\n",
+      "stderr": "[WARNING] Deprecated: asciidoctor. use asciidoc instead\n"
+    },
+    "quote#write:djot": {
+      "key": "af210c6e0dd4a8e1",
+      "exit": 0,
+      "stdout": "{#lamp-quote .cell .markdown}\n:::\n> \"Check bulb.\"\n>\n> Record the result.\n\nContinue the test.\n\n:::\n",
+      "stderr": ""
+    },
+    "quote#write:ipynb": {
+      "key": "be1e7f2393138675",
+      "exit": 0,
+      "stdout": "{\n \"cells\": [\n  {\n   \"cell_type\": \"markdown\",\n   \"metadata\": {},\n   \"source\": [\n    \"> “Check bulb.”\\n\",\n    \">\\n\",\n    \"> Record the result.\\n\",\n    \"\\n\",\n    \"Continue the test.\"\n   ],\n   \"id\": \"lamp-quote\"\n  }\n ],\n \"nbformat\": 4,\n \"nbformat_minor\": 5,\n \"metadata\": {}\n}\n",
+      "stderr": ""
+    },
+    "quote#write:typst": {
+      "key": "61738dcb24714007",
+      "exit": 0,
+      "stdout": "#block[\n#quote(block: true)[\n\"Check bulb.\"\n\nRecord the result.\n]\n\nContinue the test.\n\n] <lamp-quote>\n",
+      "stderr": ""
+    }
+  }
+}

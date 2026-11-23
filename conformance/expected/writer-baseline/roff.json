@@ -1,0 +1,425 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "bullet-list#e2e:man": {
+      "key": "c8554961005e425f",
+      "exit": 0,
+      "stdout": ".IP \\(bu 2\nCheck dial.\n.RS 2\n.IP \\(bu 2\nLog 18.\n.RE\n.IP \\(bu 2\nCheck spring.\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:ms": {
+      "key": "fe7dc381a1cf905c",
+      "exit": 0,
+      "stdout": ".IP \\(bu 3\nCheck dial.\n.RS 3\n.IP \\(bu 3\nLog 18.\n.RE\n.IP \\(bu 3\nCheck spring.\n",
+      "stderr": ""
+    },
+    "bullet-list#read": {
+      "key": "c2ee19eaeeacc0f0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dial.\"}]},{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Log\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"18.\"}]}]]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"spring.\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "bullet-list#write:man": {
+      "key": "f734bb7eb5e042fc",
+      "exit": 0,
+      "stdout": ".IP \\(bu 2\nCheck dial.\n.RS 2\n.IP \\(bu 2\nLog 18.\n.RE\n.IP \\(bu 2\nCheck spring.\n",
+      "stderr": ""
+    },
+    "bullet-list#write:ms": {
+      "key": "1fa8bc82fb8ea6a3",
+      "exit": 0,
+      "stdout": ".IP \\(bu 3\nCheck dial.\n.RS 3\n.IP \\(bu 3\nLog 18.\n.RE\n.IP \\(bu 3\nCheck spring.\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:man": {
+      "key": "b5dbc4dc256d8ff9",
+      "exit": 0,
+      "stdout": ".PP\nClock check values\n.TS\ntab(@);\nl r.\nT{\nItem\nT}@T{\nValue\nT}\n_\nT{\ndial\nT}@T{\n18\nT}\n.TE\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:ms": {
+      "key": "3da1c39628a0601a",
+      "exit": 0,
+      "stdout": ".PP\nClock check values\n.na\n.TS\ndelim(@@) tab(\t);\nl r.\nT{\nItem\nT}\tT{\nValue\nT}\n_\nT{\ndial\nT}\tT{\n18\nT}\n.TE\n.ad\n",
+      "stderr": ""
+    },
+    "captioned-table#read": {
+      "key": "b6d116a1ad69783e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"check-table\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Clock\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"values\"}]}]],[[{\"t\":\"AlignLeft\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignRight\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Item\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Value\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"dial\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"18\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "captioned-table#write:man": {
+      "key": "0b3490d6d50ac5e1",
+      "exit": 0,
+      "stdout": ".PP\nClock check values\n.TS\ntab(@);\nl r.\nT{\nItem\nT}@T{\nValue\nT}\n_\nT{\ndial\nT}@T{\n18\nT}\n.TE\n",
+      "stderr": ""
+    },
+    "captioned-table#write:ms": {
+      "key": "cb865253204e8cbc",
+      "exit": 0,
+      "stdout": ".PP\nClock check values\n.na\n.TS\ndelim(@@) tab(\t);\nl r.\nT{\nItem\nT}\tT{\nValue\nT}\n_\nT{\ndial\nT}\tT{\n18\nT}\n.TE\n.ad\n",
+      "stderr": ""
+    },
+    "code-block#e2e:man": {
+      "key": "8900ae69b151a9f3",
+      "exit": 0,
+      "stdout": ".IP\n.EX\nvalue = 18\nprint(value < 25)\n.EE\n.IP\n.EX\ndial\n  spring\n.EE\n",
+      "stderr": ""
+    },
+    "code-block#e2e:ms": {
+      "key": "87809a1c5b1c280c",
+      "exit": 0,
+      "stdout": ".IP\n.nf\n\\f[C]\n\\*[NormalTok \"value \"]\\*[OperatorTok \"=\"]\\*[NormalTok \" \"]\\*[DecValTok \"18\"]\n\\*[BuiltInTok \"print\"]\\*[NormalTok \"(value \"]\\*[OperatorTok \"<\"]\\*[NormalTok \" \"]\\*[DecValTok \"25\"]\\*[NormalTok \")\"]\n\\f[]\n.fi\n.IP\n.nf\n\\f[C]\ndial\n  spring\n\\f[]\n.fi\n",
+      "stderr": ""
+    },
+    "code-block#read": {
+      "key": "5215a7a298429738",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"sample-code\",[\"python\"],[]],\"value = 18\\nprint(value < 25)\"]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"dial\\n  spring\\n\"]}]}\n",
+      "stderr": ""
+    },
+    "code-block#write:man": {
+      "key": "43223702cf57b0e0",
+      "exit": 0,
+      "stdout": ".IP\n.EX\nvalue = 18\nprint(value < 25)\n.EE\n.IP\n.EX\ndial\n  spring\n.EE\n",
+      "stderr": ""
+    },
+    "code-block#write:ms": {
+      "key": "7bc09cd6af4e378b",
+      "exit": 0,
+      "stdout": ".IP\n.nf\n\\f[C]\n\\*[NormalTok \"value \"]\\*[OperatorTok \"=\"]\\*[NormalTok \" \"]\\*[DecValTok \"18\"]\n\\*[BuiltInTok \"print\"]\\*[NormalTok \"(value \"]\\*[OperatorTok \"<\"]\\*[NormalTok \" \"]\\*[DecValTok \"25\"]\\*[NormalTok \")\"]\n\\f[]\n.fi\n.IP\n.nf\n\\f[C]\ndial\n  spring\n\\f[]\n.fi\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:man": {
+      "key": "87ad0c7b1b312cce",
+      "exit": 0,
+      "stdout": ".TP\nLimit\nHighest permitted 18.\n.RS\nSee the log.\n.RE\n.TP\nZero\nStart value.\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:ms": {
+      "key": "49f4623caa38a85d",
+      "exit": 0,
+      "stdout": ".IP \"\\f[B]Limit\\f[R]\" 3\nHighest permitted 18.\n.RS 3\n.RE\nSee the log.\n.RS 3\n.RE\n.IP \"\\f[B]Zero\\f[R]\" 3\nStart value.\n.RS 3\n.RE\n",
+      "stderr": ""
+    },
+    "definition-list#read": {
+      "key": "f72b298d8f98f8b1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"Limit\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Highest\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"permitted\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"18.\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"See\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log.\"}]}]]],[[{\"t\":\"Str\",\"c\":\"Zero\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Start\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"value.\"}]}]]]]}]}\n",
+      "stderr": ""
+    },
+    "definition-list#write:man": {
+      "key": "d9de22b6d962a523",
+      "exit": 0,
+      "stdout": ".TP\nLimit\nHighest permitted 18.\n.RS\nSee the log.\n.RE\n.TP\nZero\nStart value.\n",
+      "stderr": ""
+    },
+    "definition-list#write:ms": {
+      "key": "f427d725beb11b24",
+      "exit": 0,
+      "stdout": ".IP \"\\f[B]Limit\\f[R]\" 3\nHighest permitted 18.\n.RS 3\n.RE\nSee the log.\n.RS 3\n.RE\n.IP \"\\f[B]Zero\\f[R]\" 3\nStart value.\n.RS 3\n.RE\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:man": {
+      "key": "c42714ee08e1e3cb",
+      "exit": 0,
+      "stdout": ".PP\nClock check dial\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:ms": {
+      "key": "fbc788f4c153a9f4",
+      "exit": 0,
+      "stdout": ".LP\nClock check dial\n",
+      "stderr": ""
+    },
+    "div-and-span#read": {
+      "key": "fa585830f90f19c8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"check-panel\",[\"inspection\"],[[\"lang\",\"en\"]]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"check-step\",[\"label\"],[[\"title\",\"Check location\"]]],[{\"t\":\"Str\",\"c\":\"Clock\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dial\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "div-and-span#write:man": {
+      "key": "cf71759fda36d301",
+      "exit": 0,
+      "stdout": ".PP\nClock check dial\n",
+      "stderr": ""
+    },
+    "div-and-span#write:ms": {
+      "key": "ceb7ae6245edea46",
+      "exit": 0,
+      "stdout": ".LP\nClock check dial\n",
+      "stderr": ""
+    },
+    "headings#e2e:man": {
+      "key": "641610c8ff2c26fc",
+      "exit": 0,
+      "stdout": ".SH Clock check\nStart here.\n.SS Readings\nCheck spring.\n",
+      "stderr": ""
+    },
+    "headings#e2e:ms": {
+      "key": "503fd24755ba07c3",
+      "exit": 0,
+      "stdout": ".SH 1\nClock check\n.LP\nStart here.\n.SH 2\nReadings\n.LP\nCheck spring.\n",
+      "stderr": ""
+    },
+    "headings#read": {
+      "key": "e8b9e99678b95957",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"dial\",[],[]],[{\"t\":\"Str\",\"c\":\"Clock\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Start\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"here.\"}]},{\"t\":\"Header\",\"c\":[2,[\"details\",[\"unnumbered\"],[]],[{\"t\":\"Str\",\"c\":\"Readings\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"spring.\"}]}]}\n",
+      "stderr": ""
+    },
+    "headings#write:man": {
+      "key": "d32dde7d6b1872e7",
+      "exit": 0,
+      "stdout": ".SH Clock check\nStart here.\n.SS Readings\nCheck spring.\n",
+      "stderr": ""
+    },
+    "headings#write:ms": {
+      "key": "a45c2048b50e0658",
+      "exit": 0,
+      "stdout": ".SH 1\nClock check\n.LP\nStart here.\n.SH 2\nReadings\n.LP\nCheck spring.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:man": {
+      "key": "7af2a981e4fb689f",
+      "exit": 0,
+      "stdout": ".PP\nBefore the dial check.\n.PP\n   *   *   *   *   *\n.PP\nAfter the spring check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:ms": {
+      "key": "907d0f5a2badb2bc",
+      "exit": 0,
+      "stdout": ".LP\nBefore the dial check.\n.HLINE\n.PP\nAfter the spring check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#read": {
+      "key": "f2dd92fb7a08cfa8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dial\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check.\"}]},{\"t\":\"HorizontalRule\"},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"After\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"spring\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check.\"}]}]}\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:man": {
+      "key": "4d879447d463425b",
+      "exit": 0,
+      "stdout": ".PP\nBefore the dial check.\n.PP\n   *   *   *   *   *\n.PP\nAfter the spring check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:ms": {
+      "key": "d1a5bfeeecfeb288",
+      "exit": 0,
+      "stdout": ".LP\nBefore the dial check.\n.HLINE\n.PP\nAfter the spring check.\n",
+      "stderr": ""
+    },
+    "image#e2e:man": {
+      "key": "cb16d5fafc8218b5",
+      "exit": 0,
+      "stdout": ".PP\n[IMAGE: \\c\n.UR data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\nClock check sample\n.UE \\c\n]\n",
+      "stderr": ""
+    },
+    "image#e2e:ms": {
+      "key": "c5adf19f39151360",
+      "exit": 0,
+      "stdout": ".LP\n[IMAGE: Clock check sample] \\\" \"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\" \"18p\"\n",
+      "stderr": ""
+    },
+    "image#read": {
+      "key": "87cbc64f121fcdec",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Image\",\"c\":[[\"sample\",[],[[\"width\",\"24px\"]]],[{\"t\":\"Str\",\"c\":\"Clock\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sample\"}],[\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\",\"Blue pixel\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "image#write:man": {
+      "key": "9aa684c6fae010e9",
+      "exit": 0,
+      "stdout": ".PP\n[IMAGE: \\c\n.UR data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\nClock check sample\n.UE \\c\n]\n",
+      "stderr": ""
+    },
+    "image#write:ms": {
+      "key": "220ddbdc278166f0",
+      "exit": 0,
+      "stdout": ".LP\n[IMAGE: Clock check sample] \\\" \"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\" \"18p\"\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:man": {
+      "key": "1a934bf2b17999bc",
+      "exit": 0,
+      "stdout": ".PP\n\\f[I]dial\\f[R] \\f[B]spring\\f[R] \\f[CR]a_b + 2\\f[R] [STRIKEOUT:retired]\nH~2~O m^2^\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:ms": {
+      "key": "f94ab1789c8c16af",
+      "exit": 0,
+      "stdout": ".LP\n\\f[I]dial\\f[R] \\f[B]spring\\f[R] \\f[CR]a_b + 2\\f[R]\n\\m[strikecolor]retired\\m[] H\\*<2\\*>O m\\*{2\\*}\n",
+      "stderr": ""
+    },
+    "inline-styles#read": {
+      "key": "5d8f49bd74b4b263",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"dial\"}]},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"spring\"}]},{\"t\":\"Space\"},{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"a_b + 2\"]},{\"t\":\"Space\"},{\"t\":\"Strikeout\",\"c\":[{\"t\":\"Str\",\"c\":\"retired\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"H\"},{\"t\":\"Subscript\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]},{\"t\":\"Str\",\"c\":\"O\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"m\"},{\"t\":\"Superscript\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "inline-styles#write:man": {
+      "key": "3fad69d239bbbabb",
+      "exit": 0,
+      "stdout": ".PP\n\\f[I]dial\\f[R] \\f[B]spring\\f[R] \\f[CR]a_b + 2\\f[R] [STRIKEOUT:retired]\nH~2~O m^2^\n",
+      "stderr": ""
+    },
+    "inline-styles#write:ms": {
+      "key": "71d1a74925a72f16",
+      "exit": 0,
+      "stdout": ".LP\n\\f[I]dial\\f[R] \\f[B]spring\\f[R] \\f[CR]a_b + 2\\f[R]\n\\m[strikecolor]retired\\m[] H\\*<2\\*>O m\\*{2\\*}\n",
+      "stderr": ""
+    },
+    "links#e2e:man": {
+      "key": "d1137d622ec0c5b7",
+      "exit": 0,
+      "stdout": ".PP\n\\c\n.UR https://example.invalid/log?mode=day&view=full\nRead the dial log\n.UE \\c\n\\ section\n.SS Log entry\n",
+      "stderr": ""
+    },
+    "links#e2e:ms": {
+      "key": "c15cb98629070d7c",
+      "exit": 0,
+      "stdout": ".LP\nRead the dial log section\n.SH 2\nLog entry\n",
+      "stderr": ""
+    },
+    "links#read": {
+      "key": "30fc57923cd49408",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dial\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log\"}],[\"https://example.invalid/log?mode=day&view=full\",\"Open log\"]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"section\"}],[\"#spring\",\"\"]]}]},{\"t\":\"Header\",\"c\":[2,[\"spring\",[],[]],[{\"t\":\"Str\",\"c\":\"Log\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"entry\"}]]}]}\n",
+      "stderr": ""
+    },
+    "links#write:man": {
+      "key": "32c1d759b207177a",
+      "exit": 0,
+      "stdout": ".PP\n\\c\n.UR https://example.invalid/log?mode=day&view=full\nRead the dial log\n.UE \\c\n\\ section\n.SS Log entry\n",
+      "stderr": ""
+    },
+    "links#write:ms": {
+      "key": "d7b92961be844fc1",
+      "exit": 0,
+      "stdout": ".LP\nRead the dial log section\n.SH 2\nLog entry\n",
+      "stderr": ""
+    },
+    "notes#e2e:man": {
+      "key": "afdfdc4256341c9e",
+      "exit": 0,
+      "stdout": ".PP\ndial[1] spring[2]\n.SH NOTES\n.SS [1]\n.PP\nUse the lower mark.\n.PP\n\\f[I]Check the scale.\\f[R]\n.SS [2]\n.PP\nUse the upper mark.\n",
+      "stderr": ""
+    },
+    "notes#e2e:ms": {
+      "key": "71931a7e7f90ae35",
+      "exit": 0,
+      "stdout": ".LP\ndial\\**\n.FS\nUse the lower mark.\n.PP\n\\f[I]Check the scale.\\f[R]\n.FE\nspring\\**\n.FS\nUse the upper mark.\n.FE\n",
+      "stderr": ""
+    },
+    "notes#read": {
+      "key": "3e5cdead4c7a2931",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"dial\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"lower\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"scale.\"}]}]}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"spring\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"upper\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark.\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "notes#write:man": {
+      "key": "495475c69abea706",
+      "exit": 0,
+      "stdout": ".PP\ndial[1] spring[2]\n.SH NOTES\n.SS [1]\n.PP\nUse the lower mark.\n.PP\n\\f[I]Check the scale.\\f[R]\n.SS [2]\n.PP\nUse the upper mark.\n",
+      "stderr": ""
+    },
+    "notes#write:ms": {
+      "key": "dd10956c853e9429",
+      "exit": 0,
+      "stdout": ".LP\ndial\\**\n.FS\nUse the lower mark.\n.PP\n\\f[I]Check the scale.\\f[R]\n.FE\nspring\\**\n.FS\nUse the upper mark.\n.FE\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:man": {
+      "key": "22a1d0d974004c10",
+      "exit": 0,
+      "stdout": ".IP \"IV)\" 4\nOpen dial.\n.RS 4\n.PP\nWait for the signal.\n.RE\n.IP \" V)\" 4\nClose spring.\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:ms": {
+      "key": "15bf593264fefc03",
+      "exit": 0,
+      "stdout": ".IP \" IV)\" 5\nOpen dial.\n.RS 5\n.LP\nWait for the signal.\n.RE\n.IP \"  V)\" 5\nClose spring.\n",
+      "stderr": ""
+    },
+    "ordered-list#read": {
+      "key": "7443af7c7605823f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[4,{\"t\":\"UpperRoman\"},{\"t\":\"OneParen\"}],[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Open\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dial.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Wait\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"for\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"signal.\"}]}],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Close\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"spring.\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "ordered-list#write:man": {
+      "key": "79541d38aec1847a",
+      "exit": 0,
+      "stdout": ".IP \"IV)\" 4\nOpen dial.\n.RS 4\n.PP\nWait for the signal.\n.RE\n.IP \" V)\" 4\nClose spring.\n",
+      "stderr": ""
+    },
+    "ordered-list#write:ms": {
+      "key": "95b6e3ff3cd1fbdb",
+      "exit": 0,
+      "stdout": ".IP \" IV)\" 5\nOpen dial.\n.RS 5\n.LP\nWait for the signal.\n.RE\n.IP \"  V)\" 5\nClose spring.\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:man": {
+      "key": "521d3627e9851168",
+      "exit": 0,
+      "stdout": ".PP\nClock check log.\n.PP\nRead slowly.\nStop.\n.PD 0\n.P\n.PD\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:ms": {
+      "key": "a94ccaf37cb7c0ef",
+      "exit": 0,
+      "stdout": ".LP\nClock check log.\n.PP\nRead slowly.\nStop.\n.br\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#read": {
+      "key": "1dec4cbd6224c5d3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Clock\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"slowly.\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"Stop.\"},{\"t\":\"LineBreak\"},{\"t\":\"Str\",\"c\":\"Café & <check>\"}]}]}\n",
+      "stderr": ""
+    },
+    "paragraphs#write:man": {
+      "key": "a4f937212e440f33",
+      "exit": 0,
+      "stdout": ".PP\nClock check log.\n.PP\nRead slowly.\nStop.\n.PD 0\n.P\n.PD\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#write:ms": {
+      "key": "e7a0216258ae0afc",
+      "exit": 0,
+      "stdout": ".LP\nClock check log.\n.PP\nRead slowly.\nStop.\n.br\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "quote#e2e:man": {
+      "key": "1f3024aa939d3fbc",
+      "exit": 0,
+      "stdout": ".RS\n.PP\n\\(lqCheck dial.\\(rq\n.PP\nRecord the result.\n.RE\n.PP\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#e2e:ms": {
+      "key": "e5b2adc3d351500f",
+      "exit": 0,
+      "stdout": ".QS\n.LP\n\\(lqCheck dial.\\(rq\n.PP\nRecord the result.\n.QE\n.LP\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#read": {
+      "key": "ea09532e9457c1db",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dial.\"}]]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Record\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"result.\"}]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Continue\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test.\"}]}]}\n",
+      "stderr": ""
+    },
+    "quote#write:man": {
+      "key": "3e123212b766b21a",
+      "exit": 0,
+      "stdout": ".RS\n.PP\n\\(lqCheck dial.\\(rq\n.PP\nRecord the result.\n.RE\n.PP\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#write:ms": {
+      "key": "23e7361e385a29d7",
+      "exit": 0,
+      "stdout": ".QS\n.LP\n\\(lqCheck dial.\\(rq\n.PP\nRecord the result.\n.QE\n.LP\nContinue the test.\n",
+      "stderr": ""
+    }
+  }
+}

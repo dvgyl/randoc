@@ -1,0 +1,425 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "bullet-list#e2e:org": {
+      "key": "5dc6f9ad6328f4ef",
+      "exit": 0,
+      "stdout": "- Check plug.\n  - Log 14.\n- Check socket.\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:rtf": {
+      "key": "dd7587342f8783cd",
+      "exit": 0,
+      "stdout": "{\\pard \\ql \\f0 \\fs24 \\sa0 \\li360 \\fi-360\\ls1\\ilvl0\\tx360 {\\listtext\\tab \\bullet \\tab} Check plug.\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa0 \\li720 \\fi-360\\ls2\\ilvl1\\tx360 {\\listtext\\tab \\endash \\tab} Log 14.\\sa180\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa0 \\li360 \\fi-360\\ls1\\ilvl0\\tx360 {\\listtext\\tab \\bullet \\tab} Check socket.\\sa180\\par}\n",
+      "stderr": ""
+    },
+    "bullet-list#read": {
+      "key": "2b340ae5b7489aea",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"plug.\"}]},{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Log\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"14.\"}]}]]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"socket.\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "bullet-list#write:org": {
+      "key": "8d4124169e095518",
+      "exit": 0,
+      "stdout": "- Check plug.\n  - Log 14.\n- Check socket.\n",
+      "stderr": ""
+    },
+    "bullet-list#write:rtf": {
+      "key": "0a58261b448d2dd6",
+      "exit": 0,
+      "stdout": "{\\pard \\ql \\f0 \\fs24 \\sa0 \\li360 \\fi-360\\ls1\\ilvl0\\tx360 {\\listtext\\tab \\bullet \\tab} Check plug.\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa0 \\li720 \\fi-360\\ls2\\ilvl1\\tx360 {\\listtext\\tab \\endash \\tab} Log 14.\\sa180\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa0 \\li360 \\fi-360\\ls1\\ilvl0\\tx360 {\\listtext\\tab \\bullet \\tab} Check socket.\\sa180\\par}\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:org": {
+      "key": "3704ef1f8db6fa9c",
+      "exit": 0,
+      "stdout": "| Item | Value |\n|------+-------|\n| plug | 14    |\n#+caption: Cable check values\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:rtf": {
+      "key": "ccbcfb68c0ce38ca",
+      "exit": 0,
+      "stdout": "{\n\\trowd \\trgaph120\n\\clbrdrb\\brdrs\\cellx4320\\clbrdrb\\brdrs\\cellx8640\n\\trkeep\\intbl\n{\n{{\\pard\\intbl \\ql \\f0 \\fs24 \\sa0 \\li0 \\fi0 Item\\par}\n\\cell}\n{{\\pard\\intbl \\qr \\f0 \\fs24 \\sa0 \\li0 \\fi0 Value\\par}\n\\cell}\n}\n\\intbl\\row}\n{\n\\trowd \\trgaph120\n\\cellx4320\\cellx8640\n\\trkeep\\intbl\n{\n{{\\pard\\intbl \\ql \\f0 \\fs24 \\sa0 \\li0 \\fi0 plug\\par}\n\\cell}\n{{\\pard\\intbl \\qr \\f0 \\fs24 \\sa0 \\li0 \\fi0 14\\par}\n\\cell}\n}\n\\intbl\\row}\n{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 Cable check values\\par}\n",
+      "stderr": ""
+    },
+    "captioned-table#read": {
+      "key": "375b166d3df3952d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"check-table\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Cable\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"values\"}]}]],[[{\"t\":\"AlignLeft\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignRight\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Item\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Value\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"plug\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"14\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "captioned-table#write:org": {
+      "key": "935e2e80c3d5da44",
+      "exit": 0,
+      "stdout": "| Item | Value |\n|------+-------|\n| plug | 14    |\n#+caption: Cable check values\n",
+      "stderr": ""
+    },
+    "captioned-table#write:rtf": {
+      "key": "e1ca14a3913baf02",
+      "exit": 0,
+      "stdout": "{\n\\trowd \\trgaph120\n\\clbrdrb\\brdrs\\cellx4320\\clbrdrb\\brdrs\\cellx8640\n\\trkeep\\intbl\n{\n{{\\pard\\intbl \\ql \\f0 \\fs24 \\sa0 \\li0 \\fi0 Item\\par}\n\\cell}\n{{\\pard\\intbl \\qr \\f0 \\fs24 \\sa0 \\li0 \\fi0 Value\\par}\n\\cell}\n}\n\\intbl\\row}\n{\n\\trowd \\trgaph120\n\\cellx4320\\cellx8640\n\\trkeep\\intbl\n{\n{{\\pard\\intbl \\ql \\f0 \\fs24 \\sa0 \\li0 \\fi0 plug\\par}\n\\cell}\n{{\\pard\\intbl \\qr \\f0 \\fs24 \\sa0 \\li0 \\fi0 14\\par}\n\\cell}\n}\n\\intbl\\row}\n{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 Cable check values\\par}\n",
+      "stderr": ""
+    },
+    "code-block#e2e:org": {
+      "key": "cb07c85794a806d7",
+      "exit": 0,
+      "stdout": "#+name: sample-code\n#+begin_src python\nvalue = 14\nprint(value < 25)\n#+end_src\n\n#+begin_example\nplug\n  socket\n#+end_example\n",
+      "stderr": ""
+    },
+    "code-block#e2e:rtf": {
+      "key": "e88ff1c470e9b0ad",
+      "exit": 0,
+      "stdout": "{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 \\f1 \\fs24 value = 14\\line\nprint(value < 25)\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 \\f1 \\fs24 plug\\line\n  socket\\par}\n",
+      "stderr": ""
+    },
+    "code-block#read": {
+      "key": "349c71b23b0153b6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"sample-code\",[\"python\"],[]],\"value = 14\\nprint(value < 25)\"]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"plug\\n  socket\\n\"]}]}\n",
+      "stderr": ""
+    },
+    "code-block#write:org": {
+      "key": "7a85fd84b956a624",
+      "exit": 0,
+      "stdout": "#+name: sample-code\n#+begin_src python\nvalue = 14\nprint(value < 25)\n#+end_src\n\n#+begin_example\nplug\n  socket\n#+end_example\n",
+      "stderr": ""
+    },
+    "code-block#write:rtf": {
+      "key": "ed0c4c7ab5405f46",
+      "exit": 0,
+      "stdout": "{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 \\f1 \\fs24 value = 14\\line\nprint(value < 25)\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 \\f1 \\fs24 plug\\line\n  socket\\par}\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:org": {
+      "key": "17cfdcec3eda2b1c",
+      "exit": 0,
+      "stdout": "- Limit :: Highest permitted 14.\n  See the log.\n- Zero :: Start value.\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:rtf": {
+      "key": "d2764deb2ea420aa",
+      "exit": 0,
+      "stdout": "{\\pard \\ql \\f0 \\fs24 \\sa0 \\li0 \\fi0 Limit\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa0 \\li360 \\fi0 Highest permitted 14.\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa0 \\li360 \\fi0 See the log.\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa0 \\li0 \\fi0 Zero\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa0 \\li360 \\fi0 Start value.\\sa180\\par}\n",
+      "stderr": ""
+    },
+    "definition-list#read": {
+      "key": "cb6dbeab81a92055",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"Limit\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Highest\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"permitted\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"14.\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"See\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log.\"}]}]]],[[{\"t\":\"Str\",\"c\":\"Zero\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Start\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"value.\"}]}]]]]}]}\n",
+      "stderr": ""
+    },
+    "definition-list#write:org": {
+      "key": "16a9e5174145c905",
+      "exit": 0,
+      "stdout": "- Limit :: Highest permitted 14.\n  See the log.\n- Zero :: Start value.\n",
+      "stderr": ""
+    },
+    "definition-list#write:rtf": {
+      "key": "2072e16835dae167",
+      "exit": 0,
+      "stdout": "{\\pard \\ql \\f0 \\fs24 \\sa0 \\li0 \\fi0 Limit\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa0 \\li360 \\fi0 Highest permitted 14.\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa0 \\li360 \\fi0 See the log.\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa0 \\li0 \\fi0 Zero\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa0 \\li360 \\fi0 Start value.\\sa180\\par}\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:org": {
+      "key": "d925f977a80e8fdc",
+      "exit": 0,
+      "stdout": "<<check-panel>>\nCable check plug\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:rtf": {
+      "key": "4bbd5b90eff7d9b2",
+      "exit": 0,
+      "stdout": "{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 Cable check plug\\par}\n",
+      "stderr": ""
+    },
+    "div-and-span#read": {
+      "key": "83a4ed8577392ef9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"check-panel\",[\"inspection\"],[[\"lang\",\"en\"]]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"check-step\",[\"label\"],[[\"title\",\"Check location\"]]],[{\"t\":\"Str\",\"c\":\"Cable\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"plug\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "div-and-span#write:org": {
+      "key": "a91fe2d5174e5baa",
+      "exit": 0,
+      "stdout": "<<check-panel>>\nCable check plug\n",
+      "stderr": ""
+    },
+    "div-and-span#write:rtf": {
+      "key": "e4c432973f075ed0",
+      "exit": 0,
+      "stdout": "{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 Cable check plug\\par}\n",
+      "stderr": ""
+    },
+    "headings#e2e:org": {
+      "key": "88e32527210fdd65",
+      "exit": 0,
+      "stdout": "* Cable check\n:PROPERTIES:\n:CUSTOM_ID: plug\n:END:\nStart here.\n\n** Readings\n:PROPERTIES:\n:CUSTOM_ID: details\n:CLASS: unnumbered\n:END:\nCheck socket.\n",
+      "stderr": ""
+    },
+    "headings#e2e:rtf": {
+      "key": "97325c76a2bbbf87",
+      "exit": 0,
+      "stdout": "{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 \\outlinelevel0 \\b \\fs34 Cable check\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 Start here.\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 \\outlinelevel1 \\b \\fs32 Readings\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 Check socket.\\par}\n",
+      "stderr": ""
+    },
+    "headings#read": {
+      "key": "70c716eebf8e8b44",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"plug\",[],[]],[{\"t\":\"Str\",\"c\":\"Cable\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Start\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"here.\"}]},{\"t\":\"Header\",\"c\":[2,[\"details\",[\"unnumbered\"],[]],[{\"t\":\"Str\",\"c\":\"Readings\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"socket.\"}]}]}\n",
+      "stderr": ""
+    },
+    "headings#write:org": {
+      "key": "25974e4f01416368",
+      "exit": 0,
+      "stdout": "* Cable check\n:PROPERTIES:\n:CUSTOM_ID: plug\n:END:\nStart here.\n\n** Readings\n:PROPERTIES:\n:CUSTOM_ID: details\n:CLASS: unnumbered\n:END:\nCheck socket.\n",
+      "stderr": ""
+    },
+    "headings#write:rtf": {
+      "key": "d1b4903282eea20a",
+      "exit": 0,
+      "stdout": "{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 \\outlinelevel0 \\b \\fs34 Cable check\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 Start here.\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 \\outlinelevel1 \\b \\fs32 Readings\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 Check socket.\\par}\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:org": {
+      "key": "afc42a2221e01dcb",
+      "exit": 0,
+      "stdout": "Before the plug check.\n\n--------------\n\nAfter the socket check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:rtf": {
+      "key": "536aa52cc7de7725",
+      "exit": 0,
+      "stdout": "{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 Before the plug check.\\par}\n{\\pard \\qc \\f0 \\fs24 \\sa180 \\li0 \\fi0 \\emdash\\emdash\\emdash\\emdash\\emdash\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 After the socket check.\\par}\n",
+      "stderr": ""
+    },
+    "horizontal-rule#read": {
+      "key": "1dc3066bde42df0a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"plug\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check.\"}]},{\"t\":\"HorizontalRule\"},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"After\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"socket\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check.\"}]}]}\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:org": {
+      "key": "167ff1509e83fc9b",
+      "exit": 0,
+      "stdout": "Before the plug check.\n\n--------------\n\nAfter the socket check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:rtf": {
+      "key": "459c08e25f230e49",
+      "exit": 0,
+      "stdout": "{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 Before the plug check.\\par}\n{\\pard \\qc \\f0 \\fs24 \\sa180 \\li0 \\fi0 \\emdash\\emdash\\emdash\\emdash\\emdash\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 After the socket check.\\par}\n",
+      "stderr": ""
+    },
+    "image#e2e:org": {
+      "key": "7053d6c4888f4fd0",
+      "exit": 0,
+      "stdout": "[[data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC]]\n",
+      "stderr": ""
+    },
+    "image#e2e:rtf": {
+      "key": "1dfcc27f92a7af0e",
+      "exit": 0,
+      "stdout": "{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 {\\pict\\pngblip\\picw1\\pich1\\picwgoal360\\pichgoal360 89504e470d0a1a0a0000000d4948445200000001000000010802000000907753de0000000c49444154789c63508eac0700019e00fcd3f0de710000000049454e44ae426082}\\par}\n",
+      "stderr": ""
+    },
+    "image#read": {
+      "key": "0be1b278bdfb2727",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Image\",\"c\":[[\"sample\",[],[[\"width\",\"24px\"]]],[{\"t\":\"Str\",\"c\":\"Cable\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sample\"}],[\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\",\"Blue pixel\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "image#write:org": {
+      "key": "436e9248b5254036",
+      "exit": 0,
+      "stdout": "[[data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC]]\n",
+      "stderr": ""
+    },
+    "image#write:rtf": {
+      "key": "0b6d59985b859df8",
+      "exit": 0,
+      "stdout": "{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 {\\pict\\pngblip\\picw1\\pich1\\picwgoal360\\pichgoal360 89504e470d0a1a0a0000000d4948445200000001000000010802000000907753de0000000c49444154789c63508eac0700019e00fcd3f0de710000000049454e44ae426082}\\par}\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:org": {
+      "key": "d6286279f62e256c",
+      "exit": 0,
+      "stdout": "/plug/ *socket* =a_b + 2= +retired+ H_{2}O m^{2}\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:rtf": {
+      "key": "590cfcc9fb5b781e",
+      "exit": 0,
+      "stdout": "{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 {\\i plug} {\\b socket} {\\f1 \\fs24 a_b + 2} {\\strike retired} H{\\sub 2}O m{\\super 2}\\par}\n",
+      "stderr": ""
+    },
+    "inline-styles#read": {
+      "key": "9e395fd48aea240d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"plug\"}]},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"socket\"}]},{\"t\":\"Space\"},{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"a_b + 2\"]},{\"t\":\"Space\"},{\"t\":\"Strikeout\",\"c\":[{\"t\":\"Str\",\"c\":\"retired\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"H\"},{\"t\":\"Subscript\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]},{\"t\":\"Str\",\"c\":\"O\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"m\"},{\"t\":\"Superscript\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "inline-styles#write:org": {
+      "key": "4688abffc55740c7",
+      "exit": 0,
+      "stdout": "/plug/ *socket* =a_b + 2= +retired+ H_{2}O m^{2}\n",
+      "stderr": ""
+    },
+    "inline-styles#write:rtf": {
+      "key": "877cc3e0a176e3a1",
+      "exit": 0,
+      "stdout": "{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 {\\i plug} {\\b socket} {\\f1 \\fs24 a_b + 2} {\\strike retired} H{\\sub 2}O m{\\super 2}\\par}\n",
+      "stderr": ""
+    },
+    "links#e2e:org": {
+      "key": "eeb344238b7a4ed7",
+      "exit": 0,
+      "stdout": "[[https://example.invalid/log?mode=day&view=full][Read the plug log]]\n[[#socket][section]]\n\n** Log entry\n:PROPERTIES:\n:CUSTOM_ID: socket\n:END:\n",
+      "stderr": ""
+    },
+    "links#e2e:rtf": {
+      "key": "b89d5fc47a12f991",
+      "exit": 0,
+      "stdout": "{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 {\\field{\\*\\fldinst{HYPERLINK \"https://example.invalid/log?mode=day&view=full\"}}{\\fldrslt{\\ul\nRead the plug log\n}}}\n {\\field{\\*\\fldinst{HYPERLINK \"#socket\"}}{\\fldrslt{\\ul\nsection\n}}}\n\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 \\outlinelevel1 \\b \\fs32 Log entry\\par}\n",
+      "stderr": ""
+    },
+    "links#read": {
+      "key": "7eb1dbdc8b54c2ce",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"plug\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log\"}],[\"https://example.invalid/log?mode=day&view=full\",\"Open log\"]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"section\"}],[\"#socket\",\"\"]]}]},{\"t\":\"Header\",\"c\":[2,[\"socket\",[],[]],[{\"t\":\"Str\",\"c\":\"Log\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"entry\"}]]}]}\n",
+      "stderr": ""
+    },
+    "links#write:org": {
+      "key": "dd4c7314f56d6db2",
+      "exit": 0,
+      "stdout": "[[https://example.invalid/log?mode=day&view=full][Read the plug log]]\n[[#socket][section]]\n\n** Log entry\n:PROPERTIES:\n:CUSTOM_ID: socket\n:END:\n",
+      "stderr": ""
+    },
+    "links#write:rtf": {
+      "key": "8f4d9720d05f6c18",
+      "exit": 0,
+      "stdout": "{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 {\\field{\\*\\fldinst{HYPERLINK \"https://example.invalid/log?mode=day&view=full\"}}{\\fldrslt{\\ul\nRead the plug log\n}}}\n {\\field{\\*\\fldinst{HYPERLINK \"#socket\"}}{\\fldrslt{\\ul\nsection\n}}}\n\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 \\outlinelevel1 \\b \\fs32 Log entry\\par}\n",
+      "stderr": ""
+    },
+    "notes#e2e:org": {
+      "key": "6eb9a77b5e78f90e",
+      "exit": 0,
+      "stdout": "plug[fn:1] socket[fn:2]\n\n[fn:1] Use the lower mark.\n\n       /Check the scale./\n\n[fn:2] Use the upper mark.\n",
+      "stderr": ""
+    },
+    "notes#e2e:rtf": {
+      "key": "844bdb49b536aecc",
+      "exit": 0,
+      "stdout": "{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 plug{\\super\\chftn}{\\*\\footnote\\chftn\\~\\plain\\pard {\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 Use the lower mark.\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 {\\i Check the scale.}\\par}\n} socket{\\super\\chftn}{\\*\\footnote\\chftn\\~\\plain\\pard {\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 Use the upper mark.\\par}\n}\\par}\n",
+      "stderr": ""
+    },
+    "notes#read": {
+      "key": "84f3a19d2841ac1f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"plug\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"lower\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"scale.\"}]}]}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"socket\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"upper\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark.\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "notes#write:org": {
+      "key": "be4fe3f3d10a91be",
+      "exit": 0,
+      "stdout": "plug[fn:1] socket[fn:2]\n\n[fn:1] Use the lower mark.\n\n       /Check the scale./\n\n[fn:2] Use the upper mark.\n",
+      "stderr": ""
+    },
+    "notes#write:rtf": {
+      "key": "89636dc7c9458d08",
+      "exit": 0,
+      "stdout": "{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 plug{\\super\\chftn}{\\*\\footnote\\chftn\\~\\plain\\pard {\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 Use the lower mark.\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 {\\i Check the scale.}\\par}\n} socket{\\super\\chftn}{\\*\\footnote\\chftn\\~\\plain\\pard {\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 Use the upper mark.\\par}\n}\\par}\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:org": {
+      "key": "4453ba37ecd095c0",
+      "exit": 0,
+      "stdout": "4) [@4] Open plug.\n\n   Wait for the signal.\n\n5) Close socket.\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:rtf": {
+      "key": "93cc147fec8fd96e",
+      "exit": 0,
+      "stdout": "{\\pard \\ql \\f0 \\fs24 \\sa180 \\li360 \\fi-360\\ls1\\ilvl0\\tx360 {\\listtext\\tab IV)\\tab} Open plug.\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa180 \\li360 \\ls1\\ilvl0\\fi0 Wait for the signal.\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa180 \\li360 \\fi-360\\ls1\\ilvl0\\tx360 {\\listtext\\tab V)\\tab} Close socket.\\sa180\\par}\n",
+      "stderr": ""
+    },
+    "ordered-list#read": {
+      "key": "7550434030db44f5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[4,{\"t\":\"UpperRoman\"},{\"t\":\"OneParen\"}],[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Open\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"plug.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Wait\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"for\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"signal.\"}]}],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Close\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"socket.\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "ordered-list#write:org": {
+      "key": "27a28b4ff725f12e",
+      "exit": 0,
+      "stdout": "4) [@4] Open plug.\n\n   Wait for the signal.\n\n5) Close socket.\n",
+      "stderr": ""
+    },
+    "ordered-list#write:rtf": {
+      "key": "efcdae741a5b96f4",
+      "exit": 0,
+      "stdout": "{\\pard \\ql \\f0 \\fs24 \\sa180 \\li360 \\fi-360\\ls1\\ilvl0\\tx360 {\\listtext\\tab IV)\\tab} Open plug.\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa180 \\li360 \\ls1\\ilvl0\\fi0 Wait for the signal.\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa180 \\li360 \\fi-360\\ls1\\ilvl0\\tx360 {\\listtext\\tab V)\\tab} Close socket.\\sa180\\par}\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:org": {
+      "key": "46c84e46247d4075",
+      "exit": 0,
+      "stdout": "Cable check log.\n\nRead slowly. Stop.\\\\\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:rtf": {
+      "key": "e29b78a015525943",
+      "exit": 0,
+      "stdout": "{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 Cable check log.\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 Read slowly. Stop.\\line Caf\\u233 ? & <check>\\par}\n",
+      "stderr": ""
+    },
+    "paragraphs#read": {
+      "key": "4247614bbd080a54",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Cable\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"slowly.\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"Stop.\"},{\"t\":\"LineBreak\"},{\"t\":\"Str\",\"c\":\"Café & <check>\"}]}]}\n",
+      "stderr": ""
+    },
+    "paragraphs#write:org": {
+      "key": "2b462cb07e5d2b72",
+      "exit": 0,
+      "stdout": "Cable check log.\n\nRead slowly. Stop.\\\\\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#write:rtf": {
+      "key": "04ccba0f726203c8",
+      "exit": 0,
+      "stdout": "{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 Cable check log.\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 Read slowly. Stop.\\line Caf\\u233 ? & <check>\\par}\n",
+      "stderr": ""
+    },
+    "quote#e2e:org": {
+      "key": "482bd8a7a6df1428",
+      "exit": 0,
+      "stdout": "#+begin_quote\n“Check plug.”\n\nRecord the result.\n#+end_quote\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#e2e:rtf": {
+      "key": "de67b47b25fb62ee",
+      "exit": 0,
+      "stdout": "{\\pard \\ql \\f0 \\fs24 \\sa180 \\li720 \\fi0 \\u8220\"Check plug.\\u8221\"\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa180 \\li720 \\fi0 Record the result.\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 Continue the test.\\par}\n",
+      "stderr": ""
+    },
+    "quote#read": {
+      "key": "57dea88ddbab3879",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"plug.\"}]]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Record\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"result.\"}]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Continue\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test.\"}]}]}\n",
+      "stderr": ""
+    },
+    "quote#write:org": {
+      "key": "3bcdf0945af5430e",
+      "exit": 0,
+      "stdout": "#+begin_quote\n“Check plug.”\n\nRecord the result.\n#+end_quote\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#write:rtf": {
+      "key": "939f6ffc8c2a9458",
+      "exit": 0,
+      "stdout": "{\\pard \\ql \\f0 \\fs24 \\sa180 \\li720 \\fi0 \\u8220\"Check plug.\\u8221\"\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa180 \\li720 \\fi0 Record the result.\\par}\n{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 Continue the test.\\par}\n",
+      "stderr": ""
+    }
+  }
+}

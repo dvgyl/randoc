@@ -1,0 +1,425 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "body-citation#e2e:biblatex": {
+      "key": "6ce68c7a4ed01997",
+      "exit": 0,
+      "stdout": "@article{wren-rings,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  title = {Salt \\emph{Marks} and Steel},\n  journal = {Journal of Shelf Surveys},\n  volume = {7},\n  number = {2},\n  pages = {17–24},\n  date = {2024-03-09},\n  doi = {10.5555/salt.724}\n}\n@incollection{mora-hinges,\n  author = {Mora, Ivo},\n  editor = {Vale, Rina},\n  publisher = {Alder Press},\n  title = {Hinges at {North} {Dock}},\n  booktitle = {Dock Repairs},\n  pages = {41-53},\n  date = {2020},\n  address = {Bath}\n}\n",
+      "stderr": ""
+    },
+    "body-citation#e2e:bibtex": {
+      "key": "f92565d0a8fab184",
+      "exit": 0,
+      "stdout": "@article{wren-rings,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  title = {Salt \\emph{Marks} and Steel},\n  journal = {Journal of Shelf Surveys},\n  volume = {7},\n  number = {2},\n  pages = {17–24},\n  year = {2024},\n  month = {mar},\n  doi = {10.5555/salt.724}\n}\n@incollection{mora-hinges,\n  author = {Mora, Ivo},\n  editor = {Vale, Rina},\n  publisher = {Alder Press},\n  title = {Hinges at {North} {Dock}},\n  booktitle = {Dock Repairs},\n  pages = {41-53},\n  year = {2020},\n  address = {Bath}\n}\n",
+      "stderr": ""
+    },
+    "body-citation#read": {
+      "key": "879cdbe07a47b306",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"DOI\":{\"t\":\"MetaString\",\"c\":\"10.5555/salt.724\"},\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Wren\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Nora\"}}},{\"t\":\"MetaMap\",\"c\":{\"literal\":{\"t\":\"MetaString\",\"c\":\"West Pier Survey Team\"}}}]},\"container-title\":{\"t\":\"MetaString\",\"c\":\"Journal of Shelf Surveys\"},\"id\":{\"t\":\"MetaString\",\"c\":\"wren-rings\"},\"issue\":{\"t\":\"MetaString\",\"c\":\"2\"},\"issued\":{\"t\":\"MetaMap\",\"c\":{\"date-parts\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"2024\"},{\"t\":\"MetaString\",\"c\":\"3\"},{\"t\":\"MetaString\",\"c\":\"9\"}]}]}}},\"page\":{\"t\":\"MetaString\",\"c\":\"17–24\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Salt\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"marks\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"steel\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"article-journal\"},\"volume\":{\"t\":\"MetaString\",\"c\":\"7\"}}},{\"t\":\"MetaMap\",\"c\":{\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Mora\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Ivo\"}}}]},\"container-title\":{\"t\":\"MetaString\",\"c\":\"Dock Repairs\"},\"editor\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Vale\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Rina\"}}}]},\"id\":{\"t\":\"MetaString\",\"c\":\"mora-hinges\"},\"issued\":{\"t\":\"MetaMap\",\"c\":{\"date-parts\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"2020\"}]}]}}},\"page\":{\"t\":\"MetaString\",\"c\":\"41-53\"},\"publisher\":{\"t\":\"MetaString\",\"c\":\"Alder Press\"},\"publisher-place\":{\"t\":\"MetaString\",\"c\":\"Bath\"},\"title\":{\"t\":\"MetaString\",\"c\":\"Hinges at North Dock\"},\"type\":{\"t\":\"MetaString\",\"c\":\"chapter\"}}}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"mora-hinges\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[Mora]\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "body-citation#write:biblatex": {
+      "key": "a396868081400a26",
+      "exit": 0,
+      "stdout": "@article{wren-rings,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  title = {Salt \\emph{Marks} and Steel},\n  journal = {Journal of Shelf Surveys},\n  volume = {7},\n  number = {2},\n  pages = {17–24},\n  date = {2024-03-09},\n  doi = {10.5555/salt.724}\n}\n@incollection{mora-hinges,\n  author = {Mora, Ivo},\n  editor = {Vale, Rina},\n  publisher = {Alder Press},\n  title = {Hinges at {North} {Dock}},\n  booktitle = {Dock Repairs},\n  pages = {41-53},\n  date = {2020},\n  address = {Bath}\n}\n",
+      "stderr": ""
+    },
+    "body-citation#write:bibtex": {
+      "key": "a46c46786fa68f23",
+      "exit": 0,
+      "stdout": "@article{wren-rings,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  title = {Salt \\emph{Marks} and Steel},\n  journal = {Journal of Shelf Surveys},\n  volume = {7},\n  number = {2},\n  pages = {17–24},\n  year = {2024},\n  month = {mar},\n  doi = {10.5555/salt.724}\n}\n@incollection{mora-hinges,\n  author = {Mora, Ivo},\n  editor = {Vale, Rina},\n  publisher = {Alder Press},\n  title = {Hinges at {North} {Dock}},\n  booktitle = {Dock Repairs},\n  pages = {41-53},\n  year = {2020},\n  address = {Bath}\n}\n",
+      "stderr": ""
+    },
+    "book-chapter#e2e:biblatex": {
+      "key": "7f211fa9ad4c9836",
+      "exit": 0,
+      "stdout": "@incollection{mora-hinges,\n  author = {Mora, Ivo},\n  editor = {Vale, Rina},\n  publisher = {Alder Press},\n  title = {Hinges at {North} {Dock}},\n  booktitle = {Dock Repairs},\n  pages = {41-53},\n  date = {2020},\n  address = {Bath}\n}\n",
+      "stderr": ""
+    },
+    "book-chapter#e2e:bibtex": {
+      "key": "e7355a3bd4c2a653",
+      "exit": 0,
+      "stdout": "@incollection{mora-hinges,\n  author = {Mora, Ivo},\n  editor = {Vale, Rina},\n  publisher = {Alder Press},\n  title = {Hinges at {North} {Dock}},\n  booktitle = {Dock Repairs},\n  pages = {41-53},\n  year = {2020},\n  address = {Bath}\n}\n",
+      "stderr": ""
+    },
+    "book-chapter#read": {
+      "key": "220ca6265469d38d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Mora\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Ivo\"}}}]},\"container-title\":{\"t\":\"MetaString\",\"c\":\"Dock Repairs\"},\"editor\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Vale\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Rina\"}}}]},\"id\":{\"t\":\"MetaString\",\"c\":\"mora-hinges\"},\"issued\":{\"t\":\"MetaMap\",\"c\":{\"date-parts\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"2020\"}]}]}}},\"page\":{\"t\":\"MetaString\",\"c\":\"41-53\"},\"publisher\":{\"t\":\"MetaString\",\"c\":\"Alder Press\"},\"publisher-place\":{\"t\":\"MetaString\",\"c\":\"Bath\"},\"title\":{\"t\":\"MetaString\",\"c\":\"Hinges at North Dock\"},\"type\":{\"t\":\"MetaString\",\"c\":\"chapter\"}}}]}},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"hinge\",[],[]],[{\"t\":\"Str\",\"c\":\"Pier\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"survey\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Start\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"here.\"}]},{\"t\":\"Header\",\"c\":[2,[\"details\",[\"unnumbered\"],[]],[{\"t\":\"Str\",\"c\":\"Readings\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"pin.\"}]}]}\n",
+      "stderr": ""
+    },
+    "book-chapter#write:biblatex": {
+      "key": "0ba79f4332c7dbe8",
+      "exit": 0,
+      "stdout": "@incollection{mora-hinges,\n  author = {Mora, Ivo},\n  editor = {Vale, Rina},\n  publisher = {Alder Press},\n  title = {Hinges at {North} {Dock}},\n  booktitle = {Dock Repairs},\n  pages = {41-53},\n  date = {2020},\n  address = {Bath}\n}\n",
+      "stderr": ""
+    },
+    "book-chapter#write:bibtex": {
+      "key": "81c5de7eacf7ca1b",
+      "exit": 0,
+      "stdout": "@incollection{mora-hinges,\n  author = {Mora, Ivo},\n  editor = {Vale, Rina},\n  publisher = {Alder Press},\n  title = {Hinges at {North} {Dock}},\n  booktitle = {Dock Repairs},\n  pages = {41-53},\n  year = {2020},\n  address = {Bath}\n}\n",
+      "stderr": ""
+    },
+    "book-with-name-parts#e2e:biblatex": {
+      "key": "82fc1eb4a9dc6d3b",
+      "exit": 0,
+      "stdout": "@book{velasquez-coating,\n  author = {Velásquez Jr., Inés and van Dale, Ari},\n  translator = {Stone, Eda},\n  publisher = {Spindle Press},\n  title = {Copper \\& {Cedar}},\n  edition = {3},\n  date = {2019},\n  isbn = {978-0-00-000137-2}\n}\n",
+      "stderr": ""
+    },
+    "book-with-name-parts#e2e:bibtex": {
+      "key": "1d64196dc44a429e",
+      "exit": 0,
+      "stdout": "@book{velasquez-coating,\n  author = {Velásquez Jr., Inés and van Dale, Ari},\n  translator = {Stone, Eda},\n  publisher = {Spindle Press},\n  title = {Copper \\& {Cedar}},\n  edition = {3},\n  year = {2019}\n}\n",
+      "stderr": ""
+    },
+    "book-with-name-parts#read": {
+      "key": "57ec8a8f791c37e4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"ISBN\":{\"t\":\"MetaString\",\"c\":\"978-0-00-000137-2\"},\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Velásquez\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Inés\"},\"suffix\":{\"t\":\"MetaString\",\"c\":\"Jr.\"}}},{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Dale\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Ari\"},\"non-dropping-particle\":{\"t\":\"MetaString\",\"c\":\"van\"}}}]},\"edition\":{\"t\":\"MetaString\",\"c\":\"3\"},\"id\":{\"t\":\"MetaString\",\"c\":\"velasquez-coating\"},\"issued\":{\"t\":\"MetaMap\",\"c\":{\"date-parts\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"2019\"}]}]}}},\"publisher\":{\"t\":\"MetaString\",\"c\":\"Spindle Press\"},\"title\":{\"t\":\"MetaString\",\"c\":\"Copper & Cedar\"},\"translator\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Stone\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Eda\"}}}]},\"type\":{\"t\":\"MetaString\",\"c\":\"book\"}}}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"hinge\"}]},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"pin\"}]},{\"t\":\"Space\"},{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"a_b + 2\"]},{\"t\":\"Space\"},{\"t\":\"Strikeout\",\"c\":[{\"t\":\"Str\",\"c\":\"retired\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"H\"},{\"t\":\"Subscript\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]},{\"t\":\"Str\",\"c\":\"O\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"m\"},{\"t\":\"Superscript\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "book-with-name-parts#write:biblatex": {
+      "key": "2bbb205e5c5d30c7",
+      "exit": 0,
+      "stdout": "@book{velasquez-coating,\n  author = {Velásquez Jr., Inés and van Dale, Ari},\n  translator = {Stone, Eda},\n  publisher = {Spindle Press},\n  title = {Copper \\& {Cedar}},\n  edition = {3},\n  date = {2019},\n  isbn = {978-0-00-000137-2}\n}\n",
+      "stderr": ""
+    },
+    "book-with-name-parts#write:bibtex": {
+      "key": "bda01566ea25ef7c",
+      "exit": 0,
+      "stdout": "@book{velasquez-coating,\n  author = {Velásquez Jr., Inés and van Dale, Ari},\n  translator = {Stone, Eda},\n  publisher = {Spindle Press},\n  title = {Copper \\& {Cedar}},\n  edition = {3},\n  year = {2019}\n}\n",
+      "stderr": ""
+    },
+    "conference-paper#e2e:biblatex": {
+      "key": "bebdc7e7f951830e",
+      "exit": 0,
+      "stdout": "@inproceedings{beam-joints,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  title = {Beam {Joints}},\n  booktitle = {Pier Engineering Forum},\n  pages = {4-8},\n  date = {2018-05}\n}\n",
+      "stderr": ""
+    },
+    "conference-paper#e2e:bibtex": {
+      "key": "fb09957275e4968d",
+      "exit": 0,
+      "stdout": "@inproceedings{beam-joints,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  title = {Beam {Joints}},\n  booktitle = {Pier Engineering Forum},\n  pages = {4-8},\n  year = {2018},\n  month = {may}\n}\n",
+      "stderr": ""
+    },
+    "conference-paper#read": {
+      "key": "bbee0e342382c5cf",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Wren\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Nora\"}}},{\"t\":\"MetaMap\",\"c\":{\"literal\":{\"t\":\"MetaString\",\"c\":\"West Pier Survey Team\"}}}]},\"container-title\":{\"t\":\"MetaString\",\"c\":\"Pier Engineering Forum\"},\"event-place\":{\"t\":\"MetaString\",\"c\":\"York\"},\"id\":{\"t\":\"MetaString\",\"c\":\"beam-joints\"},\"issued\":{\"t\":\"MetaMap\",\"c\":{\"date-parts\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"2018\"},{\"t\":\"MetaString\",\"c\":\"5\"}]}]}}},\"page\":{\"t\":\"MetaString\",\"c\":\"4-8\"},\"title\":{\"t\":\"MetaString\",\"c\":\"Beam Joints\"},\"type\":{\"t\":\"MetaString\",\"c\":\"paper-conference\"}}}]}},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[4,{\"t\":\"UpperRoman\"},{\"t\":\"OneParen\"}],[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Open\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"hinge.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Wait\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"for\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"signal.\"}]}],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Close\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"pin.\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "conference-paper#write:biblatex": {
+      "key": "bdd04369cc97da38",
+      "exit": 0,
+      "stdout": "@inproceedings{beam-joints,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  title = {Beam {Joints}},\n  booktitle = {Pier Engineering Forum},\n  pages = {4-8},\n  date = {2018-05}\n}\n",
+      "stderr": ""
+    },
+    "conference-paper#write:bibtex": {
+      "key": "a8c75913b5209c1f",
+      "exit": 0,
+      "stdout": "@inproceedings{beam-joints,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  title = {Beam {Joints}},\n  booktitle = {Pier Engineering Forum},\n  pages = {4-8},\n  year = {2018},\n  month = {may}\n}\n",
+      "stderr": ""
+    },
+    "dataset#e2e:biblatex": {
+      "key": "627a6073d7b9a24d",
+      "exit": 0,
+      "stdout": "@dataset{pin-samples,\n  author = {{South Bench Lab}},\n  title = {Dry {Pin} {Measurements}},\n  version = {2},\n  date = {2023},\n  url = {https://example.invalid/pins}\n}\n",
+      "stderr": ""
+    },
+    "dataset#e2e:bibtex": {
+      "key": "52d7421502b4af70",
+      "exit": 0,
+      "stdout": "@misc{pin-samples,\n  author = {{South Bench Lab}},\n  title = {Dry {Pin} {Measurements}},\n  year = {2023},\n  url = {https://example.invalid/pins}\n}\n",
+      "stderr": ""
+    },
+    "dataset#read": {
+      "key": "5864e0ff66e7434e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"URL\":{\"t\":\"MetaString\",\"c\":\"https://example.invalid/pins\"},\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"literal\":{\"t\":\"MetaString\",\"c\":\"South Bench Lab\"}}}]},\"id\":{\"t\":\"MetaString\",\"c\":\"pin-samples\"},\"issued\":{\"t\":\"MetaMap\",\"c\":{\"date-parts\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"2023\"}]}]}}},\"title\":{\"t\":\"MetaString\",\"c\":\"Dry Pin Measurements\"},\"type\":{\"t\":\"MetaString\",\"c\":\"dataset\"},\"version\":{\"t\":\"MetaString\",\"c\":\"2\"}}}]}},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"sample-code\",[\"python\"],[]],\"value = 21\\nprint(value < 25)\"]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"hinge\\n  pin\\n\"]}]}\n",
+      "stderr": ""
+    },
+    "dataset#write:biblatex": {
+      "key": "3dd035231cf2210d",
+      "exit": 0,
+      "stdout": "@dataset{pin-samples,\n  author = {{South Bench Lab}},\n  title = {Dry {Pin} {Measurements}},\n  version = {2},\n  date = {2023},\n  url = {https://example.invalid/pins}\n}\n",
+      "stderr": ""
+    },
+    "dataset#write:bibtex": {
+      "key": "35cc77cdd8b5bdb2",
+      "exit": 0,
+      "stdout": "@misc{pin-samples,\n  author = {{South Bench Lab}},\n  title = {Dry {Pin} {Measurements}},\n  year = {2023},\n  url = {https://example.invalid/pins}\n}\n",
+      "stderr": ""
+    },
+    "empty-references#e2e:biblatex": {
+      "key": "062682fb2968185e",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "empty-references#e2e:bibtex": {
+      "key": "f18e2ee0e9a464d1",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "empty-references#read": {
+      "key": "1d3ae7f06ab6612b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"references\":{\"t\":\"MetaList\",\"c\":[]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"The\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"has\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"no\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"references.\"}]}]}\n",
+      "stderr": ""
+    },
+    "empty-references#write:biblatex": {
+      "key": "36960e5ca9bf6f2e",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "empty-references#write:bibtex": {
+      "key": "c9eef1b9c8f4dcd3",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "journal-article#e2e:biblatex": {
+      "key": "4624fabbfdbe884f",
+      "exit": 0,
+      "stdout": "@article{wren-rings,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  title = {Salt \\emph{Marks} and Steel},\n  journal = {Journal of Shelf Surveys},\n  volume = {7},\n  number = {2},\n  pages = {17–24},\n  date = {2024-03-09},\n  doi = {10.5555/salt.724}\n}\n",
+      "stderr": ""
+    },
+    "journal-article#e2e:bibtex": {
+      "key": "3cdce2ddeb9f1ea8",
+      "exit": 0,
+      "stdout": "@article{wren-rings,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  title = {Salt \\emph{Marks} and Steel},\n  journal = {Journal of Shelf Surveys},\n  volume = {7},\n  number = {2},\n  pages = {17–24},\n  year = {2024},\n  month = {mar},\n  doi = {10.5555/salt.724}\n}\n",
+      "stderr": ""
+    },
+    "journal-article#read": {
+      "key": "76c95cfb67ebe92e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"DOI\":{\"t\":\"MetaString\",\"c\":\"10.5555/salt.724\"},\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Wren\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Nora\"}}},{\"t\":\"MetaMap\",\"c\":{\"literal\":{\"t\":\"MetaString\",\"c\":\"West Pier Survey Team\"}}}]},\"container-title\":{\"t\":\"MetaString\",\"c\":\"Journal of Shelf Surveys\"},\"id\":{\"t\":\"MetaString\",\"c\":\"wren-rings\"},\"issue\":{\"t\":\"MetaString\",\"c\":\"2\"},\"issued\":{\"t\":\"MetaMap\",\"c\":{\"date-parts\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"2024\"},{\"t\":\"MetaString\",\"c\":\"3\"},{\"t\":\"MetaString\",\"c\":\"9\"}]}]}}},\"page\":{\"t\":\"MetaString\",\"c\":\"17–24\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Salt\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"marks\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"steel\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"article-journal\"},\"volume\":{\"t\":\"MetaString\",\"c\":\"7\"}}}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Pier\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"survey\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"slowly.\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"Stop.\"},{\"t\":\"LineBreak\"},{\"t\":\"Str\",\"c\":\"Café & <check>\"}]}]}\n",
+      "stderr": ""
+    },
+    "journal-article#write:biblatex": {
+      "key": "67eb66a8539174f6",
+      "exit": 0,
+      "stdout": "@article{wren-rings,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  title = {Salt \\emph{Marks} and Steel},\n  journal = {Journal of Shelf Surveys},\n  volume = {7},\n  number = {2},\n  pages = {17–24},\n  date = {2024-03-09},\n  doi = {10.5555/salt.724}\n}\n",
+      "stderr": ""
+    },
+    "journal-article#write:bibtex": {
+      "key": "4d2d8b818295a9d1",
+      "exit": 0,
+      "stdout": "@article{wren-rings,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  title = {Salt \\emph{Marks} and Steel},\n  journal = {Journal of Shelf Surveys},\n  volume = {7},\n  number = {2},\n  pages = {17–24},\n  year = {2024},\n  month = {mar},\n  doi = {10.5555/salt.724}\n}\n",
+      "stderr": ""
+    },
+    "notes-and-attributes-in-body#e2e:biblatex": {
+      "key": "a18f6a1f7ec3f88e",
+      "exit": 0,
+      "stdout": "@phdthesis{flow-study,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  publisher = {Fen College},\n  title = {Flow {Under} a {Closed} {Sluice}},\n  date = {2017},\n  address = {Ely}\n}\n",
+      "stderr": ""
+    },
+    "notes-and-attributes-in-body#e2e:bibtex": {
+      "key": "9df9ffb369cea84b",
+      "exit": 0,
+      "stdout": "@phdthesis{flow-study,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  publisher = {Fen College},\n  title = {Flow {Under} a {Closed} {Sluice}},\n  year = {2017},\n  address = {Ely}\n}\n",
+      "stderr": ""
+    },
+    "notes-and-attributes-in-body#read": {
+      "key": "89c4ee1889a28975",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Wren\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Nora\"}}},{\"t\":\"MetaMap\",\"c\":{\"literal\":{\"t\":\"MetaString\",\"c\":\"West Pier Survey Team\"}}}]},\"genre\":{\"t\":\"MetaString\",\"c\":\"PhD thesis\"},\"id\":{\"t\":\"MetaString\",\"c\":\"flow-study\"},\"issued\":{\"t\":\"MetaMap\",\"c\":{\"date-parts\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"2017\"}]}]}}},\"publisher\":{\"t\":\"MetaString\",\"c\":\"Fen College\"},\"publisher-place\":{\"t\":\"MetaString\",\"c\":\"Ely\"},\"title\":{\"t\":\"MetaString\",\"c\":\"Flow Under a Closed Sluice\"},\"type\":{\"t\":\"MetaString\",\"c\":\"thesis\"}}}]}},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"appendix\",[],[]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"site\",[],[]],[{\"t\":\"Str\",\"c\":\"Pier\"}]]},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"See\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"field\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log.\"}]}]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "notes-and-attributes-in-body#write:biblatex": {
+      "key": "8161464b0e185f15",
+      "exit": 0,
+      "stdout": "@phdthesis{flow-study,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  publisher = {Fen College},\n  title = {Flow {Under} a {Closed} {Sluice}},\n  date = {2017},\n  address = {Ely}\n}\n",
+      "stderr": ""
+    },
+    "notes-and-attributes-in-body#write:bibtex": {
+      "key": "2b6c981a6b075146",
+      "exit": 0,
+      "stdout": "@phdthesis{flow-study,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  publisher = {Fen College},\n  title = {Flow {Under} a {Closed} {Sluice}},\n  year = {2017},\n  address = {Ely}\n}\n",
+      "stderr": ""
+    },
+    "reference-order#e2e:biblatex": {
+      "key": "b834d0556533bc59",
+      "exit": 0,
+      "stdout": "@online{gate-log,\n  author = {{Mill Gate Office}},\n  title = {Gate {Service} {Log}},\n  date = {2022-08},\n  urldate = {2025-01-06},\n  url = {https://example.invalid/log?bay=4&view=full}\n}\n@article{wren-rings,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  title = {Salt \\emph{Marks} and Steel},\n  journal = {Journal of Shelf Surveys},\n  volume = {7},\n  number = {2},\n  pages = {17–24},\n  date = {2024-03-09},\n  doi = {10.5555/salt.724}\n}\n@book{velasquez-coating,\n  author = {Velásquez Jr., Inés and van Dale, Ari},\n  translator = {Stone, Eda},\n  publisher = {Spindle Press},\n  title = {Copper \\& {Cedar}},\n  edition = {3},\n  date = {2019},\n  isbn = {978-0-00-000137-2}\n}\n",
+      "stderr": ""
+    },
+    "reference-order#e2e:bibtex": {
+      "key": "2e32dc47b94f108e",
+      "exit": 0,
+      "stdout": "@misc{gate-log,\n  author = {{Mill Gate Office}},\n  title = {Gate {Service} {Log}},\n  year = {2022},\n  month = {aug},\n  url = {https://example.invalid/log?bay=4&view=full}\n}\n@article{wren-rings,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  title = {Salt \\emph{Marks} and Steel},\n  journal = {Journal of Shelf Surveys},\n  volume = {7},\n  number = {2},\n  pages = {17–24},\n  year = {2024},\n  month = {mar},\n  doi = {10.5555/salt.724}\n}\n@book{velasquez-coating,\n  author = {Velásquez Jr., Inés and van Dale, Ari},\n  translator = {Stone, Eda},\n  publisher = {Spindle Press},\n  title = {Copper \\& {Cedar}},\n  edition = {3},\n  year = {2019}\n}\n",
+      "stderr": ""
+    },
+    "reference-order#read": {
+      "key": "132a344ebc2d8f20",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"URL\":{\"t\":\"MetaString\",\"c\":\"https://example.invalid/log?bay=4&view=full\"},\"accessed\":{\"t\":\"MetaMap\",\"c\":{\"date-parts\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"2025\"},{\"t\":\"MetaString\",\"c\":\"1\"},{\"t\":\"MetaString\",\"c\":\"6\"}]}]}}},\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"literal\":{\"t\":\"MetaString\",\"c\":\"Mill Gate Office\"}}}]},\"id\":{\"t\":\"MetaString\",\"c\":\"gate-log\"},\"issued\":{\"t\":\"MetaMap\",\"c\":{\"date-parts\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"2022\"},{\"t\":\"MetaString\",\"c\":\"8\"}]}]}}},\"title\":{\"t\":\"MetaString\",\"c\":\"Gate Service Log\"},\"type\":{\"t\":\"MetaString\",\"c\":\"webpage\"}}},{\"t\":\"MetaMap\",\"c\":{\"DOI\":{\"t\":\"MetaString\",\"c\":\"10.5555/salt.724\"},\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Wren\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Nora\"}}},{\"t\":\"MetaMap\",\"c\":{\"literal\":{\"t\":\"MetaString\",\"c\":\"West Pier Survey Team\"}}}]},\"container-title\":{\"t\":\"MetaString\",\"c\":\"Journal of Shelf Surveys\"},\"id\":{\"t\":\"MetaString\",\"c\":\"wren-rings\"},\"issue\":{\"t\":\"MetaString\",\"c\":\"2\"},\"issued\":{\"t\":\"MetaMap\",\"c\":{\"date-parts\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"2024\"},{\"t\":\"MetaString\",\"c\":\"3\"},{\"t\":\"MetaString\",\"c\":\"9\"}]}]}}},\"page\":{\"t\":\"MetaString\",\"c\":\"17–24\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Salt\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"marks\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"steel\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"article-journal\"},\"volume\":{\"t\":\"MetaString\",\"c\":\"7\"}}},{\"t\":\"MetaMap\",\"c\":{\"ISBN\":{\"t\":\"MetaString\",\"c\":\"978-0-00-000137-2\"},\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Velásquez\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Inés\"},\"suffix\":{\"t\":\"MetaString\",\"c\":\"Jr.\"}}},{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Dale\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Ari\"},\"non-dropping-particle\":{\"t\":\"MetaString\",\"c\":\"van\"}}}]},\"edition\":{\"t\":\"MetaString\",\"c\":\"3\"},\"id\":{\"t\":\"MetaString\",\"c\":\"velasquez-coating\"},\"issued\":{\"t\":\"MetaMap\",\"c\":{\"date-parts\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"2019\"}]}]}}},\"publisher\":{\"t\":\"MetaString\",\"c\":\"Spindle Press\"},\"title\":{\"t\":\"MetaString\",\"c\":\"Copper & Cedar\"},\"translator\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Stone\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Eda\"}}}]},\"type\":{\"t\":\"MetaString\",\"c\":\"book\"}}}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"hinge\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check.\"}]},{\"t\":\"HorizontalRule\"},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"After\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"pin\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check.\"}]}]}\n",
+      "stderr": ""
+    },
+    "reference-order#write:biblatex": {
+      "key": "46877eedeca9e6f4",
+      "exit": 0,
+      "stdout": "@online{gate-log,\n  author = {{Mill Gate Office}},\n  title = {Gate {Service} {Log}},\n  date = {2022-08},\n  urldate = {2025-01-06},\n  url = {https://example.invalid/log?bay=4&view=full}\n}\n@article{wren-rings,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  title = {Salt \\emph{Marks} and Steel},\n  journal = {Journal of Shelf Surveys},\n  volume = {7},\n  number = {2},\n  pages = {17–24},\n  date = {2024-03-09},\n  doi = {10.5555/salt.724}\n}\n@book{velasquez-coating,\n  author = {Velásquez Jr., Inés and van Dale, Ari},\n  translator = {Stone, Eda},\n  publisher = {Spindle Press},\n  title = {Copper \\& {Cedar}},\n  edition = {3},\n  date = {2019},\n  isbn = {978-0-00-000137-2}\n}\n",
+      "stderr": ""
+    },
+    "reference-order#write:bibtex": {
+      "key": "ed088ee817a6a7e3",
+      "exit": 0,
+      "stdout": "@misc{gate-log,\n  author = {{Mill Gate Office}},\n  title = {Gate {Service} {Log}},\n  year = {2022},\n  month = {aug},\n  url = {https://example.invalid/log?bay=4&view=full}\n}\n@article{wren-rings,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  title = {Salt \\emph{Marks} and Steel},\n  journal = {Journal of Shelf Surveys},\n  volume = {7},\n  number = {2},\n  pages = {17–24},\n  year = {2024},\n  month = {mar},\n  doi = {10.5555/salt.724}\n}\n@book{velasquez-coating,\n  author = {Velásquez Jr., Inés and van Dale, Ari},\n  translator = {Stone, Eda},\n  publisher = {Spindle Press},\n  title = {Copper \\& {Cedar}},\n  edition = {3},\n  year = {2019}\n}\n",
+      "stderr": ""
+    },
+    "table-and-image-in-body#e2e:biblatex": {
+      "key": "e40b1b595b809586",
+      "exit": 0,
+      "stdout": "@report{clamp-tests,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  publisher = {Marsh Lab},\n  title = {Clamp {Tests} on {Wet} {Timber}},\n  number = {MP-19},\n  date = {2021-11}\n}\n",
+      "stderr": ""
+    },
+    "table-and-image-in-body#e2e:bibtex": {
+      "key": "774dcce37cf80f41",
+      "exit": 0,
+      "stdout": "@techreport{clamp-tests,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  publisher = {Marsh Lab},\n  title = {Clamp {Tests} on {Wet} {Timber}},\n  number = {MP-19},\n  year = {2021},\n  month = {nov}\n}\n",
+      "stderr": ""
+    },
+    "table-and-image-in-body#read": {
+      "key": "d2493eb88681c1af",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Wren\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Nora\"}}},{\"t\":\"MetaMap\",\"c\":{\"literal\":{\"t\":\"MetaString\",\"c\":\"West Pier Survey Team\"}}}]},\"genre\":{\"t\":\"MetaString\",\"c\":\"Inspection report\"},\"id\":{\"t\":\"MetaString\",\"c\":\"clamp-tests\"},\"issued\":{\"t\":\"MetaMap\",\"c\":{\"date-parts\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"2021\"},{\"t\":\"MetaString\",\"c\":\"11\"}]}]}}},\"number\":{\"t\":\"MetaString\",\"c\":\"MP-19\"},\"publisher\":{\"t\":\"MetaString\",\"c\":\"Marsh Lab\"},\"title\":{\"t\":\"MetaString\",\"c\":\"Clamp Tests on Wet Timber\"},\"type\":{\"t\":\"MetaString\",\"c\":\"report\"}}}]}},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"clamps\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Clamp\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"results\"}]}]],[[{\"t\":\"AlignLeft\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignRight\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Part\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Load\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Pin\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"9\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Sample\"}],[\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\",\"\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "table-and-image-in-body#write:biblatex": {
+      "key": "8c3e24f29194de50",
+      "exit": 0,
+      "stdout": "@report{clamp-tests,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  publisher = {Marsh Lab},\n  title = {Clamp {Tests} on {Wet} {Timber}},\n  number = {MP-19},\n  date = {2021-11}\n}\n",
+      "stderr": ""
+    },
+    "table-and-image-in-body#write:bibtex": {
+      "key": "d90cd9c5ecd5c4e9",
+      "exit": 0,
+      "stdout": "@techreport{clamp-tests,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  publisher = {Marsh Lab},\n  title = {Clamp {Tests} on {Wet} {Timber}},\n  number = {MP-19},\n  year = {2021},\n  month = {nov}\n}\n",
+      "stderr": ""
+    },
+    "technical-report#e2e:biblatex": {
+      "key": "0d64d5037c01ccb1",
+      "exit": 0,
+      "stdout": "@report{clamp-tests,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  publisher = {Marsh Lab},\n  title = {Clamp {Tests} on {Wet} {Timber}},\n  number = {MP-19},\n  date = {2021-11}\n}\n",
+      "stderr": ""
+    },
+    "technical-report#e2e:bibtex": {
+      "key": "2842c46dff4cd174",
+      "exit": 0,
+      "stdout": "@techreport{clamp-tests,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  publisher = {Marsh Lab},\n  title = {Clamp {Tests} on {Wet} {Timber}},\n  number = {MP-19},\n  year = {2021},\n  month = {nov}\n}\n",
+      "stderr": ""
+    },
+    "technical-report#read": {
+      "key": "1b701fa5882ece32",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Wren\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Nora\"}}},{\"t\":\"MetaMap\",\"c\":{\"literal\":{\"t\":\"MetaString\",\"c\":\"West Pier Survey Team\"}}}]},\"genre\":{\"t\":\"MetaString\",\"c\":\"Inspection report\"},\"id\":{\"t\":\"MetaString\",\"c\":\"clamp-tests\"},\"issued\":{\"t\":\"MetaMap\",\"c\":{\"date-parts\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"2021\"},{\"t\":\"MetaString\",\"c\":\"11\"}]}]}}},\"number\":{\"t\":\"MetaString\",\"c\":\"MP-19\"},\"publisher\":{\"t\":\"MetaString\",\"c\":\"Marsh Lab\"},\"title\":{\"t\":\"MetaString\",\"c\":\"Clamp Tests on Wet Timber\"},\"type\":{\"t\":\"MetaString\",\"c\":\"report\"}}}]}},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"hinge.\"}]},{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Log\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"21.\"}]}]]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"pin.\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "technical-report#write:biblatex": {
+      "key": "7b2928178ba702d8",
+      "exit": 0,
+      "stdout": "@report{clamp-tests,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  publisher = {Marsh Lab},\n  title = {Clamp {Tests} on {Wet} {Timber}},\n  number = {MP-19},\n  date = {2021-11}\n}\n",
+      "stderr": ""
+    },
+    "technical-report#write:bibtex": {
+      "key": "c4f8ad3427592eb3",
+      "exit": 0,
+      "stdout": "@techreport{clamp-tests,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  publisher = {Marsh Lab},\n  title = {Clamp {Tests} on {Wet} {Timber}},\n  number = {MP-19},\n  year = {2021},\n  month = {nov}\n}\n",
+      "stderr": ""
+    },
+    "thesis#e2e:biblatex": {
+      "key": "fa65c8b975ce431e",
+      "exit": 0,
+      "stdout": "@phdthesis{flow-study,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  publisher = {Fen College},\n  title = {Flow {Under} a {Closed} {Sluice}},\n  date = {2017},\n  address = {Ely}\n}\n",
+      "stderr": ""
+    },
+    "thesis#e2e:bibtex": {
+      "key": "47fd3d3e7dce9215",
+      "exit": 0,
+      "stdout": "@phdthesis{flow-study,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  publisher = {Fen College},\n  title = {Flow {Under} a {Closed} {Sluice}},\n  year = {2017},\n  address = {Ely}\n}\n",
+      "stderr": ""
+    },
+    "thesis#read": {
+      "key": "f91590320941af13",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Wren\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Nora\"}}},{\"t\":\"MetaMap\",\"c\":{\"literal\":{\"t\":\"MetaString\",\"c\":\"West Pier Survey Team\"}}}]},\"genre\":{\"t\":\"MetaString\",\"c\":\"PhD thesis\"},\"id\":{\"t\":\"MetaString\",\"c\":\"flow-study\"},\"issued\":{\"t\":\"MetaMap\",\"c\":{\"date-parts\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"2017\"}]}]}}},\"publisher\":{\"t\":\"MetaString\",\"c\":\"Fen College\"},\"publisher-place\":{\"t\":\"MetaString\",\"c\":\"Ely\"},\"title\":{\"t\":\"MetaString\",\"c\":\"Flow Under a Closed Sluice\"},\"type\":{\"t\":\"MetaString\",\"c\":\"thesis\"}}}]}},\"blocks\":[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"Limit\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Highest\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"permitted\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"21.\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"See\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log.\"}]}]]],[[{\"t\":\"Str\",\"c\":\"Zero\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Start\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"value.\"}]}]]]]}]}\n",
+      "stderr": ""
+    },
+    "thesis#write:biblatex": {
+      "key": "5873aad6ba6da072",
+      "exit": 0,
+      "stdout": "@phdthesis{flow-study,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  publisher = {Fen College},\n  title = {Flow {Under} a {Closed} {Sluice}},\n  date = {2017},\n  address = {Ely}\n}\n",
+      "stderr": ""
+    },
+    "thesis#write:bibtex": {
+      "key": "3a6fbe31dc86eb7d",
+      "exit": 0,
+      "stdout": "@phdthesis{flow-study,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  publisher = {Fen College},\n  title = {Flow {Under} a {Closed} {Sluice}},\n  year = {2017},\n  address = {Ely}\n}\n",
+      "stderr": ""
+    },
+    "unpublished-work#e2e:biblatex": {
+      "key": "8a612d57dd7bc766",
+      "exit": 0,
+      "stdout": "@unpublished{field-memo,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  title = {Valve {Inspection} {Notes}},\n  date = {2016},\n  note = {Working draft}\n}\n",
+      "stderr": ""
+    },
+    "unpublished-work#e2e:bibtex": {
+      "key": "40598c77a6658253",
+      "exit": 0,
+      "stdout": "@unpublished{field-memo,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  title = {Valve {Inspection} {Notes}},\n  year = {2016},\n  note = {Working draft}\n}\n",
+      "stderr": ""
+    },
+    "unpublished-work#read": {
+      "key": "264dad717a53b9bd",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Wren\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Nora\"}}},{\"t\":\"MetaMap\",\"c\":{\"literal\":{\"t\":\"MetaString\",\"c\":\"West Pier Survey Team\"}}}]},\"id\":{\"t\":\"MetaString\",\"c\":\"field-memo\"},\"issued\":{\"t\":\"MetaMap\",\"c\":{\"date-parts\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"2016\"}]}]}}},\"note\":{\"t\":\"MetaString\",\"c\":\"Working draft\"},\"title\":{\"t\":\"MetaString\",\"c\":\"Valve Inspection Notes\"},\"type\":{\"t\":\"MetaString\",\"c\":\"manuscript\"}}}]}},\"blocks\":[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"hinge.\"}]]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Record\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"result.\"}]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Continue\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test.\"}]}]}\n",
+      "stderr": ""
+    },
+    "unpublished-work#write:biblatex": {
+      "key": "5b83fb0af370acb8",
+      "exit": 0,
+      "stdout": "@unpublished{field-memo,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  title = {Valve {Inspection} {Notes}},\n  date = {2016},\n  note = {Working draft}\n}\n",
+      "stderr": ""
+    },
+    "unpublished-work#write:bibtex": {
+      "key": "31e25f24ecb728a3",
+      "exit": 0,
+      "stdout": "@unpublished{field-memo,\n  author = {Wren, Nora and {West Pier Survey Team}},\n  title = {Valve {Inspection} {Notes}},\n  year = {2016},\n  note = {Working draft}\n}\n",
+      "stderr": ""
+    },
+    "webpage-with-access-date#e2e:biblatex": {
+      "key": "ec4aaafce6be49a3",
+      "exit": 0,
+      "stdout": "@online{gate-log,\n  author = {{Mill Gate Office}},\n  title = {Gate {Service} {Log}},\n  date = {2022-08},\n  urldate = {2025-01-06},\n  url = {https://example.invalid/log?bay=4&view=full}\n}\n",
+      "stderr": ""
+    },
+    "webpage-with-access-date#e2e:bibtex": {
+      "key": "7e6026e09df3c58c",
+      "exit": 0,
+      "stdout": "@misc{gate-log,\n  author = {{Mill Gate Office}},\n  title = {Gate {Service} {Log}},\n  year = {2022},\n  month = {aug},\n  url = {https://example.invalid/log?bay=4&view=full}\n}\n",
+      "stderr": ""
+    },
+    "webpage-with-access-date#read": {
+      "key": "670f551e25de14f6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"URL\":{\"t\":\"MetaString\",\"c\":\"https://example.invalid/log?bay=4&view=full\"},\"accessed\":{\"t\":\"MetaMap\",\"c\":{\"date-parts\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"2025\"},{\"t\":\"MetaString\",\"c\":\"1\"},{\"t\":\"MetaString\",\"c\":\"6\"}]}]}}},\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"literal\":{\"t\":\"MetaString\",\"c\":\"Mill Gate Office\"}}}]},\"id\":{\"t\":\"MetaString\",\"c\":\"gate-log\"},\"issued\":{\"t\":\"MetaMap\",\"c\":{\"date-parts\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"2022\"},{\"t\":\"MetaString\",\"c\":\"8\"}]}]}}},\"title\":{\"t\":\"MetaString\",\"c\":\"Gate Service Log\"},\"type\":{\"t\":\"MetaString\",\"c\":\"webpage\"}}}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"hinge\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log\"}],[\"https://example.invalid/log?mode=day&view=full\",\"Open log\"]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"section\"}],[\"#pin\",\"\"]]}]},{\"t\":\"Header\",\"c\":[2,[\"pin\",[],[]],[{\"t\":\"Str\",\"c\":\"Log\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"entry\"}]]}]}\n",
+      "stderr": ""
+    },
+    "webpage-with-access-date#write:biblatex": {
+      "key": "d8c0472026a9fd27",
+      "exit": 0,
+      "stdout": "@online{gate-log,\n  author = {{Mill Gate Office}},\n  title = {Gate {Service} {Log}},\n  date = {2022-08},\n  urldate = {2025-01-06},\n  url = {https://example.invalid/log?bay=4&view=full}\n}\n",
+      "stderr": ""
+    },
+    "webpage-with-access-date#write:bibtex": {
+      "key": "b4e8ed10d231f050",
+      "exit": 0,
+      "stdout": "@misc{gate-log,\n  author = {{Mill Gate Office}},\n  title = {Gate {Service} {Log}},\n  year = {2022},\n  month = {aug},\n  url = {https://example.invalid/log?bay=4&view=full}\n}\n",
+      "stderr": ""
+    }
+  }
+}

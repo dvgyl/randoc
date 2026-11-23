@@ -1,0 +1,171 @@
+from = "native"
+to = ["typst", "djot", "ipynb", "asciidoc", "asciidoctor", "asciidoc_legacy"]
+
+[[case]]
+id = "paragraphs"
+input = '''
+[ Div ("lamp-paragraphs", ["cell", "markdown"], [])
+    [ Para [Str "Lamp", Space, Str "check", Space, Str "log."]
+    , Para [Str "Read", Space, Str "slowly.", SoftBreak, Str "Stop.", LineBreak, Str "Café & <check>"]
+    ]
+]
+'''
+
+[[case]]
+id = "headings"
+input = '''
+[ Div ("lamp-headings", ["cell", "markdown"], [])
+    [ Header 1 ("bulb", [], []) [Str "Lamp", Space, Str "check"]
+    , Para [Str "Start", Space, Str "here."]
+    , Header 2 ("details", ["unnumbered"], []) [Str "Readings"]
+    , Para [Str "Check", Space, Str "base."]
+    ]
+]
+'''
+
+[[case]]
+id = "inline-styles"
+input = '''
+[ Div ("lamp-inline-styles", ["cell", "markdown"], [])
+    [ Para [Emph [Str "bulb"], Space, Strong [Str "base"], Space, Code ("", [], []) "a_b + 2", Space, Strikeout [Str "retired"], Space, Str "H", Subscript [Str "2"], Str "O", Space, Str "m", Superscript [Str "2"]]
+    ]
+]
+'''
+
+[[case]]
+id = "links"
+input = '''
+[ Div ("lamp-links", ["cell", "markdown"], [])
+    [ Para [Link ("", [], []) [Str "Read", Space, Str "the", Space, Str "bulb", Space, Str "log"] ("https://example.invalid/log?mode=day&view=full", "Open log"), Space, Link ("", [], []) [Str "section"] ("#base", "")]
+    , Header 2 ("base", [], []) [Str "Log", Space, Str "entry"]
+    ]
+]
+'''
+
+[[case]]
+id = "image"
+input = '''
+[ Div ("lamp-image", ["cell", "markdown"], [])
+    [ Para [Image ("sample", [], [("width", "24px")]) [Str "Lamp", Space, Str "check", Space, Str "sample"] ("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC", "Blue pixel")]
+    ]
+]
+'''
+
+[[case]]
+id = "bullet-list"
+input = '''
+[ Div ("lamp-bullet-list", ["cell", "markdown"], [])
+    [ BulletList
+        [ [Plain [Str "Check", Space, Str "bulb."],
+           BulletList [[Plain [Str "Log", Space, Str "23."]]]]
+        , [Plain [Str "Check", Space, Str "base."]]
+        ]
+    ]
+]
+'''
+
+[[case]]
+id = "ordered-list"
+input = '''
+[ Div ("lamp-ordered-list", ["cell", "markdown"], [])
+    [ OrderedList (4, UpperRoman, OneParen)
+        [ [Para [Str "Open", Space, Str "bulb."], Para [Str "Wait", Space, Str "for", Space, Str "the", Space, Str "signal."]]
+        , [Para [Str "Close", Space, Str "base."]]
+        ]
+    ]
+]
+'''
+
+[[case]]
+id = "definition-list"
+input = '''
+[ Div ("lamp-definition-list", ["cell", "markdown"], [])
+    [ DefinitionList
+        [ ([Str "Limit"], [[Plain [Str "Highest", Space, Str "permitted", Space, Str "23."]],
+                           [Plain [Str "See", Space, Str "the", Space, Str "log."]]])
+        , ([Str "Zero"], [[Plain [Str "Start", Space, Str "value."]]])
+        ]
+    ]
+]
+'''
+
+[[case]]
+id = "quote"
+input = '''
+[ Div ("lamp-quote", ["cell", "markdown"], [])
+    [ BlockQuote [Para [Quoted DoubleQuote [Str "Check", Space, Str "bulb."]], Para [Str "Record", Space, Str "the", Space, Str "result."]]
+    , Para [Str "Continue", Space, Str "the", Space, Str "test."]
+    ]
+]
+'''
+
+[[case]]
+id = "code-block"
+input = '''
+[ Div ("lamp-code-block", ["cell", "markdown"], [])
+    [ CodeBlock ("sample-code", ["python"], []) "value = 23\nprint(value < 25)"
+    , CodeBlock ("", [], []) "bulb\n  base\n"
+    ]
+]
+'''
+
+[[case]]
+id = "horizontal-rule"
+input = '''
+[ Div ("lamp-horizontal-rule", ["cell", "markdown"], [])
+    [ Para [Str "Before", Space, Str "the", Space, Str "bulb", Space, Str "check."]
+    , HorizontalRule
+    , Para [Str "After", Space, Str "the", Space, Str "base", Space, Str "check."]
+    ]
+]
+'''
+
+[[case]]
+id = "captioned-table"
+input = '''
+[ Div ("lamp-captioned-table", ["cell", "markdown"], [])
+    [ Table ("check-table", [], [])
+        (Caption Nothing [Plain [Str "Lamp", Space, Str "check", Space, Str "values"]])
+        [(AlignLeft, ColWidthDefault), (AlignRight, ColWidthDefault)]
+        (TableHead ( "", [], [] ) [Row ( "", [], [] ) [Cell ( "", [], [] ) AlignDefault ( RowSpan 1 ) ( ColSpan 1 ) [Plain [Str "Item"]], Cell ( "", [], [] ) AlignDefault ( RowSpan 1 ) ( ColSpan 1 ) [Plain [Str "Value"]]]])
+        [TableBody ( "", [], [] ) ( RowHeadColumns 0 ) []
+          [Row ( "", [], [] ) [Cell ( "", [], [] ) AlignDefault ( RowSpan 1 ) ( ColSpan 1 ) [Plain [Str "bulb"]], Cell ( "", [], [] ) AlignDefault ( RowSpan 1 ) ( ColSpan 1 ) [Plain [Str "23"]]]]]
+        (TableFoot ( "", [], [] ) [])
+    ]
+]
+'''
+
+[[case]]
+id = "notes"
+input = '''
+[ Div ("lamp-notes", ["cell", "markdown"], [])
+    [ Para [Str "bulb", Note [Para [Str "Use", Space, Str "the", Space, Str "lower", Space, Str "mark."],
+                                 Para [Emph [Str "Check", Space, Str "the", Space, Str "scale."]]],
+            Space, Str "base", Note [Para [Str "Use", Space, Str "the", Space, Str "upper", Space, Str "mark."]]]
+    ]
+]
+'''
+
+[[case]]
+id = "div-and-span"
+input = '''
+[ Div ("lamp-div-and-span", ["cell", "markdown"], [])
+    [ Div ("check-panel", ["inspection"], [("lang", "en")])
+        [Para [Span ("check-step", ["label"], [("title", "Check location")])
+                [Str "Lamp", Space, Str "check"], Space, Str "bulb"]]
+    ]
+]
+'''
+
+[[case]]
+id = "notebook-cell-kinds"
+to = ["ipynb"]
+input = '''
+[ Div ("lamp-instructions", ["cell", "markdown"], [])
+    [Para [Str "Read", Space, Str "the", Space, Str "voltage."]]
+, Div ("lamp-reading", ["cell", "code"], [("execution_count", "3")])
+    [CodeBlock ("", ["python"], []) "print(23)"]
+, Div ("lamp-raw", ["cell", "raw"], [])
+    [RawBlock (Format "html") "<p>Reading complete.</p>"]
+]
+'''

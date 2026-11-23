@@ -1,0 +1,1097 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "bullet-list#e2e:bbcode": {
+      "key": "cf61fdfe4117df7b",
+      "exit": 0,
+      "stdout": "[list]\n[*]Check lever.\n\n[list]\n[*]Log 13.\n[/list]\n[*]Check seal.\n[/list]\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:bbcode_fluxbb": {
+      "key": "89c489989f703f44",
+      "exit": 0,
+      "stdout": "[list]\n[*]Check lever.\n\n[list]\n[*]Log 13.\n[/list]\n[*]Check seal.\n[/list]\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:bbcode_hubzilla": {
+      "key": "da3b03b7ba27c878",
+      "exit": 0,
+      "stdout": "[ul]\n[*]Check lever.\n\n[ul]\n[*]Log 13.\n[/ul]\n[*]Check seal.\n[/ul]\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:bbcode_phpbb": {
+      "key": "afcbea7c49f02580",
+      "exit": 0,
+      "stdout": "[list]\n[*]Check lever.\n\n[list]\n[*]Log 13.\n[/list]\n[*]Check seal.\n[/list]\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:bbcode_steam": {
+      "key": "77f881949c39d54c",
+      "exit": 0,
+      "stdout": "[list]\n[*]Check lever.\n\n[list]\n[*]Log 13.\n[/list]\n[*]Check seal.\n[/list]\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:bbcode_xenforo": {
+      "key": "1d10d167de26eb37",
+      "exit": 0,
+      "stdout": "[list]\n[*]Check lever.\n\n[list]\n[*]Log 13.\n[/list]\n[*]Check seal.\n[/list]\n",
+      "stderr": ""
+    },
+    "bullet-list#read": {
+      "key": "256aebd83503a464",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"lever.\"}]},{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Log\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"13.\"}]}]]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"seal.\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "bullet-list#write:bbcode": {
+      "key": "ae4584d449a22ae8",
+      "exit": 0,
+      "stdout": "[list]\n[*]Check lever.\n\n[list]\n[*]Log 13.\n[/list]\n[*]Check seal.\n[/list]\n",
+      "stderr": ""
+    },
+    "bullet-list#write:bbcode_fluxbb": {
+      "key": "64227a255f8da6c3",
+      "exit": 0,
+      "stdout": "[list]\n[*]Check lever.\n\n[list]\n[*]Log 13.\n[/list]\n[*]Check seal.\n[/list]\n",
+      "stderr": ""
+    },
+    "bullet-list#write:bbcode_hubzilla": {
+      "key": "0e7bc36a909c007b",
+      "exit": 0,
+      "stdout": "[ul]\n[*]Check lever.\n\n[ul]\n[*]Log 13.\n[/ul]\n[*]Check seal.\n[/ul]\n",
+      "stderr": ""
+    },
+    "bullet-list#write:bbcode_phpbb": {
+      "key": "dbb0347ccff3823d",
+      "exit": 0,
+      "stdout": "[list]\n[*]Check lever.\n\n[list]\n[*]Log 13.\n[/list]\n[*]Check seal.\n[/list]\n",
+      "stderr": ""
+    },
+    "bullet-list#write:bbcode_steam": {
+      "key": "f6fdb665caa511c9",
+      "exit": 0,
+      "stdout": "[list]\n[*]Check lever.\n\n[list]\n[*]Log 13.\n[/list]\n[*]Check seal.\n[/list]\n",
+      "stderr": ""
+    },
+    "bullet-list#write:bbcode_xenforo": {
+      "key": "d7d7e61ea8352e18",
+      "exit": 0,
+      "stdout": "[list]\n[*]Check lever.\n\n[list]\n[*]Log 13.\n[/list]\n[*]Check seal.\n[/list]\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:bbcode": {
+      "key": "d614cbe3d31acdbd",
+      "exit": 0,
+      "stdout": "Valve check values\n[table]\n[tr][th]Item[/th][th]Value[/th][/tr]\n[tr][td]lever[/td][td]13[/td][/tr]\n[/table]\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:bbcode_fluxbb": {
+      "key": "40c3af8e82d967c6",
+      "exit": 0,
+      "stdout": "Valve check values\n(TABLE)\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:bbcode_hubzilla": {
+      "key": "48990f2aedb8bd1a",
+      "exit": 0,
+      "stdout": "Valve check values\n[table]\n[tr][th]Item[/th][th]Value[/th][/tr]\n[tr][td]lever[/td][td]13[/td][/tr]\n[/table]\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:bbcode_phpbb": {
+      "key": "9c633448c41949d2",
+      "exit": 0,
+      "stdout": "Valve check values\n(TABLE)\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:bbcode_steam": {
+      "key": "bfb0acfd3db5f43e",
+      "exit": 0,
+      "stdout": "Valve check values\n[table]\n[tr][th]Item[/th][th]Value[/th][/tr]\n[tr][td]lever[/td][td]13[/td][/tr]\n[/table]\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:bbcode_xenforo": {
+      "key": "9c23eb41e5840e09",
+      "exit": 0,
+      "stdout": "Valve check values\n[table]\n[tr][th]Item[/th][th]Value[/th][/tr]\n[tr][td]lever[/td][td]13[/td][/tr]\n[/table]\n",
+      "stderr": ""
+    },
+    "captioned-table#read": {
+      "key": "3f0bd2f7c9f1fa66",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"check-table\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Valve\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"values\"}]}]],[[{\"t\":\"AlignLeft\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignRight\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Item\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Value\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"lever\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"13\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "captioned-table#write:bbcode": {
+      "key": "cd6d9f219e09437b",
+      "exit": 0,
+      "stdout": "Valve check values\n[table]\n[tr][th]Item[/th][th]Value[/th][/tr]\n[tr][td]lever[/td][td]13[/td][/tr]\n[/table]\n",
+      "stderr": ""
+    },
+    "captioned-table#write:bbcode_fluxbb": {
+      "key": "d8e958cd219fab0e",
+      "exit": 0,
+      "stdout": "Valve check values\n(TABLE)\n",
+      "stderr": ""
+    },
+    "captioned-table#write:bbcode_hubzilla": {
+      "key": "2cbf3ab09c4116b6",
+      "exit": 0,
+      "stdout": "Valve check values\n[table]\n[tr][th]Item[/th][th]Value[/th][/tr]\n[tr][td]lever[/td][td]13[/td][/tr]\n[/table]\n",
+      "stderr": ""
+    },
+    "captioned-table#write:bbcode_phpbb": {
+      "key": "0fc95cc358280024",
+      "exit": 0,
+      "stdout": "Valve check values\n(TABLE)\n",
+      "stderr": ""
+    },
+    "captioned-table#write:bbcode_steam": {
+      "key": "6558459ec5f66da8",
+      "exit": 0,
+      "stdout": "Valve check values\n[table]\n[tr][th]Item[/th][th]Value[/th][/tr]\n[tr][td]lever[/td][td]13[/td][/tr]\n[/table]\n",
+      "stderr": ""
+    },
+    "captioned-table#write:bbcode_xenforo": {
+      "key": "550cb9600bcb1c4b",
+      "exit": 0,
+      "stdout": "Valve check values\n[table]\n[tr][th]Item[/th][th]Value[/th][/tr]\n[tr][td]lever[/td][td]13[/td][/tr]\n[/table]\n",
+      "stderr": ""
+    },
+    "code-block#e2e:bbcode": {
+      "key": "12ef893688bedf95",
+      "exit": 0,
+      "stdout": "[code=python]value = 13\nprint(value < 25)\n[/code]\n\n[code]lever\n  seal\n[/code]\n",
+      "stderr": ""
+    },
+    "code-block#e2e:bbcode_fluxbb": {
+      "key": "b4b5dd3f75668966",
+      "exit": 0,
+      "stdout": "[code]value = 13\nprint(value < 25)\n[/code]\n\n[code]lever\n  seal\n[/code]\n",
+      "stderr": ""
+    },
+    "code-block#e2e:bbcode_hubzilla": {
+      "key": "64d97201b545c0c2",
+      "exit": 0,
+      "stdout": "[code=python]value = 13\nprint(value < 25)\n[/code]\n\n[code]lever\n  seal\n[/code]\n",
+      "stderr": ""
+    },
+    "code-block#e2e:bbcode_phpbb": {
+      "key": "3bf3ca7a970927da",
+      "exit": 0,
+      "stdout": "[code=python]value = 13\nprint(value < 25)\n[/code]\n\n[code]lever\n  seal\n[/code]\n",
+      "stderr": ""
+    },
+    "code-block#e2e:bbcode_steam": {
+      "key": "b5496b7c7527e63e",
+      "exit": 0,
+      "stdout": "[code=python]value = 13\nprint(value < 25)\n[/code]\n\n[code]lever\n  seal\n[/code]\n",
+      "stderr": ""
+    },
+    "code-block#e2e:bbcode_xenforo": {
+      "key": "bc4a681f4e7a1f99",
+      "exit": 0,
+      "stdout": "[code=python]value = 13\nprint(value < 25)\n[/code]\n\n[code]lever\n  seal\n[/code]\n",
+      "stderr": ""
+    },
+    "code-block#read": {
+      "key": "0cc48b76d0bbc8c6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"sample-code\",[\"python\"],[]],\"value = 13\\nprint(value < 25)\"]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"lever\\n  seal\\n\"]}]}\n",
+      "stderr": ""
+    },
+    "code-block#write:bbcode": {
+      "key": "5b98b1b6815291c4",
+      "exit": 0,
+      "stdout": "[code=python]value = 13\nprint(value < 25)\n[/code]\n\n[code]lever\n  seal\n[/code]\n",
+      "stderr": ""
+    },
+    "code-block#write:bbcode_fluxbb": {
+      "key": "d720260e4fe19b87",
+      "exit": 0,
+      "stdout": "[code]value = 13\nprint(value < 25)\n[/code]\n\n[code]lever\n  seal\n[/code]\n",
+      "stderr": ""
+    },
+    "code-block#write:bbcode_hubzilla": {
+      "key": "8c3db0ffab3f2c8f",
+      "exit": 0,
+      "stdout": "[code=python]value = 13\nprint(value < 25)\n[/code]\n\n[code]lever\n  seal\n[/code]\n",
+      "stderr": ""
+    },
+    "code-block#write:bbcode_phpbb": {
+      "key": "4a845f643bede935",
+      "exit": 0,
+      "stdout": "[code=python]value = 13\nprint(value < 25)\n[/code]\n\n[code]lever\n  seal\n[/code]\n",
+      "stderr": ""
+    },
+    "code-block#write:bbcode_steam": {
+      "key": "c8a1a6f1c907a431",
+      "exit": 0,
+      "stdout": "[code=python]value = 13\nprint(value < 25)\n[/code]\n\n[code]lever\n  seal\n[/code]\n",
+      "stderr": ""
+    },
+    "code-block#write:bbcode_xenforo": {
+      "key": "98391de3d9bc8314",
+      "exit": 0,
+      "stdout": "[code=python]value = 13\nprint(value < 25)\n[/code]\n\n[code]lever\n  seal\n[/code]\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:bbcode": {
+      "key": "0aa3052e301c93c3",
+      "exit": 0,
+      "stdout": "Limit\n[list]\n[*]Highest permitted 13.\n[*]See the log.\n[/list]\nZero\n[list]\n[*]Start value.\n[/list]\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:bbcode_fluxbb": {
+      "key": "d68110abd2dce6c2",
+      "exit": 0,
+      "stdout": "Limit\n[list]\n[*]Highest permitted 13.\n[*]See the log.\n[/list]\nZero\n[list]\n[*]Start value.\n[/list]\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:bbcode_hubzilla": {
+      "key": "70b4936a5a8264ae",
+      "exit": 0,
+      "stdout": "[dl terms=\"b\"]\n[*= Limit]\nHighest permitted 13.\nSee the log.\n[*= Zero]\nStart value.\n[/dl]\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:bbcode_phpbb": {
+      "key": "fa52008ad96c0986",
+      "exit": 0,
+      "stdout": "Limit\n[list]\n[*]Highest permitted 13.\n[*]See the log.\n[/list]\nZero\n[list]\n[*]Start value.\n[/list]\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:bbcode_steam": {
+      "key": "d19e40567d258c1a",
+      "exit": 0,
+      "stdout": "Limit\n[list]\n[*]Highest permitted 13.\n[*]See the log.\n[/list]\nZero\n[list]\n[*]Start value.\n[/list]\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:bbcode_xenforo": {
+      "key": "a2b94dca5e1cd5d7",
+      "exit": 0,
+      "stdout": "Limit\n[list]\n[*]Highest permitted 13.\n[*]See the log.\n[/list]\nZero\n[list]\n[*]Start value.\n[/list]\n",
+      "stderr": ""
+    },
+    "definition-list#read": {
+      "key": "af1dc024c7b8c7a2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"Limit\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Highest\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"permitted\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"13.\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"See\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log.\"}]}]]],[[{\"t\":\"Str\",\"c\":\"Zero\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Start\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"value.\"}]}]]]]}]}\n",
+      "stderr": ""
+    },
+    "definition-list#write:bbcode": {
+      "key": "e1e75933d7ceafba",
+      "exit": 0,
+      "stdout": "Limit\n[list]\n[*]Highest permitted 13.\n[*]See the log.\n[/list]\nZero\n[list]\n[*]Start value.\n[/list]\n",
+      "stderr": ""
+    },
+    "definition-list#write:bbcode_fluxbb": {
+      "key": "6851ced3b5cfcbdf",
+      "exit": 0,
+      "stdout": "Limit\n[list]\n[*]Highest permitted 13.\n[*]See the log.\n[/list]\nZero\n[list]\n[*]Start value.\n[/list]\n",
+      "stderr": ""
+    },
+    "definition-list#write:bbcode_hubzilla": {
+      "key": "ffd805519b28ec47",
+      "exit": 0,
+      "stdout": "[dl terms=\"b\"]\n[*= Limit]\nHighest permitted 13.\nSee the log.\n[*= Zero]\nStart value.\n[/dl]\n",
+      "stderr": ""
+    },
+    "definition-list#write:bbcode_phpbb": {
+      "key": "487a9fb6b4e11551",
+      "exit": 0,
+      "stdout": "Limit\n[list]\n[*]Highest permitted 13.\n[*]See the log.\n[/list]\nZero\n[list]\n[*]Start value.\n[/list]\n",
+      "stderr": ""
+    },
+    "definition-list#write:bbcode_steam": {
+      "key": "e9d704f41c206a05",
+      "exit": 0,
+      "stdout": "Limit\n[list]\n[*]Highest permitted 13.\n[*]See the log.\n[/list]\nZero\n[list]\n[*]Start value.\n[/list]\n",
+      "stderr": ""
+    },
+    "definition-list#write:bbcode_xenforo": {
+      "key": "6164efa980ab136a",
+      "exit": 0,
+      "stdout": "Limit\n[list]\n[*]Highest permitted 13.\n[*]See the log.\n[/list]\nZero\n[list]\n[*]Start value.\n[/list]\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:bbcode": {
+      "key": "c625853d6e8ad948",
+      "exit": 0,
+      "stdout": "Valve check lever\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:bbcode_fluxbb": {
+      "key": "774bf0e36a0be587",
+      "exit": 0,
+      "stdout": "Valve check lever\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:bbcode_hubzilla": {
+      "key": "19e2496e24a887fb",
+      "exit": 0,
+      "stdout": "Valve check lever\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:bbcode_phpbb": {
+      "key": "baf06aa59cc679b3",
+      "exit": 0,
+      "stdout": "Valve check lever\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:bbcode_steam": {
+      "key": "896795c1aa8b8e1f",
+      "exit": 0,
+      "stdout": "Valve check lever\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:bbcode_xenforo": {
+      "key": "b42fc97ab2418a04",
+      "exit": 0,
+      "stdout": "Valve check lever\n",
+      "stderr": ""
+    },
+    "div-and-span#read": {
+      "key": "2467f0a61ad20c27",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"check-panel\",[\"inspection\"],[[\"lang\",\"en\"]]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"check-step\",[\"label\"],[[\"title\",\"Check location\"]]],[{\"t\":\"Str\",\"c\":\"Valve\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"lever\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "div-and-span#write:bbcode": {
+      "key": "bbbc4c428bb5223a",
+      "exit": 0,
+      "stdout": "Valve check lever\n",
+      "stderr": ""
+    },
+    "div-and-span#write:bbcode_fluxbb": {
+      "key": "bb5c921298418431",
+      "exit": 0,
+      "stdout": "Valve check lever\n",
+      "stderr": ""
+    },
+    "div-and-span#write:bbcode_hubzilla": {
+      "key": "80fd7aba10f6e789",
+      "exit": 0,
+      "stdout": "Valve check lever\n",
+      "stderr": ""
+    },
+    "div-and-span#write:bbcode_phpbb": {
+      "key": "ac994f0f866ad3e7",
+      "exit": 0,
+      "stdout": "Valve check lever\n",
+      "stderr": ""
+    },
+    "div-and-span#write:bbcode_steam": {
+      "key": "fbdf023907819d7b",
+      "exit": 0,
+      "stdout": "Valve check lever\n",
+      "stderr": ""
+    },
+    "div-and-span#write:bbcode_xenforo": {
+      "key": "c21269aadff2462a",
+      "exit": 0,
+      "stdout": "Valve check lever\n",
+      "stderr": ""
+    },
+    "headings#e2e:bbcode": {
+      "key": "154b2779a9903bdd",
+      "exit": 0,
+      "stdout": "[u][b]Valve check[/b][/u]\n\nStart here.\n\n[b]Readings[/b]\n\nCheck seal.\n",
+      "stderr": ""
+    },
+    "headings#e2e:bbcode_fluxbb": {
+      "key": "46689578cd90b322",
+      "exit": 0,
+      "stdout": "[u][b]Valve check[/b][/u]\n\nStart here.\n\n[b]Readings[/b]\n\nCheck seal.\n",
+      "stderr": ""
+    },
+    "headings#e2e:bbcode_hubzilla": {
+      "key": "2472fecdb1bde9ee",
+      "exit": 0,
+      "stdout": "[h1]Valve check[/h1]\n\nStart here.\n\n[h2]Readings[/h2]\n\nCheck seal.\n",
+      "stderr": ""
+    },
+    "headings#e2e:bbcode_phpbb": {
+      "key": "35cd26095d749c76",
+      "exit": 0,
+      "stdout": "[u][b]Valve check[/b][/u]\n\nStart here.\n\n[b]Readings[/b]\n\nCheck seal.\n",
+      "stderr": ""
+    },
+    "headings#e2e:bbcode_steam": {
+      "key": "3b1320cdae5f390a",
+      "exit": 0,
+      "stdout": "[h1]Valve check[/h1]\n\nStart here.\n\n[h2]Readings[/h2]\n\nCheck seal.\n",
+      "stderr": ""
+    },
+    "headings#e2e:bbcode_xenforo": {
+      "key": "63ffb467be018b11",
+      "exit": 0,
+      "stdout": "[heading=1]Valve check[/heading]\n\nStart here.\n\n[heading=2]Readings[/heading]\n\nCheck seal.\n",
+      "stderr": ""
+    },
+    "headings#read": {
+      "key": "e0c65b5075682c02",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"lever\",[],[]],[{\"t\":\"Str\",\"c\":\"Valve\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Start\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"here.\"}]},{\"t\":\"Header\",\"c\":[2,[\"details\",[\"unnumbered\"],[]],[{\"t\":\"Str\",\"c\":\"Readings\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"seal.\"}]}]}\n",
+      "stderr": ""
+    },
+    "headings#write:bbcode": {
+      "key": "1e546d9d55e58926",
+      "exit": 0,
+      "stdout": "[u][b]Valve check[/b][/u]\n\nStart here.\n\n[b]Readings[/b]\n\nCheck seal.\n",
+      "stderr": ""
+    },
+    "headings#write:bbcode_fluxbb": {
+      "key": "229a9dabcb8e6c05",
+      "exit": 0,
+      "stdout": "[u][b]Valve check[/b][/u]\n\nStart here.\n\n[b]Readings[/b]\n\nCheck seal.\n",
+      "stderr": ""
+    },
+    "headings#write:bbcode_hubzilla": {
+      "key": "ad7ef740a6c10bbd",
+      "exit": 0,
+      "stdout": "[h1]Valve check[/h1]\n\nStart here.\n\n[h2]Readings[/h2]\n\nCheck seal.\n",
+      "stderr": ""
+    },
+    "headings#write:bbcode_phpbb": {
+      "key": "d917749505d29707",
+      "exit": 0,
+      "stdout": "[u][b]Valve check[/b][/u]\n\nStart here.\n\n[b]Readings[/b]\n\nCheck seal.\n",
+      "stderr": ""
+    },
+    "headings#write:bbcode_steam": {
+      "key": "9bdcc1ac24106183",
+      "exit": 0,
+      "stdout": "[h1]Valve check[/h1]\n\nStart here.\n\n[h2]Readings[/h2]\n\nCheck seal.\n",
+      "stderr": ""
+    },
+    "headings#write:bbcode_xenforo": {
+      "key": "b82c2b6303ed2c76",
+      "exit": 0,
+      "stdout": "[heading=1]Valve check[/heading]\n\nStart here.\n\n[heading=2]Readings[/heading]\n\nCheck seal.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:bbcode": {
+      "key": "3ac794ed4004b826",
+      "exit": 0,
+      "stdout": "Before the lever check.\n\n* * *\n\nAfter the seal check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:bbcode_fluxbb": {
+      "key": "7f542f9c22cb3441",
+      "exit": 0,
+      "stdout": "Before the lever check.\n\n* * *\n\nAfter the seal check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:bbcode_hubzilla": {
+      "key": "19d89a04c4da72f5",
+      "exit": 0,
+      "stdout": "Before the lever check.\n\n[hr]\n\nAfter the seal check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:bbcode_phpbb": {
+      "key": "12c4e72825d778cd",
+      "exit": 0,
+      "stdout": "Before the lever check.\n\n* * *\n\nAfter the seal check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:bbcode_steam": {
+      "key": "84d9cdf045c9f9b9",
+      "exit": 0,
+      "stdout": "Before the lever check.\n\n[hr]\n\nAfter the seal check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:bbcode_xenforo": {
+      "key": "15c8313a06d784a2",
+      "exit": 0,
+      "stdout": "Before the lever check.\n\n[hr]\n\nAfter the seal check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#read": {
+      "key": "da1623eb6fc24ba1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"lever\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check.\"}]},{\"t\":\"HorizontalRule\"},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"After\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"seal\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check.\"}]}]}\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:bbcode": {
+      "key": "2c3609349789e01e",
+      "exit": 0,
+      "stdout": "Before the lever check.\n\n* * *\n\nAfter the seal check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:bbcode_fluxbb": {
+      "key": "483dbf206660bed5",
+      "exit": 0,
+      "stdout": "Before the lever check.\n\n* * *\n\nAfter the seal check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:bbcode_hubzilla": {
+      "key": "dbb93fcb23faa9cd",
+      "exit": 0,
+      "stdout": "Before the lever check.\n\n[hr]\n\nAfter the seal check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:bbcode_phpbb": {
+      "key": "b49d69e182d986eb",
+      "exit": 0,
+      "stdout": "Before the lever check.\n\n* * *\n\nAfter the seal check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:bbcode_steam": {
+      "key": "6d94cef8185bb1f7",
+      "exit": 0,
+      "stdout": "Before the lever check.\n\n[hr]\n\nAfter the seal check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:bbcode_xenforo": {
+      "key": "af321a39bbc02f8e",
+      "exit": 0,
+      "stdout": "Before the lever check.\n\n[hr]\n\nAfter the seal check.\n",
+      "stderr": ""
+    },
+    "image#e2e:bbcode": {
+      "key": "306cd4f602c771d3",
+      "exit": 0,
+      "stdout": "[img alt=\"Valve check sample\" title=\"Blue pixel\"]data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC[/img]\n",
+      "stderr": ""
+    },
+    "image#e2e:bbcode_fluxbb": {
+      "key": "86f3060c0338dbd0",
+      "exit": 0,
+      "stdout": "[img=Valve check sample]data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC[/img]\n",
+      "stderr": ""
+    },
+    "image#e2e:bbcode_hubzilla": {
+      "key": "5f7b6d5015bfcb34",
+      "exit": 0,
+      "stdout": "[img alt=\"Valve check sample\" title=\"Blue pixel\"]data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC[/img]\n",
+      "stderr": ""
+    },
+    "image#e2e:bbcode_phpbb": {
+      "key": "1c0c0bb429b27b9c",
+      "exit": 0,
+      "stdout": "[img]data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC[/img]\n",
+      "stderr": ""
+    },
+    "image#e2e:bbcode_steam": {
+      "key": "0775683afcb9b618",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "image#e2e:bbcode_xenforo": {
+      "key": "0975a2534b37994f",
+      "exit": 0,
+      "stdout": "[img alt=\"Valve check sample\" title=\"Blue pixel\"]data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC[/img]\n",
+      "stderr": ""
+    },
+    "image#read": {
+      "key": "85d96642caab1cb0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Image\",\"c\":[[\"sample\",[],[[\"width\",\"24px\"]]],[{\"t\":\"Str\",\"c\":\"Valve\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sample\"}],[\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\",\"Blue pixel\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "image#write:bbcode": {
+      "key": "31536e81435f16fd",
+      "exit": 0,
+      "stdout": "[img alt=\"Valve check sample\" title=\"Blue pixel\"]data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC[/img]\n",
+      "stderr": ""
+    },
+    "image#write:bbcode_fluxbb": {
+      "key": "3a4cd8a50ab986f6",
+      "exit": 0,
+      "stdout": "[img=Valve check sample]data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC[/img]\n",
+      "stderr": ""
+    },
+    "image#write:bbcode_hubzilla": {
+      "key": "db8e146c4d8385ce",
+      "exit": 0,
+      "stdout": "[img alt=\"Valve check sample\" title=\"Blue pixel\"]data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC[/img]\n",
+      "stderr": ""
+    },
+    "image#write:bbcode_phpbb": {
+      "key": "5714ab7e5a60c814",
+      "exit": 0,
+      "stdout": "[img]data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC[/img]\n",
+      "stderr": ""
+    },
+    "image#write:bbcode_steam": {
+      "key": "c45d92fb2d890890",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "image#write:bbcode_xenforo": {
+      "key": "124a3d91776ce0ed",
+      "exit": 0,
+      "stdout": "[img alt=\"Valve check sample\" title=\"Blue pixel\"]data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC[/img]\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:bbcode": {
+      "key": "5bbc615b2036b357",
+      "exit": 0,
+      "stdout": "[i]lever[/i] [b]seal[/b] a_b + 2 [s]retired[/s] H2O m2\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:bbcode_fluxbb": {
+      "key": "ec205b683cdcc67c",
+      "exit": 0,
+      "stdout": "[i]lever[/i] [b]seal[/b] a_b + 2 [s]retired[/s] H2O m2\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:bbcode_hubzilla": {
+      "key": "af7d0125250791c0",
+      "exit": 0,
+      "stdout": "[i]lever[/i] [b]seal[/b] [code]a_b + 2[/code] [s]retired[/s] H2O m2\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:bbcode_phpbb": {
+      "key": "b8c49d7d2e1566f8",
+      "exit": 0,
+      "stdout": "[i]lever[/i] [b]seal[/b] a_b + 2 [s]retired[/s] H2O m2\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:bbcode_steam": {
+      "key": "7034ba697e59bfd4",
+      "exit": 0,
+      "stdout": "[i]lever[/i] [b]seal[/b] [noparse]a_b + 2[/noparse] [strike]retired[/strike] H2O m2\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:bbcode_xenforo": {
+      "key": "0f0e091fb5a87f63",
+      "exit": 0,
+      "stdout": "[i]lever[/i] [b]seal[/b] [icode]a_b + 2[/icode] [s]retired[/s] H2O m2\n",
+      "stderr": ""
+    },
+    "inline-styles#read": {
+      "key": "7d88537b898f0e5c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"lever\"}]},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"seal\"}]},{\"t\":\"Space\"},{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"a_b + 2\"]},{\"t\":\"Space\"},{\"t\":\"Strikeout\",\"c\":[{\"t\":\"Str\",\"c\":\"retired\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"H\"},{\"t\":\"Subscript\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]},{\"t\":\"Str\",\"c\":\"O\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"m\"},{\"t\":\"Superscript\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "inline-styles#write:bbcode": {
+      "key": "c5f1e61d246c3196",
+      "exit": 0,
+      "stdout": "[i]lever[/i] [b]seal[/b] a_b + 2 [s]retired[/s] H2O m2\n",
+      "stderr": ""
+    },
+    "inline-styles#write:bbcode_fluxbb": {
+      "key": "d573ff0cff02d87b",
+      "exit": 0,
+      "stdout": "[i]lever[/i] [b]seal[/b] a_b + 2 [s]retired[/s] H2O m2\n",
+      "stderr": ""
+    },
+    "inline-styles#write:bbcode_hubzilla": {
+      "key": "12346190a50686a3",
+      "exit": 0,
+      "stdout": "[i]lever[/i] [b]seal[/b] [code]a_b + 2[/code] [s]retired[/s] H2O m2\n",
+      "stderr": ""
+    },
+    "inline-styles#write:bbcode_phpbb": {
+      "key": "42fc754e86c07ab1",
+      "exit": 0,
+      "stdout": "[i]lever[/i] [b]seal[/b] a_b + 2 [s]retired[/s] H2O m2\n",
+      "stderr": ""
+    },
+    "inline-styles#write:bbcode_steam": {
+      "key": "6d1e9e5a1b553b5d",
+      "exit": 0,
+      "stdout": "[i]lever[/i] [b]seal[/b] [noparse]a_b + 2[/noparse] [strike]retired[/strike] H2O m2\n",
+      "stderr": ""
+    },
+    "inline-styles#write:bbcode_xenforo": {
+      "key": "4598fdcf88a9fea6",
+      "exit": 0,
+      "stdout": "[i]lever[/i] [b]seal[/b] [icode]a_b + 2[/icode] [s]retired[/s] H2O m2\n",
+      "stderr": ""
+    },
+    "links#e2e:bbcode": {
+      "key": "2bd7b31006272b64",
+      "exit": 0,
+      "stdout": "[url=https://example.invalid/log?mode=day&view=full]Read the lever log[/url] [url=#seal]section[/url]\n\n[b]Log entry[/b]\n",
+      "stderr": ""
+    },
+    "links#e2e:bbcode_fluxbb": {
+      "key": "2c9dda5dc77207cf",
+      "exit": 0,
+      "stdout": "[url=https://example.invalid/log?mode=day&view=full]Read the lever log[/url] [url=#seal]section[/url]\n\n[b]Log entry[/b]\n",
+      "stderr": ""
+    },
+    "links#e2e:bbcode_hubzilla": {
+      "key": "f36b233c53bd0ae3",
+      "exit": 0,
+      "stdout": "[url=https://example.invalid/log?mode=day&view=full]Read the lever log[/url] [url=#seal]section[/url]\n\n[h2]Log entry[/h2]\n",
+      "stderr": ""
+    },
+    "links#e2e:bbcode_phpbb": {
+      "key": "714325e1a8618eab",
+      "exit": 0,
+      "stdout": "[url=https://example.invalid/log?mode=day&view=full]Read the lever log[/url] [url=#seal]section[/url]\n\n[b]Log entry[/b]\n",
+      "stderr": ""
+    },
+    "links#e2e:bbcode_steam": {
+      "key": "3db04691df2b3cf7",
+      "exit": 0,
+      "stdout": "[url=https://example.invalid/log?mode=day&view=full]Read the lever log[/url] [url=#seal]section[/url]\n\n[h2]Log entry[/h2]\n",
+      "stderr": ""
+    },
+    "links#e2e:bbcode_xenforo": {
+      "key": "3f9dafca651b0250",
+      "exit": 0,
+      "stdout": "[url=https://example.invalid/log?mode=day&view=full]Read the lever log[/url] [url=#seal]section[/url]\n\n[heading=2]Log entry[/heading]\n",
+      "stderr": ""
+    },
+    "links#read": {
+      "key": "3b8b5f0de07d44ef",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"lever\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log\"}],[\"https://example.invalid/log?mode=day&view=full\",\"Open log\"]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"section\"}],[\"#seal\",\"\"]]}]},{\"t\":\"Header\",\"c\":[2,[\"seal\",[],[]],[{\"t\":\"Str\",\"c\":\"Log\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"entry\"}]]}]}\n",
+      "stderr": ""
+    },
+    "links#write:bbcode": {
+      "key": "a510f0bf9c1a4907",
+      "exit": 0,
+      "stdout": "[url=https://example.invalid/log?mode=day&view=full]Read the lever log[/url] [url=#seal]section[/url]\n\n[b]Log entry[/b]\n",
+      "stderr": ""
+    },
+    "links#write:bbcode_fluxbb": {
+      "key": "93942ecac28b5d28",
+      "exit": 0,
+      "stdout": "[url=https://example.invalid/log?mode=day&view=full]Read the lever log[/url] [url=#seal]section[/url]\n\n[b]Log entry[/b]\n",
+      "stderr": ""
+    },
+    "links#write:bbcode_hubzilla": {
+      "key": "61020eb25dd9b470",
+      "exit": 0,
+      "stdout": "[url=https://example.invalid/log?mode=day&view=full]Read the lever log[/url] [url=#seal]section[/url]\n\n[h2]Log entry[/h2]\n",
+      "stderr": ""
+    },
+    "links#write:bbcode_phpbb": {
+      "key": "9df4aa60d5fdd8fe",
+      "exit": 0,
+      "stdout": "[url=https://example.invalid/log?mode=day&view=full]Read the lever log[/url] [url=#seal]section[/url]\n\n[b]Log entry[/b]\n",
+      "stderr": ""
+    },
+    "links#write:bbcode_steam": {
+      "key": "e9b53e3d6cb4b65a",
+      "exit": 0,
+      "stdout": "[url=https://example.invalid/log?mode=day&view=full]Read the lever log[/url] [url=#seal]section[/url]\n\n[h2]Log entry[/h2]\n",
+      "stderr": ""
+    },
+    "links#write:bbcode_xenforo": {
+      "key": "d0086231305a4ff7",
+      "exit": 0,
+      "stdout": "[url=https://example.invalid/log?mode=day&view=full]Read the lever log[/url] [url=#seal]section[/url]\n\n[heading=2]Log entry[/heading]\n",
+      "stderr": ""
+    },
+    "notes#e2e:bbcode": {
+      "key": "915c5bb21dd41539",
+      "exit": 0,
+      "stdout": "lever(1) seal(2)\n\n* * *\n\n(1) Use the lower mark.\n\n[i]Check the scale.[/i]\n\n(2) Use the upper mark.\n",
+      "stderr": ""
+    },
+    "notes#e2e:bbcode_fluxbb": {
+      "key": "7126cae10773a43e",
+      "exit": 0,
+      "stdout": "lever(1) seal(2)\n\n* * *\n\n(1) Use the lower mark.\n\n[i]Check the scale.[/i]\n\n(2) Use the upper mark.\n",
+      "stderr": ""
+    },
+    "notes#e2e:bbcode_hubzilla": {
+      "key": "e41777a3dfae8942",
+      "exit": 0,
+      "stdout": "lever(1) seal(2)\n\n[hr]\n\n(1) Use the lower mark.\n\n[i]Check the scale.[/i]\n\n(2) Use the upper mark.\n",
+      "stderr": ""
+    },
+    "notes#e2e:bbcode_phpbb": {
+      "key": "f89e0201d8b33d0a",
+      "exit": 0,
+      "stdout": "lever(1) seal(2)\n\n* * *\n\n(1) Use the lower mark.\n\n[i]Check the scale.[/i]\n\n(2) Use the upper mark.\n",
+      "stderr": ""
+    },
+    "notes#e2e:bbcode_steam": {
+      "key": "aa935d0ebbe69366",
+      "exit": 0,
+      "stdout": "lever(1) seal(2)\n\n[hr]\n\n(1) Use the lower mark.\n\n[i]Check the scale.[/i]\n\n(2) Use the upper mark.\n",
+      "stderr": ""
+    },
+    "notes#e2e:bbcode_xenforo": {
+      "key": "97b69bf21399d8a5",
+      "exit": 0,
+      "stdout": "lever(1) seal(2)\n\n[hr]\n\n(1) Use the lower mark.\n\n[i]Check the scale.[/i]\n\n(2) Use the upper mark.\n",
+      "stderr": ""
+    },
+    "notes#read": {
+      "key": "c22be0dfacbc079e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"lever\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"lower\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"scale.\"}]}]}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"seal\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"upper\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark.\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "notes#write:bbcode": {
+      "key": "3ca2718bd132ba29",
+      "exit": 0,
+      "stdout": "lever(1) seal(2)\n\n* * *\n\n(1) Use the lower mark.\n\n[i]Check the scale.[/i]\n\n(2) Use the upper mark.\n",
+      "stderr": ""
+    },
+    "notes#write:bbcode_fluxbb": {
+      "key": "1124afb1583682f2",
+      "exit": 0,
+      "stdout": "lever(1) seal(2)\n\n* * *\n\n(1) Use the lower mark.\n\n[i]Check the scale.[/i]\n\n(2) Use the upper mark.\n",
+      "stderr": ""
+    },
+    "notes#write:bbcode_hubzilla": {
+      "key": "ec7afdafdf4a3baa",
+      "exit": 0,
+      "stdout": "lever(1) seal(2)\n\n[hr]\n\n(1) Use the lower mark.\n\n[i]Check the scale.[/i]\n\n(2) Use the upper mark.\n",
+      "stderr": ""
+    },
+    "notes#write:bbcode_phpbb": {
+      "key": "be9a68aa289d5ab4",
+      "exit": 0,
+      "stdout": "lever(1) seal(2)\n\n* * *\n\n(1) Use the lower mark.\n\n[i]Check the scale.[/i]\n\n(2) Use the upper mark.\n",
+      "stderr": ""
+    },
+    "notes#write:bbcode_steam": {
+      "key": "a88aa35df5a5ed60",
+      "exit": 0,
+      "stdout": "lever(1) seal(2)\n\n[hr]\n\n(1) Use the lower mark.\n\n[i]Check the scale.[/i]\n\n(2) Use the upper mark.\n",
+      "stderr": ""
+    },
+    "notes#write:bbcode_xenforo": {
+      "key": "73193ec50de223d9",
+      "exit": 0,
+      "stdout": "lever(1) seal(2)\n\n[hr]\n\n(1) Use the lower mark.\n\n[i]Check the scale.[/i]\n\n(2) Use the upper mark.\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:bbcode": {
+      "key": "7f0e4d333879f705",
+      "exit": 0,
+      "stdout": "[list=I]\n[*]Open lever.\n\nWait for the signal.\n[*]Close seal.\n[/list]\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:bbcode_fluxbb": {
+      "key": "bac28b03eb3e40d2",
+      "exit": 0,
+      "stdout": "[list=1]\n[*]Open lever.\n\nWait for the signal.\n[*]Close seal.\n[/list]\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:bbcode_hubzilla": {
+      "key": "3983376ff0a740c6",
+      "exit": 0,
+      "stdout": "[list=I]\n[*]Open lever.\n\nWait for the signal.\n[*]Close seal.\n[/list]\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:bbcode_phpbb": {
+      "key": "9c3324a07fa449ae",
+      "exit": 0,
+      "stdout": "[list=I]\n[*]Open lever.\n\nWait for the signal.\n[*]Close seal.\n[/list]\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:bbcode_steam": {
+      "key": "82a367596a7f983a",
+      "exit": 0,
+      "stdout": "[olist]\n[*]Open lever.\n\nWait for the signal.\n[*]Close seal.\n[/olist]\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:bbcode_xenforo": {
+      "key": "96f93052b611ba61",
+      "exit": 0,
+      "stdout": "[list=1]\n[*]Open lever.\n\nWait for the signal.\n[*]Close seal.\n[/list]\n",
+      "stderr": ""
+    },
+    "ordered-list#read": {
+      "key": "fad61581832d7672",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[4,{\"t\":\"UpperRoman\"},{\"t\":\"OneParen\"}],[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Open\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"lever.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Wait\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"for\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"signal.\"}]}],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Close\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"seal.\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "ordered-list#write:bbcode": {
+      "key": "0a5ff53d6b30f4fb",
+      "exit": 0,
+      "stdout": "[list=I]\n[*]Open lever.\n\nWait for the signal.\n[*]Close seal.\n[/list]\n",
+      "stderr": ""
+    },
+    "ordered-list#write:bbcode_fluxbb": {
+      "key": "bad0a47d82dbc36a",
+      "exit": 0,
+      "stdout": "[list=1]\n[*]Open lever.\n\nWait for the signal.\n[*]Close seal.\n[/list]\n",
+      "stderr": ""
+    },
+    "ordered-list#write:bbcode_hubzilla": {
+      "key": "9cfd8b511e79e002",
+      "exit": 0,
+      "stdout": "[list=I]\n[*]Open lever.\n\nWait for the signal.\n[*]Close seal.\n[/list]\n",
+      "stderr": ""
+    },
+    "ordered-list#write:bbcode_phpbb": {
+      "key": "323338b95195431c",
+      "exit": 0,
+      "stdout": "[list=I]\n[*]Open lever.\n\nWait for the signal.\n[*]Close seal.\n[/list]\n",
+      "stderr": ""
+    },
+    "ordered-list#write:bbcode_steam": {
+      "key": "b93e58dc91bbe2e0",
+      "exit": 0,
+      "stdout": "[olist]\n[*]Open lever.\n\nWait for the signal.\n[*]Close seal.\n[/olist]\n",
+      "stderr": ""
+    },
+    "ordered-list#write:bbcode_xenforo": {
+      "key": "b1b847177a3ab08b",
+      "exit": 0,
+      "stdout": "[list=1]\n[*]Open lever.\n\nWait for the signal.\n[*]Close seal.\n[/list]\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:bbcode": {
+      "key": "da0be7162a3e1af6",
+      "exit": 0,
+      "stdout": "Valve check log.\n\nRead slowly. Stop.\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:bbcode_fluxbb": {
+      "key": "57daf8dc0974ae0f",
+      "exit": 0,
+      "stdout": "Valve check log.\n\nRead slowly. Stop.\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:bbcode_hubzilla": {
+      "key": "dc9c75e3dc7d5dfb",
+      "exit": 0,
+      "stdout": "Valve check log.\n\nRead slowly. Stop.\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:bbcode_phpbb": {
+      "key": "d3d97fd8ad971e33",
+      "exit": 0,
+      "stdout": "Valve check log.\n\nRead slowly. Stop.\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:bbcode_steam": {
+      "key": "2cfe8852ff360a87",
+      "exit": 0,
+      "stdout": "Valve check log.\n\nRead slowly. Stop.\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:bbcode_xenforo": {
+      "key": "103948639a0e094a",
+      "exit": 0,
+      "stdout": "Valve check log.\n\nRead slowly. Stop.\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#read": {
+      "key": "dcfcfff38a1ebcef",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Valve\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"slowly.\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"Stop.\"},{\"t\":\"LineBreak\"},{\"t\":\"Str\",\"c\":\"Café & <check>\"}]}]}\n",
+      "stderr": ""
+    },
+    "paragraphs#write:bbcode": {
+      "key": "3db01317bb2e317f",
+      "exit": 0,
+      "stdout": "Valve check log.\n\nRead slowly. Stop.\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#write:bbcode_fluxbb": {
+      "key": "d39f128f3a8b87de",
+      "exit": 0,
+      "stdout": "Valve check log.\n\nRead slowly. Stop.\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#write:bbcode_hubzilla": {
+      "key": "3d0aa12232ea80a6",
+      "exit": 0,
+      "stdout": "Valve check log.\n\nRead slowly. Stop.\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#write:bbcode_phpbb": {
+      "key": "1983184b4ab971e8",
+      "exit": 0,
+      "stdout": "Valve check log.\n\nRead slowly. Stop.\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#write:bbcode_steam": {
+      "key": "f8de566aff48f874",
+      "exit": 0,
+      "stdout": "Valve check log.\n\nRead slowly. Stop.\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#write:bbcode_xenforo": {
+      "key": "d811b5eadddd706f",
+      "exit": 0,
+      "stdout": "Valve check log.\n\nRead slowly. Stop.\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "quote#e2e:bbcode": {
+      "key": "7c1056f99ed52be1",
+      "exit": 0,
+      "stdout": "[quote]\n\"Check lever.\"\n\nRecord the result.\n[/quote]\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#e2e:bbcode_fluxbb": {
+      "key": "5a764f79181bcfb6",
+      "exit": 0,
+      "stdout": "[quote]\n\"Check lever.\"\n\nRecord the result.\n[/quote]\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#e2e:bbcode_hubzilla": {
+      "key": "5629c9213bb38592",
+      "exit": 0,
+      "stdout": "[quote]\n\"Check lever.\"\n\nRecord the result.\n[/quote]\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#e2e:bbcode_phpbb": {
+      "key": "adc3c5502bc0b31a",
+      "exit": 0,
+      "stdout": "[quote]\n\"Check lever.\"\n\nRecord the result.\n[/quote]\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#e2e:bbcode_steam": {
+      "key": "47b58250c2c6f8fe",
+      "exit": 0,
+      "stdout": "[quote]\n\"Check lever.\"\n\nRecord the result.\n[/quote]\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#e2e:bbcode_xenforo": {
+      "key": "7f0ef83a159246a5",
+      "exit": 0,
+      "stdout": "[quote]\n\"Check lever.\"\n\nRecord the result.\n[/quote]\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#read": {
+      "key": "18ffe5ef0c181096",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"lever.\"}]]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Record\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"result.\"}]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Continue\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test.\"}]}]}\n",
+      "stderr": ""
+    },
+    "quote#write:bbcode": {
+      "key": "5dcef7e25864ddf5",
+      "exit": 0,
+      "stdout": "[quote]\n\"Check lever.\"\n\nRecord the result.\n[/quote]\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#write:bbcode_fluxbb": {
+      "key": "7eddd9ab4e9df8c8",
+      "exit": 0,
+      "stdout": "[quote]\n\"Check lever.\"\n\nRecord the result.\n[/quote]\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#write:bbcode_hubzilla": {
+      "key": "b9731132ab78b720",
+      "exit": 0,
+      "stdout": "[quote]\n\"Check lever.\"\n\nRecord the result.\n[/quote]\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#write:bbcode_phpbb": {
+      "key": "6f6bbf44bd30b186",
+      "exit": 0,
+      "stdout": "[quote]\n\"Check lever.\"\n\nRecord the result.\n[/quote]\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#write:bbcode_steam": {
+      "key": "4b05c6f668d6721a",
+      "exit": 0,
+      "stdout": "[quote]\n\"Check lever.\"\n\nRecord the result.\n[/quote]\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#write:bbcode_xenforo": {
+      "key": "6506d337dfc747c5",
+      "exit": 0,
+      "stdout": "[quote]\n\"Check lever.\"\n\nRecord the result.\n[/quote]\n\nContinue the test.\n",
+      "stderr": ""
+    }
+  }
+}

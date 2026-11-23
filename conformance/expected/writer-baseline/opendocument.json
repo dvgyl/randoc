@@ -1,0 +1,257 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "bullet-list#e2e:opendocument": {
+      "key": "a2ccc3b1847bdefe",
+      "exit": 0,
+      "stdout": "<text:list text:style-name=\"List_20_1\">\n  <text:list-item>\n    <text:p text:style-name=\"List_20_Bullet_20_Tight\">Check\n    mark.</text:p><text:list text:style-name=\"List_20_1\">\n      <text:list-item>\n        <text:p text:style-name=\"List_20_Bullet_20_Tight\">Log\n        15.</text:p>\n      </text:list-item>\n    </text:list>\n  </text:list-item>\n  <text:list-item>\n    <text:p text:style-name=\"List_20_Bullet_20_Tight\">Check\n    tube.</text:p>\n  </text:list-item>\n</text:list>\n",
+      "stderr": ""
+    },
+    "bullet-list#read": {
+      "key": "b11136eadac71505",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark.\"}]},{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Log\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"15.\"}]}]]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tube.\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "bullet-list#write:opendocument": {
+      "key": "91498f17d03ab341",
+      "exit": 0,
+      "stdout": "<text:list text:style-name=\"List_20_1\">\n  <text:list-item>\n    <text:p text:style-name=\"List_20_Bullet_20_Tight\">Check\n    mark.</text:p><text:list text:style-name=\"List_20_1\">\n      <text:list-item>\n        <text:p text:style-name=\"List_20_Bullet_20_Tight\">Log\n        15.</text:p>\n      </text:list-item>\n    </text:list>\n  </text:list-item>\n  <text:list-item>\n    <text:p text:style-name=\"List_20_Bullet_20_Tight\">Check\n    tube.</text:p>\n  </text:list-item>\n</text:list>\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:opendocument": {
+      "key": "0f513fec37dcc66b",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"TableCaption\">Level check values</text:p>\n<table:table table:name=\"Table1\" table:style-name=\"Table1\">\n  <table:table-column table:style-name=\"Table1.A\" />\n  <table:table-column table:style-name=\"Table1.B\" />\n  <table:table-header-rows>\n    <table:table-row>\n      <table:table-cell table:style-name=\"TableHeaderRowCell\" office:value-type=\"string\">\n        <text:p text:style-name=\"Table_20_Heading\">Item</text:p>\n      </table:table-cell>\n      <table:table-cell table:style-name=\"TableHeaderRowCell\" office:value-type=\"string\">\n        <text:p text:style-name=\"P1\">Value</text:p>\n      </table:table-cell>\n    </table:table-row>\n  </table:table-header-rows>\n  <table:table-row>\n    <table:table-cell table:style-name=\"TableRowCell\" office:value-type=\"string\">\n      <text:p text:style-name=\"Table_20_Contents\">mark</text:p>\n    </table:table-cell>\n    <table:table-cell table:style-name=\"TableRowCell\" office:value-type=\"string\">\n      <text:p text:style-name=\"P2\">15</text:p>\n    </table:table-cell>\n  </table:table-row>\n</table:table>\n",
+      "stderr": ""
+    },
+    "captioned-table#read": {
+      "key": "ec8fba3fe963895c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"check-table\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Level\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"values\"}]}]],[[{\"t\":\"AlignLeft\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignRight\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Item\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Value\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"mark\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"15\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "captioned-table#write:opendocument": {
+      "key": "bdd847323dc79db1",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"TableCaption\">Level check values</text:p>\n<table:table table:name=\"Table1\" table:style-name=\"Table1\">\n  <table:table-column table:style-name=\"Table1.A\" />\n  <table:table-column table:style-name=\"Table1.B\" />\n  <table:table-header-rows>\n    <table:table-row>\n      <table:table-cell table:style-name=\"TableHeaderRowCell\" office:value-type=\"string\">\n        <text:p text:style-name=\"Table_20_Heading\">Item</text:p>\n      </table:table-cell>\n      <table:table-cell table:style-name=\"TableHeaderRowCell\" office:value-type=\"string\">\n        <text:p text:style-name=\"P1\">Value</text:p>\n      </table:table-cell>\n    </table:table-row>\n  </table:table-header-rows>\n  <table:table-row>\n    <table:table-cell table:style-name=\"TableRowCell\" office:value-type=\"string\">\n      <text:p text:style-name=\"Table_20_Contents\">mark</text:p>\n    </table:table-cell>\n    <table:table-cell table:style-name=\"TableRowCell\" office:value-type=\"string\">\n      <text:p text:style-name=\"P2\">15</text:p>\n    </table:table-cell>\n  </table:table-row>\n</table:table>\n",
+      "stderr": ""
+    },
+    "code-block#e2e:opendocument": {
+      "key": "ff4862899afc04d4",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"Preformatted_20_Text\">\n<text:span text:style-name=\"NormalTok\">value </text:span><text:span text:style-name=\"OperatorTok\">=</text:span><text:span text:style-name=\"NormalTok\"><text:s text:c=\"1\" /></text:span><text:span text:style-name=\"DecValTok\">15</text:span>\n</text:p>\n<text:p text:style-name=\"Preformatted_20_Text\">\n<text:span text:style-name=\"BuiltInTok\">print</text:span><text:span text:style-name=\"NormalTok\">(value </text:span><text:span text:style-name=\"OperatorTok\">&lt;</text:span><text:span text:style-name=\"NormalTok\"><text:s text:c=\"1\" /></text:span><text:span text:style-name=\"DecValTok\">25</text:span><text:span text:style-name=\"NormalTok\">)</text:span>\n</text:p>\n<text:p text:style-name=\"Preformatted_20_Text\">mark</text:p>\n<text:p text:style-name=\"Preformatted_20_Text\"><text:s text:c=\"2\" />tube</text:p>\n",
+      "stderr": ""
+    },
+    "code-block#read": {
+      "key": "62a88506eda446e7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"sample-code\",[\"python\"],[]],\"value = 15\\nprint(value < 25)\"]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"mark\\n  tube\\n\"]}]}\n",
+      "stderr": ""
+    },
+    "code-block#write:opendocument": {
+      "key": "2ed798fa569caeb9",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"Preformatted_20_Text\">\n<text:span text:style-name=\"NormalTok\">value </text:span><text:span text:style-name=\"OperatorTok\">=</text:span><text:span text:style-name=\"NormalTok\"><text:s text:c=\"1\" /></text:span><text:span text:style-name=\"DecValTok\">15</text:span>\n</text:p>\n<text:p text:style-name=\"Preformatted_20_Text\">\n<text:span text:style-name=\"BuiltInTok\">print</text:span><text:span text:style-name=\"NormalTok\">(value </text:span><text:span text:style-name=\"OperatorTok\">&lt;</text:span><text:span text:style-name=\"NormalTok\"><text:s text:c=\"1\" /></text:span><text:span text:style-name=\"DecValTok\">25</text:span><text:span text:style-name=\"NormalTok\">)</text:span>\n</text:p>\n<text:p text:style-name=\"Preformatted_20_Text\">mark</text:p>\n<text:p text:style-name=\"Preformatted_20_Text\"><text:s text:c=\"2\" />tube</text:p>\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:opendocument": {
+      "key": "c5ac901d73264b3b",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"Definition_20_Term_20_Tight\">Limit</text:p>\n<text:p text:style-name=\"Definition_20_Definition_20_Tight\">Highest\npermitted 15.</text:p>\n<text:p text:style-name=\"Definition_20_Definition_20_Tight\">See the\nlog.</text:p>\n<text:p text:style-name=\"Definition_20_Term_20_Tight\">Zero</text:p>\n<text:p text:style-name=\"Definition_20_Definition_20_Tight\">Start\nvalue.</text:p>\n",
+      "stderr": ""
+    },
+    "definition-list#read": {
+      "key": "d07ab61f26a59154",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"Limit\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Highest\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"permitted\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"15.\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"See\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log.\"}]}]]],[[{\"t\":\"Str\",\"c\":\"Zero\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Start\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"value.\"}]}]]]]}]}\n",
+      "stderr": ""
+    },
+    "definition-list#write:opendocument": {
+      "key": "a1cf49fc979c9dae",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"Definition_20_Term_20_Tight\">Limit</text:p>\n<text:p text:style-name=\"Definition_20_Definition_20_Tight\">Highest\npermitted 15.</text:p>\n<text:p text:style-name=\"Definition_20_Definition_20_Tight\">See the\nlog.</text:p>\n<text:p text:style-name=\"Definition_20_Term_20_Tight\">Zero</text:p>\n<text:p text:style-name=\"Definition_20_Definition_20_Tight\">Start\nvalue.</text:p>\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:opendocument": {
+      "key": "d499e608555c5548",
+      "exit": 0,
+      "stdout": "<text:section text:name=\"check-panel\"><text:p text:style-name=\"Text_20_body\"><text:bookmark-start text:name=\"check-step\" /><text:span text:style-name=\"T1\">Level\ncheck</text:span><text:bookmark-end text:name=\"check-step\" /><text:span text:style-name=\"T1\">\nmark</text:span></text:p></text:section>\n",
+      "stderr": ""
+    },
+    "div-and-span#read": {
+      "key": "1ece94032e297d87",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"check-panel\",[\"inspection\"],[[\"lang\",\"en\"]]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"check-step\",[\"label\"],[[\"title\",\"Check location\"]]],[{\"t\":\"Str\",\"c\":\"Level\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "div-and-span#write:opendocument": {
+      "key": "bb9d2f46b78a298c",
+      "exit": 0,
+      "stdout": "<text:section text:name=\"check-panel\"><text:p text:style-name=\"Text_20_body\"><text:bookmark-start text:name=\"check-step\" /><text:span text:style-name=\"T1\">Level\ncheck</text:span><text:bookmark-end text:name=\"check-step\" /><text:span text:style-name=\"T1\">\nmark</text:span></text:p></text:section>\n",
+      "stderr": ""
+    },
+    "headings#e2e:opendocument": {
+      "key": "c98079ef6abe76e4",
+      "exit": 0,
+      "stdout": "<text:h text:style-name=\"Heading_20_1\" text:outline-level=\"1\"><text:bookmark-start text:name=\"mark\" />Level\ncheck<text:bookmark-end text:name=\"mark\" /></text:h>\n<text:p text:style-name=\"First_20_paragraph\">Start here.</text:p>\n<text:h text:style-name=\"Heading_20_2\" text:outline-level=\"2\"><text:bookmark-start text:name=\"details\" />Readings<text:bookmark-end text:name=\"details\" /></text:h>\n<text:p text:style-name=\"First_20_paragraph\">Check tube.</text:p>\n",
+      "stderr": ""
+    },
+    "headings#read": {
+      "key": "62d0293e352c22d3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"mark\",[],[]],[{\"t\":\"Str\",\"c\":\"Level\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Start\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"here.\"}]},{\"t\":\"Header\",\"c\":[2,[\"details\",[\"unnumbered\"],[]],[{\"t\":\"Str\",\"c\":\"Readings\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tube.\"}]}]}\n",
+      "stderr": ""
+    },
+    "headings#write:opendocument": {
+      "key": "b9d4a66b995fdcc9",
+      "exit": 0,
+      "stdout": "<text:h text:style-name=\"Heading_20_1\" text:outline-level=\"1\"><text:bookmark-start text:name=\"mark\" />Level\ncheck<text:bookmark-end text:name=\"mark\" /></text:h>\n<text:p text:style-name=\"First_20_paragraph\">Start here.</text:p>\n<text:h text:style-name=\"Heading_20_2\" text:outline-level=\"2\"><text:bookmark-start text:name=\"details\" />Readings<text:bookmark-end text:name=\"details\" /></text:h>\n<text:p text:style-name=\"First_20_paragraph\">Check tube.</text:p>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:opendocument": {
+      "key": "80adc44bb452d451",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"Text_20_body\">Before the mark check.</text:p>\n<text:p text:style-name=\"Horizontal_20_Line\" />\n<text:p text:style-name=\"First_20_paragraph\">After the tube\ncheck.</text:p>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#read": {
+      "key": "64b4977126591636",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check.\"}]},{\"t\":\"HorizontalRule\"},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"After\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tube\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check.\"}]}]}\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:opendocument": {
+      "key": "a8f3c66335c5dacb",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"Text_20_body\">Before the mark check.</text:p>\n<text:p text:style-name=\"Horizontal_20_Line\" />\n<text:p text:style-name=\"First_20_paragraph\">After the tube\ncheck.</text:p>\n",
+      "stderr": ""
+    },
+    "image#e2e:opendocument": {
+      "key": "de1d6e527a27767d",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"Text_20_body\"><draw:frame draw:name=\"img1\" text:anchor-type=\"as-char\" svg:width=\"24px\"><draw:image xlink:href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\" xlink:type=\"simple\" xlink:show=\"embed\" xlink:actuate=\"onLoad\" /></draw:frame></text:p>\n",
+      "stderr": ""
+    },
+    "image#read": {
+      "key": "9268725c43b45e40",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Image\",\"c\":[[\"sample\",[],[[\"width\",\"24px\"]]],[{\"t\":\"Str\",\"c\":\"Level\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sample\"}],[\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\",\"Blue pixel\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "image#write:opendocument": {
+      "key": "401fe00c17e450f3",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"Text_20_body\"><draw:frame draw:name=\"img1\" text:anchor-type=\"as-char\" svg:width=\"24px\"><draw:image xlink:href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\" xlink:type=\"simple\" xlink:show=\"embed\" xlink:actuate=\"onLoad\" /></draw:frame></text:p>\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:opendocument": {
+      "key": "e4fcf0178d0664da",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"Text_20_body\"><text:span text:style-name=\"Emphasis\">mark</text:span>\n<text:span text:style-name=\"Strong_20_Emphasis\">tube</text:span>\n<text:span text:style-name=\"Source_20_Text\">a_b + 2</text:span>\n<text:span text:style-name=\"Strikeout\">retired</text:span>\nH<text:span text:style-name=\"Subscript\">2</text:span>O\nm<text:span text:style-name=\"Superscript\">2</text:span></text:p>\n",
+      "stderr": ""
+    },
+    "inline-styles#read": {
+      "key": "442d29959510caa9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"mark\"}]},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"tube\"}]},{\"t\":\"Space\"},{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"a_b + 2\"]},{\"t\":\"Space\"},{\"t\":\"Strikeout\",\"c\":[{\"t\":\"Str\",\"c\":\"retired\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"H\"},{\"t\":\"Subscript\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]},{\"t\":\"Str\",\"c\":\"O\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"m\"},{\"t\":\"Superscript\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "inline-styles#write:opendocument": {
+      "key": "c7162ba43ca448c7",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"Text_20_body\"><text:span text:style-name=\"Emphasis\">mark</text:span>\n<text:span text:style-name=\"Strong_20_Emphasis\">tube</text:span>\n<text:span text:style-name=\"Source_20_Text\">a_b + 2</text:span>\n<text:span text:style-name=\"Strikeout\">retired</text:span>\nH<text:span text:style-name=\"Subscript\">2</text:span>O\nm<text:span text:style-name=\"Superscript\">2</text:span></text:p>\n",
+      "stderr": ""
+    },
+    "links#e2e:opendocument": {
+      "key": "669c287721d168a4",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"Text_20_body\"><text:a xlink:type=\"simple\" xlink:href=\"https://example.invalid/log?mode=day&amp;view=full\" office:name=\"Open log\"><text:span text:style-name=\"Definition\">Read\nthe mark log</text:span></text:a>\n<text:a xlink:type=\"simple\" xlink:href=\"#tube\" office:name=\"\"><text:span text:style-name=\"Definition\">section</text:span></text:a></text:p>\n<text:h text:style-name=\"Heading_20_2\" text:outline-level=\"2\"><text:bookmark-start text:name=\"tube\" />Log\nentry<text:bookmark-end text:name=\"tube\" /></text:h>\n",
+      "stderr": ""
+    },
+    "links#read": {
+      "key": "f04dec30c480265b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log\"}],[\"https://example.invalid/log?mode=day&view=full\",\"Open log\"]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"section\"}],[\"#tube\",\"\"]]}]},{\"t\":\"Header\",\"c\":[2,[\"tube\",[],[]],[{\"t\":\"Str\",\"c\":\"Log\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"entry\"}]]}]}\n",
+      "stderr": ""
+    },
+    "links#write:opendocument": {
+      "key": "8eba340454f49b63",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"Text_20_body\"><text:a xlink:type=\"simple\" xlink:href=\"https://example.invalid/log?mode=day&amp;view=full\" office:name=\"Open log\"><text:span text:style-name=\"Definition\">Read\nthe mark log</text:span></text:a>\n<text:a xlink:type=\"simple\" xlink:href=\"#tube\" office:name=\"\"><text:span text:style-name=\"Definition\">section</text:span></text:a></text:p>\n<text:h text:style-name=\"Heading_20_2\" text:outline-level=\"2\"><text:bookmark-start text:name=\"tube\" />Log\nentry<text:bookmark-end text:name=\"tube\" /></text:h>\n",
+      "stderr": ""
+    },
+    "notes#e2e:opendocument": {
+      "key": "8268498941621902",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"Text_20_body\">mark<text:note text:id=\"ftn0\" text:note-class=\"footnote\"><text:note-citation>1</text:note-citation><text:note-body><text:p text:style-name=\"Footnote\">Use\nthe lower\nmark.</text:p><text:p text:style-name=\"Footnote\"><text:span text:style-name=\"Emphasis\">Check\nthe scale.</text:span></text:p></text:note-body></text:note>\ntube<text:note text:id=\"ftn1\" text:note-class=\"footnote\"><text:note-citation>2</text:note-citation><text:note-body><text:p text:style-name=\"Footnote\">Use\nthe upper mark.</text:p></text:note-body></text:note></text:p>\n",
+      "stderr": ""
+    },
+    "notes#read": {
+      "key": "fbf5943dfeb3ec65",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"mark\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"lower\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"scale.\"}]}]}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tube\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"upper\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark.\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "notes#write:opendocument": {
+      "key": "7593d7b66e29b736",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"Text_20_body\">mark<text:note text:id=\"ftn0\" text:note-class=\"footnote\"><text:note-citation>1</text:note-citation><text:note-body><text:p text:style-name=\"Footnote\">Use\nthe lower\nmark.</text:p><text:p text:style-name=\"Footnote\"><text:span text:style-name=\"Emphasis\">Check\nthe scale.</text:span></text:p></text:note-body></text:note>\ntube<text:note text:id=\"ftn1\" text:note-class=\"footnote\"><text:note-citation>2</text:note-citation><text:note-body><text:p text:style-name=\"Footnote\">Use\nthe upper mark.</text:p></text:note-body></text:note></text:p>\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:opendocument": {
+      "key": "69b5df1603fe3912",
+      "exit": 0,
+      "stdout": "<text:list text:style-name=\"Pandoc_5f_Numbering_5f_1\" text:start-value=\"4\">\n  <text:list-item>\n    <text:p text:style-name=\"List_20_Number\">Open mark.</text:p>\n    <text:p text:style-name=\"List_20_Number\">Wait for the\n    signal.</text:p>\n  </text:list-item>\n  <text:list-item>\n    <text:p text:style-name=\"List_20_Number\">Close tube.</text:p>\n  </text:list-item>\n</text:list>\n",
+      "stderr": ""
+    },
+    "ordered-list#read": {
+      "key": "3bef1fcdc0888af1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[4,{\"t\":\"UpperRoman\"},{\"t\":\"OneParen\"}],[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Open\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Wait\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"for\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"signal.\"}]}],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Close\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tube.\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "ordered-list#write:opendocument": {
+      "key": "b9e39448291cfa24",
+      "exit": 0,
+      "stdout": "<text:list text:style-name=\"Pandoc_5f_Numbering_5f_1\" text:start-value=\"4\">\n  <text:list-item>\n    <text:p text:style-name=\"List_20_Number\">Open mark.</text:p>\n    <text:p text:style-name=\"List_20_Number\">Wait for the\n    signal.</text:p>\n  </text:list-item>\n  <text:list-item>\n    <text:p text:style-name=\"List_20_Number\">Close tube.</text:p>\n  </text:list-item>\n</text:list>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:opendocument": {
+      "key": "c75573c79caf872c",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"Text_20_body\">Level check log.</text:p>\n<text:p text:style-name=\"Text_20_body\">Read slowly.\nStop.<text:line-break />Café &amp; &lt;check&gt;</text:p>\n",
+      "stderr": ""
+    },
+    "paragraphs#read": {
+      "key": "61070485af752faf",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Level\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"slowly.\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"Stop.\"},{\"t\":\"LineBreak\"},{\"t\":\"Str\",\"c\":\"Café & <check>\"}]}]}\n",
+      "stderr": ""
+    },
+    "paragraphs#write:opendocument": {
+      "key": "357f4bd20e291a79",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"Text_20_body\">Level check log.</text:p>\n<text:p text:style-name=\"Text_20_body\">Read slowly.\nStop.<text:line-break />Café &amp; &lt;check&gt;</text:p>\n",
+      "stderr": ""
+    },
+    "quote#e2e:opendocument": {
+      "key": "36c6ca71e263f285",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"Quotations\">“Check mark.”</text:p>\n<text:p text:style-name=\"Quotations\">Record the result.</text:p>\n<text:p text:style-name=\"First_20_paragraph\">Continue the test.</text:p>\n",
+      "stderr": ""
+    },
+    "quote#read": {
+      "key": "3c39fb8a98acc19e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark.\"}]]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Record\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"result.\"}]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Continue\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test.\"}]}]}\n",
+      "stderr": ""
+    },
+    "quote#write:opendocument": {
+      "key": "782c9158841fe649",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"Quotations\">“Check mark.”</text:p>\n<text:p text:style-name=\"Quotations\">Record the result.</text:p>\n<text:p text:style-name=\"First_20_paragraph\">Continue the test.</text:p>\n",
+      "stderr": ""
+    }
+  }
+}

@@ -1,0 +1,929 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "bullet-list#e2e:dokuwiki": {
+      "key": "f93b459f529b0bea",
+      "exit": 0,
+      "stdout": "  * Check latch.\n    * Log 9.\n  * Check hinge.\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:jira": {
+      "key": "a81a17e16affa6e1",
+      "exit": 0,
+      "stdout": "* Check latch.\n** Log 9.\n* Check hinge.\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:mediawiki": {
+      "key": "e7f200e7071b3b44",
+      "exit": 0,
+      "stdout": "* Check latch.\n** Log 9.\n* Check hinge.\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:xwiki": {
+      "key": "54f49e64233bf344",
+      "exit": 0,
+      "stdout": "*. Check latch.\n**. Log 9.\n*. Check hinge.\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:zimwiki": {
+      "key": "718d78168352cef2",
+      "exit": 0,
+      "stdout": "* Check latch.\n\t* Log 9.\n* Check hinge.\n",
+      "stderr": ""
+    },
+    "bullet-list#read": {
+      "key": "e422e6704f768f37",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"latch.\"}]},{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Log\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"9.\"}]}]]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"hinge.\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "bullet-list#write:dokuwiki": {
+      "key": "4ee6e21ca63bec3b",
+      "exit": 0,
+      "stdout": "  * Check latch.\n    * Log 9.\n  * Check hinge.\n",
+      "stderr": ""
+    },
+    "bullet-list#write:jira": {
+      "key": "e5791d7224793a3e",
+      "exit": 0,
+      "stdout": "* Check latch.\n** Log 9.\n* Check hinge.\n",
+      "stderr": ""
+    },
+    "bullet-list#write:mediawiki": {
+      "key": "069ffb157749bb6b",
+      "exit": 0,
+      "stdout": "* Check latch.\n** Log 9.\n* Check hinge.\n",
+      "stderr": ""
+    },
+    "bullet-list#write:xwiki": {
+      "key": "e1f65b356b3313d3",
+      "exit": 0,
+      "stdout": "*. Check latch.\n**. Log 9.\n*. Check hinge.\n",
+      "stderr": ""
+    },
+    "bullet-list#write:zimwiki": {
+      "key": "13db882b637d1fe1",
+      "exit": 0,
+      "stdout": "* Check latch.\n\t* Log 9.\n* Check hinge.\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:dokuwiki": {
+      "key": "70b6b1d49cc1792d",
+      "exit": 0,
+      "stdout": "Gate check values\n^Item   ^  Value^\n|latch  |      9|\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:jira": {
+      "key": "db7656ab479df726",
+      "exit": 0,
+      "stdout": "|| Item || Value ||\n| latch | 9 |\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:mediawiki": {
+      "key": "0e8f86088c6bd6db",
+      "exit": 0,
+      "stdout": "{| id=\"check-table\" class=\"wikitable\"\n|+ Gate check values\n|-\n! style=\"text-align: left;\"| Item\n! style=\"text-align: right;\"| Value\n|-\n| style=\"text-align: left;\"| latch\n| style=\"text-align: right;\"| 9\n|}\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:xwiki": {
+      "key": "52543f2ba77d0edb",
+      "exit": 0,
+      "stdout": "|=Item |=Value\n|latch |9\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:zimwiki": {
+      "key": "e30ee13fe951e195",
+      "exit": 0,
+      "stdout": "Gate check values\n|Item   |Value|\n|:------|----:|\n|latch  |    9|\n",
+      "stderr": ""
+    },
+    "captioned-table#read": {
+      "key": "813354c6538637d8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"check-table\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Gate\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"values\"}]}]],[[{\"t\":\"AlignLeft\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignRight\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Item\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Value\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"latch\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"9\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "captioned-table#write:dokuwiki": {
+      "key": "a2dfed732b6042c9",
+      "exit": 0,
+      "stdout": "Gate check values\n^Item   ^  Value^\n|latch  |      9|\n",
+      "stderr": ""
+    },
+    "captioned-table#write:jira": {
+      "key": "5aa0823bb56e9c1e",
+      "exit": 0,
+      "stdout": "|| Item || Value ||\n| latch | 9 |\n",
+      "stderr": ""
+    },
+    "captioned-table#write:mediawiki": {
+      "key": "0129da529fcb8019",
+      "exit": 0,
+      "stdout": "{| id=\"check-table\" class=\"wikitable\"\n|+ Gate check values\n|-\n! style=\"text-align: left;\"| Item\n! style=\"text-align: right;\"| Value\n|-\n| style=\"text-align: left;\"| latch\n| style=\"text-align: right;\"| 9\n|}\n",
+      "stderr": ""
+    },
+    "captioned-table#write:xwiki": {
+      "key": "96c928d57270a461",
+      "exit": 0,
+      "stdout": "|=Item |=Value\n|latch |9\n",
+      "stderr": ""
+    },
+    "captioned-table#write:zimwiki": {
+      "key": "f38f433118b5b51f",
+      "exit": 0,
+      "stdout": "Gate check values\n|Item   |Value|\n|:------|----:|\n|latch  |    9|\n",
+      "stderr": ""
+    },
+    "code-block#e2e:dokuwiki": {
+      "key": "8b2eb61180e3b124",
+      "exit": 0,
+      "stdout": "<code python>\nvalue = 9\nprint(value < 25)\n</code>\n\n<code>\nlatch\n  hinge\n</code>\n",
+      "stderr": ""
+    },
+    "code-block#e2e:jira": {
+      "key": "ea6e79688a58d6db",
+      "exit": 0,
+      "stdout": "{anchor:sample-code}\n\n{code:python}\nvalue = 9\nprint(value < 25)\n{code}\n{noformat}\nlatch\n  hinge\n{noformat}\n",
+      "stderr": ""
+    },
+    "code-block#e2e:mediawiki": {
+      "key": "e246680f1c556d96",
+      "exit": 0,
+      "stdout": "<syntaxhighlight lang=\"python\">value = 9\nprint(value < 25)</syntaxhighlight>\n<pre>latch\n  hinge\n</pre>\n",
+      "stderr": ""
+    },
+    "code-block#e2e:xwiki": {
+      "key": "865396b1e0052596",
+      "exit": 0,
+      "stdout": "\n{{code language=\"python\"}}\nvalue = 9\nprint(value < 25)\n{{/code}}\n\n\n{{code}}\nlatch\n  hinge\n\n{{/code}}\n",
+      "stderr": ""
+    },
+    "code-block#e2e:zimwiki": {
+      "key": "57b7678a00e28e3c",
+      "exit": 0,
+      "stdout": "{{{code: lang=\"python\" linenumbers=\"True\"\nvalue = 9\nprint(value < 25)\n}}}\n\n'''\nlatch\n  hinge\n\n'''\n",
+      "stderr": ""
+    },
+    "code-block#read": {
+      "key": "6f85ef9a3ced2811",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"sample-code\",[\"python\"],[]],\"value = 9\\nprint(value < 25)\"]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"latch\\n  hinge\\n\"]}]}\n",
+      "stderr": ""
+    },
+    "code-block#write:dokuwiki": {
+      "key": "2392016917082065",
+      "exit": 0,
+      "stdout": "<code python>\nvalue = 9\nprint(value < 25)\n</code>\n\n<code>\nlatch\n  hinge\n</code>\n",
+      "stderr": ""
+    },
+    "code-block#write:jira": {
+      "key": "810a191769102a94",
+      "exit": 0,
+      "stdout": "{anchor:sample-code}\n\n{code:python}\nvalue = 9\nprint(value < 25)\n{code}\n{noformat}\nlatch\n  hinge\n{noformat}\n",
+      "stderr": ""
+    },
+    "code-block#write:mediawiki": {
+      "key": "d8d667c3061238b5",
+      "exit": 0,
+      "stdout": "<syntaxhighlight lang=\"python\">value = 9\nprint(value < 25)</syntaxhighlight>\n<pre>latch\n  hinge\n</pre>\n",
+      "stderr": ""
+    },
+    "code-block#write:xwiki": {
+      "key": "bcd1cab631c0b3cd",
+      "exit": 0,
+      "stdout": "\n{{code language=\"python\"}}\nvalue = 9\nprint(value < 25)\n{{/code}}\n\n\n{{code}}\nlatch\n  hinge\n\n{{/code}}\n",
+      "stderr": ""
+    },
+    "code-block#write:zimwiki": {
+      "key": "f4bd7604a5804c27",
+      "exit": 0,
+      "stdout": "{{{code: lang=\"python\" linenumbers=\"True\"\nvalue = 9\nprint(value < 25)\n}}}\n\n'''\nlatch\n  hinge\n\n'''\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:dokuwiki": {
+      "key": "b222a1188df7f70b",
+      "exit": 0,
+      "stdout": "  * **Limit** Highest permitted 9.; See the log.\n  * **Zero** Start value.\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:jira": {
+      "key": "329576878c116ff0",
+      "exit": 0,
+      "stdout": "* *Limit*\nHighest permitted 9.\nSee the log.\n* *Zero*\nStart value.\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:mediawiki": {
+      "key": "2a35d28ed1493795",
+      "exit": 0,
+      "stdout": "; Limit\n: Highest permitted 9.\n: See the log.\n; Zero\n: Start value.\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:xwiki": {
+      "key": "42158360a1582f95",
+      "exit": 0,
+      "stdout": "; Limit\n: Highest permitted 9.\n: See the log.\n; Zero\n: Start value.\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:zimwiki": {
+      "key": "adf06af811d30053",
+      "exit": 0,
+      "stdout": "* **Limit** Highest permitted 9.See the log.\n* **Zero** Start value.\n",
+      "stderr": ""
+    },
+    "definition-list#read": {
+      "key": "11eceb334292e956",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"Limit\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Highest\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"permitted\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"9.\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"See\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log.\"}]}]]],[[{\"t\":\"Str\",\"c\":\"Zero\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Start\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"value.\"}]}]]]]}]}\n",
+      "stderr": ""
+    },
+    "definition-list#write:dokuwiki": {
+      "key": "e8fe568265ba1b0c",
+      "exit": 0,
+      "stdout": "  * **Limit** Highest permitted 9.; See the log.\n  * **Zero** Start value.\n",
+      "stderr": ""
+    },
+    "definition-list#write:jira": {
+      "key": "4dd252efc6f9a615",
+      "exit": 0,
+      "stdout": "* *Limit*\nHighest permitted 9.\nSee the log.\n* *Zero*\nStart value.\n",
+      "stderr": ""
+    },
+    "definition-list#write:mediawiki": {
+      "key": "229a15d4a891ab9c",
+      "exit": 0,
+      "stdout": "; Limit\n: Highest permitted 9.\n: See the log.\n; Zero\n: Start value.\n",
+      "stderr": ""
+    },
+    "definition-list#write:xwiki": {
+      "key": "45f5cfb328991bf4",
+      "exit": 0,
+      "stdout": "; Limit\n: Highest permitted 9.\n: See the log.\n; Zero\n: Start value.\n",
+      "stderr": ""
+    },
+    "definition-list#write:zimwiki": {
+      "key": "b728527e9cf59cde",
+      "exit": 0,
+      "stdout": "* **Limit** Highest permitted 9.See the log.\n* **Zero** Start value.\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:dokuwiki": {
+      "key": "178a00ce608c5862",
+      "exit": 0,
+      "stdout": "Gate check latch\n\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:jira": {
+      "key": "8e33e15950ff2b97",
+      "exit": 0,
+      "stdout": "{panel:lang=en}\n{anchor:check-panel}{anchor:check-step}Gate check latch\n{panel}\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:mediawiki": {
+      "key": "6899e7e88dc358b8",
+      "exit": 0,
+      "stdout": "<div id=\"check-panel\" class=\"inspection\" lang=\"en\">\n<span id=\"check-step\" class=\"label\" title=\"Check location\">Gate check</span> latch\n\n</div>\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:xwiki": {
+      "key": "443285806c2480b8",
+      "exit": 0,
+      "stdout": "{{id name=\"check-panel\" /}}{{id name=\"check-step\" /}}Gate check latch\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:zimwiki": {
+      "key": "c79686e65e202a4a",
+      "exit": 0,
+      "stdout": "Gate check latch\n\n",
+      "stderr": ""
+    },
+    "div-and-span#read": {
+      "key": "02e238a1b3e96c79",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"check-panel\",[\"inspection\"],[[\"lang\",\"en\"]]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"check-step\",[\"label\"],[[\"title\",\"Check location\"]]],[{\"t\":\"Str\",\"c\":\"Gate\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"latch\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "div-and-span#write:dokuwiki": {
+      "key": "128a7c0b6a83d7a6",
+      "exit": 0,
+      "stdout": "Gate check latch\n\n",
+      "stderr": ""
+    },
+    "div-and-span#write:jira": {
+      "key": "fd6c671897d32a5d",
+      "exit": 0,
+      "stdout": "{panel:lang=en}\n{anchor:check-panel}{anchor:check-step}Gate check latch\n{panel}\n",
+      "stderr": ""
+    },
+    "div-and-span#write:mediawiki": {
+      "key": "df765347e1f23e96",
+      "exit": 0,
+      "stdout": "<div id=\"check-panel\" class=\"inspection\" lang=\"en\">\n<span id=\"check-step\" class=\"label\" title=\"Check location\">Gate check</span> latch\n\n</div>\n",
+      "stderr": ""
+    },
+    "div-and-span#write:xwiki": {
+      "key": "f72c9186918c8d0e",
+      "exit": 0,
+      "stdout": "{{id name=\"check-panel\" /}}{{id name=\"check-step\" /}}Gate check latch\n",
+      "stderr": ""
+    },
+    "div-and-span#write:zimwiki": {
+      "key": "06f65344c2428fac",
+      "exit": 0,
+      "stdout": "Gate check latch\n\n",
+      "stderr": ""
+    },
+    "headings#e2e:dokuwiki": {
+      "key": "a158ff0075d49762",
+      "exit": 0,
+      "stdout": "====== Gate check ======\n\nStart here.\n\n===== Readings =====\n\nCheck hinge.\n",
+      "stderr": ""
+    },
+    "headings#e2e:jira": {
+      "key": "21f6018d79265919",
+      "exit": 0,
+      "stdout": "h1. {anchor:latch}Gate check\nStart here.\n\nh2. {anchor:details}Readings\nCheck hinge.\n",
+      "stderr": ""
+    },
+    "headings#e2e:mediawiki": {
+      "key": "46dfea960e0022c4",
+      "exit": 0,
+      "stdout": "<span id=\"latch\"></span>\n= Gate check =\n\nStart here.\n\n<span id=\"details\"></span>\n== Readings ==\n\nCheck hinge.\n",
+      "stderr": ""
+    },
+    "headings#e2e:xwiki": {
+      "key": "7023061efba61ac4",
+      "exit": 0,
+      "stdout": "= Gate check {{id name=\"latch\" /}}=\n\nStart here.\n\n== Readings {{id name=\"details\" /}}==\n\nCheck hinge.\n",
+      "stderr": ""
+    },
+    "headings#e2e:zimwiki": {
+      "key": "b0a7bc2c6b50baca",
+      "exit": 0,
+      "stdout": "====== Gate check ======\n\nStart here.\n\n===== Readings =====\n\nCheck hinge.\n",
+      "stderr": ""
+    },
+    "headings#read": {
+      "key": "57cd7481675d72a7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"latch\",[],[]],[{\"t\":\"Str\",\"c\":\"Gate\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Start\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"here.\"}]},{\"t\":\"Header\",\"c\":[2,[\"details\",[\"unnumbered\"],[]],[{\"t\":\"Str\",\"c\":\"Readings\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"hinge.\"}]}]}\n",
+      "stderr": ""
+    },
+    "headings#write:dokuwiki": {
+      "key": "9ad8488853623801",
+      "exit": 0,
+      "stdout": "====== Gate check ======\n\nStart here.\n\n===== Readings =====\n\nCheck hinge.\n",
+      "stderr": ""
+    },
+    "headings#write:jira": {
+      "key": "b0a85a4b7faf3408",
+      "exit": 0,
+      "stdout": "h1. {anchor:latch}Gate check\nStart here.\n\nh2. {anchor:details}Readings\nCheck hinge.\n",
+      "stderr": ""
+    },
+    "headings#write:mediawiki": {
+      "key": "8fa1ba20fb562ad1",
+      "exit": 0,
+      "stdout": "<span id=\"latch\"></span>\n= Gate check =\n\nStart here.\n\n<span id=\"details\"></span>\n== Readings ==\n\nCheck hinge.\n",
+      "stderr": ""
+    },
+    "headings#write:xwiki": {
+      "key": "c606484b74b92959",
+      "exit": 0,
+      "stdout": "= Gate check {{id name=\"latch\" /}}=\n\nStart here.\n\n== Readings {{id name=\"details\" /}}==\n\nCheck hinge.\n",
+      "stderr": ""
+    },
+    "headings#write:zimwiki": {
+      "key": "8dfbd94e63345d6f",
+      "exit": 0,
+      "stdout": "====== Gate check ======\n\nStart here.\n\n===== Readings =====\n\nCheck hinge.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:dokuwiki": {
+      "key": "e04a38b885ed647b",
+      "exit": 0,
+      "stdout": "Before the latch check.\n\n\n----\n\nAfter the hinge check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:jira": {
+      "key": "9544eb76a5aa28fa",
+      "exit": 0,
+      "stdout": "Before the latch check.\n\n----\nAfter the hinge check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:mediawiki": {
+      "key": "2ab9cd8073ca5b31",
+      "exit": 0,
+      "stdout": "Before the latch check.\n\n-----\n\nAfter the hinge check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:xwiki": {
+      "key": "d4780660bc354331",
+      "exit": 0,
+      "stdout": "Before the latch check.\n\n\n----\n\nAfter the hinge check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:zimwiki": {
+      "key": "f9a18a05e568fd33",
+      "exit": 0,
+      "stdout": "Before the latch check.\n\n\n----\n\nAfter the hinge check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#read": {
+      "key": "5429e55fd5b9a044",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"latch\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check.\"}]},{\"t\":\"HorizontalRule\"},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"After\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"hinge\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check.\"}]}]}\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:dokuwiki": {
+      "key": "b6d379cf6b41fc97",
+      "exit": 0,
+      "stdout": "Before the latch check.\n\n\n----\n\nAfter the hinge check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:jira": {
+      "key": "34cd812d18942168",
+      "exit": 0,
+      "stdout": "Before the latch check.\n\n----\nAfter the hinge check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:mediawiki": {
+      "key": "3e6e841f2d5aae47",
+      "exit": 0,
+      "stdout": "Before the latch check.\n\n-----\n\nAfter the hinge check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:xwiki": {
+      "key": "a8ab4b4d1b14b8cf",
+      "exit": 0,
+      "stdout": "Before the latch check.\n\n\n----\n\nAfter the hinge check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:zimwiki": {
+      "key": "17a833ba3b291501",
+      "exit": 0,
+      "stdout": "Before the latch check.\n\n\n----\n\nAfter the hinge check.\n",
+      "stderr": ""
+    },
+    "image#e2e:dokuwiki": {
+      "key": "7a0c54fe23f93e83",
+      "exit": 0,
+      "stdout": "{{data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC?24|Blue pixel}}\n",
+      "stderr": ""
+    },
+    "image#e2e:jira": {
+      "key": "d36a971cd38e147e",
+      "exit": 0,
+      "stdout": "!data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC|title=Blue pixel, alt=Gate check sample, width=24px!\n",
+      "stderr": ""
+    },
+    "image#e2e:mediawiki": {
+      "key": "b04a10f0997aa46d",
+      "exit": 0,
+      "stdout": "<nowiki></nowiki>data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC<nowiki></nowiki>\n",
+      "stderr": ""
+    },
+    "image#e2e:xwiki": {
+      "key": "053eb8d1f6b30c6d",
+      "exit": 0,
+      "stdout": "[[image:data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC||alt=\"Gate check sample\" title=\"Blue pixel\"]]\n",
+      "stderr": ""
+    },
+    "image#e2e:zimwiki": {
+      "key": "1a56d7c29e77632b",
+      "exit": 0,
+      "stdout": "{{data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC?24|Blue pixel}}\n",
+      "stderr": ""
+    },
+    "image#read": {
+      "key": "a38fa499873bb7c4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Image\",\"c\":[[\"sample\",[],[[\"width\",\"24px\"]]],[{\"t\":\"Str\",\"c\":\"Gate\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sample\"}],[\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\",\"Blue pixel\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "image#write:dokuwiki": {
+      "key": "dce84b5cdfbeb5fb",
+      "exit": 0,
+      "stdout": "{{data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC?24|Blue pixel}}\n",
+      "stderr": ""
+    },
+    "image#write:jira": {
+      "key": "1ca5220ffc2d37e8",
+      "exit": 0,
+      "stdout": "!data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC|title=Blue pixel, alt=Gate check sample, width=24px!\n",
+      "stderr": ""
+    },
+    "image#write:mediawiki": {
+      "key": "75c4790b7311da0b",
+      "exit": 0,
+      "stdout": "<nowiki></nowiki>data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC<nowiki></nowiki>\n",
+      "stderr": ""
+    },
+    "image#write:xwiki": {
+      "key": "6e6703b757c50e53",
+      "exit": 0,
+      "stdout": "[[image:data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC||alt=\"Gate check sample\" title=\"Blue pixel\"]]\n",
+      "stderr": ""
+    },
+    "image#write:zimwiki": {
+      "key": "0294d315879cb835",
+      "exit": 0,
+      "stdout": "{{data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC?24|Blue pixel}}\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:dokuwiki": {
+      "key": "e853cd580cedb12e",
+      "exit": 0,
+      "stdout": "//latch// **hinge** ''%%a_b + 2%%'' <del>retired</del> H<sub>2</sub>O m<sup>2</sup>\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:jira": {
+      "key": "3a4bcb1585fcd13b",
+      "exit": 0,
+      "stdout": "_latch_ *hinge* {{a_b + 2}} -retired- H{~}2{~}O m{^}2{^}\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:mediawiki": {
+      "key": "78d7533d13a82fd4",
+      "exit": 0,
+      "stdout": "''latch'' '''hinge''' <code>a_b + 2</code> <s>retired</s> H<sub>2</sub>O m<sup>2</sup>\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:xwiki": {
+      "key": "20834795ee1357d4",
+      "exit": 0,
+      "stdout": "//latch// **hinge** {{code}}a_b + 2{{/code}} --retired-- H,,2,,O m^^2^^\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:zimwiki": {
+      "key": "d351f90caadb6be6",
+      "exit": 0,
+      "stdout": "//latch// **hinge** ''a_b + 2'' ~~retired~~ H_{2}O m^{2}\n",
+      "stderr": ""
+    },
+    "inline-styles#read": {
+      "key": "81bc4842acab34e5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"latch\"}]},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"hinge\"}]},{\"t\":\"Space\"},{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"a_b + 2\"]},{\"t\":\"Space\"},{\"t\":\"Strikeout\",\"c\":[{\"t\":\"Str\",\"c\":\"retired\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"H\"},{\"t\":\"Subscript\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]},{\"t\":\"Str\",\"c\":\"O\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"m\"},{\"t\":\"Superscript\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "inline-styles#write:dokuwiki": {
+      "key": "2ea081a17bedbb4b",
+      "exit": 0,
+      "stdout": "//latch// **hinge** ''%%a_b + 2%%'' <del>retired</del> H<sub>2</sub>O m<sup>2</sup>\n",
+      "stderr": ""
+    },
+    "inline-styles#write:jira": {
+      "key": "f047e100f723b892",
+      "exit": 0,
+      "stdout": "_latch_ *hinge* {{a_b + 2}} -retired- H{~}2{~}O m{^}2{^}\n",
+      "stderr": ""
+    },
+    "inline-styles#write:mediawiki": {
+      "key": "2d4da7fc1ae03e1b",
+      "exit": 0,
+      "stdout": "''latch'' '''hinge''' <code>a_b + 2</code> <s>retired</s> H<sub>2</sub>O m<sup>2</sup>\n",
+      "stderr": ""
+    },
+    "inline-styles#write:xwiki": {
+      "key": "1763b3b9114ff5c3",
+      "exit": 0,
+      "stdout": "//latch// **hinge** {{code}}a_b + 2{{/code}} --retired-- H,,2,,O m^^2^^\n",
+      "stderr": ""
+    },
+    "inline-styles#write:zimwiki": {
+      "key": "07bd56c6b8023a59",
+      "exit": 0,
+      "stdout": "//latch// **hinge** ''a_b + 2'' ~~retired~~ H_{2}O m^{2}\n",
+      "stderr": ""
+    },
+    "links#e2e:dokuwiki": {
+      "key": "671bc3b9db13cc02",
+      "exit": 0,
+      "stdout": "[[https://example.invalid/log?mode=day&view=full|Read the latch log]] [[#hinge|section]]\n\n===== Log entry =====\n",
+      "stderr": ""
+    },
+    "links#e2e:jira": {
+      "key": "daa9ebb39dce07cd",
+      "exit": 0,
+      "stdout": "[Read the latch log|https://example.invalid/log?mode=day&view=full] [section|#hinge]\n\nh2. {anchor:hinge}Log entry\n",
+      "stderr": ""
+    },
+    "links#e2e:mediawiki": {
+      "key": "acc25e83865c3d70",
+      "exit": 0,
+      "stdout": "[https://example.invalid/log?mode=day&view=full Read the latch log] [[#hinge|section]]\n\n<span id=\"hinge\"></span>\n== Log entry ==\n",
+      "stderr": ""
+    },
+    "links#e2e:xwiki": {
+      "key": "9ed2dced19693570",
+      "exit": 0,
+      "stdout": "[[Read the latch log>>https://example.invalid/log?mode=day&view=full]] [[section>>#hinge]]\n\n== Log entry {{id name=\"hinge\" /}}==\n",
+      "stderr": ""
+    },
+    "links#e2e:zimwiki": {
+      "key": "a95240e222ffc09a",
+      "exit": 0,
+      "stdout": "[[https://example.invalid/log?mode=day&view=full|Read the latch log]] [[#hinge|section]]\n\n===== Log entry =====\n",
+      "stderr": ""
+    },
+    "links#read": {
+      "key": "b4462a14131bfc27",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"latch\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log\"}],[\"https://example.invalid/log?mode=day&view=full\",\"Open log\"]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"section\"}],[\"#hinge\",\"\"]]}]},{\"t\":\"Header\",\"c\":[2,[\"hinge\",[],[]],[{\"t\":\"Str\",\"c\":\"Log\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"entry\"}]]}]}\n",
+      "stderr": ""
+    },
+    "links#write:dokuwiki": {
+      "key": "3b48b029d75cfc4b",
+      "exit": 0,
+      "stdout": "[[https://example.invalid/log?mode=day&view=full|Read the latch log]] [[#hinge|section]]\n\n===== Log entry =====\n",
+      "stderr": ""
+    },
+    "links#write:jira": {
+      "key": "b5a59814373af5ea",
+      "exit": 0,
+      "stdout": "[Read the latch log|https://example.invalid/log?mode=day&view=full] [section|#hinge]\n\nh2. {anchor:hinge}Log entry\n",
+      "stderr": ""
+    },
+    "links#write:mediawiki": {
+      "key": "4455e86e631c2f3b",
+      "exit": 0,
+      "stdout": "[https://example.invalid/log?mode=day&view=full Read the latch log] [[#hinge|section]]\n\n<span id=\"hinge\"></span>\n== Log entry ==\n",
+      "stderr": ""
+    },
+    "links#write:xwiki": {
+      "key": "9372e2dc458c9113",
+      "exit": 0,
+      "stdout": "[[Read the latch log>>https://example.invalid/log?mode=day&view=full]] [[section>>#hinge]]\n\n== Log entry {{id name=\"hinge\" /}}==\n",
+      "stderr": ""
+    },
+    "links#write:zimwiki": {
+      "key": "788be8d5f73ecd51",
+      "exit": 0,
+      "stdout": "[[https://example.invalid/log?mode=day&view=full|Read the latch log]] [[#hinge|section]]\n\n===== Log entry =====\n",
+      "stderr": ""
+    },
+    "notes#e2e:dokuwiki": {
+      "key": "03cc44b32979400a",
+      "exit": 0,
+      "stdout": "latch((Use the lower mark.\n\n//Check the scale.//\n)) hinge((Use the upper mark.\n))\n",
+      "stderr": ""
+    },
+    "notes#e2e:jira": {
+      "key": "2f605cb35f3417d7",
+      "exit": 0,
+      "stdout": "latch[1] hinge[2]\n\n\n\\[1] Use the lower mark.\n\n_Check the scale._\n\n\n\\[2] Use the upper mark.\n\n",
+      "stderr": ""
+    },
+    "notes#e2e:mediawiki": {
+      "key": "bf7dea98c95aa3a4",
+      "exit": 0,
+      "stdout": "latch<ref>Use the lower mark.\n\n''Check the scale.''</ref> hinge<ref>Use the upper mark.</ref>\n\n<references />\n",
+      "stderr": ""
+    },
+    "notes#e2e:xwiki": {
+      "key": "3212590977180ba4",
+      "exit": 0,
+      "stdout": "latch{{footnote}}Use the lower mark.\n\n//Check the scale.//{{/footnote}} hinge{{footnote}}Use the upper mark.{{/footnote}}\n",
+      "stderr": ""
+    },
+    "notes#e2e:zimwiki": {
+      "key": "5ef41a7a3b1d2862",
+      "exit": 0,
+      "stdout": "latch **{Note:** Use the lower mark.\n\n//Check the scale.//**}** hinge **{Note:** Use the upper mark.**}**\n",
+      "stderr": ""
+    },
+    "notes#read": {
+      "key": "76f98d6a4f15e9c5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"latch\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"lower\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"scale.\"}]}]}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"hinge\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"upper\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark.\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "notes#write:dokuwiki": {
+      "key": "23add478a29159a0",
+      "exit": 0,
+      "stdout": "latch((Use the lower mark.\n\n//Check the scale.//\n)) hinge((Use the upper mark.\n))\n",
+      "stderr": ""
+    },
+    "notes#write:jira": {
+      "key": "bf893033e250be93",
+      "exit": 0,
+      "stdout": "latch[1] hinge[2]\n\n\n\\[1] Use the lower mark.\n\n_Check the scale._\n\n\n\\[2] Use the upper mark.\n\n",
+      "stderr": ""
+    },
+    "notes#write:mediawiki": {
+      "key": "53812a3837662390",
+      "exit": 0,
+      "stdout": "latch<ref>Use the lower mark.\n\n''Check the scale.''</ref> hinge<ref>Use the upper mark.</ref>\n\n<references />\n",
+      "stderr": ""
+    },
+    "notes#write:xwiki": {
+      "key": "31573ab2276b5f18",
+      "exit": 0,
+      "stdout": "latch{{footnote}}Use the lower mark.\n\n//Check the scale.//{{/footnote}} hinge{{footnote}}Use the upper mark.{{/footnote}}\n",
+      "stderr": ""
+    },
+    "notes#write:zimwiki": {
+      "key": "da13c0de8e0b6f7e",
+      "exit": 0,
+      "stdout": "latch **{Note:** Use the lower mark.\n\n//Check the scale.//**}** hinge **{Note:** Use the upper mark.**}**\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:dokuwiki": {
+      "key": "9e3ea0a489a2b2d4",
+      "exit": 0,
+      "stdout": "  - <WRAP>\nOpen latch.\nWait for the signal.\n</WRAP>\n  - Close hinge.\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:jira": {
+      "key": "33af2006dd5b4c01",
+      "exit": 0,
+      "stdout": "# Open latch.\nWait for the signal.\n# Close hinge.\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:mediawiki": {
+      "key": "190f669d8a10c5d6",
+      "exit": 0,
+      "stdout": "<ol start=\"4\" style=\"list-style-type: upper-roman;\">\n<li><p>Open latch.</p>\n<p>Wait for the signal.</p></li>\n<li><p>Close hinge.</p></li></ol>\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:xwiki": {
+      "key": "abbe2a3db4dcadd6",
+      "exit": 0,
+      "stdout": "1. Open latch.\n\nWait for the signal.\n1. Close hinge.\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:zimwiki": {
+      "key": "01a5fc41c65bed1c",
+      "exit": 0,
+      "stdout": "1. Open latch.\nWait for the signal.\n2. Close hinge.\n",
+      "stderr": ""
+    },
+    "ordered-list#read": {
+      "key": "66a35988b220f107",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[4,{\"t\":\"UpperRoman\"},{\"t\":\"OneParen\"}],[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Open\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"latch.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Wait\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"for\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"signal.\"}]}],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Close\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"hinge.\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "ordered-list#write:dokuwiki": {
+      "key": "2268e9a5443302a4",
+      "exit": 0,
+      "stdout": "  - <WRAP>\nOpen latch.\nWait for the signal.\n</WRAP>\n  - Close hinge.\n",
+      "stderr": ""
+    },
+    "ordered-list#write:jira": {
+      "key": "3b58f11891d1b8a9",
+      "exit": 0,
+      "stdout": "# Open latch.\nWait for the signal.\n# Close hinge.\n",
+      "stderr": ""
+    },
+    "ordered-list#write:mediawiki": {
+      "key": "46eccde5d016bd74",
+      "exit": 0,
+      "stdout": "<ol start=\"4\" style=\"list-style-type: upper-roman;\">\n<li><p>Open latch.</p>\n<p>Wait for the signal.</p></li>\n<li><p>Close hinge.</p></li></ol>\n",
+      "stderr": ""
+    },
+    "ordered-list#write:xwiki": {
+      "key": "c60716770416bd3c",
+      "exit": 0,
+      "stdout": "1. Open latch.\n\nWait for the signal.\n1. Close hinge.\n",
+      "stderr": ""
+    },
+    "ordered-list#write:zimwiki": {
+      "key": "2c540e17ef806f0e",
+      "exit": 0,
+      "stdout": "1. Open latch.\nWait for the signal.\n2. Close hinge.\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:dokuwiki": {
+      "key": "55d95b6bbd8d2cdc",
+      "exit": 0,
+      "stdout": "Gate check log.\n\nRead slowly. Stop.\\\\\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:jira": {
+      "key": "b0a4940c7ae16477",
+      "exit": 0,
+      "stdout": "Gate check log.\n\nRead slowly. Stop.\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:mediawiki": {
+      "key": "24f44d7ee721acfa",
+      "exit": 0,
+      "stdout": "Gate check log.\n\nRead slowly. Stop.<br />\nCafé &amp; &lt;check&gt;\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:xwiki": {
+      "key": "025c81a89d5464fa",
+      "exit": 0,
+      "stdout": "Gate check log.\n\nRead slowly. Stop.\\\\Café & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:zimwiki": {
+      "key": "57ec285dadfdcfb4",
+      "exit": 0,
+      "stdout": "Gate check log.\n\nRead slowly. Stop.\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#read": {
+      "key": "d090508de16ce299",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Gate\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"slowly.\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"Stop.\"},{\"t\":\"LineBreak\"},{\"t\":\"Str\",\"c\":\"Café & <check>\"}]}]}\n",
+      "stderr": ""
+    },
+    "paragraphs#write:dokuwiki": {
+      "key": "96641f5a6b5f9eb3",
+      "exit": 0,
+      "stdout": "Gate check log.\n\nRead slowly. Stop.\\\\\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#write:jira": {
+      "key": "1b71e500ad4d0742",
+      "exit": 0,
+      "stdout": "Gate check log.\n\nRead slowly. Stop.\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#write:mediawiki": {
+      "key": "434e6f1cca60d083",
+      "exit": 0,
+      "stdout": "Gate check log.\n\nRead slowly. Stop.<br />\nCafé &amp; &lt;check&gt;\n",
+      "stderr": ""
+    },
+    "paragraphs#write:xwiki": {
+      "key": "54facbee83e5259b",
+      "exit": 0,
+      "stdout": "Gate check log.\n\nRead slowly. Stop.\\\\Café & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#write:zimwiki": {
+      "key": "ee9c43fc01e566b5",
+      "exit": 0,
+      "stdout": "Gate check log.\n\nRead slowly. Stop.\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "quote#e2e:dokuwiki": {
+      "key": "d17603fdaa3fe009",
+      "exit": 0,
+      "stdout": "> “Check latch.”\n\n> Record the result.\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#e2e:jira": {
+      "key": "28076e96dd8f8c7e",
+      "exit": 0,
+      "stdout": "{quote}\n\"Check latch.\"\n\nRecord the result.\n{quote}\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#e2e:mediawiki": {
+      "key": "3a8480c71c1f195f",
+      "exit": 0,
+      "stdout": "<blockquote>“Check latch.”\n\nRecord the result.\n</blockquote>\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#e2e:xwiki": {
+      "key": "ff8da22824b4d15f",
+      "exit": 0,
+      "stdout": ">“Check latch.”\n>\n>Record the result.\n>\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#e2e:zimwiki": {
+      "key": "926755d0ea7f7aa1",
+      "exit": 0,
+      "stdout": "> “Check latch.”\n> \n> Record the result.\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#read": {
+      "key": "f293ace0de63f7f8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"latch.\"}]]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Record\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"result.\"}]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Continue\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test.\"}]}]}\n",
+      "stderr": ""
+    },
+    "quote#write:dokuwiki": {
+      "key": "891b9f9b06ffd821",
+      "exit": 0,
+      "stdout": "> “Check latch.”\n\n> Record the result.\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#write:jira": {
+      "key": "f5a02238a21918c6",
+      "exit": 0,
+      "stdout": "{quote}\n\"Check latch.\"\n\nRecord the result.\n{quote}\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#write:mediawiki": {
+      "key": "42b14003912f76b1",
+      "exit": 0,
+      "stdout": "<blockquote>“Check latch.”\n\nRecord the result.\n</blockquote>\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#write:xwiki": {
+      "key": "d9286cc4c4253a49",
+      "exit": 0,
+      "stdout": ">“Check latch.”\n>\n>Record the result.\n>\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#write:zimwiki": {
+      "key": "4ae2ede4f8654ca3",
+      "exit": 0,
+      "stdout": "> “Check latch.”\n> \n> Record the result.\n\nContinue the test.\n",
+      "stderr": ""
+    }
+  }
+}

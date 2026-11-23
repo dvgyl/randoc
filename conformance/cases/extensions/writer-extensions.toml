@@ -1,0 +1,85 @@
+from = "native"
+
+[[case]]
+id = "bibliography-element-citations"
+to = ["jats+element_citations", "jats-element_citations"]
+args = ["--standalone", "--template=citations.jats"]
+files = { "citations.jats" = "<article>\n<body>\n$body$\n</body>\n<back>\n$back$\n</back>\n</article>\n" }
+input = '''
+Pandoc (Meta {unMeta = fromList [
+  ("references", MetaList [
+      MetaMap (fromList [("id", MetaString "wren-rings"), ("type", MetaString "article-journal"), ("title", MetaInlines [Str "Salt", Space, Emph [Str "marks"], Space, Str "and", Space, Str "steel"]), ("author", MetaList [MetaMap (fromList [("given", MetaString "Nora"), ("family", MetaString "Wren")]), MetaMap (fromList [("literal", MetaString "West Pier Survey Team")])]), ("issued", MetaMap (fromList [("date-parts", MetaList [MetaList [MetaString "2024", MetaString "3", MetaString "9"]])])), ("container-title", MetaString "Journal of Shelf Surveys"), ("volume", MetaString "7"), ("issue", MetaString "2"), ("page", MetaString "17–24"), ("DOI", MetaString "10.5555/salt.724")]),
+      MetaMap (fromList [("id", MetaString "mora-hinges"), ("type", MetaString "chapter"), ("title", MetaString "Hinges at North Dock"), ("author", MetaList [MetaMap (fromList [("given", MetaString "Ivo"), ("family", MetaString "Mora")])]), ("editor", MetaList [MetaMap (fromList [("given", MetaString "Rina"), ("family", MetaString "Vale")])]), ("issued", MetaMap (fromList [("date-parts", MetaList [MetaList [MetaString "2020"]])])), ("container-title", MetaString "Dock Repairs"), ("publisher", MetaString "Alder Press"), ("publisher-place", MetaString "Bath"), ("page", MetaString "41-53")])
+  ])
+]})
+[ Para [Cite [Citation {citationId = "wren-rings", citationPrefix = [], citationSuffix = [], citationMode = NormalCitation, citationNoteNum = 0, citationHash = 0}] [Str "[Wren]"]]
+, Div ("refs", ["references", "csl-bib-body"], [])
+    [ Div ("ref-wren-rings", ["csl-entry"], []) [Para [Str "Wren", Space, Str "2024."]]
+    , Div ("ref-mora-hinges", ["csl-entry"], []) [Para [Str "Mora", Space, Str "2020."]]
+    ]
+]
+'''
+
+[[case]]
+id = "sequence-numbering"
+to = ["opendocument+native_numbering", "opendocument-native_numbering"]
+input = '''
+[ Table ("mass-table", [], [])
+    (Caption Nothing [Plain [Str "Latch", Space, Str "mass"]])
+    [(AlignLeft, ColWidthDefault), (AlignRight, ColWidthDefault)]
+    (TableHead ( "", [], [] ) [Row ( "", [], [] ) [Cell ( "", [], [] ) AlignDefault ( RowSpan 1 ) ( ColSpan 1 ) [Plain [Str "Part"]], Cell ( "", [], [] ) AlignDefault ( RowSpan 1 ) ( ColSpan 1 ) [Plain [Str "Mass"]]]])
+    [TableBody ( "", [], [] ) ( RowHeadColumns 0 ) []
+      [Row ( "", [], [] ) [Cell ( "", [], [] ) AlignDefault ( RowSpan 1 ) ( ColSpan 1 ) [Plain [Str "Latch"]], Cell ( "", [], [] ) AlignDefault ( RowSpan 1 ) ( ColSpan 1 ) [Plain [Str "21"]]]]]
+    (TableFoot ( "", [], [] ) [])
+, Table ( "", [], [] )
+    (Caption Nothing [Plain [Str "Plate", Space, Str "mass"]])
+    [(AlignLeft, ColWidthDefault), (AlignRight, ColWidthDefault)]
+    (TableHead ( "", [], [] ) [Row ( "", [], [] ) [Cell ( "", [], [] ) AlignDefault ( RowSpan 1 ) ( ColSpan 1 ) [Plain [Str "Part"]], Cell ( "", [], [] ) AlignDefault ( RowSpan 1 ) ( ColSpan 1 ) [Plain [Str "Mass"]]]])
+    [TableBody ( "", [], [] ) ( RowHeadColumns 0 ) []
+      [Row ( "", [], [] ) [Cell ( "", [], [] ) AlignDefault ( RowSpan 1 ) ( ColSpan 1 ) [Plain [Str "Plate"]], Cell ( "", [], [] ) AlignDefault ( RowSpan 1 ) ( ColSpan 1 ) [Plain [Str "42"]]]]]
+    (TableFoot ( "", [], [] ) [])
+, Para [Link ("", [], []) [Str "Latch mass"] ("#mass-table", "")]
+]
+'''
+
+[[case]]
+id = "bookmark-cross-references"
+to = ["opendocument+xrefs_name", "opendocument-xrefs_name", "opendocument+xrefs_number", "opendocument-xrefs_number"]
+input = '''
+[ Para [Link ("", [], []) [Str "Gate", Space, Str "marks"] ("#gate-marks", ""), Space,
+        Link ("", [], []) [Str "Pin", Space, Str "mark"] ("#pin-mark", ""), Space,
+        Link ("", [], []) [Str "unknown"] ("#unknown", "")]
+, Header 2 ("gate-marks", [], []) [Str "Gate", Space, Str "marks"]
+, Para [Span ("pin-mark", [], []) [Str "Pin"], Space, Str "A7"]
+]
+'''
+
+[[case]]
+id = "natural-table"
+to = ["context+ntb", "context-ntb"]
+input = '''
+[ Table ("pin-gaps", [], [])
+    (Caption Nothing [Plain [Str "Pin", Space, Str "gaps"]])
+    [(AlignLeft, ColWidthDefault), (AlignRight, ColWidthDefault)]
+    (TableHead ( "", [], [] ) [Row ( "", [], [] ) [Cell ( "", [], [] ) AlignDefault ( RowSpan 1 ) ( ColSpan 1 ) [Plain [Str "Pin"]], Cell ( "", [], [] ) AlignDefault ( RowSpan 1 ) ( ColSpan 1 ) [Plain [Str "Gap"]]]])
+    [TableBody ( "", [], [] ) ( RowHeadColumns 0 ) []
+      [Row ( "", [], [] ) [Cell ( "", [], [] ) AlignDefault ( RowSpan 1 ) ( ColSpan 1 ) [Plain [Str "Spare"]], Cell ( "", [], [] ) AlignDefault ( RowSpan 1 ) ( ColSpan 1 ) [Plain [Str "2"]]]]]
+    (TableFoot ( "", [], [] ) [])
+, Para [Str "Measure", Space, Str "the", Space, Str "gap", Space, Str "again."]
+]
+'''
+
+[[case]]
+id = "tagged-table-cells"
+to = ["context+tagging", "context-tagging"]
+input = '''
+[ Table ("pin-gaps", [], [])
+    (Caption Nothing [Plain [Str "Pin", Space, Str "gaps"]])
+    [(AlignLeft, ColWidthDefault), (AlignRight, ColWidthDefault)]
+    (TableHead ( "", [], [] ) [Row ( "", [], [] ) [Cell ( "", [], [] ) AlignDefault ( RowSpan 1 ) ( ColSpan 1 ) [Plain [Str "Pin"]], Cell ( "", [], [] ) AlignDefault ( RowSpan 1 ) ( ColSpan 1 ) [Plain [Str "Gap"]]]])
+    [TableBody ( "", [], [] ) ( RowHeadColumns 0 ) []
+      [Row ( "", [], [] ) [Cell ( "", [], [] ) AlignDefault ( RowSpan 1 ) ( ColSpan 1 ) [Plain [Str "Spare"]], Cell ( "", [], [] ) AlignDefault ( RowSpan 1 ) ( ColSpan 1 ) [Plain [Str "2"]]]]]
+    (TableFoot ( "", [], [] ) [])
+, Para [Str "Measure", Space, Str "the", Space, Str "gap", Space, Str "again."]
+]
+'''

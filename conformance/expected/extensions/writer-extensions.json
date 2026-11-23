@@ -1,0 +1,179 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "bibliography-element-citations#e2e:jats+element_citations": {
+      "key": "6e8faf2f4446346e",
+      "exit": 0,
+      "stdout": "<article>\n<body>\n<p>[Wren]</p>\n</body>\n<back>\n<ref-list>\n  <title></title>\n  <ref id=\"ref-wren-rings\">\n    <element-citation publication-type=\"article-journal\">\n      <person-group person-group-type=\"author\">\n        <name><surname>Wren</surname><given-names>Nora</given-names></name>\n        <string-name>West Pier Survey Team</string-name>\n      </person-group>\n      <article-title>Salt marks and steel</article-title>\n      <source>Journal of Shelf Surveys</source>\n      <year iso-8601-date=\"2024-03-09\">2024</year><month>03</month><day>09</day>\n      <volume>7</volume>\n      <issue>2</issue>\n      <pub-id pub-id-type=\"doi\">10.5555/salt.724</pub-id>\n      <fpage>17</fpage>\n      <lpage>24</lpage>\n    </element-citation>\n  </ref>\n</ref-list>\n</back>\n</article>\n",
+      "stderr": ""
+    },
+    "bibliography-element-citations#e2e:jats-element_citations": {
+      "key": "42b673401b987738",
+      "exit": 0,
+      "stdout": "<article>\n<body>\n<p>[Wren]</p>\n</body>\n<back>\n<ref-list>\n  <title></title>\n  <ref id=\"ref-wren-rings\">\n    <mixed-citation>Wren 2024.</mixed-citation>\n  </ref>\n  <ref id=\"ref-mora-hinges\">\n    <mixed-citation>Mora 2020.</mixed-citation>\n  </ref>\n</ref-list>\n</back>\n</article>\n",
+      "stderr": ""
+    },
+    "bibliography-element-citations#read": {
+      "key": "590624a694fab728",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"references\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"DOI\":{\"t\":\"MetaString\",\"c\":\"10.5555/salt.724\"},\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Wren\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Nora\"}}},{\"t\":\"MetaMap\",\"c\":{\"literal\":{\"t\":\"MetaString\",\"c\":\"West Pier Survey Team\"}}}]},\"container-title\":{\"t\":\"MetaString\",\"c\":\"Journal of Shelf Surveys\"},\"id\":{\"t\":\"MetaString\",\"c\":\"wren-rings\"},\"issue\":{\"t\":\"MetaString\",\"c\":\"2\"},\"issued\":{\"t\":\"MetaMap\",\"c\":{\"date-parts\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"2024\"},{\"t\":\"MetaString\",\"c\":\"3\"},{\"t\":\"MetaString\",\"c\":\"9\"}]}]}}},\"page\":{\"t\":\"MetaString\",\"c\":\"17–24\"},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Salt\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"marks\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"steel\"}]},\"type\":{\"t\":\"MetaString\",\"c\":\"article-journal\"},\"volume\":{\"t\":\"MetaString\",\"c\":\"7\"}}},{\"t\":\"MetaMap\",\"c\":{\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Mora\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Ivo\"}}}]},\"container-title\":{\"t\":\"MetaString\",\"c\":\"Dock Repairs\"},\"editor\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaMap\",\"c\":{\"family\":{\"t\":\"MetaString\",\"c\":\"Vale\"},\"given\":{\"t\":\"MetaString\",\"c\":\"Rina\"}}}]},\"id\":{\"t\":\"MetaString\",\"c\":\"mora-hinges\"},\"issued\":{\"t\":\"MetaMap\",\"c\":{\"date-parts\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaString\",\"c\":\"2020\"}]}]}}},\"page\":{\"t\":\"MetaString\",\"c\":\"41-53\"},\"publisher\":{\"t\":\"MetaString\",\"c\":\"Alder Press\"},\"publisher-place\":{\"t\":\"MetaString\",\"c\":\"Bath\"},\"title\":{\"t\":\"MetaString\",\"c\":\"Hinges at North Dock\"},\"type\":{\"t\":\"MetaString\",\"c\":\"chapter\"}}}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Cite\",\"c\":[[{\"citationId\":\"wren-rings\",\"citationPrefix\":[],\"citationSuffix\":[],\"citationMode\":{\"t\":\"NormalCitation\"},\"citationNoteNum\":0,\"citationHash\":0}],[{\"t\":\"Str\",\"c\":\"[Wren]\"}]]}]},{\"t\":\"Div\",\"c\":[[\"refs\",[\"references\",\"csl-bib-body\"],[]],[{\"t\":\"Div\",\"c\":[[\"ref-wren-rings\",[\"csl-entry\"],[]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Wren\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"2024.\"}]}]]},{\"t\":\"Div\",\"c\":[[\"ref-mora-hinges\",[\"csl-entry\"],[]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Mora\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"2020.\"}]}]]}]]}]}",
+      "stderr": ""
+    },
+    "bibliography-element-citations#write:jats+element_citations": {
+      "key": "21db24138e97805e",
+      "exit": 0,
+      "stdout": "<article>\n<body>\n<p>[Wren]</p>\n</body>\n<back>\n<ref-list>\n  <title></title>\n  <ref id=\"ref-wren-rings\">\n    <element-citation publication-type=\"article-journal\">\n      <person-group person-group-type=\"author\">\n        <name><surname>Wren</surname><given-names>Nora</given-names></name>\n        <string-name>West Pier Survey Team</string-name>\n      </person-group>\n      <article-title>Salt marks and steel</article-title>\n      <source>Journal of Shelf Surveys</source>\n      <year iso-8601-date=\"2024-03-09\">2024</year><month>03</month><day>09</day>\n      <volume>7</volume>\n      <issue>2</issue>\n      <pub-id pub-id-type=\"doi\">10.5555/salt.724</pub-id>\n      <fpage>17</fpage>\n      <lpage>24</lpage>\n    </element-citation>\n  </ref>\n</ref-list>\n</back>\n</article>\n",
+      "stderr": ""
+    },
+    "bibliography-element-citations#write:jats-element_citations": {
+      "key": "6a66c2f9586c8dc0",
+      "exit": 0,
+      "stdout": "<article>\n<body>\n<p>[Wren]</p>\n</body>\n<back>\n<ref-list>\n  <title></title>\n  <ref id=\"ref-wren-rings\">\n    <mixed-citation>Wren 2024.</mixed-citation>\n  </ref>\n  <ref id=\"ref-mora-hinges\">\n    <mixed-citation>Mora 2020.</mixed-citation>\n  </ref>\n</ref-list>\n</back>\n</article>\n",
+      "stderr": ""
+    },
+    "bookmark-cross-references#e2e:opendocument+xrefs_name": {
+      "key": "9133af0f36a25105",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"Text_20_body\"><text:bookmark-ref text:reference-format=\"text\" text:ref-name=\"gate-marks\">Gate\nmarks</text:bookmark-ref>\n<text:a xlink:type=\"simple\" xlink:href=\"#pin-mark\" office:name=\"\"><text:span text:style-name=\"Definition\">Pin\nmark</text:span></text:a>\n<text:a xlink:type=\"simple\" xlink:href=\"#unknown\" office:name=\"\"><text:span text:style-name=\"Definition\">unknown</text:span></text:a></text:p>\n<text:h text:style-name=\"Heading_20_2\" text:outline-level=\"2\"><text:bookmark-start text:name=\"gate-marks\" />Gate\nmarks<text:bookmark-end text:name=\"gate-marks\" /></text:h>\n<text:p text:style-name=\"First_20_paragraph\"><text:bookmark-start text:name=\"pin-mark\" />Pin<text:bookmark-end text:name=\"pin-mark\" />\nA7</text:p>\n",
+      "stderr": ""
+    },
+    "bookmark-cross-references#e2e:opendocument+xrefs_number": {
+      "key": "0e095b4906283189",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"Text_20_body\"><text:bookmark-ref text:reference-format=\"number\" text:ref-name=\"gate-marks\"></text:bookmark-ref>\n<text:a xlink:type=\"simple\" xlink:href=\"#pin-mark\" office:name=\"\"><text:span text:style-name=\"Definition\">Pin\nmark</text:span></text:a>\n<text:a xlink:type=\"simple\" xlink:href=\"#unknown\" office:name=\"\"><text:span text:style-name=\"Definition\">unknown</text:span></text:a></text:p>\n<text:h text:style-name=\"Heading_20_2\" text:outline-level=\"2\"><text:bookmark-start text:name=\"gate-marks\" />Gate\nmarks<text:bookmark-end text:name=\"gate-marks\" /></text:h>\n<text:p text:style-name=\"First_20_paragraph\"><text:bookmark-start text:name=\"pin-mark\" />Pin<text:bookmark-end text:name=\"pin-mark\" />\nA7</text:p>\n",
+      "stderr": ""
+    },
+    "bookmark-cross-references#e2e:opendocument-xrefs_name": {
+      "key": "9b9c400e1a3f104b",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"Text_20_body\"><text:a xlink:type=\"simple\" xlink:href=\"#gate-marks\" office:name=\"\"><text:span text:style-name=\"Definition\">Gate\nmarks</text:span></text:a>\n<text:a xlink:type=\"simple\" xlink:href=\"#pin-mark\" office:name=\"\"><text:span text:style-name=\"Definition\">Pin\nmark</text:span></text:a>\n<text:a xlink:type=\"simple\" xlink:href=\"#unknown\" office:name=\"\"><text:span text:style-name=\"Definition\">unknown</text:span></text:a></text:p>\n<text:h text:style-name=\"Heading_20_2\" text:outline-level=\"2\"><text:bookmark-start text:name=\"gate-marks\" />Gate\nmarks<text:bookmark-end text:name=\"gate-marks\" /></text:h>\n<text:p text:style-name=\"First_20_paragraph\"><text:bookmark-start text:name=\"pin-mark\" />Pin<text:bookmark-end text:name=\"pin-mark\" />\nA7</text:p>\n",
+      "stderr": ""
+    },
+    "bookmark-cross-references#e2e:opendocument-xrefs_number": {
+      "key": "844f70ac3c6dc3f3",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"Text_20_body\"><text:a xlink:type=\"simple\" xlink:href=\"#gate-marks\" office:name=\"\"><text:span text:style-name=\"Definition\">Gate\nmarks</text:span></text:a>\n<text:a xlink:type=\"simple\" xlink:href=\"#pin-mark\" office:name=\"\"><text:span text:style-name=\"Definition\">Pin\nmark</text:span></text:a>\n<text:a xlink:type=\"simple\" xlink:href=\"#unknown\" office:name=\"\"><text:span text:style-name=\"Definition\">unknown</text:span></text:a></text:p>\n<text:h text:style-name=\"Heading_20_2\" text:outline-level=\"2\"><text:bookmark-start text:name=\"gate-marks\" />Gate\nmarks<text:bookmark-end text:name=\"gate-marks\" /></text:h>\n<text:p text:style-name=\"First_20_paragraph\"><text:bookmark-start text:name=\"pin-mark\" />Pin<text:bookmark-end text:name=\"pin-mark\" />\nA7</text:p>\n",
+      "stderr": ""
+    },
+    "bookmark-cross-references#read": {
+      "key": "3619ec294de0f1b6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Gate\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"marks\"}],[\"#gate-marks\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Pin\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark\"}],[\"#pin-mark\",\"\"]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"unknown\"}],[\"#unknown\",\"\"]]}]},{\"t\":\"Header\",\"c\":[2,[\"gate-marks\",[],[]],[{\"t\":\"Str\",\"c\":\"Gate\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"marks\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"pin-mark\",[],[]],[{\"t\":\"Str\",\"c\":\"Pin\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"A7\"}]}]}\n",
+      "stderr": ""
+    },
+    "bookmark-cross-references#write:opendocument+xrefs_name": {
+      "key": "86f9d3aae7edfb6e",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"Text_20_body\"><text:bookmark-ref text:reference-format=\"text\" text:ref-name=\"gate-marks\">Gate\nmarks</text:bookmark-ref>\n<text:a xlink:type=\"simple\" xlink:href=\"#pin-mark\" office:name=\"\"><text:span text:style-name=\"Definition\">Pin\nmark</text:span></text:a>\n<text:a xlink:type=\"simple\" xlink:href=\"#unknown\" office:name=\"\"><text:span text:style-name=\"Definition\">unknown</text:span></text:a></text:p>\n<text:h text:style-name=\"Heading_20_2\" text:outline-level=\"2\"><text:bookmark-start text:name=\"gate-marks\" />Gate\nmarks<text:bookmark-end text:name=\"gate-marks\" /></text:h>\n<text:p text:style-name=\"First_20_paragraph\"><text:bookmark-start text:name=\"pin-mark\" />Pin<text:bookmark-end text:name=\"pin-mark\" />\nA7</text:p>\n",
+      "stderr": ""
+    },
+    "bookmark-cross-references#write:opendocument+xrefs_number": {
+      "key": "631968afd2226cfa",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"Text_20_body\"><text:bookmark-ref text:reference-format=\"number\" text:ref-name=\"gate-marks\"></text:bookmark-ref>\n<text:a xlink:type=\"simple\" xlink:href=\"#pin-mark\" office:name=\"\"><text:span text:style-name=\"Definition\">Pin\nmark</text:span></text:a>\n<text:a xlink:type=\"simple\" xlink:href=\"#unknown\" office:name=\"\"><text:span text:style-name=\"Definition\">unknown</text:span></text:a></text:p>\n<text:h text:style-name=\"Heading_20_2\" text:outline-level=\"2\"><text:bookmark-start text:name=\"gate-marks\" />Gate\nmarks<text:bookmark-end text:name=\"gate-marks\" /></text:h>\n<text:p text:style-name=\"First_20_paragraph\"><text:bookmark-start text:name=\"pin-mark\" />Pin<text:bookmark-end text:name=\"pin-mark\" />\nA7</text:p>\n",
+      "stderr": ""
+    },
+    "bookmark-cross-references#write:opendocument-xrefs_name": {
+      "key": "4e386630685e19c4",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"Text_20_body\"><text:a xlink:type=\"simple\" xlink:href=\"#gate-marks\" office:name=\"\"><text:span text:style-name=\"Definition\">Gate\nmarks</text:span></text:a>\n<text:a xlink:type=\"simple\" xlink:href=\"#pin-mark\" office:name=\"\"><text:span text:style-name=\"Definition\">Pin\nmark</text:span></text:a>\n<text:a xlink:type=\"simple\" xlink:href=\"#unknown\" office:name=\"\"><text:span text:style-name=\"Definition\">unknown</text:span></text:a></text:p>\n<text:h text:style-name=\"Heading_20_2\" text:outline-level=\"2\"><text:bookmark-start text:name=\"gate-marks\" />Gate\nmarks<text:bookmark-end text:name=\"gate-marks\" /></text:h>\n<text:p text:style-name=\"First_20_paragraph\"><text:bookmark-start text:name=\"pin-mark\" />Pin<text:bookmark-end text:name=\"pin-mark\" />\nA7</text:p>\n",
+      "stderr": ""
+    },
+    "bookmark-cross-references#write:opendocument-xrefs_number": {
+      "key": "63b169388e1961b4",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"Text_20_body\"><text:a xlink:type=\"simple\" xlink:href=\"#gate-marks\" office:name=\"\"><text:span text:style-name=\"Definition\">Gate\nmarks</text:span></text:a>\n<text:a xlink:type=\"simple\" xlink:href=\"#pin-mark\" office:name=\"\"><text:span text:style-name=\"Definition\">Pin\nmark</text:span></text:a>\n<text:a xlink:type=\"simple\" xlink:href=\"#unknown\" office:name=\"\"><text:span text:style-name=\"Definition\">unknown</text:span></text:a></text:p>\n<text:h text:style-name=\"Heading_20_2\" text:outline-level=\"2\"><text:bookmark-start text:name=\"gate-marks\" />Gate\nmarks<text:bookmark-end text:name=\"gate-marks\" /></text:h>\n<text:p text:style-name=\"First_20_paragraph\"><text:bookmark-start text:name=\"pin-mark\" />Pin<text:bookmark-end text:name=\"pin-mark\" />\nA7</text:p>\n",
+      "stderr": ""
+    },
+    "natural-table#e2e:context+ntb": {
+      "key": "03041c84a298951a",
+      "exit": 0,
+      "stdout": "\\startplacetable[title={Pin gaps},reference={pin-gaps}]\n\\setupTABLE[column][1][align=right]\n\\setupTABLE[column][2][align=left]\n\\bTABLE\n\\bTABLEhead\n\\bTR\n\\bTH Pin\\eTH\n\\bTH Gap\\eTH\n\\eTR\n\\eTABLEhead\n\\bTABLEbody\n\\bTR\n\\bTD Spare\\eTD\n\\bTD 2\\eTD\n\\eTR\n\\eTABLEbody\n\\bTABLEfoot\n\\eTABLEfoot\n\\eTABLE\n\\stopplacetable\n\nMeasure the gap again.\n",
+      "stderr": ""
+    },
+    "natural-table#e2e:context-ntb": {
+      "key": "d74f03e6856a538c",
+      "exit": 0,
+      "stdout": "\\startplacetable[title={Pin gaps},reference={pin-gaps}]\n\\startxtable\n\\startxtablehead[head]\n\\startxrowgroup[lastrow]\n\\startxrow\n\\startxcell[align=right] Pin \\stopxcell\n\\startxcell[align=left] Gap \\stopxcell\n\\stopxrow\n\\stopxrowgroup\n\\stopxtablehead\n\\startxtablebody[body]\n\\startxrowgroup[lastrow]\n\\startxrow\n\\startxcell[align=right] Spare \\stopxcell\n\\startxcell[align=left] 2 \\stopxcell\n\\stopxrow\n\\stopxrowgroup\n\\stopxtablebody\n\\startxtablefoot[foot]\n\\stopxtablefoot\n\\stopxtable\n\\stopplacetable\n\nMeasure the gap again.\n",
+      "stderr": ""
+    },
+    "natural-table#read": {
+      "key": "a62804ce124b61c1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"pin-gaps\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Pin\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"gaps\"}]}]],[[{\"t\":\"AlignLeft\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignRight\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Pin\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Gap\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Spare\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Measure\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"gap\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"again.\"}]}]}\n",
+      "stderr": ""
+    },
+    "natural-table#write:context+ntb": {
+      "key": "3980c0af037773a1",
+      "exit": 0,
+      "stdout": "\\startplacetable[title={Pin gaps},reference={pin-gaps}]\n\\setupTABLE[column][1][align=right]\n\\setupTABLE[column][2][align=left]\n\\bTABLE\n\\bTABLEhead\n\\bTR\n\\bTH Pin\\eTH\n\\bTH Gap\\eTH\n\\eTR\n\\eTABLEhead\n\\bTABLEbody\n\\bTR\n\\bTD Spare\\eTD\n\\bTD 2\\eTD\n\\eTR\n\\eTABLEbody\n\\bTABLEfoot\n\\eTABLEfoot\n\\eTABLE\n\\stopplacetable\n\nMeasure the gap again.\n",
+      "stderr": ""
+    },
+    "natural-table#write:context-ntb": {
+      "key": "936e20d5b4ea8c63",
+      "exit": 0,
+      "stdout": "\\startplacetable[title={Pin gaps},reference={pin-gaps}]\n\\startxtable\n\\startxtablehead[head]\n\\startxrowgroup[lastrow]\n\\startxrow\n\\startxcell[align=right] Pin \\stopxcell\n\\startxcell[align=left] Gap \\stopxcell\n\\stopxrow\n\\stopxrowgroup\n\\stopxtablehead\n\\startxtablebody[body]\n\\startxrowgroup[lastrow]\n\\startxrow\n\\startxcell[align=right] Spare \\stopxcell\n\\startxcell[align=left] 2 \\stopxcell\n\\stopxrow\n\\stopxrowgroup\n\\stopxtablebody\n\\startxtablefoot[foot]\n\\stopxtablefoot\n\\stopxtable\n\\stopplacetable\n\nMeasure the gap again.\n",
+      "stderr": ""
+    },
+    "sequence-numbering#e2e:opendocument+native_numbering": {
+      "key": "6d04dc9ed4a384f8",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"TableCaption\">Table <text:sequence text:ref-name=\"mass-table\" text:name=\"Table\" text:formula=\"ooow:Table+1\" style:num-format=\"1\">1</text:sequence>: Latch\nmass</text:p>\n<table:table table:name=\"Table1\" table:style-name=\"Table1\">\n  <table:table-column table:style-name=\"Table1.A\" />\n  <table:table-column table:style-name=\"Table1.B\" />\n  <table:table-header-rows>\n    <table:table-row>\n      <table:table-cell table:style-name=\"TableHeaderRowCell\" office:value-type=\"string\">\n        <text:p text:style-name=\"Table_20_Heading\">Part</text:p>\n      </table:table-cell>\n      <table:table-cell table:style-name=\"TableHeaderRowCell\" office:value-type=\"string\">\n        <text:p text:style-name=\"P1\">Mass</text:p>\n      </table:table-cell>\n    </table:table-row>\n  </table:table-header-rows>\n  <table:table-row>\n    <table:table-cell table:style-name=\"TableRowCell\" office:value-type=\"string\">\n      <text:p text:style-name=\"Table_20_Contents\">Latch</text:p>\n    </table:table-cell>\n    <table:table-cell table:style-name=\"TableRowCell\" office:value-type=\"string\">\n      <text:p text:style-name=\"P2\">21</text:p>\n    </table:table-cell>\n  </table:table-row>\n</table:table>\n<text:p text:style-name=\"TableCaption\">Table <text:sequence text:ref-name=\"refTable1\" text:name=\"Table\" text:formula=\"ooow:Table+1\" style:num-format=\"1\">2</text:sequence>: Plate\nmass</text:p>\n<table:table table:name=\"Table2\" table:style-name=\"Table2\">\n  <table:table-column table:style-name=\"Table2.A\" />\n  <table:table-column table:style-name=\"Table2.B\" />\n  <table:table-header-rows>\n    <table:table-row>\n      <table:table-cell table:style-name=\"TableHeaderRowCell\" office:value-type=\"string\">\n        <text:p text:style-name=\"Table_20_Heading\">Part</text:p>\n      </table:table-cell>\n      <table:table-cell table:style-name=\"TableHeaderRowCell\" office:value-type=\"string\">\n        <text:p text:style-name=\"P3\">Mass</text:p>\n      </table:table-cell>\n    </table:table-row>\n  </table:table-header-rows>\n  <table:table-row>\n    <table:table-cell table:style-name=\"TableRowCell\" office:value-type=\"string\">\n      <text:p text:style-name=\"Table_20_Contents\">Plate</text:p>\n    </table:table-cell>\n    <table:table-cell table:style-name=\"TableRowCell\" office:value-type=\"string\">\n      <text:p text:style-name=\"P4\">42</text:p>\n    </table:table-cell>\n  </table:table-row>\n</table:table>\n<text:p text:style-name=\"First_20_paragraph\"><text:a xlink:type=\"simple\" xlink:href=\"#mass-table\" office:name=\"\"><text:span text:style-name=\"Definition\">Latch mass</text:span></text:a></text:p>\n",
+      "stderr": ""
+    },
+    "sequence-numbering#e2e:opendocument-native_numbering": {
+      "key": "641e905b6e772c1a",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"TableCaption\">Latch mass</text:p>\n<table:table table:name=\"Table1\" table:style-name=\"Table1\">\n  <table:table-column table:style-name=\"Table1.A\" />\n  <table:table-column table:style-name=\"Table1.B\" />\n  <table:table-header-rows>\n    <table:table-row>\n      <table:table-cell table:style-name=\"TableHeaderRowCell\" office:value-type=\"string\">\n        <text:p text:style-name=\"Table_20_Heading\">Part</text:p>\n      </table:table-cell>\n      <table:table-cell table:style-name=\"TableHeaderRowCell\" office:value-type=\"string\">\n        <text:p text:style-name=\"P1\">Mass</text:p>\n      </table:table-cell>\n    </table:table-row>\n  </table:table-header-rows>\n  <table:table-row>\n    <table:table-cell table:style-name=\"TableRowCell\" office:value-type=\"string\">\n      <text:p text:style-name=\"Table_20_Contents\">Latch</text:p>\n    </table:table-cell>\n    <table:table-cell table:style-name=\"TableRowCell\" office:value-type=\"string\">\n      <text:p text:style-name=\"P2\">21</text:p>\n    </table:table-cell>\n  </table:table-row>\n</table:table>\n<text:p text:style-name=\"TableCaption\">Plate mass</text:p>\n<table:table table:name=\"Table2\" table:style-name=\"Table2\">\n  <table:table-column table:style-name=\"Table2.A\" />\n  <table:table-column table:style-name=\"Table2.B\" />\n  <table:table-header-rows>\n    <table:table-row>\n      <table:table-cell table:style-name=\"TableHeaderRowCell\" office:value-type=\"string\">\n        <text:p text:style-name=\"Table_20_Heading\">Part</text:p>\n      </table:table-cell>\n      <table:table-cell table:style-name=\"TableHeaderRowCell\" office:value-type=\"string\">\n        <text:p text:style-name=\"P3\">Mass</text:p>\n      </table:table-cell>\n    </table:table-row>\n  </table:table-header-rows>\n  <table:table-row>\n    <table:table-cell table:style-name=\"TableRowCell\" office:value-type=\"string\">\n      <text:p text:style-name=\"Table_20_Contents\">Plate</text:p>\n    </table:table-cell>\n    <table:table-cell table:style-name=\"TableRowCell\" office:value-type=\"string\">\n      <text:p text:style-name=\"P4\">42</text:p>\n    </table:table-cell>\n  </table:table-row>\n</table:table>\n<text:p text:style-name=\"First_20_paragraph\"><text:a xlink:type=\"simple\" xlink:href=\"#mass-table\" office:name=\"\"><text:span text:style-name=\"Definition\">Latch mass</text:span></text:a></text:p>\n",
+      "stderr": ""
+    },
+    "sequence-numbering#read": {
+      "key": "8195b1184f2f0654",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"mass-table\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Latch\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mass\"}]}]],[[{\"t\":\"AlignLeft\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignRight\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Part\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Mass\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Latch\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"21\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Plate\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mass\"}]}]],[[{\"t\":\"AlignLeft\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignRight\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Part\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Mass\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Plate\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"42\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Latch mass\"}],[\"#mass-table\",\"\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "sequence-numbering#write:opendocument+native_numbering": {
+      "key": "4cf09bf7359c59c7",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"TableCaption\">Table <text:sequence text:ref-name=\"mass-table\" text:name=\"Table\" text:formula=\"ooow:Table+1\" style:num-format=\"1\">1</text:sequence>: Latch\nmass</text:p>\n<table:table table:name=\"Table1\" table:style-name=\"Table1\">\n  <table:table-column table:style-name=\"Table1.A\" />\n  <table:table-column table:style-name=\"Table1.B\" />\n  <table:table-header-rows>\n    <table:table-row>\n      <table:table-cell table:style-name=\"TableHeaderRowCell\" office:value-type=\"string\">\n        <text:p text:style-name=\"Table_20_Heading\">Part</text:p>\n      </table:table-cell>\n      <table:table-cell table:style-name=\"TableHeaderRowCell\" office:value-type=\"string\">\n        <text:p text:style-name=\"P1\">Mass</text:p>\n      </table:table-cell>\n    </table:table-row>\n  </table:table-header-rows>\n  <table:table-row>\n    <table:table-cell table:style-name=\"TableRowCell\" office:value-type=\"string\">\n      <text:p text:style-name=\"Table_20_Contents\">Latch</text:p>\n    </table:table-cell>\n    <table:table-cell table:style-name=\"TableRowCell\" office:value-type=\"string\">\n      <text:p text:style-name=\"P2\">21</text:p>\n    </table:table-cell>\n  </table:table-row>\n</table:table>\n<text:p text:style-name=\"TableCaption\">Table <text:sequence text:ref-name=\"refTable1\" text:name=\"Table\" text:formula=\"ooow:Table+1\" style:num-format=\"1\">2</text:sequence>: Plate\nmass</text:p>\n<table:table table:name=\"Table2\" table:style-name=\"Table2\">\n  <table:table-column table:style-name=\"Table2.A\" />\n  <table:table-column table:style-name=\"Table2.B\" />\n  <table:table-header-rows>\n    <table:table-row>\n      <table:table-cell table:style-name=\"TableHeaderRowCell\" office:value-type=\"string\">\n        <text:p text:style-name=\"Table_20_Heading\">Part</text:p>\n      </table:table-cell>\n      <table:table-cell table:style-name=\"TableHeaderRowCell\" office:value-type=\"string\">\n        <text:p text:style-name=\"P3\">Mass</text:p>\n      </table:table-cell>\n    </table:table-row>\n  </table:table-header-rows>\n  <table:table-row>\n    <table:table-cell table:style-name=\"TableRowCell\" office:value-type=\"string\">\n      <text:p text:style-name=\"Table_20_Contents\">Plate</text:p>\n    </table:table-cell>\n    <table:table-cell table:style-name=\"TableRowCell\" office:value-type=\"string\">\n      <text:p text:style-name=\"P4\">42</text:p>\n    </table:table-cell>\n  </table:table-row>\n</table:table>\n<text:p text:style-name=\"First_20_paragraph\"><text:a xlink:type=\"simple\" xlink:href=\"#mass-table\" office:name=\"\"><text:span text:style-name=\"Definition\">Latch mass</text:span></text:a></text:p>\n",
+      "stderr": ""
+    },
+    "sequence-numbering#write:opendocument-native_numbering": {
+      "key": "e4d787f1e773c951",
+      "exit": 0,
+      "stdout": "<text:p text:style-name=\"TableCaption\">Latch mass</text:p>\n<table:table table:name=\"Table1\" table:style-name=\"Table1\">\n  <table:table-column table:style-name=\"Table1.A\" />\n  <table:table-column table:style-name=\"Table1.B\" />\n  <table:table-header-rows>\n    <table:table-row>\n      <table:table-cell table:style-name=\"TableHeaderRowCell\" office:value-type=\"string\">\n        <text:p text:style-name=\"Table_20_Heading\">Part</text:p>\n      </table:table-cell>\n      <table:table-cell table:style-name=\"TableHeaderRowCell\" office:value-type=\"string\">\n        <text:p text:style-name=\"P1\">Mass</text:p>\n      </table:table-cell>\n    </table:table-row>\n  </table:table-header-rows>\n  <table:table-row>\n    <table:table-cell table:style-name=\"TableRowCell\" office:value-type=\"string\">\n      <text:p text:style-name=\"Table_20_Contents\">Latch</text:p>\n    </table:table-cell>\n    <table:table-cell table:style-name=\"TableRowCell\" office:value-type=\"string\">\n      <text:p text:style-name=\"P2\">21</text:p>\n    </table:table-cell>\n  </table:table-row>\n</table:table>\n<text:p text:style-name=\"TableCaption\">Plate mass</text:p>\n<table:table table:name=\"Table2\" table:style-name=\"Table2\">\n  <table:table-column table:style-name=\"Table2.A\" />\n  <table:table-column table:style-name=\"Table2.B\" />\n  <table:table-header-rows>\n    <table:table-row>\n      <table:table-cell table:style-name=\"TableHeaderRowCell\" office:value-type=\"string\">\n        <text:p text:style-name=\"Table_20_Heading\">Part</text:p>\n      </table:table-cell>\n      <table:table-cell table:style-name=\"TableHeaderRowCell\" office:value-type=\"string\">\n        <text:p text:style-name=\"P3\">Mass</text:p>\n      </table:table-cell>\n    </table:table-row>\n  </table:table-header-rows>\n  <table:table-row>\n    <table:table-cell table:style-name=\"TableRowCell\" office:value-type=\"string\">\n      <text:p text:style-name=\"Table_20_Contents\">Plate</text:p>\n    </table:table-cell>\n    <table:table-cell table:style-name=\"TableRowCell\" office:value-type=\"string\">\n      <text:p text:style-name=\"P4\">42</text:p>\n    </table:table-cell>\n  </table:table-row>\n</table:table>\n<text:p text:style-name=\"First_20_paragraph\"><text:a xlink:type=\"simple\" xlink:href=\"#mass-table\" office:name=\"\"><text:span text:style-name=\"Definition\">Latch mass</text:span></text:a></text:p>\n",
+      "stderr": ""
+    },
+    "tagged-table-cells#e2e:context+tagging": {
+      "key": "a3fdfa76f718294d",
+      "exit": 0,
+      "stdout": "\\startplacetable[title={\\bpar{}Pin gaps\\epar{}},reference={pin-gaps}]\n\\startxtable\n\\startxtablehead[head]\n\\startxrowgroup[lastrow]\n\\startxrow\n\\startxcell[align=right] \\bpar{}Pin\\epar{} \\stopxcell\n\\startxcell[align=left] \\bpar{}Gap\\epar{} \\stopxcell\n\\stopxrow\n\\stopxrowgroup\n\\stopxtablehead\n\\startxtablebody[body]\n\\startxrowgroup[lastrow]\n\\startxrow\n\\startxcell[align=right] \\bpar{}Spare\\epar{} \\stopxcell\n\\startxcell[align=left] \\bpar{}2\\epar{} \\stopxcell\n\\stopxrow\n\\stopxrowgroup\n\\stopxtablebody\n\\startxtablefoot[foot]\n\\stopxtablefoot\n\\stopxtable\n\\stopplacetable\n\n\\bpar\nMeasure the gap again.\n\\epar\n",
+      "stderr": ""
+    },
+    "tagged-table-cells#e2e:context-tagging": {
+      "key": "8d46c10a3e712c8f",
+      "exit": 0,
+      "stdout": "\\startplacetable[title={Pin gaps},reference={pin-gaps}]\n\\startxtable\n\\startxtablehead[head]\n\\startxrowgroup[lastrow]\n\\startxrow\n\\startxcell[align=right] Pin \\stopxcell\n\\startxcell[align=left] Gap \\stopxcell\n\\stopxrow\n\\stopxrowgroup\n\\stopxtablehead\n\\startxtablebody[body]\n\\startxrowgroup[lastrow]\n\\startxrow\n\\startxcell[align=right] Spare \\stopxcell\n\\startxcell[align=left] 2 \\stopxcell\n\\stopxrow\n\\stopxrowgroup\n\\stopxtablebody\n\\startxtablefoot[foot]\n\\stopxtablefoot\n\\stopxtable\n\\stopplacetable\n\nMeasure the gap again.\n",
+      "stderr": ""
+    },
+    "tagged-table-cells#read": {
+      "key": "a62804ce124b61c1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"pin-gaps\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Pin\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"gaps\"}]}]],[[{\"t\":\"AlignLeft\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignRight\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Pin\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Gap\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Spare\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]]]]]]],[[\"\",[],[]],[]]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Measure\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"gap\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"again.\"}]}]}\n",
+      "stderr": ""
+    },
+    "tagged-table-cells#write:context+tagging": {
+      "key": "64a9b4dc2cee4922",
+      "exit": 0,
+      "stdout": "\\startplacetable[title={\\bpar{}Pin gaps\\epar{}},reference={pin-gaps}]\n\\startxtable\n\\startxtablehead[head]\n\\startxrowgroup[lastrow]\n\\startxrow\n\\startxcell[align=right] \\bpar{}Pin\\epar{} \\stopxcell\n\\startxcell[align=left] \\bpar{}Gap\\epar{} \\stopxcell\n\\stopxrow\n\\stopxrowgroup\n\\stopxtablehead\n\\startxtablebody[body]\n\\startxrowgroup[lastrow]\n\\startxrow\n\\startxcell[align=right] \\bpar{}Spare\\epar{} \\stopxcell\n\\startxcell[align=left] \\bpar{}2\\epar{} \\stopxcell\n\\stopxrow\n\\stopxrowgroup\n\\stopxtablebody\n\\startxtablefoot[foot]\n\\stopxtablefoot\n\\stopxtable\n\\stopplacetable\n\n\\bpar\nMeasure the gap again.\n\\epar\n",
+      "stderr": ""
+    },
+    "tagged-table-cells#write:context-tagging": {
+      "key": "99fbc7560f4f7344",
+      "exit": 0,
+      "stdout": "\\startplacetable[title={Pin gaps},reference={pin-gaps}]\n\\startxtable\n\\startxtablehead[head]\n\\startxrowgroup[lastrow]\n\\startxrow\n\\startxcell[align=right] Pin \\stopxcell\n\\startxcell[align=left] Gap \\stopxcell\n\\stopxrow\n\\stopxrowgroup\n\\stopxtablehead\n\\startxtablebody[body]\n\\startxrowgroup[lastrow]\n\\startxrow\n\\startxcell[align=right] Spare \\stopxcell\n\\startxcell[align=left] 2 \\stopxcell\n\\stopxrow\n\\stopxrowgroup\n\\stopxtablebody\n\\startxtablefoot[foot]\n\\stopxtablefoot\n\\stopxtable\n\\stopplacetable\n\nMeasure the gap again.\n",
+      "stderr": ""
+    }
+  }
+}

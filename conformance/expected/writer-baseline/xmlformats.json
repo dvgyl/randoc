@@ -1,0 +1,1601 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "bullet-list#e2e:docbook": {
+      "key": "848243ad56b2ee9b",
+      "exit": 0,
+      "stdout": "<itemizedlist spacing=\"compact\">\n  <listitem>\n    <para>\n      Check inlet.\n    </para>\n    <itemizedlist spacing=\"compact\">\n      <listitem>\n        <para>\n          Log 16.\n        </para>\n      </listitem>\n    </itemizedlist>\n  </listitem>\n  <listitem>\n    <para>\n      Check outlet.\n    </para>\n  </listitem>\n</itemizedlist>\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:docbook4": {
+      "key": "2ede70d99ec51d5e",
+      "exit": 0,
+      "stdout": "<itemizedlist spacing=\"compact\">\n  <listitem>\n    <para>\n      Check inlet.\n    </para>\n    <itemizedlist spacing=\"compact\">\n      <listitem>\n        <para>\n          Log 16.\n        </para>\n      </listitem>\n    </itemizedlist>\n  </listitem>\n  <listitem>\n    <para>\n      Check outlet.\n    </para>\n  </listitem>\n</itemizedlist>\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:docbook5": {
+      "key": "a58688e77990b5d7",
+      "exit": 0,
+      "stdout": "<itemizedlist spacing=\"compact\">\n  <listitem>\n    <para>\n      Check inlet.\n    </para>\n    <itemizedlist spacing=\"compact\">\n      <listitem>\n        <para>\n          Log 16.\n        </para>\n      </listitem>\n    </itemizedlist>\n  </listitem>\n  <listitem>\n    <para>\n      Check outlet.\n    </para>\n  </listitem>\n</itemizedlist>\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:fb2": {
+      "key": "29e0b5f421c8c0a0",
+      "exit": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title><section><p>• Check inlet.</p><p>• • Log 16.</p><p>• Check outlet.</p></section></body></FictionBook>\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:jats": {
+      "key": "97f7d640546f0fcd",
+      "exit": 0,
+      "stdout": "<list list-type=\"bullet\">\n  <list-item>\n    <p>Check inlet.</p>\n    <list list-type=\"bullet\">\n      <list-item>\n        <p>Log 16.</p>\n      </list-item>\n    </list>\n  </list-item>\n  <list-item>\n    <p>Check outlet.</p>\n  </list-item>\n</list>\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:jats_archiving": {
+      "key": "980cff67741dee39",
+      "exit": 0,
+      "stdout": "<list list-type=\"bullet\">\n  <list-item>\n    <p>Check inlet.</p>\n    <list list-type=\"bullet\">\n      <list-item>\n        <p>Log 16.</p>\n      </list-item>\n    </list>\n  </list-item>\n  <list-item>\n    <p>Check outlet.</p>\n  </list-item>\n</list>\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:jats_articleauthoring": {
+      "key": "ad159a4a0aea21ae",
+      "exit": 0,
+      "stdout": "<list list-type=\"bullet\">\n  <list-item>\n    <p>Check inlet.</p>\n    <list list-type=\"bullet\">\n      <list-item>\n        <p>Log 16.</p>\n      </list-item>\n    </list>\n  </list-item>\n  <list-item>\n    <p>Check outlet.</p>\n  </list-item>\n</list>\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:jats_publishing": {
+      "key": "4425d79181de7b76",
+      "exit": 0,
+      "stdout": "<list list-type=\"bullet\">\n  <list-item>\n    <p>Check inlet.</p>\n    <list list-type=\"bullet\">\n      <list-item>\n        <p>Log 16.</p>\n      </list-item>\n    </list>\n  </list-item>\n  <list-item>\n    <p>Check outlet.</p>\n  </list-item>\n</list>\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:tei": {
+      "key": "1312c695c5b475e0",
+      "exit": 0,
+      "stdout": "<list type=\"unordered\">\n  <item>\n    <p>Check inlet.</p>\n    <list type=\"unordered\">\n      <item>\n        <p>Log 16.</p>\n      </item>\n    </list>\n  </item>\n  <item>\n    <p>Check outlet.</p>\n  </item>\n</list>\n",
+      "stderr": ""
+    },
+    "bullet-list#read": {
+      "key": "c4a3d7cff38a1c73",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"inlet.\"}]},{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Log\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"16.\"}]}]]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"outlet.\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "bullet-list#write:docbook": {
+      "key": "3c0ba10546a7008e",
+      "exit": 0,
+      "stdout": "<itemizedlist spacing=\"compact\">\n  <listitem>\n    <para>\n      Check inlet.\n    </para>\n    <itemizedlist spacing=\"compact\">\n      <listitem>\n        <para>\n          Log 16.\n        </para>\n      </listitem>\n    </itemizedlist>\n  </listitem>\n  <listitem>\n    <para>\n      Check outlet.\n    </para>\n  </listitem>\n</itemizedlist>\n",
+      "stderr": ""
+    },
+    "bullet-list#write:docbook4": {
+      "key": "41b608e964a07ae3",
+      "exit": 0,
+      "stdout": "<itemizedlist spacing=\"compact\">\n  <listitem>\n    <para>\n      Check inlet.\n    </para>\n    <itemizedlist spacing=\"compact\">\n      <listitem>\n        <para>\n          Log 16.\n        </para>\n      </listitem>\n    </itemizedlist>\n  </listitem>\n  <listitem>\n    <para>\n      Check outlet.\n    </para>\n  </listitem>\n</itemizedlist>\n",
+      "stderr": ""
+    },
+    "bullet-list#write:docbook5": {
+      "key": "53d73d54685addfc",
+      "exit": 0,
+      "stdout": "<itemizedlist spacing=\"compact\">\n  <listitem>\n    <para>\n      Check inlet.\n    </para>\n    <itemizedlist spacing=\"compact\">\n      <listitem>\n        <para>\n          Log 16.\n        </para>\n      </listitem>\n    </itemizedlist>\n  </listitem>\n  <listitem>\n    <para>\n      Check outlet.\n    </para>\n  </listitem>\n</itemizedlist>\n",
+      "stderr": ""
+    },
+    "bullet-list#write:fb2": {
+      "key": "09154026a411e623",
+      "exit": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title><section><p>• Check inlet.</p><p>• • Log 16.</p><p>• Check outlet.</p></section></body></FictionBook>\n",
+      "stderr": ""
+    },
+    "bullet-list#write:jats": {
+      "key": "76f28e41918dd192",
+      "exit": 0,
+      "stdout": "<list list-type=\"bullet\">\n  <list-item>\n    <p>Check inlet.</p>\n    <list list-type=\"bullet\">\n      <list-item>\n        <p>Log 16.</p>\n      </list-item>\n    </list>\n  </list-item>\n  <list-item>\n    <p>Check outlet.</p>\n  </list-item>\n</list>\n",
+      "stderr": ""
+    },
+    "bullet-list#write:jats_archiving": {
+      "key": "31fc3deca7f368f6",
+      "exit": 0,
+      "stdout": "<list list-type=\"bullet\">\n  <list-item>\n    <p>Check inlet.</p>\n    <list list-type=\"bullet\">\n      <list-item>\n        <p>Log 16.</p>\n      </list-item>\n    </list>\n  </list-item>\n  <list-item>\n    <p>Check outlet.</p>\n  </list-item>\n</list>\n",
+      "stderr": ""
+    },
+    "bullet-list#write:jats_articleauthoring": {
+      "key": "acf287957e63eb8d",
+      "exit": 0,
+      "stdout": "<list list-type=\"bullet\">\n  <list-item>\n    <p>Check inlet.</p>\n    <list list-type=\"bullet\">\n      <list-item>\n        <p>Log 16.</p>\n      </list-item>\n    </list>\n  </list-item>\n  <list-item>\n    <p>Check outlet.</p>\n  </list-item>\n</list>\n",
+      "stderr": ""
+    },
+    "bullet-list#write:jats_publishing": {
+      "key": "6ddeaeff622c7cf9",
+      "exit": 0,
+      "stdout": "<list list-type=\"bullet\">\n  <list-item>\n    <p>Check inlet.</p>\n    <list list-type=\"bullet\">\n      <list-item>\n        <p>Log 16.</p>\n      </list-item>\n    </list>\n  </list-item>\n  <list-item>\n    <p>Check outlet.</p>\n  </list-item>\n</list>\n",
+      "stderr": ""
+    },
+    "bullet-list#write:tei": {
+      "key": "f9933e51d3da808f",
+      "exit": 0,
+      "stdout": "<list type=\"unordered\">\n  <item>\n    <p>Check inlet.</p>\n    <list type=\"unordered\">\n      <item>\n        <p>Log 16.</p>\n      </item>\n    </list>\n  </item>\n  <item>\n    <p>Check outlet.</p>\n  </item>\n</list>\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:docbook": {
+      "key": "8d8d776500f844aa",
+      "exit": 0,
+      "stdout": "<table>\n  <title>Pump check values</title>\n  <tgroup cols=\"2\">\n    <colspec align=\"left\" />\n    <colspec align=\"right\" />\n    <thead>\n      <row>\n        <entry>\n          Item\n        </entry>\n        <entry>\n          Value\n        </entry>\n      </row>\n    </thead>\n    <tbody>\n      <row>\n        <entry>\n          inlet\n        </entry>\n        <entry>\n          16\n        </entry>\n      </row>\n    </tbody>\n  </tgroup>\n</table>\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:docbook4": {
+      "key": "8b54c73b221ad321",
+      "exit": 0,
+      "stdout": "<table>\n  <title>Pump check values</title>\n  <tgroup cols=\"2\">\n    <colspec align=\"left\" />\n    <colspec align=\"right\" />\n    <thead>\n      <row>\n        <entry>\n          Item\n        </entry>\n        <entry>\n          Value\n        </entry>\n      </row>\n    </thead>\n    <tbody>\n      <row>\n        <entry>\n          inlet\n        </entry>\n        <entry>\n          16\n        </entry>\n      </row>\n    </tbody>\n  </tgroup>\n</table>\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:docbook5": {
+      "key": "1f9832d8451fa84e",
+      "exit": 0,
+      "stdout": "<table>\n  <title>Pump check values</title>\n  <tgroup cols=\"2\">\n    <colspec align=\"left\" />\n    <colspec align=\"right\" />\n    <thead>\n      <row>\n        <entry>\n          Item\n        </entry>\n        <entry>\n          Value\n        </entry>\n      </row>\n    </thead>\n    <tbody>\n      <row>\n        <entry>\n          inlet\n        </entry>\n        <entry>\n          16\n        </entry>\n      </row>\n    </tbody>\n  </tgroup>\n</table>\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:fb2": {
+      "key": "1cc66cd083f135fb",
+      "exit": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title><section><table><tr><th align=\"left\">Item</th><th align=\"right\">Value</th></tr><tr><td align=\"left\">inlet</td><td align=\"right\">16</td></tr></table><p><emphasis>Pump check values</emphasis></p></section></body></FictionBook>\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:jats": {
+      "key": "9891701b39cfb2dc",
+      "exit": 0,
+      "stdout": "<table-wrap>\n  <caption>\n    <p>Pump check values</p>\n  </caption>\n  <table id=\"check-table\">\n    <thead>\n      <tr>\n        <th align=\"left\">Item</th>\n        <th align=\"right\">Value</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr>\n        <td align=\"left\">inlet</td>\n        <td align=\"right\">16</td>\n      </tr>\n    </tbody>\n  </table>\n</table-wrap>\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:jats_archiving": {
+      "key": "088d09289c077830",
+      "exit": 0,
+      "stdout": "<table-wrap>\n  <caption>\n    <p>Pump check values</p>\n  </caption>\n  <table id=\"check-table\">\n    <thead>\n      <tr>\n        <th align=\"left\">Item</th>\n        <th align=\"right\">Value</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr>\n        <td align=\"left\">inlet</td>\n        <td align=\"right\">16</td>\n      </tr>\n    </tbody>\n  </table>\n</table-wrap>\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:jats_articleauthoring": {
+      "key": "c6fea66ad59957d1",
+      "exit": 0,
+      "stdout": "<table-wrap>\n  <caption>\n    <p>Pump check values</p>\n  </caption>\n  <table id=\"check-table\">\n    <thead>\n      <tr>\n        <th align=\"left\">Item</th>\n        <th align=\"right\">Value</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr>\n        <td align=\"left\">inlet</td>\n        <td align=\"right\">16</td>\n      </tr>\n    </tbody>\n  </table>\n</table-wrap>\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:jats_publishing": {
+      "key": "a635b5feecacfb29",
+      "exit": 0,
+      "stdout": "<table-wrap>\n  <caption>\n    <p>Pump check values</p>\n  </caption>\n  <table id=\"check-table\">\n    <thead>\n      <tr>\n        <th align=\"left\">Item</th>\n        <th align=\"right\">Value</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr>\n        <td align=\"left\">inlet</td>\n        <td align=\"right\">16</td>\n      </tr>\n    </tbody>\n  </table>\n</table-wrap>\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:tei": {
+      "key": "10c5e0e2cd73fcbb",
+      "exit": 0,
+      "stdout": "<table>\n  <row role=\"label\">\n    <cell><p>Item</p></cell>\n    <cell><p>Value</p></cell>\n  </row>\n  <row>\n    <cell><p>inlet</p></cell>\n    <cell><p>16</p></cell>\n  </row>\n</table>\n",
+      "stderr": ""
+    },
+    "captioned-table#read": {
+      "key": "91b74d8fd3ce04f2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"check-table\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Pump\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"values\"}]}]],[[{\"t\":\"AlignLeft\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignRight\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Item\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Value\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"inlet\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"16\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "captioned-table#write:docbook": {
+      "key": "cd347bd968a9fd7c",
+      "exit": 0,
+      "stdout": "<table>\n  <title>Pump check values</title>\n  <tgroup cols=\"2\">\n    <colspec align=\"left\" />\n    <colspec align=\"right\" />\n    <thead>\n      <row>\n        <entry>\n          Item\n        </entry>\n        <entry>\n          Value\n        </entry>\n      </row>\n    </thead>\n    <tbody>\n      <row>\n        <entry>\n          inlet\n        </entry>\n        <entry>\n          16\n        </entry>\n      </row>\n    </tbody>\n  </tgroup>\n</table>\n",
+      "stderr": ""
+    },
+    "captioned-table#write:docbook4": {
+      "key": "d7c1cdd0ce8fbc61",
+      "exit": 0,
+      "stdout": "<table>\n  <title>Pump check values</title>\n  <tgroup cols=\"2\">\n    <colspec align=\"left\" />\n    <colspec align=\"right\" />\n    <thead>\n      <row>\n        <entry>\n          Item\n        </entry>\n        <entry>\n          Value\n        </entry>\n      </row>\n    </thead>\n    <tbody>\n      <row>\n        <entry>\n          inlet\n        </entry>\n        <entry>\n          16\n        </entry>\n      </row>\n    </tbody>\n  </tgroup>\n</table>\n",
+      "stderr": ""
+    },
+    "captioned-table#write:docbook5": {
+      "key": "008b16d1691483ce",
+      "exit": 0,
+      "stdout": "<table>\n  <title>Pump check values</title>\n  <tgroup cols=\"2\">\n    <colspec align=\"left\" />\n    <colspec align=\"right\" />\n    <thead>\n      <row>\n        <entry>\n          Item\n        </entry>\n        <entry>\n          Value\n        </entry>\n      </row>\n    </thead>\n    <tbody>\n      <row>\n        <entry>\n          inlet\n        </entry>\n        <entry>\n          16\n        </entry>\n      </row>\n    </tbody>\n  </tgroup>\n</table>\n",
+      "stderr": ""
+    },
+    "captioned-table#write:fb2": {
+      "key": "dfbd5be4730478a1",
+      "exit": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title><section><table><tr><th align=\"left\">Item</th><th align=\"right\">Value</th></tr><tr><td align=\"left\">inlet</td><td align=\"right\">16</td></tr></table><p><emphasis>Pump check values</emphasis></p></section></body></FictionBook>\n",
+      "stderr": ""
+    },
+    "captioned-table#write:jats": {
+      "key": "e85f3d2233cac598",
+      "exit": 0,
+      "stdout": "<table-wrap>\n  <caption>\n    <p>Pump check values</p>\n  </caption>\n  <table id=\"check-table\">\n    <thead>\n      <tr>\n        <th align=\"left\">Item</th>\n        <th align=\"right\">Value</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr>\n        <td align=\"left\">inlet</td>\n        <td align=\"right\">16</td>\n      </tr>\n    </tbody>\n  </table>\n</table-wrap>\n",
+      "stderr": ""
+    },
+    "captioned-table#write:jats_archiving": {
+      "key": "32528fb7ad8b0ed4",
+      "exit": 0,
+      "stdout": "<table-wrap>\n  <caption>\n    <p>Pump check values</p>\n  </caption>\n  <table id=\"check-table\">\n    <thead>\n      <tr>\n        <th align=\"left\">Item</th>\n        <th align=\"right\">Value</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr>\n        <td align=\"left\">inlet</td>\n        <td align=\"right\">16</td>\n      </tr>\n    </tbody>\n  </table>\n</table-wrap>\n",
+      "stderr": ""
+    },
+    "captioned-table#write:jats_articleauthoring": {
+      "key": "09fd4675a9e61f2f",
+      "exit": 0,
+      "stdout": "<table-wrap>\n  <caption>\n    <p>Pump check values</p>\n  </caption>\n  <table id=\"check-table\">\n    <thead>\n      <tr>\n        <th align=\"left\">Item</th>\n        <th align=\"right\">Value</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr>\n        <td align=\"left\">inlet</td>\n        <td align=\"right\">16</td>\n      </tr>\n    </tbody>\n  </table>\n</table-wrap>\n",
+      "stderr": ""
+    },
+    "captioned-table#write:jats_publishing": {
+      "key": "4df1b1f615a2bd93",
+      "exit": 0,
+      "stdout": "<table-wrap>\n  <caption>\n    <p>Pump check values</p>\n  </caption>\n  <table id=\"check-table\">\n    <thead>\n      <tr>\n        <th align=\"left\">Item</th>\n        <th align=\"right\">Value</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr>\n        <td align=\"left\">inlet</td>\n        <td align=\"right\">16</td>\n      </tr>\n    </tbody>\n  </table>\n</table-wrap>\n",
+      "stderr": ""
+    },
+    "captioned-table#write:tei": {
+      "key": "46c5659e581f9da5",
+      "exit": 0,
+      "stdout": "<table>\n  <row role=\"label\">\n    <cell><p>Item</p></cell>\n    <cell><p>Value</p></cell>\n  </row>\n  <row>\n    <cell><p>inlet</p></cell>\n    <cell><p>16</p></cell>\n  </row>\n</table>\n",
+      "stderr": ""
+    },
+    "code-block#e2e:docbook": {
+      "key": "5c4ef5e86bd3033b",
+      "exit": 0,
+      "stdout": "<programlisting language=\"python\">\nvalue = 16\nprint(value &lt; 25)\n</programlisting>\n<programlisting>\ninlet\n  outlet\n</programlisting>\n",
+      "stderr": ""
+    },
+    "code-block#e2e:docbook4": {
+      "key": "e833c1183e7ee402",
+      "exit": 0,
+      "stdout": "<programlisting language=\"python\">\nvalue = 16\nprint(value &lt; 25)\n</programlisting>\n<programlisting>\ninlet\n  outlet\n</programlisting>\n",
+      "stderr": ""
+    },
+    "code-block#e2e:docbook5": {
+      "key": "bb568d05382f76df",
+      "exit": 0,
+      "stdout": "<programlisting language=\"python\">\nvalue = 16\nprint(value &lt; 25)\n</programlisting>\n<programlisting>\ninlet\n  outlet\n</programlisting>\n",
+      "stderr": ""
+    },
+    "code-block#e2e:fb2": {
+      "key": "d1e0760c773ef184",
+      "exit": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title><section><empty-line /><p><code>value = 16</code></p><p><code>print(value &lt; 25)</code></p><empty-line /><empty-line /><p><code>inlet</code></p><p><code>  outlet</code></p><empty-line /></section></body></FictionBook>\n",
+      "stderr": ""
+    },
+    "code-block#e2e:jats": {
+      "key": "02da4d1236730165",
+      "exit": 0,
+      "stdout": "<code id=\"sample-code\" language=\"python\">value = 16\nprint(value &lt; 25)</code>\n<preformat>inlet\n  outlet\n</preformat>\n",
+      "stderr": ""
+    },
+    "code-block#e2e:jats_archiving": {
+      "key": "00238d80e40ae0b9",
+      "exit": 0,
+      "stdout": "<code id=\"sample-code\" language=\"python\">value = 16\nprint(value &lt; 25)</code>\n<preformat>inlet\n  outlet\n</preformat>\n",
+      "stderr": ""
+    },
+    "code-block#e2e:jats_articleauthoring": {
+      "key": "d270d4ce9c1600d2",
+      "exit": 0,
+      "stdout": "<code id=\"sample-code\" language=\"python\">value = 16\nprint(value &lt; 25)</code>\n<preformat>inlet\n  outlet\n</preformat>\n",
+      "stderr": ""
+    },
+    "code-block#e2e:jats_publishing": {
+      "key": "722cd07c86168e4a",
+      "exit": 0,
+      "stdout": "<code id=\"sample-code\" language=\"python\">value = 16\nprint(value &lt; 25)</code>\n<preformat>inlet\n  outlet\n</preformat>\n",
+      "stderr": ""
+    },
+    "code-block#e2e:tei": {
+      "key": "baa2eb81cbb9b344",
+      "exit": 0,
+      "stdout": "<ab type='codeblock python'>\nvalue = 16\nprint(value &lt; 25)\n</ab>\n<ab type='codeblock '>\ninlet\n  outlet\n</ab>\n",
+      "stderr": ""
+    },
+    "code-block#read": {
+      "key": "4dab4d985992d783",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"sample-code\",[\"python\"],[]],\"value = 16\\nprint(value < 25)\"]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"inlet\\n  outlet\\n\"]}]}\n",
+      "stderr": ""
+    },
+    "code-block#write:docbook": {
+      "key": "4e30d80219518a72",
+      "exit": 0,
+      "stdout": "<programlisting language=\"python\">\nvalue = 16\nprint(value &lt; 25)\n</programlisting>\n<programlisting>\ninlet\n  outlet\n</programlisting>\n",
+      "stderr": ""
+    },
+    "code-block#write:docbook4": {
+      "key": "0a4de2a4c5cff45b",
+      "exit": 0,
+      "stdout": "<programlisting language=\"python\">\nvalue = 16\nprint(value &lt; 25)\n</programlisting>\n<programlisting>\ninlet\n  outlet\n</programlisting>\n",
+      "stderr": ""
+    },
+    "code-block#write:docbook5": {
+      "key": "a9782aafc867e394",
+      "exit": 0,
+      "stdout": "<programlisting language=\"python\">\nvalue = 16\nprint(value &lt; 25)\n</programlisting>\n<programlisting>\ninlet\n  outlet\n</programlisting>\n",
+      "stderr": ""
+    },
+    "code-block#write:fb2": {
+      "key": "f799e8816fcf221b",
+      "exit": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title><section><empty-line /><p><code>value = 16</code></p><p><code>print(value &lt; 25)</code></p><empty-line /><empty-line /><p><code>inlet</code></p><p><code>  outlet</code></p><empty-line /></section></body></FictionBook>\n",
+      "stderr": ""
+    },
+    "code-block#write:jats": {
+      "key": "eef86818c369b0a6",
+      "exit": 0,
+      "stdout": "<code id=\"sample-code\" language=\"python\">value = 16\nprint(value &lt; 25)</code>\n<preformat>inlet\n  outlet\n</preformat>\n",
+      "stderr": ""
+    },
+    "code-block#write:jats_archiving": {
+      "key": "a6399bee3bd65faa",
+      "exit": 0,
+      "stdout": "<code id=\"sample-code\" language=\"python\">value = 16\nprint(value &lt; 25)</code>\n<preformat>inlet\n  outlet\n</preformat>\n",
+      "stderr": ""
+    },
+    "code-block#write:jats_articleauthoring": {
+      "key": "80fed2e8b3e234b9",
+      "exit": 0,
+      "stdout": "<code id=\"sample-code\" language=\"python\">value = 16\nprint(value &lt; 25)</code>\n<preformat>inlet\n  outlet\n</preformat>\n",
+      "stderr": ""
+    },
+    "code-block#write:jats_publishing": {
+      "key": "e2f906d9c88f3555",
+      "exit": 0,
+      "stdout": "<code id=\"sample-code\" language=\"python\">value = 16\nprint(value &lt; 25)</code>\n<preformat>inlet\n  outlet\n</preformat>\n",
+      "stderr": ""
+    },
+    "code-block#write:tei": {
+      "key": "de0431280356d1e7",
+      "exit": 0,
+      "stdout": "<ab type='codeblock python'>\nvalue = 16\nprint(value &lt; 25)\n</ab>\n<ab type='codeblock '>\ninlet\n  outlet\n</ab>\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:docbook": {
+      "key": "8ea9b8cf69fc1f47",
+      "exit": 0,
+      "stdout": "<variablelist spacing=\"compact\">\n  <varlistentry>\n    <term>\n      Limit\n    </term>\n    <listitem>\n      <para>\n        Highest permitted 16.\n      </para>\n      <para>\n        See the log.\n      </para>\n    </listitem>\n  </varlistentry>\n  <varlistentry>\n    <term>\n      Zero\n    </term>\n    <listitem>\n      <para>\n        Start value.\n      </para>\n    </listitem>\n  </varlistentry>\n</variablelist>\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:docbook4": {
+      "key": "5edd4913977eac3c",
+      "exit": 0,
+      "stdout": "<variablelist spacing=\"compact\">\n  <varlistentry>\n    <term>\n      Limit\n    </term>\n    <listitem>\n      <para>\n        Highest permitted 16.\n      </para>\n      <para>\n        See the log.\n      </para>\n    </listitem>\n  </varlistentry>\n  <varlistentry>\n    <term>\n      Zero\n    </term>\n    <listitem>\n      <para>\n        Start value.\n      </para>\n    </listitem>\n  </varlistentry>\n</variablelist>\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:docbook5": {
+      "key": "028dcc846e27ed8b",
+      "exit": 0,
+      "stdout": "<variablelist spacing=\"compact\">\n  <varlistentry>\n    <term>\n      Limit\n    </term>\n    <listitem>\n      <para>\n        Highest permitted 16.\n      </para>\n      <para>\n        See the log.\n      </para>\n    </listitem>\n  </varlistentry>\n  <varlistentry>\n    <term>\n      Zero\n    </term>\n    <listitem>\n      <para>\n        Start value.\n      </para>\n    </listitem>\n  </varlistentry>\n</variablelist>\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:fb2": {
+      "key": "0e39cb308025775e",
+      "exit": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title><section><p><strong>Limit</strong></p><p>    Highest permitted 16.</p><p>    See the log.</p><p><strong>Zero</strong></p><p>    Start value.</p></section></body></FictionBook>\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:jats": {
+      "key": "460cab5ab3203629",
+      "exit": 0,
+      "stdout": "<def-list>\n  <def-item>\n    <term>Limit</term>\n    <def>\n      <p>Highest permitted 16.</p>\n      <p>See the log.</p>\n    </def>\n  </def-item>\n  <def-item>\n    <term>Zero</term>\n    <def>\n      <p>Start value.</p>\n    </def>\n  </def-item>\n</def-list>\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:jats_archiving": {
+      "key": "3205976162aa506d",
+      "exit": 0,
+      "stdout": "<def-list>\n  <def-item>\n    <term>Limit</term>\n    <def>\n      <p>Highest permitted 16.</p>\n      <p>See the log.</p>\n    </def>\n  </def-item>\n  <def-item>\n    <term>Zero</term>\n    <def>\n      <p>Start value.</p>\n    </def>\n  </def-item>\n</def-list>\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:jats_articleauthoring": {
+      "key": "e67e18293d4d7e4c",
+      "exit": 0,
+      "stdout": "<def-list>\n  <def-item>\n    <term>Limit</term>\n    <def>\n      <p>Highest permitted 16.</p>\n      <p>See the log.</p>\n    </def>\n  </def-item>\n  <def-item>\n    <term>Zero</term>\n    <def>\n      <p>Start value.</p>\n    </def>\n  </def-item>\n</def-list>\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:jats_publishing": {
+      "key": "d80e6750af8603b4",
+      "exit": 0,
+      "stdout": "<def-list>\n  <def-item>\n    <term>Limit</term>\n    <def>\n      <p>Highest permitted 16.</p>\n      <p>See the log.</p>\n    </def>\n  </def-item>\n  <def-item>\n    <term>Zero</term>\n    <def>\n      <p>Start value.</p>\n    </def>\n  </def-item>\n</def-list>\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:tei": {
+      "key": "586a1fbda63f4b1e",
+      "exit": 0,
+      "stdout": "<list type=\"definition\">\n  <label>\n    Limit\n  </label>\n  <item>\n    <p>Highest permitted 16.</p>\n    <p>See the log.</p>\n  </item>\n  <label>\n    Zero\n  </label>\n  <item>\n    <p>Start value.</p>\n  </item>\n</list>\n",
+      "stderr": ""
+    },
+    "definition-list#read": {
+      "key": "7ee7c31841ff315f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"Limit\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Highest\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"permitted\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"16.\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"See\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log.\"}]}]]],[[{\"t\":\"Str\",\"c\":\"Zero\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Start\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"value.\"}]}]]]]}]}\n",
+      "stderr": ""
+    },
+    "definition-list#write:docbook": {
+      "key": "63794278872efc10",
+      "exit": 0,
+      "stdout": "<variablelist spacing=\"compact\">\n  <varlistentry>\n    <term>\n      Limit\n    </term>\n    <listitem>\n      <para>\n        Highest permitted 16.\n      </para>\n      <para>\n        See the log.\n      </para>\n    </listitem>\n  </varlistentry>\n  <varlistentry>\n    <term>\n      Zero\n    </term>\n    <listitem>\n      <para>\n        Start value.\n      </para>\n    </listitem>\n  </varlistentry>\n</variablelist>\n",
+      "stderr": ""
+    },
+    "definition-list#write:docbook4": {
+      "key": "9a7ede759661df47",
+      "exit": 0,
+      "stdout": "<variablelist spacing=\"compact\">\n  <varlistentry>\n    <term>\n      Limit\n    </term>\n    <listitem>\n      <para>\n        Highest permitted 16.\n      </para>\n      <para>\n        See the log.\n      </para>\n    </listitem>\n  </varlistentry>\n  <varlistentry>\n    <term>\n      Zero\n    </term>\n    <listitem>\n      <para>\n        Start value.\n      </para>\n    </listitem>\n  </varlistentry>\n</variablelist>\n",
+      "stderr": ""
+    },
+    "definition-list#write:docbook5": {
+      "key": "5d6823e79bd6003e",
+      "exit": 0,
+      "stdout": "<variablelist spacing=\"compact\">\n  <varlistentry>\n    <term>\n      Limit\n    </term>\n    <listitem>\n      <para>\n        Highest permitted 16.\n      </para>\n      <para>\n        See the log.\n      </para>\n    </listitem>\n  </varlistentry>\n  <varlistentry>\n    <term>\n      Zero\n    </term>\n    <listitem>\n      <para>\n        Start value.\n      </para>\n    </listitem>\n  </varlistentry>\n</variablelist>\n",
+      "stderr": ""
+    },
+    "definition-list#write:fb2": {
+      "key": "00101bb442912807",
+      "exit": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title><section><p><strong>Limit</strong></p><p>    Highest permitted 16.</p><p>    See the log.</p><p><strong>Zero</strong></p><p>    Start value.</p></section></body></FictionBook>\n",
+      "stderr": ""
+    },
+    "definition-list#write:jats": {
+      "key": "c4c71885f6a36444",
+      "exit": 0,
+      "stdout": "<def-list>\n  <def-item>\n    <term>Limit</term>\n    <def>\n      <p>Highest permitted 16.</p>\n      <p>See the log.</p>\n    </def>\n  </def-item>\n  <def-item>\n    <term>Zero</term>\n    <def>\n      <p>Start value.</p>\n    </def>\n  </def-item>\n</def-list>\n",
+      "stderr": ""
+    },
+    "definition-list#write:jats_archiving": {
+      "key": "114700dc246b6c78",
+      "exit": 0,
+      "stdout": "<def-list>\n  <def-item>\n    <term>Limit</term>\n    <def>\n      <p>Highest permitted 16.</p>\n      <p>See the log.</p>\n    </def>\n  </def-item>\n  <def-item>\n    <term>Zero</term>\n    <def>\n      <p>Start value.</p>\n    </def>\n  </def-item>\n</def-list>\n",
+      "stderr": ""
+    },
+    "definition-list#write:jats_articleauthoring": {
+      "key": "4739819fc04e5de9",
+      "exit": 0,
+      "stdout": "<def-list>\n  <def-item>\n    <term>Limit</term>\n    <def>\n      <p>Highest permitted 16.</p>\n      <p>See the log.</p>\n    </def>\n  </def-item>\n  <def-item>\n    <term>Zero</term>\n    <def>\n      <p>Start value.</p>\n    </def>\n  </def-item>\n</def-list>\n",
+      "stderr": ""
+    },
+    "definition-list#write:jats_publishing": {
+      "key": "09b1295f75988755",
+      "exit": 0,
+      "stdout": "<def-list>\n  <def-item>\n    <term>Limit</term>\n    <def>\n      <p>Highest permitted 16.</p>\n      <p>See the log.</p>\n    </def>\n  </def-item>\n  <def-item>\n    <term>Zero</term>\n    <def>\n      <p>Start value.</p>\n    </def>\n  </def-item>\n</def-list>\n",
+      "stderr": ""
+    },
+    "definition-list#write:tei": {
+      "key": "3c5cf68a5f3843a3",
+      "exit": 0,
+      "stdout": "<list type=\"definition\">\n  <label>\n    Limit\n  </label>\n  <item>\n    <p>Highest permitted 16.</p>\n    <p>See the log.</p>\n  </item>\n  <label>\n    Zero\n  </label>\n  <item>\n    <p>Start value.</p>\n  </item>\n</list>\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:docbook": {
+      "key": "2812143bbc9eb858",
+      "exit": 0,
+      "stdout": "<para xml:id=\"check-panel\">\n  <anchor xml:id=\"check-step\" />Pump check inlet\n</para>\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:docbook4": {
+      "key": "4c57d49dd85322a7",
+      "exit": 0,
+      "stdout": "<para id=\"check-panel\">\n  <anchor id=\"check-step\" />Pump check inlet\n</para>\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:docbook5": {
+      "key": "69c6737ea81c9b44",
+      "exit": 0,
+      "stdout": "<para xml:id=\"check-panel\">\n  <anchor xml:id=\"check-step\" />Pump check inlet\n</para>\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:fb2": {
+      "key": "5c321bb9a98405b5",
+      "exit": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title><section><p>Pump check inlet</p></section></body></FictionBook>\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:jats": {
+      "key": "75e2a109f4bc83e6",
+      "exit": 0,
+      "stdout": "<boxed-text id=\"check-panel\" xml:lang=\"en\">\n  <p><named-content id=\"check-step\" content-type=\"label\">Pump\n  check</named-content> inlet</p>\n</boxed-text>\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:jats_archiving": {
+      "key": "bc2d4e7de4bae9c2",
+      "exit": 0,
+      "stdout": "<boxed-text id=\"check-panel\" xml:lang=\"en\">\n  <p><named-content id=\"check-step\" content-type=\"label\">Pump\n  check</named-content> inlet</p>\n</boxed-text>\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:jats_articleauthoring": {
+      "key": "9dc232ded8859397",
+      "exit": 0,
+      "stdout": "<boxed-text id=\"check-panel\" xml:lang=\"en\">\n  <p><named-content id=\"check-step\" content-type=\"label\">Pump\n  check</named-content> inlet</p>\n</boxed-text>\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:jats_publishing": {
+      "key": "e9e1eef9db2f176f",
+      "exit": 0,
+      "stdout": "<boxed-text id=\"check-panel\" xml:lang=\"en\">\n  <p><named-content id=\"check-step\" content-type=\"label\">Pump\n  check</named-content> inlet</p>\n</boxed-text>\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:tei": {
+      "key": "4894be2e0ebd3bf5",
+      "exit": 0,
+      "stdout": "<p xml:id=\"check-panel\">Pump check inlet</p>\n",
+      "stderr": ""
+    },
+    "div-and-span#read": {
+      "key": "f879769f1e08ae80",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"check-panel\",[\"inspection\"],[[\"lang\",\"en\"]]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"check-step\",[\"label\"],[[\"title\",\"Check location\"]]],[{\"t\":\"Str\",\"c\":\"Pump\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"inlet\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "div-and-span#write:docbook": {
+      "key": "88c41630a223afb8",
+      "exit": 0,
+      "stdout": "<para xml:id=\"check-panel\">\n  <anchor xml:id=\"check-step\" />Pump check inlet\n</para>\n",
+      "stderr": ""
+    },
+    "div-and-span#write:docbook4": {
+      "key": "56afa952fe023ecb",
+      "exit": 0,
+      "stdout": "<para id=\"check-panel\">\n  <anchor id=\"check-step\" />Pump check inlet\n</para>\n",
+      "stderr": ""
+    },
+    "div-and-span#write:docbook5": {
+      "key": "58d9caf7930c4956",
+      "exit": 0,
+      "stdout": "<para xml:id=\"check-panel\">\n  <anchor xml:id=\"check-step\" />Pump check inlet\n</para>\n",
+      "stderr": ""
+    },
+    "div-and-span#write:fb2": {
+      "key": "5e45e830c6e8908b",
+      "exit": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title><section><p>Pump check inlet</p></section></body></FictionBook>\n",
+      "stderr": ""
+    },
+    "div-and-span#write:jats": {
+      "key": "9d1d7c59ae5d18f4",
+      "exit": 0,
+      "stdout": "<boxed-text id=\"check-panel\" xml:lang=\"en\">\n  <p><named-content id=\"check-step\" content-type=\"label\">Pump\n  check</named-content> inlet</p>\n</boxed-text>\n",
+      "stderr": ""
+    },
+    "div-and-span#write:jats_archiving": {
+      "key": "8b6c8e41e2aeffe0",
+      "exit": 0,
+      "stdout": "<boxed-text id=\"check-panel\" xml:lang=\"en\">\n  <p><named-content id=\"check-step\" content-type=\"label\">Pump\n  check</named-content> inlet</p>\n</boxed-text>\n",
+      "stderr": ""
+    },
+    "div-and-span#write:jats_articleauthoring": {
+      "key": "ff76fc9b917975ed",
+      "exit": 0,
+      "stdout": "<boxed-text id=\"check-panel\" xml:lang=\"en\">\n  <p><named-content id=\"check-step\" content-type=\"label\">Pump\n  check</named-content> inlet</p>\n</boxed-text>\n",
+      "stderr": ""
+    },
+    "div-and-span#write:jats_publishing": {
+      "key": "efd623448ad887d1",
+      "exit": 0,
+      "stdout": "<boxed-text id=\"check-panel\" xml:lang=\"en\">\n  <p><named-content id=\"check-step\" content-type=\"label\">Pump\n  check</named-content> inlet</p>\n</boxed-text>\n",
+      "stderr": ""
+    },
+    "div-and-span#write:tei": {
+      "key": "0abc86594c033a5f",
+      "exit": 0,
+      "stdout": "<p xml:id=\"check-panel\">Pump check inlet</p>\n",
+      "stderr": ""
+    },
+    "headings#e2e:docbook": {
+      "key": "eca60bd842575067",
+      "exit": 0,
+      "stdout": "<section xmlns=\"http://docbook.org/ns/docbook\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xml:id=\"inlet\">\n  <title>Pump check</title>\n  <para>\n    Start here.\n  </para>\n  <section xml:id=\"details\" role=\"unnumbered\">\n    <title>Readings</title>\n    <para>\n      Check outlet.\n    </para>\n  </section>\n</section>\n",
+      "stderr": ""
+    },
+    "headings#e2e:docbook4": {
+      "key": "385d12be3abab7e4",
+      "exit": 0,
+      "stdout": "<sect1 id=\"inlet\">\n  <title>Pump check</title>\n  <para>\n    Start here.\n  </para>\n  <sect2 id=\"details\" role=\"unnumbered\">\n    <title>Readings</title>\n    <para>\n      Check outlet.\n    </para>\n  </sect2>\n</sect1>\n",
+      "stderr": ""
+    },
+    "headings#e2e:docbook5": {
+      "key": "a6d2f97f16d14b53",
+      "exit": 0,
+      "stdout": "<section xmlns=\"http://docbook.org/ns/docbook\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xml:id=\"inlet\">\n  <title>Pump check</title>\n  <para>\n    Start here.\n  </para>\n  <section xml:id=\"details\" role=\"unnumbered\">\n    <title>Readings</title>\n    <para>\n      Check outlet.\n    </para>\n  </section>\n</section>\n",
+      "stderr": ""
+    },
+    "headings#e2e:fb2": {
+      "key": "076c0683dcb4097a",
+      "exit": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title><section id=\"inlet\"><title><p>Pump check</p></title><p>Start here.</p><section id=\"details\"><title><p>Readings</p></title><p>Check outlet.</p></section></section></body></FictionBook>\n",
+      "stderr": ""
+    },
+    "headings#e2e:jats": {
+      "key": "e405ce4f28f3cff5",
+      "exit": 0,
+      "stdout": "<sec id=\"inlet\">\n  <title>Pump check</title>\n  <p>Start here.</p>\n  <sec id=\"details\">\n    <title>Readings</title>\n    <p>Check outlet.</p>\n  </sec>\n</sec>\n",
+      "stderr": ""
+    },
+    "headings#e2e:jats_archiving": {
+      "key": "1ab60d3a95e3fbf1",
+      "exit": 0,
+      "stdout": "<sec id=\"inlet\">\n  <title>Pump check</title>\n  <p>Start here.</p>\n  <sec id=\"details\">\n    <title>Readings</title>\n    <p>Check outlet.</p>\n  </sec>\n</sec>\n",
+      "stderr": ""
+    },
+    "headings#e2e:jats_articleauthoring": {
+      "key": "d77d20c1c3fd33b4",
+      "exit": 0,
+      "stdout": "<sec id=\"inlet\">\n  <title>Pump check</title>\n  <p>Start here.</p>\n  <sec id=\"details\">\n    <title>Readings</title>\n    <p>Check outlet.</p>\n  </sec>\n</sec>\n",
+      "stderr": ""
+    },
+    "headings#e2e:jats_publishing": {
+      "key": "cec2c9f05649d7fc",
+      "exit": 0,
+      "stdout": "<sec id=\"inlet\">\n  <title>Pump check</title>\n  <p>Start here.</p>\n  <sec id=\"details\">\n    <title>Readings</title>\n    <p>Check outlet.</p>\n  </sec>\n</sec>\n",
+      "stderr": ""
+    },
+    "headings#e2e:tei": {
+      "key": "ad7b08683b448e3a",
+      "exit": 0,
+      "stdout": "<div type=\"level1\" xml:id=\"inlet\">\n  <head>Pump check</head>\n  <p>Start here.</p>\n  <div type=\"level2\" xml:id=\"details\">\n    <head>Readings</head>\n    <p>Check outlet.</p>\n  </div>\n</div>\n",
+      "stderr": ""
+    },
+    "headings#read": {
+      "key": "5d91446b0faded1f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"inlet\",[],[]],[{\"t\":\"Str\",\"c\":\"Pump\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Start\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"here.\"}]},{\"t\":\"Header\",\"c\":[2,[\"details\",[\"unnumbered\"],[]],[{\"t\":\"Str\",\"c\":\"Readings\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"outlet.\"}]}]}\n",
+      "stderr": ""
+    },
+    "headings#write:docbook": {
+      "key": "08a44ed4c8d5c772",
+      "exit": 0,
+      "stdout": "<section xmlns=\"http://docbook.org/ns/docbook\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xml:id=\"inlet\">\n  <title>Pump check</title>\n  <para>\n    Start here.\n  </para>\n  <section xml:id=\"details\" role=\"unnumbered\">\n    <title>Readings</title>\n    <para>\n      Check outlet.\n    </para>\n  </section>\n</section>\n",
+      "stderr": ""
+    },
+    "headings#write:docbook4": {
+      "key": "db4885380032d3c5",
+      "exit": 0,
+      "stdout": "<sect1 id=\"inlet\">\n  <title>Pump check</title>\n  <para>\n    Start here.\n  </para>\n  <sect2 id=\"details\" role=\"unnumbered\">\n    <title>Readings</title>\n    <para>\n      Check outlet.\n    </para>\n  </sect2>\n</sect1>\n",
+      "stderr": ""
+    },
+    "headings#write:docbook5": {
+      "key": "edd4225f7913de20",
+      "exit": 0,
+      "stdout": "<section xmlns=\"http://docbook.org/ns/docbook\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xml:id=\"inlet\">\n  <title>Pump check</title>\n  <para>\n    Start here.\n  </para>\n  <section xml:id=\"details\" role=\"unnumbered\">\n    <title>Readings</title>\n    <para>\n      Check outlet.\n    </para>\n  </section>\n</section>\n",
+      "stderr": ""
+    },
+    "headings#write:fb2": {
+      "key": "2441f068807f1b85",
+      "exit": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title><section id=\"inlet\"><title><p>Pump check</p></title><p>Start here.</p><section id=\"details\"><title><p>Readings</p></title><p>Check outlet.</p></section></section></body></FictionBook>\n",
+      "stderr": ""
+    },
+    "headings#write:jats": {
+      "key": "41182d72ce9f122e",
+      "exit": 0,
+      "stdout": "<sec id=\"inlet\">\n  <title>Pump check</title>\n  <p>Start here.</p>\n  <sec id=\"details\">\n    <title>Readings</title>\n    <p>Check outlet.</p>\n  </sec>\n</sec>\n",
+      "stderr": ""
+    },
+    "headings#write:jats_archiving": {
+      "key": "dff76b96e954faea",
+      "exit": 0,
+      "stdout": "<sec id=\"inlet\">\n  <title>Pump check</title>\n  <p>Start here.</p>\n  <sec id=\"details\">\n    <title>Readings</title>\n    <p>Check outlet.</p>\n  </sec>\n</sec>\n",
+      "stderr": ""
+    },
+    "headings#write:jats_articleauthoring": {
+      "key": "99d027007a6f895f",
+      "exit": 0,
+      "stdout": "<sec id=\"inlet\">\n  <title>Pump check</title>\n  <p>Start here.</p>\n  <sec id=\"details\">\n    <title>Readings</title>\n    <p>Check outlet.</p>\n  </sec>\n</sec>\n",
+      "stderr": ""
+    },
+    "headings#write:jats_publishing": {
+      "key": "87e37200e7b3af93",
+      "exit": 0,
+      "stdout": "<sec id=\"inlet\">\n  <title>Pump check</title>\n  <p>Start here.</p>\n  <sec id=\"details\">\n    <title>Readings</title>\n    <p>Check outlet.</p>\n  </sec>\n</sec>\n",
+      "stderr": ""
+    },
+    "headings#write:tei": {
+      "key": "5f8d52d3940f15c9",
+      "exit": 0,
+      "stdout": "<div type=\"level1\" xml:id=\"inlet\">\n  <head>Pump check</head>\n  <p>Start here.</p>\n  <div type=\"level2\" xml:id=\"details\">\n    <head>Readings</head>\n    <p>Check outlet.</p>\n  </div>\n</div>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:docbook": {
+      "key": "454361e61585043f",
+      "exit": 0,
+      "stdout": "<para>\n  Before the inlet check.\n</para>\n<para>\n  After the outlet check.\n</para>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:docbook4": {
+      "key": "2aa188d39c689a92",
+      "exit": 0,
+      "stdout": "<para>\n  Before the inlet check.\n</para>\n<para>\n  After the outlet check.\n</para>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:docbook5": {
+      "key": "019bd796e51964db",
+      "exit": 0,
+      "stdout": "<para>\n  Before the inlet check.\n</para>\n<para>\n  After the outlet check.\n</para>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:fb2": {
+      "key": "e85cc3d0ee4033bc",
+      "exit": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title><section><p>Before the inlet check.</p><empty-line /><p>After the outlet check.</p></section></body></FictionBook>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:jats": {
+      "key": "17193cd9abbf52f1",
+      "exit": 0,
+      "stdout": "<p>Before the inlet check.</p>\n<p>After the outlet check.</p>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:jats_archiving": {
+      "key": "a96892ece3ce8a5d",
+      "exit": 0,
+      "stdout": "<p>Before the inlet check.</p>\n<p>After the outlet check.</p>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:jats_articleauthoring": {
+      "key": "a6a8dd4860c31902",
+      "exit": 0,
+      "stdout": "<p>Before the inlet check.</p>\n<p>After the outlet check.</p>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:jats_publishing": {
+      "key": "4bd26fae42aad85a",
+      "exit": 0,
+      "stdout": "<p>Before the inlet check.</p>\n<p>After the outlet check.</p>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:tei": {
+      "key": "bf607dacbebdcbfc",
+      "exit": 0,
+      "stdout": "<p>Before the inlet check.</p>\n<milestone unit=\"undefined\" type=\"separator\" rend=\"line\" />\n<p>After the outlet check.</p>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#read": {
+      "key": "a990b288b8955e67",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"inlet\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check.\"}]},{\"t\":\"HorizontalRule\"},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"After\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"outlet\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check.\"}]}]}\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:docbook": {
+      "key": "fcf2fcaa5815fe8b",
+      "exit": 0,
+      "stdout": "<para>\n  Before the inlet check.\n</para>\n<para>\n  After the outlet check.\n</para>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:docbook4": {
+      "key": "3b85bdab8adf5412",
+      "exit": 0,
+      "stdout": "<para>\n  Before the inlet check.\n</para>\n<para>\n  After the outlet check.\n</para>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:docbook5": {
+      "key": "f1d29cfc2f8fe195",
+      "exit": 0,
+      "stdout": "<para>\n  Before the inlet check.\n</para>\n<para>\n  After the outlet check.\n</para>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:fb2": {
+      "key": "d4756044f9591dd2",
+      "exit": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title><section><p>Before the inlet check.</p><empty-line /><p>After the outlet check.</p></section></body></FictionBook>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:jats": {
+      "key": "8302219a91c5db57",
+      "exit": 0,
+      "stdout": "<p>Before the inlet check.</p>\n<p>After the outlet check.</p>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:jats_archiving": {
+      "key": "837a77ce9558bdc3",
+      "exit": 0,
+      "stdout": "<p>Before the inlet check.</p>\n<p>After the outlet check.</p>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:jats_articleauthoring": {
+      "key": "16314eb51ea545c8",
+      "exit": 0,
+      "stdout": "<p>Before the inlet check.</p>\n<p>After the outlet check.</p>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:jats_publishing": {
+      "key": "fcafff86b50cbc2c",
+      "exit": 0,
+      "stdout": "<p>Before the inlet check.</p>\n<p>After the outlet check.</p>\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:tei": {
+      "key": "024d32a7aea43b56",
+      "exit": 0,
+      "stdout": "<p>Before the inlet check.</p>\n<milestone unit=\"undefined\" type=\"separator\" rend=\"line\" />\n<p>After the outlet check.</p>\n",
+      "stderr": ""
+    },
+    "image#e2e:docbook": {
+      "key": "3d2ad088f94de2fd",
+      "exit": 0,
+      "stdout": "<para>\n  <inlinemediaobject>\n    <imageobject>\n      <objectinfo>\n        <title>Blue pixel</title>\n      </objectinfo>\n      <imagedata fileref=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\" id=\"sample\" width=\"24px\" />\n    </imageobject>\n    <textobject>\n      <phrase>Pump check sample</phrase>\n    </textobject>\n  </inlinemediaobject>\n</para>\n",
+      "stderr": ""
+    },
+    "image#e2e:docbook4": {
+      "key": "e3a828598a95bf62",
+      "exit": 0,
+      "stdout": "<para>\n  <inlinemediaobject>\n    <imageobject>\n      <objectinfo>\n        <title>Blue pixel</title>\n      </objectinfo>\n      <imagedata fileref=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\" id=\"sample\" width=\"24px\" />\n    </imageobject>\n    <textobject>\n      <phrase>Pump check sample</phrase>\n    </textobject>\n  </inlinemediaobject>\n</para>\n",
+      "stderr": ""
+    },
+    "image#e2e:docbook5": {
+      "key": "c54ab75301d3d6a9",
+      "exit": 0,
+      "stdout": "<para>\n  <inlinemediaobject>\n    <imageobject>\n      <objectinfo>\n        <title>Blue pixel</title>\n      </objectinfo>\n      <imagedata fileref=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\" id=\"sample\" width=\"24px\" />\n    </imageobject>\n    <textobject>\n      <phrase>Pump check sample</phrase>\n    </textobject>\n  </inlinemediaobject>\n</para>\n",
+      "stderr": ""
+    },
+    "image#e2e:fb2": {
+      "key": "808f9ef93d55e334",
+      "exit": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title><section><image l:href=\"#image1\" l:type=\"imageType\" alt=\"Pump check sample\" title=\"Blue pixel\" /></section></body><binary id=\"image1\" content-type=\"image/png\">iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC</binary></FictionBook>\n",
+      "stderr": ""
+    },
+    "image#e2e:jats": {
+      "key": "b1a150c910119e77",
+      "exit": 0,
+      "stdout": "<graphic id=\"sample\" mimetype=\"image\" mime-subtype=\"\" xlink:href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\" xlink:title=\"Blue pixel\">\n  <alt-text>Pump check sample</alt-text>\n</graphic>\n",
+      "stderr": ""
+    },
+    "image#e2e:jats_archiving": {
+      "key": "b0e991af1e3f73f3",
+      "exit": 0,
+      "stdout": "<graphic id=\"sample\" mimetype=\"image\" mime-subtype=\"\" xlink:href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\" xlink:title=\"Blue pixel\">\n  <alt-text>Pump check sample</alt-text>\n</graphic>\n",
+      "stderr": ""
+    },
+    "image#e2e:jats_articleauthoring": {
+      "key": "2ce6f89788c07e52",
+      "exit": 0,
+      "stdout": "<graphic id=\"sample\" mimetype=\"image\" mime-subtype=\"\" xlink:href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\" xlink:title=\"Blue pixel\">\n  <alt-text>Pump check sample</alt-text>\n</graphic>\n",
+      "stderr": ""
+    },
+    "image#e2e:jats_publishing": {
+      "key": "f938802ce38ff77a",
+      "exit": 0,
+      "stdout": "<graphic id=\"sample\" mimetype=\"image\" mime-subtype=\"\" xlink:href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\" xlink:title=\"Blue pixel\">\n  <alt-text>Pump check sample</alt-text>\n</graphic>\n",
+      "stderr": ""
+    },
+    "image#e2e:tei": {
+      "key": "8209748592ad8174",
+      "exit": 0,
+      "stdout": "<p><figure>\n  <head>Pump check sample</head>\n  <graphic url=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\" xml:id=\"sample\" width=\"24px\" />\n  <figDesc>Blue pixel</figDesc>\n</figure></p>\n",
+      "stderr": ""
+    },
+    "image#read": {
+      "key": "ea35149b679c8235",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Image\",\"c\":[[\"sample\",[],[[\"width\",\"24px\"]]],[{\"t\":\"Str\",\"c\":\"Pump\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sample\"}],[\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\",\"Blue pixel\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "image#write:docbook": {
+      "key": "2a74c0dbceba1f47",
+      "exit": 0,
+      "stdout": "<para>\n  <inlinemediaobject>\n    <imageobject>\n      <objectinfo>\n        <title>Blue pixel</title>\n      </objectinfo>\n      <imagedata fileref=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\" id=\"sample\" width=\"24px\" />\n    </imageobject>\n    <textobject>\n      <phrase>Pump check sample</phrase>\n    </textobject>\n  </inlinemediaobject>\n</para>\n",
+      "stderr": ""
+    },
+    "image#write:docbook4": {
+      "key": "140b407c4111703c",
+      "exit": 0,
+      "stdout": "<para>\n  <inlinemediaobject>\n    <imageobject>\n      <objectinfo>\n        <title>Blue pixel</title>\n      </objectinfo>\n      <imagedata fileref=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\" id=\"sample\" width=\"24px\" />\n    </imageobject>\n    <textobject>\n      <phrase>Pump check sample</phrase>\n    </textobject>\n  </inlinemediaobject>\n</para>\n",
+      "stderr": ""
+    },
+    "image#write:docbook5": {
+      "key": "748e6db9b5a489b1",
+      "exit": 0,
+      "stdout": "<para>\n  <inlinemediaobject>\n    <imageobject>\n      <objectinfo>\n        <title>Blue pixel</title>\n      </objectinfo>\n      <imagedata fileref=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\" id=\"sample\" width=\"24px\" />\n    </imageobject>\n    <textobject>\n      <phrase>Pump check sample</phrase>\n    </textobject>\n  </inlinemediaobject>\n</para>\n",
+      "stderr": ""
+    },
+    "image#write:fb2": {
+      "key": "ebf10c29c1c6917c",
+      "exit": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title><section><image l:href=\"#image1\" l:type=\"imageType\" alt=\"Pump check sample\" title=\"Blue pixel\" /></section></body><binary id=\"image1\" content-type=\"image/png\">iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC</binary></FictionBook>\n",
+      "stderr": ""
+    },
+    "image#write:jats": {
+      "key": "8b8090c1b8801d03",
+      "exit": 0,
+      "stdout": "<graphic id=\"sample\" mimetype=\"image\" mime-subtype=\"\" xlink:href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\" xlink:title=\"Blue pixel\">\n  <alt-text>Pump check sample</alt-text>\n</graphic>\n",
+      "stderr": ""
+    },
+    "image#write:jats_archiving": {
+      "key": "13fde5333799a94f",
+      "exit": 0,
+      "stdout": "<graphic id=\"sample\" mimetype=\"image\" mime-subtype=\"\" xlink:href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\" xlink:title=\"Blue pixel\">\n  <alt-text>Pump check sample</alt-text>\n</graphic>\n",
+      "stderr": ""
+    },
+    "image#write:jats_articleauthoring": {
+      "key": "ec5c4c65ab05e122",
+      "exit": 0,
+      "stdout": "<graphic id=\"sample\" mimetype=\"image\" mime-subtype=\"\" xlink:href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\" xlink:title=\"Blue pixel\">\n  <alt-text>Pump check sample</alt-text>\n</graphic>\n",
+      "stderr": ""
+    },
+    "image#write:jats_publishing": {
+      "key": "9bb94e50af5cefb6",
+      "exit": 0,
+      "stdout": "<graphic id=\"sample\" mimetype=\"image\" mime-subtype=\"\" xlink:href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\" xlink:title=\"Blue pixel\">\n  <alt-text>Pump check sample</alt-text>\n</graphic>\n",
+      "stderr": ""
+    },
+    "image#write:tei": {
+      "key": "4e0109c4997d9ec0",
+      "exit": 0,
+      "stdout": "<p><figure>\n  <head>Pump check sample</head>\n  <graphic url=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\" xml:id=\"sample\" width=\"24px\" />\n  <figDesc>Blue pixel</figDesc>\n</figure></p>\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:docbook": {
+      "key": "1413cdecdb4c97a2",
+      "exit": 0,
+      "stdout": "<para>\n  <emphasis>inlet</emphasis> <emphasis role=\"strong\">outlet</emphasis>\n  <literal>a_b + 2</literal>\n  <emphasis role=\"strikethrough\">retired</emphasis>\n  H<subscript>2</subscript>O m<superscript>2</superscript>\n</para>\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:docbook4": {
+      "key": "5becc18a0a22e657",
+      "exit": 0,
+      "stdout": "<para>\n  <emphasis>inlet</emphasis> <emphasis role=\"strong\">outlet</emphasis>\n  <literal>a_b + 2</literal>\n  <emphasis role=\"strikethrough\">retired</emphasis>\n  H<subscript>2</subscript>O m<superscript>2</superscript>\n</para>\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:docbook5": {
+      "key": "a741c95aba2db266",
+      "exit": 0,
+      "stdout": "<para>\n  <emphasis>inlet</emphasis> <emphasis role=\"strong\">outlet</emphasis>\n  <literal>a_b + 2</literal>\n  <emphasis role=\"strikethrough\">retired</emphasis>\n  H<subscript>2</subscript>O m<superscript>2</superscript>\n</para>\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:fb2": {
+      "key": "68303c7670352441",
+      "exit": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title><section><p><emphasis>inlet</emphasis> <strong>outlet</strong> <code>a_b + 2</code> <strikethrough>retired</strikethrough> H<sub>2</sub>O m<sup>2</sup></p></section></body></FictionBook>\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:jats": {
+      "key": "ee905bf81f6f50cc",
+      "exit": 0,
+      "stdout": "<p><italic>inlet</italic> <bold>outlet</bold>\n<monospace>a_b + 2</monospace> <strike>retired</strike> H<sub>2</sub>O\nm<sup>2</sup></p>\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:jats_archiving": {
+      "key": "40c80e9cee331a90",
+      "exit": 0,
+      "stdout": "<p><italic>inlet</italic> <bold>outlet</bold>\n<monospace>a_b + 2</monospace> <strike>retired</strike> H<sub>2</sub>O\nm<sup>2</sup></p>\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:jats_articleauthoring": {
+      "key": "b9ad525dc4afa4c7",
+      "exit": 0,
+      "stdout": "<p><italic>inlet</italic> <bold>outlet</bold>\n<monospace>a_b + 2</monospace> <strike>retired</strike> H<sub>2</sub>O\nm<sup>2</sup></p>\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:jats_publishing": {
+      "key": "a48fed5cdea6571f",
+      "exit": 0,
+      "stdout": "<p><italic>inlet</italic> <bold>outlet</bold>\n<monospace>a_b + 2</monospace> <strike>retired</strike> H<sub>2</sub>O\nm<sup>2</sup></p>\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:tei": {
+      "key": "c1590f10597af701",
+      "exit": 0,
+      "stdout": "<p><hi rendition=\"simple:italic\">inlet</hi>\n<hi rendition=\"simple:bold\">outlet</hi> <seg type=\"code\">a_b + 2</seg>\n<hi rendition=\"simple:strikethrough\">retired</hi>\nH<hi rendition=\"simple:subscript\">2</hi>O\nm<hi rendition=\"simple:superscript\">2</hi></p>\n",
+      "stderr": ""
+    },
+    "inline-styles#read": {
+      "key": "15f9ea79424ced0a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"inlet\"}]},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"outlet\"}]},{\"t\":\"Space\"},{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"a_b + 2\"]},{\"t\":\"Space\"},{\"t\":\"Strikeout\",\"c\":[{\"t\":\"Str\",\"c\":\"retired\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"H\"},{\"t\":\"Subscript\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]},{\"t\":\"Str\",\"c\":\"O\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"m\"},{\"t\":\"Superscript\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "inline-styles#write:docbook": {
+      "key": "2d43233c9a2dc941",
+      "exit": 0,
+      "stdout": "<para>\n  <emphasis>inlet</emphasis> <emphasis role=\"strong\">outlet</emphasis>\n  <literal>a_b + 2</literal>\n  <emphasis role=\"strikethrough\">retired</emphasis>\n  H<subscript>2</subscript>O m<superscript>2</superscript>\n</para>\n",
+      "stderr": ""
+    },
+    "inline-styles#write:docbook4": {
+      "key": "6e55f0c2ddc32d7a",
+      "exit": 0,
+      "stdout": "<para>\n  <emphasis>inlet</emphasis> <emphasis role=\"strong\">outlet</emphasis>\n  <literal>a_b + 2</literal>\n  <emphasis role=\"strikethrough\">retired</emphasis>\n  H<subscript>2</subscript>O m<superscript>2</superscript>\n</para>\n",
+      "stderr": ""
+    },
+    "inline-styles#write:docbook5": {
+      "key": "99516e3b61c05afb",
+      "exit": 0,
+      "stdout": "<para>\n  <emphasis>inlet</emphasis> <emphasis role=\"strong\">outlet</emphasis>\n  <literal>a_b + 2</literal>\n  <emphasis role=\"strikethrough\">retired</emphasis>\n  H<subscript>2</subscript>O m<superscript>2</superscript>\n</para>\n",
+      "stderr": ""
+    },
+    "inline-styles#write:fb2": {
+      "key": "7db8a19676cf143a",
+      "exit": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title><section><p><emphasis>inlet</emphasis> <strong>outlet</strong> <code>a_b + 2</code> <strikethrough>retired</strikethrough> H<sub>2</sub>O m<sup>2</sup></p></section></body></FictionBook>\n",
+      "stderr": ""
+    },
+    "inline-styles#write:jats": {
+      "key": "d3fc34cc7d379bbd",
+      "exit": 0,
+      "stdout": "<p><italic>inlet</italic> <bold>outlet</bold>\n<monospace>a_b + 2</monospace> <strike>retired</strike> H<sub>2</sub>O\nm<sup>2</sup></p>\n",
+      "stderr": ""
+    },
+    "inline-styles#write:jats_archiving": {
+      "key": "43e66f33cd91a069",
+      "exit": 0,
+      "stdout": "<p><italic>inlet</italic> <bold>outlet</bold>\n<monospace>a_b + 2</monospace> <strike>retired</strike> H<sub>2</sub>O\nm<sup>2</sup></p>\n",
+      "stderr": ""
+    },
+    "inline-styles#write:jats_articleauthoring": {
+      "key": "0f5a5597347eb4c8",
+      "exit": 0,
+      "stdout": "<p><italic>inlet</italic> <bold>outlet</bold>\n<monospace>a_b + 2</monospace> <strike>retired</strike> H<sub>2</sub>O\nm<sup>2</sup></p>\n",
+      "stderr": ""
+    },
+    "inline-styles#write:jats_publishing": {
+      "key": "560638c7a4743abc",
+      "exit": 0,
+      "stdout": "<p><italic>inlet</italic> <bold>outlet</bold>\n<monospace>a_b + 2</monospace> <strike>retired</strike> H<sub>2</sub>O\nm<sup>2</sup></p>\n",
+      "stderr": ""
+    },
+    "inline-styles#write:tei": {
+      "key": "1e0a44b8f3b57c8e",
+      "exit": 0,
+      "stdout": "<p><hi rendition=\"simple:italic\">inlet</hi>\n<hi rendition=\"simple:bold\">outlet</hi> <seg type=\"code\">a_b + 2</seg>\n<hi rendition=\"simple:strikethrough\">retired</hi>\nH<hi rendition=\"simple:subscript\">2</hi>O\nm<hi rendition=\"simple:superscript\">2</hi></p>\n",
+      "stderr": ""
+    },
+    "links#e2e:docbook": {
+      "key": "2f61120726946e43",
+      "exit": 0,
+      "stdout": "<para>\n  <link xlink:href=\"https://example.invalid/log?mode=day&amp;view=full\">Read\n  the inlet log</link> <link linkend=\"outlet\">section</link>\n</para>\n<section xmlns=\"http://docbook.org/ns/docbook\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xml:id=\"outlet\">\n  <title>Log entry</title>\n  <para>\n  </para>\n</section>\n",
+      "stderr": ""
+    },
+    "links#e2e:docbook4": {
+      "key": "67a06dd3d28f0de6",
+      "exit": 0,
+      "stdout": "<para>\n  <ulink url=\"https://example.invalid/log?mode=day&amp;view=full\">Read\n  the inlet log</ulink> <link linkend=\"outlet\">section</link>\n</para>\n<sect1 id=\"outlet\">\n  <title>Log entry</title>\n  <para>\n  </para>\n</sect1>\n",
+      "stderr": ""
+    },
+    "links#e2e:docbook5": {
+      "key": "0eb123c07daea66f",
+      "exit": 0,
+      "stdout": "<para>\n  <link xlink:href=\"https://example.invalid/log?mode=day&amp;view=full\">Read\n  the inlet log</link> <link linkend=\"outlet\">section</link>\n</para>\n<section xmlns=\"http://docbook.org/ns/docbook\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xml:id=\"outlet\">\n  <title>Log entry</title>\n  <para>\n  </para>\n</section>\n",
+      "stderr": ""
+    },
+    "links#e2e:fb2": {
+      "key": "ecda010db8f435d4",
+      "exit": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title><section><p><a l:href=\"https://example.invalid/log?mode=day&amp;view=full\">Read the inlet log</a> <a l:href=\"#outlet\">section</a></p></section><section id=\"outlet\"><title><p>Log entry</p></title></section></body></FictionBook>\n",
+      "stderr": ""
+    },
+    "links#e2e:jats": {
+      "key": "9412094720cfe7e1",
+      "exit": 0,
+      "stdout": "<p><ext-link ext-link-type=\"uri\" xlink:href=\"https://example.invalid/log?mode=day&amp;view=full\" xlink:title=\"Open log\">Read\nthe inlet log</ext-link>\n<xref alt=\"section\" rid=\"outlet\">section</xref></p>\n<sec id=\"outlet\">\n  <title>Log entry</title>\n</sec>\n",
+      "stderr": ""
+    },
+    "links#e2e:jats_archiving": {
+      "key": "98ec35619d82444d",
+      "exit": 0,
+      "stdout": "<p><ext-link ext-link-type=\"uri\" xlink:href=\"https://example.invalid/log?mode=day&amp;view=full\" xlink:title=\"Open log\">Read\nthe inlet log</ext-link>\n<xref alt=\"section\" rid=\"outlet\">section</xref></p>\n<sec id=\"outlet\">\n  <title>Log entry</title>\n</sec>\n",
+      "stderr": ""
+    },
+    "links#e2e:jats_articleauthoring": {
+      "key": "c7e9c65fcff8bbf6",
+      "exit": 0,
+      "stdout": "<p><ext-link ext-link-type=\"uri\" xlink:href=\"https://example.invalid/log?mode=day&amp;view=full\" xlink:title=\"Open log\">Read\nthe inlet log</ext-link>\n<xref alt=\"section\" rid=\"outlet\">section</xref></p>\n<sec id=\"outlet\">\n  <title>Log entry</title>\n</sec>\n",
+      "stderr": ""
+    },
+    "links#e2e:jats_publishing": {
+      "key": "69ee266f512731be",
+      "exit": 0,
+      "stdout": "<p><ext-link ext-link-type=\"uri\" xlink:href=\"https://example.invalid/log?mode=day&amp;view=full\" xlink:title=\"Open log\">Read\nthe inlet log</ext-link>\n<xref alt=\"section\" rid=\"outlet\">section</xref></p>\n<sec id=\"outlet\">\n  <title>Log entry</title>\n</sec>\n",
+      "stderr": ""
+    },
+    "links#e2e:tei": {
+      "key": "f6d85c8300896d14",
+      "exit": 0,
+      "stdout": "<p><ref target=\"https://example.invalid/log?mode=day&amp;view=full\">Read\nthe inlet log</ref> <ref target=\"#outlet\">section</ref></p>\n<div type=\"level1\" xml:id=\"outlet\">\n  <head>Log entry</head>\n  <p></p>\n</div>\n",
+      "stderr": ""
+    },
+    "links#read": {
+      "key": "ac9a8dc1cd65a69b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"inlet\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log\"}],[\"https://example.invalid/log?mode=day&view=full\",\"Open log\"]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"section\"}],[\"#outlet\",\"\"]]}]},{\"t\":\"Header\",\"c\":[2,[\"outlet\",[],[]],[{\"t\":\"Str\",\"c\":\"Log\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"entry\"}]]}]}\n",
+      "stderr": ""
+    },
+    "links#write:docbook": {
+      "key": "019c9a5de3ae81dc",
+      "exit": 0,
+      "stdout": "<para>\n  <link xlink:href=\"https://example.invalid/log?mode=day&amp;view=full\">Read\n  the inlet log</link> <link linkend=\"outlet\">section</link>\n</para>\n<section xmlns=\"http://docbook.org/ns/docbook\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xml:id=\"outlet\">\n  <title>Log entry</title>\n  <para>\n  </para>\n</section>\n",
+      "stderr": ""
+    },
+    "links#write:docbook4": {
+      "key": "4f10b990b31f658d",
+      "exit": 0,
+      "stdout": "<para>\n  <ulink url=\"https://example.invalid/log?mode=day&amp;view=full\">Read\n  the inlet log</ulink> <link linkend=\"outlet\">section</link>\n</para>\n<sect1 id=\"outlet\">\n  <title>Log entry</title>\n  <para>\n  </para>\n</sect1>\n",
+      "stderr": ""
+    },
+    "links#write:docbook5": {
+      "key": "52a8189a4f9822ea",
+      "exit": 0,
+      "stdout": "<para>\n  <link xlink:href=\"https://example.invalid/log?mode=day&amp;view=full\">Read\n  the inlet log</link> <link linkend=\"outlet\">section</link>\n</para>\n<section xmlns=\"http://docbook.org/ns/docbook\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xml:id=\"outlet\">\n  <title>Log entry</title>\n  <para>\n  </para>\n</section>\n",
+      "stderr": ""
+    },
+    "links#write:fb2": {
+      "key": "1a57e18ea2b330cd",
+      "exit": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title><section><p><a l:href=\"https://example.invalid/log?mode=day&amp;view=full\">Read the inlet log</a> <a l:href=\"#outlet\">section</a></p></section><section id=\"outlet\"><title><p>Log entry</p></title></section></body></FictionBook>\n",
+      "stderr": ""
+    },
+    "links#write:jats": {
+      "key": "de72173df23c15a8",
+      "exit": 0,
+      "stdout": "<p><ext-link ext-link-type=\"uri\" xlink:href=\"https://example.invalid/log?mode=day&amp;view=full\" xlink:title=\"Open log\">Read\nthe inlet log</ext-link>\n<xref alt=\"section\" rid=\"outlet\">section</xref></p>\n<sec id=\"outlet\">\n  <title>Log entry</title>\n</sec>\n",
+      "stderr": ""
+    },
+    "links#write:jats_archiving": {
+      "key": "f0cd5274467ca3f4",
+      "exit": 0,
+      "stdout": "<p><ext-link ext-link-type=\"uri\" xlink:href=\"https://example.invalid/log?mode=day&amp;view=full\" xlink:title=\"Open log\">Read\nthe inlet log</ext-link>\n<xref alt=\"section\" rid=\"outlet\">section</xref></p>\n<sec id=\"outlet\">\n  <title>Log entry</title>\n</sec>\n",
+      "stderr": ""
+    },
+    "links#write:jats_articleauthoring": {
+      "key": "b11680d734c83cff",
+      "exit": 0,
+      "stdout": "<p><ext-link ext-link-type=\"uri\" xlink:href=\"https://example.invalid/log?mode=day&amp;view=full\" xlink:title=\"Open log\">Read\nthe inlet log</ext-link>\n<xref alt=\"section\" rid=\"outlet\">section</xref></p>\n<sec id=\"outlet\">\n  <title>Log entry</title>\n</sec>\n",
+      "stderr": ""
+    },
+    "links#write:jats_publishing": {
+      "key": "388afa328989b303",
+      "exit": 0,
+      "stdout": "<p><ext-link ext-link-type=\"uri\" xlink:href=\"https://example.invalid/log?mode=day&amp;view=full\" xlink:title=\"Open log\">Read\nthe inlet log</ext-link>\n<xref alt=\"section\" rid=\"outlet\">section</xref></p>\n<sec id=\"outlet\">\n  <title>Log entry</title>\n</sec>\n",
+      "stderr": ""
+    },
+    "links#write:tei": {
+      "key": "c2a5cf01bca80211",
+      "exit": 0,
+      "stdout": "<p><ref target=\"https://example.invalid/log?mode=day&amp;view=full\">Read\nthe inlet log</ref> <ref target=\"#outlet\">section</ref></p>\n<div type=\"level1\" xml:id=\"outlet\">\n  <head>Log entry</head>\n  <p></p>\n</div>\n",
+      "stderr": ""
+    },
+    "notes#e2e:docbook": {
+      "key": "7a41853b68ab5b68",
+      "exit": 0,
+      "stdout": "<para>\n  inlet<footnote>\n    <para>\n      Use the lower mark.\n    </para>\n    <para>\n      <emphasis>Check the scale.</emphasis>\n    </para>\n  </footnote> outlet<footnote>\n    <para>\n      Use the upper mark.\n    </para>\n  </footnote>\n</para>\n",
+      "stderr": ""
+    },
+    "notes#e2e:docbook4": {
+      "key": "8457f83b1dd42bc1",
+      "exit": 0,
+      "stdout": "<para>\n  inlet<footnote>\n    <para>\n      Use the lower mark.\n    </para>\n    <para>\n      <emphasis>Check the scale.</emphasis>\n    </para>\n  </footnote> outlet<footnote>\n    <para>\n      Use the upper mark.\n    </para>\n  </footnote>\n</para>\n",
+      "stderr": ""
+    },
+    "notes#e2e:docbook5": {
+      "key": "f0c15ca0ee002ed4",
+      "exit": 0,
+      "stdout": "<para>\n  inlet<footnote>\n    <para>\n      Use the lower mark.\n    </para>\n    <para>\n      <emphasis>Check the scale.</emphasis>\n    </para>\n  </footnote> outlet<footnote>\n    <para>\n      Use the upper mark.\n    </para>\n  </footnote>\n</para>\n",
+      "stderr": ""
+    },
+    "notes#e2e:fb2": {
+      "key": "01d90704fbf4346f",
+      "exit": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title><section><p>inlet<a l:href=\"#n1\" type=\"note\">[1]</a> outlet<a l:href=\"#n2\" type=\"note\">[2]</a></p></section></body><body name=\"notes\"><section id=\"n1\"><title><p>1</p></title><p>Use the lower mark.</p><p><emphasis>Check the scale.</emphasis></p></section><section id=\"n2\"><title><p>2</p></title><p>Use the upper mark.</p></section></body></FictionBook>\n",
+      "stderr": ""
+    },
+    "notes#e2e:jats": {
+      "key": "6b3a937ccec99b66",
+      "exit": 0,
+      "stdout": "<p>inlet<xref ref-type=\"fn\" rid=\"fn1\">1</xref>\noutlet<xref ref-type=\"fn\" rid=\"fn2\">2</xref></p>\n",
+      "stderr": ""
+    },
+    "notes#e2e:jats_archiving": {
+      "key": "a55208f1531f0a92",
+      "exit": 0,
+      "stdout": "<p>inlet<xref ref-type=\"fn\" rid=\"fn1\">1</xref>\noutlet<xref ref-type=\"fn\" rid=\"fn2\">2</xref></p>\n",
+      "stderr": ""
+    },
+    "notes#e2e:jats_articleauthoring": {
+      "key": "00abc5e1ad0b2c71",
+      "exit": 0,
+      "stdout": "<p>inlet<fn>\n  <p>Use the lower mark.</p>\n  <p><italic>Check the scale.</italic></p>\n</fn> outlet<fn>\n  <p>Use the upper mark.</p>\n</fn></p>\n",
+      "stderr": ""
+    },
+    "notes#e2e:jats_publishing": {
+      "key": "1dee2cab3087a689",
+      "exit": 0,
+      "stdout": "<p>inlet<xref ref-type=\"fn\" rid=\"fn1\">1</xref>\noutlet<xref ref-type=\"fn\" rid=\"fn2\">2</xref></p>\n",
+      "stderr": ""
+    },
+    "notes#e2e:tei": {
+      "key": "3b107763bc560faf",
+      "exit": 0,
+      "stdout": "<p>inlet<note>\n  <p>Use the lower mark.</p>\n  <p><hi rendition=\"simple:italic\">Check the scale.</hi></p>\n</note> outlet<note>\n  <p>Use the upper mark.</p>\n</note></p>\n",
+      "stderr": ""
+    },
+    "notes#read": {
+      "key": "a7eab33717cc85b0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"inlet\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"lower\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"scale.\"}]}]}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"outlet\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"upper\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark.\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "notes#write:docbook": {
+      "key": "39165b85b433d6e8",
+      "exit": 0,
+      "stdout": "<para>\n  inlet<footnote>\n    <para>\n      Use the lower mark.\n    </para>\n    <para>\n      <emphasis>Check the scale.</emphasis>\n    </para>\n  </footnote> outlet<footnote>\n    <para>\n      Use the upper mark.\n    </para>\n  </footnote>\n</para>\n",
+      "stderr": ""
+    },
+    "notes#write:docbook4": {
+      "key": "196568ab1478da2d",
+      "exit": 0,
+      "stdout": "<para>\n  inlet<footnote>\n    <para>\n      Use the lower mark.\n    </para>\n    <para>\n      <emphasis>Check the scale.</emphasis>\n    </para>\n  </footnote> outlet<footnote>\n    <para>\n      Use the upper mark.\n    </para>\n  </footnote>\n</para>\n",
+      "stderr": ""
+    },
+    "notes#write:docbook5": {
+      "key": "0fd9485c0d8dd9ce",
+      "exit": 0,
+      "stdout": "<para>\n  inlet<footnote>\n    <para>\n      Use the lower mark.\n    </para>\n    <para>\n      <emphasis>Check the scale.</emphasis>\n    </para>\n  </footnote> outlet<footnote>\n    <para>\n      Use the upper mark.\n    </para>\n  </footnote>\n</para>\n",
+      "stderr": ""
+    },
+    "notes#write:fb2": {
+      "key": "d5818d33101c066d",
+      "exit": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title><section><p>inlet<a l:href=\"#n1\" type=\"note\">[1]</a> outlet<a l:href=\"#n2\" type=\"note\">[2]</a></p></section></body><body name=\"notes\"><section id=\"n1\"><title><p>1</p></title><p>Use the lower mark.</p><p><emphasis>Check the scale.</emphasis></p></section><section id=\"n2\"><title><p>2</p></title><p>Use the upper mark.</p></section></body></FictionBook>\n",
+      "stderr": ""
+    },
+    "notes#write:jats": {
+      "key": "9eceb8c8137b12dc",
+      "exit": 0,
+      "stdout": "<p>inlet<xref ref-type=\"fn\" rid=\"fn1\">1</xref>\noutlet<xref ref-type=\"fn\" rid=\"fn2\">2</xref></p>\n",
+      "stderr": ""
+    },
+    "notes#write:jats_archiving": {
+      "key": "2ce1efd367995690",
+      "exit": 0,
+      "stdout": "<p>inlet<xref ref-type=\"fn\" rid=\"fn1\">1</xref>\noutlet<xref ref-type=\"fn\" rid=\"fn2\">2</xref></p>\n",
+      "stderr": ""
+    },
+    "notes#write:jats_articleauthoring": {
+      "key": "e64256c67bbe4f7f",
+      "exit": 0,
+      "stdout": "<p>inlet<fn>\n  <p>Use the lower mark.</p>\n  <p><italic>Check the scale.</italic></p>\n</fn> outlet<fn>\n  <p>Use the upper mark.</p>\n</fn></p>\n",
+      "stderr": ""
+    },
+    "notes#write:jats_publishing": {
+      "key": "4e3bd3487b72efdb",
+      "exit": 0,
+      "stdout": "<p>inlet<xref ref-type=\"fn\" rid=\"fn1\">1</xref>\noutlet<xref ref-type=\"fn\" rid=\"fn2\">2</xref></p>\n",
+      "stderr": ""
+    },
+    "notes#write:tei": {
+      "key": "9db66ba974c50f69",
+      "exit": 0,
+      "stdout": "<p>inlet<note>\n  <p>Use the lower mark.</p>\n  <p><hi rendition=\"simple:italic\">Check the scale.</hi></p>\n</note> outlet<note>\n  <p>Use the upper mark.</p>\n</note></p>\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:docbook": {
+      "key": "0a719f27a263a5c8",
+      "exit": 0,
+      "stdout": "<orderedlist numeration=\"upperroman\" startingnumber=\"4\">\n  <listitem>\n    <para>\n      Open inlet.\n    </para>\n    <para>\n      Wait for the signal.\n    </para>\n  </listitem>\n  <listitem>\n    <para>\n      Close outlet.\n    </para>\n  </listitem>\n</orderedlist>\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:docbook4": {
+      "key": "afcebc5f8688b991",
+      "exit": 0,
+      "stdout": "<orderedlist numeration=\"upperroman\" startingnumber=\"4\">\n  <listitem>\n    <para>\n      Open inlet.\n    </para>\n    <para>\n      Wait for the signal.\n    </para>\n  </listitem>\n  <listitem>\n    <para>\n      Close outlet.\n    </para>\n  </listitem>\n</orderedlist>\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:docbook5": {
+      "key": "76818b48fe4d4794",
+      "exit": 0,
+      "stdout": "<orderedlist numeration=\"upperroman\" startingnumber=\"4\">\n  <listitem>\n    <para>\n      Open inlet.\n    </para>\n    <para>\n      Wait for the signal.\n    </para>\n  </listitem>\n  <listitem>\n    <para>\n      Close outlet.\n    </para>\n  </listitem>\n</orderedlist>\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:fb2": {
+      "key": "dd139a535783cdf7",
+      "exit": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title><section><p>IV) Open inlet.</p><empty-line /><p>    Wait for the signal.</p><empty-line /><p>V) Close outlet.</p><empty-line /></section></body></FictionBook>\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:jats": {
+      "key": "fdb1a7c79c592346",
+      "exit": 0,
+      "stdout": "<list list-type=\"roman-upper\">\n  <list-item>\n    <label>IV)</label>\n    <p>Open inlet.</p>\n    <p>Wait for the signal.</p>\n  </list-item>\n  <list-item>\n    <label>V)</label>\n    <p>Close outlet.</p>\n  </list-item>\n</list>\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:jats_archiving": {
+      "key": "fb0cf01160c06ba2",
+      "exit": 0,
+      "stdout": "<list list-type=\"roman-upper\">\n  <list-item>\n    <label>IV)</label>\n    <p>Open inlet.</p>\n    <p>Wait for the signal.</p>\n  </list-item>\n  <list-item>\n    <label>V)</label>\n    <p>Close outlet.</p>\n  </list-item>\n</list>\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:jats_articleauthoring": {
+      "key": "2e05e508ac1195e1",
+      "exit": 0,
+      "stdout": "<list list-type=\"order\">\n  <list-item>\n    <label>IV)</label>\n    <p>Open inlet.</p>\n    <p>Wait for the signal.</p>\n  </list-item>\n  <list-item>\n    <label>V)</label>\n    <p>Close outlet.</p>\n  </list-item>\n</list>\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:jats_publishing": {
+      "key": "ceca4a392eb3fcc9",
+      "exit": 0,
+      "stdout": "<list list-type=\"roman-upper\">\n  <list-item>\n    <label>IV)</label>\n    <p>Open inlet.</p>\n    <p>Wait for the signal.</p>\n  </list-item>\n  <list-item>\n    <label>V)</label>\n    <p>Close outlet.</p>\n  </list-item>\n</list>\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:tei": {
+      "key": "432237c4a92441b7",
+      "exit": 0,
+      "stdout": "<list type=\"ordered:upperroman\">\n  <item n=\"4\">\n    <p>Open inlet.</p>\n    <p>Wait for the signal.</p>\n  </item>\n  <item>\n    <p>Close outlet.</p>\n  </item>\n</list>\n",
+      "stderr": ""
+    },
+    "ordered-list#read": {
+      "key": "dd43ecc7f307cc40",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[4,{\"t\":\"UpperRoman\"},{\"t\":\"OneParen\"}],[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Open\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"inlet.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Wait\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"for\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"signal.\"}]}],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Close\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"outlet.\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "ordered-list#write:docbook": {
+      "key": "50ebd1038c1cd6e4",
+      "exit": 0,
+      "stdout": "<orderedlist numeration=\"upperroman\" startingnumber=\"4\">\n  <listitem>\n    <para>\n      Open inlet.\n    </para>\n    <para>\n      Wait for the signal.\n    </para>\n  </listitem>\n  <listitem>\n    <para>\n      Close outlet.\n    </para>\n  </listitem>\n</orderedlist>\n",
+      "stderr": ""
+    },
+    "ordered-list#write:docbook4": {
+      "key": "a26cd08db378e02f",
+      "exit": 0,
+      "stdout": "<orderedlist numeration=\"upperroman\" startingnumber=\"4\">\n  <listitem>\n    <para>\n      Open inlet.\n    </para>\n    <para>\n      Wait for the signal.\n    </para>\n  </listitem>\n  <listitem>\n    <para>\n      Close outlet.\n    </para>\n  </listitem>\n</orderedlist>\n",
+      "stderr": ""
+    },
+    "ordered-list#write:docbook5": {
+      "key": "504518cec9cc22e2",
+      "exit": 0,
+      "stdout": "<orderedlist numeration=\"upperroman\" startingnumber=\"4\">\n  <listitem>\n    <para>\n      Open inlet.\n    </para>\n    <para>\n      Wait for the signal.\n    </para>\n  </listitem>\n  <listitem>\n    <para>\n      Close outlet.\n    </para>\n  </listitem>\n</orderedlist>\n",
+      "stderr": ""
+    },
+    "ordered-list#write:fb2": {
+      "key": "39210c3c6fc26f6f",
+      "exit": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title><section><p>IV) Open inlet.</p><empty-line /><p>    Wait for the signal.</p><empty-line /><p>V) Close outlet.</p><empty-line /></section></body></FictionBook>\n",
+      "stderr": ""
+    },
+    "ordered-list#write:jats": {
+      "key": "177904ad0a578458",
+      "exit": 0,
+      "stdout": "<list list-type=\"roman-upper\">\n  <list-item>\n    <label>IV)</label>\n    <p>Open inlet.</p>\n    <p>Wait for the signal.</p>\n  </list-item>\n  <list-item>\n    <label>V)</label>\n    <p>Close outlet.</p>\n  </list-item>\n</list>\n",
+      "stderr": ""
+    },
+    "ordered-list#write:jats_archiving": {
+      "key": "a88e99d2ba70944c",
+      "exit": 0,
+      "stdout": "<list list-type=\"roman-upper\">\n  <list-item>\n    <label>IV)</label>\n    <p>Open inlet.</p>\n    <p>Wait for the signal.</p>\n  </list-item>\n  <list-item>\n    <label>V)</label>\n    <p>Close outlet.</p>\n  </list-item>\n</list>\n",
+      "stderr": ""
+    },
+    "ordered-list#write:jats_articleauthoring": {
+      "key": "a3f895ec686ab979",
+      "exit": 0,
+      "stdout": "<list list-type=\"order\">\n  <list-item>\n    <label>IV)</label>\n    <p>Open inlet.</p>\n    <p>Wait for the signal.</p>\n  </list-item>\n  <list-item>\n    <label>V)</label>\n    <p>Close outlet.</p>\n  </list-item>\n</list>\n",
+      "stderr": ""
+    },
+    "ordered-list#write:jats_publishing": {
+      "key": "eddea1e327642c25",
+      "exit": 0,
+      "stdout": "<list list-type=\"roman-upper\">\n  <list-item>\n    <label>IV)</label>\n    <p>Open inlet.</p>\n    <p>Wait for the signal.</p>\n  </list-item>\n  <list-item>\n    <label>V)</label>\n    <p>Close outlet.</p>\n  </list-item>\n</list>\n",
+      "stderr": ""
+    },
+    "ordered-list#write:tei": {
+      "key": "f1251ce1ead5f79b",
+      "exit": 0,
+      "stdout": "<list type=\"ordered:upperroman\">\n  <item n=\"4\">\n    <p>Open inlet.</p>\n    <p>Wait for the signal.</p>\n  </item>\n  <item>\n    <p>Close outlet.</p>\n  </item>\n</list>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:docbook": {
+      "key": "76f8f92a3be4d8c0",
+      "exit": 0,
+      "stdout": "<para>\n  Pump check log.\n</para>\n<literallayout>Read slowly. Stop.\nCafé &amp; &lt;check&gt;</literallayout>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:docbook4": {
+      "key": "52df2523d5f350b1",
+      "exit": 0,
+      "stdout": "<para>\n  Pump check log.\n</para>\n<literallayout>Read slowly. Stop.\nCafé &amp; &lt;check&gt;</literallayout>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:docbook5": {
+      "key": "6a2c016be8baa324",
+      "exit": 0,
+      "stdout": "<para>\n  Pump check log.\n</para>\n<literallayout>Read slowly. Stop.\nCafé &amp; &lt;check&gt;</literallayout>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:fb2": {
+      "key": "91341dd0e289c947",
+      "exit": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title><section><p>Pump check log.</p><p>Read slowly.\nStop.\nCafé &amp; &lt;check&gt;</p></section></body></FictionBook>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:jats": {
+      "key": "7a5fb19d67c030de",
+      "exit": 0,
+      "stdout": "<p>Pump check log.</p>\n<p>Read slowly. Stop.\nCafé &amp; &lt;check&gt;</p>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:jats_archiving": {
+      "key": "bd64eea2489af242",
+      "exit": 0,
+      "stdout": "<p>Pump check log.</p>\n<p>Read slowly. Stop.\nCafé &amp; &lt;check&gt;</p>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:jats_articleauthoring": {
+      "key": "64f3496948e282a1",
+      "exit": 0,
+      "stdout": "<p>Pump check log.</p>\n<p>Read slowly. Stop.\nCafé &amp; &lt;check&gt;</p>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:jats_publishing": {
+      "key": "6b36acbc3f73d679",
+      "exit": 0,
+      "stdout": "<p>Pump check log.</p>\n<p>Read slowly. Stop.\nCafé &amp; &lt;check&gt;</p>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:tei": {
+      "key": "4f0749bfe0d2b307",
+      "exit": 0,
+      "stdout": "<p>Pump check log.</p>\n<p>Read slowly. Stop.<lb />Café &amp; &lt;check&gt;</p>\n",
+      "stderr": ""
+    },
+    "paragraphs#read": {
+      "key": "02f4006306a0c3a8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Pump\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"slowly.\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"Stop.\"},{\"t\":\"LineBreak\"},{\"t\":\"Str\",\"c\":\"Café & <check>\"}]}]}\n",
+      "stderr": ""
+    },
+    "paragraphs#write:docbook": {
+      "key": "01f273fc11e8e69f",
+      "exit": 0,
+      "stdout": "<para>\n  Pump check log.\n</para>\n<literallayout>Read slowly. Stop.\nCafé &amp; &lt;check&gt;</literallayout>\n",
+      "stderr": ""
+    },
+    "paragraphs#write:docbook4": {
+      "key": "e5a453fdb120bdfe",
+      "exit": 0,
+      "stdout": "<para>\n  Pump check log.\n</para>\n<literallayout>Read slowly. Stop.\nCafé &amp; &lt;check&gt;</literallayout>\n",
+      "stderr": ""
+    },
+    "paragraphs#write:docbook5": {
+      "key": "578796da81c63b81",
+      "exit": 0,
+      "stdout": "<para>\n  Pump check log.\n</para>\n<literallayout>Read slowly. Stop.\nCafé &amp; &lt;check&gt;</literallayout>\n",
+      "stderr": ""
+    },
+    "paragraphs#write:fb2": {
+      "key": "f2e38be87620aabe",
+      "exit": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title><section><p>Pump check log.</p><p>Read slowly.\nStop.\nCafé &amp; &lt;check&gt;</p></section></body></FictionBook>\n",
+      "stderr": ""
+    },
+    "paragraphs#write:jats": {
+      "key": "0b9b8c70e1c87e8b",
+      "exit": 0,
+      "stdout": "<p>Pump check log.</p>\n<p>Read slowly. Stop.\nCafé &amp; &lt;check&gt;</p>\n",
+      "stderr": ""
+    },
+    "paragraphs#write:jats_archiving": {
+      "key": "7cbde85a23393837",
+      "exit": 0,
+      "stdout": "<p>Pump check log.</p>\n<p>Read slowly. Stop.\nCafé &amp; &lt;check&gt;</p>\n",
+      "stderr": ""
+    },
+    "paragraphs#write:jats_articleauthoring": {
+      "key": "097673161713c52c",
+      "exit": 0,
+      "stdout": "<p>Pump check log.</p>\n<p>Read slowly. Stop.\nCafé &amp; &lt;check&gt;</p>\n",
+      "stderr": ""
+    },
+    "paragraphs#write:jats_publishing": {
+      "key": "96c42a6efa7860f0",
+      "exit": 0,
+      "stdout": "<p>Pump check log.</p>\n<p>Read slowly. Stop.\nCafé &amp; &lt;check&gt;</p>\n",
+      "stderr": ""
+    },
+    "paragraphs#write:tei": {
+      "key": "a9bd0c1a37361782",
+      "exit": 0,
+      "stdout": "<p>Pump check log.</p>\n<p>Read slowly. Stop.<lb />Café &amp; &lt;check&gt;</p>\n",
+      "stderr": ""
+    },
+    "quote#e2e:docbook": {
+      "key": "fbb129ba1bfdebc6",
+      "exit": 0,
+      "stdout": "<blockquote>\n  <para>\n    <quote>Check inlet.</quote>\n  </para>\n  <para>\n    Record the result.\n  </para>\n</blockquote>\n<para>\n  Continue the test.\n</para>\n",
+      "stderr": ""
+    },
+    "quote#e2e:docbook4": {
+      "key": "5452c6e0598e93db",
+      "exit": 0,
+      "stdout": "<blockquote>\n  <para>\n    <quote>Check inlet.</quote>\n  </para>\n  <para>\n    Record the result.\n  </para>\n</blockquote>\n<para>\n  Continue the test.\n</para>\n",
+      "stderr": ""
+    },
+    "quote#e2e:docbook5": {
+      "key": "c98a3c4f8d00b542",
+      "exit": 0,
+      "stdout": "<blockquote>\n  <para>\n    <quote>Check inlet.</quote>\n  </para>\n  <para>\n    Record the result.\n  </para>\n</blockquote>\n<para>\n  Continue the test.\n</para>\n",
+      "stderr": ""
+    },
+    "quote#e2e:fb2": {
+      "key": "86b7d5a0900d6abd",
+      "exit": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title><section><cite><p>“Check inlet.”</p><p>Record the result.</p></cite><p>Continue the test.</p></section></body></FictionBook>\n",
+      "stderr": ""
+    },
+    "quote#e2e:jats": {
+      "key": "254ee163a34627e0",
+      "exit": 0,
+      "stdout": "<disp-quote>\n  <p>“Check inlet.”</p>\n  <p>Record the result.</p>\n</disp-quote>\n<p>Continue the test.</p>\n",
+      "stderr": ""
+    },
+    "quote#e2e:jats_archiving": {
+      "key": "4b83640884c2fccc",
+      "exit": 0,
+      "stdout": "<disp-quote>\n  <p>“Check inlet.”</p>\n  <p>Record the result.</p>\n</disp-quote>\n<p>Continue the test.</p>\n",
+      "stderr": ""
+    },
+    "quote#e2e:jats_articleauthoring": {
+      "key": "f14ed3fd0f194e6b",
+      "exit": 0,
+      "stdout": "<disp-quote>\n  <p>“Check inlet.”</p>\n  <p>Record the result.</p>\n</disp-quote>\n<p>Continue the test.</p>\n",
+      "stderr": ""
+    },
+    "quote#e2e:jats_publishing": {
+      "key": "5f183282da5485c3",
+      "exit": 0,
+      "stdout": "<disp-quote>\n  <p>“Check inlet.”</p>\n  <p>Record the result.</p>\n</disp-quote>\n<p>Continue the test.</p>\n",
+      "stderr": ""
+    },
+    "quote#e2e:tei": {
+      "key": "fcb3762a98e02c7d",
+      "exit": 0,
+      "stdout": "<quote>\n  <p><quote>Check inlet.</quote></p>\n  <p>Record the result.</p>\n</quote>\n<p>Continue the test.</p>\n",
+      "stderr": ""
+    },
+    "quote#read": {
+      "key": "90bfc80f81625f2e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"inlet.\"}]]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Record\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"result.\"}]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Continue\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test.\"}]}]}\n",
+      "stderr": ""
+    },
+    "quote#write:docbook": {
+      "key": "952c43240a35d0d0",
+      "exit": 0,
+      "stdout": "<blockquote>\n  <para>\n    <quote>Check inlet.</quote>\n  </para>\n  <para>\n    Record the result.\n  </para>\n</blockquote>\n<para>\n  Continue the test.\n</para>\n",
+      "stderr": ""
+    },
+    "quote#write:docbook4": {
+      "key": "4c42b83f3cd04c73",
+      "exit": 0,
+      "stdout": "<blockquote>\n  <para>\n    <quote>Check inlet.</quote>\n  </para>\n  <para>\n    Record the result.\n  </para>\n</blockquote>\n<para>\n  Continue the test.\n</para>\n",
+      "stderr": ""
+    },
+    "quote#write:docbook5": {
+      "key": "18e7d5e12583de26",
+      "exit": 0,
+      "stdout": "<blockquote>\n  <para>\n    <quote>Check inlet.</quote>\n  </para>\n  <para>\n    Record the result.\n  </para>\n</blockquote>\n<para>\n  Continue the test.\n</para>\n",
+      "stderr": ""
+    },
+    "quote#write:fb2": {
+      "key": "54c6d484947f0233",
+      "exit": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\"><description><title-info><genre>unrecognised</genre></title-info><document-info><program-used>pandoc</program-used></document-info></description><body><title><p /></title><section><cite><p>“Check inlet.”</p><p>Record the result.</p></cite><p>Continue the test.</p></section></body></FictionBook>\n",
+      "stderr": ""
+    },
+    "quote#write:jats": {
+      "key": "20758575bd7c835c",
+      "exit": 0,
+      "stdout": "<disp-quote>\n  <p>“Check inlet.”</p>\n  <p>Record the result.</p>\n</disp-quote>\n<p>Continue the test.</p>\n",
+      "stderr": ""
+    },
+    "quote#write:jats_archiving": {
+      "key": "ea5f6a8f014035a8",
+      "exit": 0,
+      "stdout": "<disp-quote>\n  <p>“Check inlet.”</p>\n  <p>Record the result.</p>\n</disp-quote>\n<p>Continue the test.</p>\n",
+      "stderr": ""
+    },
+    "quote#write:jats_articleauthoring": {
+      "key": "4bc5a35d67374bc5",
+      "exit": 0,
+      "stdout": "<disp-quote>\n  <p>“Check inlet.”</p>\n  <p>Record the result.</p>\n</disp-quote>\n<p>Continue the test.</p>\n",
+      "stderr": ""
+    },
+    "quote#write:jats_publishing": {
+      "key": "11c869f199ab9ef9",
+      "exit": 0,
+      "stdout": "<disp-quote>\n  <p>“Check inlet.”</p>\n  <p>Record the result.</p>\n</disp-quote>\n<p>Continue the test.</p>\n",
+      "stderr": ""
+    },
+    "quote#write:tei": {
+      "key": "fd82c7de69bbe2b7",
+      "exit": 0,
+      "stdout": "<quote>\n  <p><quote>Check inlet.</quote></p>\n  <p>Record the result.</p>\n</quote>\n<p>Continue the test.</p>\n",
+      "stderr": ""
+    }
+  }
+}

@@ -1,0 +1,1097 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "bullet-list#e2e:haddock": {
+      "key": "422c5f28c5eef5bf",
+      "exit": 0,
+      "stdout": "-   Check bolt.\n    -   Log 11.\n-   Check plate.\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:muse": {
+      "key": "218a648c3ea49c88",
+      "exit": 0,
+      "stdout": " - Check bolt.\n   - Log 11.\n - Check plate.\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:opml": {
+      "key": "0e1feae57b5e7b28",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:t2t": {
+      "key": "0bb430216c9cb70b",
+      "exit": 0,
+      "stdout": "- Check bolt.\n  - Log 11.\n- Check plate.\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:textile": {
+      "key": "4c027c80ff88cbee",
+      "exit": 0,
+      "stdout": "* Check bolt.\n** Log 11.\n* Check plate.\n",
+      "stderr": ""
+    },
+    "bullet-list#e2e:vimdoc": {
+      "key": "20cc6521bd033b4a",
+      "exit": 0,
+      "stdout": "- Check bolt.\n  - Log 11.\n- Check plate.\n",
+      "stderr": ""
+    },
+    "bullet-list#read": {
+      "key": "ce328fb408742d90",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"bolt.\"}]},{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Log\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"11.\"}]}]]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"plate.\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "bullet-list#write:haddock": {
+      "key": "17476a550079d394",
+      "exit": 0,
+      "stdout": "-   Check bolt.\n    -   Log 11.\n-   Check plate.\n",
+      "stderr": ""
+    },
+    "bullet-list#write:muse": {
+      "key": "8875334e13bc853f",
+      "exit": 0,
+      "stdout": " - Check bolt.\n   - Log 11.\n - Check plate.\n",
+      "stderr": ""
+    },
+    "bullet-list#write:opml": {
+      "key": "7dbac32115022fbf",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "bullet-list#write:t2t": {
+      "key": "ebbe9e9ceed90e98",
+      "exit": 0,
+      "stdout": "- Check bolt.\n  - Log 11.\n- Check plate.\n",
+      "stderr": ""
+    },
+    "bullet-list#write:textile": {
+      "key": "c981065f7c776c1b",
+      "exit": 0,
+      "stdout": "* Check bolt.\n** Log 11.\n* Check plate.\n",
+      "stderr": ""
+    },
+    "bullet-list#write:vimdoc": {
+      "key": "5405d5a77360a94d",
+      "exit": 0,
+      "stdout": "- Check bolt.\n  - Log 11.\n- Check plate.\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:haddock": {
+      "key": "2f5c0170c040ec4c",
+      "exit": 0,
+      "stdout": "+------+-------+\n| Item | Value |\n+:=====+======:+\n| bolt | 11    |\n+------+-------+\n\nRail check values\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:muse": {
+      "key": "ec8df560585f9a8b",
+      "exit": 0,
+      "stdout": " Item || Value\n bolt |  11\n |+ Rail check values +|\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:opml": {
+      "key": "630953d39101b7ab",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:t2t": {
+      "key": "532458de2c771bc8",
+      "exit": 0,
+      "stdout": "Rail check values\n|Item  |  Value|\n|bolt  |     11|\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:textile": {
+      "key": "1047ddd777f091bd",
+      "exit": 0,
+      "stdout": "<table>\n<caption>Rail check values</caption>\n<thead>\n<tr>\n<th align=\"left\">Item</th>\n<th align=\"right\">Value</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td align=\"left\">bolt</td>\n<td align=\"right\">11</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "captioned-table#e2e:vimdoc": {
+      "key": "e1ab563f283cc399",
+      "exit": 0,
+      "stdout": "    Item     Value ~\n    bolt        11\n\n    Rail check values\n",
+      "stderr": ""
+    },
+    "captioned-table#read": {
+      "key": "a9090c2440c62fd3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Table\",\"c\":[[\"check-table\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Rail\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"values\"}]}]],[[{\"t\":\"AlignLeft\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignRight\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Item\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Value\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"bolt\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"11\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "captioned-table#write:haddock": {
+      "key": "d5621731a08e65a0",
+      "exit": 0,
+      "stdout": "+------+-------+\n| Item | Value |\n+:=====+======:+\n| bolt | 11    |\n+------+-------+\n\nRail check values\n",
+      "stderr": ""
+    },
+    "captioned-table#write:muse": {
+      "key": "504baab84a0353d5",
+      "exit": 0,
+      "stdout": " Item || Value\n bolt |  11\n |+ Rail check values +|\n",
+      "stderr": ""
+    },
+    "captioned-table#write:opml": {
+      "key": "cad6afc4f63a4655",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "captioned-table#write:t2t": {
+      "key": "4a75a3938533ad34",
+      "exit": 0,
+      "stdout": "Rail check values\n|Item  |  Value|\n|bolt  |     11|\n",
+      "stderr": ""
+    },
+    "captioned-table#write:textile": {
+      "key": "8b56133b71934aa1",
+      "exit": 0,
+      "stdout": "<table>\n<caption>Rail check values</caption>\n<thead>\n<tr>\n<th align=\"left\">Item</th>\n<th align=\"right\">Value</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td align=\"left\">bolt</td>\n<td align=\"right\">11</td>\n</tr>\n</tbody>\n</table>\n",
+      "stderr": ""
+    },
+    "captioned-table#write:vimdoc": {
+      "key": "b042d48bc305f0d3",
+      "exit": 0,
+      "stdout": "    Item     Value ~\n    bolt        11\n\n    Rail check values\n",
+      "stderr": ""
+    },
+    "code-block#e2e:haddock": {
+      "key": "6c4fc5677d197d9b",
+      "exit": 0,
+      "stdout": "> value = 11\n> print(value < 25)\n\n> bolt\n>   plate\n",
+      "stderr": ""
+    },
+    "code-block#e2e:muse": {
+      "key": "c80cae78ecb19994",
+      "exit": 0,
+      "stdout": "<example>\nvalue = 11\nprint(value < 25)\n</example>\n\n<example>\nbolt\n  plate\n</example>\n",
+      "stderr": ""
+    },
+    "code-block#e2e:opml": {
+      "key": "55e146b265f55a74",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "code-block#e2e:t2t": {
+      "key": "0ddd793e99e4685f",
+      "exit": 0,
+      "stdout": "```\nvalue = 11\nprint(value < 25)\n```\n\n```\nbolt\n  plate\n```\n",
+      "stderr": ""
+    },
+    "code-block#e2e:textile": {
+      "key": "3bb84444396f6102",
+      "exit": 0,
+      "stdout": "bc(python). value = 11\nprint(value < 25)\n\n\nbc. bolt\n  plate\n\n\n",
+      "stderr": ""
+    },
+    "code-block#e2e:vimdoc": {
+      "key": "05150825b69cc026",
+      "exit": 0,
+      "stdout": ">python\n    value = 11\n    print(value < 25)\n<\n>\n    bolt\n      plate\n<\n",
+      "stderr": ""
+    },
+    "code-block#read": {
+      "key": "41db2345b02eb06c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"sample-code\",[\"python\"],[]],\"value = 11\\nprint(value < 25)\"]},{\"t\":\"CodeBlock\",\"c\":[[\"\",[],[]],\"bolt\\n  plate\\n\"]}]}\n",
+      "stderr": ""
+    },
+    "code-block#write:haddock": {
+      "key": "adda97bfe30536e4",
+      "exit": 0,
+      "stdout": "> value = 11\n> print(value < 25)\n\n> bolt\n>   plate\n",
+      "stderr": ""
+    },
+    "code-block#write:muse": {
+      "key": "f35ba1b68691294f",
+      "exit": 0,
+      "stdout": "<example>\nvalue = 11\nprint(value < 25)\n</example>\n\n<example>\nbolt\n  plate\n</example>\n",
+      "stderr": ""
+    },
+    "code-block#write:opml": {
+      "key": "523a7bd39b29dccf",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "code-block#write:t2t": {
+      "key": "71379f6604b64e38",
+      "exit": 0,
+      "stdout": "```\nvalue = 11\nprint(value < 25)\n```\n\n```\nbolt\n  plate\n```\n",
+      "stderr": ""
+    },
+    "code-block#write:textile": {
+      "key": "f094c6c51fcfb39b",
+      "exit": 0,
+      "stdout": "bc(python). value = 11\nprint(value < 25)\n\n\nbc. bolt\n  plate\n\n\n",
+      "stderr": ""
+    },
+    "code-block#write:vimdoc": {
+      "key": "fd1abc56d9fa0009",
+      "exit": 0,
+      "stdout": ">python\n    value = 11\n    print(value < 25)\n<\n>\n    bolt\n      plate\n<\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:haddock": {
+      "key": "17c6bb3ccc355049",
+      "exit": 0,
+      "stdout": "[Limit]\n    Highest permitted 11.\n    See the log.\n[Zero]\n    Start value.\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:muse": {
+      "key": "4c8cb7045d25b5d0",
+      "exit": 0,
+      "stdout": " Limit :: Highest permitted 11.\n       :: See the log.\n Zero :: Start value.\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:opml": {
+      "key": "731bdb8f6727f3b0",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:t2t": {
+      "key": "dd9523c27228556d",
+      "exit": 0,
+      "stdout": ": **Limit**\n  Highest permitted 11.\n  See the log.\n: **Zero**\n  Start value.\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:textile": {
+      "key": "a31874eb6a5a03d2",
+      "exit": 0,
+      "stdout": "<dl>\n<dt>Limit</dt>\n<dd>Highest permitted 11.</dd>\n<dd>See the log.</dd>\n<dt>Zero</dt>\n<dd>Start value.</dd>\n</dl>\n",
+      "stderr": ""
+    },
+    "definition-list#e2e:vimdoc": {
+      "key": "8ec2894b7c5fafa6",
+      "exit": 0,
+      "stdout": "Limit\n    Highest permitted 11.\n    See the log.\nZero\n    Start value.\n",
+      "stderr": ""
+    },
+    "definition-list#read": {
+      "key": "0bb1f54c4f679098",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"Limit\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Highest\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"permitted\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"11.\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"See\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log.\"}]}]]],[[{\"t\":\"Str\",\"c\":\"Zero\"}],[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Start\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"value.\"}]}]]]]}]}\n",
+      "stderr": ""
+    },
+    "definition-list#write:haddock": {
+      "key": "db60672549b2826a",
+      "exit": 0,
+      "stdout": "[Limit]\n    Highest permitted 11.\n    See the log.\n[Zero]\n    Start value.\n",
+      "stderr": ""
+    },
+    "definition-list#write:muse": {
+      "key": "ce08d2d429b15223",
+      "exit": 0,
+      "stdout": " Limit :: Highest permitted 11.\n       :: See the log.\n Zero :: Start value.\n",
+      "stderr": ""
+    },
+    "definition-list#write:opml": {
+      "key": "076a17f2f0d25ca3",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "definition-list#write:t2t": {
+      "key": "d5e1aa9f29224266",
+      "exit": 0,
+      "stdout": ": **Limit**\n  Highest permitted 11.\n  See the log.\n: **Zero**\n  Start value.\n",
+      "stderr": ""
+    },
+    "definition-list#write:textile": {
+      "key": "5392c47fe4576237",
+      "exit": 0,
+      "stdout": "<dl>\n<dt>Limit</dt>\n<dd>Highest permitted 11.</dd>\n<dd>See the log.</dd>\n<dt>Zero</dt>\n<dd>Start value.</dd>\n</dl>\n",
+      "stderr": ""
+    },
+    "definition-list#write:vimdoc": {
+      "key": "185298bee1a253d5",
+      "exit": 0,
+      "stdout": "Limit\n    Highest permitted 11.\n    See the log.\nZero\n    Start value.\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:haddock": {
+      "key": "7071d2d6fff490f5",
+      "exit": 0,
+      "stdout": "Rail check bolt\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:muse": {
+      "key": "7fe8fa8203fcb052",
+      "exit": 0,
+      "stdout": "#check-step <class name=\"label\">Rail check</class> bolt\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:opml": {
+      "key": "5dfb41df85b0aaf2",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:t2t": {
+      "key": "cabb2d067b22e391",
+      "exit": 0,
+      "stdout": "Rail check bolt\n\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:textile": {
+      "key": "2c26610722b230c4",
+      "exit": 0,
+      "stdout": "<div id=\"check-panel\" class=\"inspection\" lang=\"en\">\n\nRail check bolt\n\n\n</div>\n",
+      "stderr": ""
+    },
+    "div-and-span#e2e:vimdoc": {
+      "key": "903a2d5e235618a0",
+      "exit": 0,
+      "stdout": "Rail check bolt\n",
+      "stderr": ""
+    },
+    "div-and-span#read": {
+      "key": "aa368619593b665a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"check-panel\",[\"inspection\"],[[\"lang\",\"en\"]]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"check-step\",[\"label\"],[[\"title\",\"Check location\"]]],[{\"t\":\"Str\",\"c\":\"Rail\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"bolt\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "div-and-span#write:haddock": {
+      "key": "3f868df76a90e205",
+      "exit": 0,
+      "stdout": "Rail check bolt\n",
+      "stderr": ""
+    },
+    "div-and-span#write:muse": {
+      "key": "81c5cb87a324d066",
+      "exit": 0,
+      "stdout": "#check-step <class name=\"label\">Rail check</class> bolt\n",
+      "stderr": ""
+    },
+    "div-and-span#write:opml": {
+      "key": "8f059800d4e8eae6",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "div-and-span#write:t2t": {
+      "key": "f88c1a6f72b0ae89",
+      "exit": 0,
+      "stdout": "Rail check bolt\n\n",
+      "stderr": ""
+    },
+    "div-and-span#write:textile": {
+      "key": "f4cfaabbd6dbb9c2",
+      "exit": 0,
+      "stdout": "<div id=\"check-panel\" class=\"inspection\" lang=\"en\">\n\nRail check bolt\n\n\n</div>\n",
+      "stderr": ""
+    },
+    "div-and-span#write:vimdoc": {
+      "key": "e8d935a4d4c38660",
+      "exit": 0,
+      "stdout": "Rail check bolt\n",
+      "stderr": ""
+    },
+    "headings#e2e:haddock": {
+      "key": "bc92a17b7c5ea260",
+      "exit": 0,
+      "stdout": "= Rail check\n#bolt#\n\nStart here.\n\n== Readings\n#details#\n\nCheck plate.\n",
+      "stderr": ""
+    },
+    "headings#e2e:muse": {
+      "key": "09814b86514f3285",
+      "exit": 0,
+      "stdout": "#bolt\n* Rail check\n\nStart here.\n\n#details\n** Readings\n\nCheck plate.\n",
+      "stderr": ""
+    },
+    "headings#e2e:opml": {
+      "key": "b96446d8353513e5",
+      "exit": 0,
+      "stdout": "<outline text=\"Rail check\" _note=\"Start here.\">\n  <outline text=\"Readings\" _note=\"Check plate.\">\n  </outline>\n</outline>\n",
+      "stderr": ""
+    },
+    "headings#e2e:t2t": {
+      "key": "5ee06d921ac00e84",
+      "exit": 0,
+      "stdout": "= Rail check =\n\nStart here.\n\n== Readings ==\n\nCheck plate.\n",
+      "stderr": ""
+    },
+    "headings#e2e:textile": {
+      "key": "1c4ac25c002654e7",
+      "exit": 0,
+      "stdout": "h1(#bolt). Rail check\n\nStart here.\n\nh2(unnumbered#details). Readings\n\nCheck plate.\n",
+      "stderr": ""
+    },
+    "headings#e2e:vimdoc": {
+      "key": "f65918726e41d03b",
+      "exit": 0,
+      "stdout": "========================================================================\nRail check                                                          *bolt*\n\nStart here.\n\n------------------------------------------------------------------------\nReadings                                                         *details*\n\nCheck plate.\n",
+      "stderr": ""
+    },
+    "headings#read": {
+      "key": "e06695319f81fced",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"bolt\",[],[]],[{\"t\":\"Str\",\"c\":\"Rail\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Start\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"here.\"}]},{\"t\":\"Header\",\"c\":[2,[\"details\",[\"unnumbered\"],[]],[{\"t\":\"Str\",\"c\":\"Readings\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"plate.\"}]}]}\n",
+      "stderr": ""
+    },
+    "headings#write:haddock": {
+      "key": "c7bee27da73b25c5",
+      "exit": 0,
+      "stdout": "= Rail check\n#bolt#\n\nStart here.\n\n== Readings\n#details#\n\nCheck plate.\n",
+      "stderr": ""
+    },
+    "headings#write:muse": {
+      "key": "c99aa09ac06c4290",
+      "exit": 0,
+      "stdout": "#bolt\n* Rail check\n\nStart here.\n\n#details\n** Readings\n\nCheck plate.\n",
+      "stderr": ""
+    },
+    "headings#write:opml": {
+      "key": "a374503a27cb2110",
+      "exit": 0,
+      "stdout": "<outline text=\"Rail check\" _note=\"Start here.\">\n  <outline text=\"Readings\" _note=\"Check plate.\">\n  </outline>\n</outline>\n",
+      "stderr": ""
+    },
+    "headings#write:t2t": {
+      "key": "aecf4c95090cdb99",
+      "exit": 0,
+      "stdout": "= Rail check =\n\nStart here.\n\n== Readings ==\n\nCheck plate.\n",
+      "stderr": ""
+    },
+    "headings#write:textile": {
+      "key": "40e36f4b684d544c",
+      "exit": 0,
+      "stdout": "h1(#bolt). Rail check\n\nStart here.\n\nh2(unnumbered#details). Readings\n\nCheck plate.\n",
+      "stderr": ""
+    },
+    "headings#write:vimdoc": {
+      "key": "348e37d6c8defbee",
+      "exit": 0,
+      "stdout": "========================================================================\nRail check                                                          *bolt*\n\nStart here.\n\n------------------------------------------------------------------------\nReadings                                                         *details*\n\nCheck plate.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:haddock": {
+      "key": "5060938bbf144d88",
+      "exit": 0,
+      "stdout": "Before the bolt check.\n\n________________________________________________________________________\n\nAfter the plate check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:muse": {
+      "key": "c79077da720082d3",
+      "exit": 0,
+      "stdout": "Before the bolt check.\n\n----\n\nAfter the plate check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:opml": {
+      "key": "04ceabfe12d83c33",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:t2t": {
+      "key": "61a21e285f4e66b4",
+      "exit": 0,
+      "stdout": "Before the bolt check.\n\n\n--------------------\n\nAfter the plate check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:textile": {
+      "key": "404fc5eb3a413c2d",
+      "exit": 0,
+      "stdout": "Before the bolt check.\n\n<hr />\n\nAfter the plate check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#e2e:vimdoc": {
+      "key": "ca36dfdf55bbef49",
+      "exit": 0,
+      "stdout": "Before the bolt check.\n\n * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\n\nAfter the plate check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#read": {
+      "key": "03acc7b9e92903ab",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"bolt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check.\"}]},{\"t\":\"HorizontalRule\"},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"After\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"plate\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check.\"}]}]}\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:haddock": {
+      "key": "e0647c3b2b9732a4",
+      "exit": 0,
+      "stdout": "Before the bolt check.\n\n________________________________________________________________________\n\nAfter the plate check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:muse": {
+      "key": "e4f509c9a084d5df",
+      "exit": 0,
+      "stdout": "Before the bolt check.\n\n----\n\nAfter the plate check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:opml": {
+      "key": "af746bdbf9b7015f",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:t2t": {
+      "key": "a466b06933b6a688",
+      "exit": 0,
+      "stdout": "Before the bolt check.\n\n\n--------------------\n\nAfter the plate check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:textile": {
+      "key": "9388c03dc8db563b",
+      "exit": 0,
+      "stdout": "Before the bolt check.\n\n<hr />\n\nAfter the plate check.\n",
+      "stderr": ""
+    },
+    "horizontal-rule#write:vimdoc": {
+      "key": "952051230394ec5d",
+      "exit": 0,
+      "stdout": "Before the bolt check.\n\n * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\n\nAfter the plate check.\n",
+      "stderr": ""
+    },
+    "image#e2e:haddock": {
+      "key": "621a012c13e0327a",
+      "exit": 0,
+      "stdout": "<<data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC Rail check sample>>\n",
+      "stderr": ""
+    },
+    "image#e2e:muse": {
+      "key": "b772638de7de2243",
+      "exit": 0,
+      "stdout": "[[data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC][Blue pixel]]\n",
+      "stderr": ""
+    },
+    "image#e2e:opml": {
+      "key": "30fcd12170f376a3",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "image#e2e:t2t": {
+      "key": "56e1985edbeeccc6",
+      "exit": 0,
+      "stdout": "[data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC?24|Blue pixel]\n",
+      "stderr": ""
+    },
+    "image#e2e:textile": {
+      "key": "ebacbe6a29ed8455",
+      "exit": 0,
+      "stdout": "!{width:24px;height:auto;}data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC(Blue pixel)!\n",
+      "stderr": ""
+    },
+    "image#e2e:vimdoc": {
+      "key": "03325c654ff21be1",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "image#read": {
+      "key": "8ebdf68cd1a2373b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Image\",\"c\":[[\"sample\",[],[[\"width\",\"24px\"]]],[{\"t\":\"Str\",\"c\":\"Rail\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sample\"}],[\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC\",\"Blue pixel\"]]}]}]}\n",
+      "stderr": ""
+    },
+    "image#write:haddock": {
+      "key": "f1302c6f6ea777fa",
+      "exit": 0,
+      "stdout": "<<data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC Rail check sample>>\n",
+      "stderr": ""
+    },
+    "image#write:muse": {
+      "key": "edff11adfd44bc6b",
+      "exit": 0,
+      "stdout": "[[data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC][Blue pixel]]\n",
+      "stderr": ""
+    },
+    "image#write:opml": {
+      "key": "6446b299413a97eb",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "image#write:t2t": {
+      "key": "7f6855203de3ad9e",
+      "exit": 0,
+      "stdout": "[data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC?24|Blue pixel]\n",
+      "stderr": ""
+    },
+    "image#write:textile": {
+      "key": "9a5684432bf1da87",
+      "exit": 0,
+      "stdout": "!{width:24px;height:auto;}data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNQjqwHAAGeAPzT8N5xAAAAAElFTkSuQmCC(Blue pixel)!\n",
+      "stderr": ""
+    },
+    "image#write:vimdoc": {
+      "key": "eb8a017495b93ff9",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:haddock": {
+      "key": "91df09a9b855d30b",
+      "exit": 0,
+      "stdout": "/bolt/ __plate__ @a_b + 2@ ~~retired~~ H2O m2\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:muse": {
+      "key": "d96f1b89eb17ab18",
+      "exit": 0,
+      "stdout": "*bolt* **plate** =a_b + 2= <del>retired</del> H<sub>2</sub>O\nm<sup>2</sup>\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:opml": {
+      "key": "e3638b4b316111f8",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:t2t": {
+      "key": "4198ad7205b35597",
+      "exit": 0,
+      "stdout": "//bolt// **plate** ``a_b + 2`` --retired-- H<sub>2</sub>O m<sup>2</sup>\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:textile": {
+      "key": "9092ece258737f2a",
+      "exit": 0,
+      "stdout": "_bolt_ *plate* @a_b + 2@ -retired- H[~2~]O m[^2^]\n",
+      "stderr": ""
+    },
+    "inline-styles#e2e:vimdoc": {
+      "key": "4dc1c45bf38c9306",
+      "exit": 0,
+      "stdout": "bolt plate `a_b + 2` retired H2O m2\n",
+      "stderr": ""
+    },
+    "inline-styles#read": {
+      "key": "e4ce86177ac258b0",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"bolt\"}]},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"plate\"}]},{\"t\":\"Space\"},{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"a_b + 2\"]},{\"t\":\"Space\"},{\"t\":\"Strikeout\",\"c\":[{\"t\":\"Str\",\"c\":\"retired\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"H\"},{\"t\":\"Subscript\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]},{\"t\":\"Str\",\"c\":\"O\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"m\"},{\"t\":\"Superscript\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "inline-styles#write:haddock": {
+      "key": "b467cc88a75aed98",
+      "exit": 0,
+      "stdout": "/bolt/ __plate__ @a_b + 2@ ~~retired~~ H2O m2\n",
+      "stderr": ""
+    },
+    "inline-styles#write:muse": {
+      "key": "3967bb23608e5199",
+      "exit": 0,
+      "stdout": "*bolt* **plate** =a_b + 2= <del>retired</del> H<sub>2</sub>O\nm<sup>2</sup>\n",
+      "stderr": ""
+    },
+    "inline-styles#write:opml": {
+      "key": "72c9004227af5c19",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "inline-styles#write:t2t": {
+      "key": "82648159a34031ec",
+      "exit": 0,
+      "stdout": "//bolt// **plate** ``a_b + 2`` --retired-- H<sub>2</sub>O m<sup>2</sup>\n",
+      "stderr": ""
+    },
+    "inline-styles#write:textile": {
+      "key": "10a1031ebde91eb5",
+      "exit": 0,
+      "stdout": "_bolt_ *plate* @a_b + 2@ -retired- H[~2~]O m[^2^]\n",
+      "stderr": ""
+    },
+    "inline-styles#write:vimdoc": {
+      "key": "929b03e1ebe2b6bf",
+      "exit": 0,
+      "stdout": "bolt plate `a_b + 2` retired H2O m2\n",
+      "stderr": ""
+    },
+    "links#e2e:haddock": {
+      "key": "07a711db92834f40",
+      "exit": 0,
+      "stdout": "<https://example.invalid/log?mode=day&view=full Read the bolt log>\n<#plate section>\n\n== Log entry\n#plate#\n",
+      "stderr": ""
+    },
+    "links#e2e:muse": {
+      "key": "618e4e7f027a9085",
+      "exit": 0,
+      "stdout": "[[https://example.invalid/log?mode=day&view=full][Read the bolt log]]\n[[#plate][section]]\n\n#plate\n** Log entry\n",
+      "stderr": ""
+    },
+    "links#e2e:opml": {
+      "key": "1d2a8ae2926bcb25",
+      "exit": 0,
+      "stdout": "<outline text=\"Log entry\">\n</outline>\n",
+      "stderr": ""
+    },
+    "links#e2e:t2t": {
+      "key": "049ad6ae38462c2c",
+      "exit": 0,
+      "stdout": "[Read the bolt log https://example.invalid/log?mode=day&view=full] [section #plate]\n\n== Log entry ==\n",
+      "stderr": ""
+    },
+    "links#e2e:textile": {
+      "key": "3bc0232aec8c3c63",
+      "exit": 0,
+      "stdout": "\"Read the bolt log\":https://example.invalid/log?mode=day&view=full \"section\":#plate\n\nh2(#plate). Log entry\n",
+      "stderr": ""
+    },
+    "links#e2e:vimdoc": {
+      "key": "0661fde3d3e640cf",
+      "exit": 0,
+      "stdout": "Read the bolt log https://example.invalid/log?mode=day&view=full section\n#plate\n\n------------------------------------------------------------------------\nLog entry                                                          *plate*\n",
+      "stderr": ""
+    },
+    "links#read": {
+      "key": "1afdb2ff066c867d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"bolt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log\"}],[\"https://example.invalid/log?mode=day&view=full\",\"Open log\"]]},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"section\"}],[\"#plate\",\"\"]]}]},{\"t\":\"Header\",\"c\":[2,[\"plate\",[],[]],[{\"t\":\"Str\",\"c\":\"Log\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"entry\"}]]}]}\n",
+      "stderr": ""
+    },
+    "links#write:haddock": {
+      "key": "44fb38f95371c0bb",
+      "exit": 0,
+      "stdout": "<https://example.invalid/log?mode=day&view=full Read the bolt log>\n<#plate section>\n\n== Log entry\n#plate#\n",
+      "stderr": ""
+    },
+    "links#write:muse": {
+      "key": "46a27247c4921462",
+      "exit": 0,
+      "stdout": "[[https://example.invalid/log?mode=day&view=full][Read the bolt log]]\n[[#plate][section]]\n\n#plate\n** Log entry\n",
+      "stderr": ""
+    },
+    "links#write:opml": {
+      "key": "9dca5f40c971bee2",
+      "exit": 0,
+      "stdout": "<outline text=\"Log entry\">\n</outline>\n",
+      "stderr": ""
+    },
+    "links#write:t2t": {
+      "key": "e9cc459d9484158f",
+      "exit": 0,
+      "stdout": "[Read the bolt log https://example.invalid/log?mode=day&view=full] [section #plate]\n\n== Log entry ==\n",
+      "stderr": ""
+    },
+    "links#write:textile": {
+      "key": "d146f5750fb6296e",
+      "exit": 0,
+      "stdout": "\"Read the bolt log\":https://example.invalid/log?mode=day&view=full \"section\":#plate\n\nh2(#plate). Log entry\n",
+      "stderr": ""
+    },
+    "links#write:vimdoc": {
+      "key": "e05602b5616203f0",
+      "exit": 0,
+      "stdout": "Read the bolt log https://example.invalid/log?mode=day&view=full section\n#plate\n\n------------------------------------------------------------------------\nLog entry                                                          *plate*\n",
+      "stderr": ""
+    },
+    "notes#e2e:haddock": {
+      "key": "e8194af49f5c4375",
+      "exit": 0,
+      "stdout": "bolt<#notes [1]> plate<#notes [2]>\n\n#notes#\n\n1.  Use the lower mark.\n\n    /Check the scale./\n\n2.  Use the upper mark.\n",
+      "stderr": ""
+    },
+    "notes#e2e:muse": {
+      "key": "ae7066eb6a0bc08a",
+      "exit": 0,
+      "stdout": "bolt[1] plate[2]\n\n[1] Use the lower mark.\n\n    *Check the scale.*\n\n[2] Use the upper mark.\n",
+      "stderr": ""
+    },
+    "notes#e2e:opml": {
+      "key": "490865fc9f4bbc6a",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "notes#e2e:t2t": {
+      "key": "eb206d1a226786c1",
+      "exit": 0,
+      "stdout": "bolt(Use the lower mark.\n\n//Check the scale.//) plate(Use the upper mark.)\n",
+      "stderr": ""
+    },
+    "notes#e2e:textile": {
+      "key": "e5cfb64bacfe6698",
+      "exit": 0,
+      "stdout": "bolt[1] plate[2]\n\n\nfn1. Use the lower mark.\n\n_Check the scale._\n\n\nfn2. Use the upper mark.\n\n\n",
+      "stderr": ""
+    },
+    "notes#e2e:vimdoc": {
+      "key": "9691d6d68540a514",
+      "exit": 0,
+      "stdout": "bolt |footnote1| plate |footnote2|\n\n * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\n\n                                                               *footnote1*\nUse the lower mark.\n\nCheck the scale.\n\n                                                               *footnote2*\nUse the upper mark.\n",
+      "stderr": ""
+    },
+    "notes#read": {
+      "key": "4f4ddd0a868a9152",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"bolt\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"lower\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"scale.\"}]}]}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"plate\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"upper\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark.\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "notes#write:haddock": {
+      "key": "6911a9bd62f8ebdd",
+      "exit": 0,
+      "stdout": "bolt<#notes [1]> plate<#notes [2]>\n\n#notes#\n\n1.  Use the lower mark.\n\n    /Check the scale./\n\n2.  Use the upper mark.\n",
+      "stderr": ""
+    },
+    "notes#write:muse": {
+      "key": "798da6a9ffa582e6",
+      "exit": 0,
+      "stdout": "bolt[1] plate[2]\n\n[1] Use the lower mark.\n\n    *Check the scale.*\n\n[2] Use the upper mark.\n",
+      "stderr": ""
+    },
+    "notes#write:opml": {
+      "key": "673a71a256e17966",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "notes#write:t2t": {
+      "key": "34d15be2d1979c71",
+      "exit": 0,
+      "stdout": "bolt(Use the lower mark.\n\n//Check the scale.//) plate(Use the upper mark.)\n",
+      "stderr": ""
+    },
+    "notes#write:textile": {
+      "key": "92bfa3a32b43d542",
+      "exit": 0,
+      "stdout": "bolt[1] plate[2]\n\n\nfn1. Use the lower mark.\n\n_Check the scale._\n\n\nfn2. Use the upper mark.\n\n\n",
+      "stderr": ""
+    },
+    "notes#write:vimdoc": {
+      "key": "897f45f74cb2e690",
+      "exit": 0,
+      "stdout": "bolt |footnote1| plate |footnote2|\n\n * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\n\n                                                               *footnote1*\nUse the lower mark.\n\nCheck the scale.\n\n                                                               *footnote2*\nUse the upper mark.\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:haddock": {
+      "key": "d049deff06d7e217",
+      "exit": 0,
+      "stdout": "4)  Open bolt.\n\n    Wait for the signal.\n\n5)  Close plate.\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:muse": {
+      "key": "6f0ceb99be0edbf0",
+      "exit": 0,
+      "stdout": " IV. Open bolt.\n\n     Wait for the signal.\n V. Close plate.\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:opml": {
+      "key": "90bc4e7e342ecb10",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:t2t": {
+      "key": "d2814712c9932b83",
+      "exit": 0,
+      "stdout": "+ Open bolt.\nWait for the signal.\n+ Close plate.\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:textile": {
+      "key": "984c020c78b97566",
+      "exit": 0,
+      "stdout": "<ol start=\"4\" style=\"list-style-type: upper-roman;\">\n<li><p>Open bolt.</p>\n<p>Wait for the signal.</p></li>\n<li><p>Close plate.</p></li>\n</ol>\n",
+      "stderr": ""
+    },
+    "ordered-list#e2e:vimdoc": {
+      "key": "a6ba76e3422184f2",
+      "exit": 0,
+      "stdout": "IV) Open bolt.\n\n    Wait for the signal.\n\nV) Close plate.\n",
+      "stderr": ""
+    },
+    "ordered-list#read": {
+      "key": "bf59fae4f0e4bc98",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[4,{\"t\":\"UpperRoman\"},{\"t\":\"OneParen\"}],[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Open\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"bolt.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Wait\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"for\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"signal.\"}]}],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Close\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"plate.\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "ordered-list#write:haddock": {
+      "key": "b9d2efdc7c64eb55",
+      "exit": 0,
+      "stdout": "4)  Open bolt.\n\n    Wait for the signal.\n\n5)  Close plate.\n",
+      "stderr": ""
+    },
+    "ordered-list#write:muse": {
+      "key": "afa0164143da2128",
+      "exit": 0,
+      "stdout": " IV. Open bolt.\n\n     Wait for the signal.\n V. Close plate.\n",
+      "stderr": ""
+    },
+    "ordered-list#write:opml": {
+      "key": "20000c44d04dd3a8",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "ordered-list#write:t2t": {
+      "key": "2c0b6825204e1211",
+      "exit": 0,
+      "stdout": "+ Open bolt.\nWait for the signal.\n+ Close plate.\n",
+      "stderr": ""
+    },
+    "ordered-list#write:textile": {
+      "key": "e278cdf0a618364c",
+      "exit": 0,
+      "stdout": "<ol start=\"4\" style=\"list-style-type: upper-roman;\">\n<li><p>Open bolt.</p>\n<p>Wait for the signal.</p></li>\n<li><p>Close plate.</p></li>\n</ol>\n",
+      "stderr": ""
+    },
+    "ordered-list#write:vimdoc": {
+      "key": "e8bb1c3ab9fc09ba",
+      "exit": 0,
+      "stdout": "IV) Open bolt.\n\n    Wait for the signal.\n\nV) Close plate.\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:haddock": {
+      "key": "f2f7ffac81f779f5",
+      "exit": 0,
+      "stdout": "Rail check log.\n\nRead slowly. Stop.\nCafé & \\<check>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:muse": {
+      "key": "0ee0e36ed89afda2",
+      "exit": 0,
+      "stdout": "Rail check log.\n\nRead slowly. Stop.<br>\n<verbatim>Café & <check></verbatim>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:opml": {
+      "key": "ca85dffc9854ca02",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:t2t": {
+      "key": "f2dbe53293dfe8d9",
+      "exit": 0,
+      "stdout": "Rail check log.\n\nRead slowly. Stop.\\\\\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:textile": {
+      "key": "52fe19eb7441ac28",
+      "exit": 0,
+      "stdout": "Rail check log.\n\nRead slowly. Stop.\nCafé &amp; &lt;check&gt;\n",
+      "stderr": ""
+    },
+    "paragraphs#e2e:vimdoc": {
+      "key": "b95faec879efab8c",
+      "exit": 0,
+      "stdout": "Rail check log.\n\nRead slowly. Stop.\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#read": {
+      "key": "d096efed3cee570a",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Rail\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"slowly.\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"Stop.\"},{\"t\":\"LineBreak\"},{\"t\":\"Str\",\"c\":\"Café & <check>\"}]}]}\n",
+      "stderr": ""
+    },
+    "paragraphs#write:haddock": {
+      "key": "f32bbef0bc645158",
+      "exit": 0,
+      "stdout": "Rail check log.\n\nRead slowly. Stop.\nCafé & \\<check>\n",
+      "stderr": ""
+    },
+    "paragraphs#write:muse": {
+      "key": "afced3ff1a4df157",
+      "exit": 0,
+      "stdout": "Rail check log.\n\nRead slowly. Stop.<br>\n<verbatim>Café & <check></verbatim>\n",
+      "stderr": ""
+    },
+    "paragraphs#write:opml": {
+      "key": "5bab2618d0ebc3d7",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "paragraphs#write:t2t": {
+      "key": "857a5b275d60646c",
+      "exit": 0,
+      "stdout": "Rail check log.\n\nRead slowly. Stop.\\\\\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "paragraphs#write:textile": {
+      "key": "8dc4da150bbbb913",
+      "exit": 0,
+      "stdout": "Rail check log.\n\nRead slowly. Stop.\nCafé &amp; &lt;check&gt;\n",
+      "stderr": ""
+    },
+    "paragraphs#write:vimdoc": {
+      "key": "7469aa91388f09dd",
+      "exit": 0,
+      "stdout": "Rail check log.\n\nRead slowly. Stop.\nCafé & <check>\n",
+      "stderr": ""
+    },
+    "quote#e2e:haddock": {
+      "key": "3bdfe2277a0f497d",
+      "exit": 0,
+      "stdout": "“Check bolt.”\n\nRecord the result.\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#e2e:muse": {
+      "key": "2bcce3dbb6735f54",
+      "exit": 0,
+      "stdout": "<quote>\n“Check bolt.”\n\nRecord the result.\n</quote>\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#e2e:opml": {
+      "key": "394f423e8c2fce34",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "quote#e2e:t2t": {
+      "key": "014bac25067aa001",
+      "exit": 0,
+      "stdout": "“Check bolt.”\n\nRecord the result.\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#e2e:textile": {
+      "key": "0c04cd9fbab68452",
+      "exit": 0,
+      "stdout": "<blockquote>\n\n\"Check bolt.\"\n\nRecord the result.\n\n</blockquote>\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#e2e:vimdoc": {
+      "key": "f1c6727ab1147636",
+      "exit": 0,
+      "stdout": "  \"Check bolt.\"\n\n  Record the result.\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#read": {
+      "key": "b0a3ebef0a235dac",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"bolt.\"}]]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Record\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"result.\"}]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Continue\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"test.\"}]}]}\n",
+      "stderr": ""
+    },
+    "quote#write:haddock": {
+      "key": "84674786cbe5005b",
+      "exit": 0,
+      "stdout": "“Check bolt.”\n\nRecord the result.\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#write:muse": {
+      "key": "30ed8ed36df64fcc",
+      "exit": 0,
+      "stdout": "<quote>\n“Check bolt.”\n\nRecord the result.\n</quote>\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#write:opml": {
+      "key": "97af16db168e9f4c",
+      "exit": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    "quote#write:t2t": {
+      "key": "b23748075cedea97",
+      "exit": 0,
+      "stdout": "“Check bolt.”\n\nRecord the result.\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#write:textile": {
+      "key": "db895ef43e5c9770",
+      "exit": 0,
+      "stdout": "<blockquote>\n\n\"Check bolt.\"\n\nRecord the result.\n\n</blockquote>\n\nContinue the test.\n",
+      "stderr": ""
+    },
+    "quote#write:vimdoc": {
+      "key": "0f2cb93608f6a9da",
+      "exit": 0,
+      "stdout": "  \"Check bolt.\"\n\n  Record the result.\n\nContinue the test.\n",
+      "stderr": ""
+    }
+  }
+}
