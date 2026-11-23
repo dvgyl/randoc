@@ -93,6 +93,41 @@ fn is_safe_relative(name: &str) -> bool {
             .all(|part| matches!(part, Component::Normal(_)))
 }
 
+fn stage_fixtures(args: &[String], repo_root: &Path, work_dir: &Path) -> Result<(), String> {
+    use crate::cases::{FIXTURE_PREFIX as PREFIX, arg_value};
+    for arg in args {
+        let value = arg_value(arg);
+        let fixture = value.starts_with(PREFIX);
+        if !fixture && !value.contains("/conformance/fixtures/") {
+            continue;
+        }
+        if !is_safe_relative(value) || value.contains('\\') {
+            return Err(format!("fixture '{value}' is not a safe relative path"));
+        }
+        if !fixture {
+            continue;
+        }
+
+        let root = repo_root
+            .canonicalize()
+            .map_err(|e| format!("{}: {e}", repo_root.display()))?;
+        let source = root.join(value);
+        let resolved = source
+            .canonicalize()
+            .map_err(|e| format!("{}: {e}", source.display()))?;
+        if !resolved.starts_with(root.join(PREFIX)) || !resolved.is_file() {
+            return Err(format!("fixture '{value}' is not a file in {PREFIX}"));
+        }
+
+        let destination = work_dir.join(value);
+        if let Some(parent) = destination.parent() {
+            fs::create_dir_all(parent).map_err(|e| format!("{}: {e}", parent.display()))?;
+        }
+        fs::copy(&resolved, &destination).map_err(|e| format!("{}: {e}", destination.display()))?;
+    }
+    Ok(())
+}
+
 /// Stops the program and each process that it started.
 fn kill_tree(child: &mut Child) {
     // The program runs in its own process group, and the group identifier is its process identifier.
@@ -139,7 +174,7 @@ impl Program {
         files: &BTreeMap<String, Vec<u8>>,
         work_dir: &Path,
     ) -> Result<Outcome, String> {
-        self.run_captured(args, stdin, files, work_dir, None)
+        self.run_captured(args, stdin, files, work_dir, None, None)
     }
 
     pub(crate) fn run_unit(
@@ -147,6 +182,7 @@ impl Program {
         unit: &Unit,
         stdin: &[u8],
         work_dir: &Path,
+        repo_root: &Path,
     ) -> Result<Outcome, String> {
         self.run_captured(
             &unit.args,
@@ -154,6 +190,7 @@ impl Program {
             &unit.files,
             work_dir,
             unit.capture_files.as_ref(),
+            Some(repo_root),
         )
     }
 
@@ -164,6 +201,7 @@ impl Program {
         files: &BTreeMap<String, Vec<u8>>,
         work_dir: &Path,
         capture: Option<&CaptureFiles>,
+        repo_root: Option<&Path>,
     ) -> Result<Outcome, String> {
         let isolated = capture.map(|_| {
             static RUN: AtomicUsize = AtomicUsize::new(0);
@@ -182,6 +220,10 @@ impl Program {
                 work_dir
             }
         };
+        // Keep fixtures out of `Unit::files` so existing fingerprints stay valid.
+        if let Some(repo_root) = repo_root {
+            stage_fixtures(args, repo_root, work_dir)?;
+        }
         for (name, contents) in files {
             if !is_safe_relative(name) {
                 return Err(format!(

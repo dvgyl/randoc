@@ -661,9 +661,9 @@ They were written afterwards from the merge records in `MERGE_LOG.md`.
   of `Collation.hs`, `Collator.hs`, `Normalize.hs` and `Trie.hs`.
   `tools/collation_tables.py` writes `src/collate/ducet.bin` from
   `allkeys.txt` and `UnicodeData.txt` 13.0.0 of unicode.org (SHA-256 pinned
-  in the tool). No tailoring and no CJK data is in the repository: a
-  tailored language sorts in root order (row I-CITE-17 of
-  `docs/ISSUES.md`).
+  in the tool). The Spanish sort key places `ñ` after `n` and before `o`.
+  Randoc uses root order for the remaining language-specific tailorings
+  and excludes CJK tailoring data. See I-CITE-17 in `docs/ISSUES.md`.
 - **Why.** The oracle normalizes and collates with the Unicode 13.0.0 data.
   A crate such as `icu_collator` uses the CLDR root order and newer Unicode
   data, which differ from the oracle in some orders, and it is a large

@@ -1,0 +1,30 @@
+from = "odt"
+to = []
+
+[[case]]
+id = "footnote"
+input_file = "reader-baseline/odt-footnote.odt"
+
+[[case]]
+id = "headings"
+input_file = "reader-baseline/odt-headings.odt"
+
+[[case]]
+id = "hyperlink"
+input_file = "reader-baseline/odt-hyperlink.odt"
+
+[[case]]
+id = "inline-formatting"
+input_file = "reader-baseline/odt-inline-formatting.odt"
+
+[[case]]
+id = "metadata"
+input_file = "reader-baseline/odt-metadata.odt"
+
+[[case]]
+id = "nested-list"
+input_file = "reader-baseline/odt-nested-list.odt"
+
+[[case]]
+id = "table"
+input_file = "reader-baseline/odt-table.odt"

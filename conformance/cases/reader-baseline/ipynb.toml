@@ -1,0 +1,212 @@
+from = "ipynb"
+to = []
+
+[[case]]
+id = "paragraphs"
+input = '''
+{
+  "nbformat": 4,
+  "nbformat_minor": 4,
+  "metadata": {},
+  "cells": [
+    {"cell_type":"markdown","metadata":{},"source":["The air is cool.\n","The sensor is dry.\n","\n","Read the upper dial."]}
+  ]
+}
+'''
+
+[[case]]
+id = "headings"
+input = '''
+{
+  "nbformat": 4,
+  "nbformat_minor": 4,
+  "metadata": {},
+  "cells": [
+    {"cell_type":"markdown","metadata":{},"source":["# Lamp test\n","\n","## East window\n","\n","Close the shade."]}
+  ]
+}
+'''
+
+[[case]]
+id = "inline-markup"
+input = '''
+{
+  "nbformat": 4,
+  "nbformat_minor": 4,
+  "metadata": {},
+  "cells": [
+    {"cell_type":"markdown","metadata":{},"source":["Use *soft* light, **two lamps**, and `lamp --check`."]}
+  ]
+}
+'''
+
+[[case]]
+id = "lists"
+input = '''
+{
+  "nbformat": 4,
+  "nbformat_minor": 4,
+  "metadata": {},
+  "cells": [
+    {"cell_type":"markdown","metadata":{},"source":["- Clip\n","  - Spring\n","- Case\n","\n","1. Check the lead.\n","2. Close the case."]}
+  ]
+}
+'''
+
+[[case]]
+id = "links"
+input = '''
+{
+  "nbformat": 4,
+  "nbformat_minor": 4,
+  "metadata": {},
+  "cells": [
+    {"cell_type":"markdown","metadata":{},"source":["Read [the lamp guide](https://example.org/lamp)."]}
+  ]
+}
+'''
+
+[[case]]
+id = "image"
+input = '''
+{
+  "nbformat": 4,
+  "nbformat_minor": 4,
+  "metadata": {},
+  "cells": [
+    {"cell_type":"markdown","metadata":{},"source":["![A lamp on the sill](lamp.png)"]}
+  ]
+}
+'''
+
+[[case]]
+id = "quote"
+input = '''
+{
+  "nbformat": 4,
+  "nbformat_minor": 4,
+  "metadata": {},
+  "cells": [
+    {"cell_type":"markdown","metadata":{},"source":["> Keep the shade above the mark.\n",">\n","> Check it at noon."]}
+  ]
+}
+'''
+
+[[case]]
+id = "table"
+input = '''
+{
+  "nbformat": 4,
+  "nbformat_minor": 4,
+  "metadata": {},
+  "cells": [
+    {"cell_type":"markdown","metadata":{},"source":["| Lamp | Count |\n","| :--- | ----: |\n","| Desk | 4     |"]}
+  ]
+}
+'''
+
+[[case]]
+id = "math"
+input = '''
+{
+  "nbformat": 4,
+  "nbformat_minor": 4,
+  "metadata": {},
+  "cells": [
+    {"cell_type":"markdown","metadata":{},"source":["The area is $r^2$.\n","\n","$$x = 3$$"]}
+  ]
+}
+'''
+
+[[case]]
+id = "code-cell"
+input = '''
+{
+  "nbformat": 4,
+  "nbformat_minor": 4,
+  "metadata": {"language_info":{"name":"python"}},
+  "cells": [
+    {"cell_type":"code","metadata":{},"source":["level = 4\n","print(level)\n"],"execution_count":3,"outputs":[]}
+  ]
+}
+'''
+
+[[case]]
+id = "stream-output"
+input = '''
+{
+  "nbformat": 4,
+  "nbformat_minor": 4,
+  "metadata": {},
+  "cells": [
+    {"cell_type":"code","metadata":{},"source":["print('east')"],"execution_count":1,"outputs":[{"output_type":"stream","name":"stdout","text":["east\n"]}]}
+  ]
+}
+'''
+
+[[case]]
+id = "execute-result"
+input = '''
+{
+  "nbformat": 4,
+  "nbformat_minor": 4,
+  "metadata": {},
+  "cells": [
+    {"cell_type":"code","metadata":{},"source":["8 + 3"],"execution_count":2,"outputs":[{"output_type":"execute_result","execution_count":2,"metadata":{},"data":{"text/plain":["11"]}}]}
+  ]
+}
+'''
+
+[[case]]
+id = "display-data"
+input = '''
+{
+  "nbformat": 4,
+  "nbformat_minor": 4,
+  "metadata": {},
+  "cells": [
+    {"cell_type":"code","metadata":{},"source":["show_status()"],"execution_count":4,"outputs":[{"output_type":"display_data","metadata":{},"data":{"text/html":["<b>Open</b>"],"text/plain":["Open"]}}]}
+  ]
+}
+'''
+
+[[case]]
+id = "error-output"
+input = '''
+{
+  "nbformat": 4,
+  "nbformat_minor": 4,
+  "metadata": {},
+  "cells": [
+    {"cell_type":"code","metadata":{},"source":["1 / 0"],"execution_count":5,"outputs":[{"output_type":"error","ename":"ZeroDivisionError","evalue":"division by zero","traceback":["Test cell","ZeroDivisionError: division by zero"]}]}
+  ]
+}
+'''
+
+[[case]]
+id = "raw-cell"
+input = '''
+{
+  "nbformat": 4,
+  "nbformat_minor": 4,
+  "metadata": {},
+  "cells": [
+    {"cell_type":"raw","metadata":{"raw_mimetype":"text/html"},"source":["<p>Field record</p>\n"]}
+  ]
+}
+'''
+
+[[case]]
+id = "metadata-and-cell-order"
+input = '''
+{
+  "nbformat": 4,
+  "nbformat_minor": 4,
+  "metadata": {"title":"Lamp report","authors":[{"name":"Lin West"}],"kernelspec":{"display_name":"Python 3","language":"python","name":"python3"}},
+  "cells": [
+    {"cell_type":"markdown","metadata":{"tags":["site"]},"source":["# East gate\n"]},
+    {"cell_type":"code","metadata":{"tags":["measure"]},"source":["print(8)"],"execution_count":null,"outputs":[]},
+    {"cell_type":"markdown","metadata":{},"source":["Gate survey complete."]}
+  ]
+}
+'''

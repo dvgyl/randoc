@@ -1,0 +1,194 @@
+from = "xml"
+to = []
+
+[[case]]
+id = "paragraphs"
+input = '''
+<Pandoc api-version="1,23,1,2">
+<meta/>
+<blocks>
+<Para>The water reached the red mark.</Para><Para>Check again at noon.</Para>
+</blocks>
+</Pandoc>
+'''
+
+[[case]]
+id = "headings"
+input = '''
+<Pandoc api-version="1,23,1,2">
+<meta/>
+<blocks>
+<Header id="ridge" level="1">Ridge station</Header><Header id="spare" level="2">Spare gauge</Header>
+</blocks>
+</Pandoc>
+'''
+
+[[case]]
+id = "metadata"
+input = '''
+<Pandoc api-version="1,23,1,2">
+<meta><entry key="title"><MetaInlines>Rain log</MetaInlines></entry><entry key="draft"><MetaBool>true</MetaBool></entry><entry key="site"><MetaString>East bank</MetaString></entry></meta>
+<blocks>
+<Para>Meet at the north gate.</Para>
+</blocks>
+</Pandoc>
+'''
+
+[[case]]
+id = "emphasis"
+input = '''
+<Pandoc api-version="1,23,1,2">
+<meta/>
+<blocks>
+<Para>Move <Emph>slowly</Emph> and hold <Strong>firmly</Strong>.</Para>
+</blocks>
+</Pandoc>
+'''
+
+[[case]]
+id = "inline-variants"
+input = '''
+<Pandoc api-version="1,23,1,2">
+<meta/>
+<blocks>
+<Para>Enter <Code>level --check</Code> and record m<Superscript>2</Superscript> or H<Subscript>2</Subscript>O.</Para>
+</blocks>
+</Pandoc>
+'''
+
+[[case]]
+id = "unordered-list"
+input = '''
+<Pandoc api-version="1,23,1,2">
+<meta/>
+<blocks>
+<BulletList><item><Plain>Tray</Plain><BulletList><item><Plain>Small clip</Plain></item></BulletList></item><item><Plain>Rack</Plain></item></BulletList>
+</blocks>
+</Pandoc>
+'''
+
+[[case]]
+id = "ordered-list"
+input = '''
+<Pandoc api-version="1,23,1,2">
+<meta/>
+<blocks>
+<OrderedList start="4" number-style="LowerAlpha" number-delim="Period"><item><Plain>Measure the slot.</Plain></item><item><Plain>Cut the pin.</Plain></item></OrderedList>
+</blocks>
+</Pandoc>
+'''
+
+[[case]]
+id = "link"
+input = '''
+<Pandoc api-version="1,23,1,2">
+<meta/>
+<blocks>
+<Para>Read the <Link href="https://example.org/ridge" title="Field guide">ridge guide</Link>.</Para>
+</blocks>
+</Pandoc>
+'''
+
+[[case]]
+id = "figure"
+input = '''
+<Pandoc api-version="1,23,1,2">
+<meta/>
+<blocks>
+<Figure id="rack"><Caption><Plain>Upper rack</Plain></Caption><Plain><Image src="rack.svg">The rack at noon</Image></Plain></Figure>
+</blocks>
+</Pandoc>
+'''
+
+[[case]]
+id = "quote"
+input = '''
+<Pandoc api-version="1,23,1,2">
+<meta/>
+<blocks>
+<BlockQuote><Para>Keep below the red line.</Para><Para>Stop at the gate.</Para></BlockQuote>
+</blocks>
+</Pandoc>
+'''
+
+[[case]]
+id = "code-block"
+input = '''
+<Pandoc api-version="1,23,1,2">
+<meta/>
+<blocks>
+<CodeBlock id="count" class="python">for n in range(4):
+    print(n)</CodeBlock>
+</blocks>
+</Pandoc>
+'''
+
+[[case]]
+id = "table"
+input = '''
+<Pandoc api-version="1,23,1,2">
+<meta/>
+<blocks>
+<Table><Caption><Plain>Stock</Plain></Caption><colspecs><ColSpec alignment="AlignLeft" col-width="0"/><ColSpec alignment="AlignRight" col-width="0"/></colspecs><TableHead><Row><Cell alignment="AlignLeft"><Plain>Part</Plain></Cell><Cell alignment="AlignRight"><Plain>Count</Plain></Cell></Row></TableHead><TableBody row-head-columns="0"><header/><body><Row><Cell alignment="AlignLeft"><Plain>Clip</Plain></Cell><Cell alignment="AlignRight"><Plain>8</Plain></Cell></Row></body></TableBody><TableFoot/></Table>
+</blocks>
+</Pandoc>
+'''
+
+[[case]]
+id = "math"
+input = '''
+<Pandoc api-version="1,23,1,2">
+<meta/>
+<blocks>
+<Para>The area is <Math math-type="InlineMath">x^2 + 4</Math>.</Para>
+</blocks>
+</Pandoc>
+'''
+
+[[case]]
+id = "footnote"
+input = '''
+<Pandoc api-version="1,23,1,2">
+<meta/>
+<blocks>
+<Para>Check the seal.<Note><Para>Use the small seal first.</Para></Note></Para>
+</blocks>
+</Pandoc>
+'''
+
+[[case]]
+id = "div-and-span"
+input = '''
+<Pandoc api-version="1,23,1,2">
+<meta/>
+<blocks>
+<Div id="scope" class="field note"><Para>Use the <Span class="label">green</Span> pin.</Para></Div>
+</blocks>
+</Pandoc>
+'''
+
+[[case]]
+id = "entities-and-raw"
+input = '''
+<Pandoc api-version="1,23,1,2">
+<meta/>
+<blocks>
+<Para>Salt &amp; sand <RawInline format="html">&lt;br&gt;</RawInline> at the edge.</Para><HorizontalRule/>
+</blocks>
+</Pandoc>
+'''
+
+[[case]]
+id = "metadata-bool-attribute"
+input = '''
+<Pandoc api-version="1,23,1,2">
+<meta>
+<entry key="checked"><MetaBool value="true"/></entry>
+<entry key="draft"><MetaBool value="false"/></entry>
+<entry key="site"><MetaString>North bank</MetaString></entry>
+</meta>
+<blocks>
+<Para>Use the blue marker.</Para>
+</blocks>
+</Pandoc>
+'''

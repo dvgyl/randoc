@@ -22,7 +22,11 @@
       }
     },
     "amuse": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 8,
+        "total": 8
+      }
     },
     "angle_brackets_escapable": {
       "status": "passing",
@@ -53,9 +57,9 @@
       }
     },
     "autolink_bare_uris": {
-      "status": "partial",
+      "status": "passing",
       "units": {
-        "passing": 8,
+        "passing": 9,
         "total": 9
       }
     },
@@ -109,7 +113,11 @@
       }
     },
     "element_citations": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 4,
+        "total": 4
+      }
     },
     "emoji": {
       "status": "passing",
@@ -266,9 +274,9 @@
       }
     },
     "latex_macros": {
-      "status": "partial",
+      "status": "passing",
       "units": {
-        "passing": 4,
+        "passing": 5,
         "total": 5
       }
     },
@@ -294,9 +302,9 @@
       }
     },
     "literate_haskell": {
-      "status": "partial",
+      "status": "passing",
       "units": {
-        "passing": 5,
+        "passing": 7,
         "total": 7
       }
     },
@@ -308,9 +316,9 @@
       }
     },
     "markdown_attribute": {
-      "status": "partial",
+      "status": "passing",
       "units": {
-        "passing": 133,
+        "passing": 135,
         "total": 135
       }
     },
@@ -329,9 +337,9 @@
       }
     },
     "mmd_link_attributes": {
-      "status": "partial",
+      "status": "passing",
       "units": {
-        "passing": 1,
+        "passing": 3,
         "total": 3
       }
     },
@@ -357,7 +365,11 @@
       }
     },
     "native_numbering": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 4,
+        "total": 4
+      }
     },
     "native_spans": {
       "status": "passing",
@@ -367,7 +379,11 @@
       }
     },
     "ntb": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 4,
+        "total": 4
+      }
     },
     "old_dashes": {
       "status": "passing",
@@ -398,14 +414,18 @@
       }
     },
     "raw_html": {
-      "status": "partial",
+      "status": "passing",
       "units": {
-        "passing": 1967,
+        "passing": 1968,
         "total": 1968
       }
     },
     "raw_markdown": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 4,
+        "total": 4
+      }
     },
     "raw_tex": {
       "status": "passing",
@@ -450,7 +470,11 @@
       }
     },
     "smart_quotes": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 4,
+        "total": 4
+      }
     },
     "sourcepos": {
       "status": "passing",
@@ -474,7 +498,11 @@
       }
     },
     "special_strings": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 4,
+        "total": 4
+      }
     },
     "startnum": {
       "status": "passing",
@@ -491,7 +519,11 @@
       }
     },
     "styles": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 2,
+        "total": 2
+      }
     },
     "subscript": {
       "status": "passing",
@@ -522,7 +554,11 @@
       }
     },
     "tagging": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 4,
+        "total": 4
+      }
     },
     "task_lists": {
       "status": "passing",
@@ -532,9 +568,9 @@
       }
     },
     "tex_math_dollars": {
-      "status": "partial",
+      "status": "passing",
       "units": {
-        "passing": 595,
+        "passing": 597,
         "total": 597
       }
     },
@@ -574,10 +610,18 @@
       }
     },
     "xrefs_name": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 4,
+        "total": 4
+      }
     },
     "xrefs_number": {
-      "status": "not_started"
+      "status": "passing",
+      "units": {
+        "passing": 4,
+        "total": 4
+      }
     },
     "yaml_metadata_block": {
       "status": "passing",
@@ -590,13 +634,25 @@
   "generated_by": "randoc-harness run --matrix",
   "input_formats": {
     "asciidoc": {
-      "status": "not_started"
+      "read": {
+        "passing": 16,
+        "total": 16
+      },
+      "status": "passing"
     },
     "biblatex": {
-      "status": "not_started"
+      "read": {
+        "passing": 16,
+        "total": 16
+      },
+      "status": "passing"
     },
     "bibtex": {
-      "status": "not_started"
+      "read": {
+        "passing": 17,
+        "total": 17
+      },
+      "status": "passing"
     },
     "bits": {
       "read": {
@@ -645,16 +701,32 @@
       "status": "passing"
     },
     "djot": {
-      "status": "not_started"
+      "read": {
+        "passing": 16,
+        "total": 16
+      },
+      "status": "passing"
     },
     "docbook": {
-      "status": "not_started"
+      "read": {
+        "passing": 16,
+        "total": 16
+      },
+      "status": "passing"
     },
     "docx": {
-      "status": "not_started"
+      "read": {
+        "passing": 10,
+        "total": 10
+      },
+      "status": "passing"
     },
     "dokuwiki": {
-      "status": "not_started"
+      "read": {
+        "passing": 16,
+        "total": 16
+      },
+      "status": "passing"
     },
     "endnotexml": {
       "read": {
@@ -664,13 +736,25 @@
       "status": "passing"
     },
     "epub": {
-      "status": "not_started"
+      "read": {
+        "passing": 7,
+        "total": 7
+      },
+      "status": "passing"
     },
     "fb2": {
-      "status": "not_started"
+      "read": {
+        "passing": 16,
+        "total": 16
+      },
+      "status": "passing"
     },
     "fodt": {
-      "status": "not_started"
+      "read": {
+        "passing": 16,
+        "total": 16
+      },
+      "status": "passing"
     },
     "gfm": {
       "read": {
@@ -680,27 +764,43 @@
       "status": "passing"
     },
     "haddock": {
-      "status": "not_started"
+      "read": {
+        "passing": 16,
+        "total": 16
+      },
+      "status": "passing"
     },
     "html": {
       "read": {
-        "passing": 10103,
+        "passing": 10106,
         "total": 10106
       },
-      "status": "partial"
+      "status": "passing"
     },
     "ipynb": {
-      "status": "not_started"
+      "read": {
+        "passing": 20,
+        "total": 20
+      },
+      "status": "passing"
     },
     "jats": {
-      "status": "not_started"
+      "read": {
+        "passing": 16,
+        "total": 16
+      },
+      "status": "passing"
     },
     "jira": {
-      "status": "not_started"
+      "read": {
+        "passing": 16,
+        "total": 16
+      },
+      "status": "passing"
     },
     "json": {
       "end_to_end": {
-        "passing": 13509,
+        "passing": 13578,
         "total": 13615
       },
       "read": {
@@ -717,18 +817,22 @@
       "status": "passing"
     },
     "man": {
-      "status": "not_started"
+      "read": {
+        "passing": 16,
+        "total": 16
+      },
+      "status": "passing"
     },
     "markdown": {
       "end_to_end": {
-        "passing": 1839,
+        "passing": 1847,
         "total": 1847
       },
       "read": {
-        "passing": 2884,
+        "passing": 2921,
         "total": 2921
       },
-      "status": "partial"
+      "status": "passing"
     },
     "markdown_github": {
       "read": {
@@ -739,17 +843,17 @@
     },
     "markdown_mmd": {
       "read": {
-        "passing": 15,
+        "passing": 16,
         "total": 16
       },
-      "status": "partial"
+      "status": "passing"
     },
     "markdown_phpextra": {
       "read": {
-        "passing": 18,
+        "passing": 19,
         "total": 19
       },
-      "status": "partial"
+      "status": "passing"
     },
     "markdown_strict": {
       "read": {
@@ -766,30 +870,50 @@
       "status": "partial"
     },
     "mediawiki": {
-      "status": "not_started"
-    },
-    "muse": {
-      "status": "not_started"
-    },
-    "native": {
-      "end_to_end": {
-        "passing": 587,
-        "total": 587
-      },
       "read": {
-        "passing": 587,
-        "total": 587
+        "passing": 17,
+        "total": 17
       },
       "status": "passing"
     },
+    "muse": {
+      "read": {
+        "passing": 24,
+        "total": 24
+      },
+      "status": "passing"
+    },
+    "native": {
+      "end_to_end": {
+        "passing": 1323,
+        "total": 1355
+      },
+      "read": {
+        "passing": 796,
+        "total": 796
+      },
+      "status": "partial"
+    },
     "odt": {
-      "status": "not_started"
+      "read": {
+        "passing": 7,
+        "total": 7
+      },
+      "status": "passing"
     },
     "opml": {
-      "status": "not_started"
+      "read": {
+        "passing": 16,
+        "total": 16
+      },
+      "status": "passing"
     },
     "org": {
-      "status": "not_started"
+      "read": {
+        "passing": 24,
+        "total": 24
+      },
+      "status": "passing"
     },
     "pod": {
       "read": {
@@ -799,7 +923,11 @@
       "status": "passing"
     },
     "pptx": {
-      "status": "not_started"
+      "read": {
+        "passing": 7,
+        "total": 7
+      },
+      "status": "passing"
     },
     "ris": {
       "read": {
@@ -820,13 +948,25 @@
       "status": "passing"
     },
     "rtf": {
-      "status": "not_started"
+      "read": {
+        "passing": 17,
+        "total": 17
+      },
+      "status": "passing"
     },
     "t2t": {
-      "status": "not_started"
+      "read": {
+        "passing": 16,
+        "total": 16
+      },
+      "status": "passing"
     },
     "textile": {
-      "status": "not_started"
+      "read": {
+        "passing": 16,
+        "total": 16
+      },
+      "status": "passing"
     },
     "tikiwiki": {
       "read": {
@@ -850,7 +990,11 @@
       "status": "passing"
     },
     "typst": {
-      "status": "not_started"
+      "read": {
+        "passing": 17,
+        "total": 17
+      },
+      "status": "passing"
     },
     "vimwiki": {
       "read": {
@@ -860,10 +1004,18 @@
       "status": "passing"
     },
     "xlsx": {
-      "status": "not_started"
+      "read": {
+        "passing": 7,
+        "total": 7
+      },
+      "status": "passing"
     },
     "xml": {
-      "status": "not_started"
+      "read": {
+        "passing": 17,
+        "total": 17
+      },
+      "status": "passing"
     }
   },
   "options": {
@@ -889,7 +1041,8 @@
       }
     },
     "bash-completion": {
-      "status": "not_started"
+      "reason": "Pandoc prints its own bash completion script, which is GPL text. Randoc generates its script from its own option table (I-CLI-13).",
+      "status": "not_applicable"
     },
     "biblatex": {
       "status": "passing",
@@ -950,8 +1103,8 @@
     "css": {
       "status": "passing",
       "units": {
-        "passing": 28,
-        "total": 28
+        "passing": 84,
+        "total": 84
       }
     },
     "data-dir": {
@@ -1160,8 +1313,8 @@
     "incremental": {
       "status": "passing",
       "units": {
-        "passing": 11,
-        "total": 11
+        "passing": 22,
+        "total": 22
       }
     },
     "indented-code-classes": {
@@ -1300,8 +1453,8 @@
     "metadata": {
       "status": "passing",
       "units": {
-        "passing": 42,
-        "total": 42
+        "passing": 109,
+        "total": 109
       }
     },
     "metadata-file": {
@@ -1405,8 +1558,8 @@
     "reference-doc": {
       "status": "partial",
       "units": {
-        "passing": 9,
-        "total": 10
+        "passing": 41,
+        "total": 106
       }
     },
     "reference-links": {
@@ -1468,8 +1621,8 @@
     "slide-level": {
       "status": "passing",
       "units": {
-        "passing": 607,
-        "total": 607
+        "passing": 618,
+        "total": 618
       }
     },
     "split-level": {
@@ -1482,8 +1635,8 @@
     "standalone": {
       "status": "passing",
       "units": {
-        "passing": 49,
-        "total": 49
+        "passing": 65,
+        "total": 65
       }
     },
     "strip-comments": {
@@ -1501,10 +1654,10 @@
       }
     },
     "syntax-highlighting": {
-      "status": "passing",
+      "status": "partial",
       "units": {
-        "passing": 38,
-        "total": 38
+        "passing": 62,
+        "total": 110
       }
     },
     "tab-stop": {
@@ -1524,8 +1677,8 @@
     "template": {
       "status": "passing",
       "units": {
-        "passing": 889,
-        "total": 889
+        "passing": 929,
+        "total": 929
       }
     },
     "title-prefix": {
@@ -1545,7 +1698,7 @@
     "toc": {
       "status": "partial",
       "units": {
-        "passing": 134,
+        "passing": 144,
         "total": 146
       }
     },
@@ -1630,34 +1783,114 @@
   "oracle": "pandoc 3.13",
   "output_formats": {
     "ansi": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "asciidoc": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "asciidoc_legacy": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "asciidoctor": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "bbcode": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "bbcode_fluxbb": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "bbcode_hubzilla": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "bbcode_phpbb": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "bbcode_steam": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "bbcode_xenforo": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "beamer": {
       "end_to_end": {
@@ -1671,13 +1904,37 @@
       }
     },
     "biblatex": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "bibtex": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "chunkedhtml": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 8,
+        "total": 8
+      },
+      "status": "passing",
+      "write": {
+        "passing": 8,
+        "total": 8
+      }
     },
     "commonmark": {
       "end_to_end": {
@@ -1702,7 +1959,15 @@
       }
     },
     "context": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 18,
+        "total": 18
+      },
+      "status": "passing",
+      "write": {
+        "passing": 18,
+        "total": 18
+      }
     },
     "csljson": {
       "end_to_end": {
@@ -1716,40 +1981,136 @@
       }
     },
     "djot": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "docbook": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "docbook4": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "docbook5": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "docx": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 0,
+        "total": 8
+      },
+      "status": "failing",
+      "write": {
+        "passing": 0,
+        "total": 8
+      }
     },
     "dokuwiki": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "dzslides": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 15,
+        "total": 15
+      },
+      "status": "passing",
+      "write": {
+        "passing": 15,
+        "total": 15
+      }
     },
     "epub": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 8,
+        "total": 8
+      },
+      "status": "passing",
+      "write": {
+        "passing": 8,
+        "total": 8
+      }
     },
     "epub2": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 8,
+        "total": 8
+      },
+      "status": "passing",
+      "write": {
+        "passing": 8,
+        "total": 8
+      }
     },
     "epub3": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 8,
+        "total": 8
+      },
+      "status": "passing",
+      "write": {
+        "passing": 8,
+        "total": 8
+      }
     },
     "fb2": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "fodt": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 0,
+        "total": 8
+      },
+      "status": "failing",
+      "write": {
+        "passing": 0,
+        "total": 8
+      }
     },
     "gfm": {
       "end_to_end": {
@@ -1763,25 +2124,33 @@
       }
     },
     "haddock": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "html": {
       "end_to_end": {
-        "passing": 916,
+        "passing": 953,
         "total": 970
       },
       "status": "partial",
       "write": {
-        "passing": 919,
+        "passing": 953,
         "total": 970
       }
     },
     "html4": {
       "end_to_end": {
-        "passing": 420,
+        "passing": 421,
         "total": 421
       },
-      "status": "partial",
+      "status": "passing",
       "write": {
         "passing": 421,
         "total": 421
@@ -1799,25 +2168,81 @@
       }
     },
     "icml": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "ipynb": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 15,
+        "total": 15
+      },
+      "status": "passing",
+      "write": {
+        "passing": 15,
+        "total": 15
+      }
     },
     "jats": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 16,
+        "total": 16
+      },
+      "status": "passing",
+      "write": {
+        "passing": 16,
+        "total": 16
+      }
     },
     "jats_archiving": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "jats_articleauthoring": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "jats_publishing": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "jira": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "json": {
       "end_to_end": {
@@ -1832,26 +2257,34 @@
     },
     "latex": {
       "end_to_end": {
-        "passing": 1105,
+        "passing": 1141,
         "total": 1158
       },
       "status": "partial",
       "write": {
-        "passing": 1106,
+        "passing": 1141,
         "total": 1158
       }
     },
     "man": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "markdown": {
       "end_to_end": {
-        "passing": 3810,
+        "passing": 3811,
         "total": 3811
       },
-      "status": "partial",
+      "status": "passing",
       "write": {
-        "passing": 3810,
+        "passing": 3811,
         "total": 3811
       }
     },
@@ -1890,12 +2323,12 @@
     },
     "markdown_strict": {
       "end_to_end": {
-        "passing": 1138,
+        "passing": 1139,
         "total": 1139
       },
-      "status": "partial",
+      "status": "passing",
       "write": {
-        "passing": 1138,
+        "passing": 1139,
         "total": 1139
       }
     },
@@ -1911,13 +2344,37 @@
       }
     },
     "mediawiki": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "ms": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "muse": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "native": {
       "end_to_end": {
@@ -1931,36 +2388,85 @@
       }
     },
     "odt": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 0,
+        "total": 8
+      },
+      "status": "failing",
+      "write": {
+        "passing": 0,
+        "total": 8
+      }
     },
     "opendocument": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 20,
+        "total": 20
+      },
+      "status": "passing",
+      "write": {
+        "passing": 20,
+        "total": 20
+      }
     },
     "opml": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "org": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "pdf": {
-      "status": "not_started"
+      "reason": "PDF output needs an external engine (pdflatex, weasyprint, typst, groff or context). The mock-engine tests in crates/randoc-cli/tests/pdf.rs test it.",
+      "status": "not_applicable"
     },
     "plain": {
       "end_to_end": {
-        "passing": 1771,
+        "passing": 1772,
         "total": 1772
       },
-      "status": "partial",
+      "status": "passing",
       "write": {
-        "passing": 1771,
+        "passing": 1772,
         "total": 1772
       }
     },
     "pptx": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 0,
+        "total": 8
+      },
+      "status": "failing",
+      "write": {
+        "passing": 0,
+        "total": 8
+      }
     },
     "revealjs": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 15,
+        "total": 15
+      },
+      "status": "passing",
+      "write": {
+        "passing": 15,
+        "total": 15
+      }
     },
     "rst": {
       "end_to_end": {
@@ -1974,43 +2480,147 @@
       }
     },
     "rtf": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "s5": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 15,
+        "total": 15
+      },
+      "status": "passing",
+      "write": {
+        "passing": 15,
+        "total": 15
+      }
     },
     "slideous": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 15,
+        "total": 15
+      },
+      "status": "passing",
+      "write": {
+        "passing": 15,
+        "total": 15
+      }
     },
     "slidy": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 15,
+        "total": 15
+      },
+      "status": "passing",
+      "write": {
+        "passing": 15,
+        "total": 15
+      }
     },
     "t2t": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "tei": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "texinfo": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "textile": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "typst": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "vimdoc": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "xml": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "xwiki": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     },
     "zimwiki": {
-      "status": "not_started"
+      "end_to_end": {
+        "passing": 14,
+        "total": 14
+      },
+      "status": "passing",
+      "write": {
+        "passing": 14,
+        "total": 14
+      }
     }
   },
   "status_values": [
@@ -2022,28 +2632,26 @@
   ],
   "summary": {
     "extensions": {
-      "not_started": 11,
-      "partial": 7,
-      "passing": 72
+      "passing": 90
     },
     "input_formats": {
-      "not_started": 27,
-      "partial": 6,
-      "passing": 19
+      "partial": 3,
+      "passing": 49
     },
     "options": {
-      "not_started": 1,
-      "partial": 13,
-      "passing": 95
+      "not_applicable": 1,
+      "partial": 14,
+      "passing": 94
     },
     "output_formats": {
-      "not_started": 58,
-      "partial": 7,
-      "passing": 12
+      "failing": 4,
+      "not_applicable": 1,
+      "partial": 3,
+      "passing": 69
     },
     "units": {
-      "passing": 63436,
-      "total": 63771
+      "passing": 65747,
+      "total": 65931
     }
   }
 }

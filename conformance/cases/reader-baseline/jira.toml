@@ -1,0 +1,121 @@
+from = "jira"
+to = []
+
+[[case]]
+id = "paragraphs"
+input = '''
+The test site has one exit.
+Use the east path.
+
+Meet at the blue marker.
+'''
+
+[[case]]
+id = "headings"
+input = '''
+h1. Ramp test
+h2. Trial two
+Return the cart.
+'''
+
+[[case]]
+id = "emphasis"
+input = '''
+Use *two clips*, move _slowly_ and type {{arm}}.
+'''
+
+[[case]]
+id = "inline-variants"
+input = '''
+Add +blue tape+. Remove -old tape-. Note H~2~O and 5^2^.
+'''
+
+[[case]]
+id = "unordered-list"
+input = '''
+* Markers
+** Blue
+** Green
+* Tape
+'''
+
+[[case]]
+id = "ordered-list"
+input = '''
+# Load the cart.
+## Check the right wheel.
+# Release the brake.
+'''
+
+[[case]]
+id = "links"
+input = '''
+Open [the map|https://example.org/ramp] or [https://example.org/yard].
+'''
+
+[[case]]
+id = "image"
+input = '''
+!cart.png|alt=Cart at the gate,width=80!
+'''
+
+[[case]]
+id = "quote"
+input = '''
+{quote}
+The hinge faces the road.
+{quote}
+'''
+
+[[case]]
+id = "blockquote"
+input = '''
+bq. Keep a spare clip in the case.
+'''
+
+[[case]]
+id = "source-block"
+input = '''
+{code:python}
+print('trial')
+{code}
+'''
+
+[[case]]
+id = "noformat"
+input = '''
+{noformat}
+* Keep this marker.
+  Keep these spaces.
+{noformat}
+'''
+
+[[case]]
+id = "table"
+input = '''
+|| Sample || Time ||
+| Blue | 4 s |
+| Green | 5 s |
+'''
+
+[[case]]
+id = "panel"
+input = '''
+{panel:title=Site note}
+The gate has a loose handle.
+{panel}
+'''
+
+[[case]]
+id = "escaped-markup"
+input = '''
+Write \* to label the star key.
+'''
+
+[[case]]
+id = "line-break-and-rule"
+input = '''
+Cart in\\Cart out
+----
+End of test.
+'''

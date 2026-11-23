@@ -1,0 +1,131 @@
+from = "djot"
+to = []
+
+[[case]]
+id = "paragraphs"
+input = '''
+The sled is by the barn.
+The rope is on the rack.
+
+Check both before use.
+'''
+
+[[case]]
+id = "headings"
+input = '''
+# Sled shed
+
+## Spare runners
+
+Use the top shelf.
+'''
+
+[[case]]
+id = "inline-markup"
+input = '''
+Keep the rope _dry_ and pull *firmly*. Type `start`.
+'''
+
+[[case]]
+id = "inline-changes"
+input = '''
+Use the {+new+} and {-old-} labels, with {=spare=} marked.
+'''
+
+[[case]]
+id = "unordered-list"
+input = '''
+- Sled
+  - Runner
+  - Rope
+- Rack
+'''
+
+[[case]]
+id = "ordered-list"
+input = '''
+4. Fit the pin.
+5. Tighten the clamp.
+'''
+
+[[case]]
+id = "definition-list"
+input = '''
+: Runner
+
+  The long part below the sled.
+
+: Eyelet
+
+  A small hole for the rope.
+'''
+
+[[case]]
+id = "links"
+input = '''
+Read [the sled guide][guide].
+
+[guide]: https://example.org/sled
+'''
+
+[[case]]
+id = "image"
+input = '''
+![Left runner](runner.png)
+'''
+
+[[case]]
+id = "quote"
+input = '''
+> Put the sled on firm ground.
+>
+> Keep the rope clear.
+'''
+
+[[case]]
+id = "source-block"
+input = '''
+```python
+print('stop')
+```
+'''
+
+[[case]]
+id = "table"
+input = '''
+| Runner | Length |
+| :----- | -----: |
+| Left   | 210    |
+| Right  | 212    |
+'''
+
+[[case]]
+id = "math"
+input = '''
+The distance is $`v t`$.
+'''
+
+[[case]]
+id = "footnote"
+input = '''
+Check the eyelet.[^wear]
+
+[^wear]: Look for a crack near the edge.
+'''
+
+[[case]]
+id = "attributes"
+input = '''
+{#stop-point .marker}
+## Stop point
+
+Use the [rear door]{.route}.
+'''
+
+[[case]]
+id = "fenced-div"
+input = '''
+::: condition
+The yard is closed.
+:::
+'''

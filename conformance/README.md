@@ -50,10 +50,21 @@ without a reader. A unit also needs the same exit code and the same standard
 error output as the oracle.
 
 Text output must have the same bytes. A ZIP format (DOCX, ODT, EPUB, PPTX,
-chunked HTML) must
-have the same entries with the same content. The harness ignores the order,
-the time stamps and the compression of the entries. The report counts
-byte-identical and content-identical results separately.
+chunked HTML) must have the same entries with the same content. The harness
+ignores the order, the time stamps and the compression of the entries, with
+one exception: when the oracle archive starts with a `mimetype` entry without
+compression, as an EPUB or ODT container must, the Randoc archive must start
+with the same entry without compression. The report counts byte-identical and
+content-identical results separately.
+
+A `cmd` unit has no output format. When the oracle stdout of a `cmd` unit
+starts with `PK\x03\x04`, the harness compares the two outputs as ZIP
+archives. The entry names and contents must be equal, and the first entry must
+have the same name. When the oracle stores the first entry without
+compression, Randoc must do the same. The harness ignores the time stamps,
+the compression method and level of each other entry, and the central
+directory layout. If one of the two outputs is not a valid archive, the bytes
+must be equal. A failure names each missing, extra, or different entry.
 
 The full identifier of a unit is `SUITE/NAME/CASE#UNIT`.
 
@@ -102,9 +113,11 @@ files/media/` to run those cases and inspect their reports.
   make one of them fail. Only the coordinator updates the baseline, after a merge.
 - The harness runs each program with a fixed environment and a fixed clock
   (`SOURCE_DATE_EPOCH=1700000000`), under the program name `pandoc`.
-- A stored result belongs to one command line, one standard input and one set
-  of files. When you change a case, its stored results are out of date. `run`
-  reports such a unit as "not recorded", which is a failure. Run `record` again.
+- A stored result belongs to one command line, one standard input, one set
+  of files and the contents of each `conformance/fixtures/` file that the
+  arguments name. When you change a case or one of its fixtures, its stored
+  results are out of date. `run` reports such a unit as "not recorded", which
+  is a failure. Run `record` again.
 - A run that the harness stops (time limit) or cannot start is never a result.
   `record` refuses it, and `run` reports the unit as "no result".
 - `run` without `--baseline` exits with 0 also when units fail. Use

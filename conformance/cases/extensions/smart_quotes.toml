@@ -1,0 +1,30 @@
+from = "org"
+to = []
+
+[[case]]
+id = "enabled-quoted-labels"
+from = "org+smart_quotes"
+input = '''
+"Open the gate," said Mara. 'Read the sign first.'
+'''
+
+[[case]]
+id = "disabled-quoted-labels"
+from = "org-smart_quotes"
+input = '''
+"Open the gate," said Mara. 'Read the sign first.'
+'''
+
+[[case]]
+id = "enabled-apostrophe-and-quote"
+from = "org+smart_quotes"
+input = '''
+The guide's note reads "Don't use the lower path."
+'''
+
+[[case]]
+id = "disabled-apostrophe-and-quote"
+from = "org-smart_quotes"
+input = '''
+The guide's note reads "Don't use the lower path."
+'''

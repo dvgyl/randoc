@@ -78,6 +78,10 @@ pub struct Unit {
     /// Additional files for the working directory.
     pub files: BTreeMap<String, Vec<u8>>,
     pub(crate) capture_files: Option<CaptureFiles>,
+    /// The contents of the files in `conformance/fixtures/` that the
+    /// arguments name, by argument value. The run copies these files into
+    /// the work directory.
+    pub(crate) fixtures: BTreeMap<String, Vec<u8>>,
     /// The input format without extension changes, when the case names one.
     pub from: Option<String>,
     /// The output format without extension changes, when the case names one.
@@ -107,6 +111,14 @@ impl Unit {
                 hash.field(path.as_bytes());
             }
         }
+        // Only units that name fixtures hash them, so other fingerprints stay valid.
+        if !self.fixtures.is_empty() {
+            hash.field(b"\0fixtures");
+            for (name, contents) in &self.fixtures {
+                hash.field(name.as_bytes());
+                hash.field(contents);
+            }
+        }
         format!("{:016x}", hash.0)
     }
 
@@ -115,6 +127,32 @@ impl Unit {
         let case = self.local_id.split('#').next().unwrap_or(&self.local_id);
         format!("{case}#read")
     }
+}
+
+/// The prefix of an argument that names a fixture file.
+pub(crate) const FIXTURE_PREFIX: &str = "conformance/fixtures/";
+
+/// Returns the value of an argument: the part after `=` of a long option, or
+/// the whole argument.
+pub(crate) fn arg_value(arg: &str) -> &str {
+    if arg.starts_with("--") {
+        arg.split_once('=').map_or(arg, |(_, value)| value)
+    } else {
+        arg
+    }
+}
+
+/// Reads the fixture files that the arguments name. A file that cannot be
+/// read is left out: the run reports it.
+fn read_fixtures(args: &[String], fixtures_dir: &Path) -> BTreeMap<String, Vec<u8>> {
+    args.iter()
+        .filter_map(|arg| {
+            let value = arg_value(arg);
+            let name = value.strip_prefix(FIXTURE_PREFIX)?;
+            let contents = fs::read(fixtures_dir.join(name)).ok()?;
+            Some((value.to_owned(), contents))
+        })
+        .collect()
 }
 
 fn base_format(spec: &str) -> String {
@@ -271,6 +309,7 @@ fn expand_case(
         covers.sort();
         covers.dedup();
         let local_id = format!("{}#{unit}", case.id);
+        let fixtures = read_fixtures(&args, fixtures_dir);
         Unit {
             id: format!("{file_key}/{local_id}"),
             file_key: file_key.to_owned(),
@@ -280,6 +319,7 @@ fn expand_case(
             stdin,
             files: files.clone(),
             capture_files: capture_files.cloned(),
+            fixtures,
             from: from.map(base_format),
             to: to.map(base_format),
             covers,
@@ -703,6 +743,47 @@ cmd = ["--version"]
     }
 
     #[test]
+    fn the_fingerprint_hashes_fixtures_only_for_units_that_name_them() {
+        let dir = temp_dir("fixture-hash");
+        fs::create_dir_all(dir.join("a")).unwrap();
+        let path = dir.join("a/ref.docx");
+        let arg = "--reference-doc=conformance/fixtures/a/ref.docx".to_owned();
+        let fingerprint = |args: &[String]| {
+            let mut unit = units_for(args);
+            unit.fixtures = read_fixtures(args, &dir);
+            unit.fingerprint(b"in")
+        };
+        fs::write(&path, b"one").unwrap();
+        let plain = fingerprint(&["-t".to_owned(), "docx".to_owned()]);
+        assert_eq!(
+            plain,
+            units_for(&["-t".to_owned(), "docx".to_owned()]).fingerprint(b"in")
+        );
+        let first = fingerprint(std::slice::from_ref(&arg));
+        fs::write(&path, b"two").unwrap();
+        let second = fingerprint(std::slice::from_ref(&arg));
+        assert_ne!(first, second);
+        fs::remove_dir_all(&dir).unwrap();
+    }
+
+    fn units_for(args: &[String]) -> Unit {
+        Unit {
+            id: "s/f/c#u".into(),
+            file_key: "s/f".into(),
+            local_id: "c#u".into(),
+            kind: UnitKind::Command,
+            args: args.to_vec(),
+            stdin: Stdin::Bytes(Vec::new()),
+            files: BTreeMap::new(),
+            capture_files: None,
+            fixtures: BTreeMap::new(),
+            from: None,
+            to: None,
+            covers: Vec::new(),
+        }
+    }
+
+    #[test]
     fn the_fingerprint_depends_on_each_part_of_the_input() {
         let unit = |args: &[&str], files: &[(&str, &str)]| Unit {
             id: String::new(),
@@ -716,6 +797,7 @@ cmd = ["--version"]
                 .map(|(k, v)| ((*k).to_owned(), v.as_bytes().to_vec()))
                 .collect(),
             capture_files: None,
+            fixtures: BTreeMap::new(),
             from: None,
             to: None,
             covers: Vec::new(),

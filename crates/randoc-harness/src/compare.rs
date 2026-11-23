@@ -42,29 +42,60 @@ pub struct Verdict {
     pub pass: bool,
 }
 
+/// The first four bytes of a ZIP archive: a local file header signature.
+const ZIP_MAGIC: &[u8] = b"PK\x03\x04";
+
 /// Returns `true` when the unit passes on content and not on bytes.
 ///
 /// A read unit compares document trees. A ZIP format compares archive entries.
+/// A command unit whose oracle stdout is a ZIP archive compares archive entries.
 /// Each other unit must have the same bytes.
-fn content_is_enough(unit: &Unit) -> bool {
-    unit.kind == UnitKind::Read
-        || unit
-            .to
-            .as_deref()
-            .is_some_and(|to| ZIP_FORMATS.contains(&to))
+fn content_is_enough(unit: &Unit, expected: &[u8]) -> bool {
+    unit.kind == UnitKind::Read || has_zip_format(unit) || is_zip_stdout(unit, expected)
 }
 
-/// Reads each entry of an archive. An archive that is not valid, that is too
-/// large or that has two entries with one name gives `None`.
-fn zip_entries(bytes: &[u8]) -> Option<BTreeMap<String, Vec<u8>>> {
+fn has_zip_format(unit: &Unit) -> bool {
+    unit.to
+        .as_deref()
+        .is_some_and(|to| ZIP_FORMATS.contains(&to))
+}
+
+/// A command unit has no output format, so the harness identifies a ZIP
+/// archive on stdout by its first bytes.
+fn is_zip_stdout(unit: &Unit, stdout: &[u8]) -> bool {
+    unit.kind == UnitKind::Command && stdout.starts_with(ZIP_MAGIC)
+}
+
+/// The semantic content of a ZIP archive. The timestamps, the compression
+/// level and the central directory layout are not part of it.
+#[derive(Debug, PartialEq, Eq)]
+struct Archive {
+    /// The contents of each file entry by name. Directory entries are not included.
+    entries: BTreeMap<String, Vec<u8>>,
+    /// The name of the entry with the first local header.
+    first: Option<String>,
+    /// The first entry is stored without compression.
+    first_stored: bool,
+}
+
+/// Reads an archive. An archive that is not valid, that is too large or that
+/// has two entries with one name gives `None`.
+fn read_archive(bytes: &[u8]) -> Option<Archive> {
     let mut archive = zip::ZipArchive::new(Cursor::new(bytes)).ok()?;
     if archive.len() > MAX_ARCHIVE_ENTRIES || archive.has_duplicate_names() {
         return None;
     }
     let mut entries = BTreeMap::new();
+    let mut first: Option<(u64, String, bool)> = None;
     let mut total = 0u64;
     for index in 0..archive.len() {
         let mut file = archive.by_index(index).ok()?;
+        let name = file.name().ok()?.into_owned();
+        let start = file.header_start();
+        if first.as_ref().is_none_or(|(offset, _, _)| start < *offset) {
+            let stored = file.compression() == zip::CompressionMethod::Stored;
+            first = Some((start, name.clone(), stored));
+        }
         if file.is_dir() {
             continue;
         }
@@ -77,14 +108,78 @@ fn zip_entries(bytes: &[u8]) -> Option<BTreeMap<String, Vec<u8>>> {
         if total > MAX_ARCHIVE_BYTES {
             return None;
         }
-        if entries
-            .insert(file.name().ok()?.into_owned(), contents)
-            .is_some()
-        {
+        if entries.insert(name, contents).is_some() {
             return None;
         }
     }
-    Some(entries)
+    let (first, first_stored) = match first {
+        Some((_, name, stored)) => (Some(name), stored),
+        None => (None, false),
+    };
+    Some(Archive {
+        entries,
+        first,
+        first_stored,
+    })
+}
+
+/// Lists each difference between two archives, as text for a person.
+///
+/// The entry names and contents must be equal. The first entry must have the
+/// same name: an EPUB container must start with `mimetype`. When the oracle
+/// stores the first entry without compression, Randoc must do the same.
+fn archive_differences(expected: &Archive, actual: &Archive) -> Vec<String> {
+    let mut differences = Vec::new();
+    if expected.first != actual.first {
+        differences.push(format!(
+            "first entry {:?}, randoc gives {:?}",
+            expected.first.as_deref().unwrap_or(""),
+            actual.first.as_deref().unwrap_or("")
+        ));
+    } else if expected.first_stored && !actual.first_stored {
+        differences.push(format!(
+            "first entry {:?} is compressed, the oracle stores it",
+            expected.first.as_deref().unwrap_or("")
+        ));
+    }
+    for (name, contents) in &expected.entries {
+        match actual.entries.get(name) {
+            None => differences.push(format!("missing entry {name:?}")),
+            Some(other) if other != contents => {
+                differences.push(format!("different entry {name:?}"));
+            }
+            Some(_) => {}
+        }
+    }
+    for name in actual.entries.keys() {
+        if !expected.entries.contains_key(name) {
+            differences.push(format!("extra entry {name:?}"));
+        }
+    }
+    differences
+}
+
+/// When the oracle archive starts with a stored `mimetype` entry, as an EPUB
+/// or ODT container must, the Randoc archive must start with it too. The
+/// order of the other entries does not matter.
+fn keeps_stored_mimetype(expected: &Archive, actual: &Archive) -> bool {
+    let stored_mimetype =
+        |archive: &Archive| archive.first.as_deref() == Some("mimetype") && archive.first_stored;
+    !stored_mimetype(expected) || stored_mimetype(actual)
+}
+
+/// Describes why the ZIP archive on the stdout of a command unit is different
+/// from the oracle archive. Gives `None` when the unit does not compare
+/// archives or when the archives are equal.
+pub fn zip_stdout_difference(unit: &Unit, expected: &[u8], actual: &[u8]) -> Option<String> {
+    if !is_zip_stdout(unit, expected) || expected == actual {
+        return None;
+    }
+    let (Some(expected), Some(actual)) = (read_archive(expected), read_archive(actual)) else {
+        return Some("stdout is not a valid ZIP archive, the bytes are different".to_owned());
+    };
+    let differences = archive_differences(&expected, &actual);
+    (!differences.is_empty()).then(|| format!("ZIP stdout: {}", differences.join("; ")))
 }
 
 fn same_content(unit: &Unit, expected: &[u8], actual: &[u8]) -> bool {
@@ -96,12 +191,17 @@ fn same_content(unit: &Unit, expected: &[u8], actual: &[u8]) -> bool {
         let parse = |bytes: &[u8]| serde_json::from_slice::<serde_json::Value>(bytes).ok();
         return matches!((parse(expected), parse(actual)), (Some(a), Some(b)) if a == b);
     }
-    if unit
-        .to
-        .as_deref()
-        .is_some_and(|to| ZIP_FORMATS.contains(&to))
-    {
-        return matches!((zip_entries(expected), zip_entries(actual)), (Some(a), Some(b)) if a == b);
+    if has_zip_format(unit) {
+        return matches!(
+            (read_archive(expected), read_archive(actual)),
+            (Some(a), Some(b)) if a.entries == b.entries && keeps_stored_mimetype(&a, &b)
+        );
+    }
+    if is_zip_stdout(unit, expected) {
+        return matches!(
+            (read_archive(expected), read_archive(actual)),
+            (Some(a), Some(b)) if archive_differences(&a, &b).is_empty()
+        );
     }
     false
 }
@@ -146,7 +246,7 @@ pub fn compare(unit: &Unit, expected: &Outcome, actual: &Outcome) -> Verdict {
             (&expected.file_changes, &actual.file_changes),
             (Some(expected), Some(actual)) if same_file_changes(expected, actual)
         );
-    let output_ok = if content_is_enough(unit) {
+    let output_ok = if content_is_enough(unit, &expected_out) {
         content_ok
     } else {
         bytes_ok
@@ -178,6 +278,7 @@ mod tests {
             stdin: Stdin::Bytes(Vec::new()),
             files: BTreeMap::new(),
             capture_files: None,
+            fixtures: BTreeMap::new(),
             from: None,
             to: to.map(str::to_owned),
             covers: Vec::new(),
@@ -389,7 +490,155 @@ mod tests {
             )
             .pass
         );
-        assert!(zip_entries(&actual).is_none());
+        assert!(read_archive(&actual).is_none());
+    }
+
+    /// One entry of a test archive: name, contents, compression method,
+    /// compression level and modification year.
+    type TestEntry<'a> = (&'a str, &'a [u8], zip::CompressionMethod, Option<i64>, u16);
+
+    fn archive_bytes(entries: &[TestEntry<'_>]) -> Vec<u8> {
+        let mut writer = zip::ZipWriter::new(Cursor::new(Vec::new()));
+        for (name, contents, method, level, year) in entries {
+            let time = zip::DateTime::from_date_and_time(*year, 1, 2, 3, 4, 6).unwrap();
+            let options = zip::write::SimpleFileOptions::default()
+                .compression_method(*method)
+                .compression_level(*level)
+                .last_modified_time(time);
+            writer.start_file(*name, options).unwrap();
+            writer.write_all(contents).unwrap();
+        }
+        writer.finish().unwrap().into_inner()
+    }
+
+    const STORED: zip::CompressionMethod = zip::CompressionMethod::Stored;
+    const DEFLATED: zip::CompressionMethod = zip::CompressionMethod::Deflated;
+    const PAGE: &[u8] = b"<html><body><p>Some text, some text, some text.</p></body></html>\n";
+
+    fn oracle_archive() -> Vec<u8> {
+        archive_bytes(&[
+            ("mimetype", b"application/epub+zip", STORED, None, 2023),
+            ("index.html", PAGE, DEFLATED, Some(9), 2023),
+            ("sitemap.json", b"{}", DEFLATED, Some(9), 2023),
+        ])
+    }
+
+    fn command_verdict(expected: &[u8], actual: &[u8]) -> (Verdict, Option<String>) {
+        let command = unit(UnitKind::Command, None);
+        (
+            compare(
+                &command,
+                &outcome(0, expected, b""),
+                &outcome(0, actual, b""),
+            ),
+            zip_stdout_difference(&command, expected, actual),
+        )
+    }
+
+    #[test]
+    fn a_command_zip_on_stdout_ignores_time_stamps_and_compression_level() {
+        let expected = oracle_archive();
+        let actual = archive_bytes(&[
+            ("mimetype", b"application/epub+zip", STORED, None, 2030),
+            ("sitemap.json", b"{}", STORED, None, 2030),
+            ("index.html", PAGE, DEFLATED, Some(1), 2030),
+        ]);
+        assert_ne!(expected, actual);
+        let (verdict, difference) = command_verdict(&expected, &actual);
+        assert!(!verdict.bytes_ok && verdict.content_ok && verdict.pass);
+        assert_eq!(difference, None);
+    }
+
+    #[test]
+    fn a_command_zip_on_stdout_with_other_entries_fails_with_the_entry_names() {
+        let expected = oracle_archive();
+        let cases: [(Vec<u8>, &str); 5] = [
+            (
+                archive_bytes(&[
+                    ("mimetype", b"application/epub+zip", STORED, None, 2023),
+                    ("index.html", b"<p>changed</p>", DEFLATED, Some(9), 2023),
+                    ("sitemap.json", b"{}", DEFLATED, Some(9), 2023),
+                ]),
+                "ZIP stdout: different entry \"index.html\"",
+            ),
+            (
+                archive_bytes(&[
+                    ("mimetype", b"application/epub+zip", STORED, None, 2023),
+                    ("index.html", PAGE, DEFLATED, Some(9), 2023),
+                ]),
+                "ZIP stdout: missing entry \"sitemap.json\"",
+            ),
+            (
+                archive_bytes(&[
+                    ("mimetype", b"application/epub+zip", STORED, None, 2023),
+                    ("index.html", PAGE, DEFLATED, Some(9), 2023),
+                    ("sitemap.json", b"{}", DEFLATED, Some(9), 2023),
+                    ("extra.css", b"p {}", DEFLATED, Some(9), 2023),
+                ]),
+                "ZIP stdout: extra entry \"extra.css\"",
+            ),
+            (
+                archive_bytes(&[
+                    ("index.html", PAGE, DEFLATED, Some(9), 2023),
+                    ("mimetype", b"application/epub+zip", STORED, None, 2023),
+                    ("sitemap.json", b"{}", DEFLATED, Some(9), 2023),
+                ]),
+                "ZIP stdout: first entry \"mimetype\", randoc gives \"index.html\"",
+            ),
+            (
+                archive_bytes(&[
+                    ("mimetype", b"application/epub+zip", DEFLATED, Some(9), 2023),
+                    ("index.html", PAGE, DEFLATED, Some(9), 2023),
+                    ("sitemap.json", b"{}", DEFLATED, Some(9), 2023),
+                ]),
+                "ZIP stdout: first entry \"mimetype\" is compressed, the oracle stores it",
+            ),
+        ];
+        for (actual, message) in cases {
+            let (verdict, difference) = command_verdict(&expected, &actual);
+            assert!(!verdict.content_ok && !verdict.pass, "{message}");
+            assert_eq!(difference.as_deref(), Some(message));
+        }
+    }
+
+    #[test]
+    fn a_damaged_zip_on_stdout_needs_the_same_bytes() {
+        let valid = oracle_archive();
+        let truncated = &valid[..valid.len() - 10];
+        assert!(truncated.starts_with(ZIP_MAGIC) && read_archive(truncated).is_none());
+        let mut damaged = valid.clone();
+        let end = damaged.len() - 22;
+        damaged[end..end + 4].copy_from_slice(b"XXXX");
+        assert!(read_archive(&damaged).is_none());
+
+        let not_valid = Some("stdout is not a valid ZIP archive, the bytes are different");
+        for (expected, actual) in [
+            (truncated, valid.as_slice()),
+            (valid.as_slice(), truncated),
+            (damaged.as_slice(), valid.as_slice()),
+            (truncated, damaged.as_slice()),
+        ] {
+            let (verdict, difference) = command_verdict(expected, actual);
+            assert!(!verdict.content_ok && !verdict.pass);
+            assert_eq!(difference.as_deref(), not_valid);
+        }
+        let (verdict, difference) = command_verdict(truncated, truncated);
+        assert!(verdict.bytes_ok && verdict.pass);
+        assert_eq!(difference, None);
+    }
+
+    #[test]
+    fn command_stdout_that_is_not_a_zip_needs_the_same_bytes() {
+        let valid = oracle_archive();
+        let (verdict, difference) = command_verdict(b"PK text\n", b"PK text \n");
+        assert!(!verdict.content_ok && !verdict.pass);
+        assert_eq!(difference, None);
+        // Only the oracle stdout selects the ZIP comparison.
+        let (verdict, difference) = command_verdict(b"text\n", &valid);
+        assert!(!verdict.pass);
+        assert_eq!(difference, None);
+        let (verdict, _) = command_verdict(&valid, b"text\n");
+        assert!(!verdict.pass);
     }
 
     #[test]
@@ -398,5 +647,45 @@ mod tests {
         let a = zip_bytes(&[("a", b"1"), ("b", b"2")], false);
         let b = zip_bytes(&[("b", b"2"), ("a", b"1")], false);
         assert!(!compare(&html, &outcome(0, &a, b""), &outcome(0, &b, b"")).pass);
+    }
+
+    #[test]
+    fn a_zip_writer_unit_needs_the_stored_mimetype_first_only_when_the_oracle_has_it() {
+        let write = |to: &str, expected: &[u8], actual: &[u8]| {
+            compare(
+                &unit(UnitKind::Write, Some(to)),
+                &outcome(0, expected, b""),
+                &outcome(0, actual, b""),
+            )
+            .pass
+        };
+        let expected = oracle_archive();
+        let reordered = archive_bytes(&[
+            ("mimetype", b"application/epub+zip", STORED, None, 2030),
+            ("sitemap.json", b"{}", DEFLATED, Some(1), 2030),
+            ("index.html", PAGE, DEFLATED, Some(1), 2030),
+        ]);
+        assert!(write("epub", &expected, &reordered));
+        let mimetype_later = archive_bytes(&[
+            ("index.html", PAGE, DEFLATED, Some(9), 2023),
+            ("mimetype", b"application/epub+zip", STORED, None, 2023),
+            ("sitemap.json", b"{}", DEFLATED, Some(9), 2023),
+        ]);
+        assert!(!write("epub", &expected, &mimetype_later));
+        let compressed = archive_bytes(&[
+            ("mimetype", b"application/epub+zip", DEFLATED, Some(9), 2023),
+            ("index.html", PAGE, DEFLATED, Some(9), 2023),
+            ("sitemap.json", b"{}", DEFLATED, Some(9), 2023),
+        ]);
+        assert!(!write("epub", &expected, &compressed));
+        let docx = archive_bytes(&[
+            ("[Content_Types].xml", b"<Types/>", DEFLATED, Some(9), 2023),
+            ("word/document.xml", PAGE, DEFLATED, Some(9), 2023),
+        ]);
+        let docx_reordered = archive_bytes(&[
+            ("word/document.xml", PAGE, DEFLATED, Some(9), 2023),
+            ("[Content_Types].xml", b"<Types/>", DEFLATED, Some(9), 2023),
+        ]);
+        assert!(write("docx", &docx, &docx_reordered));
     }
 }

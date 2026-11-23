@@ -1,0 +1,17 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "disabled-custom-styles#read": {
+      "key": "aa158db71bbd41a1",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"The\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"gauge\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"reads\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"normal.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Close\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"panel.\"}]}]}\n",
+      "stderr": ""
+    },
+    "enabled-custom-styles#read": {
+      "key": "9304fb82fd11970b",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"\",[],[[\"custom-style\",\"Field Log\"]]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"The\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"gauge\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"reads\"},{\"t\":\"Space\"},{\"t\":\"Span\",\"c\":[[\"\",[],[[\"custom-style\",\"Gauge Tag\"]]],[{\"t\":\"Str\",\"c\":\"normal\"}]]},{\"t\":\"Str\",\"c\":\".\"}]}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Close\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"panel.\"}]}]}\n",
+      "stderr": ""
+    }
+  }
+}

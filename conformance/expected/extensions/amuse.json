@@ -1,0 +1,53 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "disabled-directive-case#read": {
+      "key": "c55357f9674df2d9",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"AUTHOR\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Nia\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"West\"}]},\"TITLE\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Gate\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"record\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"upper\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"hinge.\"}]}]}\n",
+      "stderr": ""
+    },
+    "disabled-footnote-scope#read": {
+      "key": "e06a4884d379c084",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"blue\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"marker.\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"rail.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Continue\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"to\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"gate.\"}]}]}]}]}\n",
+      "stderr": ""
+    },
+    "disabled-multiline-heading#read": {
+      "key": "bde53ba89e164ca5",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"route-across\",[],[]],[{\"t\":\"Str\",\"c\":\"Route\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"across\"}]]},{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"east\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"bank\"}]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"high\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"path.\"}]}]}\n",
+      "stderr": ""
+    },
+    "disabled-nested-inline#read": {
+      "key": "5969bbb2bccb9fff",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"lamp --check\"]}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"closing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"case.\"}]}]}\n",
+      "stderr": ""
+    },
+    "enabled-directive-case#read": {
+      "key": "47f1cbc0735dbc0f",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"AUTHOR\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Nia\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"West\"}]},\"TITLE\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Gate\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"record\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"upper\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"hinge.\"}]}]}\n",
+      "stderr": ""
+    },
+    "enabled-footnote-scope#read": {
+      "key": "9249de2166ab5782",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"blue\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"marker.\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"rail.\"}]}]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Continue\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"to\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"gate.\"}]}]}\n",
+      "stderr": ""
+    },
+    "enabled-multiline-heading#read": {
+      "key": "76ceae8d2063c4d3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"route-across-the-east-bank\",[],[]],[{\"t\":\"Str\",\"c\":\"Route\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"across\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"east\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"bank\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"high\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"path.\"}]}]}\n",
+      "stderr": ""
+    },
+    "enabled-nested-inline#read": {
+      "key": "9403feed417841ed",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"lamp --check\"]}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"before\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"closing\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"case.\"}]}]}\n",
+      "stderr": ""
+    }
+  }
+}

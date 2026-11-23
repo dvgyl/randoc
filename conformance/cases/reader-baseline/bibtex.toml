@@ -1,0 +1,109 @@
+from = "bibtex"
+to = []
+
+[[case]]
+id = "article"
+input = '''
+@article{north42, author={Lina Reed and Tomas West}, title={Wind at the north bank}, journal={River Notes}, year={2024}, volume={8}, number={2}, pages={21--29}}
+'''
+
+[[case]]
+id = "book"
+input = '''
+@book{gate, author={Rosa Lane}, title={Gates of the Lower Canal}, publisher={Marsh Press}, address={York}, year={2022}, edition={2}}
+'''
+
+[[case]]
+id = "book-chapter"
+input = '''
+@incollection{ledge, author={Ira Lake}, title={Marks on the ledge}, booktitle={Guide to the Ridge}, editor={Chen, Lin}, publisher={East Press}, year={2021}, pages={30--46}}
+'''
+
+[[case]]
+id = "conference-paper"
+input = '''
+@inproceedings{rope, author={Bell, Ali}, title={Rope tests in rain}, booktitle={Proceedings of the Field Tools Meeting}, year={2020}, organization={Field Tool Group}, pages={81--85}}
+'''
+
+[[case]]
+id = "thesis"
+input = '''
+@phdthesis{marsh, author={Mira Frost}, title={Moss on the Upper Marsh}, school={North Field University}, year={2023}, address={Dover}}
+'''
+
+[[case]]
+id = "report"
+input = '''
+@techreport{level, author={{North Canal Office}}, title={Canal levels in winter}, institution={Canal Office}, number={R-14}, year={2025}, month=feb}
+'''
+
+[[case]]
+id = "misc-identifiers"
+input = '''
+@misc{clip, author={Nia Park}, title={Clip catalogue}, howpublished={Field bulletin}, year={2025}, url={https://example.org/clips}, doi={10.5555/clip.6}}
+'''
+
+[[case]]
+id = "names"
+input = '''
+@book{hill, author={van der Brook, Ivo and Moss, Jr., Nia and {Field Survey Group} and others}, title={Hill notes}, year={2018}}
+'''
+
+[[case]]
+id = "case-protection"
+input = '''
+@article{meters, author={Ren West}, title={A {GPS} and {UV} survey of River Stone}, journal={Survey Letters}, year={2026}}
+'''
+
+[[case]]
+id = "tex-accents"
+input = '''
+@book{accents, author={L{\'e}a Dupr{\'e} and J{\"o}rg Bach}, title={Cr{\`e}ches on the Upper Bank}, year={2020}}
+'''
+
+[[case]]
+id = "macro-concatenation"
+input = '''
+@string{station = "Ridge"}
+@manual{station-log, title=station # " Station Log", organization={Upland Works}, year={2024}}
+'''
+
+[[case]]
+id = "crossref"
+input = '''
+@inproceedings{red-clay, author={Nia Moss}, title={Heat in red clay}, crossref={soil-days}, pages={3--9}}
+@proceedings{soil-days, title={Soil Days}, year={2022}, publisher={Clay House}}
+'''
+
+[[case]]
+id = "comment-and-preamble"
+input = '''
+@comment{Old entry omitted}
+@preamble{"Log for the ridge station"}
+@unpublished{notes, author={Ira Frost}, title={Notes on the East Path}, note={Draft field log}, year={2023}}
+'''
+
+[[case]]
+id = "quoted-values"
+input = '''
+@article(sill, author="Bell, Mara", title="Stress at the sill", journal="Bench Tests", year=2022, pages="17--18")
+'''
+
+[[case]]
+id = "multiple-entries"
+input = '''
+@book{pin, author={Chen Li}, title={Pin Shapes}, year={2021}}
+@book{slot, author={Jo River}, title={Slot Shapes}, year={2020}}
+'''
+
+[[case]]
+id = "sparse-entry"
+input = '''
+@misc{bell, title={The small bell}}
+'''
+
+[[case]]
+id = "quoted-braced-values"
+input = '''
+@article{sill, author="Bell, Mara", title="Stress at the sill", journal="Bench Tests", year=2022, pages="17--18"}
+'''

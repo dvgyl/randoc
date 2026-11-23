@@ -326,7 +326,8 @@ fn record(mut session: Session) -> Result<bool, String> {
             .collect();
         let outcomes = parallel_map(&todo, session.oracle_jobs(), |worker, (unit, stdin)| {
             let stdin = stdin.as_ref()?;
-            let result = oracle.run_unit(unit, stdin, &session.work_dir(worker));
+            let result =
+                oracle.run_unit(unit, stdin, &session.work_dir(worker), &session.config.root);
             Some(result.map(|mut outcome| {
                 outcome.key = unit.fingerprint(stdin);
                 outcome
@@ -431,27 +432,39 @@ struct UnitResult<'a> {
     status: Status,
     verdict: Option<Verdict>,
     actual: Option<Outcome>,
+    /// What is different in the output, when the harness can tell more than the verdict.
+    detail: Option<String>,
 }
 
 fn run_units<'a>(session: &'a Session, randoc: &Program) -> Vec<UnitResult<'a>> {
     let run = |worker, unit: &Unit| {
         let Some(stdin) = session.stdin(unit) else {
-            return (Status::Skipped, None, None);
+            return (Status::Skipped, None, None, None);
         };
         let Some(expected) = session.current(unit, &stdin) else {
-            return (Status::NotRecorded, None, None);
+            return (Status::NotRecorded, None, None, None);
         };
-        match randoc.run_unit(unit, &stdin, &session.work_dir(worker)) {
+        match randoc.run_unit(
+            unit,
+            &stdin,
+            &session.work_dir(worker),
+            &session.config.root,
+        ) {
             Ok(actual) => {
                 let verdict = compare::compare(unit, expected, &actual);
-                let status = if verdict.pass {
-                    Status::Pass
+                let (status, detail) = if verdict.pass {
+                    (Status::Pass, None)
                 } else {
-                    Status::Fail
+                    let detail = compare::zip_stdout_difference(
+                        unit,
+                        &expected.stdout_bytes(),
+                        &actual.stdout_bytes(),
+                    );
+                    (Status::Fail, detail)
                 };
-                (status, Some(verdict), Some(actual))
+                (status, Some(verdict), Some(actual), detail)
             }
-            Err(error) => (Status::NoResult(error), None, None),
+            Err(error) => (Status::NoResult(error), None, None, None),
         }
     };
     let results = parallel_map(&session.units, session.config.jobs, run);
@@ -460,8 +473,8 @@ fn run_units<'a>(session: &'a Session, randoc: &Program) -> Vec<UnitResult<'a>> 
         .iter()
         .zip(results)
         .map(|(unit, result)| {
-            let (status, verdict, actual) = match result {
-                Some((Status::NoResult(_), _, _)) | None => run(0, unit),
+            let (status, verdict, actual, detail) = match result {
+                Some((Status::NoResult(_), _, _, _)) | None => run(0, unit),
                 Some(result) => result,
             };
             UnitResult {
@@ -469,6 +482,7 @@ fn run_units<'a>(session: &'a Session, randoc: &Program) -> Vec<UnitResult<'a>> 
                 status,
                 verdict,
                 actual,
+                detail,
             }
         })
         .collect()
@@ -520,7 +534,12 @@ fn failure_reason(result: &UnitResult<'_>) -> String {
                     "output"
                 });
             }
-            parts.join(", ")
+            let mut reason = parts.join(", ");
+            if let Some(detail) = &result.detail {
+                reason.push_str(": ");
+                reason.push_str(detail);
+            }
+            reason
         }
         (status, None) => status.name().to_owned(),
     }
@@ -575,6 +594,9 @@ fn run(session: Session) -> Result<bool, String> {
                 "status": result.status.name(),
                 "verdict": result.verdict,
             });
+            if let Some(detail) = &result.detail {
+                entry["detail"] = serde_json::json!(detail);
+            }
             if result.unit.capture_files.is_some() {
                 let expected = session
                     .stdin(result.unit)
@@ -721,7 +743,12 @@ fn verify_oracle(session: Session) -> Result<bool, String> {
     let unchanged = session.units.len() - todo.len();
     let fresh = parallel_map(&todo, session.oracle_jobs(), |worker, unit| {
         let stdin = session.stdin(unit)?;
-        Some(oracle.run_unit(unit, &stdin, &session.work_dir(worker)))
+        Some(oracle.run_unit(
+            unit,
+            &stdin,
+            &session.work_dir(worker),
+            &session.config.root,
+        ))
     });
     let mut different = 0usize;
     let mut checked = 0usize;
@@ -802,6 +829,9 @@ fn show(session: Session) -> Result<bool, String> {
     }
     if let Some(verdict) = result.verdict {
         println!("verdict: {verdict:?}");
+    }
+    if let Some(detail) = &result.detail {
+        println!("difference: {detail}");
     }
     Ok(result.status == Status::Pass)
 }
@@ -1107,6 +1137,98 @@ mod tests {
         fn drop(&mut self) {
             let _ = fs::remove_dir_all(&self.root);
         }
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn stages_binary_fixtures_for_command_and_option_arguments() {
+        let fixture = Fixture::new("binary-fixtures");
+        fixture.cases(
+            r#"
+args = ["conformance/fixtures/input.bin"]
+[[case]]
+id = "binary"
+cmd = ["--reference-doc=conformance/fixtures/docs/reference.docx"]
+"#,
+        );
+        let fixtures = fixture.root.join("conformance/fixtures");
+        fs::create_dir_all(fixtures.join("docs")).unwrap();
+        fs::write(fixtures.join("docs/reference.docx"), [0x50, 0x4b, 0xff]).unwrap();
+        fs::write(fixtures.join("input.bin"), [0, 0xfe]).unwrap();
+        let program = fixture.program(
+            "read-fixtures",
+            "if [ \"$1\" = --version ]; then echo 'fake 1'; exit 0; fi\ncat \"${1#*=}\" \"$2\"",
+        );
+
+        assert!(record(fixture.session("record", &[], &program, &program)).unwrap());
+        let session = fixture.session("run", &[], &program, &program);
+        let results = run_units(&session, &session.randoc().unwrap());
+        assert_eq!(results.len(), 1);
+        assert_eq!(results[0].status, Status::Pass);
+        let actual = results[0].actual.as_ref().unwrap();
+        assert_eq!(actual.exit, 0);
+        assert_eq!(actual.stdout_bytes(), [0x50, 0x4b, 0xff, 0, 0xfe]);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn rejects_fixture_arguments_that_escape_the_repository() {
+        let fixture = Fixture::new("fixture-escape");
+        let program = fixture.echo("echo");
+        let session = fixture.session("run", &[], &program, &program);
+        let mut unit = session.units[0].clone();
+        for arg in [
+            "--reference-doc=conformance/fixtures/../secret.docx",
+            "../conformance/fixtures/input.bin",
+            "/conformance/fixtures/input.bin",
+        ] {
+            unit.args = args(&[arg]);
+            let error = session
+                .randoc()
+                .unwrap()
+                .run_unit(&unit, b"", &session.work_dir(0), &fixture.root)
+                .unwrap_err();
+            assert!(error.contains("is not a safe relative path"), "{error}");
+        }
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn stages_the_epub_writer_baseline_stylesheet() {
+        let fixture = Fixture::new("epub-stylesheet");
+        let program = fixture.program(
+            "read-stylesheet",
+            "for arg do\n  case \"$arg\" in --css=*) exec cat \"${arg#*=}\";; esac\ndone\nexit 1",
+        );
+        let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+        let session = Session::open(
+            parse_config(&args(&[
+                "run",
+                "--root",
+                root.to_str().unwrap(),
+                "--filter",
+                "writer-baseline/epub/headings-and-paragraphs#e2e:epub3",
+                "--randoc",
+                program.to_str().unwrap(),
+            ]))
+            .unwrap(),
+        )
+        .unwrap();
+        let [unit] = session.units.as_slice() else {
+            panic!("Expected one EPUB unit");
+        };
+        let stdin = session.stdin(unit).unwrap();
+        assert!(session.current(unit, &stdin).is_some());
+        let actual = session
+            .randoc()
+            .unwrap()
+            .run_unit(unit, &stdin, &session.work_dir(0), &root)
+            .unwrap();
+        assert_eq!(actual.exit, 0);
+        assert_eq!(
+            actual.stdout_bytes(),
+            fs::read(root.join("conformance/fixtures/writer-baseline/style.css")).unwrap()
+        );
     }
 
     #[cfg(unix)]

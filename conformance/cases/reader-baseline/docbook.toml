@@ -1,0 +1,147 @@
+from = "docbook"
+to = []
+
+[[case]]
+id = "paragraphs"
+input = '''
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<title>Lock station</title>
+<para>The west path is dry.</para><para>Use the low gate.</para>
+</article>
+'''
+
+[[case]]
+id = "headings"
+input = '''
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<title>Lock station</title>
+<section xml:id="east"><title>East channel</title><para>Read the depth.</para><section><title>Spare gauge</title><para>Use the low shelf.</para></section></section>
+</article>
+'''
+
+[[case]]
+id = "metadata"
+input = '''
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<info><title>Canal survey</title><author><personname><firstname>Ira</firstname><surname>West</surname></personname></author><date>2026-05-12</date><abstract><para>The survey covers three locks.</para></abstract></info>
+<para>Start at the crossing.</para>
+</article>
+'''
+
+[[case]]
+id = "emphasis"
+input = '''
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<title>Lock station</title>
+<para>Use <emphasis>light</emphasis> pressure and <emphasis role="bold">two hands</emphasis>.</para>
+</article>
+'''
+
+[[case]]
+id = "code-inline"
+input = '''
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<title>Lock station</title>
+<para>Run <command>canal</command> with <option>--depth</option> and <literal>east</literal>.</para>
+</article>
+'''
+
+[[case]]
+id = "unordered-list"
+input = '''
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<title>Lock station</title>
+<itemizedlist><listitem><para>Marks</para><itemizedlist><listitem><para>Blue</para></listitem></itemizedlist></listitem><listitem><para>Hooks</para></listitem></itemizedlist>
+</article>
+'''
+
+[[case]]
+id = "ordered-list"
+input = '''
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<title>Lock station</title>
+<orderedlist numeration="loweralpha"><listitem><para>Lift the tray.</para></listitem><listitem><para>Inspect the base.</para></listitem></orderedlist>
+</article>
+'''
+
+[[case]]
+id = "definition-list"
+input = '''
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<title>Lock station</title>
+<variablelist><varlistentry><term>Stop pin</term><listitem><para>Part that limits travel.</para></listitem></varlistentry></variablelist>
+</article>
+'''
+
+[[case]]
+id = "links"
+input = '''
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<title>Lock station</title>
+<para>Read the <link xlink:href="https://example.org/locks">lock guide</link>.</para>
+</article>
+'''
+
+[[case]]
+id = "image"
+input = '''
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<title>Lock station</title>
+<figure xml:id="canal-plan"><title>Canal plan</title><mediaobject><imageobject><imagedata fileref="plan.svg" width="120px"/></imageobject><textobject><phrase>Plan of the east channel</phrase></textobject></mediaobject></figure>
+</article>
+'''
+
+[[case]]
+id = "quote"
+input = '''
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<title>Lock station</title>
+<blockquote><attribution>Ren Moss</attribution><para>The upper lock stays closed.</para></blockquote>
+</article>
+'''
+
+[[case]]
+id = "code-block"
+input = '''
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<title>Lock station</title>
+<programlisting language="python">depth = 4
+print(depth)</programlisting>
+</article>
+'''
+
+[[case]]
+id = "table"
+input = '''
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<title>Lock station</title>
+<table><title>Supplies</title><tgroup cols="2"><thead><row><entry>Part</entry><entry>Count</entry></row></thead><tbody><row><entry>Hook</entry><entry>4</entry></row></tbody></tgroup></table>
+</article>
+'''
+
+[[case]]
+id = "footnote"
+input = '''
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<title>Lock station</title>
+<para>Use the outer ring.<footnote><para>It has a red mark.</para></footnote></para>
+</article>
+'''
+
+[[case]]
+id = "equation"
+input = '''
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<title>Lock station</title>
+<para>Use <inlineequation><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi><mo>+</mo><mn>2</mn></math></inlineequation>.</para>
+</article>
+'''
+
+[[case]]
+id = "admonition"
+input = '''
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<title>Lock station</title>
+<warning><title>Sharp edge</title><para>Wear gloves near the gate.</para></warning>
+</article>
+'''

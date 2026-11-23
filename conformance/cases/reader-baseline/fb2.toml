@@ -1,0 +1,164 @@
+from = "fb2"
+to = []
+
+[[case]]
+id = "paragraphs"
+input = '''
+<FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:l="http://www.w3.org/1999/xlink">
+<body><section>
+<p>The boat reached the far bank.</p><p>A light shone above the steps.</p>
+</section></body>
+</FictionBook>
+'''
+
+[[case]]
+id = "headings"
+input = '''
+<FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:l="http://www.w3.org/1999/xlink">
+<body><section>
+<title><p>The crossing</p></title><p>The guide waved.</p><section><title><p>The landing</p></title><p>They tied the rope.</p></section>
+</section></body>
+</FictionBook>
+'''
+
+[[case]]
+id = "emphasis"
+input = '''
+<FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:l="http://www.w3.org/1999/xlink">
+<body><section>
+<p>It was <emphasis>cold</emphasis> and the wind was <strong>strong</strong>.</p>
+</section></body>
+</FictionBook>
+'''
+
+[[case]]
+id = "inline-variants"
+input = '''
+<FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:l="http://www.w3.org/1999/xlink">
+<body><section>
+<p>She read <code>west</code>, crossed out <strikethrough>east</strikethrough>, and wrote m<sup>2</sup> and H<sub>2</sub>O.</p>
+</section></body>
+</FictionBook>
+'''
+
+[[case]]
+id = "link"
+input = '''
+<FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:l="http://www.w3.org/1999/xlink">
+<body><section>
+<p>Read the <a l:href="https://example.org/ferry">ferry log</a>.</p>
+</section></body>
+</FictionBook>
+'''
+
+[[case]]
+id = "inline-image"
+input = '''
+<FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:l="http://www.w3.org/1999/xlink">
+<body><section>
+<p>The sign <image l:href="lamp.png" alt="A lantern"/> marked the steps.</p>
+</section></body>
+</FictionBook>
+'''
+
+[[case]]
+id = "block-image"
+input = '''
+<FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:l="http://www.w3.org/1999/xlink">
+<body><section>
+<image l:href="bank.png" alt="Steps by the bank" title="The landing"/>
+</section></body>
+</FictionBook>
+'''
+
+[[case]]
+id = "quote"
+input = '''
+<FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:l="http://www.w3.org/1999/xlink">
+<body><section>
+<cite><p>Wait below the lantern.</p><text-author>Ren Lake</text-author></cite>
+</section></body>
+</FictionBook>
+'''
+
+[[case]]
+id = "epigraph"
+input = '''
+<FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:l="http://www.w3.org/1999/xlink">
+<body><section>
+<epigraph><p>A light on the water</p><text-author>Nia Bell</text-author></epigraph><p>The boat arrived at dusk.</p>
+</section></body>
+</FictionBook>
+'''
+
+[[case]]
+id = "poem"
+input = '''
+<FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:l="http://www.w3.org/1999/xlink">
+<body><section>
+<poem><title><p>Low water</p></title><stanza><v>Stone beside the stream</v><v>Reed above the sand</v></stanza><text-author>Ali Moss</text-author></poem>
+</section></body>
+</FictionBook>
+'''
+
+[[case]]
+id = "subtitle"
+input = '''
+<FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:l="http://www.w3.org/1999/xlink">
+<body><section>
+<subtitle>At the east bank</subtitle><p>The oars stayed in the boat.</p>
+</section></body>
+</FictionBook>
+'''
+
+[[case]]
+id = "table"
+input = '''
+<FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:l="http://www.w3.org/1999/xlink">
+<body><section>
+<table><tr><th>Part</th><th>Stock</th></tr><tr><td>Oar</td><td>3</td></tr></table>
+</section></body>
+</FictionBook>
+'''
+
+[[case]]
+id = "footnote"
+input = '''
+<FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:l="http://www.w3.org/1999/xlink">
+<body><section>
+<p>The guide used the small bell<a l:href="#bell-note" type="note">1</a>.</p>
+</section></body>
+<body name="notes"><section id="bell-note"><title><p>1</p></title><p>The bell had a split handle.</p></section></body>
+</FictionBook>
+'''
+
+[[case]]
+id = "metadata"
+input = '''
+<FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:l="http://www.w3.org/1999/xlink">
+<description><title-info><genre>prose</genre><author><first-name>Ira</first-name><last-name>Reed</last-name></author><book-title>Beyond the landing</book-title><annotation><p>A short account of a ferry trip.</p></annotation><lang>en</lang></title-info><document-info><author><nickname>Ira</nickname></author><date value="2026-04-03">3 April 2026</date><id>landing-1</id><version>1.0</version></document-info></description>
+<body><section>
+<p>The mist rose before dawn.</p>
+</section></body>
+</FictionBook>
+'''
+
+[[case]]
+id = "empty-line"
+input = '''
+<FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:l="http://www.w3.org/1999/xlink">
+<body><section>
+<p>The boat was quiet.</p><empty-line/><p>A bird called from the west.</p>
+</section></body>
+</FictionBook>
+'''
+
+[[case]]
+id = "section-anchor"
+input = '''
+<FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:l="http://www.w3.org/1999/xlink">
+<body><section>
+<p>Go to <a l:href="#landing">the landing</a>.</p><section id="landing"><title><p>The landing</p></title><p>Use the low steps.</p></section>
+</section></body>
+</FictionBook>
+'''

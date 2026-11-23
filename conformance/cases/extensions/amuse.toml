@@ -1,0 +1,78 @@
+from = "muse"
+to = []
+
+[[case]]
+id = "enabled-multiline-heading"
+from = "muse+amuse"
+input = '''
+* Route across
+  the east bank
+
+Use the high path.
+'''
+
+[[case]]
+id = "disabled-multiline-heading"
+from = "muse-amuse"
+input = '''
+* Route across
+  the east bank
+
+Use the high path.
+'''
+
+[[case]]
+id = "enabled-directive-case"
+from = "muse+amuse"
+input = '''
+#TITLE Gate record
+#AUTHOR Nia West
+
+Check the upper hinge.
+'''
+
+[[case]]
+id = "disabled-directive-case"
+from = "muse-amuse"
+input = '''
+#TITLE Gate record
+#AUTHOR Nia West
+
+Check the upper hinge.
+'''
+
+[[case]]
+id = "enabled-nested-inline"
+from = "muse+amuse"
+input = '''
+Use **=lamp --check=** before closing the case.
+'''
+
+[[case]]
+id = "disabled-nested-inline"
+from = "muse-amuse"
+input = '''
+Use **=lamp --check=** before closing the case.
+'''
+
+[[case]]
+id = "enabled-footnote-scope"
+from = "muse+amuse"
+input = '''
+Use the blue marker.[4]
+
+[4] Check the rail.
+
+Continue to the gate.
+'''
+
+[[case]]
+id = "disabled-footnote-scope"
+from = "muse-amuse"
+input = '''
+Use the blue marker.[4]
+
+[4] Check the rail.
+
+Continue to the gate.
+'''

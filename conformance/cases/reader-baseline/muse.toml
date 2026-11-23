@@ -1,0 +1,132 @@
+from = "muse"
+to = []
+
+[[case]]
+id = "paragraphs"
+input = '''
+Ice formed on the lower path.
+Use the higher path.
+
+Check the gate.
+'''
+
+[[case]]
+id = "headings"
+input = '''
+* Canal walk
+
+** East gate
+
+Keep to the gravel.
+'''
+
+[[case]]
+id = "inline-markup"
+input = '''
+Move *slowly*, hold **firmly** and type =ready=.
+'''
+
+[[case]]
+id = "unordered-list"
+input = '''
+ - Gate
+   - Hinge
+   - Latch
+ - Post
+'''
+
+[[case]]
+id = "ordered-list"
+input = '''
+ 1. Turn the handle.
+ 2. Push the gate.
+'''
+
+[[case]]
+id = "definition-list"
+input = '''
+ Sill :: The lower edge of the opening.
+ Stop :: The part that limits travel.
+'''
+
+[[case]]
+id = "links"
+input = '''
+Read [[https://example.org/gate][the gate guide]].
+'''
+
+[[case]]
+id = "image"
+input = '''
+[[gate.png][View of the west gate]]
+'''
+
+[[case]]
+id = "quote"
+input = '''
+<quote>
+Leave the south gate open.
+</quote>
+'''
+
+[[case]]
+id = "example-block"
+input = '''
+<example>
+open --west
+check  --all
+</example>
+'''
+
+[[case]]
+id = "table"
+input = '''
+Part || Count
+Latch | 3
+Handle | 2
+'''
+
+[[case]]
+id = "footnote"
+input = '''
+Use the new handle.[1]
+
+[1] The new handle has a blue mark.
+'''
+
+[[case]]
+id = "metadata"
+input = '''
+#title Canal inspection
+#author Ali Moss
+#date 2026-05-09
+
+Start at the bridge.
+'''
+
+[[case]]
+id = "rule"
+input = '''
+Canal notes.
+
+----
+
+River notes.
+'''
+
+[[case]]
+id = "verse"
+input = '''
+<verse>
+A pale stone at the crossing
+A dark line on the hill
+</verse>
+'''
+
+[[case]]
+id = "comment"
+input = '''
+; Private count: seven
+
+The lower path is clear.
+'''

@@ -1,0 +1,30 @@
+from = "org"
+to = []
+
+[[case]]
+id = "enabled-dashes-and-ellipsis"
+from = "org+special_strings"
+input = '''
+Wait... open the gate -- then record 5---8 units.
+'''
+
+[[case]]
+id = "disabled-dashes-and-ellipsis"
+from = "org-special_strings"
+input = '''
+Wait... open the gate -- then record 5---8 units.
+'''
+
+[[case]]
+id = "enabled-protected-code"
+from = "org+special_strings"
+input = '''
+Read 4--6, or type =4--6= and ~wait...~.
+'''
+
+[[case]]
+id = "disabled-protected-code"
+from = "org-special_strings"
+input = '''
+Read 4--6, or type =4--6= and ~wait...~.
+'''

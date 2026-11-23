@@ -1,0 +1,101 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "code-block#read": {
+      "key": "1bb9b812453ff55d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"\",[\"python\"],[]],\"mass = 12\\nprint(mass)\"]}]}\n",
+      "stderr": ""
+    },
+    "cross-reference#read": {
+      "key": "7237fb30eda9f1d4",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"See\"},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[[\"ref-type\",\"sec\"]]],[{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"steps\"}],[\"#steps\",\"\"]]},{\"t\":\"Str\",\"c\":\".\"}]},{\"t\":\"Header\",\"c\":[1,[\"steps\",[],[]],[{\"t\":\"Str\",\"c\":\"Steps\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Fit\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"lower\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"clip.\"}]}]}\n",
+      "stderr": ""
+    },
+    "definition-list#read": {
+      "key": "67c1756903ce23d2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"DefinitionList\",\"c\":[[[{\"t\":\"Str\",\"c\":\"Loam\"}],[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Soil\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"with\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sand,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"silt,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"clay.\"}]}]]]]}]}\n",
+      "stderr": ""
+    },
+    "emphasis#read": {
+      "key": "12f36d6ab0599843",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Keep\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"fine\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sample\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"in\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"sealed\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tray.\"}]}]}\n",
+      "stderr": ""
+    },
+    "figure#read": {
+      "key": "37a9180101f2fec8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Figure\",\"c\":[[\"tray\",[],[]],[null,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Tray\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"after\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"screening\"}]}]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Image\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"A\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"wire\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tray\"}],[\"tray.svg\",\"\"]]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "footnote#read": {
+      "key": "ca15346505447253",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"left\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tray\"},{\"t\":\"Note\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"The\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"left\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tray\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"has\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"blue\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark.\"}]}]},{\"t\":\"Str\",\"c\":\".\"}]}]}\n",
+      "stderr": ""
+    },
+    "formula#read": {
+      "key": "9b7ac50a619c9292",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"The\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"depth\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"is\"},{\"t\":\"Space\"},{\"t\":\"Math\",\"c\":[{\"t\":\"InlineMath\"},\"d_1 + d_2\"]},{\"t\":\"Str\",\"c\":\".\"}]}]}\n",
+      "stderr": ""
+    },
+    "headings#read": {
+      "key": "47da56c848f76722",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"field\",[],[]],[{\"t\":\"Str\",\"c\":\"Field\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"setup\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Level\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"stand.\"}]},{\"t\":\"Header\",\"c\":[2,[\"rack\",[],[]],[{\"t\":\"Str\",\"c\":\"Sample\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"rack\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Close\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cover.\"}]}]}\n",
+      "stderr": ""
+    },
+    "inline-variants#read": {
+      "key": "16231d8b095afbaa",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"sample-6\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"for\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Fe\"},{\"t\":\"Superscript\",\"c\":[{\"t\":\"Str\",\"c\":\"2+\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"H\"},{\"t\":\"Subscript\",\"c\":[{\"t\":\"Str\",\"c\":\"2\"}]},{\"t\":\"Str\",\"c\":\"O.\"}]}]}\n",
+      "stderr": ""
+    },
+    "link#read": {
+      "key": "aab6616847df8cad",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"sample\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"guide\"}],[\"https://example.org/soil\",\"\"]]},{\"t\":\"Str\",\"c\":\".\"}]}]}\n",
+      "stderr": ""
+    },
+    "metadata#read": {
+      "key": "6fdfdf88cd14e60c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"abstract\":{\"t\":\"MetaBlocks\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"We\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"compare\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"two\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"samples.\"}]}]},\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Lin\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Chen\"}]}]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Soil\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"at\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"east\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"wall\"}]}},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Record\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"depth\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"at\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"noon.\"}]}]}\n",
+      "stderr": ""
+    },
+    "ordered-list#read": {
+      "key": "5185b5718fd676e7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"OrderedList\",\"c\":[[1,{\"t\":\"DefaultStyle\"},{\"t\":\"DefaultDelim\"}],[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Weigh\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"cup.\"}]}],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Add\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sand.\"}]}]]]}]}\n",
+      "stderr": ""
+    },
+    "paragraphs#read": {
+      "key": "04d43e36398b1100",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"The\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"east\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tray\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"holds\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sand.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"The\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"west\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tray\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"holds\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"clay.\"}]}]}\n",
+      "stderr": ""
+    },
+    "quote#read": {
+      "key": "0cc7c92bdd1b97b8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BlockQuote\",\"c\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Collect\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"each\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sample\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"at\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"same\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"depth.\"}]},{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Field\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"— Field\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log\"}]}]}]}\n",
+      "stderr": ""
+    },
+    "table#read": {
+      "key": "0fe58ff3d705cc98",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"weights\",[\"table-wrap\"],[]],[{\"t\":\"Div\",\"c\":[[\"\",[\"caption\"],[]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Sample\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"weights\"}]}]]},{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Sample\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Mass\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Clay\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"12\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"g\"}]}]]]]]]],[[\"\",[],[]],[]]]}]]}]}\n",
+      "stderr": ""
+    },
+    "unordered-list#read": {
+      "key": "c1ba44928ebb0f25",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Sieve\"}]}],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Tray\"}]}]]}]}\n",
+      "stderr": ""
+    }
+  }
+}

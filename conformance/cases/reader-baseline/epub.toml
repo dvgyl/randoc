@@ -1,0 +1,30 @@
+from = "epub"
+to = []
+
+[[case]]
+id = "footnote"
+input_file = "reader-baseline/epub-footnote.epub"
+
+[[case]]
+id = "headings"
+input_file = "reader-baseline/epub-headings.epub"
+
+[[case]]
+id = "inline-formatting"
+input_file = "reader-baseline/epub-inline-formatting.epub"
+
+[[case]]
+id = "metadata"
+input_file = "reader-baseline/epub-metadata.epub"
+
+[[case]]
+id = "nested-list"
+input_file = "reader-baseline/epub-nested-list.epub"
+
+[[case]]
+id = "spine-links"
+input_file = "reader-baseline/epub-spine-links.epub"
+
+[[case]]
+id = "table"
+input_file = "reader-baseline/epub-table.epub"

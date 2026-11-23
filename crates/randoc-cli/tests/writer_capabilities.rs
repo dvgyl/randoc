@@ -279,19 +279,8 @@ fn standalone_output_preserves_the_oracle_result_or_reports_the_scope_gap() {
             }
             expected.1.push(b'\n');
         }
-        // These Wave 6 cases have different spacing or template values.
         // See I-TAIL-03 in docs/ISSUES.md.
         match (record.writer.as_str(), record.request.as_str(), titled) {
-            ("ansi", "standalone", true) => {
-                let text = String::from_utf8(expected.1).expect("ANSI text");
-                expected.1 = text
-                    .replacen(&format!("\n{}\n", " ".repeat(36)), "\n\n", 1)
-                    .into_bytes();
-            }
-            ("vimdoc", "standalone", false) => {
-                let text = String::from_utf8(expected.1).expect("Vim help text");
-                expected.1 = text.replacen("\n vim:", "\n\n\n\n vim:", 1).into_bytes();
-            }
             ("icml", "template" | "both", true) => {
                 let text = String::from_utf8(expected.1).expect("ICML text");
                 let (_, body) = text.split_once('|').expect("the template body separator");

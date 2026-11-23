@@ -1,0 +1,131 @@
+from = "asciidoc"
+to = []
+
+[[case]]
+id = "paragraphs"
+input = '''
+The pump is below the tank.
+Open the small hatch.
+
+Check the pressure.
+'''
+
+[[case]]
+id = "headings"
+input = '''
+== Service route
+
+=== Side passage
+
+Use the handrail.
+'''
+
+[[case]]
+id = "metadata"
+input = '''
+= Salt shed
+Ava North <ava@example.org>
+2026-04-07
+:description: Record of the salt store.
+
+Open the upper hatch.
+'''
+
+[[case]]
+id = "inline-markup"
+input = '''
+Turn *left*, move _slowly_ and type `route`.
+'''
+
+[[case]]
+id = "unordered-list"
+input = '''
+* Scope
+** East side
+** West side
+* Tools
+'''
+
+[[case]]
+id = "ordered-list"
+input = '''
+. Stand clear.
+.. Move behind the line.
+. Signal to start.
+'''
+
+[[case]]
+id = "definition-list"
+input = '''
+Runoff:: Water that leaves the site.
+Gutter:: Channel for runoff.
+'''
+
+[[case]]
+id = "links"
+input = '''
+Read https://example.org/tanks[the tank guide].
+'''
+
+[[case]]
+id = "image"
+input = '''
+image::tank.svg[Side view of the tank,width=140]
+'''
+
+[[case]]
+id = "quote"
+input = '''
+[quote,Mae River]
+____
+The outer steps remain wet.
+____
+'''
+
+[[case]]
+id = "source-block"
+input = '''
+[source,python]
+----
+print(7 - 2)
+----
+'''
+
+[[case]]
+id = "table"
+input = '''
+[options="header"]
+|===
+| Gauge | Reading
+| Main | 14
+| Spare | 12
+|===
+'''
+
+[[case]]
+id = "footnote"
+input = '''
+Use the small tray.footnote:[It is in the lower drawer.]
+'''
+
+[[case]]
+id = "math"
+input = '''
+:stem: latexmath
+
+The area is stem:[\pi r^2].
+'''
+
+[[case]]
+id = "admonition"
+input = '''
+NOTE: Keep the tag dry.
+'''
+
+[[case]]
+id = "attributes"
+input = '''
+:site: West bank
+
+Start at the {site}.
+'''

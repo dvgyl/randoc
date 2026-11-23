@@ -1,0 +1,127 @@
+from = "mediawiki"
+to = []
+
+[[case]]
+id = "paragraphs"
+input = '''
+Fog covered the lower pier.
+The upper pier stayed open.
+
+Use the north stairs.
+'''
+
+[[case]]
+id = "headings"
+input = '''
+== Harbor access ==
+=== Night entry ===
+Use the side gate.
+'''
+
+[[case]]
+id = "inline-markup"
+input = '''
+Try ''slowly'' and <b>hold</b> the <code>release</code> key.
+'''
+
+[[case]]
+id = "mixed-list"
+input = '''
+* Wildlife
+** Heron
+** Tern
+* Weather
+'''
+
+[[case]]
+id = "ordered-list"
+input = '''
+# Check the dial.
+## Check the lower mark.
+# Record the reading.
+'''
+
+[[case]]
+id = "definition-list"
+input = '''
+; Shoal : A shallow area.
+; Buoy : A floating marker.
+'''
+
+[[case]]
+id = "links"
+input = '''
+Read [[Tide chart|the tide chart]] and [https://example.org/pier the pier notice].
+'''
+
+[[case]]
+id = "image"
+input = '''
+[[File:buoy.png|thumb|A spare buoy]]
+'''
+
+[[case]]
+id = "quote"
+input = '''
+<blockquote>Keep the narrow passage clear.</blockquote>
+'''
+
+[[case]]
+id = "source-block"
+input = '''
+<syntaxhighlight lang="python">
+print(6 * 7)
+</syntaxhighlight>
+'''
+
+[[case]]
+id = "indented-preformat"
+input = '''
+ Keep  both  gaps.
+ Count  both  spaces.
+'''
+
+[[case]]
+id = "captioned-table"
+input = '''
+{| class="wikitable"
+|+ Stores
+! Item !! Count
+|-
+| Oar || 3
+|-
+| Lamp || 2
+|}
+'''
+
+[[case]]
+id = "math"
+input = '''
+Calculate <math>u^2 + v^2</math> before launch.
+'''
+
+[[case]]
+id = "reference"
+input = '''
+Check the tide log.<ref>Entry for 14 June.</ref>
+
+<references />
+'''
+
+[[case]]
+id = "nowiki"
+input = '''
+The label reads <nowiki>[[Closed]]</nowiki>.
+'''
+
+[[case]]
+id = "entities-and-break"
+input = '''
+Water &amp; salt<br />Test batch
+
+----
+End of log.
+'''
+[[case]]
+id = "native-strong"
+input = "Keep the '''safety pin''' in the tray.\n"

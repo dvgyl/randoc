@@ -726,7 +726,6 @@ KNOWN = (
        for label, _ in [("write markua", None)] + write_option_probes("markua")]
     + [("I-ORG-01", "convert-final-newline", "end of org"),
        ("I-WIKI-03", "convert-write-dokuwiki", "write dokuwiki"),
-       ("I-WIKI-04", "convert-write-jira", "write jira"),
        ("I-WIKI-05", "convert-write-mediawiki", "write mediawiki"),
        ("I-WIKI-05", "convert-final-newline", "end of mediawiki")]
     + [("I-XML-01", f"convert-write-{name}", f"write {name} {{identifier_prefix = 'p-'}}")

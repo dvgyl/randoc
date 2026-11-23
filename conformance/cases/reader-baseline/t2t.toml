@@ -1,0 +1,161 @@
+from = "t2t"
+to = []
+
+[[case]]
+id = "metadata"
+input = '''
+Gate survey
+Ira West
+2026-03-15
+
+The upper hinge is loose.
+'''
+
+[[case]]
+id = "paragraphs"
+input = '''
+
+
+The path has brick steps.
+Hold the rail.
+
+Check the last step.
+'''
+
+[[case]]
+id = "headings"
+input = '''
+
+
+= North stair =
+
+== Landing ==
+
+Use the side exit.
+'''
+
+[[case]]
+id = "inline-markup"
+input = '''
+
+
+Use **two clips**, move //slowly// and type ``ready``.
+'''
+
+[[case]]
+id = "underline-and-strike"
+input = '''
+
+
+Place __blue__ tape over the --old-- mark.
+'''
+
+[[case]]
+id = "unordered-list"
+input = '''
+
+
+- Gate
+  - Hinge
+  - Handle
+- Rail
+'''
+
+[[case]]
+id = "ordered-list"
+input = '''
+
+
++ Fit the spare latch.
++ Test the new latch.
+'''
+
+[[case]]
+id = "definition-list"
+input = '''
+
+
+: Latch
+  Part that keeps the gate closed.
+: Stop
+  Part that limits movement.
+'''
+
+[[case]]
+id = "link"
+input = '''
+
+
+Read [the gate guide https://example.org/gate].
+'''
+
+[[case]]
+id = "image"
+input = '''
+
+
+[gate.png]
+'''
+
+[[case]]
+id = "quote"
+input = '''
+
+
+	Keep the rail clear.
+	Use the lower gate.
+'''
+
+[[case]]
+id = "code-block"
+input = '''
+
+
+```
+status  = closed
+count   = 8
+```
+'''
+
+[[case]]
+id = "table"
+input = '''
+
+
+|| Part | Stock |
+| Hook | 8 |
+| Rope | 2 |
+'''
+
+[[case]]
+id = "rule"
+input = '''
+
+
+The gate is shut.
+
+--------------------
+
+The rail is dry.
+'''
+
+[[case]]
+id = "comment"
+input = '''
+
+
+% Internal marker
+Leave the upper gate open.
+'''
+
+[[case]]
+id = "numbered-heading"
+input = '''
+
+
++ Lift test +
+
+++ Second check ++
+
+Lower the tray.
+'''

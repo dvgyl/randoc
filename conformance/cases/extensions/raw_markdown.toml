@@ -1,0 +1,62 @@
+from = "ipynb"
+to = []
+
+[[case]]
+id = "enabled-heading-and-list"
+from = "ipynb+raw_markdown"
+input = '''
+{
+  "nbformat": 4,
+  "nbformat_minor": 4,
+  "metadata": {},
+  "cells": [
+    {"cell_type":"markdown","metadata":{},"source":["# Gate log\n","\n","- Read the left dial.\n","- Check the latch.\n"]}
+  ]
+}
+'''
+
+[[case]]
+id = "disabled-heading-and-list"
+from = "ipynb-raw_markdown"
+input = '''
+{
+  "nbformat": 4,
+  "nbformat_minor": 4,
+  "metadata": {},
+  "cells": [
+    {"cell_type":"markdown","metadata":{},"source":["# Gate log\n","\n","- Read the left dial.\n","- Check the latch.\n"]}
+  ]
+}
+'''
+
+[[case]]
+id = "enabled-mixed-cells"
+from = "ipynb+raw_markdown"
+input = '''
+{
+  "nbformat": 4,
+  "nbformat_minor": 4,
+  "metadata": {"language_info":{"name":"python"}},
+  "cells": [
+    {"cell_type":"markdown","metadata":{},"source":["Use **two** clips and `test`.\n"]},
+    {"cell_type":"code","metadata":{},"source":["print(2)\n"],"execution_count":null,"outputs":[]},
+    {"cell_type":"markdown","metadata":{},"source":["[The log](https://example.org/latch)\n"]}
+  ]
+}
+'''
+
+[[case]]
+id = "disabled-mixed-cells"
+from = "ipynb-raw_markdown"
+input = '''
+{
+  "nbformat": 4,
+  "nbformat_minor": 4,
+  "metadata": {"language_info":{"name":"python"}},
+  "cells": [
+    {"cell_type":"markdown","metadata":{},"source":["Use **two** clips and `test`.\n"]},
+    {"cell_type":"code","metadata":{},"source":["print(2)\n"],"execution_count":null,"outputs":[]},
+    {"cell_type":"markdown","metadata":{},"source":["[The log](https://example.org/latch)\n"]}
+  ]
+}
+'''

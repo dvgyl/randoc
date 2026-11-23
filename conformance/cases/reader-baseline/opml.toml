@@ -1,0 +1,205 @@
+from = "opml"
+to = []
+
+[[case]]
+id = "single-item"
+input = '''
+<?xml version="1.0"?>
+<opml version="2.0">
+<head><title>Gate notes</title></head>
+<body>
+<outline text="East gate"/>
+</body>
+</opml>
+'''
+
+[[case]]
+id = "sibling-items"
+input = '''
+<?xml version="1.0"?>
+<opml version="2.0">
+<head><title>Gate notes</title></head>
+<body>
+<outline text="Key tray"/>
+<outline text="Tool rack"/>
+</body>
+</opml>
+'''
+
+[[case]]
+id = "nested-items"
+input = '''
+<?xml version="1.0"?>
+<opml version="2.0">
+<head><title>Gate notes</title></head>
+<body>
+<outline text="Field kit">
+<outline text="Tray">
+<outline text="Small hook"/>
+</outline>
+<outline text="Cover"/>
+</outline>
+</body>
+</opml>
+'''
+
+[[case]]
+id = "metadata"
+input = '''
+<?xml version="1.0"?>
+<opml version="2.0">
+<head><title>Ridge walk</title><ownerName>Mira West</ownerName><dateCreated>Thu, 04 Jun 2026 11:00:00 GMT</dateCreated></head>
+<body>
+<outline text="Lower path"/>
+</body>
+</opml>
+'''
+
+[[case]]
+id = "empty-body"
+input = '''
+<?xml version="1.0"?>
+<opml version="2.0">
+<head><title>Closed routes</title></head>
+<body>
+
+</body>
+</opml>
+'''
+
+[[case]]
+id = "entities"
+input = '''
+<?xml version="1.0"?>
+<opml version="2.0">
+<head><title>Gate notes</title></head>
+<body>
+<outline text="Salt &amp; water &lt; ice"/>
+</body>
+</opml>
+'''
+
+[[case]]
+id = "unicode"
+input = '''
+<?xml version="1.0"?>
+<opml version="2.0">
+<head><title>Gate notes</title></head>
+<body>
+<outline text="Étage extérieur — 東京"/>
+</body>
+</opml>
+'''
+
+[[case]]
+id = "inline-markup"
+input = '''
+<?xml version="1.0"?>
+<opml version="2.0">
+<head><title>Gate notes</title></head>
+<body>
+<outline text="&lt;em&gt;Loose hinge&lt;/em&gt; and &lt;strong&gt;red mark&lt;/strong&gt;"/>
+</body>
+</opml>
+'''
+
+[[case]]
+id = "link-item"
+input = '''
+<?xml version="1.0"?>
+<opml version="2.0">
+<head><title>Gate notes</title></head>
+<body>
+<outline text="Gate guide" type="link" url="https://example.org/gates"/>
+</body>
+</opml>
+'''
+
+[[case]]
+id = "subscription"
+input = '''
+<?xml version="1.0"?>
+<opml version="2.0">
+<head><title>Gate notes</title></head>
+<body>
+<outline text="Ridge alerts" type="rss" xmlUrl="https://example.org/ridge.xml" htmlUrl="https://example.org/ridge"/>
+</body>
+</opml>
+'''
+
+[[case]]
+id = "note"
+input = '''
+<?xml version="1.0"?>
+<opml version="2.0">
+<head><title>Gate notes</title></head>
+<body>
+<outline text="Upper gate" _note="Use the square key.&#10;&#10;Keep a spare."/>
+</body>
+</opml>
+'''
+
+[[case]]
+id = "note-markup"
+input = '''
+<?xml version="1.0"?>
+<opml version="2.0">
+<head><title>Gate notes</title></head>
+<body>
+<outline text="Lower gate" _note="Use **two clips** and `test`."/>
+</body>
+</opml>
+'''
+
+[[case]]
+id = "heading-with-link"
+input = '''
+<?xml version="1.0"?>
+<opml version="2.0">
+<head><title>Gate notes</title></head>
+<body>
+<outline text="&lt;a href=&quot;https://example.org/maps&quot;&gt;Ridge map&lt;/a&gt;"/>
+</body>
+</opml>
+'''
+
+[[case]]
+id = "category"
+input = '''
+<?xml version="1.0"?>
+<opml version="2.0">
+<head><title>Gate notes</title></head>
+<body>
+<outline text="Spare clips" category="/tools/spares,/north"/>
+</body>
+</opml>
+'''
+
+[[case]]
+id = "comment-state"
+input = '''
+<?xml version="1.0"?>
+<opml version="2.0">
+<head><title>Gate notes</title></head>
+<body>
+<outline text="Private log" isComment="true" isBreakpoint="false">
+<outline text="Blue clip"/>
+</outline>
+</body>
+</opml>
+'''
+
+[[case]]
+id = "repeated-headings"
+input = '''
+<?xml version="1.0"?>
+<opml version="2.0">
+<head><title>Gate notes</title></head>
+<body>
+<outline text="Steps"/>
+<outline text="Steps">
+<outline text="Steps"/>
+</outline>
+</body>
+</opml>
+'''

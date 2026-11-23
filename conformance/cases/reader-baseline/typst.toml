@@ -1,0 +1,124 @@
+from = "typst"
+to = []
+
+[[case]]
+id = "paragraphs"
+input = '''
+The lens faces north.
+The cable runs below it.
+
+Check the cable before use.
+'''
+
+[[case]]
+id = "headings"
+input = '''
+= Ridge station
+== Backup sensor
+Open the small case.
+'''
+
+[[case]]
+id = "emphasis"
+input = '''
+Keep the lens _dry_ and hold it *firmly*.
+'''
+
+[[case]]
+id = "code-inline"
+input = '''
+Enter `read --north` at the prompt.
+'''
+
+[[case]]
+id = "unordered-list"
+input = '''
+- Case
+  - Lens
+  - Cable
+- Stand
+'''
+
+[[case]]
+id = "ordered-list"
+input = '''
++ Level the stand.
++ Fit the lens.
+'''
+
+[[case]]
+id = "definition-list"
+input = '''
+/ Flange: The flat rim around the opening.
+/ Shim: A thin part that fills a gap.
+'''
+
+[[case]]
+id = "link"
+input = '''
+#link("https://example.org/lens")[Lens guide]
+'''
+
+[[case]]
+id = "quote"
+input = '''
+#quote(block: true, attribution: [Mira Lake])[Keep the sensor above the ledge.]
+'''
+
+[[case]]
+id = "code-block"
+input = '''
+```python
+print(9 - 4)
+```
+'''
+
+[[case]]
+id = "table"
+input = '''
+#table(columns: 2, table.header([Part], [Stock]), [Lens], [4], [Case], [2])
+'''
+
+[[case]]
+id = "math"
+input = '''
+The value is $sqrt(a^2 + b^2)$.
+
+$ sum_(i=1)^n i $
+'''
+
+[[case]]
+id = "footnote"
+input = '''
+Fit the shorter lead.#footnote[Keep the long lead as a spare.]
+'''
+
+[[case]]
+id = "metadata"
+input = '''
+#set document(title: [Night survey], author: ("Mira Lake", "Jo Bell"))
+
+Begin at the signal post.
+'''
+
+[[case]]
+id = "heading-label"
+input = '''
+= Glass plate <glass-plate>
+
+See #ref(<glass-plate>).
+'''
+
+[[case]]
+id = "function-content"
+input = '''
+#let gauge(n) = [Reading: #n kPa]
+#gauge(32)
+'''
+
+[[case]]
+id = "image"
+files = { "lens.svg" = '<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8"><rect x="1" y="1" width="6" height="6" fill="blue"/></svg>' }
+input = '''
+#image("lens.svg", alt: "A square lens")
+'''

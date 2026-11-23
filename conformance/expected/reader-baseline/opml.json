@@ -1,0 +1,101 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "category#read": {
+      "key": "b5c7d2e727290331",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"author\":{\"t\":\"MetaList\",\"c\":[]},\"date\":{\"t\":\"MetaInlines\",\"c\":[]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Gate\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"notes\"}]}},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Spare\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"clips\"}]]}]}\n",
+      "stderr": ""
+    },
+    "comment-state#read": {
+      "key": "7ede6b6b5d2f661e",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"author\":{\"t\":\"MetaList\",\"c\":[]},\"date\":{\"t\":\"MetaInlines\",\"c\":[]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Gate\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"notes\"}]}},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Private\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log\"}]]},{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Blue\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"clip\"}]]}]}\n",
+      "stderr": ""
+    },
+    "empty-body#read": {
+      "key": "ab1aaa40483a5256",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"author\":{\"t\":\"MetaList\",\"c\":[]},\"date\":{\"t\":\"MetaInlines\",\"c\":[]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Closed\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"routes\"}]}},\"blocks\":[]}\n",
+      "stderr": ""
+    },
+    "entities#read": {
+      "key": "1d428d2dd4780ab7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"author\":{\"t\":\"MetaList\",\"c\":[]},\"date\":{\"t\":\"MetaInlines\",\"c\":[]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Gate\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"notes\"}]}},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Salt\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"&\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"water\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"<\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"ice\"}]]}]}\n",
+      "stderr": ""
+    },
+    "heading-with-link#read": {
+      "key": "854ff7bab54e68f7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"author\":{\"t\":\"MetaList\",\"c\":[]},\"date\":{\"t\":\"MetaInlines\",\"c\":[]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Gate\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"notes\"}]}},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"\",[],[]],[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Ridge\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"map\"}],[\"https://example.org/maps\",\"\"]]}]]}]}\n",
+      "stderr": ""
+    },
+    "inline-markup#read": {
+      "key": "d8acb56bd1796580",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"author\":{\"t\":\"MetaList\",\"c\":[]},\"date\":{\"t\":\"MetaInlines\",\"c\":[]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Gate\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"notes\"}]}},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"\",[],[]],[{\"t\":\"Emph\",\"c\":[{\"t\":\"Str\",\"c\":\"Loose\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"hinge\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"red\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"mark\"}]}]]}]}\n",
+      "stderr": ""
+    },
+    "link-item#read": {
+      "key": "0030a345cd356f94",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"author\":{\"t\":\"MetaList\",\"c\":[]},\"date\":{\"t\":\"MetaInlines\",\"c\":[]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Gate\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"notes\"}]}},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"\",[],[]],[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Gate\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"guide\"}],[\"https://example.org/gates\",\"\"]]}]]}]}\n",
+      "stderr": ""
+    },
+    "metadata#read": {
+      "key": "caf4c11cd8fb3d98",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"author\":{\"t\":\"MetaList\",\"c\":[{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Mira\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"West\"}]}]},\"date\":{\"t\":\"MetaInlines\",\"c\":[]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Ridge\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"walk\"}]}},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Lower\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"path\"}]]}]}\n",
+      "stderr": ""
+    },
+    "nested-items#read": {
+      "key": "33b0466e166b3ff3",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"author\":{\"t\":\"MetaList\",\"c\":[]},\"date\":{\"t\":\"MetaInlines\",\"c\":[]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Gate\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"notes\"}]}},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Field\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"kit\"}]]},{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Tray\"}]]},{\"t\":\"Header\",\"c\":[3,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Small\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"hook\"}]]},{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Cover\"}]]}]}\n",
+      "stderr": ""
+    },
+    "note#read": {
+      "key": "9419e49b669fcd25",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"author\":{\"t\":\"MetaList\",\"c\":[]},\"date\":{\"t\":\"MetaInlines\",\"c\":[]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Gate\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"notes\"}]}},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Upper\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"gate\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"square\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"key.\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Keep\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"spare.\"}]}]}\n",
+      "stderr": ""
+    },
+    "note-markup#read": {
+      "key": "5d88d7471390bb95",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"author\":{\"t\":\"MetaList\",\"c\":[]},\"date\":{\"t\":\"MetaInlines\",\"c\":[]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Gate\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"notes\"}]}},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Lower\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"gate\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"two\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"clips\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"test\"]},{\"t\":\"Str\",\"c\":\".\"}]}]}\n",
+      "stderr": ""
+    },
+    "repeated-headings#read": {
+      "key": "5b5f26690af51120",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"author\":{\"t\":\"MetaList\",\"c\":[]},\"date\":{\"t\":\"MetaInlines\",\"c\":[]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Gate\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"notes\"}]}},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Steps\"}]]},{\"t\":\"Header\",\"c\":[1,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Steps\"}]]},{\"t\":\"Header\",\"c\":[2,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Steps\"}]]}]}\n",
+      "stderr": ""
+    },
+    "sibling-items#read": {
+      "key": "cda58fc573bfe53d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"author\":{\"t\":\"MetaList\",\"c\":[]},\"date\":{\"t\":\"MetaInlines\",\"c\":[]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Gate\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"notes\"}]}},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Key\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"tray\"}]]},{\"t\":\"Header\",\"c\":[1,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Tool\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"rack\"}]]}]}\n",
+      "stderr": ""
+    },
+    "single-item#read": {
+      "key": "a40891a3046d3199",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"author\":{\"t\":\"MetaList\",\"c\":[]},\"date\":{\"t\":\"MetaInlines\",\"c\":[]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Gate\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"notes\"}]}},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"East\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"gate\"}]]}]}\n",
+      "stderr": ""
+    },
+    "subscription#read": {
+      "key": "8523c616f79b92a2",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"author\":{\"t\":\"MetaList\",\"c\":[]},\"date\":{\"t\":\"MetaInlines\",\"c\":[]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Gate\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"notes\"}]}},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Ridge\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"alerts\"}]]}]}\n",
+      "stderr": ""
+    },
+    "unicode#read": {
+      "key": "8917761687b33995",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"author\":{\"t\":\"MetaList\",\"c\":[]},\"date\":{\"t\":\"MetaInlines\",\"c\":[]},\"title\":{\"t\":\"MetaInlines\",\"c\":[{\"t\":\"Str\",\"c\":\"Gate\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"notes\"}]}},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"Étage\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"extérieur\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"—\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"東京\"}]]}]}\n",
+      "stderr": ""
+    }
+  }
+}

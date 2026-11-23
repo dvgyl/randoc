@@ -87,7 +87,6 @@
 # known I-LUA-31 convert-write-markua write markua PANDOC_WRITER_OPTIONS
 # known I-ORG-01 convert-final-newline end of org
 # known I-WIKI-03 convert-write-dokuwiki write dokuwiki
-# known I-WIKI-04 convert-write-jira write jira
 # known I-WIKI-05 convert-write-mediawiki write mediawiki
 # known I-WIKI-05 convert-final-newline end of mediawiki
 # known I-XML-01 convert-write-docbook write docbook {identifier_prefix = 'p-'}

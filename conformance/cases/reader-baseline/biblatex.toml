@@ -1,0 +1,100 @@
+from = "biblatex"
+to = []
+
+[[case]]
+id = "article"
+input = '''
+@article{film, author={Ivo Reed and Lin Frost}, title={Salt films on wood}, journaltitle={Surface Letters}, date={2024-03}, volume={4}, number={2}, pages={7--18}}
+'''
+
+[[case]]
+id = "book"
+input = '''
+@book{bridge, author={Mara Snow}, title={Bridges of the East Track}, subtitle={A field guide}, publisher={Cairn Press}, location={York}, date={2023}, edition={3}}
+'''
+
+[[case]]
+id = "incollection"
+input = '''
+@incollection{gap, author={Rosa Bell}, editor={Lin Chen}, title={Gaps below the sill}, booktitle={Survey of Water Gates}, date={2022}, pages={25--34}, publisher={Wall Press}}
+'''
+
+[[case]]
+id = "online"
+input = '''
+@online{lamp, author={{Pier Office}}, title={Lamp register}, date={2025-06-21}, url={https://example.org/lamps}, urldate={2026-02-17}}
+'''
+
+[[case]]
+id = "software"
+input = '''
+@software{tray, author={Ali Lake}, title={Tray counter}, version={2.4}, date={2025-02-11}, url={https://example.org/tray}}
+'''
+
+[[case]]
+id = "thesis"
+input = '''
+@thesis{runoff, author={Nia North}, title={Runoff from the Upper Slope}, type={mathesis}, institution={Coast College}, location={Hull}, date={2024}}
+'''
+
+[[case]]
+id = "report"
+input = '''
+@report{reeds, author={{Marsh Survey Unit}}, title={Reed count}, type={techreport}, institution={Marsh Office}, number={M-26}, date={2025-09}}
+'''
+
+[[case]]
+id = "date-range"
+input = '''
+@book{bank, author={Jo West}, title={Bank Work}, date={2021-04-02/2021-09-12}, origdate={2001}, eventdate={2020-11}}
+'''
+
+[[case]]
+id = "name-parts"
+input = '''
+@book{ledge, author={de la Marsh, Jr., Ima and {North Path Group}}, editor={Ren Lake and Ali Moss}, title={Ledge Maps}, date={2022}}
+'''
+
+[[case]]
+id = "identifiers"
+input = '''
+@article{shale, author={Ira Moss}, title={Shale near the ridge}, journaltitle={Ridge Survey}, date={2024}, doi={10.5555/shale.8}, issn={1234-5679}, eprint={2401.00008}, eprinttype={arxiv}, eprintclass={physics.geo-ph}}
+'''
+
+[[case]]
+id = "titles-and-language"
+input = '''
+@book{voie, author={Léa Marchand}, title={La voie haute}, shorttitle={Voie haute}, subtitle={Un plan du col}, langid={french}, date={2022}}
+'''
+
+[[case]]
+id = "tex-formatting"
+input = '''
+@article{text, author={J{\"o}rg Moss}, title={A \textit{thin} layer above {UV} glass}, journaltitle={Lamp Notes}, date={2020}}
+'''
+
+[[case]]
+id = "crossref"
+input = '''
+@inproceedings{torch, author={Ira West}, title={A cold torch test}, crossref={lamp-days}, pages={1--4}}
+@proceedings{lamp-days, title={Lamp Days}, date={2025}, eventtitle={Annual Lamp Meeting}, venue={York}}
+'''
+
+[[case]]
+id = "xdata"
+input = '''
+@xdata{reed-series, publisher={Marsh Press}, location={Bath}, series={Reed Surveys}}
+@book{low-reeds, author={Lin West}, title={Reeds by the Low Gate}, date={2025}, xdata={reed-series}}
+'''
+
+[[case]]
+id = "periodical"
+input = '''
+@periodical{wall-notes, editor={Mara Chen}, title={Wall Notes}, date={2026-02}, volume={5}, number={1}, issuetitle={Stone and clay}}
+'''
+
+[[case]]
+id = "patent"
+input = '''
+@patent{shutter, author={Ali North}, title={Shutter for a Gauge}, type={patentgb}, number={GB1234608}, holder={{North Gauge Works}}, date={2019-11-09}}
+'''

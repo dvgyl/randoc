@@ -1,0 +1,141 @@
+from = "man"
+to = []
+
+[[case]]
+id = "paragraphs"
+input = '''
+.PP
+The basin fills from the west.
+.PP
+Keep the outlet clear.
+'''
+
+[[case]]
+id = "headings"
+input = '''
+.SH "Tank service"
+.SS "Lower hatch"
+Use the short ladder.
+'''
+
+[[case]]
+id = "title"
+input = '''
+.TH RIVERCHECK 1 "2026-06-08" "River Tools 2" "Field Commands"
+.SH NAME
+rivercheck \- read a river gauge
+'''
+
+[[case]]
+id = "font-macros"
+input = '''
+.B Prime
+.I slowly
+.BR pump (8)
+.IR gauge (1) .
+'''
+
+[[case]]
+id = "font-escapes"
+input = '''
+Use \fBfirm\fP pressure and then turn \fIslowly\fP.
+'''
+
+[[case]]
+id = "unordered-list"
+input = '''
+.IP \(bu 2
+Blue tape
+.IP \(bu 2
+Green tape
+'''
+
+[[case]]
+id = "numbered-list"
+input = '''
+.IP 1. 4
+Open the flap.
+.IP 2. 4
+Fit the spring.
+'''
+
+[[case]]
+id = "tagged-paragraph"
+input = '''
+.TP
+.B \-q
+Quiet mode.
+.TP
+.B \-r
+Repeat the check.
+'''
+
+[[case]]
+id = "url"
+input = '''
+.UR https://example.org/river
+River guide
+.UE .
+'''
+
+[[case]]
+id = "mail-link"
+input = '''
+.MT reports@example.org
+Gauge reports
+.ME .
+'''
+
+[[case]]
+id = "indent-block"
+input = '''
+.RS 4
+Keep the valve dry.
+.RE
+Check the seal.
+'''
+
+[[case]]
+id = "no-fill"
+input = '''
+.nf
+level  =  3
+status = clear
+.fi
+'''
+
+[[case]]
+id = "example-block"
+input = '''
+.EX
+gauge \-q
+printf done
+.EE
+'''
+
+[[case]]
+id = "table"
+input = '''
+.TS
+tab(|);
+l r.
+Part|Count
+Lens|4
+Rack|2
+.TE
+'''
+
+[[case]]
+id = "escapes"
+input = '''
+Read 7\(de, allow \(+-2 units, and enter \e to quit.
+'''
+
+[[case]]
+id = "comment-and-break"
+input = '''
+Check the gauge.
+.\" Private log entry
+.br
+Record the date.
+'''

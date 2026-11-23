@@ -1,0 +1,163 @@
+from = "rtf"
+to = []
+
+[[case]]
+id = "paragraphs"
+input = '''
+{\rtf1\ansi\ansicpg1252\deff0
+{\fonttbl{\f0\fswiss Arial;}}
+The cart stood by the gate.\par The gate faced west.\par
+}
+'''
+
+[[case]]
+id = "heading-outline"
+input = '''
+{\rtf1\ansi\ansicpg1252\deff0
+{\fonttbl{\f0\fswiss Arial;}}
+\pard\outlinelevel0 Ridge route\par\pard\outlinelevel1 Lower path\par\pard Check the rail.\par
+}
+'''
+
+[[case]]
+id = "styles"
+input = '''
+{\rtf1\ansi\ansicpg1252\deff0
+{\fonttbl{\f0\fswiss Arial;}}
+{\stylesheet{\s0 Normal;}{\s1\sbasedon0\snext0\b Heading 1;}}\pard\s1 Storage rack\par\pard\s0 Use the top shelf.\par
+}
+'''
+
+[[case]]
+id = "metadata"
+input = '''
+{\rtf1\ansi\ansicpg1252\deff0
+{\fonttbl{\f0\fswiss Arial;}}
+{\info{\title Tool log}{\author Nia Reed}{\subject Shed supplies}}\pard Check the spare key.\par
+}
+'''
+
+[[case]]
+id = "emphasis"
+input = '''
+{\rtf1\ansi\ansicpg1252\deff0
+{\fonttbl{\f0\fswiss Arial;}}
+Use {\b firm} pressure. Turn {\i slowly}.\par
+}
+'''
+
+[[case]]
+id = "decorations"
+input = '''
+{\rtf1\ansi\ansicpg1252\deff0
+{\fonttbl{\f0\fswiss Arial;}}
+Use {\ul blue} ink on the {\strike old} strap.\par
+}
+'''
+
+[[case]]
+id = "superscript-subscript"
+input = '''
+{\rtf1\ansi\ansicpg1252\deff0
+{\fonttbl{\f0\fswiss Arial;}}
+Record m{\super 2} and H{\sub 2}O.\par
+}
+'''
+
+[[case]]
+id = "bullet-list"
+input = '''
+{\rtf1\ansi\ansicpg1252\deff0
+{\fonttbl{\f0\fswiss Arial;}}
+\pard{\pntext\f0\'b7\tab}{\*\pn\pnlvlblt{\pntxtb\'b7}} Hook\par\pard{\pntext\f0\'b7\tab}{\*\pn\pnlvlblt{\pntxtb\'b7}} Rope\par
+}
+'''
+
+[[case]]
+id = "numbered-list"
+input = '''
+{\rtf1\ansi\ansicpg1252\deff0
+{\fonttbl{\f0\fswiss Arial;}}
+\pard{\pntext 1.\tab}{\*\pn\pnlvlbody\pndec\pnstart1{\pntxta.}} Check the lever.\par\pard{\pntext 2.\tab}{\*\pn\pnlvlbody\pndec\pnstart1{\pntxta.}} Fit the cover.\par
+}
+'''
+
+[[case]]
+id = "link"
+input = '''
+{\rtf1\ansi\ansicpg1252\deff0
+{\fonttbl{\f0\fswiss Arial;}}
+Read {\field{\*\fldinst HYPERLINK "https://example.org/cart"}{\fldrslt the cart guide}}.\par
+}
+'''
+
+[[case]]
+id = "image"
+input = '''
+{\rtf1\ansi\ansicpg1252\deff0
+{\fonttbl{\f0\fswiss Arial;}}
+{\pict\pngblip\picw1\pich1
+89504e470d0a1a0a0000000d4948445200000001000000010802000000907753
+de0000000c49444154789c6390ce3f030001ff01571611db550000000049454e
+44ae426082}\par
+}
+'''
+
+[[case]]
+id = "indented-paragraph"
+input = '''
+{\rtf1\ansi\ansicpg1252\deff0
+{\fonttbl{\f0\fswiss Arial;}}
+\pard\li720 Check the upper hinge.\par\pard Check the lower hinge.\par
+}
+'''
+
+[[case]]
+id = "table"
+input = '''
+{\rtf1\ansi\ansicpg1252\deff0
+{\fonttbl{\f0\fswiss Arial;}}
+\trowd\cellx1200\cellx2400\intbl Hook\cell 4\cell\row\trowd\cellx1200\cellx2400\intbl Rope\cell 2\cell\row\pard
+}
+'''
+
+[[case]]
+id = "note"
+input = '''
+{\rtf1\ansi\ansicpg1252\deff0
+{\fonttbl{\f0\fswiss Arial;}}
+Use the square key{\super\chftn}{\footnote\pard\plain\chftn The key is in the tray.}.\par
+}
+'''
+
+[[case]]
+id = "unicode"
+input = '''
+{\rtf1\ansi\ansicpg1252\deff0
+{\fonttbl{\f0\fswiss Arial;}}
+\uc1 Cafe\u769? beside \u937? and \u945?.\par
+}
+'''
+
+[[case]]
+id = "break-and-escapes"
+input = '''
+{\rtf1\ansi\ansicpg1252\deff0
+{\fonttbl{\f0\fswiss Arial;}}
+North\tab 12\line South\tab 18\par Type \{open\} and \\. \emdash \endash \bullet\par
+}
+'''
+[[case]]
+id = "list-table-numbering"
+input = '''
+{\rtf1\ansi\deff0
+{\fonttbl{\f0\fswiss Arial;}}
+{\*\listtable
+{\list\listtemplateid1\listsimple1
+{\listlevel\levelnfc0\leveljc0\levelfollow0\levelstartat4{\leveltext\'02\'00.;}{\levelnumbers\'01;}\fi-180\li720}
+\listid1234}}
+{\*\listoverridetable{\listoverride\listid1234\listoverridecount0\ls1}}
+\pard\plain\ls1\ilvl0{\listtext 4.\tab}Tighten the handle.\par
+\pard\plain\ls1\ilvl0{\listtext 5.\tab}Check the spring.\par
+}
+'''

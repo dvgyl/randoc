@@ -1,0 +1,165 @@
+from = "jats"
+to = []
+
+[[case]]
+id = "paragraphs"
+input = '''
+<article xmlns:xlink="http://www.w3.org/1999/xlink">
+<body>
+<p>The east tray holds sand.</p><p>The west tray holds clay.</p>
+</body>
+</article>
+'''
+
+[[case]]
+id = "headings"
+input = '''
+<article xmlns:xlink="http://www.w3.org/1999/xlink">
+<body>
+<sec id="field"><title>Field setup</title><p>Level the stand.</p><sec id="rack"><title>Sample rack</title><p>Close the cover.</p></sec></sec>
+</body>
+</article>
+'''
+
+[[case]]
+id = "metadata"
+input = '''
+<article xmlns:xlink="http://www.w3.org/1999/xlink">
+<front><article-meta><title-group><article-title>Soil at the east wall</article-title></title-group><contrib-group><contrib contrib-type="author"><name><surname>Chen</surname><given-names>Lin</given-names></name></contrib></contrib-group><abstract><p>We compare two samples.</p></abstract></article-meta></front>
+<body>
+<p>Record the depth at noon.</p>
+</body>
+</article>
+'''
+
+[[case]]
+id = "emphasis"
+input = '''
+<article xmlns:xlink="http://www.w3.org/1999/xlink">
+<body>
+<p>Keep the <italic>fine</italic> sample in the <bold>sealed</bold> tray.</p>
+</body>
+</article>
+'''
+
+[[case]]
+id = "inline-variants"
+input = '''
+<article xmlns:xlink="http://www.w3.org/1999/xlink">
+<body>
+<p>Use <monospace>sample-6</monospace> for Fe<sup>2+</sup> and H<sub>2</sub>O.</p>
+</body>
+</article>
+'''
+
+[[case]]
+id = "unordered-list"
+input = '''
+<article xmlns:xlink="http://www.w3.org/1999/xlink">
+<body>
+<list list-type="bullet"><list-item><p>Sieve</p></list-item><list-item><p>Tray</p></list-item></list>
+</body>
+</article>
+'''
+
+[[case]]
+id = "ordered-list"
+input = '''
+<article xmlns:xlink="http://www.w3.org/1999/xlink">
+<body>
+<list list-type="order"><list-item><p>Weigh the cup.</p></list-item><list-item><p>Add the sand.</p></list-item></list>
+</body>
+</article>
+'''
+
+[[case]]
+id = "definition-list"
+input = '''
+<article xmlns:xlink="http://www.w3.org/1999/xlink">
+<body>
+<def-list><def-item><term>Loam</term><def><p>Soil with sand, silt, and clay.</p></def></def-item></def-list>
+</body>
+</article>
+'''
+
+[[case]]
+id = "link"
+input = '''
+<article xmlns:xlink="http://www.w3.org/1999/xlink">
+<body>
+<p>Read the <ext-link ext-link-type="uri" xlink:href="https://example.org/soil">sample guide</ext-link>.</p>
+</body>
+</article>
+'''
+
+[[case]]
+id = "figure"
+input = '''
+<article xmlns:xlink="http://www.w3.org/1999/xlink">
+<body>
+<fig id="tray"><caption><p>Tray after screening</p></caption><graphic xlink:href="tray.svg"><alt-text>A wire tray</alt-text></graphic></fig>
+</body>
+</article>
+'''
+
+[[case]]
+id = "quote"
+input = '''
+<article xmlns:xlink="http://www.w3.org/1999/xlink">
+<body>
+<disp-quote><p>Collect each sample at the same depth.</p><attrib>Field log</attrib></disp-quote>
+</body>
+</article>
+'''
+
+[[case]]
+id = "code-block"
+input = '''
+<article xmlns:xlink="http://www.w3.org/1999/xlink">
+<body>
+<code language="python">mass = 12
+print(mass)</code>
+</body>
+</article>
+'''
+
+[[case]]
+id = "table"
+input = '''
+<article xmlns:xlink="http://www.w3.org/1999/xlink">
+<body>
+<table-wrap id="weights"><caption><p>Sample weights</p></caption><table><thead><tr><th>Sample</th><th>Mass</th></tr></thead><tbody><tr><td>Clay</td><td>12 g</td></tr></tbody></table></table-wrap>
+</body>
+</article>
+'''
+
+[[case]]
+id = "footnote"
+input = '''
+<article xmlns:xlink="http://www.w3.org/1999/xlink">
+<body>
+<p>Use the left tray<xref ref-type="fn" rid="tray-note">1</xref>.</p>
+</body>
+<back><fn-group><fn id="tray-note"><p>The left tray has a blue mark.</p></fn></fn-group></back>
+</article>
+'''
+
+[[case]]
+id = "formula"
+input = '''
+<article xmlns:xlink="http://www.w3.org/1999/xlink">
+<body>
+<p>The depth is <inline-formula><tex-math><![CDATA[d_1 + d_2]]></tex-math></inline-formula>.</p>
+</body>
+</article>
+'''
+
+[[case]]
+id = "cross-reference"
+input = '''
+<article xmlns:xlink="http://www.w3.org/1999/xlink">
+<body>
+<p>See <xref ref-type="sec" rid="steps">the steps</xref>.</p><sec id="steps"><title>Steps</title><p>Fit the lower clip.</p></sec>
+</body>
+</article>
+'''

@@ -1,0 +1,29 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "disabled-heading-and-list#read": {
+      "key": "2cf2e23d2c7c5af7",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"jupyter\":{\"t\":\"MetaMap\",\"c\":{\"nbformat\":{\"t\":\"MetaString\",\"c\":\"4\"},\"nbformat_minor\":{\"t\":\"MetaString\",\"c\":\"4\"}}}},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"\",[\"cell\",\"markdown\"],[]],[{\"t\":\"Header\",\"c\":[1,[\"gate-log\",[],[]],[{\"t\":\"Str\",\"c\":\"Gate\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log\"}]]},{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"left\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"dial.\"}]}],[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"latch.\"}]}]]}]]}]}\n",
+      "stderr": ""
+    },
+    "disabled-mixed-cells#read": {
+      "key": "89f2823303ef0929",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"jupyter\":{\"t\":\"MetaMap\",\"c\":{\"language_info\":{\"t\":\"MetaMap\",\"c\":{\"name\":{\"t\":\"MetaString\",\"c\":\"python\"}}},\"nbformat\":{\"t\":\"MetaString\",\"c\":\"4\"},\"nbformat_minor\":{\"t\":\"MetaString\",\"c\":\"4\"}}}},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"\",[\"cell\",\"markdown\"],[]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use\"},{\"t\":\"Space\"},{\"t\":\"Strong\",\"c\":[{\"t\":\"Str\",\"c\":\"two\"}]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"clips\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"test\"]},{\"t\":\"Str\",\"c\":\".\"}]}]]},{\"t\":\"Div\",\"c\":[[\"\",[\"cell\",\"code\"],[]],[{\"t\":\"CodeBlock\",\"c\":[[\"\",[\"python\"],[]],\"print(2)\\n\"]}]]},{\"t\":\"Div\",\"c\":[[\"\",[\"cell\",\"markdown\"],[]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"\",[],[]],[{\"t\":\"Str\",\"c\":\"The\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"log\"}],[\"https://example.org/latch\",\"\"]]}]}]]}]}\n",
+      "stderr": ""
+    },
+    "enabled-heading-and-list#read": {
+      "key": "b68b59c3c8039891",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"jupyter\":{\"t\":\"MetaMap\",\"c\":{\"nbformat\":{\"t\":\"MetaString\",\"c\":\"4\"},\"nbformat_minor\":{\"t\":\"MetaString\",\"c\":\"4\"}}}},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"\",[\"cell\",\"markdown\"],[]],[{\"t\":\"RawBlock\",\"c\":[\"markdown\",\"# Gate log\\n\\n- Read the left dial.\\n- Check the latch.\\n\"]}]]}]}\n",
+      "stderr": ""
+    },
+    "enabled-mixed-cells#read": {
+      "key": "0740408db55bac37",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{\"jupyter\":{\"t\":\"MetaMap\",\"c\":{\"language_info\":{\"t\":\"MetaMap\",\"c\":{\"name\":{\"t\":\"MetaString\",\"c\":\"python\"}}},\"nbformat\":{\"t\":\"MetaString\",\"c\":\"4\"},\"nbformat_minor\":{\"t\":\"MetaString\",\"c\":\"4\"}}}},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"\",[\"cell\",\"markdown\"],[]],[{\"t\":\"RawBlock\",\"c\":[\"markdown\",\"Use **two** clips and `test`.\\n\"]}]]},{\"t\":\"Div\",\"c\":[[\"\",[\"cell\",\"code\"],[]],[{\"t\":\"CodeBlock\",\"c\":[[\"\",[\"python\"],[]],\"print(2)\\n\"]}]]},{\"t\":\"Div\",\"c\":[[\"\",[\"cell\",\"markdown\"],[]],[{\"t\":\"RawBlock\",\"c\":[\"markdown\",\"[The log](https://example.org/latch)\\n\"]}]]}]}\n",
+      "stderr": ""
+    }
+  }
+}

@@ -1,0 +1,118 @@
+from = "dokuwiki"
+to = []
+
+[[case]]
+id = "paragraphs"
+input = '''
+Fresh air enters here.
+The vent faces south.
+
+Leave the grille clear.
+'''
+
+[[case]]
+id = "headings"
+input = '''
+====== Rope store ======
+===== Spare lines =====
+Use the low rack.
+'''
+
+[[case]]
+id = "inline-markup"
+input = '''
+Use **firm** pressure, turn //slowly// and enter ''clear''.
+'''
+
+[[case]]
+id = "underline-and-strike"
+input = '''
+Use __blue__ tape. The <del>paper label</del> is old.
+'''
+
+[[case]]
+id = "unordered-list"
+input = '''
+  * Rope
+    * Hemp
+    * Nylon
+  * Hook
+'''
+
+[[case]]
+id = "ordered-list"
+input = '''
+  - Inspect the frame.
+  - Mark the loose joints.
+    - Mark the lower joint first.
+'''
+
+[[case]]
+id = "links"
+input = '''
+See [[guide:lanterns|the lantern guide]] and [[https://example.org/wicks|wick sizes]].
+'''
+
+[[case]]
+id = "image"
+input = '''
+{{:maps:bay.png?120|Map of the bay}}
+'''
+
+[[case]]
+id = "quote"
+input = '''
+> The buoy is east of the dock.
+>> The channel is west of it.
+'''
+
+[[case]]
+id = "code-block"
+input = '''
+<code python>
+print('north')
+</code>
+'''
+
+[[case]]
+id = "preformatted"
+input = '''
+  Keep  the  spaces.
+  Check the second line.
+'''
+
+[[case]]
+id = "table"
+input = '''
+^ Material ^ Length ^
+| Hemp | 12 m |
+| Nylon |  9 m |
+'''
+
+[[case]]
+id = "footnote"
+input = '''
+Keep one spare key.((Store it in the red box.))
+'''
+
+[[case]]
+id = "no-format"
+input = '''
+Enter %%**open**%% as plain text.
+'''
+
+[[case]]
+id = "line-break"
+input = '''
+North ramp\\ South ramp
+'''
+
+[[case]]
+id = "rule"
+input = '''
+End of the first log.
+
+----
+
+Start the second log.
+'''

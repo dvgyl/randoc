@@ -1,0 +1,30 @@
+from = "xlsx"
+to = []
+
+[[case]]
+id = "cached-formula"
+input_file = "reader-baseline/xlsx-cached-formula.xlsx"
+
+[[case]]
+id = "inline-cells"
+input_file = "reader-baseline/xlsx-inline-cells.xlsx"
+
+[[case]]
+id = "links-and-merge"
+input_file = "reader-baseline/xlsx-links-and-merge.xlsx"
+
+[[case]]
+id = "number-formats"
+input_file = "reader-baseline/xlsx-number-formats.xlsx"
+
+[[case]]
+id = "shared-strings"
+input_file = "reader-baseline/xlsx-shared-strings.xlsx"
+
+[[case]]
+id = "sheet-order"
+input_file = "reader-baseline/xlsx-sheet-order.xlsx"
+
+[[case]]
+id = "sparse-cells"
+input_file = "reader-baseline/xlsx-sparse-cells.xlsx"

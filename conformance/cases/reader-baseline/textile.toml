@@ -1,0 +1,118 @@
+from = "textile"
+to = []
+
+[[case]]
+id = "paragraphs"
+input = '''
+Wind blew across the yard.
+Keep the rope off the road.
+
+Leave the hook in the shed.
+'''
+
+[[case]]
+id = "headings"
+input = '''
+h1. Rope shed
+
+h2. Long lines
+
+Use the upper rack.
+'''
+
+[[case]]
+id = "inline-markup"
+input = '''
+Pull _slowly_, hold *firmly* and enter @halt@.
+'''
+
+[[case]]
+id = "inline-variants"
+input = '''
+Use +fresh+ tape over the -old- mark. Note H~2~O and m^2^.
+'''
+
+[[case]]
+id = "unordered-list"
+input = '''
+* Line
+** Inner loop
+** Outer loop
+* Hook
+'''
+
+[[case]]
+id = "ordered-list"
+input = '''
+# Check the hook.
+## Test the spring.
+# Check the loop.
+'''
+
+[[case]]
+id = "definition-list"
+input = '''
+- Anchor := Part that holds the line.
+- Loop := A closed curve in the line.
+'''
+
+[[case]]
+id = "link"
+input = '''
+Read "the rope guide":https://example.org/rope.
+'''
+
+[[case]]
+id = "image"
+input = '''
+!line.png(View of the outer loop)!
+'''
+
+[[case]]
+id = "quote"
+input = '''
+bq. Keep the loop away from the wheel.
+'''
+
+[[case]]
+id = "code-block"
+input = '''
+bc. open --east
+check  --quiet
+'''
+
+[[case]]
+id = "table"
+input = '''
+|_. Gear|_. Stock|
+|Line|6|
+|Hook|2|
+'''
+
+[[case]]
+id = "footnote"
+input = '''
+Use the upper hook[1].
+
+fn1. It has a green mark.
+'''
+
+[[case]]
+id = "attributes"
+input = '''
+h2(rack#short-lines). Short lines
+
+p>. Check the lower shelf.
+'''
+
+[[case]]
+id = "no-textile"
+input = '''
+The sign reads ==*Keep clear*==.
+'''
+
+[[case]]
+id = "acronym"
+input = '''
+Record the RPM(Revolutions per minute) at the upper mark.
+'''

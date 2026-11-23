@@ -1,0 +1,34 @@
+from = "docx"
+to = []
+
+[[case]]
+id = "custom-styles"
+input_file = "reader-baseline/docx-custom-styles.docx"
+
+[[case]]
+id = "footnote"
+input_file = "reader-baseline/docx-footnote.docx"
+
+[[case]]
+id = "heading"
+input_file = "reader-baseline/docx-heading.docx"
+
+[[case]]
+id = "hyperlink"
+input_file = "reader-baseline/docx-hyperlink.docx"
+
+[[case]]
+id = "inline-formatting"
+input_file = "reader-baseline/docx-inline-formatting.docx"
+
+[[case]]
+id = "metadata"
+input_file = "reader-baseline/docx-metadata.docx"
+
+[[case]]
+id = "nested-list"
+input_file = "reader-baseline/docx-nested-list.docx"
+
+[[case]]
+id = "table"
+input_file = "reader-baseline/docx-table.docx"

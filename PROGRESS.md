@@ -34,6 +34,13 @@ Historical handoffs from sessions 1–6 are archived in
   formats and all 77 output formats, including PDF. The PDF driver supports
   all 15 `--pdf-engine` values. Lua uses the shared registry for all 52 readers
   and 76 writers. See [known issues](docs/ISSUES.md) for remaining differences.
+- **Waves 7 and 8A** improve reader and writer parity across text formats and
+  office archives. The harness adds binary fixtures and checks ZIP content.
+  Template compilation limits nested partial loads. Citation sorting uses the
+  Spanish order for `ñ`. The HTML reader handles iframe data and host fetches.
+- **Clean-room highlighting, Batch 1** adds a Rust syntax builder and built-in
+  definitions for JavaScript, Haskell, Literate Haskell, and Python. External
+  keyword lists support Sass and Zsh.
 - **Consolidated verification & measurement suites** from the `gpt/build` and
   `M1-*` workstreams under `tools/measure/` and `tools/{casegen,pivot,readers,errors,ast,custom-writers,server,extension-caps}/`, with Codex-specific `ops`/`guard`/`plan` tooling removed.
 - **Upgraded `randoc-harness`** with work-folder file diffing, symlink hashing,
@@ -78,19 +85,29 @@ Historical handoffs from sessions 1–6 are archived in
 
 ### Latest recorded baseline metrics
 
-- **Conformance harness (`spec/baseline.json`)** has 63,436 passing units
-  out of 64,191. The previous baseline had 63,375 passing units.
-  This update adds 61 passes with zero regressions. The harness reports
-  335 failures outside the baseline and 420 skipped units. Each passing
-  result is byte-identical.
-- **Capability matrix (`spec/capabilities.json`)** records results from the harness.
-  It includes 63,436 passing units out of 63,771 units that ran.
-  - Input formats have 19 passing, 6 partial, 0 failing, 27 not started.
-  - Output formats have 12 passing, 7 partial, 0 failing, 58 not started.
-  - Extensions have 72 passing, 7 partial, 0 failing, 11 not started.
-  - Options have 95 passing, 13 partial, 0 failing, 1 not started.
-- **Pandoc 3.13 test suite (`tools/pandoc-testsuite`):** The last suite-wide report counted 646 of 2,231 passing tests.
-- **Real-document corpus (`tools/corpus`):** The last corpus-wide report counted 162 of 690 passing units.
+- **Conformance harness (`spec/baseline.json`).** 65,747 of
+  66,351 units pass. The update adds 2,311 passes to the previous
+  baseline of 63,436, with zero regressions. The harness reports
+  184 failures outside the baseline and 420 skipped units.
+  65,680 results match byte for byte. All passing results
+  match in content.
+- **Capability matrix (`spec/capabilities.json`).** The harness ran
+  65,931 units. Every applicable capability has a
+  recorded test result.
+
+| Capability | Total | Passing | Partial | Failing | Not started | Not applicable |
+|---|---:|---:|---:|---:|---:|---:|
+| Input formats | 52 | 49 | 3 | 0 | 0 | 0 |
+| Output formats | 77 | 69 | 3 | 4 | 0 | 1 |
+| Extensions | 90 | 90 | 0 | 0 | 0 | 0 |
+| Options | 109 | 94 | 14 | 0 | 0 | 1 |
+
+- **Pandoc 3.13 command suite.** A Wave 8A run increased the pass count from
+  1,312 to 1,557 of 1,884 command cases. Later targeted runs improved the
+  Markdown and LaTeX set from 24 to 69 of 71 syntax-tree checks and from
+  103 to 149 of 169 end-to-end checks.
+- **Real-document corpus.** Randoc matched Pandoc 3.13 JSON output for all
+  230 Wave 8A corpus cases (100%).
 - **Lua conversion replay** covers 52 readers and 76 writers in 130 filters
   with 2,669 probes. It runs 260 filter and document pairs in each Lua mode.
   The command-line standalone replay covers 76 writers in 608 cases.

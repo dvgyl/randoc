@@ -1,0 +1,11 @@
+from = "docx+styles"
+to = []
+
+[[case]]
+id = "enabled-custom-styles"
+input_file = "reader-baseline/docx-custom-styles.docx"
+
+[[case]]
+id = "disabled-custom-styles"
+from = "docx-styles"
+input_file = "reader-baseline/docx-custom-styles.docx"

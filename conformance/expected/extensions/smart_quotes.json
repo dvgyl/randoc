@@ -1,0 +1,29 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "disabled-apostrophe-and-quote#read": {
+      "key": "46ff86fd02000710",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"The\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"guide's\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"note\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"reads\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"\\\"Don't\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"use\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"lower\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"path.\\\"\"}]}]}\n",
+      "stderr": ""
+    },
+    "disabled-quoted-labels#read": {
+      "key": "febeb26a1cbaebac",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"\\\"Open\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"gate,\\\"\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"said\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Mara.\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"'Read\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sign\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"first.'\"}]}]}\n",
+      "stderr": ""
+    },
+    "enabled-apostrophe-and-quote#read": {
+      "key": "e62b2f6ac9d0a132",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"The\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"guide’s\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"note\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"reads\"},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Don’t\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"use\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"lower\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"path.\"}]]}]}]}\n",
+      "stderr": ""
+    },
+    "enabled-quoted-labels#read": {
+      "key": "9784ad7922473d62",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"Open\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"gate,\"}]]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"said\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"Mara.\"},{\"t\":\"Space\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"SingleQuote\"},[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"sign\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"first.\"}]]}]}]}\n",
+      "stderr": ""
+    }
+  }
+}

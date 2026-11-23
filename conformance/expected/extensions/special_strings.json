@@ -1,0 +1,29 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "disabled-dashes-and-ellipsis#read": {
+      "key": "c7e3578321c7f7cf",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Wait...\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"open\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"gate\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"--\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"then\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"record\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"5---8\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"units.\"}]}]}\n",
+      "stderr": ""
+    },
+    "disabled-protected-code#read": {
+      "key": "0872f4deed70f725",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"4--6,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"or\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"type\"},{\"t\":\"Space\"},{\"t\":\"Code\",\"c\":[[\"\",[\"verbatim\"],[]],\"4--6\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"wait...\"]},{\"t\":\"Str\",\"c\":\".\"}]}]}\n",
+      "stderr": ""
+    },
+    "enabled-dashes-and-ellipsis#read": {
+      "key": "4d9e9d8d1d98de9d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Wait…\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"open\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"the\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"gate\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"–\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"then\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"record\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"5—8\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"units.\"}]}]}\n",
+      "stderr": ""
+    },
+    "enabled-protected-code#read": {
+      "key": "5cf00c9d0de34633",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Read\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"4–6,\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"or\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"type\"},{\"t\":\"Space\"},{\"t\":\"Code\",\"c\":[[\"\",[\"verbatim\"],[]],\"4--6\"]},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"and\"},{\"t\":\"Space\"},{\"t\":\"Code\",\"c\":[[\"\",[],[]],\"wait...\"]},{\"t\":\"Str\",\"c\":\".\"}]}]}\n",
+      "stderr": ""
+    }
+  }
+}

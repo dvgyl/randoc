@@ -170,10 +170,27 @@ pub fn build(spec_dir: &Path, facts: &[UnitFact]) -> Result<Value, String> {
     }
     let not_applicable_path = spec_dir.join("not-applicable.json");
     let not_applicable: BTreeMap<String, String> = if not_applicable_path.exists() {
-        serde_json::from_value(read_json(&not_applicable_path)?).map_err(|e| e.to_string())?
+        serde_json::from_value(read_json(&not_applicable_path)?)
+            .map_err(|e| format!("{}: {e}", not_applicable_path.display()))?
     } else {
         BTreeMap::new()
     };
+    // A key that names no entry has no effect, so it is an error.
+    for key in not_applicable.keys() {
+        let known = match key.split_once(':') {
+            Some(("input", name)) => input_formats.iter().any(|n| n == name),
+            Some(("output", name)) => output_formats.iter().any(|n| n == name),
+            Some(("extension", name)) => extensions.iter().any(|n| n == name),
+            Some(("option", name)) => options.iter().any(|n| n == name),
+            _ => false,
+        };
+        if !known {
+            return Err(format!(
+                "{}: {key:?} names no input, output, extension or option of the inventory",
+                not_applicable_path.display()
+            ));
+        }
+    }
 
     let mut inputs: BTreeMap<(String, &'static str), Tally> = BTreeMap::new();
     let mut outputs: BTreeMap<(String, &'static str), Tally> = BTreeMap::new();
@@ -425,6 +442,37 @@ mod tests {
             serde_json::json!({"not_started": 1, "partial": 1, "passing": 1})
         );
         fs::remove_dir_all(&dir).unwrap();
+    }
+
+    #[test]
+    fn a_not_applicable_key_that_names_no_entry_is_an_error() {
+        let dir = spec_dir("unknown-key");
+        fs::write(
+            dir.join("not-applicable.json"),
+            r#"{"output:pdff":"misspelled"}"#,
+        )
+        .unwrap();
+        let error = build(&dir, &[]).unwrap_err();
+        assert!(error.contains("output:pdff"), "{error}");
+        fs::remove_dir_all(&dir).unwrap();
+    }
+
+    #[test]
+    fn the_repository_marks_pdf_output_and_bash_completion_as_not_applicable() {
+        let spec = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../spec");
+        let facts = [fact(UnitKind::Write, None, Some("pdf"), &[], false)];
+        let matrix = build(&spec, &facts).unwrap();
+        let pdf = &matrix["output_formats"]["pdf"];
+        assert_eq!(pdf["status"], "not_applicable");
+        assert!(pdf["reason"].as_str().is_some_and(|r| !r.is_empty()));
+        let completion = &matrix["options"]["bash-completion"];
+        assert_eq!(completion["status"], "not_applicable");
+        assert!(
+            completion["reason"]
+                .as_str()
+                .is_some_and(|r| r.contains("I-CLI-13"))
+        );
+        assert_eq!(matrix["output_formats"]["html"]["status"], "not_started");
     }
 
     #[test]

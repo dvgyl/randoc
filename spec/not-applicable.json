@@ -1,0 +1,4 @@
+{
+  "option:bash-completion": "Pandoc prints its own bash completion script, which is GPL text. Randoc generates its script from its own option table (I-CLI-13).",
+  "output:pdf": "PDF output needs an external engine (pdflatex, weasyprint, typst, groff or context). The mock-engine tests in crates/randoc-cli/tests/pdf.rs test it."
+}

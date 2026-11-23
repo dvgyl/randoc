@@ -1,0 +1,120 @@
+from = "haddock"
+to = []
+
+[[case]]
+id = "paragraphs"
+input = '''
+The board has three sockets.
+Connect the centre cable.
+
+Keep a spare plug on hand.
+'''
+
+[[case]]
+id = "headings"
+input = '''
+= Meter guide
+
+== Back panel
+
+Read the left dial.
+'''
+
+[[case]]
+id = "inline-markup"
+input = '''
+Use /gentle pressure/, __two clips__ and @meter --reset@.
+'''
+
+[[case]]
+id = "identifier-links"
+input = '''
+Use 'resetMeter' from "Field.Meter".
+'''
+
+[[case]]
+id = "unordered-list"
+input = '''
+* Cable
+* Socket
+* Clip
+'''
+
+[[case]]
+id = "ordered-list"
+input = '''
+(1) Set the dial to zero.
+(2) Fit the cover.
+'''
+
+[[case]]
+id = "definition-list"
+input = '''
+[Dial] A round scale.
+[Pointer] A moving part above the scale.
+'''
+
+[[case]]
+id = "link"
+input = '''
+<https://example.org/meter Meter guide>
+'''
+
+[[case]]
+id = "image"
+input = '''
+<<meter.png The left dial>>
+'''
+
+[[case]]
+id = "bird-track"
+input = '''
+  > level = 4
+  > next = level + 1
+'''
+
+[[case]]
+id = "code-block"
+input = '''
+@
+step x = x + 2
+stop = 9
+@
+'''
+
+[[case]]
+id = "example"
+input = '''
+>>> addThree 5
+8
+
+The result is a whole number.
+'''
+
+[[case]]
+id = "math"
+input = '''
+Use \(a^2+b^2\).
+
+\[ x = 4 \]
+'''
+
+[[case]]
+id = "anchor"
+input = '''
+#meter-reset#
+
+Reset the meter.
+'''
+
+[[case]]
+id = "properties"
+input = '''
+prop> reverse (reverse xs) == xs
+'''
+
+[[case]]
+id = "entities"
+input = '''
+A &amp; B use &#955; and &#x3bc;.
+'''

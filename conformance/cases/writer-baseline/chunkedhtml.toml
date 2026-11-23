@@ -1,0 +1,197 @@
+from = "native"
+to = ["chunkedhtml"]
+args = ["--template=chunk.html"]
+
+[[case]]
+id = "headings-and-paragraphs"
+input = '''
+[ Header 1 ("arrival", [], []) [Str "Arrival"]
+, Para [Str "Check", Space, Str "the", Space, Str "seal."]
+, Header 2 ("seal", [], []) [Str "Seal", Space, Str "record"]
+, Para [Str "Use", Space, Str "the", Space, Str "dock", Space, Str "log."]
+, Header 1 ("departure", [], []) [Str "Departure"]
+, Para [Str "Close", Space, Str "the", Space, Str "gate."]
+]
+'''
+[case.files]
+"chunk.html" = '''
+<!DOCTYPE html>
+<html lang="$lang$">
+<head>
+<meta charset="utf-8">
+<title>$pagetitle$</title>
+</head>
+<body>
+$if(toc)$<nav>$table-of-contents$</nav>$endif$
+$body$
+</body>
+</html>
+'''
+
+[[case]]
+id = "inline-styles"
+input = '''
+[ Para [Str "Mark", Space, Emph [Str "wet"], Space, Strong [Str "glass"],
+        Space, Str "as", Space, Code ("", [], []) "hold & check", Str "."]
+]
+'''
+[case.files]
+"chunk.html" = '''
+<!DOCTYPE html>
+<html lang="$lang$">
+<head>
+<meta charset="utf-8">
+<title>$pagetitle$</title>
+</head>
+<body>
+$if(toc)$<nav>$table-of-contents$</nav>$endif$
+$body$
+</body>
+</html>
+'''
+
+[[case]]
+id = "bullet-list"
+input = '''
+[ BulletList
+    [ [Plain [Str "Inspect", Space, Str "the", Space, Str "hinge."]]
+    , [Plain [Str "Check", Space, Str "the", Space, Str "latch."],
+       BulletList [[Plain [Str "Check", Space, Str "both", Space, Str "pins."]]]]
+    ]
+]
+'''
+[case.files]
+"chunk.html" = '''
+<!DOCTYPE html>
+<html lang="$lang$">
+<head>
+<meta charset="utf-8">
+<title>$pagetitle$</title>
+</head>
+<body>
+$if(toc)$<nav>$table-of-contents$</nav>$endif$
+$body$
+</body>
+</html>
+'''
+
+[[case]]
+id = "ordered-list"
+input = '''
+[ OrderedList (3, Decimal, Period)
+    [ [Plain [Str "Turn", Space, Str "the", Space, Str "key."]]
+    , [Plain [Str "Open", Space, Str "the", Space, Str "cabinet."]]
+    ]
+]
+'''
+[case.files]
+"chunk.html" = '''
+<!DOCTYPE html>
+<html lang="$lang$">
+<head>
+<meta charset="utf-8">
+<title>$pagetitle$</title>
+</head>
+<body>
+$if(toc)$<nav>$table-of-contents$</nav>$endif$
+$body$
+</body>
+</html>
+'''
+
+[[case]]
+id = "links"
+input = '''
+[ Para [Link ("", [], []) [Str "Read", Space, Str "the", Space, Str "log"]
+    ("https://example.invalid/dock?view=day&gate=west", "Dock log"), Str "."]
+]
+'''
+[case.files]
+"chunk.html" = '''
+<!DOCTYPE html>
+<html lang="$lang$">
+<head>
+<meta charset="utf-8">
+<title>$pagetitle$</title>
+</head>
+<body>
+$if(toc)$<nav>$table-of-contents$</nav>$endif$
+$body$
+</body>
+</html>
+'''
+
+[[case]]
+id = "block-quote"
+input = '''
+[ BlockQuote [Para [Str "Keep", Space, Str "the", Space, Str "west", Space, Str "gate", Space, Str "clear."]]
+, Para [Str "Use", Space, Str "the", Space, Str "east", Space, Str "gate."]
+]
+'''
+[case.files]
+"chunk.html" = '''
+<!DOCTYPE html>
+<html lang="$lang$">
+<head>
+<meta charset="utf-8">
+<title>$pagetitle$</title>
+</head>
+<body>
+$if(toc)$<nav>$table-of-contents$</nav>$endif$
+$body$
+</body>
+</html>
+'''
+
+[[case]]
+id = "table"
+input = '''
+[ Table ("gate-widths", [], [])
+    (Caption Nothing [Plain [Str "Gate", Space, Str "widths"]])
+    [(AlignLeft, ColWidthDefault), (AlignRight, ColWidthDefault)]
+    (TableHead ("width-labels", [], [])
+      [Row ("", [], [])
+        [Cell ("gate",[],[]) AlignLeft (RowSpan 1)(ColSpan 1) [Plain [Str "Gate"]],
+         Cell ("width",[],[]) AlignRight (RowSpan 1)(ColSpan 1) [Plain [Str "Width"]]]])
+    [TableBody ("", [], []) (RowHeadColumns 0) []
+      [Row ("", [], [])
+        [Cell ("east",[],[]) AlignLeft (RowSpan 1)(ColSpan 1) [Plain [Str "East"]],
+         Cell ("east-width",[],[]) AlignRight (RowSpan 1)(ColSpan 1) [Plain [Str "240 cm"]]]]]
+    (TableFoot ("", [], []) [])
+]
+'''
+[case.files]
+"chunk.html" = '''
+<!DOCTYPE html>
+<html lang="$lang$">
+<head>
+<meta charset="utf-8">
+<title>$pagetitle$</title>
+</head>
+<body>
+$if(toc)$<nav>$table-of-contents$</nav>$endif$
+$body$
+</body>
+</html>
+'''
+
+[[case]]
+id = "code-block"
+input = '''
+[ CodeBlock ("gate-state", [], []) "gate = west\n  state = closed\ncount < 7"
+]
+'''
+[case.files]
+"chunk.html" = '''
+<!DOCTYPE html>
+<html lang="$lang$">
+<head>
+<meta charset="utf-8">
+<title>$pagetitle$</title>
+</head>
+<body>
+$if(toc)$<nav>$table-of-contents$</nav>$endif$
+$body$
+</body>
+</html>
+'''

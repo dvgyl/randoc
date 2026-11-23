@@ -1,0 +1,130 @@
+from = "org"
+to = []
+
+[[case]]
+id = "paragraphs"
+input = '''
+The north gate opens at dawn.
+Report to the desk.
+
+Collect an orange badge.
+'''
+
+[[case]]
+id = "headings"
+input = '''
+* Glasshouse
+** Night vents
+*** Manual release
+Close the latch.
+'''
+
+[[case]]
+id = "heading-properties"
+input = '''
+* River marker :survey:
+:PROPERTIES:
+:CUSTOM_ID: river-six
+:END:
+Read the scale.
+'''
+
+[[case]]
+id = "inline-markup"
+input = '''
+Use *gentle* pressure, pull /up/, then select =ready= or ~check~.
+'''
+
+[[case]]
+id = "strike-and-underline"
+input = '''
+The label is +temporary+. Use _green_ ink.
+'''
+
+[[case]]
+id = "unordered-list"
+input = '''
+- Basin
+  - Inlet
+  - Outlet
+- Cover
+'''
+
+[[case]]
+id = "ordered-list"
+input = '''
+3. Prime the line.
+4. Open the return.
+'''
+
+[[case]]
+id = "task-list"
+input = '''
+- [X] Set the timer.
+- [-] Check the lamps.
+- [ ] Close the shed.
+'''
+
+[[case]]
+id = "definition-list"
+input = '''
+- Attic :: Space above the ceiling.
+- Sill :: Part below the window.
+'''
+
+[[case]]
+id = "links"
+input = '''
+Read [[https://example.org/river][the river guide]] or [[file:notes.org][the notes]].
+'''
+
+[[case]]
+id = "image"
+input = '''
+#+CAPTION: A map of the east track
+[[file:track.png]]
+'''
+
+[[case]]
+id = "quote"
+input = '''
+#+BEGIN_QUOTE
+The path ends at the pine tree.
+#+END_QUOTE
+'''
+
+[[case]]
+id = "source-block"
+input = '''
+#+NAME: count-bolts
+#+BEGIN_SRC python
+print(8 + 2)
+#+END_SRC
+'''
+
+[[case]]
+id = "table"
+input = '''
+| Part | Stock |
+|------+-------|
+| Clip |     8 |
+| Bolt |    12 |
+'''
+
+[[case]]
+id = "math-and-note"
+input = '''
+The value is $r^2$.[fn:units]
+
+[fn:units] Measure the radius in metres.
+'''
+
+[[case]]
+id = "metadata"
+input = '''
+#+TITLE: Reed survey
+#+AUTHOR: Nia Frost
+#+DATE: 2026-06-04
+
+Mark each new reed.
+'''

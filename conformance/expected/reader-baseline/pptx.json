@@ -1,0 +1,47 @@
+{
+  "oracle": "pandoc 3.13",
+  "units": {
+    "hyperlink#read": {
+      "key": "9b6f53c7af6e2ff8",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"slide-1\",[],[]],[{\"t\":\"Str\",\"c\":\"Slide 1\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Read  the valve guide .\"}]}]}\n",
+      "stderr": ""
+    },
+    "inline-formatting#read": {
+      "key": "02608fb44797ca90",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"slide-1\",[],[]],[{\"t\":\"Str\",\"c\":\"Slide 1\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Use the  small  key. Press  reset .\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Watch the lamp.\"}]}]}\n",
+      "stderr": ""
+    },
+    "nested-list#read": {
+      "key": "bce54a5eccfefbd6",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"slide-1\",[],[]],[{\"t\":\"Str\",\"c\":\"Slide 1\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Unlock the panel.\"}]},{\"t\":\"BulletList\",\"c\":[[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Check the upper switch.\"}]}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Close the panel.\"}]}]}\n",
+      "stderr": ""
+    },
+    "slide-order#read": {
+      "key": "09e9192388c2d578",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"slide-1\",[],[]],[{\"t\":\"Str\",\"c\":\"Slide 1\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Count the keys.\"}]},{\"t\":\"Header\",\"c\":[2,[\"slide-2\",[],[]],[{\"t\":\"Str\",\"c\":\"Slide 2\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Lock the cabinet.\"}]}]}\n",
+      "stderr": ""
+    },
+    "speaker-notes#read": {
+      "key": "3b6e6fcc78699d8d",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"slide-1\",[],[]],[{\"t\":\"Str\",\"c\":\"Slide 1\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Show the spare lamp.\"}]}]}\n",
+      "stderr": ""
+    },
+    "table#read": {
+      "key": "1f8d7bf9c6c9496c",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"slide-1\",[],[]],[{\"t\":\"Str\",\"c\":\"Slide 1\"}]]},{\"t\":\"Table\",\"c\":[[\"\",[],[]],[null,[]],[[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}],[{\"t\":\"AlignDefault\"},{\"t\":\"ColWidthDefault\"}]],[[\"\",[],[]],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Tool\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Bin\"}]}]]]]]],[[[\"\",[],[]],0,[],[[[\"\",[],[]],[[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Punch\"}]}]],[[\"\",[],[]],{\"t\":\"AlignDefault\"},1,1,[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"A4\"}]}]]]]]]],[[\"\",[],[]],[]]]}]}\n",
+      "stderr": ""
+    },
+    "title-body#read": {
+      "key": "ec1893b21dbec101",
+      "exit": 0,
+      "stdout": "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[2,[\"slide-1\",[],[]],[{\"t\":\"Str\",\"c\":\"North platform\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Keep the steps clear.\"}]}]}\n",
+      "stderr": ""
+    }
+  }
+}

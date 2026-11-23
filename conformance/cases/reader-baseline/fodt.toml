@@ -1,0 +1,259 @@
+from = "fodt"
+to = []
+
+[[case]]
+id = "paragraphs"
+input = '''
+<office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
+ xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
+ xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0"
+ xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/"
+ xmlns:xlink="http://www.w3.org/1999/xlink" office:version="1.2"
+ office:mimetype="application/vnd.oasis.opendocument.text">
+<office:styles/>
+<office:body><office:text>
+<text:p>The cart rests below the ramp.</text:p><text:p>Use the upper track.</text:p>
+</office:text></office:body>
+</office:document>
+'''
+
+[[case]]
+id = "headings"
+input = '''
+<office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
+ xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
+ xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0"
+ xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/"
+ xmlns:xlink="http://www.w3.org/1999/xlink" office:version="1.2"
+ office:mimetype="application/vnd.oasis.opendocument.text">
+<office:styles/>
+<office:body><office:text>
+<text:h text:outline-level="1">Cart route</text:h><text:h text:outline-level="2">Lower ramp</text:h><text:p>Check the rail.</text:p>
+</office:text></office:body>
+</office:document>
+'''
+
+[[case]]
+id = "metadata"
+input = '''
+<office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
+ xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
+ xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0"
+ xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/"
+ xmlns:xlink="http://www.w3.org/1999/xlink" office:version="1.2"
+ office:mimetype="application/vnd.oasis.opendocument.text">
+<office:meta><dc:title>Cart trial</dc:title><dc:creator>Ren West</dc:creator><dc:date>2026-06-10T09:00:00</dc:date><dc:description>A trial on the lower ramp.</dc:description></office:meta>
+<office:styles/>
+<office:body><office:text>
+<text:p>Check the first wheel.</text:p>
+</office:text></office:body>
+</office:document>
+'''
+
+[[case]]
+id = "emphasis"
+input = '''
+<office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
+ xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
+ xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0"
+ xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/"
+ xmlns:xlink="http://www.w3.org/1999/xlink" office:version="1.2"
+ office:mimetype="application/vnd.oasis.opendocument.text">
+<office:styles><style:style style:name="Soft" style:family="text"><style:text-properties fo:font-style="italic"/></style:style><style:style style:name="Firm" style:family="text"><style:text-properties fo:font-weight="bold"/></style:style></office:styles>
+<office:body><office:text>
+<text:p>Move <text:span text:style-name="Soft">slowly</text:span> and hold <text:span text:style-name="Firm">firmly</text:span>.</text:p>
+</office:text></office:body>
+</office:document>
+'''
+
+[[case]]
+id = "inline-variants"
+input = '''
+<office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
+ xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
+ xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0"
+ xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/"
+ xmlns:xlink="http://www.w3.org/1999/xlink" office:version="1.2"
+ office:mimetype="application/vnd.oasis.opendocument.text">
+<office:styles><style:style style:name="Mark" style:family="text"><style:text-properties style:text-underline-style="solid" style:text-underline-type="single"/></style:style><style:style style:name="Lower" style:family="text"><style:text-properties style:text-position="sub 58%"/></style:style></office:styles>
+<office:body><office:text>
+<text:p>Use <text:span text:style-name="Mark">blue</text:span> ink. Write H<text:span text:style-name="Lower">2</text:span>O.</text:p>
+</office:text></office:body>
+</office:document>
+'''
+
+[[case]]
+id = "unordered-list"
+input = '''
+<office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
+ xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
+ xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0"
+ xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/"
+ xmlns:xlink="http://www.w3.org/1999/xlink" office:version="1.2"
+ office:mimetype="application/vnd.oasis.opendocument.text">
+<office:styles><text:list-style style:name="Dots"><text:list-level-style-bullet text:level="1" text:bullet-char="•"/><text:list-level-style-bullet text:level="2" text:bullet-char="◦"/></text:list-style></office:styles>
+<office:body><office:text>
+<text:list text:style-name="Dots"><text:list-item><text:p>Axle</text:p><text:list><text:list-item><text:p>Pin</text:p></text:list-item></text:list></text:list-item><text:list-item><text:p>Handle</text:p></text:list-item></text:list>
+</office:text></office:body>
+</office:document>
+'''
+
+[[case]]
+id = "ordered-list"
+input = '''
+<office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
+ xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
+ xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0"
+ xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/"
+ xmlns:xlink="http://www.w3.org/1999/xlink" office:version="1.2"
+ office:mimetype="application/vnd.oasis.opendocument.text">
+<office:styles><text:list-style style:name="Steps"><text:list-level-style-number text:level="1" style:num-format="1" style:num-suffix="."/></text:list-style></office:styles>
+<office:body><office:text>
+<text:list text:style-name="Steps"><text:list-item text:start-value="4"><text:p>Tilt the tray.</text:p></text:list-item><text:list-item><text:p>Fit the strap.</text:p></text:list-item></text:list>
+</office:text></office:body>
+</office:document>
+'''
+
+[[case]]
+id = "link"
+input = '''
+<office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
+ xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
+ xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0"
+ xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/"
+ xmlns:xlink="http://www.w3.org/1999/xlink" office:version="1.2"
+ office:mimetype="application/vnd.oasis.opendocument.text">
+<office:styles/>
+<office:body><office:text>
+<text:p>Read the <text:a xlink:href="https://example.org/cart">cart guide</text:a>.</text:p>
+</office:text></office:body>
+</office:document>
+'''
+
+[[case]]
+id = "image"
+input = '''
+<office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
+ xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
+ xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0"
+ xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/"
+ xmlns:xlink="http://www.w3.org/1999/xlink" office:version="1.2"
+ office:mimetype="application/vnd.oasis.opendocument.text">
+<office:styles/>
+<office:body><office:text>
+<text:p><draw:frame draw:name="Cart wheel" text:anchor-type="as-char" svg:width="1cm" svg:height="1cm"><draw:image xlink:href="wheel.png" xlink:type="simple"/><svg:title>Cart wheel</svg:title><svg:desc>Side view of the wheel</svg:desc></draw:frame></text:p>
+</office:text></office:body>
+</office:document>
+'''
+
+[[case]]
+id = "quote"
+input = '''
+<office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
+ xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
+ xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0"
+ xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/"
+ xmlns:xlink="http://www.w3.org/1999/xlink" office:version="1.2"
+ office:mimetype="application/vnd.oasis.opendocument.text">
+<office:styles><style:style style:name="Quotations" style:family="paragraph"/></office:styles>
+<office:body><office:text>
+<text:p text:style-name="Quotations">Keep clear of the lower ramp.</text:p>
+</office:text></office:body>
+</office:document>
+'''
+
+[[case]]
+id = "code-block"
+input = '''
+<office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
+ xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
+ xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0"
+ xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/"
+ xmlns:xlink="http://www.w3.org/1999/xlink" office:version="1.2"
+ office:mimetype="application/vnd.oasis.opendocument.text">
+<office:styles><style:style style:name="Preformatted_20_Text" style:display-name="Preformatted Text" style:family="paragraph"/></office:styles>
+<office:body><office:text>
+<text:p text:style-name="Preformatted_20_Text">limit = 4<text:line-break/>print(limit)</text:p>
+</office:text></office:body>
+</office:document>
+'''
+
+[[case]]
+id = "table"
+input = '''
+<office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
+ xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
+ xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0"
+ xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/"
+ xmlns:xlink="http://www.w3.org/1999/xlink" office:version="1.2"
+ office:mimetype="application/vnd.oasis.opendocument.text">
+<office:styles/>
+<office:body><office:text>
+<table:table table:name="Parts"><table:table-column table:number-columns-repeated="2"/><table:table-header-rows><table:table-row><table:table-cell office:value-type="string"><text:p>Part</text:p></table:table-cell><table:table-cell office:value-type="string"><text:p>Stock</text:p></table:table-cell></table:table-row></table:table-header-rows><table:table-row><table:table-cell office:value-type="string"><text:p>Rim</text:p></table:table-cell><table:table-cell office:value-type="string"><text:p>5</text:p></table:table-cell></table:table-row></table:table>
+</office:text></office:body>
+</office:document>
+'''
+
+[[case]]
+id = "footnote"
+input = '''
+<office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
+ xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
+ xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0"
+ xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/"
+ xmlns:xlink="http://www.w3.org/1999/xlink" office:version="1.2"
+ office:mimetype="application/vnd.oasis.opendocument.text">
+<office:styles/>
+<office:body><office:text>
+<text:p>Use the upper ramp<text:note text:id="ramp-note" text:note-class="footnote"><text:note-citation>1</text:note-citation><text:note-body><text:p>The lower ramp is wet.</text:p></text:note-body></text:note>.</text:p>
+</office:text></office:body>
+</office:document>
+'''
+
+[[case]]
+id = "white-space"
+input = '''
+<office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
+ xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
+ xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0"
+ xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/"
+ xmlns:xlink="http://www.w3.org/1999/xlink" office:version="1.2"
+ office:mimetype="application/vnd.oasis.opendocument.text">
+<office:styles/>
+<office:body><office:text>
+<text:p>Level<text:s text:c="3"/>4<text:tab/>Open<text:line-break/>Level 5 Closed</text:p>
+</office:text></office:body>
+</office:document>
+'''
+
+[[case]]
+id = "bookmark"
+input = '''
+<office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
+ xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
+ xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0"
+ xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/"
+ xmlns:xlink="http://www.w3.org/1999/xlink" office:version="1.2"
+ office:mimetype="application/vnd.oasis.opendocument.text">
+<office:styles/>
+<office:body><office:text>
+<text:p><text:bookmark text:name="arrival"/>Wait here.</text:p><text:p>Go to <text:a xlink:href="#arrival">the marker</text:a>.</text:p>
+</office:text></office:body>
+</office:document>
+'''
+
+[[case]]
+id = "section"
+input = '''
+<office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
+ xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
+ xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0"
+ xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/"
+ xmlns:xlink="http://www.w3.org/1999/xlink" office:version="1.2"
+ office:mimetype="application/vnd.oasis.opendocument.text">
+<office:styles/>
+<office:body><office:text>
+<text:section text:name="EastRamp"><text:h text:outline-level="2">East ramp</text:h><text:p>Keep to the right.</text:p></text:section>
+</office:text></office:body>
+</office:document>
+'''

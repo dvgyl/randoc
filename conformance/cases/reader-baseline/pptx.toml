@@ -1,0 +1,30 @@
+from = "pptx"
+to = []
+
+[[case]]
+id = "hyperlink"
+input_file = "reader-baseline/pptx-hyperlink.pptx"
+
+[[case]]
+id = "inline-formatting"
+input_file = "reader-baseline/pptx-inline-formatting.pptx"
+
+[[case]]
+id = "nested-list"
+input_file = "reader-baseline/pptx-nested-list.pptx"
+
+[[case]]
+id = "slide-order"
+input_file = "reader-baseline/pptx-slide-order.pptx"
+
+[[case]]
+id = "speaker-notes"
+input_file = "reader-baseline/pptx-speaker-notes.pptx"
+
+[[case]]
+id = "table"
+input_file = "reader-baseline/pptx-table.pptx"
+
+[[case]]
+id = "title-body"
+input_file = "reader-baseline/pptx-title-body.pptx"

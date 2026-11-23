@@ -13,13 +13,6 @@ use std::path::Path;
 use randoc_ast::json::from_json;
 use randoc_core::{CiteMethod, Context, Extension, WriterOptions, default_extensions};
 
-/// Units that differ from the oracle for a known reason (see `docs/ISSUES.md`).
-const KNOWN_DIVERGENCES: &[&str] = &[
-    // I-LATEX-01: tokens of the syntax highlighter.
-    "blocks/block-9#write:latex",
-    "blocks/block-10#write:latex",
-];
-
 /// The command-line options of each case of a suite, by case identifier.
 fn case_args(suite: &str) -> HashMap<String, Vec<String>> {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -133,8 +126,7 @@ fn the_writer_matches_the_recorded_oracle_output() {
         if !text.ends_with('\n') {
             text.push('\n');
         }
-        let known = KNOWN_DIVERGENCES.contains(&id.as_str());
-        if (text == *expected) == known {
+        if text != *expected {
             failures.push(id.clone());
         }
     }
