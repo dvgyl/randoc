@@ -48,7 +48,7 @@ pub(super) fn draw_slide<'d>(
     let background = if let Some(url) = slide.attr.and_then(|attr| attr.get("background-image")) {
         let id = builder.image_rel(url)?;
         format!(
-            r#"<p:bg><p:bgPr><a:blipFill><a:blip r:embed="{id}"/><a:stretch><a:fillRect/></a:stretch></a:blipFill><a:effectLst/></p:bgPr></p:bg>"#
+            r#"<p:bg><p:bgPr><a:blipFill><a:blip r:embed="{id}" /><a:stretch><a:fillRect /></a:stretch></a:blipFill><a:effectLst /></p:bgPr></p:bg>"#
         )
     } else {
         String::new()
@@ -97,7 +97,7 @@ pub(super) fn draw_slide<'d>(
                 },
             )?;
             let level = level.saturating_sub(1).clamp(0, 8);
-            let _ = write!(paras, r#"<a:p><a:pPr lvl="{level}"/>{run}</a:p>"#);
+            let _ = write!(paras, r#"<a:p><a:pPr lvl="{level}" />{run}</a:p>"#);
             if paras.len() as u64 > super::output_limit(builder.state.context) {
                 return Err(Error::App("PPTX exceeds the output limit".into()));
             }
@@ -111,7 +111,7 @@ pub(super) fn draw_slide<'d>(
                     ..Style::default()
                 },
             );
-            let _ = write!(paras, r#"<a:p><a:pPr lvl="0"/>{run}</a:p>"#);
+            let _ = write!(paras, r#"<a:p><a:pPr lvl="0" />{run}</a:p>"#);
         }
         builder.suppress_notes = false;
         if !paras.is_empty() {
@@ -586,7 +586,7 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
                         let mut xml = String::new();
                         for (index, line) in code.lines.into_iter().enumerate() {
                             if index != 0 {
-                                xml.push_str("<a:br/>");
+                                xml.push_str("<a:br />");
                             }
                             for (kind, text) in line {
                                 let theme = &highlight.theme;
@@ -649,12 +649,12 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
         let level = para.indent.min(8);
         let properties = match para.bullet {
             Bullet::None if para.code.is_some() => {
-                format!(r#"<a:pPr lvl="{level}" indent="0"{alignment}><a:buNone/></a:pPr>"#)
+                format!(r#"<a:pPr lvl="{level}" indent="0"{alignment}><a:buNone /></a:pPr>"#)
             }
             Bullet::None => format!(
-                r#"<a:pPr lvl="{level}" indent="0" marL="0"{alignment}><a:buNone/></a:pPr>"#
+                r#"<a:pPr lvl="{level}" indent="0" marL="0"{alignment}><a:buNone /></a:pPr>"#
             ),
-            Bullet::Unordered => format!(r#"<a:pPr lvl="{level}"{alignment}/>"#),
+            Bullet::Unordered => format!(r#"<a:pPr lvl="{level}"{alignment} />"#),
             Bullet::Ordered(list, start) => {
                 let kind = number_style(list);
                 let number = list.start.clamp(1, 32767);
@@ -665,7 +665,7 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
                 };
                 let margin = 342_900 * (level + 1);
                 format!(
-                    r#"<a:pPr lvl="{level}" indent="-342900" marL="{margin}"{alignment}><a:buAutoNum type="{kind}"{start}/></a:pPr>"#
+                    r#"<a:pPr lvl="{level}" indent="-342900" marL="{margin}"{alignment}><a:buAutoNum type="{kind}"{start} /></a:pPr>"#
                 )
             }
         };
@@ -686,7 +686,7 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
             },
         );
         Ok(format!(
-            r#"<a:p><a:pPr{alignment}><a:buNone/></a:pPr>{run}</a:p>"#
+            r#"<a:p><a:pPr{alignment}><a:buNone /></a:pPr>{run}</a:p>"#
         ))
     }
 
@@ -702,20 +702,20 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
         self.animations
             .extend(animate.iter().map(|paragraph| (id, *paragraph)));
         let placeholder = match (kind, slot) {
-            (Some(kind), 0) => format!(r#"<p:ph type="{kind}"/>"#),
-            (Some(""), _) => format!(r#"<p:ph idx="{slot}"/>"#),
-            (Some(kind), _) => format!(r#"<p:ph type="{kind}" idx="{slot}"/>"#),
+            (Some(kind), 0) => format!(r#"<p:ph type="{kind}" />"#),
+            (Some(""), _) => format!(r#"<p:ph idx="{slot}" />"#),
+            (Some(kind), _) => format!(r#"<p:ph type="{kind}" idx="{slot}" />"#),
             (None, _) => String::new(),
         };
         let bounds = bounds.map_or_else(String::new, |bounds| bounds.transform("a"));
         let box_kind = if kind.is_none() { r#" txBox="1""# } else { "" };
         let shape = if kind.is_none() {
-            r#"<a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/>"#
+            r#"<a:prstGeom prst="rect"><a:avLst /></a:prstGeom><a:noFill />"#
         } else {
             ""
         };
         let xml = format!(
-            r#"<p:sp><p:nvSpPr><p:cNvPr id="{id}" name="Text {id}"/><p:cNvSpPr{box_kind}/><p:nvPr>{placeholder}</p:nvPr></p:nvSpPr><p:spPr>{bounds}{shape}</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/>{paras}</p:txBody></p:sp>"#
+            r#"<p:sp><p:nvSpPr><p:cNvPr id="{id}" name="Text {id}" /><p:cNvSpPr{box_kind} /><p:nvPr>{placeholder}</p:nvPr></p:nvSpPr><p:spPr>{bounds}{shape}</p:spPr><p:txBody><a:bodyPr /><a:lstStyle />{paras}</p:txBody></p:sp>"#
         );
         math_shape(xml, paras.contains("<a14:m>"))
     }
@@ -773,7 +773,7 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
         let position = frame.transform("p");
         let first = usize::from(!table.head.rows.is_empty());
         let mut xml = format!(
-            r#"<p:graphicFrame><p:nvGraphicFramePr><p:cNvPr id="{id}" name="Table {id}"/><p:cNvGraphicFramePr/><p:nvPr><p:ph idx="{slot}"/></p:nvPr></p:nvGraphicFramePr>{position}<a:graphic><a:graphicData uri="{TABLE_URI}"><a:tbl><a:tblPr firstRow="{first}" bandRow="1"/><a:tblGrid>"#
+            r#"<p:graphicFrame><p:nvGraphicFramePr><p:cNvPr id="{id}" name="Table {id}" /><p:cNvGraphicFramePr /><p:nvPr><p:ph idx="{slot}" /></p:nvPr></p:nvGraphicFramePr>{position}<a:graphic><a:graphicData uri="{TABLE_URI}"><a:tbl><a:tblPr firstRow="{first}" bandRow="1" /><a:tblGrid>"#
         );
         let equal = (area.w / width as i64).max(1);
         let custom = table.col_specs.len() == width && table.col_specs.iter().all(|spec| matches!(spec.width, ColWidth::ColWidth(frac) if frac.is_finite() && frac > 0.0 && frac <= 1.0));
@@ -784,7 +784,7 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
                 }
                 _ => equal,
             };
-            let _ = write!(xml, r#"<a:gridCol w="{width}"/>"#);
+            let _ = write!(xml, r#"<a:gridCol w="{width}" />"#);
         }
         xml.push_str("</a:tblGrid>");
         let row_height = (frame.h / height as i64).clamp(1, 381_000);
@@ -819,7 +819,7 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
                     Alignment::AlignCenter => "ctr",
                     Alignment::AlignDefault => "",
                 };
-                xml.push_str("<a:tc><a:txBody><a:bodyPr/><a:lstStyle/>");
+                xml.push_str("<a:tc><a:txBody><a:bodyPr /><a:lstStyle />");
                 let mut notes = Vec::new();
                 let paragraphs = flatten_from(
                     cell.content.iter(),
@@ -838,9 +838,9 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
                     }
                 }
                 if !written {
-                    xml.push_str("<a:p/>");
+                    xml.push_str("<a:p />");
                 }
-                xml.push_str("</a:txBody><a:tcPr/></a:tc>");
+                xml.push_str("</a:txBody><a:tcPr /></a:tc>");
                 self.padding(&mut xml, span - 1)?;
                 col += span;
             }
@@ -877,7 +877,7 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
             .ok_or_else(table_limit)?;
         for _ in 0..count {
             xml.push_str(
-                "<a:tc><a:txBody><a:bodyPr/><a:lstStyle/><a:p/></a:txBody><a:tcPr/></a:tc>",
+                "<a:tc><a:txBody><a:bodyPr /><a:lstStyle /><a:p /></a:txBody><a:tcPr /></a:tc>",
             );
         }
         Ok(())
@@ -913,7 +913,7 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
         area.h = h;
         let position = area.transform("a");
         Ok(format!(
-            r#"<p:pic><p:nvPicPr><p:cNvPr id="{id}" name="{name}" descr="{caption}"/><p:cNvPicPr><a:picLocks noChangeAspect="1"/></p:cNvPicPr><p:nvPr/></p:nvPicPr><p:blipFill><a:blip r:embed="rId{rel}"/><a:stretch><a:fillRect/></a:stretch></p:blipFill><p:spPr>{position}<a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr></p:pic>"#
+            r#"<p:pic><p:nvPicPr><p:cNvPr id="{id}" name="{name}" descr="{caption}" /><p:cNvPicPr><a:picLocks noChangeAspect="1" /></p:cNvPicPr><p:nvPr /></p:nvPicPr><p:blipFill><a:blip r:embed="rId{rel}" /><a:stretch><a:fillRect /></a:stretch></p:blipFill><p:spPr>{position}<a:prstGeom prst="rect"><a:avLst /></a:prstGeom></p:spPr></p:pic>"#
         ))
     }
 
@@ -1071,7 +1071,7 @@ impl<'c> Builder<'_, '_, 'c> {
                         }
                         Inline::LineBreak => {
                             flush_run(&mut xml, &mut run, previous);
-                            xml.push_str("<a:br/>");
+                            xml.push_str("<a:br />");
                             continue;
                         }
                         Inline::Emph(children) => {
@@ -1143,7 +1143,7 @@ impl<'c> Builder<'_, '_, 'c> {
                                     flush_run(&mut xml, &mut run, previous);
                                     xml.push_str("<a14:m>");
                                     if *kind == MathType::DisplayMath {
-                                        xml.push_str(r#"<m:oMathPara><m:oMathParaPr><m:jc m:val="center"/></m:oMathParaPr>"#);
+                                        xml.push_str(r#"<m:oMathPara><m:oMathParaPr><m:jc m:val="center" /></m:oMathParaPr>"#);
                                     }
                                     xml.push_str(&math);
                                     if *kind == MathType::DisplayMath {
@@ -1251,11 +1251,11 @@ fn make_run(text: &str, style: Style) -> String {
         let randoc_highlight::Color { r, g, b } = color;
         let _ = write!(
             xml,
-            r#"<a:solidFill><a:srgbClr val="{r:02X}{g:02X}{b:02X}"/></a:solidFill>"#
+            r#"<a:solidFill><a:srgbClr val="{r:02X}{g:02X}{b:02X}" /></a:solidFill>"#
         );
     }
     if style.code {
-        xml.push_str(r#"<a:latin typeface="Courier"/>"#);
+        xml.push_str(r#"<a:latin typeface="Courier" />"#);
     }
     if let Some((id, slide)) = style.link {
         let action = if slide {
@@ -1263,7 +1263,7 @@ fn make_run(text: &str, style: Style) -> String {
         } else {
             ""
         };
-        let _ = write!(xml, r#"<a:hlinkClick r:id="rId{id}"{action}/>"#);
+        let _ = write!(xml, r#"<a:hlinkClick r:id="rId{id}"{action} />"#);
     }
     xml.push_str("</a:rPr><a:t>");
     escape_content(text, &mut xml);
@@ -1299,12 +1299,12 @@ fn timing(animations: &[(usize, usize)]) -> String {
         let _ = write!(
             xml,
             concat!(
-                r#"<p:par><p:cTn id="{event}" fill="hold"><p:stCondLst><p:cond delay="indefinite"/></p:stCondLst><p:childTnLst>"#,
-                r#"<p:par><p:cTn id="{click}" fill="hold"><p:stCondLst><p:cond delay="0"/></p:stCondLst><p:childTnLst>"#,
-                r#"<p:par><p:cTn id="{effect}" presetID="1" presetClass="entr" presetSubtype="0" fill="hold" grpId="0" nodeType="clickEffect"><p:stCondLst><p:cond delay="0"/></p:stCondLst><p:childTnLst>"#,
-                r#"<p:set><p:cBhvr><p:cTn id="{behavior}" dur="1" fill="hold"><p:stCondLst><p:cond delay="0"/></p:stCondLst></p:cTn>"#,
-                r#"<p:tgtEl><p:spTgt spid="{shape}"><p:txEl><p:pRg st="{paragraph}" end="{paragraph}"/></p:txEl></p:spTgt></p:tgtEl>"#,
-                r#"<p:attrNameLst><p:attrName>style.visibility</p:attrName></p:attrNameLst></p:cBhvr><p:to><p:strVal val="visible"/></p:to></p:set>"#,
+                r#"<p:par><p:cTn id="{event}" fill="hold"><p:stCondLst><p:cond delay="indefinite" /></p:stCondLst><p:childTnLst>"#,
+                r#"<p:par><p:cTn id="{click}" fill="hold"><p:stCondLst><p:cond delay="0" /></p:stCondLst><p:childTnLst>"#,
+                r#"<p:par><p:cTn id="{effect}" presetID="1" presetClass="entr" presetSubtype="0" fill="hold" grpId="0" nodeType="clickEffect"><p:stCondLst><p:cond delay="0" /></p:stCondLst><p:childTnLst>"#,
+                r#"<p:set><p:cBhvr><p:cTn id="{behavior}" dur="1" fill="hold"><p:stCondLst><p:cond delay="0" /></p:stCondLst></p:cTn>"#,
+                r#"<p:tgtEl><p:spTgt spid="{shape}"><p:txEl><p:pRg st="{paragraph}" end="{paragraph}" /></p:txEl></p:spTgt></p:tgtEl>"#,
+                r#"<p:attrNameLst><p:attrName>style.visibility</p:attrName></p:attrNameLst></p:cBhvr><p:to><p:strVal val="visible" /></p:to></p:set>"#,
                 "</p:childTnLst></p:cTn></p:par></p:childTnLst></p:cTn></p:par></p:childTnLst></p:cTn></p:par>"
             ),
             event = event,
@@ -1319,7 +1319,7 @@ fn timing(animations: &[(usize, usize)]) -> String {
     for (condition, event) in [("prevCondLst", "onPrev"), ("nextCondLst", "onNext")] {
         let _ = write!(
             xml,
-            r#"<p:{condition}><p:cond evt="{event}" delay="0"><p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:{condition}>"#
+            r#"<p:{condition}><p:cond evt="{event}" delay="0"><p:tgtEl><p:sldTgt /></p:tgtEl></p:cond></p:{condition}>"#
         );
     }
     xml.push_str("</p:seq></p:childTnLst></p:cTn></p:par></p:tnLst><p:bldLst>");
@@ -1328,7 +1328,7 @@ fn timing(animations: &[(usize, usize)]) -> String {
         if previous != Some(*shape) {
             let _ = write!(
                 xml,
-                r#"<p:bldP spid="{shape}" grpId="0" uiExpand="1" build="p"/>"#
+                r#"<p:bldP spid="{shape}" grpId="0" uiExpand="1" build="p" />"#
             );
             previous = Some(*shape);
         }

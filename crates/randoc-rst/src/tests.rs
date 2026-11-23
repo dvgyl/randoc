@@ -685,3 +685,71 @@ fn bird_tracks_require_a_blank_line_before_prose() {
         [Block::Para(text), Block::CodeBlock(attr, code), Block::Para(_)]
         if text.contains(&Inline::SoftBreak) && attr.has_class("literate") && code == "code"));
 }
+
+#[test]
+fn a_role_and_literal_can_follow_a_backtick_delimiter() {
+    let code = |text: &str| Inline::Code(Attr::default(), text.into());
+    let input = "word``x``:doc:`a```, joined\n\nwith ``rest.";
+    assert_eq!(
+        read(input, &mut Context::pure()).unwrap().blocks,
+        vec![Block::Para(vec![
+            Inline::Str("word".into()),
+            code("x"),
+            Inline::Code(
+                Attr::new(
+                    "",
+                    vec!["interpreted-text".into()],
+                    vec![("role".into(), "doc".into())]
+                ),
+                "a".into(),
+            ),
+            code(", joined  with"),
+            Inline::Str("rest.".into())
+        ])]
+    );
+}
+
+#[test]
+fn a_single_backtick_can_close_before_a_symbol() {
+    let input = "`with spaces `%s` and";
+    assert_eq!(
+        read(input, &mut Context::pure()).unwrap().blocks,
+        vec![Block::Para(vec![
+            Inline::Span(
+                Attr::new("", vec!["title-ref".into()], vec![]),
+                vec![
+                    Inline::Str("with".into()),
+                    Inline::Space,
+                    Inline::Str("spaces".into()),
+                    Inline::Space
+                ],
+            ),
+            Inline::Str("%s`".into()),
+            Inline::Space,
+            Inline::Str("and".into())
+        ])]
+    );
+}
+
+#[test]
+#[ignore = "requires local corpus files and Pandoc reference fixtures"]
+fn wave8_fixture_replay() {
+    let root = std::path::PathBuf::from(std::env::var_os("RANDOC_W8_REPLAY").unwrap());
+    let corpus = std::path::PathBuf::from(std::env::var_os("RANDOC_CORPUS").unwrap());
+    let mut failures = Vec::new();
+    for id in ["sphinx-usage-domains-python", "sphinx-usage-referencing"] {
+        let filename = corpus.join(format!("{id}.rst"));
+        let file = std::fs::read_to_string(&filename).unwrap();
+        let mut context = Context::pure();
+        let actual = read(&file, &mut context).unwrap();
+        let expected = randoc_ast::json::from_json(
+            &std::fs::read_to_string(root.join(format!("{id}.json"))).unwrap(),
+        )
+        .unwrap();
+        if actual != expected || !context.log().is_empty() {
+            failures.push(id);
+        }
+    }
+    println!("RST corpus: {}/2", 2 - failures.len());
+    assert!(failures.is_empty(), "{failures:?}");
+}

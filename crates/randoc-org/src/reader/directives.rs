@@ -99,6 +99,93 @@ pub(super) fn attributes(input: &str) -> Vec<(String, String)> {
     pairs
 }
 
+/// Reads the parameters of a block start line: Org `:key value` pairs, or
+/// Python `key=value` pairs, or else one `parameters` attribute with the text.
+pub(super) fn block_parameters(args: &str) -> Vec<(String, String)> {
+    let args = args.trim();
+    if args.is_empty() {
+        return Vec::new();
+    }
+    org_parameters(args)
+        .or_else(|| python_parameters(args))
+        .unwrap_or_else(|| vec![("parameters".into(), args.into())])
+}
+
+fn parameter_name(name: &str) -> bool {
+    !name.is_empty()
+        && name
+            .chars()
+            .all(|c| c.is_alphanumeric() || "-_".contains(c))
+}
+
+/// Splits text at white space. A word that starts with a quote goes to the
+/// next quote and comes back without the quotes, marked `true`.
+fn parameter_words(mut input: &str) -> Option<Vec<(&str, bool)>> {
+    let mut words = Vec::new();
+    loop {
+        input = input.trim_start();
+        if input.is_empty() {
+            return Some(words);
+        }
+        if let Some(rest) = input.strip_prefix('"') {
+            let close = rest.find('"')?;
+            if rest[close + 1..].starts_with(|c: char| !c.is_whitespace()) {
+                return None;
+            }
+            words.push((&rest[..close], true));
+            input = &rest[close + 1..];
+        } else {
+            let end = input.find(char::is_whitespace).unwrap_or(input.len());
+            words.push((&input[..end], false));
+            input = &input[end..];
+        }
+    }
+}
+
+fn org_parameters(args: &str) -> Option<Vec<(String, String)>> {
+    let words = parameter_words(args)?;
+    let mut pairs = Vec::new();
+    let mut index = 0;
+    while let Some(&(word, quoted)) = words.get(index) {
+        let key = word
+            .strip_prefix(':')
+            .filter(|key| !quoted && parameter_name(key))?;
+        index += 1;
+        let value = match words.get(index) {
+            Some(&(value, true)) => {
+                index += 1;
+                value.to_owned()
+            }
+            Some(_) => {
+                let mut parts = Vec::new();
+                while let Some(&(part, quoted)) = words.get(index) {
+                    if part.starts_with(':') && !quoted {
+                        break;
+                    }
+                    if quoted || part.starts_with('"') {
+                        return None;
+                    }
+                    parts.push(part);
+                    index += 1;
+                }
+                parts.join(" ")
+            }
+            None => return None,
+        };
+        pairs.push((key.to_owned(), value));
+    }
+    Some(pairs)
+}
+
+fn python_parameters(args: &str) -> Option<Vec<(String, String)>> {
+    args.split_whitespace()
+        .map(|word| {
+            let (key, value) = word.split_once('=')?;
+            (parameter_name(key) && parameter_name(value)).then(|| (key.into(), value.into()))
+        })
+        .collect()
+}
+
 #[derive(Default)]
 pub(super) struct Affiliated<'a> {
     pub id: &'a str,
@@ -113,6 +200,7 @@ impl<'a> Affiliated<'a> {
         };
         match key.to_ascii_lowercase().as_str() {
             "name" | "label" => self.id = value,
+            "results" => {}
             "caption" => {
                 if !self.caption.is_empty() {
                     self.caption.push(' ');
@@ -218,7 +306,15 @@ impl Parser<'_> {
             "select_tags" | "export_select_tags" => {
                 self.select = value.split_whitespace().map(str::to_owned).collect();
             }
-            "exclude_tags" => self.exclude = value.split_whitespace().map(str::to_owned).collect(),
+            "exclude_tags" => {
+                if !self.custom_exclude {
+                    self.exclude.clear();
+                    self.custom_exclude = true;
+                }
+                self.exclude
+                    .extend(value.split_whitespace().map(str::to_owned));
+            }
+            "title" => self.titles.push(value.to_owned()),
             "link" => {
                 if let Some((key, body)) = value.split_once(char::is_whitespace) {
                     self.abbreviations

@@ -3,13 +3,14 @@ use std::cell::RefCell;
 use std::fmt::Write;
 
 use randoc_ast::{
-    Block, ColWidth, Inline, ListAttributes, ListNumberDelim, MathType, Pandoc, QuoteType, Table,
+    Block, ColWidth, Inline, ListAttributes, ListNumberDelim, ListNumberStyle, MathType, Pandoc,
+    QuoteType, Table,
 };
 use randoc_core::shared::{meta_context::meta_to_context, stringify};
 use randoc_core::{Context, Error, LogMessage, Result, WrapOption, WriterOptions};
 use randoc_layout::{
-    Color, Doc, bg, blankline, bold, chomp, cr, fg, hang, hcat, hsep, italic, lblock, link,
-    literal, nest, nowrap, prefixed, space, strikeout, text, underlined, vcat, vfill, vsep,
+    Color, Doc, bg, blankline, bold, cblock, chomp, cr, fg, hang, hcat, hsep, italic, lblock, link,
+    literal, nest, nowrap, prefixed, rblock, space, strikeout, text, underlined, vcat, vfill, vsep,
 };
 use randoc_templates::Val;
 
@@ -43,7 +44,8 @@ pub(super) fn write(
     };
     let mut render = renderer.borrow_mut();
     let mut body = chomp(render.blocks(&doc.blocks));
-    if !render.notes.is_empty() {
+    let has_notes = !render.notes.is_empty();
+    if has_notes {
         body += blankline() + render.separator() + blankline();
         let items = std::mem::take(&mut render.notes)
             .into_iter()
@@ -52,25 +54,27 @@ pub(super) fn write(
         body += vsep(items);
     }
     let output = if let Some(template) = &options.template {
-        let mut title = Vec::new();
-        if let Some(value) = scope.get("title").and_then(as_doc) {
-            title.push(center(render.width, bold(value.clone())));
-        }
-        for field in ["subtitle", "author", "date"] {
-            match scope.get(field) {
-                Some(Val::List(items)) => title.extend(
-                    items
-                        .iter()
-                        .filter_map(as_doc)
-                        .map(|doc| center(render.width, doc.clone())),
-                ),
-                Some(Val::Simple(doc)) => title.push(center(render.width, doc.clone())),
-                _ => {}
-            }
-        }
-        if !title.is_empty() {
-            title.push(render.separator());
-            scope.insert("titleblock", Val::Simple(vsep(title)));
+        let field = |name| {
+            scope
+                .get(name)
+                .and_then(as_doc)
+                .cloned()
+                .unwrap_or_default()
+        };
+        let title = vcat([bold(field("title")), field("subtitle")]);
+        let authors = match scope.get("author") {
+            Some(Val::List(items)) => vcat(items.iter().filter_map(as_doc).cloned()),
+            _ => field("author"),
+        };
+        let titleblock = vsep([title, authors, italic(field("date"))]);
+        if !titleblock.is_empty() {
+            let titleblock = vsep([titleblock, separator()]);
+            let titleblock = if options.wrap_text == WrapOption::WrapAuto {
+                cblock(render.width, titleblock)
+            } else {
+                titleblock
+            };
+            scope.insert("titleblock", Val::Simple(titleblock));
         }
         scope.insert("body", Val::Simple(body));
         template.render(&scope)
@@ -83,7 +87,74 @@ pub(super) fn write(
     if output.estimated_size() > limit {
         return Err(Error::App("The ANSI output exceeds the size limit.".into()));
     }
+    let output = if options.template.is_none() && !has_notes && ends_with_line_break(&doc.blocks) {
+        output + literal("\n")
+    } else {
+        output
+    };
     Ok(output.render_ansi(super::columns(options)))
+}
+
+fn ends_with_line_break(mut blocks: &[Block]) -> bool {
+    while let Some(Block::Div(_, children)) = blocks.last() {
+        blocks = children;
+    }
+    matches!(
+        blocks.last(),
+        Some(
+            Block::Header(..)
+                | Block::OrderedList(..)
+                | Block::DefinitionList(_)
+                | Block::CodeBlock(..)
+        )
+    )
+}
+
+fn format_number(style: ListNumberStyle, start: i64, index: usize) -> String {
+    let mut number = start.saturating_add(i64::try_from(index).unwrap_or(i64::MAX));
+    match style {
+        ListNumberStyle::LowerAlpha | ListNumberStyle::UpperAlpha => {
+            let base = if style == ListNumberStyle::LowerAlpha {
+                b'a'
+            } else {
+                b'A'
+            };
+            let first = ((start.max(1) - 1) % 26) as usize;
+            char::from(base + ((first + index % 26) % 26) as u8).to_string()
+        }
+        ListNumberStyle::LowerRoman | ListNumberStyle::UpperRoman => {
+            if !(0..=3999).contains(&number) {
+                return "?".into();
+            }
+            let mut roman = String::new();
+            for (value, digits) in [
+                (1000, "M"),
+                (900, "CM"),
+                (500, "D"),
+                (400, "CD"),
+                (100, "C"),
+                (90, "XC"),
+                (50, "L"),
+                (40, "XL"),
+                (10, "X"),
+                (9, "IX"),
+                (5, "V"),
+                (4, "IV"),
+                (1, "I"),
+            ] {
+                while number >= value {
+                    roman.push_str(digits);
+                    number -= value;
+                }
+            }
+            if style == ListNumberStyle::LowerRoman {
+                roman.to_ascii_lowercase()
+            } else {
+                roman
+            }
+        }
+        _ => number.to_string(),
+    }
 }
 
 fn as_doc(value: &Val) -> Option<&Doc> {
@@ -98,6 +169,10 @@ fn center(width: usize, doc: Doc) -> Doc {
     text(" ".repeat(width.saturating_sub(doc.offset()) / 2)) + doc
 }
 
+fn separator() -> Doc {
+    text("────────────────────")
+}
+
 struct Renderer<'a> {
     context: &'a mut Context,
     options: &'a WriterOptions,
@@ -110,7 +185,7 @@ struct Renderer<'a> {
 
 impl Renderer<'_> {
     fn separator(&self) -> Doc {
-        center(self.width, text("────────────────────"))
+        center(self.width, separator())
     }
 
     fn blocks(&mut self, blocks: &[Block]) -> Doc {
@@ -140,12 +215,17 @@ impl Renderer<'_> {
             Block::HorizontalRule => text("────────────────────") + blankline(),
             Block::BulletList(items) => self.list(None, items),
             Block::OrderedList(attrs, items) => self.list(Some(attrs), items),
-            Block::DefinitionList(items) => hcat(items.iter().map(|(term, defs)| {
-                let term = bold(self.inlines(term));
-                let indent = term.offset().saturating_add(1);
-                let defs = vsep(defs.iter().map(|def| chomp(self.blocks(def))));
-                hang(indent, term + space(), defs) + blankline()
-            })),
+            Block::DefinitionList(items) => {
+                let terms: Vec<_> = items
+                    .iter()
+                    .map(|(term, _)| bold(self.inlines(term)))
+                    .collect();
+                let width = terms.iter().map(Doc::offset).max().unwrap_or(0);
+                hcat(terms.into_iter().zip(items).map(|(term, (_, defs))| {
+                    let defs = vsep(defs.iter().map(|def| chomp(self.blocks(def))));
+                    hang(width + 1, rblock(width, term) + space(), defs) + blankline()
+                }))
+            }
             Block::Div(_, blocks) => self.blocks(blocks),
             Block::Figure(_, caption, content) => {
                 let body = if matches!(content.as_slice(), [Block::Para(items) | Block::Plain(items)]
@@ -192,31 +272,39 @@ impl Renderer<'_> {
                 None => {}
             }
         }
-        let lines = code.split('\n').map(|line| fg(Color::Red, literal(line)));
+        let lines = code
+            .split_terminator('\n')
+            .map(|line| fg(Color::Red, literal(line)));
         nest(4, vcat(lines)) + blankline()
     }
 
     fn list(&mut self, attrs: Option<&ListAttributes>, items: &[Vec<Block>]) -> Doc {
-        hcat(items.iter().enumerate().map(|(index, item)| {
-            let marker = match attrs {
-                Some(attrs) => {
-                    let number = attrs
-                        .start
-                        .saturating_add(i64::try_from(index).unwrap_or(i64::MAX));
-                    match attrs.delim {
-                        ListNumberDelim::OneParen => format!("{number}) "),
-                        ListNumberDelim::TwoParens => format!("({number}) "),
-                        _ => format!("{number}. "),
-                    }
+        let markers: Vec<_> = (0..items.len())
+            .map(|index| {
+                let Some(attrs) = attrs else {
+                    return "•".to_owned();
+                };
+                let number = format_number(attrs.style, attrs.start, index);
+                match attrs.delim {
+                    ListNumberDelim::OneParen => format!("{number})"),
+                    ListNumberDelim::TwoParens => format!("({number})"),
+                    _ => format!("{number}."),
                 }
-                None => "• ".into(),
-            };
-            let indent = randoc_layout::real_length(&marker);
+            })
+            .collect();
+        let width = markers
+            .iter()
+            .map(|m| randoc_layout::real_length(m))
+            .max()
+            .unwrap_or(0);
+        let indent = width + 1;
+        hcat(items.iter().zip(markers).map(|(item, marker)| {
+            let marker = rblock(width, text(marker)) + space();
             let body = chomp(self.blocks(item));
             if matches!(item.first(), Some(Block::Plain(_) | Block::Para(_))) {
-                hang(indent, text(marker), body) + blankline()
+                hang(indent, marker, body) + blankline()
             } else {
-                text(marker) + cr() + nest(indent, body) + blankline()
+                marker + cr() + nest(indent, body) + blankline()
             }
         }))
     }
@@ -483,5 +571,27 @@ fn token_ansi(token: randoc_highlight::TokenType) -> (u8, bool, bool) {
         Operator => (90, false, false),
         SpecialString => (35, false, false),
         Extension | RegionMarker | Normal => (0, false, false),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn alphabetic_markers_cycle_and_roman_markers_have_a_limit() {
+        for (style, start, index, expected) in [
+            (ListNumberStyle::LowerAlpha, 0, 0, "a"),
+            (ListNumberStyle::LowerAlpha, 0, 1, "b"),
+            (ListNumberStyle::LowerAlpha, 26, 0, "z"),
+            (ListNumberStyle::LowerAlpha, 26, 1, "a"),
+            (ListNumberStyle::LowerAlpha, 27, 0, "a"),
+            (ListNumberStyle::UpperAlpha, 28, 0, "B"),
+            (ListNumberStyle::UpperRoman, 3999, 0, "MMMCMXCIX"),
+            (ListNumberStyle::UpperRoman, 4000, 0, "?"),
+            (ListNumberStyle::LowerRoman, 0, 0, ""),
+        ] {
+            assert_eq!(format_number(style, start, index), expected);
+        }
     }
 }

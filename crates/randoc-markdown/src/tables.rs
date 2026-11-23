@@ -354,15 +354,16 @@ fn split_columns(line: &str, columns: &[DashColumn]) -> Vec<String> {
     out
 }
 
-/// Finds the alignment of a column from its raw text lines and its dash count.
+/// Finds the alignment of a column from its raw text lines and its dash
+/// count. The shortest line decides (the first of equal lines).
 fn column_alignment(texts: &[&str], dashes: usize) -> Alignment {
-    let texts: Vec<&str> = texts
+    let shortest = texts
         .iter()
         .map(|text| text.trim_end_matches(SPACE))
         .filter(|text| !text.is_empty())
-        .collect();
-    let left = texts.iter().any(|text| text.starts_with(' '));
-    let right = texts.iter().any(|text| text_width(text) < dashes);
+        .min_by_key(|text| text.chars().count());
+    let left = shortest.is_some_and(|text| text.starts_with(' '));
+    let right = shortest.is_some_and(|text| text_width(text) < dashes);
     match (left, right) {
         (true, true) => Alignment::AlignCenter,
         (false, true) => Alignment::AlignLeft,
@@ -790,6 +791,7 @@ struct Trace {
 impl Grid {
     /// Builds the grid and its indexes from the lines of display columns.
     fn new(rows: Vec<Vec<char>>, rules: Vec<bool>) -> Grid {
+        let outer = rows.first().map_or(0, |row| row.len().saturating_sub(1));
         let width = rows.iter().map(Vec::len).max().unwrap_or(0);
         let mut grid = Grid {
             rows,
@@ -803,6 +805,10 @@ impl Grid {
             for (x, c) in row.iter().enumerate() {
                 crate::step(1);
                 if *c != '|'
+                    && !(x == outer
+                        && row.len() > outer + 1
+                        && row.last() == Some(&'|')
+                        && row.first() == Some(&'|'))
                     && let Some(list) = grid.marks.get_mut(x)
                 {
                     list.push(y);
@@ -933,9 +939,15 @@ impl Grid {
         let lines: Vec<String> = (cell.top + 1..cell.bottom)
             .map(|y| {
                 let row = self.rows.get(y).map_or(&[][..], Vec::as_slice);
-                let inside = row
-                    .get(cell.left + 1..cell.right.min(row.len()))
-                    .unwrap_or(&[]);
+                let right = if cell.right + 1 == self.row_len(0)
+                    && row.len() > cell.right + 1
+                    && row.last() == Some(&'|')
+                {
+                    row.len() - 1
+                } else {
+                    cell.right
+                };
+                let inside = row.get(cell.left + 1..right.min(row.len())).unwrap_or(&[]);
                 crate::step(inside.len() + 1);
                 let text: String = inside.iter().filter(|c| **c != WIDE_FILL).collect();
                 text.trim_end_matches(SPACE).to_string()
@@ -1067,7 +1079,29 @@ fn grid_table(
     let alignment_line = head_end
         .and_then(|y| grid.rows.get(y))
         .or(grid.rows.first());
-    let col_specs = grid_col_specs(&xs, alignment_line.map_or(&[][..], Vec::as_slice), options);
+    let mut col_specs = grid_col_specs(&xs, alignment_line.map_or(&[][..], Vec::as_slice), options);
+    if let [.., left, right] = xs.as_slice()
+        && *right + 1 == grid.row_len(0)
+        && let Some(width) = grid
+            .rows
+            .iter()
+            .filter(|row| row.first() == Some(&'|') && row.last() == Some(&'|'))
+            .map(Vec::len)
+            .max()
+            .filter(|width| *width > *right + 1)
+    {
+        let outer = width - 1;
+        let columns = options.columns.max(outer).max(1);
+        for spec in col_specs.iter_mut() {
+            if let ColWidth::ColWidth(width) = &mut spec.width {
+                *width *= options.columns.max(*right).max(1) as f64 / columns as f64;
+            }
+        }
+        if let Some(last) = col_specs.last_mut() {
+            last.align = Alignment::AlignDefault;
+            last.width = ColWidth::ColWidth((outer - left) as f64 / columns as f64);
+        }
+    }
 
     let mut built: Vec<(usize, usize, Cell)> = cells
         .iter()

@@ -5,14 +5,14 @@ mod tables;
 
 use std::collections::HashMap;
 
-use randoc_ast::{Attr, Pandoc, Text};
+use randoc_ast::{Attr, Block, Pandoc, Text};
 use randoc_core::{Context, Error, Result, WrapOption, WriterOptions};
-use randoc_layout::{Doc, vcat, vsep};
+use randoc_layout::{Doc, literal, nest, vcat, vsep};
 
 struct Writer<'a> {
     options: &'a WriterOptions,
     context: &'a mut Context,
-    notes: Vec<Doc>,
+    notes: Vec<(Vec<Block>, usize)>,
     links: Vec<Doc>,
     link_urls: HashMap<String, String>,
     images: Vec<Doc>,
@@ -44,13 +44,21 @@ impl Writer<'_> {
             .flatten()
     }
 
-    fn append_definitions(&mut self, body: Doc) -> Doc {
-        vsep([
+    fn append_definitions(&mut self, body: Doc) -> Result<Doc> {
+        let mut notes = Vec::new();
+        while notes.len() < self.notes.len() {
+            let number = notes.len() + 1;
+            let (blocks, depth) = std::mem::take(&mut self.notes[number - 1]);
+            let body = self.blocks(&blocks, depth)?;
+            notes.push(literal(format!(".. [{number}]")).above(nest(3, body)));
+        }
+        self.notes.clear();
+        Ok(vsep([
             body,
-            vsep(std::mem::take(&mut self.notes)),
+            vsep(notes),
             vcat(std::mem::take(&mut self.links)),
             vcat(std::mem::take(&mut self.images)),
-        ])
+        ]))
     }
 }
 
@@ -70,7 +78,7 @@ pub(super) fn write(doc: &Pandoc, options: &WriterOptions, context: &mut Context
         writer.standalone(doc)
     } else {
         let body = writer.blocks(&doc.blocks, 0)?;
-        let mut output = writer.append_definitions(body).render(writer.width());
+        let mut output = writer.append_definitions(body)?.render(writer.width());
         if !output.is_empty() && !output.ends_with('\n') {
             output.push('\n');
         }

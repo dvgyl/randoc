@@ -13,7 +13,7 @@ use randoc_ast::{
     ListAttributes, ListNumberDelim, ListNumberStyle, MathType, Meta, Pandoc, Row, Table,
     TableBody, TableFoot, TableHead, Target,
 };
-use randoc_core::shared::{IdentifierSet, auto_identifier};
+use randoc_core::shared::{IdentifierSet, auto_identifier, stringify};
 use randoc_core::{Context, Error, Extensions, MediaItem, ReaderOptions, Result};
 
 use crate::ns::{DRAW, MATH, OFFICE, SVG, TABLE, TEXT, XLINK, XML, is_el};
@@ -276,9 +276,11 @@ impl<'a, 'b> Converter<'a, 'b> {
             .unwrap_or_default();
 
         // Preformatted code block paragraph.
+        // Pandoc reads its inlines and keeps their plain text, so a line
+        // break or a tab becomes one space.
         if flags.preformatted {
-            let line = self.extract_code_text(el, depth + 1)?;
-            out.push(RawBlock::CodeLine(line));
+            let inlines = self.convert_inlines(el, depth + 1)?;
+            out.push(RawBlock::CodeLine(stringify(&inlines)));
             return Ok(());
         }
 
@@ -426,18 +428,9 @@ impl<'a, 'b> Converter<'a, 'b> {
         let level_kind = style_name.and_then(|sn| self.styles.list_level(sn, level));
 
         let mut items: Vec<Vec<Block>> = Vec::new();
-        let mut first_item_start: Option<i64> = None;
-
+        // Pandoc ignores `text:start-value` on a list item.
         for child in el.elements() {
             if is_el(child, TEXT, "list-item") || is_el(child, TEXT, "list-header") {
-                if items.is_empty()
-                    && first_item_start.is_none()
-                    && let Some(sv) = child
-                        .attr(TEXT, "start-value")
-                        .and_then(|s| s.trim().parse::<i64>().ok())
-                {
-                    first_item_start = Some(sv);
-                }
                 let item_blocks = self.convert_list_item(child, style_name, level, depth + 1)?;
                 items.push(item_blocks);
             }
@@ -453,7 +446,6 @@ impl<'a, 'b> Converter<'a, 'b> {
                 delim,
             }) => {
                 let start = self.resolve_list_start(
-                    first_item_start,
                     style_start,
                     style_name,
                     level,
@@ -481,7 +473,6 @@ impl<'a, 'b> Converter<'a, 'b> {
             None => {
                 // Unstyled list -> OrderedList (1, DefaultStyle, DefaultDelim)
                 let start = self.resolve_list_start(
-                    first_item_start,
                     1,
                     style_name,
                     level,
@@ -511,16 +502,12 @@ impl<'a, 'b> Converter<'a, 'b> {
 
     fn resolve_list_start(
         &self,
-        first_item_start: Option<i64>,
         style_start: i64,
         style_name: Option<&str>,
         level: usize,
         continue_numbering: bool,
         continue_list: Option<&str>,
     ) -> i64 {
-        if let Some(sv) = first_item_start {
-            return sv;
-        }
         if let Some(target_id) = continue_list
             && let Some(&next) = self.list_next_by_id.get(target_id)
         {
@@ -781,8 +768,8 @@ impl<'a, 'b> Converter<'a, 'b> {
         if is_el(el, TEXT, "span") {
             let style_name = el.attr(TEXT, "style-name");
             if style_name.is_some_and(|sn| self.styles.is_inline_code(sn)) {
-                let code_text = self.extract_code_text(el, depth + 1)?;
-                out.push(Inline::Code(Attr::default(), code_text));
+                let inlines = self.convert_inlines(el, depth + 1)?;
+                out.push(Inline::Code(Attr::default(), stringify(&inlines)));
                 return Ok(());
             }
             let props = style_name
@@ -797,18 +784,31 @@ impl<'a, 'b> Converter<'a, 'b> {
         } else if is_el(el, TEXT, "s") {
             let count = space_count(el);
             self.charge_spaces(count)?;
+            // Pandoc joins the first space with a space or a break before it.
             if count > 0 {
-                if matches!(out.last(), Some(Inline::Space)) {
-                    out.pop();
-                }
-                out.extend(std::iter::repeat_n(Inline::Space, count));
+                let joined = match out.last() {
+                    Some(Inline::Space) => {
+                        out.pop();
+                        0
+                    }
+                    Some(Inline::SoftBreak | Inline::LineBreak) => 1,
+                    _ => 0,
+                };
+                out.extend(std::iter::repeat_n(Inline::Space, count - joined));
             }
         } else if is_el(el, TEXT, "tab") {
             // Multiple consecutive tabs/spaces collapse to one Space (verified in `tab.native`).
-            if !matches!(out.last(), Some(Inline::Space)) {
+            if !matches!(
+                out.last(),
+                Some(Inline::Space | Inline::SoftBreak | Inline::LineBreak)
+            ) {
                 out.push(Inline::Space);
             }
         } else if is_el(el, TEXT, "line-break") {
+            // A line break takes the place of a space or a soft break next to it.
+            if matches!(out.last(), Some(Inline::Space | Inline::SoftBreak)) {
+                out.pop();
+            }
             out.push(Inline::LineBreak);
         } else if is_el(el, TEXT, "soft-page-break") {
             // Transparent; does not split Str tokens.
@@ -1128,40 +1128,6 @@ impl<'a, 'b> Converter<'a, 'b> {
             },
         )))
     }
-
-    fn extract_code_text(&mut self, el: &XmlElement, depth: usize) -> Result<String> {
-        self.check_depth(depth)?;
-        let mut out = String::new();
-        for node in &el.children {
-            match node {
-                XmlNode::Text(t) => {
-                    self.charge_repeated_bytes(t.len())?;
-                    out.push_str(t);
-                }
-                XmlNode::Element(child) => {
-                    if is_el(child, TEXT, "s") {
-                        let count = space_count(child);
-                        self.charge_spaces(count)?;
-                        for _ in 0..count {
-                            out.push(' ');
-                        }
-                    } else if is_el(child, TEXT, "tab") {
-                        out.push('\t');
-                    } else if is_el(child, TEXT, "line-break") {
-                        out.push('\n');
-                    } else if is_el(child, TEXT, "soft-page-break")
-                        || is_el(child, OFFICE, "annotation")
-                    {
-                        // ignore
-                    } else {
-                        let sub = self.extract_code_text(child, depth + 1)?;
-                        out.push_str(&sub);
-                    }
-                }
-            }
-        }
-        Ok(out)
-    }
 }
 
 /// Elements under `<office:text>` that Pandoc's ODT reader ignores completely.
@@ -1302,14 +1268,24 @@ fn apply_text_props(mut inlines: Vec<Inline>, props: TextProps) -> Vec<Inline> {
 
 fn push_prose_text(text: &str, out: &mut Vec<Inline>) {
     let mut word = String::new();
-    let mut in_space = matches!(out.last(), Some(Inline::Space));
+    let mut in_space = matches!(
+        out.last(),
+        Some(Inline::Space | Inline::SoftBreak | Inline::LineBreak)
+    );
     for ch in text.chars() {
         if ch == '\n' {
             if !word.is_empty() {
                 out.push(Inline::Str(std::mem::take(&mut word)));
             }
-            in_space = false;
-            out.push(Inline::SoftBreak);
+            match out.last() {
+                Some(Inline::LineBreak | Inline::SoftBreak) => {}
+                Some(Inline::Space) => {
+                    out.pop();
+                    out.push(Inline::SoftBreak);
+                }
+                _ => out.push(Inline::SoftBreak),
+            }
+            in_space = true;
         } else if ch == ' ' || ch == '\t' || ch == '\r' {
             if !word.is_empty() {
                 out.push(Inline::Str(std::mem::take(&mut word)));

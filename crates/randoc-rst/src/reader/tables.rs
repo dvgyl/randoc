@@ -176,8 +176,16 @@ impl Parser<'_> {
             }
             let row_start = cursor;
             cursor += 1;
-            while cursor < end && Some(cursor) != head_end && input[cursor].indent() >= layout[1].0
-            {
+            while cursor < end && Some(cursor) != head_end {
+                let line = input[cursor];
+                if line.indent() < layout[1].0
+                    && !(line.blank()
+                        && input
+                            .get(cursor + 1)
+                            .is_some_and(|l| l.indent() >= layout[1].0))
+                {
+                    break;
+                }
                 cursor += 1;
             }
             let row_end = cursor;
@@ -214,23 +222,36 @@ impl Parser<'_> {
             for &line in &input[row_start..row_end] {
                 let offsets = cuts(line.text, &positions);
                 for (cell, range) in contents.iter_mut().zip(offsets.windows(2)) {
-                    cell.push(line.with(line.text[range[0]..range[1]].trim()));
+                    let text = line.text[range[0]..range[1]].trim_end();
+                    cell.push(line.with(if text.trim() == "\\" { "" } else { text }));
                 }
             }
             let cells = contents
                 .into_iter()
                 .zip(spans)
                 .map(|(content, (left, right))| {
-                    self.parse_cell(&content, depth + 1).map(|mut cell| {
-                        cell.col_span = (right - left) as i64;
-                        cell
-                    })
+                    let margin = content
+                        .iter()
+                        .filter(|line| !line.blank())
+                        .map(|line| line.indent())
+                        .min()
+                        .unwrap_or(0);
+                    let content: Vec<_> = content.iter().map(|line| line.cut(margin)).collect();
+                    let mut cell = self.parse_cell(&content, depth + 1)?;
+                    cell.col_span = (right - left) as i64;
+                    Ok(cell)
                 })
                 .collect::<Result<_>>()?;
             rows.push(Row {
                 cells,
                 ..Row::default()
             });
+        }
+        let (head, body) = rows.split_at_mut(header);
+        for section in [head, body] {
+            if section.iter().all(simple_row) {
+                section.iter_mut().for_each(plain_row);
+            }
         }
         let table = make_table(vec![ColSpec::default(); layout.len()], rows, header);
         Ok(Some((Block::Table(Box::new(table)), end + 1)))
@@ -400,12 +421,8 @@ impl Parser<'_> {
     }
 
     fn parse_cell(&mut self, content: &[Line<'_>], depth: usize) -> Result<Cell> {
-        let mut blocks = self.blocks(content, depth)?;
-        if blocks.len() == 1 {
-            plain_first(&mut blocks);
-        }
         Ok(Cell {
-            content: blocks,
+            content: self.blocks(content, depth)?,
             ..Cell::default()
         })
     }
@@ -505,13 +522,17 @@ impl Parser<'_> {
                 cells.push(self.parse_cell(&content, depth + 1)?);
                 cursor = end;
             }
-            layout.push(Row {
+            let mut row = Row {
                 cells,
                 ..Row::default()
-            });
+            };
+            if tight_row(&row) {
+                plain_row(&mut row);
+            }
+            layout.push(row);
             i = end;
         }
-        self.directive_rows(layout, header_count(fields))
+        self.directive_rows(layout, usize::from(header_count(fields) > 0))
     }
 
     fn csv_table(
@@ -544,7 +565,11 @@ impl Parser<'_> {
         let escape = field(fields, "escape").and_then(|s| s.chars().next());
         let header = field(fields, "header");
         let mut rows = Vec::new();
-        for text in header.into_iter().chain(std::iter::once(text)) {
+        for (delimiter, text) in header
+            .map(|header| (',', header))
+            .into_iter()
+            .chain(std::iter::once((delimiter, text)))
+        {
             let mut chars = text.chars().peekable();
             let mut quoted = false;
             let mut value = String::new();
@@ -590,6 +615,9 @@ impl Parser<'_> {
                 });
             }
         }
+        if rows.iter().all(simple_row) {
+            rows.iter_mut().for_each(plain_row);
+        }
         self.directive_rows(
             rows,
             if header.is_some() {
@@ -613,6 +641,25 @@ impl Parser<'_> {
             row.cells.resize_with(cols, Cell::default);
         }
         Ok(make_table(vec![ColSpec::default(); cols], rows, header))
+    }
+}
+
+fn tight_row(row: &Row) -> bool {
+    row.cells.iter().all(|cell| cell.content.len() <= 1)
+}
+
+fn simple_row(row: &Row) -> bool {
+    row.cells.iter().all(|cell| {
+        matches!(
+            cell.content.as_slice(),
+            [] | [Block::Para(_) | Block::Plain(_)]
+        )
+    })
+}
+
+fn plain_row(row: &mut Row) {
+    for cell in &mut row.cells {
+        plain_first(&mut cell.content);
     }
 }
 

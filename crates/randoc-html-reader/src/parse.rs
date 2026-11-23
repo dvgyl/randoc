@@ -8,6 +8,8 @@
 //! remembered for its token, a failed inline element is not tried a second
 //! way, and a step budget stops input that needs more work than that.
 
+use std::collections::hash_map::Entry;
+
 use randoc_archive::{mathml::mathml_str_to_tex, xml::XmlLimits};
 use randoc_ast::{
     Attr, Block, Caption, Format, Inline, ListAttributes, ListNumberDelim, ListNumberStyle,
@@ -16,6 +18,7 @@ use randoc_ast::{
 use randoc_core::shared::stringify;
 use randoc_core::{Extension, Extensions, Limits, LogMessage, SourcePos};
 
+use crate::iframe::Outcome;
 use crate::table::CellBudget;
 use crate::text::{
     Inlines, TextMode, attribute, clean_attributes, escape_uri, is_blank, quoted_text_inlines,
@@ -197,6 +200,11 @@ struct Snapshot {
     headings: usize,
 }
 
+/// An internal block marker. Input cannot make a raw block with this format.
+const IFRAME_FORMAT: &str = "\u{0}randoc-iframe";
+
+type ReadIframe<'a> = dyn FnMut(&str, usize) -> Outcome + 'a;
+
 /// The parser of one token list.
 pub(crate) struct Parser<'a> {
     input: &'a str,
@@ -240,6 +248,8 @@ pub(crate) struct Parser<'a> {
     meta_index: std::collections::HashMap<Text, usize>,
     /// The `href` of the `base` element.
     pub(crate) base: Option<BaseUri>,
+    pub(crate) read_iframe: Option<&'a mut ReadIframe<'a>>,
+    iframes: std::collections::HashMap<usize, Outcome>,
 }
 
 impl<'a> Parser<'a> {
@@ -282,6 +292,8 @@ impl<'a> Parser<'a> {
             meta: Vec::new(),
             meta_index: std::collections::HashMap::new(),
             base: None,
+            read_iframe: None,
+            iframes: std::collections::HashMap::new(),
         }
     }
 
@@ -440,7 +452,10 @@ impl<'a> Parser<'a> {
         self.ended_at_eof = self.at_end();
         match self.peek() {
             None => true,
-            Some(TokenKind::Close(name)) if name == tag => {
+            Some(TokenKind::Close(name))
+                if name == tag
+                    || matches!(name.as_str(), "td" | "th") && matches!(tag, "td" | "th") =>
+            {
                 self.pos += 1;
                 true
             }
@@ -584,18 +599,12 @@ impl<'a> Parser<'a> {
             }
             "figure" => self.attempt(out, Self::figure),
             "script" if self.is_math_script() => self.plain_or_raw(out),
-            "iframe"
-                if self.has(Extension::RawHtml)
-                    || attribute(attributes, "src").is_none_or(str::is_empty) =>
-            {
-                self.plain_or_raw(out)
-            }
-            "script" | "style" | "textarea" | "iframe" => {
+            "iframe" => self.iframe(attributes, out),
+            "script" | "style" | "textarea" => {
                 let end = match name {
                     "script" => self.raw_element_end("script"),
                     "style" => self.raw_element_end("style"),
-                    "textarea" => self.raw_element_end("textarea"),
-                    _ => self.element_end("iframe"),
+                    _ => self.raw_element_end("textarea"),
                 };
                 if let Some(raw) = self.skip_raw_escaped(end, name == "textarea") {
                     out.push(Block::RawBlock(Format::new("html"), raw));
@@ -604,6 +613,90 @@ impl<'a> Parser<'a> {
             }
             _ => self.plain_or_raw(out),
         }
+    }
+
+    fn iframe(&mut self, attributes: &[(Text, Text)], out: &mut Vec<Block>) -> Parse<()> {
+        let Some(src) = attribute(attributes, "src") else {
+            return self.plain_or_raw(out);
+        };
+        if self.has(Extension::RawHtml) {
+            return self.plain_or_raw(out);
+        }
+        let start = self.pos;
+        let mut end = start + 1;
+        while match self.toks.get(end).map(|token| &token.kind) {
+            Some(TokenKind::Comment(_)) => true,
+            Some(TokenKind::Text(text)) => is_blank(text),
+            _ => false,
+        } {
+            end += 1;
+            self.step()?;
+        }
+        match self.toks.get(end).map(|token| &token.kind) {
+            Some(TokenKind::Close(name)) if name == "iframe" => {}
+            None => {}
+            _ => return self.plain_or_raw(out),
+        }
+        if src.is_empty() {
+            self.skip_iframe(start, end);
+            return Ok(());
+        }
+        let outcome = match self.iframes.entry(start) {
+            Entry::Occupied(entry) => entry.into_mut(),
+            Entry::Vacant(entry) => {
+                let resolved = self
+                    .base
+                    .as_ref()
+                    .and_then(|base| resolve_against(&base.parts(), src));
+                let Some(read) = &mut self.read_iframe else {
+                    return self.plain_or_raw(out);
+                };
+                let depth = self.max_depth.saturating_sub(self.depth + 1);
+                entry.insert(read(resolved.as_deref().unwrap_or(src), depth))
+            }
+        };
+        self.logs
+            .extend(outcome.logs.iter().cloned().map(|log| (start, log)));
+        if outcome.block.is_some() {
+            // Insert the child after this document has resolved its headings
+            // and notes. The child has its own identifiers and note references.
+            out.push(Block::RawBlock(
+                Format::new(IFRAME_FORMAT),
+                start.to_string(),
+            ));
+        } else {
+            self.skip_iframe(start, end);
+        }
+        self.pos = (end + 1).min(self.toks.len());
+        Ok(())
+    }
+
+    fn skip_iframe(&mut self, start: usize, end: usize) {
+        let mut raw = String::new();
+        self.render(start, &mut raw);
+        raw.push_str("</iframe>");
+        let position = self.position(end.min(self.toks.len() - 1));
+        self.logs
+            .push((start, LogMessage::SkippedContent(raw, position)));
+        self.pos = (end + 1).min(self.toks.len());
+    }
+
+    pub(crate) fn resolve_iframes(&self, blocks: &mut Vec<Block>) {
+        if self.iframes.is_empty() {
+            return;
+        }
+        randoc_ast::walk::walk_blocks_mut(blocks, |block| {
+            if let Block::RawBlock(format, index) = block
+                && format.0 == IFRAME_FORMAT
+                && let Ok(index) = index.parse::<usize>()
+                && let Some(child) = self
+                    .iframes
+                    .get(&index)
+                    .and_then(|entry| entry.block.as_ref())
+            {
+                *block = child.clone();
+            }
+        });
     }
 
     /// Runs a block rule. When the rule fails, the tag is unknown markup.
@@ -767,11 +860,7 @@ impl<'a> Parser<'a> {
             return Err(Stop::Fail);
         };
         let attr = to_attr(&clean_attributes(attributes));
-        let content = self.blocks_in(name)?;
-        if !content.is_empty() {
-            out.push(Block::Div(attr, content));
-        }
-        Ok(())
+        self.endnotes(name, attr, out)
     }
 
     /// A block or either element whose `epub:type` is exactly `toc`: Pandoc
@@ -1545,12 +1634,12 @@ impl<'a> Parser<'a> {
             return Err(Stop::Fail);
         }
         let mut attr = to_attr(&clean);
+        if attr.id.is_empty() {
+            attr.id = attribute(&clean, "name").unwrap_or_default().to_owned();
+        }
+        attr.attributes
+            .retain(|(key, _)| !matches!(key.as_str(), "name" | "title" | "href"));
         let Some(href) = attribute(&clean, "href") else {
-            if attr.id.is_empty() {
-                attr.id = attribute(&clean, "name").unwrap_or_default().to_owned();
-            }
-            attr.attributes
-                .retain(|(key, _)| key != "name" && key != "title");
             out.append(content.wrap_extracting_spaces(|content| Inline::Span(attr, content)));
             return Ok(());
         };
@@ -1558,8 +1647,6 @@ impl<'a> Parser<'a> {
             self.url(href),
             attribute(&clean, "title").unwrap_or_default(),
         );
-        attr.attributes
-            .retain(|(key, _)| key != "href" && key != "title");
         out.append(content.wrap_extracting_spaces(|content| Inline::Link(attr, content, target)));
         Ok(())
     }
@@ -1633,9 +1720,9 @@ impl<'a> Parser<'a> {
     }
 
     /// An inline `svg` element is an image with the element as a data URI,
-    /// rendered as `tagsoup` does: a tag that closes itself in the source
-    /// (`<rect/>`) is minimized, and text is escaped, but not in `style` and
-    /// `script`. The image has the identifier and the classes of the element.
+    /// rendered as `tagsoup` does. It uses a single tag for certain empty
+    /// elements and escapes text outside `style` and `script`. The image
+    /// has the identifier and the classes of the SVG element.
     fn svg(&mut self, attributes: &[(Text, Text)], out: &mut Inlines) -> Parse<()> {
         let full = to_attr(&clean_attributes(attributes));
         let attr = Attr::new(full.id, full.classes, Vec::new());
@@ -1647,8 +1734,11 @@ impl<'a> Parser<'a> {
             let previous = index.checked_sub(1).and_then(|at| self.toks.get(at));
             match (&token.kind, next) {
                 (TokenKind::Open(name, attributes), Some(close))
-                    if close.kind == TokenKind::Close(name.clone())
-                        && (close.line, close.column) == (token.line, token.column) =>
+                    if matches!(&close.kind, TokenKind::Close(close) if close == name)
+                        && matches!(
+                            name.as_str(),
+                            "br" | "col" | "hr" | "img" | "link" | "meta" | "path" | "rect" | "use"
+                        ) =>
                 {
                     render_open(name, attributes, &mut raw);
                     raw.pop();
@@ -1726,6 +1816,13 @@ impl<'a> Parser<'a> {
 impl<'a> Parser<'a> {
     pub(crate) fn peek_kind(&self) -> Option<&'a TokenKind> {
         self.peek()
+    }
+
+    pub(crate) fn previous_is_close(&self, tag: &str) -> bool {
+        matches!(
+            self.pos.checked_sub(1).and_then(|index| self.toks.get(index)),
+            Some(Token { kind: TokenKind::Close(name), .. }) if name == tag
+        )
     }
 
     pub(crate) fn advance(&mut self) {

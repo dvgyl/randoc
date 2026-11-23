@@ -3,7 +3,7 @@ use std::fmt::Write;
 use randoc_ast::{Attr, Inline, MathType, QuoteType, Target};
 use randoc_core::{LogMessage, Result};
 
-use super::styles::Kind;
+use super::styles::{Kind, Styles};
 use super::xml::{Xml, bookmark_end, size_error};
 use super::{Renderer, bookmark_name};
 
@@ -61,39 +61,39 @@ impl<'a> Run<'a> {
         if let Some(style) = self.style {
             out.raw(r#"<w:rStyle w:val=""#);
             out.escaped(style);
-            out.raw("\"/>");
+            out.raw("\" />");
         }
         if east_asia {
-            out.raw(r#"<w:rFonts w:hint="eastAsia"/>"#);
+            out.raw(r#"<w:rFonts w:hint="eastAsia" />"#);
         }
         if self.marks & BOLD != 0 {
-            out.raw("<w:b/><w:bCs/>");
+            out.raw("<w:b /><w:bCs />");
         }
         if self.marks & ITALIC != 0 {
-            out.raw("<w:i/><w:iCs/>");
+            out.raw("<w:i /><w:iCs />");
         }
         if self.marks & SMALL_CAPS != 0 {
-            out.raw("<w:smallCaps/>");
+            out.raw("<w:smallCaps />");
         }
         if self.marks & STRIKE != 0 {
-            out.raw("<w:strike/>");
+            out.raw("<w:strike />");
         }
         if self.marks & MARK != 0 {
-            out.raw(r#"<w:highlight w:val="yellow"/>"#);
+            out.raw(r#"<w:highlight w:val="yellow" />"#);
         }
         if self.marks & UNDERLINE != 0 {
-            out.raw(r#"<w:u w:val="single"/>"#);
+            out.raw(r#"<w:u w:val="single" />"#);
         }
         if let Some(vertical) = self.vertical {
-            let _ = write!(out, "<w:vertAlign w:val=\"{vertical}\"/>");
+            let _ = write!(out, "<w:vertAlign w:val=\"{vertical}\" />");
         }
         if self.rtl {
-            out.raw("<w:rtl/>");
+            out.raw("<w:rtl />");
         }
         if let Some(lang) = self.lang {
             out.raw(r#"<w:lang w:val=""#);
             out.escaped(lang);
-            out.raw("\"/>");
+            out.raw("\" />");
         }
         out.raw("</w:rPr>");
     }
@@ -104,17 +104,30 @@ impl<'a> Run<'a> {
         out.raw("</w:r>");
     }
 
+    /// Writes text in runs as Pandoc does: a word with an East Asian
+    /// character gets its own run with the East Asian font hint; the other
+    /// words and the white space between words share runs.
     pub(super) fn text(self, out: &mut Xml, value: &str) {
         let mut start = 0;
-        let mut east_asia = value.chars().next().is_some_and(is_east_asian);
-        for (index, ch) in value.char_indices() {
-            if is_east_asian(ch) != east_asia {
-                self.text_run(out, &value[start..index], east_asia);
-                start = index;
-                east_asia = !east_asia;
+        let mut index = 0;
+        while index < value.len() {
+            let rest = &value[index..];
+            let end = rest
+                .char_indices()
+                .find(|(_, ch)| is_space(*ch) != rest.starts_with(is_space))
+                .map_or(value.len(), |(offset, _)| index + offset);
+            if value[index..end].chars().any(is_east_asian) {
+                if start < index {
+                    self.text_run(out, &value[start..index], false);
+                }
+                self.text_run(out, &value[index..end], true);
+                start = end;
             }
+            index = end;
         }
-        self.text_run(out, &value[start..], east_asia);
+        if start < value.len() || value.is_empty() {
+            self.text_run(out, &value[start..], false);
+        }
     }
 
     fn text_run(self, out: &mut Xml, value: &str, east_asia: bool) {
@@ -133,55 +146,55 @@ impl Renderer<'_> {
         run: Run<'_>,
         depth: usize,
     ) -> Result<()> {
-        if !inlines.is_empty() {
+        let pieces: Vec<_> = inlines.iter().map(Piece::Inline).collect();
+        self.pieces(out, &pieces, run, depth)
+    }
+
+    /// Writes inlines as Pandoc does: `Str Str` and `Str Space Str` join
+    /// into one run, and each other inline gives its own runs.
+    pub(super) fn pieces(
+        &mut self,
+        out: &mut Xml,
+        pieces: &[Piece<'_>],
+        run: Run<'_>,
+        depth: usize,
+    ) -> Result<()> {
+        if !pieces.is_empty() {
             self.depth(depth)?;
         }
-        if inlines.len() > 1 && inlines.iter().all(|inline| plain_text(inline).is_some()) {
-            return self.plain(out, inlines, run, "");
-        }
-        let mut rest = inlines;
-        while let Some((inline, tail)) = rest.split_first() {
-            if !self.comment_ids.is_empty() && matches!(inline, Inline::Str(_)) {
-                let count = rest
-                    .iter()
-                    .take_while(|inline| plain_text(inline).is_some())
-                    .count();
-                let end = rest[..count]
-                    .iter()
-                    .rposition(|inline| matches!(inline, Inline::Str(_)))
-                    .unwrap_or_default()
-                    + 1;
-                self.plain(out, &rest[..end], run, "")?;
-                rest = &rest[end..];
+        let mut rest = pieces;
+        while let Some((piece, tail)) = rest.split_first() {
+            if piece.text().is_some() {
+                let mut count = 1;
+                loop {
+                    match rest.get(count..) {
+                        Some([next, ..]) if next.text().is_some() => count += 1,
+                        Some([Piece::Inline(Inline::Space), next, ..]) if next.text().is_some() => {
+                            count += 2;
+                        }
+                        _ => break,
+                    }
+                }
+                let limit = self.budget.remaining();
+                let mut value = String::new();
+                for piece in &rest[..count] {
+                    let text = piece.text().unwrap_or(" ");
+                    if text.len() > limit.saturating_sub(value.len()) {
+                        return Err(size_error());
+                    }
+                    value.push_str(text);
+                }
+                run.text(out, &value);
+                rest = &rest[count..];
             } else {
-                self.inline(out, inline, run, depth + 1)?;
+                if let Piece::Inline(inline) = piece {
+                    self.inline(out, inline, run, depth + 1)?;
+                }
                 rest = tail;
             }
             self.budget.check()?;
         }
         Ok(())
-    }
-
-    pub(super) fn plain(
-        &self,
-        out: &mut Xml,
-        inlines: &[Inline],
-        run: Run<'_>,
-        prefix: &str,
-    ) -> Result<()> {
-        let limit = self.budget.remaining();
-        if prefix.len() > limit {
-            return Err(size_error());
-        }
-        let mut value = String::from(prefix);
-        for text in inlines.iter().filter_map(plain_text) {
-            if text.len() > limit.saturating_sub(value.len()) {
-                return Err(size_error());
-            }
-            value.push_str(text);
-        }
-        run.text(out, &value);
-        self.budget.check()
     }
 
     fn inline(
@@ -194,7 +207,7 @@ impl Renderer<'_> {
         match inline {
             Inline::Str(value) => run.text(out, value),
             Inline::Space | Inline::SoftBreak => run.text(out, " "),
-            Inline::LineBreak => run.markup(out, "<w:br/>"),
+            Inline::LineBreak => run.markup(out, "<w:br />"),
             Inline::RawInline(format, xml) => {
                 if format.0 == "openxml" {
                     out.raw(xml);
@@ -233,9 +246,10 @@ impl Renderer<'_> {
                     QuoteType::SingleQuote => ("‘", "’"),
                     QuoteType::DoubleQuote => ("“", "”"),
                 };
-                run.text(out, left);
-                self.inlines(out, children, run, depth)?;
-                run.text(out, right);
+                let mut pieces = vec![Piece::Text(left)];
+                pieces.extend(children.iter().map(Piece::Inline));
+                pieces.push(Piece::Text(right));
+                return self.pieces(out, &pieces, run, depth);
             }
             Inline::Cite(_, children) => return self.inlines(out, children, run, depth),
             Inline::Span(attr, children) => return self.span(out, attr, children, run, depth),
@@ -251,7 +265,7 @@ impl Renderer<'_> {
                 return self.image(out, attr, children, target, run, depth);
             }
             Inline::Math(kind, tex) => self.math(out, *kind, tex, run, depth)?,
-            Inline::Note(blocks) => return self.note(out, blocks, run, depth),
+            Inline::Note(blocks) => return self.note(out, blocks, depth),
         }
         Ok(())
     }
@@ -344,10 +358,10 @@ impl Renderer<'_> {
                 Ok(code) => {
                     for (index, line) in code.lines.iter().enumerate() {
                         if index > 0 {
-                            Run::default().markup(out, "<w:br/>");
+                            Run::default().markup(out, "<w:br />");
                         }
                         for (token, text) in line {
-                            let style = self.styles.token(*token, &self.budget)?;
+                            let style = Styles::token(*token);
                             Run::default().styled(&style).text(out, text);
                         }
                         self.budget.check()?;
@@ -360,7 +374,7 @@ impl Renderer<'_> {
         let run = run.styled(self.styles.id(Kind::Character, "VerbatimChar"));
         for (index, line) in code.split('\n').enumerate() {
             if index > 0 {
-                Run::default().markup(out, "<w:br/>");
+                Run::default().markup(out, "<w:br />");
             }
             run.text(out, line);
             self.budget.check()?;
@@ -384,7 +398,7 @@ impl Renderer<'_> {
             Ok(xml) => {
                 if kind == MathType::DisplayMath {
                     out.raw(
-                        r#"<m:oMathPara><m:oMathParaPr><m:jc m:val="center"/></m:oMathParaPr>"#,
+                        r#"<m:oMathPara><m:oMathParaPr><m:jc m:val="center" /></m:oMathParaPr>"#,
                     );
                 }
                 out.raw(&xml);
@@ -409,14 +423,29 @@ impl Renderer<'_> {
     }
 }
 
-fn is_east_asian(ch: char) -> bool {
-    matches!(ch, '\u{2E80}'..='\u{A4CF}' | '\u{AC00}'..='\u{D7AF}' | '\u{F900}'..='\u{FAFF}' | '\u{20000}'..='\u{323AF}')
+/// An inline, or text that Pandoc adds as a `Str`, such as a quotation mark.
+pub(super) enum Piece<'a> {
+    Inline(&'a Inline),
+    Text(&'static str),
 }
 
-pub(super) fn plain_text(inline: &Inline) -> Option<&str> {
-    match inline {
-        Inline::Str(text) => Some(text),
-        Inline::Space | Inline::SoftBreak => Some(" "),
-        _ => None,
+impl Piece<'_> {
+    fn text(&self) -> Option<&str> {
+        match self {
+            Piece::Inline(Inline::Str(text)) => Some(text),
+            Piece::Text(text) => Some(text),
+            Piece::Inline(_) => None,
+        }
     }
+}
+
+/// Returns `true` for the white space of Haskell's `isSpace`: the ASCII
+/// spaces, the no-break space and the other space separators.
+fn is_space(ch: char) -> bool {
+    matches!(ch, ' ' | '\t'..='\r' | '\u{a0}')
+        || (ch > '\u{ff}' && ch.is_whitespace() && !matches!(ch, '\u{2028}' | '\u{2029}'))
+}
+
+fn is_east_asian(ch: char) -> bool {
+    matches!(ch, '\u{2E80}'..='\u{A4CF}' | '\u{AC00}'..='\u{D7AF}' | '\u{F900}'..='\u{FAFF}' | '\u{20000}'..='\u{323AF}')
 }

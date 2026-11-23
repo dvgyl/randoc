@@ -299,6 +299,8 @@ impl Parser<'_> {
                     is_raw_block_tag(tag.name)
                         || tag.name.eq_ignore_ascii_case("p")
                         || tag.name.eq_ignore_ascii_case("gallery")
+                        || is_code_block_tag(tag.name)
+                        || tag.close && tag.name.eq_ignore_ascii_case("blockquote")
                         || !tag.close
                             && tag.name.eq_ignore_ascii_case("blockquote")
                             && scan.region(at, end).is_some()
@@ -515,7 +517,10 @@ impl Parser<'_> {
         if self.wiki == Wiki::Media && matches!(name.as_str(), "p" | "gallery") {
             return Ok(Some((None, tag.end)));
         }
-        if self.wiki == Wiki::Media && is_raw_block_tag(&name) {
+        if self.wiki == Wiki::Media
+            && (is_raw_block_tag(&name)
+                || tag.close && (is_code_block_tag(&name) || name == "blockquote"))
+        {
             return Ok(Some((
                 Some(Block::RawBlock(
                     Format("html".into()),
@@ -661,11 +666,11 @@ impl Parser<'_> {
             at = stop.saturating_add(1).min(end);
         }
         let block = if self.wiki == Wiki::Doku {
-            let text = lines
-                .iter()
-                .map(|&(start, end)| &scan.text[start..end])
-                .collect::<Vec<_>>()
-                .join("\n");
+            let mut text = String::new();
+            for (start, end) in lines {
+                text.push_str(&scan.text[start..end]);
+                text.push('\n');
+            }
             Block::CodeBlock(Attr::default(), text)
         } else {
             let mut items = Vec::new();
@@ -1054,6 +1059,12 @@ fn is_raw_block_tag(name: &str) -> bool {
     ]
     .iter()
     .any(|tag| name.eq_ignore_ascii_case(tag))
+}
+
+pub(crate) fn is_code_block_tag(name: &str) -> bool {
+    ["pre", "source", "syntaxhighlight", "haskell"]
+        .iter()
+        .any(|tag| name.eq_ignore_ascii_case(tag))
 }
 
 fn definition_marker(text: &str, start: usize, end: usize) -> (usize, usize) {

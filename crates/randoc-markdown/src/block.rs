@@ -149,6 +149,9 @@ pub(crate) struct Parser {
     tab_stop: usize,
     indented_code_classes: Vec<Text>,
     pub source: Text,
+    source_lines: Vec<(u32, Text)>,
+    source_line: u32,
+    inline_directory: Text,
     pub max_depth: usize,
     pub depth: usize,
     log: Vec<LogMessage>,
@@ -184,6 +187,10 @@ pub(crate) struct Parser {
     /// a processing instruction: the last line of a slice (the same names)
     /// such that no line from this one to it ends the token.
     no_raw_end: HashMap<(usize, usize, bool), (usize, usize)>,
+    /// For a line (`Ln::src_id`, `Ln::text_start`) and an end marker such
+    /// as `\end{code}`: the last line of a slice (the same names) such that
+    /// no line from this one to it holds the marker.
+    no_marker_below: HashMap<(usize, usize, Text), (usize, usize)>,
     rest: RestHandoff,
     idset: IdentifierSet,
     pub examples: HashMap<Text, i64>,
@@ -194,10 +201,19 @@ pub(crate) struct Parser {
     split_budget: usize,
     /// The resolve step is in the cells of a table that is not a grid table.
     inline_cells: bool,
+    /// The macro definitions of the raw TeX read so far (`latex_macros`).
+    macros: randoc_latex_reader::Macros,
+    /// The blocks being read are in an HTML element with Markdown content
+    /// that `markdown_attribute` gave: an element without the attribute
+    /// has Markdown content too.
+    markdown_inside: bool,
     /// The number of emphasis openers that found no closer.
     pub emphasis_failures: usize,
     /// The number of bracket texts that ended at a block tag.
     pub block_tag_cuts: usize,
+    /// The number of brackets and quotes in the contents of a native span
+    /// whose closer follows the contents: such a closer takes the closing tag.
+    pub crossing_closers: usize,
     in_list: bool,
     /// The items being read belong to a loose list.
     loose_list: bool,
@@ -219,7 +235,10 @@ fn is_example_marker(t: &str) -> bool {
         Some(rest) => (true, rest),
         None => (false, t),
     };
-    let Some(label) = body.strip_prefix('@') else {
+    let Some(label) = body
+        .trim_start_matches(|c: char| c.is_ascii_digit())
+        .strip_prefix('@')
+    else {
         return false;
     };
     let rest = label.trim_start_matches(|c: char| c.is_alphanumeric() || c == '_' || c == '-');
@@ -323,6 +342,8 @@ struct FenceMemo {
     /// For a comment and a processing instruction: the line where the last
     /// search for the line of its end started, and the line that it found.
     raw_ends: [Option<(usize, Option<usize>)>; 2],
+    /// The same for the end of a TeX environment, by name.
+    tex_ends: HashMap<Text, (usize, Option<usize>)>,
     tokens: Tokens,
 }
 
@@ -433,6 +454,8 @@ struct Marker {
     kind: ListKind,
     start: i64,
     label: Option<Text>,
+    /// An example marker with a number before `@`: `start` is its number.
+    numbered: bool,
     /// The column of the item content.
     content: usize,
     /// The text of the first line after the marker.
@@ -848,6 +871,9 @@ struct CloserScan<'a> {
     /// at the start of a line: a closing tag there ends a paragraph, and an
     /// opening tag starts a nested div only where a block can start.
     line_start_tags: bool,
+    /// Without `raw_html`, a tag of a native div counts only at the first
+    /// column of a line: elsewhere it is text.
+    column_one_tags: bool,
 }
 
 impl<'a> CloserScan<'a> {
@@ -866,6 +892,9 @@ impl<'a> CloserScan<'a> {
             line_start_tags: name == "div"
                 && parser.ext(Extension::NativeDivs)
                 && !parser.ext(Extension::MarkdownInHtmlBlocks),
+            column_one_tags: name == "div"
+                && parser.ext(Extension::NativeDivs)
+                && !parser.ext(Extension::RawHtml),
         }
     }
 
@@ -971,12 +1000,13 @@ impl<'a> CloserScan<'a> {
                     b'<' => {
                         let rest = t.get(i..).unwrap_or("");
                         let tag = self.tag_at(rest).filter(|tag| {
-                            !self.line_start_tags
-                                || (at_lead
-                                    && (matches!(tag, Tag::Close)
-                                        || j == 0
-                                        || starts_block
-                                        || i > 0))
+                            (!self.column_one_tags || i == 0)
+                                && (!self.line_start_tags
+                                    || at_lead
+                                        && (matches!(tag, Tag::Close)
+                                            || j == 0
+                                            || starts_block
+                                            || i > 0))
                         });
                         lead = tag.is_some();
                         match tag {
@@ -1190,6 +1220,9 @@ impl Parser {
             tab_stop: usize::try_from(options.tab_stop).unwrap_or(4).clamp(1, 256),
             indented_code_classes: options.indented_code_classes.clone(),
             source: source.to_string(),
+            source_lines: Vec::new(),
+            source_line: 1,
+            inline_directory: Text::new(),
             max_depth,
             depth: 0,
             log: Vec::new(),
@@ -1205,6 +1238,7 @@ impl Parser {
             kept_sources: Vec::new(),
             token_scopes: Vec::new(),
             no_raw_end: HashMap::new(),
+            no_marker_below: HashMap::new(),
             rest: RestHandoff::Off,
             idset: IdentifierSet::new(),
             examples: HashMap::new(),
@@ -1212,8 +1246,11 @@ impl Parser {
             note_number: 0,
             in_note: false,
             inline_cells: false,
+            markdown_inside: false,
+            macros: randoc_latex_reader::Macros::default(),
             split_budget: source.len().saturating_mul(4).saturating_add(4096),
             emphasis_failures: 0,
+            crossing_closers: 0,
             block_tag_cuts: 0,
             in_list: false,
             loose_list: false,
@@ -1221,6 +1258,48 @@ impl Parser {
             end_line: 1,
             meta: Meta::default(),
         }
+    }
+
+    /// Records the first line and directory of each named input.
+    pub(crate) fn set_sources(&mut self, sources: &randoc_core::Sources) {
+        let mut line = 1u32;
+        for source in &sources.0 {
+            self.source_lines
+                .push((line, source_directory(&source.name).into()));
+            let newlines = u32::try_from(source.text.bytes().filter(|byte| *byte == b'\n').count())
+                .unwrap_or(u32::MAX);
+            let implicit_newline =
+                u32::from(!source.text.is_empty() && !source.text.ends_with('\n'));
+            line = line
+                .saturating_add(newlines)
+                .saturating_add(1 + implicit_newline);
+        }
+    }
+
+    fn source_directory(&self) -> &str {
+        let index = self
+            .source_lines
+            .partition_point(|(line, _)| *line <= self.source_line);
+        index
+            .checked_sub(1)
+            .and_then(|index| self.source_lines.get(index))
+            .map_or_else(
+                || source_directory(&self.source),
+                |(_, directory)| directory,
+            )
+    }
+
+    fn placeholder(&self, text: &str) -> Inline {
+        let format = if self.ext(Extension::RebaseRelativePaths) {
+            Format::new(format!("{PLACEHOLDER}{}", self.source_directory()))
+        } else {
+            Format::new(PLACEHOLDER)
+        };
+        Inline::RawInline(format, text.into())
+    }
+
+    pub(crate) fn rebase_inline_target(&self, target: Text) -> Text {
+        rebase_target(target, &self.inline_directory)
     }
 
     pub(crate) fn ext(&self, extension: Extension) -> bool {
@@ -1326,20 +1405,22 @@ impl Parser {
         if let Some(title) = it.next()
             && !title.is_empty()
         {
-            let value = MetaValue::MetaInlines(vec![placeholder(&title)]);
+            let value = MetaValue::MetaInlines(vec![self.placeholder(&title)]);
             self.meta.insert("title", value);
         }
         if let Some(authors) = it.next() {
             let list = title_block_authors(&authors)
-                .map(|a| MetaValue::MetaInlines(vec![placeholder(a)]))
+                .map(|a| MetaValue::MetaInlines(vec![self.placeholder(a)]))
                 .collect();
             self.meta.insert("author", MetaValue::MetaList(list));
         }
         if let Some(date) = it.next()
             && !date.is_empty()
         {
-            self.meta
-                .insert("date", MetaValue::MetaInlines(vec![placeholder(&date)]));
+            self.meta.insert(
+                "date",
+                MetaValue::MetaInlines(vec![self.placeholder(&date)]),
+            );
         }
         i
     }
@@ -1383,7 +1464,7 @@ impl Parser {
         }
         for (key, value) in fields {
             self.meta
-                .insert(key, MetaValue::MetaInlines(vec![placeholder(&value)]));
+                .insert(key, MetaValue::MetaInlines(vec![self.placeholder(&value)]));
         }
         i
     }
@@ -1454,7 +1535,9 @@ impl Parser {
     fn blocks_inner(&mut self, lines: &[Ln], gobble: usize) -> Result<Vec<Block>> {
         let mut fences = self.fence_memo(lines);
         self.token_scopes.push(fences.tokens.clone());
+        let line = self.source_line;
         let result = self.blocks_in_scope(lines, gobble, &mut fences);
+        self.source_line = line;
         self.token_scopes.pop();
         result
     }
@@ -1496,6 +1579,9 @@ impl Parser {
         let Some(line) = rest.first() else {
             return Ok(1);
         };
+        if line.n != 0 {
+            self.source_line = line.n;
+        }
         let s = line.t();
         if let Some(n) = self.fenced_code(rest, i, fences, out) {
             return Ok(n);
@@ -1504,6 +1590,9 @@ impl Parser {
             && self.ext(Extension::YamlMetadataBlock)
             && let Some(n) = self.yaml_block(rest)?
         {
+            return Ok(n);
+        }
+        if let Some(n) = self.literate_code(rest, out) {
             return Ok(n);
         }
         if let Some(n) = self.list(rest, true, out)? {
@@ -1534,7 +1623,7 @@ impl Parser {
         if indent(s) >= 4 {
             return Ok(self.indented_code(rest, out));
         }
-        if let Some(n) = self.raw_tex_block(rest, out) {
+        if let Some(n) = self.raw_tex_block(rest, out)? {
             return Ok(n);
         }
         if let Some(n) = self.block_quote(rest, out)? {
@@ -1670,6 +1759,12 @@ impl Parser {
                     j = m + 1;
                     continue;
                 }
+                // So does a TeX environment that is open there.
+                if let Some(m) = self.open_tex_end(lines, scan_from..j, at, fences) {
+                    scan_from = m;
+                    j = m + 1;
+                    continue;
+                }
                 para = Some(true);
                 break;
             }
@@ -1712,7 +1807,7 @@ impl Parser {
         {
             return Ok(n);
         }
-        let inlines = vec![placeholder(text.trim_start_matches(SPACE))];
+        let inlines = vec![self.placeholder(text.trim_start_matches(SPACE))];
         if para.unwrap_or(self.end_blank) {
             out.push(Block::Para(inlines));
         } else {
@@ -1766,6 +1861,49 @@ impl Parser {
         found.map(|m| m - at)
     }
 
+    /// Returns the index of the line that ends a TeX environment that the
+    /// paragraph lines `range` leave open. `at` is the index of `lines` in
+    /// the slice of `fences`.
+    fn open_tex_end(
+        &self,
+        lines: &[Ln],
+        range: Range<usize>,
+        at: usize,
+        fences: &mut FenceMemo,
+    ) -> Option<usize> {
+        if !self.ext(Extension::RawTex) {
+            return None;
+        }
+        let end = range.end;
+        let text: Vec<&str> = lines.get(range)?.iter().map(|l| l.t()).collect();
+        let text = text.join("\n");
+        crate::step(text.len());
+        let name = text.match_indices("\\begin{").find_map(|(k, _)| {
+            let rest = text.get(k + 7..)?;
+            let name = rest.get(..rest.find('}')?)?;
+            let marker = format!("\\end{{{name}}}");
+            (!name.is_empty() && !rest.contains(&marker)).then(|| name.to_string())
+        })?;
+        let marker = format!("\\end{{{name}}}");
+        let from = at + end + 1;
+        if let Some(&(start, found)) = fences.tex_ends.get(&name)
+            && from >= start
+            && found.is_none_or(|m| m >= from)
+        {
+            return found.map(|m| m - at);
+        }
+        let found = lines
+            .get(end + 1..)?
+            .iter()
+            .position(|l| {
+                crate::step(1 + l.t().len());
+                l.t().contains(&marker)
+            })
+            .map(|k| at + end + 1 + k);
+        fences.tex_ends.insert(name, (from, found));
+        found.map(|m| m - at)
+    }
+
     /// Tells whether `s` starts with a block tag that ends the inline text
     /// of a bracket: the inline parse of Pandoc stops at it.
     pub(crate) fn ends_inline_text(&self, s: &str) -> bool {
@@ -1778,13 +1916,15 @@ impl Parser {
     /// block tag after the start that is not in a code span. The inline
     /// parse of Pandoc stops there, so the paragraph ends before the tag.
     fn inline_block_tag(&self, text: &str) -> Option<usize> {
-        if self.split_budget == 0
-            || !self.ext(Extension::RawHtml)
-            || !(self.ext(Extension::MarkdownInHtmlBlocks)
-                || self.ext(Extension::MarkdownAttribute))
-        {
+        let html = self.ext(Extension::RawHtml)
+            && (self.ext(Extension::MarkdownInHtmlBlocks)
+                || self.ext(Extension::MarkdownAttribute));
+        let tex = self.ext(Extension::RawTex) && text.contains('\\');
+        if self.split_budget == 0 || !(html || tex) {
             return None;
         }
+        // The last position of each environment end of the text.
+        let mut environment_ends = None;
         let bytes = text.as_bytes();
         let brackets = matching_brackets(bytes);
         let lines: Vec<Ln> = text.split('\n').map(|t| Ln::new(t, 0)).collect();
@@ -1813,13 +1953,18 @@ impl Parser {
                 continue;
             }
             match b {
-                b'\\' => i += 2,
+                b'\\' => {
+                    if tex && i > 0 && tex_block_at(text, i, &mut environment_ends) {
+                        return Some(i);
+                    }
+                    i += 2;
+                }
                 // A bracket that a link destination follows is read at
                 // its closing bracket.
                 b'[' => i = brackets.get(&i).copied().unwrap_or(i + 1),
                 b'<' => {
                     let rest = text.get(i..)?;
-                    if i > 0 && is_mid_line_block_tag(rest) {
+                    if html && i > 0 && is_mid_line_block_tag(rest) {
                         return Some(i);
                     }
                     i = tokens.tag_end(view, here).map_or(i + 1, absolute);
@@ -1831,7 +1976,8 @@ impl Parser {
     }
 
     /// Ends the paragraph of `lines` at the byte offset `k` of its text, where
-    /// a block tag starts, and reads the tag and the rest as blocks.
+    /// a block tag or raw TeX of a block starts, and reads it and the rest
+    /// as blocks.
     fn paragraph_before_tag(
         &mut self,
         lines: &[Ln],
@@ -1857,12 +2003,18 @@ impl Parser {
         // the lines after it.
         let saved = line.skip_to(col);
         let mut blocks = Vec::new();
-        let parsed = self.html_block_at(rest, &mut blocks);
+        let parsed = if text.get(k..).is_some_and(|t| t.starts_with('\\')) {
+            self.raw_tex_block(rest, &mut blocks)
+        } else {
+            self.html_block_at(rest, &mut blocks)
+        };
         line.restore(saved);
         let Some(n) = parsed? else {
             return Ok(None);
         };
-        out.push(Block::Plain(vec![placeholder(before.trim_matches(SPACE))]));
+        out.push(Block::Plain(vec![
+            self.placeholder(before.trim_matches(SPACE)),
+        ]));
         out.extend(blocks);
         Ok(Some(l + n))
     }
@@ -2078,7 +2230,7 @@ impl Parser {
         attr.attributes
             .push(("\u{0}line".into(), next_line.to_string()));
         attr.attributes.push(("\u{0}raw".into(), text.clone()));
-        out.push(Block::Header(level, attr, vec![placeholder(&text)]));
+        out.push(Block::Header(level, attr, vec![self.placeholder(&text)]));
         Some(used)
     }
 
@@ -2320,10 +2472,14 @@ impl Parser {
         } else {
             content
         };
+        let numbered = matches!(kind, ListKind::Ordered(ListNumberStyle::Example, _))
+            && t.trim_start_matches('(')
+                .starts_with(|c: char| c.is_ascii_digit());
         Some(Marker {
             kind,
             start,
             label,
+            numbered,
             content,
             rest_from,
         })
@@ -2366,7 +2522,9 @@ impl Parser {
             candidates.push((DefaultStyle, 1, None));
         } else if !fancy {
             return None;
-        } else if let Some(label) = token.strip_prefix('@') {
+        } else if let Some((number, label)) = token.split_once('@')
+            && number.bytes().all(|b| b.is_ascii_digit())
+        {
             if !self.ext(Extension::ExampleLists)
                 || !label
                     .chars()
@@ -2374,7 +2532,15 @@ impl Parser {
             {
                 return None;
             }
-            candidates.push((Example, 1, Some(label.to_string())));
+            // A number before `@` sets the number of the example.
+            let n = if number.is_empty() {
+                1
+            } else {
+                number.bytes().fold(0i64, |acc, b| {
+                    acc.wrapping_mul(10).wrapping_add(i64::from(b - b'0'))
+                })
+            };
+            candidates.push((Example, n, Some(label.to_string())));
         } else {
             let mut chars = token.chars();
             let single = match (chars.next(), chars.next()) {
@@ -2473,7 +2639,11 @@ impl Parser {
                 let number = match known {
                     Some(n) => n,
                     None => {
-                        self.example_count += 1;
+                        self.example_count = if m.numbered {
+                            m.start
+                        } else {
+                            self.example_count.wrapping_add(1)
+                        };
                         if let Some(label) = &m.label
                             && !label.is_empty()
                         {
@@ -2560,13 +2730,16 @@ impl Parser {
             };
             // A nested list at the end of the item takes the blank lines in
             // it and after it, so they do not make this list loose.
-            let is_marker =
-                |l: &Ln| l.indent() == 0 && !is_hrule(l.t()) && self.marker(l.t(), None).is_some();
             let mut sublist = None;
             for i in (1..=last_text).rev() {
                 let Some(l) = item.get(i) else { break };
-                if is_marker(l) {
-                    sublist = Some(i);
+                if l.indent() < 4
+                    && !is_hrule(l.t())
+                    && let Some(marker) = self.marker(l.t(), None)
+                {
+                    if marker.start == 1 {
+                        sublist = Some(i);
+                    }
                 } else if !(l.is_blank() || l.indent() > 0) {
                     break;
                 }
@@ -2689,9 +2862,10 @@ impl Parser {
         let [Inline::RawInline(format, text)] = xs.as_slice() else {
             return;
         };
-        if *format != Format::new(PLACEHOLDER) {
+        if !format.as_str().starts_with(PLACEHOLDER) {
             return;
         }
+        let format = format.clone();
         let symbol = match text.get(..3) {
             Some("[ ]") => "\u{2610}",
             Some("[x]" | "[X]") => "\u{2612}",
@@ -2709,7 +2883,7 @@ impl Parser {
         let mut inlines = vec![Inline::Str(symbol.to_string())];
         if !rest.is_empty() {
             inlines.push(Inline::Space);
-            inlines.push(placeholder(rest));
+            inlines.push(Inline::RawInline(format, rest.into()));
         }
         *xs = inlines;
     }
@@ -2858,7 +3032,7 @@ impl Parser {
                     }
                 }
             }
-            items.push((vec![placeholder(term.t().trim_matches(SPACE))], defs));
+            items.push((vec![self.placeholder(term.t().trim_matches(SPACE))], defs));
             j = k;
         }
         if items.is_empty() {
@@ -2907,9 +3081,9 @@ impl Parser {
             // A line ends without a line break, so its final backslash is
             // text and not an escaped line break.
             if ends_with_escape(rest) {
-                inlines.push(placeholder(&format!("{rest}\\")));
+                inlines.push(self.placeholder(&format!("{rest}\\")));
             } else if !rest.is_empty() {
-                inlines.push(placeholder(rest));
+                inlines.push(self.placeholder(rest));
             }
             result.push(inlines);
         }
@@ -3082,6 +3256,22 @@ impl Parser {
         self.html_element_block(lines, defer, out)
     }
 
+    /// Tells whether the start tag at the start of `s`, complete on its
+    /// line, gives its element Markdown content with `markdown_attribute`.
+    fn markdown_content(&self, s: &str) -> bool {
+        let Some(tag) = html_tag_len(s).and_then(|n| s.get(..n)) else {
+            return false;
+        };
+        match tag_parts(tag)
+            .1
+            .into_iter()
+            .find(|(k, _)| k.eq_ignore_ascii_case("markdown"))
+        {
+            Some((_, value)) => value != "0",
+            None => self.markdown_inside,
+        }
+    }
+
     /// Parses an HTML element at the first line. A separate function keeps
     /// its large stack frame off the path of a comment.
     #[inline(never)]
@@ -3101,6 +3291,11 @@ impl Parser {
         let needs_all = html_tag_name(s).is_some_and(|(name, _)| {
             matches!(name.as_str(), "pre" | "script" | "style" | "textarea")
                 || !self.ext(Extension::MarkdownInHtmlBlocks)
+                // With `markdown_attribute`, an element without the
+                // attribute is raw, except a native div.
+                || (self.ext(Extension::MarkdownAttribute)
+                    && !(name == "div" && self.ext(Extension::NativeDivs))
+                    && !self.markdown_content(s))
         });
         let block_end = if needs_all {
             lines.len()
@@ -3157,7 +3352,7 @@ impl Parser {
         let tag_lines = tag.matches('\n').count();
         let after_tag = text.get(tag_len..).unwrap_or("");
         let native_div = name == "div" && !closing && self.ext(Extension::NativeDivs);
-        if !native_div && !self.ext(Extension::RawHtml) {
+        if !self.ext(Extension::RawHtml) && (!native_div || first.indent() > 0) {
             return Ok(None);
         }
         if closing {
@@ -3171,7 +3366,17 @@ impl Parser {
             )?));
         }
         let verbatim = matches!(name.as_str(), "pre" | "script" | "style" | "textarea");
-        let in_markdown = self.ext(Extension::MarkdownInHtmlBlocks) || native_div;
+        // With `markdown_attribute`, the attribute `markdown` with a value
+        // other than `0` makes the content Markdown. Without the attribute,
+        // the content of an element inside such an element is Markdown.
+        let by_attribute = self.ext(Extension::MarkdownAttribute) && !native_div;
+        let in_markdown = native_div
+            || if by_attribute {
+                self.markdown_content(tag)
+            } else {
+                self.ext(Extension::MarkdownInHtmlBlocks)
+            };
+        let inside = by_attribute || self.markdown_inside;
         if verbatim || !in_markdown {
             let close = format!("</{name}");
             let mut depth = 0usize;
@@ -3279,6 +3484,7 @@ impl Parser {
             self.cover_tokens(lines, tag_lines);
             let following = lines.get(tag_lines + 1..).unwrap_or(&[]);
             let saved = std::mem::replace(&mut self.in_list, false);
+            let saved_inside = std::mem::replace(&mut self.markdown_inside, inside);
             let extra = attrs.len().saturating_sub(1);
             self.depth += extra;
             let blocks = if blank(text) {
@@ -3313,6 +3519,7 @@ impl Parser {
             };
             self.depth -= extra;
             self.in_list = saved;
+            self.markdown_inside = saved_inside;
             let mut blocks = blocks?;
             if native_div {
                 let close = self.pos(self.end_line);
@@ -3387,6 +3594,7 @@ impl Parser {
         // lines, so a nested element does not copy the lines again.
         let whole_lines = close_line > tag_lines && blank(first_rest) && closer_own_line;
         let saved = std::mem::replace(&mut self.in_list, false);
+        let saved_inside = std::mem::replace(&mut self.markdown_inside, inside);
         self.gobble = content_indent;
         let blocks = if whole_lines {
             self.cover_tokens(lines, tag_lines);
@@ -3399,6 +3607,7 @@ impl Parser {
             self.blocks(&inner)
         };
         self.in_list = saved;
+        self.markdown_inside = saved_inside;
         let blocks = blocks?;
         if native_div {
             let attr = html_attr(tag);
@@ -3589,71 +3798,246 @@ impl Parser {
         found
     }
 
-    fn raw_tex_block(&mut self, lines: &[Ln], out: &mut Vec<Block>) -> Option<usize> {
-        if !self.ext(Extension::RawTex) {
+    /// Reads a code block of `literate_haskell`: lines with bird tracks
+    /// (`>`, or `<` before a space) that a blank line or the end follows, or
+    /// a `code` environment.
+    fn literate_code(&mut self, lines: &[Ln], out: &mut Vec<Block>) -> Option<usize> {
+        if !self.ext(Extension::LiterateHaskell) {
             return None;
         }
         let first = lines.first()?;
-        let s = first.t().trim_start_matches(SPACE);
-        const DEFINITIONS: &[&str] = &[
-            "\\newcommand",
-            "\\renewcommand",
-            "\\providecommand",
-            "\\def\\",
-            "\\let\\",
-            "\\DeclareMathOperator",
-            "\\newenvironment",
-        ];
-        if DEFINITIONS.iter().any(|d| s.starts_with(d)) {
+        let t = first.t();
+        if let Some(track) = t.chars().next().filter(|c| matches!(c, '>' | '<'))
+            && (track == '>'
+                || t.get(1..)
+                    .is_none_or(|r| r.is_empty() || r.starts_with(' ')))
+        {
+            let mut body = Vec::new();
             let mut j = 0;
-            while lines.get(j).is_some_and(|l| !l.is_blank()) {
+            while let Some(rest) = lines.get(j).and_then(|l| l.t().strip_prefix(track)) {
+                crate::step(1);
+                body.push(rest.strip_prefix(' ').unwrap_or(rest));
                 j += 1;
             }
-            let body: Vec<&str> = lines
-                .get(..j)
-                .unwrap_or(&[])
-                .iter()
-                .map(|l| l.t())
-                .collect();
-            out.push(Block::RawBlock(Format::new("tex"), body.join("\n")));
+            if lines.get(j).is_some_and(|l| !l.is_blank()) {
+                return None;
+            }
+            let classes = if track == '>' {
+                vec!["haskell".into(), "literate".into()]
+            } else {
+                vec!["haskell".into()]
+            };
+            out.push(Block::CodeBlock(
+                Attr::new("", classes, vec![]),
+                body.join("\n"),
+            ));
             return Some(j);
         }
-        let rest = s.strip_prefix("\\begin{")?;
-        let name: Text = rest.chars().take_while(|c| *c != '}').collect();
-        if name.is_empty()
-            || !rest.get(name.len()..)?.starts_with('}')
-            || MATH_ENVIRONMENTS.contains(&name.trim_end_matches('*'))
+        if first.indent() > 3
+            || !t
+                .trim_start_matches(' ')
+                .strip_prefix("\\begin{code}")
+                .is_some_and(blank)
         {
             return None;
         }
-        let end = format!("\\end{{{name}}}");
-        let begin = format!("\\begin{{{name}}}");
-        let mut depth = 0usize;
-        let mut j = 0;
-        while let Some(line) = lines.get(j) {
+        let (end_line, end) = self.marker_below(lines, "\\end{code}")?;
+        let last = lines.get(end_line)?.t();
+        if !blank(last.get(end + "\\end{code}".len()..)?) {
+            return None;
+        }
+        let mut body: Vec<&str> = lines
+            .get(1..end_line)
+            .unwrap_or(&[])
+            .iter()
+            .map(Ln::t)
+            .collect();
+        body.push(last.get(..end)?);
+        let body = body.join("\n");
+        let classes = vec!["haskell".into(), "literate".into()];
+        out.push(Block::CodeBlock(
+            Attr::new("", classes, vec![]),
+            body.trim_end_matches('\n').to_string(),
+        ));
+        Some(end_line + 1)
+    }
+
+    /// Finds the first `marker` after `lines[0]`: the line and the byte
+    /// position. A search that finds none marks each line that it read, so
+    /// that a later search from there stops at once.
+    fn marker_below(&mut self, lines: &[Ln], marker: &str) -> Option<(usize, usize)> {
+        let last = lines.last()?;
+        let end_key = (last.src_id(), last.text_start());
+        let key = |line: &Ln| (line.src_id(), line.text_start(), marker.to_string());
+        for (k, line) in lines.iter().enumerate().skip(1) {
             crate::step(1);
-            depth += line.t().matches(&begin).count();
-            let closes = line.t().matches(&end).count();
-            if closes >= depth && closes > 0 {
-                let tail = line.t().rsplit(&end).next().unwrap_or("");
-                let mut body: Vec<&str> = lines
-                    .get(..j)
-                    .unwrap_or(&[])
-                    .iter()
-                    .map(|l| l.t())
-                    .collect();
-                let last = line.t().get(..line.t().len() - tail.len()).unwrap_or("");
-                body.push(last);
-                if !blank(tail) {
-                    return None;
-                }
-                out.push(Block::RawBlock(Format::new("tex"), body.join("\n")));
-                return Some(j + 1);
+            if self.no_marker_below.get(&key(line)) == Some(&end_key) {
+                return None;
             }
-            depth = depth.saturating_sub(closes);
-            j += 1;
+            crate::step(line.t().len());
+            if let Some(end) = line.t().find(marker) {
+                return Some((k, end));
+            }
+        }
+        for line in lines.iter().skip(1) {
+            self.no_marker_below.insert(key(line), end_key);
+            self.kept_sources.push(Rc::clone(&line.src));
         }
         None
+    }
+
+    /// Reads raw TeX at the start of `lines[0]` as a raw block: a macro
+    /// definition, an environment that is not math, or commands that
+    /// `randoc_latex_reader::raw_tex_block` gives. The text after the raw
+    /// TeX on its line is read as blocks.
+    fn raw_tex_block(&mut self, lines: &[Ln], out: &mut Vec<Block>) -> Result<Option<usize>> {
+        let start = out.len();
+        let Some(mut used) = self.raw_tex_unit(lines, out)? else {
+            return Ok(None);
+        };
+        if !lines
+            .first()
+            .is_some_and(|line| line.t().trim_start_matches(SPACE).starts_with("\\begin{"))
+        {
+            return Ok(Some(used));
+        }
+        while out.len() == start + 1 {
+            let Some(more) = self.raw_tex_unit(&lines[used..], out)? else {
+                break;
+            };
+            used += more;
+            let [Block::RawBlock(_, first), Block::RawBlock(_, second), ..] = &mut out[start..]
+            else {
+                break;
+            };
+            first.push('\n');
+            first.push_str(second);
+            out.remove(start + 1);
+        }
+        Ok(Some(used))
+    }
+
+    fn raw_tex_unit(&mut self, lines: &[Ln], out: &mut Vec<Block>) -> Result<Option<usize>> {
+        if !self.ext(Extension::RawTex) {
+            return Ok(None);
+        }
+        let Some(first) = lines.first() else {
+            return Ok(None);
+        };
+        let s = first.t().trim_start_matches(SPACE);
+        if !s.starts_with('\\') || first.indent() > 3 {
+            return Ok(None);
+        }
+        if let Some(rest) = s.strip_prefix("\\begin{") {
+            return self.raw_tex_environment(lines, rest, out);
+        }
+        // Commands: this line and the lines after it that start with a
+        // backslash, as a command can follow a command on the next line.
+        if !s
+            .get(1..)
+            .is_some_and(|r| r.starts_with(char::is_alphabetic))
+        {
+            return Ok(None);
+        }
+        let mut j = 1;
+        let mut bytes = s.len();
+        let may_span_lines = s.starts_with("\\parbox") || s.starts_with("\\makeatletter");
+        while let Some(line) = lines.get(j) {
+            if line.is_blank()
+                || bytes >= 64 * 1024
+                || (!may_span_lines && !line.t().trim_start_matches(SPACE).starts_with('\\'))
+            {
+                break;
+            }
+            bytes = bytes.saturating_add(line.t().len() + 1);
+            crate::step(1);
+            j += 1;
+        }
+        let parts: Vec<&str> = std::iter::once(s)
+            .chain(lines.get(1..j).unwrap_or(&[]).iter().map(Ln::t))
+            .collect();
+        let text = parts.join("\n");
+        crate::step(text.len());
+        let Some((end, raw)) = randoc_latex_reader::raw_tex_block(&text) else {
+            return Ok(None);
+        };
+        let before = text.get(..end).unwrap_or("");
+        let line = before.matches('\n').count();
+        let line_text = parts.get(line).copied().unwrap_or("");
+        let col = end - before.rfind('\n').map_or(0, |k| k + 1);
+        out.push(Block::RawBlock(Format::new("tex"), raw));
+        let rest_len = line_text.len().saturating_sub(col);
+        Ok(Some(self.rest_after(lines, line, rest_len, false, out)?))
+    }
+
+    /// Reads an environment that is not math, from `\begin{` to its
+    /// `\end`, as a raw block. `rest` is the text after `\begin{`.
+    fn raw_tex_environment(
+        &mut self,
+        lines: &[Ln],
+        rest: &str,
+        out: &mut Vec<Block>,
+    ) -> Result<Option<usize>> {
+        let name: Text = rest.chars().take_while(|c| *c != '}').collect();
+        if name.is_empty()
+            || !rest.get(name.len()..).is_some_and(|r| r.starts_with('}'))
+            || MATH_ENVIRONMENTS.contains(&name.trim_end_matches('*'))
+        {
+            return Ok(None);
+        }
+        let end = format!("\\end{{{name}}}");
+        let begin = format!("\\begin{{{name}}}");
+        // No end marker on this line or below: no search for the closer.
+        if !lines.first().is_some_and(|l| l.t().contains(&end))
+            && self.marker_below(lines, &end).is_none()
+        {
+            return Ok(None);
+        }
+        let mut depth = 0usize;
+        for (j, line) in lines.iter().enumerate() {
+            crate::step(1);
+            let t = if j == 0 {
+                line.t().trim_start_matches(SPACE)
+            } else {
+                line.t()
+            };
+            // The markers of the line in order; the closer that brings the
+            // depth to zero ends the environment.
+            let mut marks: Vec<(usize, bool)> = t
+                .match_indices(&begin)
+                .map(|(k, _)| (k, true))
+                .chain(t.match_indices(&end).map(|(k, _)| (k, false)))
+                .collect();
+            marks.sort_unstable();
+            let mut close_at = None;
+            for (k, opens) in marks {
+                if opens {
+                    depth += 1;
+                } else {
+                    depth = depth.saturating_sub(1);
+                    if depth == 0 {
+                        close_at = Some(k + end.len());
+                        break;
+                    }
+                }
+            }
+            let Some(close_at) = close_at else {
+                continue;
+            };
+            let mut body: Vec<&str> = std::iter::once(
+                lines
+                    .first()
+                    .map_or("", |l| l.t().trim_start_matches(SPACE)),
+            )
+            .chain(lines.get(1..j).unwrap_or(&[]).iter().map(Ln::t))
+            .take(j)
+            .collect();
+            body.push(t.get(..close_at).unwrap_or(t));
+            out.push(Block::RawBlock(Format::new("tex"), body.join("\n")));
+            let rest_len = t.len().saturating_sub(close_at);
+            return Ok(Some(self.rest_after(lines, j, rest_len, false, out)?));
+        }
+        Ok(None)
     }
 
     // ----- tables -----
@@ -3769,10 +4153,10 @@ impl Parser {
             crate::yaml::parse_yaml_metadata(&body, &source, first_line, max_depth, &mut markdown);
         match fields {
             Ok(Some(fields)) => {
+                // A later block replaces the value of a key, also a value
+                // of the title block.
                 for (key, value) in fields {
-                    if self.meta.get(&key).is_none() {
-                        self.meta.insert(key, value);
-                    }
+                    self.meta.insert(key, value);
                 }
                 Ok(Some(end + 1))
             }
@@ -3789,9 +4173,9 @@ impl Parser {
         // Some blocks need the line break at the end of their line, so one
         // line without it is a paragraph.
         if !text.contains('\n') && self.needs_line_end(text) {
-            return Ok(vec![Block::Para(vec![placeholder(
-                text.trim_matches(SPACE),
-            )])]);
+            return Ok(vec![Block::Para(vec![
+                self.placeholder(text.trim_matches(SPACE)),
+            ])]);
         }
         let lines: Vec<Ln> = text
             .split('\n')
@@ -3838,7 +4222,12 @@ impl Parser {
             }
         };
         let label = label.as_str();
-        if label.starts_with('^') && self.ext(Extension::Footnotes) {
+        // A label that is a note key belongs to a note definition.
+        if self.ext(Extension::Footnotes)
+            && label
+                .strip_prefix('^')
+                .is_some_and(|key| !key.is_empty() && !key.contains(char::is_whitespace))
+        {
             return None;
         }
         let rest = rest.strip_prefix(':')?;
@@ -3850,11 +4239,24 @@ impl Parser {
                 used += 1;
             }
         }
-        let t = text.trim_matches(SPACE);
+        let mut t = text.trim_matches(SPACE);
         if t.starts_with('[') {
             return None;
         }
-        let (url, after) = if let Some(inner) = t.strip_prefix('<') {
+        // MultiMarkdown `key=value` pairs after the destination and the
+        // title, on this line and on the lines after it.
+        let mut pairs = None;
+        if self.ext(Extension::MmdLinkAttributes)
+            && let Some(start) = mmd_pairs_start(t)
+        {
+            let (found, more) = mmd_pairs(t.get(start..)?, lines.get(used..).unwrap_or(&[]))?;
+            pairs = Some(found);
+            used += more;
+            t = t.get(..start)?.trim_end_matches(SPACE);
+        }
+        let (url, after) = if title_of(t).is_some_and(|(_, rest)| blank(rest)) {
+            (Text::new(), t)
+        } else if let Some(inner) = t.strip_prefix('<') {
             let close = inner.find('>')?;
             (inner.get(..close)?.to_string(), inner.get(close + 1..)?)
         } else {
@@ -3917,7 +4319,22 @@ impl Parser {
             Some((title, rest)) => (title, rest.trim_matches(SPACE).to_string()),
             None => (Text::new(), after),
         };
-        let attr = if after.is_empty() {
+        if pairs.is_none()
+            && after.is_empty()
+            && self.ext(Extension::MmdLinkAttributes)
+            && let Some(next) = lines.get(used).filter(|l| !l.is_blank())
+            && mmd_key(next.t().trim_start_matches(SPACE)).is_some()
+        {
+            let (found, more) = mmd_pairs("", lines.get(used..).unwrap_or(&[]))?;
+            pairs = Some(found);
+            used += more;
+        }
+        let attr = if let Some(pairs) = pairs {
+            if !after.is_empty() {
+                return None;
+            }
+            mmd_attr(pairs)
+        } else if after.is_empty() {
             Attr::default()
         } else if self.ext(Extension::LinkAttributes) && after.starts_with('{') {
             self.parse_attr(&after)?
@@ -3925,7 +4342,13 @@ impl Parser {
             return None;
         };
         let key = normalize_key(label);
-        let target = Target::new(escape_uri(&crate::inline::unescape(&url)), title);
+        let url = escape_uri(&crate::inline::unescape(&url));
+        let url = if self.ext(Extension::RebaseRelativePaths) {
+            rebase_target(url, self.source_directory())
+        } else {
+            url
+        };
+        let target = Target::new(url, title);
         if self
             .refs
             .get(&key)
@@ -4031,7 +4454,10 @@ impl Parser {
         if key.is_empty() || key.contains(char::is_whitespace) {
             return Ok(None);
         }
-        let mut inner = vec![Ln::new(rest.trim_start_matches(SPACE), first.n)];
+        // The first line keeps the spaces after the colon, less an indent
+        // of four, so that a heading mark there is no heading.
+        let first_text = rest.strip_prefix("    ").unwrap_or(rest);
+        let mut inner = vec![Ln::new(first_text, first.n)];
         let mut j = 1;
         let mut prev_blank = false;
         while let Some(line) = lines.get(j) {
@@ -4180,12 +4606,20 @@ impl Parser {
         let note_number = self.note_number;
         let used_notes = self.used_notes.len();
         let log = self.log.len();
-        let counts = (self.emphasis_failures, self.block_tag_cuts);
+        let counts = (
+            self.emphasis_failures,
+            self.block_tag_cuts,
+            self.crossing_closers,
+        );
         let out = f(self);
         self.note_number = note_number;
         self.used_notes.truncate(used_notes);
         self.log.truncate(log);
-        (self.emphasis_failures, self.block_tag_cuts) = counts;
+        (
+            self.emphasis_failures,
+            self.block_tag_cuts,
+            self.crossing_closers,
+        ) = counts;
         out
     }
 
@@ -4247,22 +4681,85 @@ impl Parser {
         }
         let mut image_attr = attr.clone();
         let id = std::mem::take(&mut image_attr.id);
+        // The first `alt` value is the image description and the first
+        // `latex-placement` value moves to the figure. Each copy of the two
+        // keys leaves the image.
+        let first = |key: &str| {
+            image_attr
+                .attributes
+                .iter()
+                .find(|(k, _)| k == key)
+                .map(|(_, v)| v.clone())
+        };
+        let description = first("alt").map_or_else(|| alt.clone(), |text| words(&text));
+        let placement = first("latex-placement").map(|v| ("latex-placement".into(), v));
+        image_attr
+            .attributes
+            .retain(|(k, _)| k != "alt" && k != "latex-placement");
         Some(Block::Figure(
-            Attr::new(id, vec![], vec![]),
+            Attr::new(id, vec![], placement.into_iter().collect()),
             Caption {
                 short: None,
                 long: vec![Block::Plain(alt.clone())],
             },
             vec![Block::Plain(vec![Inline::Image(
                 image_attr,
-                alt.clone(),
+                description,
                 target.clone(),
             )])],
         ))
     }
 
+    /// Keeps the macro definitions of the raw TeX `raw` for the math that
+    /// follows, with `latex_macros`.
+    pub(crate) fn define_macros(&mut self, raw: &str) {
+        const DEFINITIONS: &[&str] = &[
+            "\\newcommand",
+            "\\renewcommand",
+            "\\providecommand",
+            "\\def",
+            "\\gdef",
+            "\\edef",
+            "\\xdef",
+            "\\let",
+            "\\DeclareMathOperator",
+            "\\newenvironment",
+            "\\renewenvironment",
+        ];
+        if self.ext(Extension::LatexMacros) && DEFINITIONS.iter().any(|d| raw.contains(d)) {
+            crate::step(raw.len());
+            self.macros.define(raw);
+        }
+    }
+
+    /// Expands the macros of the raw TeX read so far.
+    pub(crate) fn expand_math(&mut self, math: &str) -> Text {
+        if !self.ext(Extension::LatexMacros) {
+            return math.to_string();
+        }
+        self.macros.expand_math(math)
+    }
+
+    /// Expands the macros in one raw TeX command.
+    pub(crate) fn expand_raw_inline(&mut self, text: &str) -> Text {
+        if self.ext(Extension::LatexMacros) {
+            self.macros.expand_inline(text)
+        } else {
+            text.into()
+        }
+    }
+
     fn resolve_block(&mut self, block: Block) -> Block {
         match block {
+            Block::RawBlock(format, raw) if format.as_str() == "tex" => {
+                let raw = if self.ext(Extension::LatexMacros) {
+                    crate::step(raw.len());
+                    self.macros.expand_block(&raw)
+                } else {
+                    raw
+                };
+                Block::RawBlock(format, raw)
+            }
             // An image alone in a paragraph is a figure, also when the
             // paragraph is plain, as in a tight list item.
             Block::Para(xs) => {
@@ -4343,8 +4840,11 @@ impl Parser {
         let mut out = Vec::new();
         for inline in inlines {
             match inline {
-                Inline::RawInline(format, text) if format.as_str() == PLACEHOLDER => {
+                Inline::RawInline(format, text) if format.as_str().starts_with(PLACEHOLDER) => {
+                    let directory = format.as_str().strip_prefix(PLACEHOLDER).unwrap_or("");
+                    let previous = std::mem::replace(&mut self.inline_directory, directory.into());
                     out.extend(self.parse_inlines(&text));
+                    self.inline_directory = previous;
                 }
                 other => out.push(other),
             }
@@ -4377,9 +4877,9 @@ impl CellParser for Parser {
         } else if ends_with_escape(t) {
             // The text ends without a line break, so its final backslash
             // is text and not an escaped line break.
-            vec![placeholder(&format!("{t}\\"))]
+            vec![self.placeholder(&format!("{t}\\"))]
         } else {
-            vec![placeholder(t)]
+            vec![self.placeholder(t)]
         }
     }
 
@@ -4395,8 +4895,95 @@ impl CellParser for Parser {
 }
 
 /// Makes a placeholder inline for raw Markdown text.
-pub(crate) fn placeholder(text: &str) -> Inline {
-    Inline::RawInline(Format::new(PLACEHOLDER), text.to_string())
+/// Tells whether the text from byte `i` of `text` starts with raw TeX that
+/// Pandoc reads as a block in a paragraph: a command of class `Block` or an
+/// environment that is not math, with its end. `ends` gets the last
+/// position of each `\end{name}` of `text` at the first environment.
+fn tex_block_at<'t>(text: &'t str, i: usize, ends: &mut Option<HashMap<&'t str, usize>>) -> bool {
+    use randoc_latex_reader::{CommandClass, RawKind};
+    let rest = text.get(i..).unwrap_or("");
+    let name_len = rest
+        .get(1..)
+        .unwrap_or("")
+        .find(|c: char| !c.is_alphabetic())
+        .unwrap_or(rest.len().saturating_sub(1));
+    let name = rest.get(1..1 + name_len).unwrap_or("");
+    let window = if name == "begin" {
+        let Some(env) = rest
+            .strip_prefix("\\begin{")
+            .and_then(|r| r.get(..r.find('}')?))
+        else {
+            return false;
+        };
+        if MATH_ENVIRONMENTS.contains(&env.trim_end_matches('*')) {
+            return false;
+        }
+        let ends = ends.get_or_insert_with(|| {
+            crate::step(text.len());
+            let mut ends = HashMap::new();
+            for (k, _) in text.match_indices("\\end{") {
+                let after = text.get(k + 5..).unwrap_or("");
+                if let Some(close) = after.find('}') {
+                    ends.insert(after.get(..close).unwrap_or(""), k);
+                }
+            }
+            ends
+        });
+        match ends.get(env) {
+            Some(&end) if end > i => rest.get(..end - i + env.len() + 6).unwrap_or(rest),
+            _ => return false,
+        }
+    } else if randoc_latex_reader::command_class(name) == CommandClass::Block {
+        let mut window = rest.len().min(1024);
+        while !rest.is_char_boundary(window) {
+            window -= 1;
+        }
+        rest.get(..window).unwrap_or("")
+    } else {
+        return false;
+    };
+    crate::step(window.len().min(64));
+    matches!(
+        randoc_latex_reader::raw_tex_inline(window).map(|raw| raw.kind),
+        Some(RawKind::Environment { math: false } | RawKind::Command(CommandClass::Block))
+    )
+}
+
+/// Splits `text` into words, with one space for each run of white space.
+fn words(text: &str) -> Vec<Inline> {
+    let mut out = Vec::new();
+    for (k, word) in text.split(SPACE).enumerate() {
+        if k > 0 && out.last() != Some(&Inline::Space) {
+            out.push(Inline::Space);
+        }
+        if !word.is_empty() {
+            out.push(Inline::Str(word.into()));
+        }
+    }
+    out
+}
+
+fn source_directory(source: &str) -> &str {
+    source.rsplit_once('/').map_or(
+        "",
+        |(directory, _)| {
+            if directory.is_empty() { "/" } else { directory }
+        },
+    )
+}
+
+fn rebase_target(target: Text, directory: &str) -> Text {
+    if directory.is_empty()
+        || target.is_empty()
+        || target.starts_with(['#', '/'])
+        || target
+            .split('/')
+            .next()
+            .is_some_and(|head| head.contains(':'))
+    {
+        return target;
+    }
+    format!("{}/{target}", directory.trim_end_matches('/'))
 }
 
 /// Returns the number of lines to consume so that the trailing blank lines stay for the next block.
@@ -4460,6 +5047,117 @@ fn same_list(a: ListKind, b: ListKind) -> bool {
         || (a == decimal && b == hash)
 }
 
+/// Returns the length of the MultiMarkdown attribute key at the start of
+/// `s` when an `=` follows it: a letter, then letters, digits and `-_:.`.
+fn mmd_key(s: &str) -> Option<usize> {
+    if !s.starts_with(|c: char| c.is_alphabetic()) {
+        return None;
+    }
+    let len = s
+        .find(|c: char| !(c.is_alphanumeric() || matches!(c, '-' | '_' | ':' | '.')))
+        .unwrap_or(s.len());
+    s.get(len..)?.starts_with('=').then_some(len)
+}
+
+/// Returns the start of the first `key=value` word of a reference
+/// definition line `t` that does not start the line. A title that ends
+/// before white space or the end of the line is skipped.
+fn mmd_pairs_start(t: &str) -> Option<usize> {
+    let mut skip_to = 0;
+    for (i, c) in t.char_indices() {
+        if i == 0 || i < skip_to || !t.get(..i).is_some_and(|b| b.ends_with(SPACE)) {
+            continue;
+        }
+        let rest = t.get(i..)?;
+        if matches!(c, '"' | '\'' | '(')
+            && let Some((_, after)) = title_of(rest)
+            && (after.is_empty() || after.starts_with(SPACE))
+        {
+            skip_to = t.len() - after.len();
+        } else if mmd_key(rest).is_some() {
+            return Some(i);
+        }
+    }
+    None
+}
+
+/// Parses MultiMarkdown `key=value` pairs from `first` and from the lines
+/// of `next` that continue them. Pairs are separated by white space, and a
+/// quoted value can span lines. Returns the pairs and the number of lines
+/// of `next` that they use, or `None` when other text follows them.
+fn mmd_pairs(first: &str, next: &[Ln]) -> Option<(Vec<(Text, Text)>, usize)> {
+    let mut pairs = Vec::new();
+    let mut line = first;
+    let mut used = 0;
+    let mut pos = 0;
+    loop {
+        crate::step(1);
+        pos = line.len() - line.get(pos..)?.trim_start_matches(SPACE).len();
+        if pos == line.len() {
+            match next.get(used) {
+                Some(l) if !l.is_blank() && mmd_key(l.t().trim_start_matches(SPACE)).is_some() => {
+                    line = l.t();
+                    pos = 0;
+                    used += 1;
+                    continue;
+                }
+                _ => return Some((pairs, used)),
+            }
+        }
+        let rest = line.get(pos..)?;
+        let key_len = mmd_key(rest)?;
+        let key = rest.get(..key_len)?;
+        pos += key_len + 1;
+        let rest = line.get(pos..)?;
+        let value = match rest.chars().next() {
+            Some(quote @ ('"' | '\'')) => {
+                let mut value = String::new();
+                let mut part = rest.get(1..)?;
+                loop {
+                    crate::step(part.len());
+                    if let Some(end) = part.find(quote) {
+                        value.push_str(part.get(..end)?);
+                        pos = line.len() - part.len() + end + 1;
+                        break;
+                    }
+                    value.push_str(part);
+                    value.push(' ');
+                    let l = next.get(used).filter(|l| !l.is_blank())?;
+                    line = l.t();
+                    part = line;
+                    used += 1;
+                }
+                if !line.get(pos..)?.is_empty() && !line.get(pos..)?.starts_with(SPACE) {
+                    return None;
+                }
+                value
+            }
+            _ => {
+                let len = rest.find(SPACE).unwrap_or(rest.len());
+                pos += len;
+                rest.get(..len)?.to_string()
+            }
+        };
+        pairs.push((key.to_string(), value));
+    }
+}
+
+/// Makes the attributes of MultiMarkdown pairs: `id` is the identifier and
+/// each `class` value adds its words as classes.
+fn mmd_attr(pairs: Vec<(Text, Text)>) -> Attr {
+    let mut attr = Attr::default();
+    for (key, value) in pairs {
+        match key.as_str() {
+            "id" => attr.id = value,
+            "class" => attr
+                .classes
+                .extend(value.split(SPACE).filter(|w| !w.is_empty()).map(Text::from)),
+            _ => attr.attributes.push((key, value)),
+        }
+    }
+    attr
+}
+
 /// Returns the label inside `[...]` at the start of `s` and the text after `]`.
 fn bracket_label(s: &str) -> Option<(&str, &str)> {
     let inner = s.strip_prefix('[')?;
@@ -4473,13 +5171,7 @@ fn bracket_label(s: &str) -> Option<(&str, &str)> {
         match c {
             '\\' => escaped = true,
             '[' => depth += 1,
-            ']' if depth == 0 => {
-                let label = inner.get(..i)?;
-                if label.is_empty() {
-                    return None;
-                }
-                return Some((label, inner.get(i + 1..)?));
-            }
+            ']' if depth == 0 => return Some((inner.get(..i)?, inner.get(i + 1..)?)),
             ']' => depth -= 1,
             _ => {}
         }
@@ -4629,7 +5321,7 @@ pub(crate) fn html_attr(tag: &str) -> Attr {
 fn render_start_tag(tag: &str) -> Text {
     let (name, attributes) = tag_parts(tag);
     let mut out = format!("<{name}");
-    for (key, value) in attributes {
+    for (key, value) in attributes.into_iter().filter(|(k, _)| *k != "markdown") {
         out.push(' ');
         out.push_str(key);
         if value.is_empty() {

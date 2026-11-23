@@ -43,7 +43,7 @@ fn pending_reference(reference: Reference, out: &mut Vec<Inline>) -> (Vec<Inline
             let url = format!("##REF##{label}");
             (vec![str_inline(label)], url)
         }
-        Reference::Substitution(name) => {
+        Reference::Substitution(name, _) => {
             let label = words(&format!("|{name}|"), false);
             let url = format!("##SUBST##{}", stringify(&label));
             (label, url)
@@ -124,7 +124,7 @@ impl Resolver<'_, '_> {
             if let Block::Para(inlines) | Block::Plain(inlines) = &block
                 && let [inline] = inlines.as_slice()
                 && let Some(index) = reference_index(inline)
-                && let Some((Some(Reference::Substitution(name)), pos)) =
+                && let Some((Some(Reference::Substitution(name, false)), pos)) =
                     self.parser.references.get(index)
             {
                 let (name, pos) = (name.clone(), pos.clone());
@@ -145,7 +145,7 @@ impl Resolver<'_, '_> {
                 if let Some(replacement) = replacement {
                     out.extend(replacement);
                 } else {
-                    self.missing(&format!("\"{name}\""), &pos);
+                    self.missing(&format!("\"{}\"", key(&name)), &pos);
                     out.push(Block::Para(vec![str_inline(format!("|{name}|"))]));
                 }
                 continue;
@@ -298,14 +298,14 @@ impl Resolver<'_, '_> {
                             );
                         }
                     }
-                    Reference::Substitution(name) => {
+                    Reference::Substitution(name, linked) => {
                         let content = self.substitution(&name, &pos, depth + 1)?;
                         let mut inlines = match content.and_then(|blocks| blocks.into_iter().next())
                         {
                             Some(Block::Para(ils) | Block::Plain(ils)) => ils,
                             Some(_) => Vec::new(),
                             None => {
-                                self.missing(&format!("\"{name}\""), &pos);
+                                self.missing(&format!("\"{}\"", key(&name)), &pos);
                                 inline = Inline::Span(
                                     Attr::default(),
                                     vec![str_inline(format!("|{name}|"))],
@@ -314,10 +314,16 @@ impl Resolver<'_, '_> {
                                 continue;
                             }
                         };
-                        inline = if inlines.len() == 1 {
+                        let content = if inlines.len() == 1 {
                             inlines.remove(0)
                         } else {
                             Inline::Span(Attr::default(), inlines)
+                        };
+                        inline = if linked {
+                            let url = self.url(Some(&key(&name)), None, &pos);
+                            Inline::Link(Attr::default(), vec![content], Target::new(url, ""))
+                        } else {
+                            content
                         };
                     }
                 }

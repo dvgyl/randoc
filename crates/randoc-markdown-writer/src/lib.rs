@@ -16,6 +16,7 @@ mod html;
 mod inlines;
 mod standalone;
 mod tables;
+mod uri;
 
 use std::sync::Arc;
 
@@ -74,13 +75,19 @@ fn write(
     variant: Variant,
 ) -> Result<Text> {
     let mut w = W::new(options, variant, context.limits.max_nesting_depth);
+    let blocks = match doc.blocks.split_last() {
+        Some((Block::Div(attr, _), rest)) if attr.id == "refs" && w.has(Extension::Citations) => {
+            rest
+        }
+        _ => &doc.blocks,
+    };
     let output = match &options.template {
-        Some(template) => w.standalone(doc, template)?,
+        Some(template) => w.standalone(doc, blocks, template)?,
         None => {
             // Pandoc converts the metadata before the body, also for a
             // fragment, so the notes of the metadata take the first numbers.
             w.meta_context(&doc.meta)?;
-            w.document(&doc.blocks)?
+            w.document(blocks)?
         }
     };
     for message in std::mem::take(&mut w.messages) {
@@ -136,6 +143,8 @@ pub(crate) struct W<'a> {
     pub in_heading: bool,
     /// The number of images written so far.
     pub images: usize,
+    pub image_label_depth: usize,
+    pub image_label_repeats: usize,
     /// `true` inside an entry of the table of contents, which drops notes
     /// and writes links as their content.
     pub in_toc: bool,
@@ -191,6 +200,8 @@ impl<'a> W<'a> {
             in_heading: false,
             in_toc: false,
             images: 0,
+            image_label_depth: 0,
+            image_label_repeats: 0,
             list_level: 0,
             div_count: 0,
             upper: false,

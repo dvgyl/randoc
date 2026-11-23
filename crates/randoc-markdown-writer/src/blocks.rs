@@ -5,7 +5,8 @@ use randoc_ast::{
 };
 use randoc_core::{Extension, Result};
 use randoc_layout::{
-    Doc, blankline, blanklines, chomp, cr, empty, hang, literal, nest, prefixed, real_length, vcat,
+    Doc, blankline, blanklines, chomp, cr, empty, hang, literal, nest, nowrap, prefixed,
+    real_length, vcat,
 };
 
 use crate::html::html_attrs;
@@ -805,9 +806,15 @@ impl W<'_> {
     fn definition_list(&mut self, items: &[(Vec<Inline>, Vec<Vec<Block>>)]) -> Result<Doc> {
         let mut out = empty();
         for (term, definitions) in items {
-            let term_doc = self.inlines(term)?;
+            let (trailing, term) = match term.split_last() {
+                Some((Inline::Space, rest)) => (literal(" "), rest),
+                _ => (empty(), term.as_slice()),
+            };
+            let term_doc = nowrap(self.inlines(term)? + trailing);
             // The first definition sets the spacing of all definitions.
-            let tight = definitions.first().is_none_or(|d| starts_plain(d));
+            let tight = definitions
+                .first()
+                .is_none_or(|d| matches!(d.first(), Some(Block::Plain(_))));
             if self.plain() {
                 let mut defs = empty();
                 for definition in definitions {
@@ -998,7 +1005,8 @@ impl W<'_> {
                 );
                 return Ok(self.html_blocks(&[Block::Plain(vec![image])])? + blankline());
             }
-            let caption_doc = self.caption_lines(&caption.long, (false, true))?.doc;
+            let caption_doc =
+                self.image_label(|w| Ok(w.caption_lines(&caption.long, (false, true))?.doc))?;
             return Ok(self.image_doc(&new_attr, caption_doc, target) + blankline());
         }
         if self.has(Extension::RawHtml) {

@@ -96,7 +96,7 @@ enum Reference {
     Link(String, Vec<Inline>),
     Anonymous(Vec<Inline>),
     Note(String),
-    Substitution(String),
+    Substitution(String, bool),
 }
 
 #[derive(Clone)]

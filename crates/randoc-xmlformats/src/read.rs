@@ -444,6 +444,10 @@ impl<'a> Read<'a, '_> {
             }
             "imagedata" | "inlinemediaobject" | "mediaobject" | "graphic" | "inline-graphic"
             | "image" => {
+                if self.dialect == Dialect::Fb2 {
+                    out.push(fb2::image(el, false));
+                    return Ok(());
+                }
                 if let Some(image) = self.image(el, depth)? {
                     image
                 } else {

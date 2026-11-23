@@ -466,19 +466,15 @@ fn check_ms_highlighting(oracle: &Oracle) {
         std::str::from_utf8(&expected.stdout).unwrap(),
     ));
 
-    // I-HL-01/02 (D4). Randoc uses plain code for Python with the default registry.
+    // The default registry highlights Python, as the oracle does.
     let input = "```python\nprint(1)\n```\n";
     let expected = oracle.run(&["-t", "ms"], input);
     assert!(expected.status.success() && expected.stderr.is_empty());
-    assert!(
-        std::str::from_utf8(&expected.stdout)
-            .unwrap()
-            .contains("\\*[BuiltInTok \"print\"]")
-    );
-    assert_eq!(
-        write("ms", &oracle.json("markdown", input), &[]),
-        ".IP\n.nf\n\\f[C]\nprint(1)\n\\f[]\n.fi\n",
-    );
+    assert!(compare_text(
+        "ms with Python highlighting",
+        &write("ms", &oracle.json("markdown", input), &[]),
+        std::str::from_utf8(&expected.stdout).unwrap(),
+    ));
 }
 
 fn check_synopsis_subsection(oracle: &Oracle) {

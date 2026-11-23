@@ -57,7 +57,9 @@ fn grid(table: &Table) -> Grid<'_> {
     for row in &table.foot.rows {
         body.push(row.cells.iter().collect());
     }
-    let head = if head_rows.is_empty() {
+    let head = if head_rows.is_empty()
+        || head_rows.len() == 1 && head_rows[0].iter().all(|cell| cell.content.is_empty())
+    {
         None
     } else {
         Some(head_rows.remove(0))
@@ -209,6 +211,34 @@ fn doc_lines(doc: &Doc, width: Option<usize>) -> Vec<Text> {
     }
 }
 
+/// Fits the natural widths within the available room. Give each long column
+/// the same share and redistribute the room that short columns do not use.
+fn fit_grid_widths(natural: &[usize], columns: usize) -> Vec<usize> {
+    let mut room = columns.saturating_sub(3 * natural.len() + 1);
+    let mut remaining = natural.len();
+    let mut sorted = natural.to_vec();
+    sorted.sort_unstable();
+    for width in sorted {
+        let share = room / remaining;
+        if width > share {
+            break;
+        }
+        room -= width;
+        remaining -= 1;
+    }
+    let share = room.checked_div(remaining).unwrap_or(usize::MAX);
+    natural.iter().map(|width| (*width).min(share)).collect()
+}
+
+fn cell_width(doc: &Doc, width: Option<usize>) -> usize {
+    doc_lines(doc, width)
+        .iter()
+        .map(|line| real_length(line))
+        .max()
+        .unwrap_or(0)
+        .max(1)
+}
+
 /// The plain-text table forms.
 #[derive(Clone, Copy)]
 enum Kind {
@@ -277,6 +307,7 @@ impl W<'_> {
         } else if all_simple && no_widths && pipe {
             (Some(Kind::Pipe), false)
         } else if no_foot
+            && !g.body.is_empty()
             && self.has(Extension::MultilineTables)
             && g.head
                 .iter()
@@ -378,9 +409,12 @@ impl W<'_> {
         Ok((head, body))
     }
 
-    /// Renders the cell documents as lines at the column widths. A header
-    /// row with only empty cells counts as no header.
-    fn rows_lines(docs: &CellDocs, widths: Option<&[usize]>) -> (Option<RowLines>, Vec<RowLines>) {
+    /// Renders the cell documents at the column widths.
+    fn rows_lines(
+        docs: &CellDocs,
+        widths: Option<&[usize]>,
+        keep_empty_head: bool,
+    ) -> (Option<RowLines>, Vec<RowLines>) {
         let width_of = |index: usize| widths.and_then(|w| w.get(index).copied());
         let row_lines = |row: &[Doc]| -> RowLines {
             row.iter()
@@ -391,8 +425,8 @@ impl W<'_> {
         let head = docs
             .0
             .as_deref()
-            .map(row_lines)
-            .filter(|cells| cells.iter().any(|c| !c.is_empty()));
+            .filter(|cells| keep_empty_head || cells.iter().any(|c| !c.is_empty()))
+            .map(row_lines);
         let body = docs.1.iter().map(|row| row_lines(row)).collect();
         (head, body)
     }
@@ -447,7 +481,7 @@ impl W<'_> {
 
     fn simple_lines(&mut self, g: &Grid<'_>) -> Result<Vec<Text>> {
         let docs = self.cell_docs(g)?;
-        let (head, body) = Self::rows_lines(&docs, None);
+        let (head, body) = Self::rows_lines(&docs, None, true);
         let columns = g.aligns.len();
         // The document width includes spaces that the renderer trims.
         let widths: Vec<usize> = Self::natural_widths(&docs.0, &docs.1, columns, Doc::offset)
@@ -487,7 +521,7 @@ impl W<'_> {
             return None;
         }
         let columns = g.aligns.len();
-        let (head, body) = Self::rows_lines(docs, Some(&vec![1; columns]));
+        let (head, body) = Self::rows_lines(docs, Some(&vec![1; columns]), false);
         let words = Self::rendered_widths(&head, &body, columns);
         Some(
             g.widths
@@ -509,7 +543,7 @@ impl W<'_> {
     fn multiline_lines(&mut self, g: &Grid<'_>) -> Result<Vec<Text>> {
         let docs = self.cell_docs(g)?;
         let relative = Self::relative_widths(g, &docs, self.opts.columns.saturating_sub(1), 0, 2);
-        let (head, body) = Self::rows_lines(&docs, relative.as_deref());
+        let (head, body) = Self::rows_lines(&docs, relative.as_deref(), true);
         let columns = g.aligns.len();
         let widths: Vec<usize> = match &relative {
             Some(widths) => widths.clone(),
@@ -549,7 +583,7 @@ impl W<'_> {
     }
 
     fn pipe_lines(&mut self, g: &Grid<'_>) -> Result<Vec<Text>> {
-        let (head, body) = Self::rows_lines(&self.cell_docs(g)?, None);
+        let (head, body) = Self::rows_lines(&self.cell_docs(g)?, None, false);
         let columns = g.aligns.len();
         let natural: Vec<usize> = Self::rendered_widths(&head, &body, columns)
             .iter()
@@ -630,13 +664,6 @@ impl W<'_> {
             docs.push(self.cell_doc(placed.cell)?);
         }
         let relative = !g.widths.iter().all(|w| *w == 0.0);
-        let longest = |doc: &Doc, width: Option<usize>| {
-            doc_lines(doc, width)
-                .iter()
-                .map(|line| real_length(line))
-                .max()
-                .unwrap_or(0)
-        };
         // The characters of a part of the line, less the border of a cell.
         let room = |part: f64| {
             let chars = (self.opts.columns.max(0) as f64 * part).floor();
@@ -655,7 +682,7 @@ impl W<'_> {
         }
         for (placed, doc) in l.cells.iter().zip(&docs) {
             if placed.cols == 1 {
-                let width = longest(doc, relative.then_some(1));
+                let width = cell_width(doc, relative.then_some(1));
                 widths[placed.col] = widths[placed.col].max(width);
             }
         }
@@ -665,7 +692,7 @@ impl W<'_> {
                 let width = if relative {
                     room(g.widths[span.clone()].iter().sum())
                 } else {
-                    longest(doc, None)
+                    cell_width(doc, None)
                 };
                 // Pandoc gives each spanned column the quotient plus the remainder.
                 let share = width / placed.cols + width % placed.cols;
@@ -674,25 +701,23 @@ impl W<'_> {
                 }
             }
         }
-        // A table wider than the line shares the line by the natural widths.
-        let natural: usize = widths.iter().sum();
-        let borders = 3 * columns + 1;
-        let line_width = crate::run_length(self.opts.columns);
-        let shrunk = !relative && natural + borders > line_width;
-        if shrunk {
-            let room = line_width.saturating_sub(borders);
-            for slot in &mut widths {
-                *slot = (room * *slot / natural.max(1)).max(1);
+        if !relative {
+            widths = fit_grid_widths(&widths, crate::run_length(self.opts.columns));
+            for (placed, doc) in l.cells.iter().zip(&docs) {
+                let width = cell_width(doc, Some(1));
+                let share = width / placed.cols + width % placed.cols;
+                for slot in &mut widths[placed.col..placed.col + placed.cols] {
+                    *slot = (*slot).max(share);
+                }
             }
         }
-        let wrap = relative || shrunk;
         let span_width =
             |p: &Placed<'_>| widths[p.col..p.col + p.cols].iter().sum::<usize>() + 3 * (p.cols - 1);
         let texts: Vec<Vec<Text>> = l
             .cells
             .iter()
             .zip(&docs)
-            .map(|(p, doc)| doc_lines(doc, wrap.then(|| span_width(p))))
+            .map(|(p, doc)| doc_lines(doc, Some(span_width(p))))
             .collect();
         let rows = l.owner.len();
         // The text of a cell that spans rows stays in its first row.
@@ -736,7 +761,7 @@ impl W<'_> {
                         match (before, shown) {
                             (Some(_), Some(_)) => '|',
                             (None, None)
-                                if !(aligns && above.is_none())
+                                if !(aligns && (above.is_none() || fill == '='))
                                     && !vertical(above, c)
                                     && !vertical(below, c) =>
                             {
@@ -813,16 +838,20 @@ impl W<'_> {
 
     fn grid_lines(&mut self, g: &Grid<'_>) -> Result<Vec<Text>> {
         let docs = self.cell_docs(g)?;
-        let relative = Self::relative_widths(g, &docs, self.opts.columns, 3, 0);
-        let (head, body) = Self::rows_lines(&docs, relative.as_deref());
         let columns = g.aligns.len();
-        let widths: Vec<usize> = match &relative {
-            Some(widths) => widths.clone(),
-            None => Self::rendered_widths(&head, &body, columns)
-                .iter()
-                .map(|w| (*w).max(1))
-                .collect(),
-        };
+        let widths =
+            Self::relative_widths(g, &docs, self.opts.columns, 3, 0).unwrap_or_else(|| {
+                let natural =
+                    Self::natural_widths(&docs.0, &docs.1, columns, |doc| cell_width(doc, None));
+                let mut widths = fit_grid_widths(&natural, crate::run_length(self.opts.columns));
+                let minimum =
+                    Self::natural_widths(&docs.0, &docs.1, columns, |doc| cell_width(doc, Some(1)));
+                for (width, minimum) in widths.iter_mut().zip(minimum) {
+                    *width = (*width).max(minimum).max(1);
+                }
+                widths
+            });
+        let (head, body) = Self::rows_lines(&docs, Some(&widths), true);
         let border = |fill: char, aligns: bool| -> Text {
             let mut out = Text::from("+");
             for (index, width) in widths.iter().enumerate() {

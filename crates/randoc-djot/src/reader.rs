@@ -732,23 +732,34 @@ impl<'s> State<'_, 's> {
         let mut chain = Vec::new();
         let mut lines = lines.to_vec();
         let mut start = 0;
+        let mut leading = Vec::new();
         while let Some(first) = lines.get(start).copied() {
             let first = first.trim();
             if first.text.is_empty() {
                 start += 1;
                 continue;
             }
-            let nested = if block_start(first.text) {
-                start
-            } else if let Some(index) = lines[start + 1..]
-                .iter()
-                .position(|line| block_start(line.trim().text))
-            {
-                start + index + 1
-            } else {
+            if !block_start(first.text) {
+                let stop = lines[start..]
+                    .iter()
+                    .position(|line| line.text.trim().is_empty())
+                    .map_or(lines.len(), |offset| start + offset);
+                for line in &mut lines[start..stop] {
+                    *line = line.trim();
+                }
+                let para = self.inline_lines(&lines[start..stop], depth + chain.len())?;
+                let mut attr = Attr::default();
+                if self.sourcepos {
+                    set_pos(
+                        &mut attr,
+                        (first.number, first.column),
+                        line_boundary(lines[stop - 1]),
+                    );
+                }
+                leading.push(attrs::block(attr, Block::Para(para)));
+                start = stop;
                 break;
-            };
-            let first = lines[nested].trim();
+            }
             if horizontal(first.text) {
                 break;
             }
@@ -757,7 +768,7 @@ impl<'s> State<'_, 's> {
             else {
                 break;
             };
-            if lines[nested + 1..]
+            if lines[start + 1..]
                 .iter()
                 .any(|line| !line.text.trim().is_empty() && line.trim().column <= first.column)
             {
@@ -769,25 +780,23 @@ impl<'s> State<'_, 's> {
             if self.sourcepos {
                 set_pos(&mut attr, (first.number, first.column), line_boundary(last));
             }
-            let prefix = self.blocks(&lines[start..nested], depth + chain.len())?;
-            chain.push((prefix, marker, attr));
-            start = nested;
+            chain.push((marker, attr));
             lines[start] = first.tail(marker.skip);
             for line in &mut lines[start + 1..] {
                 let width = (first.column + marker.skip).saturating_sub(line.column);
                 *line = remove_indent(*line, width);
             }
         }
-        let mut blocks = self.blocks(&lines[start..], depth + chain.len())?;
-        for (mut prefix, marker, attr) in chain.into_iter().rev() {
+        leading.extend(self.blocks(&lines[start..], depth + chain.len())?);
+        let mut blocks = leading;
+        for (marker, attr) in chain.into_iter().rev() {
             if !blocks
                 .windows(2)
                 .any(|pair| matches!(pair, [Block::Para(_), Block::Para(_)]))
             {
                 make_plain(&mut blocks);
             }
-            prefix.push(attrs::block(attr, list_block(marker, vec![blocks])));
-            blocks = prefix;
+            blocks = vec![attrs::block(attr, list_block(marker, vec![blocks]))];
         }
         Ok(blocks)
     }

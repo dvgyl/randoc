@@ -18,6 +18,7 @@ struct Layout {
     widths: Vec<usize>,
     head: usize,
     foot: usize,
+    constrained: bool,
 }
 
 impl Writer<'_> {
@@ -41,12 +42,7 @@ impl Writer<'_> {
                 .iter()
                 .any(|c| matches!(c.width, ColWidth::ColWidth(_)))
             || layout.cells.iter().any(|c| c.bottom > c.row + 1)
-            || layout
-                .widths
-                .iter()
-                .sum::<usize>()
-                .saturating_add(layout.widths.len().saturating_sub(1))
-                > self.width().unwrap_or(usize::MAX);
+            || layout.constrained;
         if self.options.list_tables {
             let mut header = literal(".. list-table::");
             if !caption.is_empty() {
@@ -62,7 +58,7 @@ impl Writer<'_> {
                     .iter()
                     .map(|col| {
                         if let ColWidth::ColWidth(w) = col.width {
-                            (w * 100.0).round() as usize
+                            (w * self.options.columns.max(1) as f64).round() as usize
                         } else {
                             0
                         }
@@ -117,14 +113,16 @@ impl Writer<'_> {
                 let bottom = r
                     .saturating_add(usize::try_from(cell.row_span).unwrap_or(1).max(1))
                     .min(count);
-                let doc = self.blocks(&cell.content, depth)?;
+                let doc = if self.options.list_tables {
+                    self.indented_blocks(&cell.content, depth)?
+                } else {
+                    self.blocks(&cell.content, depth)?
+                };
                 has_blocks |= cell
                     .content
                     .iter()
                     .any(|b| !matches!(b, Block::Para(_) | Block::Plain(_)));
-                if end == col + 1 {
-                    widths[col] = widths[col].max(doc.offset());
-                }
+                widths[col] = widths[col].max(doc.offset());
                 for slot in &mut slots[r..bottom] {
                     slot[col..end].fill(Some(cells.len()));
                 }
@@ -167,19 +165,26 @@ impl Writer<'_> {
             .col_specs
             .iter()
             .any(|c| matches!(c.width, ColWidth::ColWidth(_)));
+        let mut default_cap = usize::MAX;
+        if constrained && !explicit && cols > 0 {
+            let mut available = columns.saturating_sub(cols * 3 + 1);
+            let mut natural = widths.clone();
+            natural.sort_unstable();
+            for (index, width) in natural.into_iter().enumerate() {
+                default_cap = available / (cols - index);
+                if width > default_cap {
+                    break;
+                }
+                available -= width;
+            }
+        }
         if explicit || constrained || has_blocks {
             for (i, (spec, w)) in table.col_specs.iter().zip(&mut widths).enumerate() {
                 let preferred = match spec.width {
                     ColWidth::ColWidth(fraction) => ((fraction * columns as f64).floor() as usize)
                         .min(columns)
                         .saturating_sub(3),
-                    ColWidth::ColWidthDefault if constrained => (*w).min(
-                        columns
-                            .saturating_sub(1)
-                            .checked_div(cols)
-                            .unwrap_or(1)
-                            .saturating_sub(3),
-                    ),
+                    ColWidth::ColWidthDefault if constrained => (*w).min(default_cap),
                     ColWidth::ColWidthDefault => *w,
                 };
                 *w = preferred.max(min_widths[i]);
@@ -191,6 +196,7 @@ impl Writer<'_> {
             widths,
             head: table.head.rows.len(),
             foot: table.foot.rows.len(),
+            constrained,
         })
     }
 }
@@ -247,9 +253,14 @@ impl Layout {
                 for (j, (width, part)) in parts.iter().enumerate() {
                     let text = part.get(i).map_or("", String::as_str);
                     line.push_str(text);
-                    if j + 1 < parts.len() {
-                        line.push_str(&" ".repeat(width.saturating_sub(real_length(text)) + 1));
-                    }
+                    let column_end = if j + 1 < parts.len() {
+                        width + 1
+                    } else if spans[j].1 {
+                        width.saturating_sub(self.widths.last().copied().unwrap_or(0))
+                    } else {
+                        0
+                    };
+                    line.push_str(&" ".repeat(column_end.saturating_sub(real_length(text))));
                 }
                 lines.push(line);
             }

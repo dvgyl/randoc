@@ -4,7 +4,7 @@ use std::fmt::Write;
 
 use randoc_ast::{
     Alignment, Attr, Block, Cell, ColWidth, Inline, ListAttributes, ListNumberDelim,
-    ListNumberStyle, MathType, Pandoc, QuoteType, Row, Table,
+    ListNumberStyle, MathType, MetaValue, Pandoc, QuoteType, Row, Table,
 };
 use randoc_core::shared::{sections::make_sections, stringify_meta};
 use randoc_core::{Context, Extension, Result, TopLevelDivision, WrapOption, WriterOptions};
@@ -74,7 +74,7 @@ pub(super) fn write(
             Val::Bool(options.extensions.contains(Extension::Tagging)),
         ),
     ];
-    super::render_template(
+    super::render_template_with(
         doc,
         options,
         context.limits,
@@ -93,7 +93,23 @@ pub(super) fn write(
                 .check_layout(&body, context.limits.max_input_size)?;
             Ok(body)
         },
-        fields,
+        |scope| {
+            super::set_template_defaults(scope, fields);
+            if options.variables.get("papersize").is_none()
+                && matches!(doc.meta.get("papersize"), Some(MetaValue::MetaBlocks(_)))
+            {
+                return;
+            }
+            let limit = usize::try_from(context.limits.max_input_size).unwrap_or(usize::MAX);
+            if let Some(Val::Simple(value)) = scope.get("papersize")
+                && let Some(label) = value.render_limited(limit)
+                && let Some(number) = label.strip_prefix('a')
+                && !number.is_empty()
+                && number.bytes().all(|byte| byte.is_ascii_digit())
+            {
+                scope.insert("papersize", Val::text(format!("A{number}")));
+            }
+        },
     )
 }
 
@@ -127,7 +143,14 @@ impl Renderer<'_> {
     fn block(&mut self, block: &Block) -> Doc {
         match block {
             Block::Plain(items) => self.inlines(items) + cr(),
-            Block::Para(items) => self.inlines(items) + blankline(),
+            Block::Para(items) => {
+                let body = self.inlines(items);
+                if self.options.extensions.contains(Extension::Tagging) {
+                    text("\\bpar") + cr() + body + cr() + text("\\epar") + blankline()
+                } else {
+                    body + blankline()
+                }
+            }
             Block::LineBlock(lines) => {
                 vcat(lines.iter().map(|line| self.inlines(line) + text("\\crlf"))) + blankline()
             }
@@ -233,8 +256,18 @@ impl Renderer<'_> {
                                 write!(output, "\\{}Tok{{{}}}", kind.name(), escape_code(first));
                         }
                         for (kind, source) in tokens {
-                            let _ =
-                                write!(output, "\\{}Tok{{{}}}", kind.name(), escape_code(&source));
+                            if kind == randoc_highlight::TokenType::Normal
+                                && source.chars().all(|c| c == ' ')
+                            {
+                                output.push_str(&source);
+                            } else {
+                                let _ = write!(
+                                    output,
+                                    "\\{}Tok{{{}}}",
+                                    kind.name(),
+                                    escape_code(&source)
+                                );
+                            }
                         }
                         output.push_str("/ETEX");
                     }
@@ -243,6 +276,7 @@ impl Renderer<'_> {
                 return literal(output) + blankline();
             }
         }
+        let code = code.strip_suffix('\n').unwrap_or(code);
         flush(literal(format!("\\starttyping\n{code}\n\\stoptyping"))) + blankline()
     }
 
@@ -364,36 +398,40 @@ impl Renderer<'_> {
     }
 
     fn table(&mut self, table: &Table) -> Doc {
-        let title = chomp(self.blocks(&table.caption.long));
-        let mut out = Vec::new();
+        let title = self.table_content(&table.caption.long);
         let name = &table.attr.id;
-        let id = if name.is_empty() {
+        let reference = if name.is_empty() {
             String::new()
         } else {
-            format!("reference={},", reference(name))
+            format!(",reference={{{}}}", reference(name))
         };
         let place = if title.is_empty() {
-            text(format!("\\startplacetable[{id}location=none]"))
+            text(format!("\\startplacetable[location=none{reference}]"))
         } else {
-            text(format!("\\startplacetable[{id}title={{")) + title + text("}]")
+            text("\\startplacetable[title={") + title + text(format!("}}{reference}]"))
         };
-        out.extend([place, cr()]);
+        let mut out = vec![place, cr()];
         if self.options.extensions.contains(Extension::Ntb) {
-            out.push(literal("\\bTABLE") + cr());
-            for (_, row) in super::rows(table) {
-                out.push(text("\\bTR") + cr());
-                for cell in &row.cells {
-                    out.push(
-                        text("\\bTD")
-                            + space()
-                            + chomp(self.blocks(&cell.content))
-                            + space()
-                            + text("\\eTD")
-                            + cr(),
-                    );
+            for (index, spec) in table.col_specs.iter().enumerate() {
+                if let Some(align) = table_alignment(spec.align) {
+                    out.extend([
+                        text(format!(
+                            "\\setupTABLE[column][{}][align={align}]",
+                            index + 1
+                        )),
+                        cr(),
+                    ]);
                 }
-                out.push(text("\\eTR") + cr());
             }
+            out.extend([text("\\bTABLE"), cr()]);
+            out.push(self.natural_rows("head", &table.head.rows, true));
+            out.extend([text("\\bTABLEbody"), cr()]);
+            for body in &table.bodies {
+                out.push(self.natural_rows_content(&body.head, true));
+                out.push(self.natural_rows_content(&body.body, false));
+            }
+            out.extend([text("\\eTABLEbody"), cr()]);
+            out.push(self.natural_rows("foot", &table.foot.rows, false));
             out.extend([text("\\eTABLE"), cr()]);
         } else {
             out.push(text("\\startxtable") + cr());
@@ -409,6 +447,60 @@ impl Renderer<'_> {
         }
         out.extend([text("\\stopplacetable"), blankline()]);
         hcat(out)
+    }
+
+    fn table_content(&mut self, blocks: &[Block]) -> Doc {
+        chomp(hcat(blocks.iter().map(|block| match block {
+            Block::Plain(items) | Block::Para(items) => {
+                let body = self.inlines(items);
+                let body = if self.options.extensions.contains(Extension::Tagging) {
+                    inside(text("\\bpar{}"), text("\\epar{}"), body)
+                } else {
+                    body
+                };
+                body + cr()
+            }
+            _ => self.block(block),
+        })))
+    }
+
+    fn natural_rows(&mut self, group: &str, rows: &[Row], header: bool) -> Doc {
+        text(format!("\\bTABLE{group}"))
+            + cr()
+            + self.natural_rows_content(rows, header)
+            + text(format!("\\eTABLE{group}"))
+            + cr()
+    }
+
+    fn natural_rows_content(&mut self, rows: &[Row], header: bool) -> Doc {
+        let tag = if header { "TH" } else { "TD" };
+        hcat(rows.iter().map(|row| {
+            text("\\bTR")
+                + cr()
+                + hcat(row.cells.iter().map(|cell| {
+                    let mut props = Vec::new();
+                    if cell.col_span != 1 {
+                        props.push(format!("nx={}", cell.col_span));
+                    }
+                    if cell.row_span != 1 {
+                        props.push(format!("ny={}", cell.row_span));
+                    }
+                    if let Some(align) = table_alignment(cell.align) {
+                        props.push(format!("align={align}"));
+                    }
+                    let attrs = if props.is_empty() {
+                        String::new()
+                    } else {
+                        format!("[{}]", props.join(","))
+                    };
+                    text(format!("\\b{tag}{attrs} "))
+                        + self.table_content(&cell.content)
+                        + text(format!("\\e{tag}"))
+                        + cr()
+                }))
+                + text("\\eTR")
+                + cr()
+        }))
     }
 
     fn row_group(&mut self, name: &str, rows: &[Row], table: &Table) -> Doc {
@@ -438,11 +530,8 @@ impl Renderer<'_> {
         } else {
             cell.align
         };
-        match alignment {
-            Alignment::AlignLeft => props.push("align=right".into()),
-            Alignment::AlignRight => props.push("align=left".into()),
-            Alignment::AlignCenter => props.push("align=middle".into()),
-            _ => {}
+        if let Some(align) = table_alignment(alignment) {
+            props.push(format!("align={align}"));
         }
         if cell.col_span != 1 {
             props.push(format!("nx={}", cell.col_span));
@@ -456,12 +545,7 @@ impl Renderer<'_> {
                 (width * 100.0).round() / 100.0
             ));
         }
-        let body = chomp(self.blocks(&cell.content));
-        let body = if self.options.extensions.contains(Extension::Tagging) {
-            inside(text("\\bpar{}"), text("\\epar{}"), body)
-        } else {
-            body
-        };
+        let body = self.table_content(&cell.content);
         let suffix = if props.is_empty() {
             String::new()
         } else {
@@ -555,7 +639,11 @@ impl Renderer<'_> {
             }
             Inline::Note(blocks) => {
                 let body = nest(2, chomp(self.blocks(blocks)));
-                if blocks.len() > 1 {
+                let mut has_code_block = false;
+                randoc_ast::walk::query_blocks(blocks, |block| {
+                    has_code_block |= matches!(block, Block::CodeBlock(..));
+                });
+                if has_code_block {
                     text("\\startbuffer ") + body + text("\\stopbuffer\\footnote{\\getbuffer}")
                 } else {
                     argument("footnote", body)
@@ -604,6 +692,15 @@ impl Renderer<'_> {
             }
             Inline::RawInline(..) => Doc::default(),
         }
+    }
+}
+
+fn table_alignment(alignment: Alignment) -> Option<&'static str> {
+    match alignment {
+        Alignment::AlignLeft => Some("right"),
+        Alignment::AlignRight => Some("left"),
+        Alignment::AlignCenter => Some("middle"),
+        Alignment::AlignDefault => None,
     }
 }
 
@@ -672,7 +769,7 @@ fn reference(id: &str) -> String {
     out
 }
 
-fn dimension(value: &str, dpi: i64) -> Option<String> {
+pub(super) fn dimension(value: &str, dpi: i64) -> Option<String> {
     let (number, unit) = value.split_at(
         value
             .find(|c: char| c.is_ascii_alphabetic() || c == '%')
@@ -683,6 +780,7 @@ fn dimension(value: &str, dpi: i64) -> Option<String> {
         "%" => (number / 100.0, "\\textwidth"),
         "" | "px" => (number / dpi.max(1) as f64, "in"),
         "in" | "cm" | "mm" | "pt" | "pc" | "em" => (number, unit),
+        "inch" => (number, "in"),
         _ => return None,
     };
     let decimal = format!("{number:.5}");

@@ -1,7 +1,7 @@
 use randoc_ast::{
     Attr, Block, Inline, ListAttributes, ListNumberDelim as Delim, ListNumberStyle as Style,
 };
-use randoc_core::shared::auto_identifier;
+use randoc_core::shared::{auto_identifier, stringify};
 use randoc_core::{Extension, Result};
 
 use super::directives::field_line;
@@ -182,8 +182,18 @@ fn option_list(text: &str) -> Option<(&str, &str)> {
         return None;
     }
     let (name, description) = text.split_once("  ").unwrap_or((text, ""));
-    if name.split_whitespace().count() > 2 {
-        return None;
+    for option in name.split(", ") {
+        let (flag, argument) = option.split_once(' ').unwrap_or((option, ""));
+        let flag = flag
+            .strip_prefix("--")
+            .or_else(|| flag.strip_prefix(['-', '/']))?;
+        if flag.is_empty()
+            || flag.contains(',')
+            || !(argument.starts_with('<') && argument.ends_with('>'))
+                && argument.chars().any(char::is_whitespace)
+        {
+            return None;
+        }
     }
     Some((name, description.trim_start()))
 }
@@ -227,6 +237,7 @@ impl Parser<'_> {
         let mut targets = Vec::new();
         let mut classes = Vec::new();
         let mut bird_run_end = 0;
+        let mut paragraph_source = None;
         let mut i = 0;
         while i < input.len() {
             i = skip_blanks(input, i);
@@ -258,8 +269,9 @@ impl Parser<'_> {
                 } else {
                     String::new()
                 };
-                self.targets
-                    .insert(key(title.text), TargetDef::Url(format!("#{auto}")));
+                let target = TargetDef::Url(format!("#{auto}"));
+                self.targets.insert(key(title.text), target.clone());
+                self.targets.insert(key(&stringify(&label)), target);
                 let id = targets.pop().unwrap_or(auto);
                 for earlier in targets.drain(..) {
                     label.push(Inline::Span(attr(earlier, &[]), Vec::new()));
@@ -379,13 +391,7 @@ impl Parser<'_> {
                 Block::DefinitionList(items)
             } else {
                 let start = i;
-                i += 1;
-                while input.get(i).is_some_and(|l| !l.blank()) {
-                    if input[i - 1].text.trim_end().ends_with("::") {
-                        break;
-                    }
-                    i += 1;
-                }
+                i = paragraph_end(input, start);
                 let mut para = joined(&input[start..i]);
                 let mut literal = None;
                 if para.trim_end().ends_with("::") {
@@ -413,7 +419,32 @@ impl Parser<'_> {
                         para.truncate(if para.trim() == "::" { 0 } else { end - 1 });
                     }
                 }
-                let inlines = self.inlines(&para, &line.pos());
+                let inlines = if literal.is_none() && para.contains("``") {
+                    let (source, offsets) = paragraph_source.get_or_insert_with(|| {
+                        let mut offsets = Vec::with_capacity(input.len() + 1);
+                        let mut source = String::new();
+                        for line in input {
+                            offsets.push(source.len());
+                            source.push_str(line.text);
+                            source.push('\n');
+                        }
+                        offsets.push(source.len());
+                        (source, offsets)
+                    });
+                    let from = offsets[start];
+                    self.paragraph(
+                        &source[from..],
+                        offsets[i] - from - 1,
+                        &line.pos(),
+                        |close| {
+                            let row = offsets.partition_point(|offset| *offset < from + close) - 1;
+                            i = paragraph_end(input, row);
+                            offsets[i] - from - 1
+                        },
+                    )
+                } else {
+                    self.inlines(&para, &line.pos())
+                };
                 if let Some(code) = literal {
                     if !inlines.is_empty() {
                         out.push(self.apply_pending(
@@ -502,6 +533,16 @@ impl Parser<'_> {
             i,
         ))
     }
+}
+
+fn paragraph_end(input: &[Line<'_>], start: usize) -> usize {
+    let mut next = start + 1;
+    while input.get(next).is_some_and(|line| !line.blank())
+        && !input[next - 1].text.trim_end().ends_with("::")
+    {
+        next += 1;
+    }
+    next
 }
 
 fn definition_start(input: &[Line<'_>], i: usize) -> bool {

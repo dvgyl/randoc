@@ -103,14 +103,7 @@ fn record(
     actual: &str,
     expected: &str,
 ) {
-    let known = matches!(
-        (format, group, id),
-        (
-            "mediawiki",
-            "corpus",
-            "wp-markdown.wiki" | "wp-printing-press.wiki"
-        ) | ("jira", "old", "writer/basic")
-    );
+    let known = matches!((format, group, id), ("jira", "old", "writer/basic"));
     let (passed, total) = report.entry((format.into(), group)).or_default();
     *total += 1;
     if actual == expected {
@@ -425,5 +418,5 @@ fn oracle_parity() {
         }
     }
     assert_eq!(report.values().map(|(_, total)| total).sum::<usize>(), 100);
-    assert_eq!(report.values().map(|(passed, _)| passed).sum::<usize>(), 97);
+    assert_eq!(report.values().map(|(passed, _)| passed).sum::<usize>(), 99);
 }

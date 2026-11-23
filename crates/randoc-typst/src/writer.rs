@@ -306,7 +306,17 @@ impl Renderer<'_> {
                     format!("#block({})[\n", params.join(", "))
                 };
                 let tail = label(&attr.id, true);
-                let separator = if matches!(blocks.last(), Some(Block::Para(_))) {
+                let separator = if matches!(
+                    blocks.last(),
+                    Some(
+                        Block::Para(_)
+                            | Block::BulletList(_)
+                            | Block::OrderedList(..)
+                            | Block::DefinitionList(_)
+                            | Block::Table(_)
+                            | Block::CodeBlock(..)
+                    )
+                ) {
                     "\n\n"
                 } else {
                     "\n"

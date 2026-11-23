@@ -10,18 +10,12 @@ use super::styles::Kind;
 use super::xml::Xml;
 
 pub(super) const SEPARATORS: &str = concat!(
-    r#"<w:footnote w:type="continuationSeparator" w:id="0"><w:p><w:r><w:continuationSeparator/></w:r></w:p></w:footnote>"#,
-    r#"<w:footnote w:type="separator" w:id="-1"><w:p><w:r><w:separator/></w:r></w:p></w:footnote>"#,
+    r#"<w:footnote w:type="continuationSeparator" w:id="0"><w:p><w:r><w:continuationSeparator /></w:r></w:p></w:footnote>"#,
+    r#"<w:footnote w:type="separator" w:id="-1"><w:p><w:r><w:separator /></w:r></w:p></w:footnote>"#,
 );
 
 impl Renderer<'_> {
-    pub(super) fn note(
-        &mut self,
-        out: &mut Xml,
-        blocks: &[Block],
-        run: Run<'_>,
-        depth: usize,
-    ) -> Result<()> {
+    pub(super) fn note(&mut self, out: &mut Xml, blocks: &[Block], depth: usize) -> Result<()> {
         let id = self.id();
         let mut note = self.budget.xml();
         let _ = write!(note, "<w:footnote w:id=\"{id}\">");
@@ -42,8 +36,10 @@ impl Renderer<'_> {
         self.first = first;
         note.raw("</w:footnote>");
         self.notes.append(note);
-        let reference = format!("<w:footnoteReference w:id=\"{id}\"/>");
-        run.styled(self.styles.id(Kind::Character, "FootnoteReference"))
+        let reference = format!("<w:footnoteReference w:id=\"{id}\" />");
+        // Pandoc gives the reference run only the character style.
+        Run::default()
+            .styled(self.styles.id(Kind::Character, "FootnoteReference"))
             .markup(out, &reference);
         Ok(())
     }
@@ -89,17 +85,17 @@ impl Renderer<'_> {
             self.open_paragraph(&mut comment, &mut Flow::default(), Some("CommentText"));
             Run::default()
                 .styled(self.styles.id(Kind::Character, "CommentReference"))
-                .markup(&mut comment, "<w:annotationRef/>");
+                .markup(&mut comment, "<w:annotationRef />");
             self.inlines(&mut comment, content, Run::default(), depth)?;
             self.first = first;
             comment.raw("</w:p></w:comment>");
             self.comments.append(comment);
-            let _ = write!(out, "<w:commentRangeStart w:id=\"{id}\"/>");
+            let _ = write!(out, "<w:commentRangeStart w:id=\"{id}\" />");
         } else {
             if let Some(id) = self.comment_ids.remove(key) {
-                let _ = write!(out, "<w:commentRangeEnd w:id=\"{id}\"/>");
+                let _ = write!(out, "<w:commentRangeEnd w:id=\"{id}\" />");
                 run.styled(self.styles.id(Kind::Character, "CommentReference"))
-                    .markup(out, &format!("<w:commentReference w:id=\"{id}\"/>"));
+                    .markup(out, &format!("<w:commentReference w:id=\"{id}\" />"));
             }
             self.inlines(out, content, run, depth)?;
         }

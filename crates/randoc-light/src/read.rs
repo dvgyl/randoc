@@ -37,15 +37,15 @@ pub(crate) fn read(
     if format == Format::T2t {
         strip_t2t_comments(&mut lines);
     }
+    let amuse = options.extensions.contains(Extension::Amuse);
     let mut current = 0;
     let mut content = Vec::new();
     while let Some(&line) = lines.get(current) {
         if let Some((id, body)) = note_definition(format, line) {
             let mut end = current + 1;
             while let Some(next) = lines.get(end)
-                && !next.trim().is_empty()
                 && note_definition(format, next).is_none()
-                && (format == Format::Textile || next.starts_with([' ', '\t']))
+                && (format == Format::Muse && !amuse || !next.trim().is_empty())
             {
                 end += 1;
             }
@@ -194,8 +194,24 @@ impl State<'_> {
                 continue;
             }
             if let Some((level, mut attr, title)) = heading(format, line) {
-                let xs = self.inline.parse(title.trim(), depth)?;
                 let extensions = self.inline.options.extensions;
+                i += 1;
+                let xs = if format == Format::Muse && extensions.contains(Extension::Amuse) {
+                    let start = i;
+                    while let Some(next) = lines.get(i)
+                        && !next.trim().is_empty()
+                        && heading(format, next).is_none()
+                    {
+                        i += 1;
+                    }
+                    let text = std::iter::once(title.trim())
+                        .chain(lines[start..i].iter().map(|line| line.trim()))
+                        .collect::<Vec<_>>()
+                        .join("\n");
+                    self.inline.parse(&text, depth)?
+                } else {
+                    self.inline.parse(title.trim(), depth)?
+                };
                 if matches!(format, Format::Muse | Format::Textile) {
                     if attr.id.is_empty() && extensions.contains(Extension::AutoIdentifiers) {
                         attr.id = self.ids.unique(&auto_identifier(&xs, extensions));
@@ -204,7 +220,6 @@ impl State<'_> {
                     }
                 }
                 out.push(Block::Header(level, attr, xs));
-                i += 1;
                 continue;
             }
             if format == Format::Textile {
@@ -401,19 +416,35 @@ impl State<'_> {
                     out.push(Block::CodeBlock(Attr::default(), code.join("\n")));
                     continue;
                 }
-                if trim == "@" {
-                    let (text, end) = collect_delimited(lines, i, "", "\n@");
+                if let Some(property) = trim.strip_prefix("prop>") {
+                    out.push(Block::CodeBlock(
+                        Attr::new("", vec!["property".into(), "haskell".into()], vec![]),
+                        property.trim_start().into(),
+                    ));
+                    i += 1;
+                    continue;
+                }
+                if trim == "@"
+                    && let (text, Some(end)) = collect_delimited(lines, i, "", "\n@")
+                {
+                    let text = text.strip_prefix('\n').unwrap_or(&text);
                     let mut xs = Vec::new();
-                    for line in text.trim_matches('\n').lines() {
+                    let mut has_markup = false;
+                    for line in text.lines() {
                         let contents = self.haddock_code(line, depth)?;
+                        has_markup |= !matches!(contents.as_slice(), [Inline::Code(attr, _)] if attr.is_empty());
                         let module = matches!(contents.first(), Some(Inline::Code(attr, _)) if attr.has_class("module"));
                         if !xs.is_empty() && !module {
                             xs.push(Inline::LineBreak);
                         }
                         xs.extend(contents);
                     }
-                    out.push(Block::Para(xs));
-                    i = end.unwrap_or(lines.len());
+                    out.push(if has_markup {
+                        Block::Para(xs)
+                    } else {
+                        Block::CodeBlock(Attr::default(), format!("{text}\n"))
+                    });
+                    i = end;
                     continue;
                 }
             }
@@ -455,6 +486,9 @@ impl State<'_> {
                         .get(i)
                         .and_then(|line| list_marker(format, line))
                         .is_some()
+                    || format == Format::Haddock
+                        && matches!(xs.as_slice(), [Inline::Span(attr, children)]
+                            if attr.has_class("anchor") && children.is_empty())
                 {
                     Block::Plain(xs)
                 } else {

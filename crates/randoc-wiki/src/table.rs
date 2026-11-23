@@ -1,7 +1,7 @@
 use randoc_ast::{Alignment, Block, Cell, ColSpec, ColWidth, Inline, Row, Table, TableBody};
 use randoc_core::Result;
 
-use crate::reader::{Parser, append_paragraph};
+use crate::reader::{Parser, append_paragraph, is_code_block_tag};
 use crate::scan::{Scan, attrs, char_len, line_end};
 use crate::{Wiki, cell_error};
 
@@ -9,6 +9,7 @@ struct CellSource {
     start: usize,
     first_end: usize,
     end: usize,
+    rescan: bool,
 }
 
 #[derive(Default)]
@@ -152,9 +153,20 @@ impl Parser<'_> {
         let mut heading = false;
         let mut multiline = false;
         let mut explicit_row = false;
+        let mut region_end = 0;
         let mut at = (opener_end + 1).min(close);
         while at < close {
-            let stop = self.logical_line(scan, at, close);
+            let rescan = at < region_end;
+            let mut stop = at;
+            while stop < close && scan.text.as_bytes()[stop] != b'\n' {
+                let next = scan.table_skip(stop, close);
+                if let Some(region) = scan.region(stop, close)
+                    && region.end > next
+                {
+                    region_end = region_end.max(region.end);
+                }
+                stop = next;
+            }
             let line = &scan.text[at..stop];
             let trim = line.trim_start_matches([' ', '\t']);
             let first = stop - trim.len();
@@ -202,7 +214,8 @@ impl Parser<'_> {
                         && let Some(prefix) = cell_attributes(&scan.text[at..stop])
                     {
                         at += prefix.len() + 1;
-                    } else if let Some(r) = scan.region(at, stop)
+                    } else if scan.text[at..].starts_with("{{")
+                        && let Some(r) = scan.region(at, stop)
                         && r.end > physical_end
                     {
                         at = r.end;
@@ -214,6 +227,7 @@ impl Parser<'_> {
                             start: cell_at,
                             first_end: at,
                             end: at,
+                            rescan,
                         });
                         at += 2;
                         cell_at = at;
@@ -225,6 +239,7 @@ impl Parser<'_> {
                     start: cell_at,
                     first_end: stop,
                     end: stop,
+                    rescan,
                 });
             } else if !trim.trim().is_empty() {
                 extend_cell(&mut cells, stop);
@@ -263,38 +278,12 @@ impl Parser<'_> {
             )?;
             attr.attributes
                 .retain(|(key, _)| !matches!(key.as_str(), "align" | "rowspan" | "colspan"));
-            let line = scan.text[start..source.first_end].trim();
-            let first = source.first_end - scan.text[start..source.first_end].trim_start().len();
-            let mut content = if source.first_end < source.end {
-                let allowance = if line.starts_with(['*', '#', ';', ':']) {
-                    start
-                } else {
-                    first
-                };
-                self.block_range(scan, allowance, source.end, depth)?
-            } else if (line.starts_with("{{")
-                || scan.tags.get(&first).is_some_and(|tag| {
-                    [
-                        "pre",
-                        "source",
-                        "syntaxhighlight",
-                        "blockquote",
-                        "div",
-                        "haskell",
-                    ]
-                    .iter()
-                    .any(|name| tag.name.eq_ignore_ascii_case(name))
-                }))
-                && scan.region(first, source.end).is_some()
-            {
-                self.block_range(scan, first, source.end, depth)?
+            let mut content = if source.rescan {
+                // The table split a region which hid markup from the document scan.
+                let cell = Scan::new(&scan.text[start..source.end], Wiki::Media);
+                self.media_cell_content(&cell, 0, source.first_end - start, cell.text.len(), depth)?
             } else {
-                let items = self.inlines(scan, start, source.end, depth)?;
-                if items.is_empty() {
-                    vec![]
-                } else {
-                    vec![Block::Plain(items)]
-                }
+                self.media_cell_content(scan, start, source.first_end, source.end, depth)?
             };
             if source.first_end < source.end
                 && let [Block::Para(items)] = content.as_mut_slice()
@@ -320,6 +309,46 @@ impl Parser<'_> {
             cells,
             ..Row::default()
         })
+    }
+
+    fn media_cell_content(
+        &mut self,
+        scan: &Scan<'_>,
+        start: usize,
+        first_end: usize,
+        end: usize,
+        depth: usize,
+    ) -> Result<Vec<Block>> {
+        let line = scan.text[start..first_end].trim_start();
+        let first = first_end - line.len();
+        let stop = cell_content_end(scan, first, end);
+        if stop == first && first == end {
+            return Ok(Vec::new());
+        }
+        if first_end < end {
+            let allowance = if line.starts_with(['*', '#', ';', ':']) {
+                start
+            } else {
+                first
+            };
+            self.block_range(scan, allowance, stop, depth)
+        } else if (line.starts_with("{{")
+            || scan.tags.get(&first).is_some_and(|tag| {
+                is_code_block_tag(tag.name)
+                    || tag.name.eq_ignore_ascii_case("blockquote")
+                    || tag.name.eq_ignore_ascii_case("div")
+            }))
+            && scan.region(first, stop).is_some()
+        {
+            self.block_range(scan, first, stop, depth)
+        } else {
+            let items = self.inlines(scan, start, stop, depth)?;
+            Ok(if items.is_empty() {
+                vec![]
+            } else {
+                vec![Block::Plain(items)]
+            })
+        }
     }
 
     fn normalize_row(
@@ -562,6 +591,21 @@ fn extend_cell(sources: &mut [CellSource], stop: usize) {
     if let Some(cell) = sources.last_mut() {
         cell.end = stop;
     }
+}
+
+fn cell_content_end(scan: &Scan<'_>, start: usize, end: usize) -> usize {
+    let mut at = start;
+    while at < end {
+        if scan.tags.get(&at).is_some_and(|tag| {
+            !tag.close
+                && (is_code_block_tag(tag.name) || tag.name.eq_ignore_ascii_case("blockquote"))
+        }) && scan.region(at, end).is_none()
+        {
+            return at;
+        }
+        at = scan.skip(at, end);
+    }
+    end
 }
 
 fn span(value: Option<&str>) -> Result<usize> {

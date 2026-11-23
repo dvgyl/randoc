@@ -267,6 +267,9 @@ fn convert(entry: &syntax::Entry, latex: bool, limits: &Limits) -> Result<MetaVa
     if let Some(value) = record.first(&["annotation", "annote"]) {
         insert(&mut map, "annote", record.field(value, false)?);
     }
+    if let Some(value) = record.get("eventtitle") {
+        insert(&mut map, "event", record.title(value, true)?);
+    }
     if let Some(value) = record.get("series") {
         let localized = bibstring(value);
         let parts = if localized != value {
@@ -294,7 +297,6 @@ fn convert(entry: &syntax::Entry, latex: bool, limits: &Limits) -> Result<MetaVa
     let genre = record.get("type").or(match entry.kind.as_str() {
         "phdthesis" => Some("phdthesis"),
         "mastersthesis" => Some("mathesis"),
-        "techreport" => Some("techreport"),
         _ => None,
     });
     if let Some(genre) = genre {
@@ -333,9 +335,22 @@ fn convert(entry: &syntax::Entry, latex: bool, limits: &Limits) -> Result<MetaVa
     }
     insert(&mut map, "issue", issue);
     let mut publisher = Vec::new();
-    for field in ["school", "institution", "organization", "publisher"] {
+    for field in [
+        "school",
+        "institution",
+        "organization",
+        "howpublished",
+        "publisher",
+    ] {
         if let Some(value) = record.get(field) {
-            join(&mut publisher, record.list(value, false)?, ";");
+            let parts = if field == "howpublished" {
+                let mut parts = record.field(value, true)?;
+                clear_nocase(&mut parts);
+                parts
+            } else {
+                record.list(value, false)?
+            };
+            join(&mut publisher, parts, ";");
         }
     }
     insert(&mut map, "publisher", publisher);

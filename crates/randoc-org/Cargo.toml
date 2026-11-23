@@ -19,5 +19,8 @@ randoc-templates = { workspace = true }
 [dev-dependencies]
 serde_json = { workspace = true }
 
+[target.'cfg(unix)'.dev-dependencies]
+nix = { version = "0.31", default-features = false, features = ["time"] }
+
 [lints]
 workspace = true

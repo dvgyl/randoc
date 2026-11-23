@@ -188,9 +188,7 @@ fn read_parent(context: &mut Context, href: &str) -> Result<String, Error> {
         }
     }
     if href.starts_with("http://") || href.starts_with("https://") {
-        let headers = context.state.request_headers.clone();
-        let (bytes, _) = context.host().fetch_url(href, &headers)?;
-        return decode(context, href, bytes);
+        return read_style_url(context, href);
     }
     match file_url_path(href) {
         Some(path) => read_style_file(context, &path),
@@ -200,9 +198,19 @@ fn read_parent(context: &mut Context, href: &str) -> Result<String, Error> {
     }
 }
 
-/// Reads and parses the style file at `path`. A path with no extension gets
-/// `.csl`, and a `file:` URL names a file, as in the oracle.
+fn read_style_url(context: &mut Context, url: &str) -> Result<String, Error> {
+    let headers = context.state.request_headers.clone();
+    let (bytes, _) = context.host().fetch_url(url, &headers)?;
+    decode(context, url, bytes)
+}
+
+/// Reads and parses a style from a path or URL. A local path with no
+/// extension gets `.csl`.
 pub fn read_style(context: &mut Context, path: &str) -> Result<Style, Error> {
+    if path.starts_with("http://") || path.starts_with("https://") {
+        let text = read_style_url(context, path)?;
+        return parse_style(context, &text);
+    }
     let path = file_url_path(path).unwrap_or_else(|| path.to_owned());
     let file_name = path.rsplit('/').next().unwrap_or(&path);
     let path = if file_name.contains('.') {

@@ -404,3 +404,180 @@ fn ragged_table_charges_only_retained_cells() -> Result<()> {
     assert!(matches!(read(&input, &mut context), Err(Error::Parse(_))));
     Ok(())
 }
+
+/// Runs one text writer of `randoc-native` or this crate.
+fn run_writer(name: &str, doc: &Pandoc, options: &WriterOptions) -> Result<String> {
+    let writer = if name == "native" {
+        randoc_native::writer(name)
+    } else {
+        writer(name)
+    };
+    let Some(Writer::Text(writer)) = writer else {
+        return Err(Error::App(format!("Missing writer {name}.")));
+    };
+    writer.write(doc, options, &mut Context::pure())
+}
+
+#[test]
+fn reader_matches_the_oracle_cases() -> Result<()> {
+    let mut failures = Vec::new();
+    for (name, input, expected) in crate::oracle_cases::READER {
+        let Some(Reader::Text(reader)) = reader("org") else {
+            return Err(Error::App("Missing Org reader.".into()));
+        };
+        let mut options = ReaderOptions::default();
+        options.extensions = default_extensions("org");
+        options.columns = 72;
+        let doc = reader.read(&Sources::from_text(*input), &options, &mut Context::pure())?;
+        let native = run_writer("native", &doc, &WriterOptions::default())?;
+        // The command line adds the final line break.
+        if native.trim_end() != expected.trim_end() {
+            failures.push(format!(
+                "{name}\n--- expected\n{expected}--- actual\n{native}"
+            ));
+        }
+    }
+    assert!(failures.is_empty(), "{}", failures.join("\n"));
+    Ok(())
+}
+
+#[test]
+fn writer_matches_the_oracle_cases() -> std::result::Result<(), Box<dyn std::error::Error>> {
+    let mut failures = Vec::new();
+    for (name, format, args, input, expected) in crate::oracle_cases::WRITER {
+        let Some(Reader::Text(native)) = randoc_native::reader("native") else {
+            return Err(io::Error::other("Missing native reader.").into());
+        };
+        let doc = native.read(
+            &Sources::from_text(*input),
+            &ReaderOptions::default(),
+            &mut Context::pure(),
+        )?;
+        let mut options = WriterOptions::default();
+        options.extensions = randoc_core::FormatSpec::parse(format).extensions()?;
+        for arg in *args {
+            if let Some(columns) = arg.strip_prefix("--columns=") {
+                options.columns = columns.parse()?;
+            } else if *arg == "-s" {
+                let template = randoc_data::default_template("org")
+                    .ok_or_else(|| io::Error::other("Missing Org template."))?;
+                options.template = Some(Template::compile(
+                    "default.org",
+                    template,
+                    32,
+                    &mut |path| Err(io::Error::other(format!("Missing partial {path}."))),
+                )?);
+            }
+        }
+        let org = run_writer("org", &doc, &options)?;
+        if org.trim_end() != expected.trim_end() {
+            failures.push(format!("{name}\n--- expected\n{expected}--- actual\n{org}"));
+        }
+    }
+    assert!(failures.is_empty(), "{}", failures.join("\n"));
+    Ok(())
+}
+
+#[test]
+fn abstract_block_goes_to_the_metadata() -> Result<()> {
+    let doc = read(
+        "#+begin_abstract\nShort /summary/.\n#+end_abstract\n\n#+BEGIN_ABSTRACT\nKept.\n#+END_ABSTRACT",
+        &mut Context::pure(),
+    )?;
+    assert!(matches!(
+        doc.meta.get("abstract"),
+        Some(randoc_ast::MetaValue::MetaBlocks(blocks)) if matches!(blocks.as_slice(), [Block::Para(_)])
+    ));
+    assert!(matches!(doc.blocks.as_slice(), [Block::Div(attr, _)] if attr.classes == ["ABSTRACT"]));
+    Ok(())
+}
+
+#[test]
+fn grid_tables_and_list_blocks_respect_the_limits() {
+    let row = "+---+---+\n| a | b |\n";
+    let mut context = Context::pure();
+    // The column count is charged once more for the border line.
+    context.limits.max_table_cells = 8;
+    assert!(read(&format!("{}+---+---+\n", row.repeat(3)), &mut context).is_ok());
+    assert!(read(&format!("{}+---+---+\n", row.repeat(4)), &mut context).is_err());
+    let mut context = Context::pure();
+    context.limits.max_nesting_depth = 8;
+    let nested = (0..12)
+        .map(|level| format!("{}- item\n", "  ".repeat(level)))
+        .collect::<String>();
+    assert!(read(&nested, &mut context).is_err());
+}
+
+#[test]
+fn paragraphs_stop_at_grid_borders() -> Result<()> {
+    let doc = read(
+        "text\n+---+---+\n| a | b |\n+---+---+\n",
+        &mut Context::pure(),
+    )?;
+    assert!(matches!(
+        doc.blocks.as_slice(),
+        [Block::Para(text), Block::Table(table)]
+            if stringify(text) == "text" && table.col_specs.len() == 2
+    ));
+    let doc = read("text\n+-+x\n", &mut Context::pure())?;
+    assert!(matches!(
+        doc.blocks.as_slice(),
+        [Block::Para(_), Block::Para(_)]
+    ));
+    let doc = read("text\n+=+\n", &mut Context::pure())?;
+    assert!(matches!(doc.blocks.as_slice(), [Block::Para(_)]));
+    Ok(())
+}
+
+#[test]
+fn grid_cells_keep_text_after_a_leading_no_break_space() -> Result<()> {
+    let doc = read("+---+\n|\u{a0}a |\n+---+\n", &mut Context::pure())?;
+    let [Block::Table(table)] = doc.blocks.as_slice() else {
+        panic!("Expected a table: {doc:?}");
+    };
+    let [Block::Plain(text)] = table.bodies[0].body[0].cells[0].content.as_slice() else {
+        panic!("Expected one plain cell: {table:?}");
+    };
+    assert_eq!(stringify(text), "a");
+    Ok(())
+}
+
+#[test]
+fn locator_labels_use_a_normal_space() -> Result<()> {
+    let cite = |suffix: Vec<Inline>| {
+        Inline::Cite(
+            vec![randoc_ast::Citation {
+                id: "k".into(),
+                prefix: Vec::new(),
+                suffix,
+                mode: randoc_ast::CitationMode::NormalCitation,
+                note_num: 0,
+                hash: 0,
+            }],
+            Vec::new(),
+        )
+    };
+    let doc = Pandoc {
+        meta: randoc_ast::Meta::default(),
+        blocks: vec![Block::Para(vec![
+            cite(vec![Inline::Str("p.\u{a0}12".into())]),
+            Inline::Space,
+            cite(vec![
+                Inline::Str(",".into()),
+                Inline::Space,
+                Inline::Str("p.\u{a0}12".into()),
+            ]),
+            Inline::Space,
+            cite(vec![Inline::Space, Inline::Str("p.\u{a0}12".into())]),
+            Inline::Space,
+            cite(vec![Inline::Str("a\u{a0}b".into())]),
+        ])],
+    };
+    let mut options = WriterOptions::default();
+    options.extensions = default_extensions("org");
+    assert_eq!(
+        write(&doc, &options, &mut Context::pure())?,
+        "[cite:@k p. 12] [cite:@k p. 12] [cite:@k p. 12] [cite:@k , a\u{a0}b]"
+    );
+    Ok(())
+}

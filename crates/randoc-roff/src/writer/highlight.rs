@@ -53,6 +53,9 @@ impl Renderer<'_, '_> {
     }
 
     fn syntax_registry(&mut self) -> &Registry {
+        if self.options.syntax_definitions.is_empty() {
+            return Registry::embedded();
+        }
         if self.syntax.is_none() {
             let mut registry = Registry::embedded().clone();
             if let Err(err) = registry.add_definitions(

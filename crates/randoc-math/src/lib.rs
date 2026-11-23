@@ -548,6 +548,38 @@ mod tests {
     }
 
     #[test]
+    fn unclosed_group_with_space_has_the_oracle_diagnostic() {
+        let tex = " \\sqrt{ ";
+        let error = to_inlines(MathType::DisplayMath, tex, DEFAULT_DEPTH).unwrap_err();
+        let detail = error.detail(tex);
+        assert!(detail.starts_with(" \\sqrt{ \n       ^\nunexpected eof\nexpecting space, "));
+        assert!(detail.ends_with(r#", white space or "}""#));
+
+        let tex = r"\sqrt{";
+        let error = to_inlines(MathType::DisplayMath, tex, DEFAULT_DEPTH).unwrap_err();
+        assert!(error.detail(tex).contains("\nexpecting white space, "));
+    }
+
+    #[test]
+    fn escaped_line_feed_is_a_control_space_in_an_array() {
+        let array = |end| format!(r"\begin{{array}}{{c}}a{end}b\end{{array}}");
+        let tex = array(concat!(r"\\\", "\n"));
+        let mathml = to_mathml(MathType::DisplayMath, &tex, DEFAULT_DEPTH).unwrap();
+        assert!(mathml.contains("<mspace width=\"0.222em\"></mspace><mi>b</mi>"));
+        assert!(mathml.contains(&format!(">{tex}</annotation>")));
+
+        for (end, command) in [(concat!(r"\\\", "\t"), "\\\t"), ("\\cr\n", r"\cr")] {
+            let tex = array(end);
+            let error = to_mathml(MathType::DisplayMath, &tex, DEFAULT_DEPTH).unwrap_err();
+            assert!(
+                error
+                    .detail(&tex)
+                    .contains(&format!("unexpected control sequence {command}"))
+            );
+        }
+    }
+
+    #[test]
     fn the_detail_shows_the_place_of_a_parse_error() {
         assert_eq!(MathError::Unsupported.detail("x"), "");
         let parse = MathError::Parse {

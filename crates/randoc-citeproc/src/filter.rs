@@ -239,7 +239,7 @@ pub fn process_citations(context: &mut Context, doc: &mut Pandoc, mut hooks: Hoo
             *content = new;
         }
     });
-    let after_punctuation = is_note && meta_flag(doc, "notes-after-punctuation").unwrap_or(true);
+    let after_punctuation = meta_flag(doc, "notes-after-punctuation").unwrap_or(is_note);
     let mut mover = MoveNotes {
         after_punctuation,
         punctuation_in_quote: locale.punctuation_in_quote == Some(true),
@@ -925,7 +925,10 @@ fn parse_locator(
         let Some(end) = end else {
             return unchanged();
         };
-        let content = &us[i + 1..end];
+        let mut content = &us[i + 1..end];
+        while is_space_unit(content.first()) {
+            content = &content[1..];
+        }
         let rest = units_to_inlines(&us[end + 1..]);
         if content.is_empty() {
             return (None, rest);
@@ -1028,6 +1031,7 @@ fn is_word_char(c: char) -> bool {
 /// counts. A final period is not part of the word.
 fn locator_word(us: &[Unit], start: usize, roman: bool) -> Option<(String, usize)> {
     let (word, end) = match us.get(start)? {
+        Unit::Other(_, Inline::Math(..)) => return None,
         // Formatted text counts only with a digit.
         Unit::Other(text, _) => {
             return text
@@ -1133,9 +1137,15 @@ fn note_citation(
             for inline in inlines {
                 match inline {
                     Inline::Span(attr, content) if attr.classes == ["csl-note"] => {
-                        out.push(Inline::Str(",".into()));
-                        out.push(Inline::Space);
-                        out.extend(content);
+                        if content.is_empty() {
+                            out.push(Inline::Span(Attr::default(), content));
+                        } else {
+                            if !out.is_empty() {
+                                out.push(Inline::Str(",".into()));
+                                out.push(Inline::Space);
+                            }
+                            out.extend(content);
+                        }
                     }
                     other => out.push(other),
                 }
@@ -1250,7 +1260,10 @@ fn starts_with_note(content: &[Inline]) -> bool {
 }
 
 fn ends_with_note(content: &[Inline]) -> bool {
-    matches!(content.last(), Some(Inline::Note(_)))
+    matches!(
+        content.last(),
+        Some(Inline::Note(_) | Inline::Superscript(_))
+    )
 }
 
 /// A citation whose text ends with a period takes the place of a period
@@ -1385,5 +1398,80 @@ fn insert_bibliography(doc: &mut Pandoc, style: &Style, entries: Vec<Block>) {
         }
         doc.blocks
             .push(Block::Div(Attr::new("refs", classes, attributes), entries));
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn citation_math_stays_in_the_suffix() {
+        let suffix = [
+            Inline::Str(",".into()),
+            Inline::Space,
+            Inline::Math(randoc_ast::MathType::InlineMath, "x^2".into()),
+        ];
+        assert_eq!(parse_locator(&[], &suffix), (None, suffix.to_vec()));
+    }
+
+    #[test]
+    fn a_braced_locator_accepts_space_before_the_page_label() {
+        let terms = [("p.".into(), "page".into())];
+        let suffix = [Inline::Str("{ p.\u{a0}9 }".into())];
+        assert_eq!(
+            parse_locator(&terms, &suffix),
+            (Some(("page".into(), "9 ".into())), vec![])
+        );
+    }
+
+    #[test]
+    fn author_in_text_in_a_note_uses_a_comma_between_nonempty_parts() {
+        let cite = Collected {
+            citation: Citation::default(),
+            in_note: true,
+            opens_note: false,
+            author_in_text: true,
+        };
+        let note = |inlines| Inline::Span(Attr::new("", vec!["csl-note".into()], vec![]), inlines);
+        let author = Inline::Str("Doe".into());
+        let title = Inline::Str("Title".into());
+        for (input, expected) in [
+            (vec![note(vec![title.clone()])], vec![title.clone()]),
+            (
+                vec![author.clone(), note(vec![])],
+                vec![author.clone(), Inline::Span(Attr::default(), vec![])],
+            ),
+            (
+                vec![author.clone(), note(vec![title.clone()])],
+                vec![author, Inline::Str(",".into()), Inline::Space, title],
+            ),
+        ] {
+            assert_eq!(note_citation(input, &cite, None, 100).ok(), Some(expected));
+        }
+    }
+
+    #[test]
+    fn superscript_citations_can_follow_punctuation() {
+        let cite = Inline::Cite(
+            vec![],
+            vec![Inline::Superscript(vec![Inline::Str("1".into())])],
+        );
+        for after_punctuation in [true, false] {
+            let text = Inline::Str("Word".into());
+            let comma = Inline::Str(",".into());
+            let mut inlines = vec![text.clone(), Inline::Space, cite.clone(), comma.clone()];
+            let mut mover = MoveNotes {
+                after_punctuation,
+                punctuation_in_quote: false,
+            };
+            walk::VisitorMut::inlines(&mut mover, &mut inlines);
+            let expected = if after_punctuation {
+                vec![text, comma, cite.clone()]
+            } else {
+                vec![text, cite.clone(), comma]
+            };
+            assert_eq!(inlines, expected);
+        }
     }
 }

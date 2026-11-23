@@ -40,19 +40,19 @@ impl Renderer<'_> {
             let id = image.id;
             let _ = write!(
                 out,
-                "<w:r><w:drawing><wp:inline><wp:extent cx=\"{cx}\" cy=\"{cy}\"/><wp:effectExtent b=\"0\" l=\"0\" r=\"0\" t=\"0\"/><wp:docPr descr=\""
+                "<w:r><w:drawing><wp:inline><wp:extent cx=\"{cx}\" cy=\"{cy}\" /><wp:effectExtent b=\"0\" l=\"0\" r=\"0\" t=\"0\" /><wp:docPr descr=\""
             );
             out.escaped(&alt);
             out.raw("\" title=\"");
             out.escaped(&target.title);
             let _ = write!(
                 out,
-                "\" id=\"{first}\" name=\"Picture\"/><a:graphic><a:graphicData uri=\"http://schemas.openxmlformats.org/drawingml/2006/picture\"><pic:pic><pic:nvPicPr><pic:cNvPr descr=\""
+                "\" id=\"{first}\" name=\"Picture\" /><a:graphic><a:graphicData uri=\"http://schemas.openxmlformats.org/drawingml/2006/picture\"><pic:pic><pic:nvPicPr><pic:cNvPr descr=\""
             );
             out.escaped(&target.url);
             let _ = write!(
                 out,
-                r#"" id="{second}" name="Picture"/><pic:cNvPicPr><a:picLocks noChangeArrowheads="1" noChangeAspect="1"/></pic:cNvPicPr></pic:nvPicPr><pic:blipFill><a:blip r:embed="rId{id}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr bwMode="auto"><a:xfrm><a:off x="0" y="0"/><a:ext cx="{cx}" cy="{cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/><a:ln w="9525"><a:noFill/><a:headEnd/><a:tailEnd/></a:ln></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>"#
+                r#"" id="{second}" name="Picture" /><pic:cNvPicPr><a:picLocks noChangeArrowheads="1" noChangeAspect="1" /></pic:cNvPicPr></pic:nvPicPr><pic:blipFill><a:blip r:embed="rId{id}" /><a:stretch><a:fillRect /></a:stretch></pic:blipFill><pic:spPr bwMode="auto"><a:xfrm><a:off x="0" y="0" /><a:ext cx="{cx}" cy="{cy}" /></a:xfrm><a:prstGeom prst="rect"><a:avLst /></a:prstGeom><a:noFill /><a:ln w="9525"><a:noFill /><a:headEnd /><a:tailEnd /></a:ln></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>"#
             );
         }
         bookmark_end(out, bookmark);

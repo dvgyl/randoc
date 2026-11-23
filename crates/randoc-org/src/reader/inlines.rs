@@ -255,6 +255,19 @@ impl Parser<'_> {
                 ));
             }
         }
+        if previous.is_none_or(|p| !p.is_alphanumeric())
+            && tail.starts_with("src_")
+            && let Some((end, item)) = inline_source(text, index, pos)
+        {
+            return Ok(Some((pos + end, item)));
+        }
+        if previous.is_none_or(|p| !p.is_alphanumeric())
+            && tail.starts_with("cite")
+            && self.enabled(Extension::Citations)
+            && let Some((end, cite)) = org_ref_citation(tail)
+        {
+            return Ok(token(pos + end, cite));
+        }
         if previous.is_none_or(|p| !p.is_alphanumeric() && p != '`')
             && let Some(url) = bare_uri(tail)
         {
@@ -372,6 +385,8 @@ impl Parser<'_> {
         }
         if url.starts_with('/') {
             url.insert_str(0, "file://");
+        } else if drive_path(&url) {
+            url.insert_str(0, "file:///");
         }
         if description.is_none() && image_path(&url) {
             return Ok(Inline::Image(Attr::default(), vec![], Target::new(url, "")));
@@ -692,8 +707,11 @@ impl Parser<'_> {
         if end == pos + 1 {
             return None;
         }
-        let digits = command.bytes().take_while(u8::is_ascii_digit).count();
         let name = &text[pos + 1..end];
+        if matches!(name, "begin" | "end") && self.setting("tex", "t") != "verbatim" {
+            return self.math_environment(text, index, pos);
+        }
+        let digits = command.bytes().take_while(u8::is_ascii_digit).count();
         let digit_boundary = digits > 0 && !command[digits..].starts_with(char::is_alphabetic);
         let exact = (1..=4)
             .contains(&digits)
@@ -789,6 +807,41 @@ impl Parser<'_> {
     }
 }
 
+impl Parser<'_> {
+    /// Reads a LaTeX math environment `\\begin{NAME}...\\end{NAME}` as raw LaTeX.
+    /// Other environment commands are plain text.
+    fn math_environment(&self, text: &str, index: &Index, pos: usize) -> Token {
+        let name = text[pos..]
+            .strip_prefix("\\begin{")
+            .and_then(super::blocks::latex_name)
+            .filter(|name| super::blocks::math_environment(name))?;
+        let end = index.environment_end(name, pos)?;
+        if self.setting("tex", "t") == "nil" {
+            return Some((end, TokenItem::Skip));
+        }
+        if pos == 0 {
+            // An environment that starts a paragraph keeps its text.
+            return token(
+                end,
+                Inline::RawInline(Format::new("latex"), text[..end].into()),
+            );
+        }
+        // Inside a paragraph, the indentation of each line becomes one space.
+        let mut raw = String::with_capacity(end - pos);
+        let mut lines = text[pos..end].split('\n');
+        raw.push_str(lines.next().unwrap_or_default());
+        for line in lines {
+            raw.push('\n');
+            let content = line.trim_start_matches([' ', '\t']);
+            if content.len() < line.len() {
+                raw.push(' ');
+            }
+            raw.push_str(content);
+        }
+        token(end, Inline::RawInline(Format::new("latex"), raw))
+    }
+}
+
 enum TokenItem {
     Inline(Inline),
     Skip,
@@ -840,6 +893,94 @@ fn latex_math<'a>(text: &'a str, index: &Index, pos: usize) -> Option<(usize, &'
     };
     let end = index.find(pos + 2, close)?;
     Some((end + 2, &text[pos + 2..end], kind))
+}
+
+/// Reads an inline source block `src_LANG[HEADERS]{BODY}`. A block that
+/// exports no code gives nothing.
+fn inline_source(text: &str, index: &Index, pos: usize) -> Option<(usize, TokenItem)> {
+    let start = pos + "src_".len();
+    let lang_end = index.word_end(text, start);
+    let lang = &text[start..lang_end];
+    if lang.is_empty() {
+        return None;
+    }
+    let mut headers = "";
+    let mut open = lang_end;
+    if text[open..].starts_with('[') {
+        let close = index.next_match(open + 1, "]")?;
+        headers = text[open + 1..close].trim();
+        if !headers.is_empty() && !headers.starts_with(':') {
+            return None;
+        }
+        open = close + 1;
+    }
+    if !text[open..].starts_with('{') {
+        return None;
+    }
+    let close = index.next_match(open + 1, "}")?;
+    let end = close + 1 - pos;
+    let body = &text[open + 1..close];
+    let mut attr = Attr::default();
+    super::blocks::language(lang, &mut attr);
+    attr.attributes
+        .extend(super::directives::attributes(headers));
+    if matches!(attr.get("exports"), Some("none" | "results")) {
+        return Some((end, TokenItem::Skip));
+    }
+    Some((end, TokenItem::Inline(Inline::Code(attr, body.into()))))
+}
+
+/// Reads an org-ref citation link such as `cite:&key1,key2`.
+fn org_ref_citation(tail: &str) -> Option<(usize, Inline)> {
+    // The command is a short ASCII word, so the colon search stops early.
+    let length = tail
+        .find(|c: char| !(c.is_ascii_lowercase() || c == '*'))
+        .filter(|&length| tail[length..].starts_with(':'))?;
+    let command = &tail[..length];
+    let mode = match command {
+        "cite" | "citet" | "citet*" => CitationMode::AuthorInText,
+        "citep" | "citep*" => CitationMode::NormalCitation,
+        "citeyear" => CitationMode::SuppressAuthor,
+        _ => return None,
+    };
+    let mut citations = Vec::new();
+    let mut end = command.len() + 1;
+    loop {
+        let item = &tail[end..];
+        let key = item.strip_prefix('&').unwrap_or(item);
+        let run = key
+            .find(|c: char| !(c.is_alphanumeric() || "_-:./".contains(c)))
+            .unwrap_or(key.len());
+        let id = key[..run].trim_end_matches(|c: char| !c.is_alphanumeric());
+        if id.is_empty() {
+            break;
+        }
+        citations.push(Citation {
+            id: id.into(),
+            prefix: vec![],
+            suffix: vec![],
+            mode,
+            note_num: 0,
+            hash: 0,
+        });
+        end += item.len() - key.len() + id.len();
+        if !tail[end..].starts_with(',') {
+            break;
+        }
+        let next = tail[end + 1..]
+            .strip_prefix('&')
+            .unwrap_or(&tail[end + 1..]);
+        if !next.starts_with(|c: char| c.is_alphanumeric() || "_-:./".contains(c)) {
+            break;
+        }
+        end += 1;
+    }
+    (!citations.is_empty()).then(|| {
+        (
+            end,
+            Inline::Cite(citations, vec![Inline::Str(tail[..end].into())]),
+        )
+    })
 }
 
 fn next(text: &str, pos: usize) -> Option<char> {
@@ -927,6 +1068,15 @@ fn bare_uri(text: &str) -> Option<&str> {
         url = &url[..url.len() - closing.saturating_sub(opening).min(trailing)];
     }
     (!url.ends_with("://") && scheme(url)).then_some(url)
+}
+
+/// Returns `true` for an absolute Windows path such as `d:/notes.org`.
+fn drive_path(url: &str) -> bool {
+    let bytes = url.as_bytes();
+    bytes.len() > 2
+        && bytes[0].is_ascii_alphabetic()
+        && bytes[1] == b':'
+        && matches!(bytes[2], b'/' | b'\\')
 }
 
 fn uri_unreserved(byte: u8) -> bool {

@@ -6,7 +6,7 @@ use randoc_layout::{Doc, cr, empty, literal, space};
 
 use crate::escape::is_interrupting_marker;
 use crate::html::{escape_html, html_attr_parts};
-use randoc_core::shared::stringify;
+use randoc_core::shared::{is_haskell_alphanum, stringify};
 
 use crate::{LinkRef, Variant, W};
 
@@ -19,6 +19,29 @@ enum SpanForm {
     Span(&'static str),
     Delimited(&'static str, &'static str),
     Upper,
+}
+
+fn bare_citation_key(key: &str) -> bool {
+    let is_key_char = |c| c == '_' || is_haskell_alphanum(c);
+    let mut chars = key.trim_end_matches(is_haskell_space).chars().peekable();
+    if !chars.next().is_some_and(|c| c == '*' || is_key_char(c)) {
+        return false;
+    }
+    while let Some(c) = chars.next() {
+        if is_key_char(c) {
+            continue;
+        }
+        if !":.#$%&-+?<>~/".contains(c) {
+            return false;
+        }
+        if matches!(c, ':' | '/') {
+            while chars.next_if_eq(&'/').is_some() {}
+        }
+        if !chars.next().is_some_and(is_key_char) {
+            return false;
+        }
+    }
+    true
 }
 
 /// Returns `true` when the inlines after a shortcut reference `[text]` would
@@ -240,7 +263,7 @@ impl W<'_> {
         }
         match (next, after) {
             (Some(Inline::Str(text)), Some(Inline::Space | Inline::SoftBreak))
-                if is_interrupting_marker(&self.escape_text(text)) =>
+                if is_interrupting_marker(&self.escape_text(text), self.list_level > 0) =>
             {
                 literal(" ")
             }
@@ -717,12 +740,7 @@ impl W<'_> {
             } else {
                 ""
             };
-            let plain_key = !citation.id.is_empty()
-                && citation
-                    .id
-                    .chars()
-                    .all(|c| c.is_alphanumeric() || "_-:.#$%&+?<>~/".contains(c));
-            part += if plain_key {
+            part += if bare_citation_key(&citation.id) {
                 literal(format!("{dash}@{}", citation.id))
             } else {
                 literal(format!("{dash}@{{{}}}", citation.id))
@@ -809,12 +827,12 @@ impl W<'_> {
                 }));
             }
             if let [Inline::Str(text)] = content {
-                let is_uri_auto = *text == target.url && target.url.contains(':');
-                let is_mail_auto = format!("mailto:{text}") == target.url;
+                let autolink_label = crate::uri::autolink_label(&target.url);
+                let is_auto = autolink_label == Some(text.as_str());
                 let auto_attr = attr.id.is_empty()
                     && attr.attributes.is_empty()
                     && attr.classes.iter().all(|c| c == "uri" || c == "email");
-                if (is_uri_auto || is_mail_auto) && auto_attr {
+                if is_auto && auto_attr {
                     return Ok(literal(format!("<{text}>")));
                 }
             }
@@ -1009,8 +1027,38 @@ impl W<'_> {
             let image = Inline::Image(attr.clone(), alt, target.clone());
             return self.html_blocks(&[randoc_ast::Block::Plain(vec![image])]);
         }
-        let inner = self.inline_list(content, false)?;
+        let inner = if matches!(content, [Inline::Str(text)] if *text == target.url) {
+            empty()
+        } else {
+            self.image_label(|w| w.inline_list(content, false))?
+        };
         Ok(self.image_doc(attr, inner, target))
+    }
+
+    pub(crate) fn image_label(
+        &mut self,
+        mut render: impl FnMut(&mut Self) -> Result<Doc>,
+    ) -> Result<Doc> {
+        // Each repeat can double the number of notes in a nested image label.
+        const MAX_REPEAT_DEPTH: usize = 3;
+        const MAX_LABEL_REPEATS: usize = 64;
+        let before = self.notes.len();
+        self.image_label_depth += 1;
+        let result = (|| {
+            let label = render(self)?;
+            if self.notes.len() != before
+                && self.image_label_depth <= MAX_REPEAT_DEPTH
+                && self.image_label_repeats < MAX_LABEL_REPEATS
+            {
+                self.image_label_repeats += 1;
+                // Keep the markers from the first render. The second render
+                // reserves note numbers for the repeated definitions.
+                render(self)?;
+            }
+            Ok(label)
+        })();
+        self.image_label_depth -= 1;
+        result
     }
 
     fn styled_span(&mut self, style: SpanStyle, content: &[Inline]) -> Result<Doc> {

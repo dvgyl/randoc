@@ -172,11 +172,11 @@ fn uses_custom_template_and_context_terms() {
     for value in [
         "My title",
         "Summary &amp; scope",
-        r#"<w:docPartGallery w:val="Table of Contents"/>"#,
+        r#"<w:docPartGallery w:val="Table of Contents" />"#,
         ">Table of Contents</w:t>",
-        r#"<w:docPartGallery w:val="List of Figures"/>"#,
+        r#"<w:docPartGallery w:val="List of Figures" />"#,
         ">Figure index</w:t>",
-        r#"<w:docPartGallery w:val="List of Tables"/>"#,
+        r#"<w:docPartGallery w:val="List of Tables" />"#,
         ">Table index</w:t>",
         "Summary text",
         "Body &amp; text",
@@ -189,7 +189,7 @@ fn uses_custom_template_and_context_terms() {
     );
     let output = super::DocxWriter.write(&doc, &options, &mut ctx).unwrap();
     let xml = document_xml(&output, "word/document.xml");
-    assert!(xml.contains(r#"<w:docPartGallery w:val="Table of Contents"/>"#));
+    assert!(xml.contains(r#"<w:docPartGallery w:val="Table of Contents" />"#));
     assert!(xml.contains(">Outline &amp; index</w:t>"));
 }
 
@@ -384,8 +384,8 @@ fn writes_custom_style_ids_and_code_background() {
         .write(&doc, &options, &mut Context::pure())
         .unwrap();
     let xml = document_xml(&bytes, "word/styles.xml");
-    assert!(xml.contains(r#"<w:wordWrap w:val="off"/><w:shd w:val="clear" w:fill="303030"/>"#));
-    assert!(xml.contains(r#"w:styleId="MyStyle!" w:customStyle="1"><w:name w:val="My Style!"/><w:basedOn w:val="BodyText"/><w:qFormat/>"#));
+    assert!(xml.contains(r#"<w:wordWrap w:val="off" /><w:shd w:val="clear" w:fill="303030" />"#));
+    assert!(xml.contains(r#"w:customStyle="1" w:styleId="MyStyle!"><w:name w:val="My Style!" /><w:basedOn w:val="BodyText" /><w:qFormat />"#));
 }
 
 #[test]

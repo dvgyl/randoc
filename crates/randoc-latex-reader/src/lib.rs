@@ -8,6 +8,7 @@
 
 mod inlines;
 mod parse;
+mod raw;
 mod scope;
 #[cfg(test)]
 mod stress;
@@ -21,6 +22,10 @@ use randoc_core::{
 };
 
 use crate::parse::{Parser, Stop};
+
+pub use crate::raw::{
+    CommandClass, Macros, RawKind, RawTex, command_class, raw_tex_block, raw_tex_inline,
+};
 
 /// Returns the reader when the format name is `latex`.
 pub fn reader(format: &str) -> Option<Reader> {
@@ -190,6 +195,76 @@ mod tests {
     fn convert(input: &str, format: &str) -> Result<Pandoc> {
         let mut context = Context::pure();
         read(&Sources::from_text(input), &options(format), &mut context)
+    }
+
+    #[test]
+    fn a_measurement_range_keeps_both_units_and_their_powers() {
+        let doc = convert(
+            r"\SI{2}[\$]{\euro} \SIrange{1}{3}{\milli\metre\tothe{4}}",
+            "latex",
+        )
+        .unwrap();
+        let text = |value: &str| Inline::Str(value.into());
+        let power = || Inline::Superscript(vec![text("4")]);
+        assert_eq!(
+            doc.blocks,
+            vec![Block::Para(vec![
+                text("$\u{a0}2\u{a0}€"),
+                Inline::Space,
+                text("1\u{a0}mm"),
+                power(),
+                text("–3\u{a0}mm"),
+                power(),
+            ])]
+        );
+    }
+
+    #[test]
+    fn hyphenation_commands_preserve_text_and_insert_break_points() {
+        let doc = convert(
+            r"a\hyp{}b\fshyp{}c\dothyp{}d \textnhtt{x---y} \nohyphens{\emph{z}}",
+            "latex",
+        )
+        .unwrap();
+        assert_eq!(
+            doc.blocks,
+            vec![Block::Para(vec![
+                Inline::Str("a-b/\u{ad}c.\u{ad}d".into()),
+                Inline::Space,
+                Inline::Code(Attr::default(), "x—y".into()),
+                Inline::Space,
+                Inline::Emph(vec![Inline::Str("z".into())]),
+            ])]
+        );
+    }
+
+    #[test]
+    fn an_expanded_conditional_reports_an_error_at_the_macro_call() {
+        let input = concat!(
+            "\\def\\branch{\\fi\\global\\advance\\count by1}\n",
+            "\\def\\test{\\ifdim\\wd0>0pt\\let\\choice\\branch\\fi}\n",
+            "\\test\n",
+        );
+        let error = convert(input, "latex").unwrap_err();
+        assert_eq!(
+            error.to_string(),
+            "Error at (line 3, column 1):\nunexpected \\advance\n\\test\n^"
+        );
+    }
+
+    #[test]
+    fn a_block_in_a_control_group_keeps_the_environment_definition_in_scope() {
+        let input = concat!(
+            "\\begin{document}\n",
+            "\\begingroup\n",
+            "\\renewenvironment{document}{}{}\n",
+            "\\par\n",
+            "\\endgroup\n",
+            "\\end{document}\n",
+        );
+        let error = convert(input, "latex").unwrap_err();
+        assert_eq!(error.exit_code(), 64);
+        assert!(error.to_string().contains("expecting \\end{document}"));
     }
 
     /// Runs `test` on a thread with a 2 MB stack, as a library user has.
@@ -776,6 +851,65 @@ mod tests {
             let error = convert(input, "latex").expect_err(input);
             assert_eq!(error.exit_code(), 91, "{input}");
         }
+    }
+
+    #[test]
+    fn expl_syntax_document_commands_use_their_signatures() {
+        let input = concat!(
+            r"\ExplSyntaxOn",
+            "\n",
+            r"\NewDocumentCommand\greet_user:n{s O{#3} m}{\IfBooleanTF{#1}{Yes}{No}: #2/#3}",
+            "\n",
+            r"\greet_user:n*{first}",
+            "\n\n",
+            r"\greet_user:n[second]{third}",
+            "\n",
+            r"\ExplSyntaxOff",
+        );
+        let tree = convert(input, "latex").expect("document");
+        let paragraph = |status: &str, body: &str| {
+            Block::Para(vec![
+                Inline::Str(status.into()),
+                Inline::Space,
+                Inline::Str(body.into()),
+            ])
+        };
+        assert_eq!(
+            tree.blocks,
+            vec![
+                paragraph("Yes:", "first/first"),
+                paragraph("No:", "second/third")
+            ]
+        );
+    }
+
+    #[test]
+    fn document_verbatim_arguments_keep_special_characters() {
+        let tree =
+            convert(r"\NewDocumentCommand\show{v}{[#1]}\show|a_b% c|.", "latex").expect("document");
+        assert_eq!(tree.blocks, para("[a_b% c]."));
+    }
+
+    #[test]
+    fn a_recursive_document_command_preserves_the_macro_limit() {
+        let input = r"\NewDocumentCommand\loop{m}{\loop{#1}}\loop{x}";
+        assert!(matches!(convert(input, "latex"), Err(Error::MacroLoop(_))));
+    }
+
+    #[test]
+    fn a_large_document_argument_counts_toward_the_expansion_limit() {
+        let mut input = String::new();
+        for level in 0..14 {
+            let name = letter_name(level);
+            let body = if level == 0 {
+                "#1#1".to_owned()
+            } else {
+                format!(r"\{}{{#1#1}}", letter_name(level - 1))
+            };
+            input.push_str(&format!(r"\NewDocumentCommand\{name}{{m}}{{{body}}}"));
+        }
+        input.push_str(&format!(r"\{}{{{}}}", letter_name(13), "x".repeat(8192)));
+        assert!(matches!(convert(&input, "latex"), Err(Error::MacroLoop(_))));
     }
 
     #[test]

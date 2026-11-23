@@ -22,6 +22,10 @@ pub(crate) const MAX_BLOCK_WIDTH: usize = 100_000;
 /// The deepest partial nesting before `doctemplates` inserts `(loop)`.
 const MAX_PARTIAL_NESTING: usize = 50;
 
+/// The largest total number of partial loads permitted while compiling one
+/// template, preventing exponential blowup in branching self-referential partials.
+const MAX_PARTIAL_LOADS: usize = 10_000;
+
 const RESERVED: [&str; 8] = [
     "if", "else", "endif", "elseif", "for", "endfor", "sep", "it",
 ];
@@ -170,13 +174,6 @@ pub(crate) fn partial_path(template_path: &str, name: &str) -> String {
     }
 }
 
-fn remove_final_newline(text: String) -> String {
-    match text.strip_suffix('\n') {
-        Some(t) => t.to_owned(),
-        None => text,
-    }
-}
-
 fn merge_option(first: Option<PErr>, second: PErr) -> PErr {
     match first {
         Some(e) => e.merge(second),
@@ -193,15 +190,16 @@ pub(crate) struct Parser<'a, E> {
     fatal: Option<Fatal<E>>,
     depth: usize,
     max_depth: usize,
-    /// Each partial that was parsed, by the state that its parse depends
-    /// on, so that a partial used many times is read and parsed one time.
+    /// Parsed partials that did not load another partial.
     partials: HashMap<PartialKey, (Arc<Node>, bool, PErr)>,
+    partial_loads: usize,
 }
 
-/// The path of a partial and the parser state that its parse depends on.
+/// The path, text and parser state that determine a partial parse.
 #[derive(PartialEq, Eq, Hash)]
 struct PartialKey {
     path: String,
+    text: String,
     nesting: usize,
     depth: usize,
     breaking_spaces: bool,
@@ -235,6 +233,7 @@ pub(crate) fn compile<E>(
         depth: 0,
         max_depth,
         partials: HashMap::new(),
+        partial_loads: 0,
     };
     let reply = parser.template_then_eof();
     match (reply, parser.fatal.take()) {
@@ -985,10 +984,18 @@ impl<E> Parser<'_, E> {
         let mut a = Acc::new(&self.pos);
         let sep = a.step(self.option(Node::Empty, Self::p_sep))?;
         let path = partial_path(&self.st.template_path, name);
-        let nesting = self.st.partial_nesting;
+        self.partial_loads += 1;
+        if self.st.partial_nesting > 0 && self.partial_loads > MAX_PARTIAL_LOADS {
+            return self.fatal_error(Fatal::TooDeep);
+        }
+        let text = match (self.load)(&path) {
+            Ok(text) => text,
+            Err(e) => return self.fatal_error(Fatal::Load(e)),
+        };
         let key = PartialKey {
             path,
-            nesting,
+            text,
+            nesting: self.st.partial_nesting,
             depth: self.depth,
             breaking_spaces: self.st.breaking_spaces,
             inside_directive: self.st.inside_directive,
@@ -996,7 +1003,7 @@ impl<E> Parser<'_, E> {
         let body = if let Some(parsed) = self.partials.get(&key) {
             a.step(Ok(parsed.clone()))?
         } else {
-            a.step(self.p_partial_body(&key))?
+            a.step(self.p_partial_body(key))?
         };
         self.st = old_state;
         let pipes = a.step(self.many_alt(Self::p_pipe))?;
@@ -1007,44 +1014,34 @@ impl<E> Parser<'_, E> {
         })
     }
 
-    /// Reads and parses a partial, and keeps the result for the next use.
-    fn p_partial_body(&mut self, key: &PartialKey) -> R<Arc<Node>> {
-        let path = key.path.clone();
-        let nesting = key.nesting;
-        let text = match (self.load)(&path) {
-            Ok(text) => remove_final_newline(text),
-            Err(e) => return self.fatal_error(Fatal::Load(e)),
-        };
-        let reply = if nesting > MAX_PARTIAL_NESTING {
+    /// Parses a partial. A cache hit must not hide a nested load.
+    fn p_partial_body(&mut self, key: PartialKey) -> R<Arc<Node>> {
+        let loads = self.partial_loads;
+        let reply = if key.nesting > MAX_PARTIAL_NESTING {
             self.ret(Node::Literal(literal("(loop)")))
         } else {
+            let text = key.text.strip_suffix('\n').unwrap_or(&key.text);
             let old_input = std::mem::replace(&mut self.input, text.chars().collect());
             let old_idx = std::mem::replace(&mut self.idx, 0);
-            let old_pos = std::mem::replace(&mut self.pos, Pos::initial(Rc::from(path.as_str())));
-            self.st.partial_nesting = nesting + 1;
+            let old_pos =
+                std::mem::replace(&mut self.pos, Pos::initial(Rc::from(key.path.as_str())));
+            self.st.partial_nesting = key.nesting + 1;
             self.st.nested_col = None;
             let reply = self.template_then_eof();
             if let Err(fail) = reply {
                 return Err(fail);
             }
-            self.st.partial_nesting = nesting;
+            self.st.partial_nesting = key.nesting;
             self.input = old_input;
             self.idx = old_idx;
             self.pos = old_pos;
             reply
         };
         let reply = reply.map(|(node, consumed, error)| (Arc::new(node), consumed, error));
-        if let Ok(parsed) = &reply {
-            self.partials.insert(
-                PartialKey {
-                    path,
-                    nesting,
-                    depth: key.depth,
-                    breaking_spaces: key.breaking_spaces,
-                    inside_directive: key.inside_directive,
-                },
-                parsed.clone(),
-            );
+        if self.partial_loads == loads
+            && let Ok(parsed) = &reply
+        {
+            self.partials.insert(key, parsed.clone());
         }
         reply
     }
@@ -1172,6 +1169,26 @@ impl<E> Parser<'_, E> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn partial_loads_each_time_and_shares_the_parse_for_identical_text() {
+        let mut loads = Vec::new();
+        let mut load = |path: &str| -> Result<String, ()> {
+            loads.push(path.to_owned());
+            Ok("partial".into())
+        };
+        let Ok(node) = compile("main.txt", "$p()$$p()$", 128, &mut load) else {
+            panic!("expected the template to compile");
+        };
+        assert_eq!(loads, ["p.txt", "p.txt"]);
+        let Node::Concat(nodes) = node else {
+            panic!("expected two partials");
+        };
+        let [Node::Partial(_, first), Node::Partial(_, second)] = nodes.as_slice() else {
+            panic!("expected two partials");
+        };
+        assert!(Arc::ptr_eq(first, second));
+    }
 
     #[test]
     fn partial_paths() {

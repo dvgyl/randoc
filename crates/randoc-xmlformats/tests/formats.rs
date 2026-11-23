@@ -58,6 +58,54 @@ fn registers_supported_names() {
 }
 
 #[test]
+fn jats_divs_choose_the_wrapper_from_the_child_blocks() {
+    let plain = || Block::Plain(vec![Inline::Str("Plain".into())]);
+    let para = || Block::Para(vec![Inline::Str("Paragraph".into())]);
+    let div = |id, children| {
+        Block::Div(
+            Attr::new(
+                id,
+                vec!["note".into()],
+                vec![("custom".into(), "value".into())],
+            ),
+            children,
+        )
+    };
+    let doc = Pandoc {
+        blocks: vec![
+            div("empty", vec![]),
+            div("1plain&", vec![plain(), plain()]),
+            div("para", vec![para()]),
+            div("Ⅳé·1", vec![]),
+            div("outer", vec![plain(), div("inner", vec![para()])]),
+            div("", vec![para()]),
+        ],
+        ..Pandoc::default()
+    };
+    let expected = concat!(
+        "<p id=\"empty\">\n</p>\n",
+        "<p id=\"U0031plainU0026\">\n  <p>Plain</p>\n  <p>Plain</p>\n</p>\n",
+        "<boxed-text id=\"para\">\n  <p>Paragraph</p>\n</boxed-text>\n",
+        "<p id=\"U2163é·1\">\n</p>\n",
+        "<boxed-text id=\"outer\">\n  <p>Plain</p>\n",
+        "  <boxed-text id=\"inner\">\n    <p>Paragraph</p>\n  </boxed-text>\n</boxed-text>\n",
+        "<p>Paragraph</p>",
+    );
+    for format in [
+        "jats",
+        "jats_archiving",
+        "jats_articleauthoring",
+        "jats_publishing",
+    ] {
+        assert_eq!(
+            write(format, &doc, &mut Context::pure()).unwrap(),
+            expected,
+            "{format}"
+        );
+    }
+}
+
+#[test]
 fn fragment_boundaries() {
     let mut context = Context::pure();
     for format in ["docbook", "jats", "bits"] {
@@ -749,4 +797,128 @@ fn fb2_writer_budgets_generated_prefixes() {
             matches!(write("fb2", &doc, &mut context), Err(Error::App(message)) if message.contains("FB2 list and definition prefix size"))
         );
     }
+}
+
+fn write_with(format: &str, doc: &Pandoc, options: &WriterOptions) -> String {
+    let output = writer(format)
+        .unwrap()
+        .write(doc, options, &mut Context::pure())
+        .unwrap();
+    String::from_utf8(output.into_bytes()).unwrap()
+}
+
+#[test]
+fn tei_code_blocks_use_the_first_language_class() {
+    for (classes, expected) in [
+        (vec!["numberLines", "python"], "python"),
+        (vec!["Python"], "Python"),
+        (vec!["py", "rust"], "python"),
+        (vec!["sh"], "bash"),
+        (vec!["foo"], ""),
+    ] {
+        let classes = classes.into_iter().map(Text::from).collect();
+        let doc = Pandoc {
+            meta: Meta::default(),
+            blocks: vec![Block::CodeBlock(
+                Attr::new("", classes, Vec::new()),
+                "x".into(),
+            )],
+        };
+        assert_eq!(
+            write_with("tei", &doc, &WriterOptions::default()),
+            format!("<ab type='codeblock {expected}'>\nx\n</ab>")
+        );
+    }
+}
+
+#[test]
+fn jats_element_citations_list_cited_references_in_metadata_order() {
+    let reference = |id: &str| {
+        let mut fields = std::collections::BTreeMap::new();
+        fields.insert("id".to_owned(), MetaValue::MetaString(id.into()));
+        fields.insert(
+            "type".to_owned(),
+            MetaValue::MetaString("article-journal".into()),
+        );
+        fields.insert("title".to_owned(), MetaValue::MetaString(id.to_uppercase()));
+        MetaValue::MetaMap(fields)
+    };
+    let cite = |id: &str| Citation {
+        id: id.into(),
+        prefix: Vec::new(),
+        suffix: Vec::new(),
+        mode: CitationMode::NormalCitation,
+        note_num: 0,
+        hash: 0,
+    };
+    let mut meta = Meta::default();
+    meta.insert(
+        "references",
+        MetaValue::MetaList(vec![reference("c"), reference("b"), reference("a")]),
+    );
+    let doc = Pandoc {
+        meta,
+        blocks: vec![
+            Block::Para(vec![Inline::Cite(vec![cite("b"), cite("c")], Vec::new())]),
+            Block::Div(
+                Attr::new("refs", Vec::new(), Vec::new()),
+                vec![Block::Div(
+                    Attr::new("ref-b", Vec::new(), Vec::new()),
+                    vec![para("B")],
+                )],
+            ),
+        ],
+    };
+    let mut options = WriterOptions::default();
+    options
+        .extensions
+        .enable(randoc_core::Extension::ElementCitations);
+    options.template = Some(
+        randoc_templates::Template::compile::<String>("t", "$back$", 8, &mut |path| {
+            Err(path.to_owned())
+        })
+        .unwrap(),
+    );
+    let output = write_with("jats", &doc, &options);
+    let ids = output
+        .match_indices("<ref id=\"")
+        .map(|(start, _)| &output[start + 9..start + 14])
+        .collect::<Vec<_>>();
+    assert_eq!(ids, ["ref-c", "ref-b"], "{output}");
+    assert!(
+        output.contains("<article-title>C</article-title>"),
+        "{output}"
+    );
+    assert!(!output.contains("mixed-citation"), "{output}");
+}
+
+#[test]
+fn docbook_gives_the_title_only_to_inline_images() {
+    let image = Inline::Image(
+        Attr::default(),
+        vec![Inline::Str("Alt".into())],
+        Target::new("a.jpg", "Title"),
+    );
+    let inline = Pandoc {
+        meta: Meta::default(),
+        blocks: vec![Block::Para(vec![image.clone()])],
+    };
+    assert!(
+        write("docbook5", &inline, &mut Context::pure())
+            .unwrap()
+            .contains("<objectinfo>")
+    );
+    let figure = Pandoc {
+        meta: Meta::default(),
+        blocks: vec![Block::Figure(
+            Attr::default(),
+            Caption::default(),
+            vec![Block::Plain(vec![image])],
+        )],
+    };
+    assert!(
+        !write("docbook5", &figure, &mut Context::pure())
+            .unwrap()
+            .contains("<objectinfo>")
+    );
 }

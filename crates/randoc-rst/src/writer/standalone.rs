@@ -27,7 +27,7 @@ impl Writer<'_> {
             fields.insert("titleblock", Val::Simple(titleblock));
         }
         let body = self.render_blocks(&doc.blocks, 0, true)?;
-        fields.insert("body", Val::Simple(self.append_definitions(body)));
+        fields.insert("body", Val::Simple(self.append_definitions(body)?));
         if self.raw_tex {
             fields.insert("rawtex", Val::Bool(true));
         }

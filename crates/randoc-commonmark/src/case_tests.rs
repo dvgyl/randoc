@@ -648,3 +648,33 @@ fn depth_fallback_keeps_later_text_complete() {
         );
     });
 }
+
+#[test]
+fn gfm_math_removes_the_doubled_backslash_before_a_brace() {
+    let math = |format: &str, input: &str| {
+        let doc = read_doc(format, input, 64).unwrap();
+        let mut found = Vec::new();
+        randoc_ast::walk::query_inlines(&doc, |inline| {
+            if let randoc_ast::Inline::Math(_, text) = inline {
+                found.push(text.clone());
+            }
+        });
+        found
+    };
+    let input =
+        "$\\\\{x,y\\\\}$ $\\\\\\\\{a\\\\\\\\}$ $`\\\\{b\\\\}`$ $\\\\,$\n\n$$\\\\{c\\\\}$$\n";
+    assert_eq!(
+        math("gfm", input),
+        [
+            "\\{x,y\\}",
+            "\\\\\\{a\\\\\\}",
+            "\\{b\\}",
+            "\\\\,",
+            "\\\\{c\\\\}"
+        ]
+    );
+    assert_eq!(
+        math("commonmark+tex_math_dollars", "$\\\\{x\\\\}$\n"),
+        ["\\\\{x\\\\}"]
+    );
+}

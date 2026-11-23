@@ -13,9 +13,11 @@ randoc-archive = { workspace = true }
 randoc-ast = { workspace = true }
 randoc-citeproc = { workspace = true }
 randoc-core = { workspace = true }
+randoc-data = { workspace = true }
 randoc-latex = { workspace = true }
 randoc-latex-reader = { workspace = true }
 randoc-layout = { workspace = true }
+randoc-templates = { workspace = true }
 
 [dev-dependencies]
 serde_json = { workspace = true }

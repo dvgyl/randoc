@@ -423,7 +423,15 @@ struct ParsedPara {
 #[allow(clippy::large_enum_variant)]
 enum BodyItem {
     Para(ParsedPara),
-    Table(Block),
+    Table(Block, Option<i64>),
+}
+
+type ListCounters = BTreeMap<i64, HashMap<Text, i64>>;
+
+fn reset_deeper_lists(counters: &mut ListCounters, level: i64) {
+    if let Some(deeper_level) = level.checked_add(1) {
+        counters.split_off(&deeper_level);
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -568,8 +576,8 @@ impl<'a, 'b> Converter<'a, 'b> {
             let p = self.parse_paragraph(el, ns, part_path, rels)?;
             out.push(BodyItem::Para(p));
         } else if ns.is_w(el, "tbl") {
-            let tbl = self.parse_table(el, ns, part_path, rels)?;
-            out.push(BodyItem::Table(tbl));
+            let (table, list_level) = self.parse_table(el, ns, part_path, rels)?;
+            out.push(BodyItem::Table(table, list_level));
         } else if ns.is_w(el, "sdt") {
             if let Some(content) = ns.w_child(el, "sdtContent") {
                 let inner = self.parse_body_children(content, ns, part_path, rels)?;
@@ -1055,10 +1063,7 @@ impl<'a, 'b> Converter<'a, 'b> {
             } else if ns.is_w(child, "tab") {
                 atoms.push(RunAtom::Tab);
             } else if ns.is_w(child, "br") || ns.is_w(child, "cr") {
-                let br_type = ns.w_attr(child, "type").unwrap_or("textWrapping");
-                if br_type != "page" && br_type != "column" {
-                    atoms.push(RunAtom::LineBreak);
-                }
+                atoms.push(RunAtom::LineBreak);
             } else if ns.is_w(child, "softHyphen") {
                 atoms.push(RunAtom::Text("\u{00AD}".into()));
             } else if ns.is_w(child, "noBreakHyphen") {
@@ -1859,7 +1864,10 @@ impl<'a, 'b> Converter<'a, 'b> {
         ns: &DocxNs,
         part_path: &str,
         rels: &RelsMap,
-    ) -> Result<Block> {
+    ) -> Result<(Block, Option<i64>)> {
+        // A list in a cell resets deeper lists in the enclosing document.
+        // The cell keeps its own item counts.
+        let mut list_level = None;
         let tbl_pr = ns.w_child(tbl, "tblPr");
         let tbl_look_first_row = tbl_pr
             .and_then(|p| ns.w_child(p, "tblLook"))
@@ -1970,6 +1978,16 @@ impl<'a, 'b> Converter<'a, 'b> {
                     .unwrap_or(VMerge::None);
 
                 let items = self.parse_body_children(tc, ns, part_path, rels)?;
+                let cell_list_level = items
+                    .iter()
+                    .filter_map(|item| match item {
+                        BodyItem::Para(para) => {
+                            self.para_list_info(para).map(|(_, level, _)| level)
+                        }
+                        BodyItem::Table(_, level) => *level,
+                    })
+                    .min();
+                list_level = list_level.into_iter().chain(cell_list_level).min();
                 let cell_align = infer_cell_alignment(&items);
                 let blocks = self.build_blocks(items, false, true)?;
 
@@ -2174,14 +2192,15 @@ impl<'a, 'b> Converter<'a, 'b> {
             body: body_rows,
         }];
 
-        Ok(Block::Table(Box::new(Table {
+        let block = Block::Table(Box::new(Table {
             attr: Attr::default(),
             caption: Caption::default(),
             col_specs,
             head,
             bodies,
             foot: TableFoot::default(),
-        })))
+        }));
+        Ok((block, list_level))
     }
 
     fn charge_table_cells(&mut self, count: usize) -> Result<()> {
@@ -2207,7 +2226,7 @@ impl<'a, 'b> Converter<'a, 'b> {
     ) -> Result<Vec<Block>> {
         let merged = self.merge_tracked_and_dropcap_paragraphs(items);
         let mut blocks = Vec::new();
-        let mut list_counters: HashMap<Text, BTreeMap<i64, i64>> = HashMap::new();
+        let mut list_counters = ListCounters::new();
         let mut in_bibl = false;
         let mut idx = 0usize;
 
@@ -2227,7 +2246,10 @@ impl<'a, 'b> Converter<'a, 'b> {
                     idx += 1;
                     continue;
                 }
-                BodyItem::Table(tbl) => {
+                BodyItem::Table(tbl, list_level) => {
+                    if let Some(level) = list_level {
+                        reset_deeper_lists(&mut list_counters, *level);
+                    }
                     let mut tbl = tbl.clone();
                     // Check for trailing caption paragraph immediately after table.
                     if let Some(BodyItem::Para(next_p)) = merged.get(idx + 1)
@@ -2250,8 +2272,12 @@ impl<'a, 'b> Converter<'a, 'b> {
 
                     // 1. Table caption immediately before a table.
                     if (is_caption_style(&p.style_names) || p.has_seq_table)
-                        && let Some(BodyItem::Table(mut tbl)) = merged.get(idx + 1).cloned()
+                        && let Some(BodyItem::Table(mut tbl, list_level)) =
+                            merged.get(idx + 1).cloned()
                     {
+                        if let Some(level) = list_level {
+                            reset_deeper_lists(&mut list_counters, level);
+                        }
                         if let Block::Table(table) = &mut tbl {
                             table.caption.long = vec![Block::Para(p.inlines.clone())];
                         }
@@ -2559,7 +2585,7 @@ impl<'a, 'b> Converter<'a, 'b> {
         root_num_id: &str,
         root_ilvl: i64,
         root_kind: ListKind,
-        counters: &mut HashMap<Text, BTreeMap<i64, i64>>,
+        counters: &mut ListCounters,
         list_depth: usize,
     ) -> Result<(Block, usize)> {
         let max_depth = self.context.limits.max_nesting_depth;
@@ -2570,14 +2596,18 @@ impl<'a, 'b> Converter<'a, 'b> {
         }
         let mut list_items: Vec<Vec<Block>> = Vec::new();
         let mut idx = start_idx;
+        let abstract_id = self
+            .numbering
+            .abstract_id(root_num_id)
+            .unwrap_or(root_num_id);
 
         let effective_start = match &root_kind {
             ListKind::Ordered { start, .. } => {
                 if self.numbering.has_start_override(root_num_id, root_ilvl) {
                     *start
                 } else if let Some(&prev) = counters
-                    .get(root_num_id)
-                    .and_then(|levels| levels.get(&root_ilvl))
+                    .get(&root_ilvl)
+                    .and_then(|ids| ids.get(abstract_id))
                 {
                     prev + 1
                 } else {
@@ -2615,18 +2645,14 @@ impl<'a, 'b> Converter<'a, 'b> {
                         ) => {
                             s1 == s2
                                 && d1 == d2
-                                && (num_id == root_num_id
-                                    || !self.numbering.has_start_override(&num_id, ilvl))
+                                && self.numbering.abstract_id(&num_id) == Some(abstract_id)
                         }
                         _ => false,
                     };
                     if !compatible && idx > start_idx {
                         break;
                     }
-                    // Reset deeper sublist counters for this `numId` in O(log L + removed).
-                    if let Some(levels) = counters.get_mut(root_num_id) {
-                        let _ = levels.split_off(&root_ilvl.saturating_add(1));
-                    }
+                    reset_deeper_lists(counters, root_ilvl);
                     let mut inlines = p.inlines.clone();
                     if let ListKind::Bullet {
                         checkbox: Some(box_sym),
@@ -2663,6 +2689,15 @@ impl<'a, 'b> Converter<'a, 'b> {
                     }
                     idx = next_idx;
                 }
+            } else if !self.empty_paragraphs()
+                && p.extra_blocks.is_empty()
+                && !p.is_bibl_start
+                && !is_source_code_style(&p.style_names)
+                && p.inlines
+                    .iter()
+                    .all(|inline| matches!(inline, Inline::Space | Inline::LineBreak))
+            {
+                idx += 1;
             } else if !p.inlines.is_empty()
                 && heading_info(&p.style_names, p.props.outline_lvl).is_none()
                 && (p
@@ -2692,9 +2727,9 @@ impl<'a, 'b> Converter<'a, 'b> {
             ListKind::Ordered { style, delim, .. } => {
                 if item_count > 0 {
                     counters
-                        .entry(Text::from(root_num_id))
+                        .entry(root_ilvl)
                         .or_default()
-                        .insert(root_ilvl, effective_start + item_count - 1);
+                        .insert(Text::from(abstract_id), effective_start + item_count - 1);
                 }
                 Block::OrderedList(
                     ListAttributes {

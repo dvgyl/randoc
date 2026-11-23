@@ -128,6 +128,31 @@ fn render_template(
     inlines: &mut dyn FnMut(&[Inline]) -> Result<Doc>,
     fields: impl IntoIterator<Item = (&'static str, Val)>,
 ) -> Result<String> {
+    render_template_with(doc, options, limits, body, blocks, inlines, |scope| {
+        set_template_defaults(scope, fields);
+    })
+}
+
+fn set_template_defaults(
+    scope: &mut randoc_templates::Context,
+    fields: impl IntoIterator<Item = (&'static str, Val)>,
+) {
+    for (name, value) in fields {
+        if scope.get(name).is_none() {
+            scope.insert(name, value);
+        }
+    }
+}
+
+fn render_template_with(
+    doc: &Pandoc,
+    options: &WriterOptions,
+    limits: randoc_core::Limits,
+    body: Doc,
+    blocks: &mut dyn FnMut(&[Block]) -> Result<Doc>,
+    inlines: &mut dyn FnMut(&[Inline]) -> Result<Doc>,
+    set_fields: impl FnOnce(&mut randoc_templates::Context),
+) -> Result<String> {
     let width = columns(options);
     let limit = usize::try_from(limits.max_input_size).unwrap_or(usize::MAX);
     let Some(template) = &options.template else {
@@ -144,11 +169,7 @@ fn render_template(
         blocks,
         inlines,
     )?;
-    for (name, value) in fields {
-        if !scope.0.contains_key(name) {
-            scope.insert(name, value);
-        }
-    }
+    set_fields(&mut scope);
     scope.insert("body", Val::Simple(body));
     if width.is_none() {
         return template

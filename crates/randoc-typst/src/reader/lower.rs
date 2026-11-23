@@ -706,7 +706,7 @@ impl<'a> Evaluator<'a, '_> {
                     if let Some(author) = author {
                         let mut text = vec![Inline::Str("—\u{a0}".into())];
                         text.extend(inlines(self.content(author, depth, pos)?, true));
-                        blocks.push(Block::Para(text));
+                        blocks.push(Block::Para(normalize(text, true)));
                     }
                     block(Block::BlockQuote(blocks))
                 } else {

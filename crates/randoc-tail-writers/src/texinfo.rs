@@ -2,7 +2,7 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 
 use randoc_ast::{Block, Inline, ListNumberStyle, MathType, Pandoc, QuoteType, Table};
-use randoc_core::shared::{sections::make_sections, stringify, stringify_meta};
+use randoc_core::shared::{sections::make_sections, stringify_meta};
 use randoc_core::{Context, Result, WrapOption, WriterOptions};
 use randoc_layout::{Doc, blankline, chomp, cr, hcat, inside, literal, space, text, vcat};
 use randoc_templates::Val;
@@ -87,7 +87,7 @@ pub(super) fn write(
         parts.push(preamble);
         parts.push(blankline());
     }
-    parts.push(menu(&nodes, &roots));
+    parts.push(menu(&nodes, &roots, 1));
     for index in order {
         let node = &nodes[index];
         if !(1..=4).contains(&node.level) {
@@ -105,7 +105,7 @@ pub(super) fn write(
             parts.push(body);
             parts.push(blankline());
         }
-        parts.push(menu(&nodes, &node.children));
+        parts.push(menu(&nodes, &node.children, node.level + 1));
     }
     let body = chomp(hcat(parts));
     super::check_layout(&body, context.limits.max_input_size)?;
@@ -170,12 +170,12 @@ fn node_name(title: &str) -> String {
     out.split_whitespace().collect::<Vec<_>>().join(" ")
 }
 
-fn menu(nodes: &[Node<'_>], entries: &[usize]) -> Doc {
+fn menu(nodes: &[Node<'_>], entries: &[usize], level: i64) -> Doc {
     let entries: Vec<_> = entries
         .iter()
         .filter_map(|&i| {
             let item = &nodes[i];
-            (1..=4).contains(&item.level).then(|| {
+            (level <= 4 && item.level == level).then(|| {
                 if item.name == item.base {
                     format!("* {}::", item.base)
                 } else {
@@ -258,6 +258,7 @@ impl Renderer<'_> {
             }
             Block::Header(_, _, items) => self.inlines(items) + cr(),
             Block::CodeBlock(_, code) => {
+                let code = code.strip_suffix('\n').unwrap_or(code);
                 literal(format!("@verbatim\n{code}\n@end verbatim")) + blankline()
             }
             Block::RawBlock(format, raw) if format == "texinfo" => literal(raw.clone()) + cr(),
@@ -476,20 +477,37 @@ impl Renderer<'_> {
                     command("uref", text(format!("{},", argument(&url))) + label)
                 }
             }
-            Inline::Image(_, items, target) => {
+            Inline::Image(attr, items, target) => {
                 let (base, ext) = target
                     .url
                     .rsplit_once('.')
                     .filter(|(_, suffix)| !suffix.contains('/'))
                     .unwrap_or((&target.url, ""));
+                let dimension = |key| {
+                    attr.get(key)
+                        .filter(|value| !value.ends_with('%'))
+                        .and_then(|value| super::context::dimension(value, self.options.dpi))
+                        .unwrap_or_default()
+                };
+                let mut alt = items.to_vec();
+                randoc_ast::walk::walk_inlines_mut(&mut alt, |item| {
+                    if let Inline::Str(text) = item
+                        && text.contains(',')
+                    {
+                        *item = Inline::RawInline(
+                            randoc_ast::Format("texinfo".into()),
+                            argument(&escape(text)),
+                        );
+                    }
+                });
+                let alt = self.inlines(&alt);
+                let width = dimension("width");
+                let height = dimension("height");
                 command(
                     "image",
-                    text(format!(
-                        "{},,,{},{}",
-                        argument(&escape(base)),
-                        argument(&escape(&stringify(items))),
-                        escape(ext)
-                    )),
+                    text(format!("{},{width},{height},", escape(base)))
+                        + alt
+                        + text(format!(",{}", escape(ext))),
                 )
             }
         }

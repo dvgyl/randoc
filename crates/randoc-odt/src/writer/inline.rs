@@ -1,4 +1,5 @@
-use randoc_ast::{Inline, MathType, QuoteType};
+use randoc_ast::{Attr, Inline, MathType, QuoteType};
+use randoc_citeproc::parse_lang;
 use randoc_core::{Extension, LogMessage, Result, WrapOption};
 use randoc_layout::{Doc, cr, space, text};
 
@@ -17,11 +18,19 @@ impl Renderer<'_> {
         self.inline_run(inlines, 0, depth)
     }
 
+    /// Renders inlines as Pandoc does: each run of words and spaces gets the
+    /// text style of the enclosing formats and languages. The other inlines
+    /// carry the style down to their own runs.
     fn inline_run(&mut self, inlines: &[Inline], styles: u8, depth: usize) -> Result<Doc> {
         self.check_depth(depth)?;
         let mut out = Doc::default();
         let mut run = Doc::default();
         for inline in inlines {
+            if matches!(inline, Inline::Str(_) | Inline::Space | Inline::SoftBreak) {
+                run += self.inline(inline, styles, depth)?;
+                continue;
+            }
+            out += self.styled_run(styles, std::mem::take(&mut run));
             let formatted = match inline {
                 Inline::Emph(items) => Some((EMPH, items)),
                 Inline::Strong(items) => Some((STRONG, items)),
@@ -32,44 +41,77 @@ impl Renderer<'_> {
                 Inline::Underline(items) => Some((UNDERLINE, items)),
                 _ => None,
             };
-            if let Some((flag, items)) = formatted {
-                out += self.styled_run(styles, std::mem::take(&mut run));
-                out += self.inline_run(items, styles | flag, depth + 1)?;
-            } else if matches!(inline, Inline::Link(..)) {
-                out += self.styled_run(styles, std::mem::take(&mut run));
-                out += self.inline(inline, styles, depth)?;
-            } else {
-                run += self.inline(inline, 0, depth)?;
-            }
+            out += match formatted {
+                Some((flag, items)) => self.inline_run(items, styles | flag, depth + 1)?,
+                None => self.inline(inline, styles, depth)?,
+            };
         }
         Ok(out + self.styled_run(styles, run))
     }
 
+    /// Renders `body` with the language of `attr` added to the text style.
+    pub(super) fn with_language<T>(
+        &mut self,
+        attr: &Attr,
+        body: impl FnOnce(&mut Self) -> Result<T>,
+    ) -> Result<T> {
+        let Some(value) = attr.get("lang") else {
+            return body(self);
+        };
+        let lang = match parse_lang(value) {
+            Ok(lang) => lang,
+            Err(_) => {
+                self.context.report(LogMessage::InvalidLang(value.into()));
+                return body(self);
+            }
+        };
+        if !self.languages.insert(lang.clone()) {
+            return body(self);
+        }
+        let result = body(self);
+        self.languages.remove(&lang);
+        result
+    }
+
     fn styled_run(&mut self, styles: u8, run: Doc) -> Doc {
-        if run.is_empty() || styles == 0 {
+        if run.is_empty() || (styles == 0 && self.languages.is_empty()) {
             return run;
         }
         let builtin = match styles {
-            EMPH => "Emphasis",
-            STRONG => "Strong_20_Emphasis",
-            STRIKE => "Strikeout",
-            SUPER => "Superscript",
-            SUB => "Subscript",
-            _ => return span(&self.text_style(styles), run),
+            _ if !self.languages.is_empty() => None,
+            EMPH => Some("Emphasis"),
+            STRONG => Some("Strong_20_Emphasis"),
+            STRIKE => Some("Strikeout"),
+            SUPER => Some("Superscript"),
+            SUB => Some("Subscript"),
+            _ => None,
         };
-        span(builtin, run)
+        match builtin {
+            Some(name) => span(name, run),
+            None => span(&self.text_style(styles), run),
+        }
     }
 
     fn text_style(&mut self, styles: u8) -> String {
         let next = self.text_styles.len() + 1;
-        let index = *self.text_style_index.entry(styles).or_insert(next);
+        let index = *self
+            .text_style_index
+            .entry((styles, self.languages.clone()))
+            .or_insert(next);
         let name = format!("T{index}");
         if index == next {
+            // Pandoc writes the properties in the order of their names.
+            let lang = self.languages.last();
+            let region = lang.and_then(|lang| lang.region.as_deref());
             let mut properties = String::new();
+            if let Some(region) = region {
+                properties.push_str(&attribute("fo:country", region));
+            }
             for (flag, attrs) in [
                 (EMPH, " fo:font-style=\"italic\""),
                 (SMALL, " fo:font-variant=\"small-caps\""),
                 (STRONG, " fo:font-weight=\"bold\""),
+                (0, ""),
                 (
                     EMPH,
                     " style:font-style-asian=\"italic\" style:font-style-complex=\"italic\"",
@@ -86,7 +128,11 @@ impl Renderer<'_> {
                     " style:text-underline-color=\"font-color\" style:text-underline-style=\"solid\" style:text-underline-width=\"auto\"",
                 ),
             ] {
-                if styles & flag != 0 {
+                if flag == 0 {
+                    if let Some(lang) = lang {
+                        properties.push_str(&attribute("fo:language", &lang.language));
+                    }
+                } else if styles & flag != 0 {
                     properties.push_str(attrs);
                 }
             }
@@ -119,15 +165,16 @@ impl Renderer<'_> {
                     QuoteType::SingleQuote => ("‘", "’"),
                     QuoteType::DoubleQuote => ("“", "”"),
                 };
-                text(start) + self.inlines(inlines, depth + 1)? + text(end)
+                text(start) + self.inline_run(inlines, styles, depth + 1)? + text(end)
             }
-            Inline::Cite(_, inlines) => self.inlines(inlines, depth + 1)?,
+            Inline::Cite(_, inlines) => self.inline_run(inlines, styles, depth + 1)?,
             Inline::RawInline(format, raw) if format.0 == "opendocument" => text(raw),
             Inline::RawInline(..) => Doc::default(),
             Inline::Span(attr, inlines) => {
-                let mut content = self.inlines(inlines, depth + 1)?;
+                let mut content = self.with_language(attr, |renderer| {
+                    renderer.inline_run(inlines, styles, depth + 1)
+                })?;
                 if let Some(style) = attr.get("custom-style") {
-                    self.custom_styles.insert((style.into(), "text"));
                     content = span(style, content);
                 }
                 bookmark(&attr.id, content)
@@ -172,7 +219,11 @@ impl Renderer<'_> {
             Inline::Note(blocks) => {
                 let id = self.note_count;
                 self.note_count += 1;
-                let content = self.blocks(blocks, Some("Footnote"), depth + 1, false)?;
+                // The text of a note starts with no text style.
+                let languages = std::mem::take(&mut self.languages);
+                let content = self.blocks(blocks, Some("Footnote"), depth + 1, false);
+                self.languages = languages;
+                let content = content?;
                 let number = id + 1;
                 tag(
                     "text:note",
@@ -181,7 +232,7 @@ impl Renderer<'_> {
                         + tag("text:note-body", "", content),
                 )
             }
-            Inline::Math(kind, tex) => self.math(*kind, tex, depth)?,
+            Inline::Math(kind, tex) => self.math(*kind, tex, styles, depth)?,
             Inline::Emph(_)
             | Inline::Underline(_)
             | Inline::Strong(_)
@@ -192,7 +243,7 @@ impl Renderer<'_> {
         })
     }
 
-    fn math(&mut self, kind: MathType, tex: &str, depth: usize) -> Result<Doc> {
+    fn math(&mut self, kind: MathType, tex: &str, styles: u8, depth: usize) -> Result<Doc> {
         let max_depth = self.context.limits.max_nesting_depth;
         if self.format != Format::Fragment {
             match randoc_math::to_mathml(kind, tex, max_depth) {
@@ -205,7 +256,7 @@ impl Renderer<'_> {
             return Ok(literal_math(kind, tex));
         }
         match randoc_math::to_inlines(kind, tex, max_depth) {
-            Ok(inlines) => self.inlines(&inlines, depth + 1),
+            Ok(inlines) => self.inline_run(&inlines, styles, depth + 1),
             Err(error) => {
                 self.context.report(LogMessage::CouldNotConvertTexMath(
                     tex.into(),

@@ -737,7 +737,7 @@ fn loop_cost_matrix_is_linear() {
 }
 
 #[test]
-fn each_partial_is_read_one_time() {
+fn each_partial_invocation_loads_the_file() {
     let mut calls = 0;
     let mut load = |path: &str| -> Result<String, String> {
         calls += 1;
@@ -747,11 +747,42 @@ fn each_partial_is_read_one_time() {
     let Ok(t) = Template::compile("main.txt", &source, DEPTH, &mut load) else {
         unreachable!("the template compiles");
     };
-    assert_eq!(calls, 1);
+    assert_eq!(calls, 1001);
     let mut ctx = Context::new();
     ctx.insert("list", Val::List(vec![Val::text("a"), Val::text("b")]));
     let out = t.render(&ctx).render(None);
     assert!(out.starts_with("(p.txt:)(p.txt:)") && out.ends_with("(p.txt:a),(p.txt:b)"));
+}
+
+#[test]
+fn repeated_parent_partials_load_their_children_again() {
+    let mut loads = Vec::new();
+    let mut load = |path: &str| -> Result<String, ()> {
+        loads.push(path.to_owned());
+        Ok(match path {
+            "p.txt" => "$child()$",
+            _ if loads.len() == 2 => "first",
+            _ => "second",
+        }
+        .into())
+    };
+    let template = Template::compile("main.txt", "$p()$$p()$", DEPTH, &mut load).unwrap();
+    assert_eq!(loads, ["p.txt", "child.txt", "p.txt", "child.txt"]);
+    assert_eq!(template.render(&Context::new()).render(None), "firstsecond");
+}
+
+#[test]
+fn cyclic_partials_stop_at_the_depth_limit() {
+    let mut loads = Vec::new();
+    let mut load = |path: &str| -> Result<String, ()> {
+        loads.push(path.to_owned());
+        Ok(if path == "a.txt" { "$b()$" } else { "$a()$" }.into())
+    };
+    assert_eq!(
+        Template::compile("main.txt", "$a()$", 3, &mut load),
+        Err(CompileError::TooDeep)
+    );
+    assert_eq!(loads, ["a.txt", "b.txt", "a.txt"]);
 }
 
 /// Codex review, round 4 (TPL-R4-01): `pairs` of the result of `pairs` on
@@ -972,4 +1003,14 @@ fn repeated_constructs_time() {
         }
         eprintln!("{construct:?}: {}", times.join(", "));
     }
+}
+
+#[test]
+fn branching_recursive_partial_stops_at_load_limit() {
+    let files = BTreeMap::from([("a.txt".to_owned(), "$a()$$a()$".to_owned())]);
+    let err = compile_with("main.txt", "$a()$", &files).unwrap_err();
+    assert!(
+        matches!(err, CompileError::TooDeep),
+        "expected TooDeep, got {err:?}"
+    );
 }

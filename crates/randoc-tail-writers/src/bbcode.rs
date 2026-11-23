@@ -66,6 +66,7 @@ impl Dialect {
         match (self, ordered) {
             (Self::Hubzilla, None) => ("ul", "ul"),
             (Self::Steam, Some(_)) => ("olist", "olist"),
+            (Self::Fluxbb | Self::Xenforo, Some(_)) => ("list=1", "list"),
             (_, Some(ListNumberStyle::LowerRoman)) => ("list=i", "list"),
             (_, Some(ListNumberStyle::UpperRoman)) => ("list=I", "list"),
             (_, Some(ListNumberStyle::LowerAlpha)) => ("list=a", "list"),
@@ -165,6 +166,7 @@ impl Renderer<'_> {
                     self.limit,
                 )?;
                 let open = language.map_or_else(|| "code".into(), |lang| format!("code={lang}"));
+                let code = code.strip_suffix('\n').unwrap_or(code);
                 pair(&open, "code", &format!("{code}\n"))
             }
             Block::BlockQuote(blocks) => tag("quote", &format!("\n{}\n", self.blocks(blocks)?)),
@@ -236,7 +238,12 @@ impl Renderer<'_> {
 
     fn table(&mut self, table: &Table) -> Result<String> {
         if matches!(self.dialect, Dialect::Fluxbb | Dialect::Phpbb) {
-            return Ok("(TABLE)".into());
+            return join_output(
+                [self.blocks(&table.caption.long), Ok("(TABLE)".into())],
+                "\n",
+                self.limit,
+                true,
+            );
         }
         let mut body = String::from("[table]\n");
         for (head, row) in super::rows(table) {
@@ -357,7 +364,7 @@ impl Renderer<'_> {
         Ok(output)
     }
 
-    fn image(&mut self, attr: &Attr, items: &[Inline], target: &Target) -> Result<String> {
+    fn image(&mut self, _attr: &Attr, items: &[Inline], target: &Target) -> Result<String> {
         if self.dialect == Dialect::Steam {
             return Ok(String::new());
         }
@@ -375,12 +382,6 @@ impl Renderer<'_> {
                         check_output(value.len(), self.limit)?;
                         append_output(&mut open, &format!(" {key}=\"{value}\""), self.limit)?;
                     }
-                }
-                if self.dialect == Dialect::Xenforo
-                    && let Some(width) = attr.get("width")
-                {
-                    check_output(width.len(), self.limit)?;
-                    append_output(&mut open, &format!(" width={width}"), self.limit)?;
                 }
                 open
             }

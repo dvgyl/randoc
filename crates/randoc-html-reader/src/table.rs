@@ -53,6 +53,7 @@ impl CellBudget {
 /// A cell and the kind of its tag.
 struct ReadCell {
     is_header: bool,
+    explicitly_closed: bool,
     cell: Cell,
 }
 
@@ -98,12 +99,19 @@ pub(crate) fn table(parser: &mut Parser<'_>, out: &mut Vec<Block>) -> Parse<()> 
         let mut pending: Option<ReadRow> = None;
         if at_open(parser, "thead") {
             head = section(parser, "thead")?;
-        } else if at_open(parser, "tr") {
-            let first = row(parser)?;
-            if !first.1.is_empty() && first.1.iter().all(|cell| cell.is_header) {
-                head.1.push(first);
-            } else {
-                pending = Some(first);
+        } else {
+            while at_open(parser, "tr") {
+                let first = row(parser)?;
+                skip_blank(parser);
+                if first.1.is_empty() {
+                    continue;
+                }
+                if first.1.iter().all(|cell| cell.is_header) {
+                    head.1.push(first);
+                } else {
+                    pending = Some(first);
+                }
+                break;
             }
         }
         skip_blank(parser);
@@ -234,7 +242,37 @@ fn column(parser: &mut Parser<'_>, widths: &mut Vec<Width>) {
 /// Reads `thead`, `tbody` or `tfoot`: the attributes and the rows.
 fn section(parser: &mut Parser<'_>, tag: &str) -> Parse<(Attr, Vec<ReadRow>)> {
     let attr = open_attr(parser);
-    let rows = parser.within(|parser| {
+    let mut rows = section_rows(parser, tag)?;
+    let last_cell_is_implicit = rows
+        .last()
+        .and_then(|(_, cells)| cells.last())
+        .is_some_and(|cell| !cell.explicitly_closed);
+    if last_cell_is_implicit
+        && rows.iter().enumerate().any(|(index, (_, cells))| {
+            cells.iter().any(|cell| {
+                u64::try_from(cell.cell.row_span).unwrap_or(0) > (rows.len() - index) as u64
+            })
+        })
+    {
+        // If the last cell has no close tag, a span past the section
+        // makes Pandoc keep all later rows in the same section.
+        loop {
+            parser.count_step()?;
+            skip_blank(parser);
+            match parser.peek_kind() {
+                Some(TokenKind::Open(name, _)) if matches!(name.as_str(), "tbody" | "tfoot") => {
+                    rows.extend(section_rows(parser, name)?);
+                }
+                Some(TokenKind::Open(name, _)) if name == "tr" => rows.push(row(parser)?),
+                _ => break,
+            }
+        }
+    }
+    Ok((attr, rows))
+}
+
+fn section_rows(parser: &mut Parser<'_>, tag: &str) -> Parse<Vec<ReadRow>> {
+    parser.within(|parser| {
         parser.advance();
         let mut rows = Vec::new();
         loop {
@@ -249,8 +287,7 @@ fn section(parser: &mut Parser<'_>, tag: &str) -> Parse<(Attr, Vec<ReadRow>)> {
             rows.push(row(parser)?);
         }
         Ok(rows)
-    })?;
-    Ok((attr, rows))
+    })
 }
 
 fn row(parser: &mut Parser<'_>) -> Parse<ReadRow> {
@@ -269,6 +306,8 @@ fn row(parser: &mut Parser<'_>) -> Parse<ReadRow> {
                     let content = parser.container(name)?;
                     cells.push(ReadCell {
                         is_header: name == "th",
+                        explicitly_closed: parser.previous_is_close("td")
+                            || parser.previous_is_close("th"),
                         cell: cell(attributes, content),
                     });
                 }
@@ -363,9 +402,7 @@ fn build(
             .chain(bodies.iter().flat_map(|(_, rows)| rows.iter()))
             .chain(foot.1.iter())
     };
-    // A table without cells is not a table. A table whose widest row has no
-    // positive width has no columns.
-    if all_rows().all(|row| row.1.is_empty()) {
+    if all_rows().next().is_none() {
         return Err(Stop::Fail);
     }
     let cell_columns = all_rows().map(row_width).max().unwrap_or(0);
@@ -483,7 +520,7 @@ fn row_head_columns(rows: &[ReadRow], column_count: usize) -> usize {
 fn body(attr: Attr, rows: Vec<ReadRow>, column_count: usize) -> TableBody {
     let head_count = rows
         .iter()
-        .take_while(|row| !row.1.is_empty() && row.1.iter().all(|cell| cell.is_header))
+        .take_while(|row| row.1.iter().all(|cell| cell.is_header))
         .count();
     let mut rows = rows;
     let body_rows = rows.split_off(head_count);
@@ -618,6 +655,7 @@ mod tests {
     fn plain_cell(row_span: i64, col_span: i64) -> ReadCell {
         ReadCell {
             is_header: false,
+            explicitly_closed: true,
             cell: Cell {
                 row_span,
                 col_span,

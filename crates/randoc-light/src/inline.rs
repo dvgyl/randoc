@@ -557,15 +557,35 @@ impl Parser<'_> {
                 self.budget = self.budget.checked_sub(body.len().max(1)).ok_or_else(|| {
                     randoc_core::Error::App("Expanded notes are too large.".into())
                 })?;
-                *x = Inline::Note(vec![Block::Para(self.parse_unresolved(body, next, true)?)]);
+                let mut paragraphs = Vec::new();
+                if self.format == Format::Muse {
+                    let mut start = 0;
+                    let mut offset = 0;
+                    for line in body.split_inclusive('\n').chain(std::iter::once("")) {
+                        if line.trim().is_empty() {
+                            let text = body[start..offset].trim();
+                            if !text.is_empty() {
+                                paragraphs
+                                    .push(Block::Para(self.parse_unresolved(text, next, true)?));
+                            }
+                            start = offset + line.len();
+                        }
+                        offset += line.len();
+                    }
+                } else {
+                    paragraphs.push(Block::Para(self.parse_unresolved(body, next, true)?));
+                }
+                *x = Inline::Note(paragraphs);
                 work.push(Work::Leave(id));
             }
             let xs = match x {
                 Inline::Note(blocks) => {
-                    let Some(Block::Para(xs)) = blocks.first_mut() else {
-                        continue;
-                    };
-                    xs
+                    for block in blocks.iter_mut().rev() {
+                        if let Block::Para(xs) = block {
+                            work.extend(xs.iter_mut().rev().map(|x| Work::Inline(x, depth + 1)));
+                        }
+                    }
+                    continue;
                 }
                 Inline::Emph(xs)
                 | Inline::Strong(xs)
@@ -738,6 +758,8 @@ impl Parser<'_> {
                         |hex| shared::numeric_entity(hex, true),
                     )
                     .map(|c| c.to_string())
+            } else if haddock {
+                None
             } else {
                 shared::named_entity(name).map(str::to_owned)
             };

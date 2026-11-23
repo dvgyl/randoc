@@ -309,6 +309,11 @@ fn strip_math_ticks(content: String) -> String {
     }
 }
 
+/// Changes `\\{` to `\{` and `\\}` to `\}` in `tex_math_gfm` inline math, as Pandoc does.
+fn gfm_math_braces(content: &str) -> String {
+    content.replace("\\\\{", "\\{").replace("\\\\}", "\\}")
+}
+
 /// Adds attributes to an inline as `commonmark-pandoc` does. An inline
 /// without attributes goes into a span with the attribute `wrapper="1"`.
 fn add_inline_attrs(pairs: &crate::attrs::Pairs, inline: Inline) -> Inline {
@@ -1026,7 +1031,7 @@ impl<'a, 'e> Parser<'a, 'e> {
         }
         self.pos = p;
         let content = if self.config().math_gfm {
-            strip_math_ticks(content)
+            gfm_math_braces(&strip_math_ticks(content))
         } else {
             content
         };

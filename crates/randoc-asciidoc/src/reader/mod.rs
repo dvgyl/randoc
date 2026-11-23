@@ -11,6 +11,11 @@ use randoc_core::{Context, Error, LogMessage, Reader, ReaderOptions, Result, Sou
 
 use crate::limit;
 
+#[cfg(test)]
+thread_local! {
+    pub(super) static DEFINITION_CHECKS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+}
+
 pub(super) fn read(
     sources: &Sources,
     options: &ReaderOptions,
@@ -149,22 +154,16 @@ impl State<'_> {
                 }
                 self.meta.insert("author", MetaValue::MetaList(values));
                 i += 1;
-                if let Some(revision) = lines.get(i).filter(|line| {
-                    !line.trim().is_empty() && !line.starts_with([':', '=', '[', '/'])
-                }) {
-                    let (revision, remark) = revision.split_once(':').unwrap_or((revision, ""));
-                    let (version, date) = revision.split_once(',').unwrap_or((revision, ""));
-                    self.meta.insert(
-                        "version",
-                        MetaValue::MetaString(version.trim().trim_start_matches('v').into()),
-                    );
+                if let Some((version, date, remark)) = lines.get(i).and_then(|line| revision(line))
+                {
+                    self.meta
+                        .insert("version", MetaValue::MetaString(version.into()));
                     if !date.is_empty() {
-                        self.meta
-                            .insert("date", MetaValue::MetaString(date.trim().into()));
+                        self.meta.insert("date", MetaValue::MetaString(date.into()));
                     }
-                    if !remark.is_empty() {
+                    if let Some(remark) = remark {
                         self.meta
-                            .insert("remark", MetaValue::MetaString(remark.trim().into()));
+                            .insert("remark", MetaValue::MetaString(remark.into()));
                     }
                     i += 1;
                 }
@@ -285,4 +284,27 @@ fn include_key(path: &Path) -> PathBuf {
 fn expansion_allowance(input_bytes: u64, max_input_size: u64) -> u64 {
     // Allow for the memory cost of AST nodes in copied content.
     input_bytes.saturating_mul(32).min(max_input_size)
+}
+
+/// Reads a revision line: `v1.0, 2024-01-02: remark`, or `v1.0` alone.
+/// A comma and a colon must have a space or the line end after them, and the
+/// version has no comma. A colon gives a remark, also an empty one.
+fn revision(line: &str) -> Option<(&str, &str, Option<&str>)> {
+    if line.starts_with([':', '=', '[', '/']) {
+        return None;
+    }
+    let Some((version, rest)) = line.split_once(',') else {
+        return Some((line.strip_prefix('v')?.trim(), "", None));
+    };
+    let version = version.trim().trim_start_matches('v');
+    let rest = rest.strip_prefix(' ')?;
+    let (date, remark) = match rest.split_once(':') {
+        Some((date, remark)) if remark.is_empty() || remark.starts_with(' ') => {
+            (date, Some(remark.trim()))
+        }
+        Some(_) => return None,
+        None => (rest, None),
+    };
+    let date = date.trim();
+    (!version.is_empty() && !date.is_empty()).then_some((version, date, remark))
 }

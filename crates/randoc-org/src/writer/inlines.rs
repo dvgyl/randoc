@@ -10,9 +10,13 @@ impl Render<'_> {
         self.depth(depth)?;
         let mut doc = Doc::default();
         for (position, inline) in inlines.iter().enumerate() {
-            if matches!(inline, Inline::Space | Inline::SoftBreak)
-                && matches!(inlines.get(position + 1), Some(Inline::Str(mark)) if list_word(mark))
-            {
+            // A line must not start with a list marker or a footnote reference.
+            let glued = match inlines.get(position + 1) {
+                Some(Inline::Note(_)) => true,
+                Some(Inline::Str(mark)) => list_word(mark),
+                _ => false,
+            };
+            if matches!(inline, Inline::Space | Inline::SoftBreak) && glued {
                 doc += literal(" ");
             } else {
                 doc += self.inline(inline, depth)?;
@@ -119,27 +123,53 @@ impl Render<'_> {
                         doc += self.inlines(&citation.prefix, depth + 1)? + space();
                     }
                     doc += literal(format!("@{}", citation.id));
-                    let mut suffix = citation.suffix.as_slice();
-                    if index > 0
-                        && matches!(suffix.first(), Some(Inline::Str(comma)) if comma == ",")
-                    {
-                        suffix = &suffix[1..];
-                    }
-                    let first_word = suffix
-                        .iter()
-                        .position(|inline| !matches!(inline, Inline::Space | Inline::SoftBreak));
-                    if let Some(first) = first_word {
-                        if first == 0 && citation.mode == CitationMode::AuthorInText {
-                            doc += space() + literal(",");
-                        }
-                        doc += space() + self.inlines(&suffix[first..], depth + 1)?;
-                    }
+                    doc += self.citation_suffix(&citation.suffix, depth)?;
                 }
                 doc + literal("]")
             }
             Inline::Cite(_, body) => self.inlines(body, depth + 1)?,
         };
         Ok(rendered)
+    }
+
+    /// Writes a citation suffix. A suffix that does not start with white space
+    /// loses its leading comma, and a comma separates it from the key unless it
+    /// starts with a locator such as `p. 12`.
+    fn citation_suffix(&mut self, suffix: &[Inline], depth: usize) -> Result<Doc> {
+        if matches!(suffix.first(), Some(Inline::Space | Inline::SoftBreak)) {
+            let start = suffix
+                .iter()
+                .position(|inline| !matches!(inline, Inline::Space | Inline::SoftBreak))
+                .unwrap_or(suffix.len());
+            if start == suffix.len() {
+                return Ok(Doc::default());
+            }
+            let suffix = locator_space(&suffix[start..]);
+            return Ok(space() + self.inlines(&suffix, depth + 1)?);
+        }
+        let mut suffix = suffix.to_vec();
+        if let Some(Inline::Str(first)) = suffix.first_mut()
+            && let Some(rest) = first.strip_prefix(',')
+        {
+            if rest.is_empty() {
+                suffix.remove(0);
+            } else {
+                *first = rest.into();
+            }
+        }
+        let start = suffix
+            .iter()
+            .position(|inline| !matches!(inline, Inline::Space | Inline::SoftBreak))
+            .unwrap_or(suffix.len());
+        if start == suffix.len() {
+            return Ok(Doc::default());
+        }
+        let text = self.inlines(&locator_space(&suffix[start..]), depth + 1)?;
+        if locator(&text.render(None)) {
+            Ok(space() + text)
+        } else {
+            Ok(space() + literal(",") + space() + text)
+        }
     }
 
     fn delimit(&mut self, start: &str, body: &[Inline], end: &str, depth: usize) -> Result<Doc> {
@@ -187,6 +217,95 @@ fn url(target: &Target) -> String {
         "file:"
     };
     format!("{prefix}{}", url.replace('[', "\\[").replace(']', "\\]"))
+}
+
+/// Returns `true` when text starts with a locator: a word with a digit, or a
+/// locator label such as `p.` or `chap.` before a word with a digit.
+/// Pandoc writes the no-break space after a locator label, as in `p. 12`,
+/// as a normal space.
+fn locator_space(suffix: &[Inline]) -> Vec<Inline> {
+    let mut suffix = suffix.to_vec();
+    if let Some(Inline::Str(first)) = suffix.first_mut()
+        && let Some((label, rest)) = first.split_once('\u{a0}')
+        && !label.is_empty()
+        && locator(first)
+    {
+        *first = format!("{label} {rest}");
+    }
+    suffix
+}
+
+fn locator(text: &str) -> bool {
+    let digit = |word: &str| word.bytes().any(|b| b.is_ascii_digit());
+    let mut words = text.split_whitespace();
+    let Some(first) = words.next() else {
+        return false;
+    };
+    digit(first)
+        || ([
+            "book",
+            "bk",
+            "books",
+            "bks",
+            "chapter",
+            "chap",
+            "chapters",
+            "chaps",
+            "column",
+            "col",
+            "columns",
+            "cols",
+            "figure",
+            "fig",
+            "figures",
+            "figs",
+            "folio",
+            "fol",
+            "folios",
+            "fols",
+            "number",
+            "no",
+            "numbers",
+            "nos",
+            "line",
+            "l",
+            "lines",
+            "ll",
+            "note",
+            "n",
+            "notes",
+            "nn",
+            "opus",
+            "op",
+            "opera",
+            "opp",
+            "page",
+            "p",
+            "pages",
+            "pp",
+            "paragraph",
+            "para",
+            "paragraphs",
+            "paras",
+            "part",
+            "pt",
+            "parts",
+            "pts",
+            "section",
+            "sec",
+            "sections",
+            "secs",
+            "verse",
+            "v",
+            "verses",
+            "vv",
+            "volume",
+            "vol",
+            "volumes",
+            "vols",
+        ]
+        .contains(&first.strip_suffix('.').unwrap_or(first))
+            && words.next().is_some_and(digit))
 }
 
 fn list_word(word: &str) -> bool {

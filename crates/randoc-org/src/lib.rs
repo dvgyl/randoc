@@ -21,4 +21,6 @@ pub fn writer(format: &str) -> Option<Writer> {
 }
 
 #[cfg(test)]
+mod oracle_cases;
+#[cfg(test)]
 mod tests;

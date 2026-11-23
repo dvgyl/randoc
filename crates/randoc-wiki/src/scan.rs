@@ -24,6 +24,7 @@ pub(crate) struct Scan<'a> {
     pub(crate) text: &'a str,
     pub(crate) tags: HashMap<usize, Tag<'a>>,
     pub(crate) tables: HashMap<usize, usize>,
+    pub(crate) ref_definition_lines: HashMap<usize, (usize, usize)>,
     regions: HashMap<usize, Region>,
 }
 
@@ -33,6 +34,7 @@ impl<'a> Scan<'a> {
             text,
             tags: HashMap::new(),
             tables: HashMap::new(),
+            ref_definition_lines: HashMap::new(),
             regions: HashMap::new(),
         };
         scan.pairs(wiki);
@@ -81,6 +83,7 @@ impl<'a> Scan<'a> {
         let mut brackets: Vec<(usize, usize, Option<usize>)> = Vec::new();
         let mut last_blank = None;
         let mut notes = Vec::new();
+        let mut references = Vec::new();
         let mut tags = HashMap::<String, Vec<(usize, usize)>>::new();
         let mut macros = HashMap::<&str, Vec<(usize, usize)>>::new();
         let last_comment_end = text.rfind("-->");
@@ -148,13 +151,15 @@ impl<'a> Scan<'a> {
             {
                 let name = tag.name.to_ascii_lowercase();
                 self.tags.insert(at, tag);
-                if tag.close {
+                if wiki == Wiki::Media && name == "ref" {
+                    if tag.close || !(tag.single || tag.attrs.contains('/')) {
+                        references.push((at, tag));
+                    }
+                } else if tag.close {
                     if let Some((start, body)) = tags.get_mut(&name).and_then(Vec::pop) {
                         self.pair(start, body, at, tag.end);
                     }
-                } else if !tag.single
-                    && !(wiki == Wiki::Media && name == "ref" && tag.attrs.contains('/'))
-                {
+                } else if !tag.single {
                     if is_literal_tag(&name, wiki) {
                         if last_literal_end
                             .get(&name)
@@ -164,8 +169,7 @@ impl<'a> Scan<'a> {
                         }
                     } else if matches!(
                         name.as_str(),
-                        "ref"
-                            | "blockquote"
+                        "blockquote"
                             | "div"
                             | "math"
                             | "code"
@@ -311,6 +315,55 @@ impl<'a> Scan<'a> {
             }
             at += advance;
         }
+        self.reference_pairs(references);
+    }
+
+    fn reference_pairs(&mut self, references: Vec<(usize, Tag<'_>)>) {
+        let mut closes = Vec::new();
+        let mut definition_line = 0..0;
+        for (at, tag) in references.into_iter().rev() {
+            if tag.close {
+                closes.push((at, tag.end));
+                continue;
+            }
+            let Some(&(first_close, _)) = closes.last() else {
+                continue;
+            };
+            let definition = self.ref_definition_start(tag.end, first_close);
+            if let Some(start) = definition
+                && !definition_line.contains(&start)
+            {
+                let line_start = self.text[..start].rfind('\n').map_or(0, |at| at + 1);
+                let line_end = line_end(self.text, start);
+                definition_line = line_start..line_end;
+            }
+            if definition.is_some() && first_close < definition_line.end {
+                let next_line = definition_line.end.saturating_add(1).min(self.text.len());
+                // A definition on the closing tag's line consumes the remaining
+                // tokens of that line. Pair the note with a later closing tag.
+                if closes.first().is_none_or(|&(close, _)| close < next_line) {
+                    continue;
+                }
+                while closes.last().is_some_and(|&(close, _)| close < next_line) {
+                    closes.pop();
+                }
+                self.ref_definition_lines
+                    .insert(tag.end, (first_close, next_line));
+            }
+            if let Some((close, end)) = closes.pop() {
+                self.pair(at, tag.end, close, end);
+            }
+        }
+    }
+
+    fn ref_definition_start(&self, body: usize, close: usize) -> Option<usize> {
+        let mut at = body;
+        while self.text[at..close].starts_with("{{")
+            && let Some(template) = self.region(at, close)
+        {
+            at = template.end;
+        }
+        self.text[at..close].starts_with(':').then_some(at)
     }
 
     fn open_braces(&self, braces: &mut Vec<(usize, usize)>, at: usize, run: usize, wiki: Wiki) {
@@ -362,11 +415,14 @@ impl<'a> Scan<'a> {
             let mut at = line;
             let mut end = next;
             while at < end {
-                let after = if let Some(tag) = self.tags.get(&at)
+                let after = if !opens.is_empty() {
+                    self.table_skip(at, self.text.len())
+                } else if let Some(tag) = self.tags.get(&at)
                     && matches!(
                         tag.name.to_ascii_lowercase().as_str(),
                         "div" | "references" | "blockquote" | "ul" | "ol" | "li"
-                    ) {
+                    )
+                {
                     tag.end
                 } else {
                     self.skip(at, self.text.len())
@@ -377,6 +433,15 @@ impl<'a> Scan<'a> {
                 at = after;
             }
             line = end.saturating_add(1);
+        }
+    }
+
+    pub(crate) fn table_skip(&self, at: usize, end: usize) -> usize {
+        // A template can contain table markers in its arguments.
+        if self.text[at..].starts_with("{{") {
+            self.skip(at, end)
+        } else {
+            at + char_len(&self.text[at..])
         }
     }
 }
@@ -401,7 +466,7 @@ fn last_literal_ends(text: &str) -> HashMap<String, usize> {
     ends
 }
 
-fn tag_at(text: &str, at: usize) -> Option<Tag<'_>> {
+pub(crate) fn tag_at(text: &str, at: usize) -> Option<Tag<'_>> {
     let tail = &text[at + 1..];
     let close = tail.starts_with('/');
     let body = if close { &tail[1..] } else { tail };

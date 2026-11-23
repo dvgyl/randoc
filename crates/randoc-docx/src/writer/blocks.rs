@@ -7,7 +7,7 @@ use super::Renderer;
 use super::inlines::Run;
 use super::numbering::Marker;
 use super::styles::Kind;
-use super::xml::{Xml, bookmark_end};
+use super::xml::{Xml, block_bookmark_end, bookmark_end};
 
 #[derive(Clone, Copy, Default)]
 pub(super) struct Flow<'a> {
@@ -19,6 +19,8 @@ pub(super) struct Flow<'a> {
     pub(super) bidi: bool,
     pub(super) list: Option<i64>,
     pub(super) note: bool,
+    /// Inside a table cell, Pandoc gives each `Plain` block the `Compact` style.
+    pub(super) compact: bool,
 }
 
 impl Renderer<'_> {
@@ -47,6 +49,12 @@ impl Renderer<'_> {
         depth: usize,
     ) -> Result<()> {
         match block {
+            Block::Plain(inlines) if flow.compact => {
+                let style = flow.style.replace("Compact");
+                let result = self.paragraphs(out, inlines, flow, depth);
+                flow.style = style;
+                result
+            }
             Block::Plain(inlines) | Block::Para(inlines) => {
                 self.paragraphs(out, inlines, flow, depth)
             }
@@ -54,7 +62,7 @@ impl Renderer<'_> {
                 self.open_paragraph(out, flow, None);
                 for (index, line) in lines.iter().enumerate() {
                     if index > 0 {
-                        flow.run.markup(out, "<w:br/>");
+                        flow.run.markup(out, "<w:br />");
                     }
                     self.inlines(out, line, flow.run, depth + 1)?;
                 }
@@ -79,12 +87,14 @@ impl Renderer<'_> {
                 depth,
             ),
             Block::HorizontalRule => {
-                out.raw(r#"<w:p><w:r><w:pict><v:rect style="width:0;height:1.5pt" o:hralign="center" o:hrstd="t" o:hr="t"/></w:pict></w:r></w:p>"#);
+                out.element();
+                out.raw(r#"<w:p><w:r><w:pict><v:rect style="width:0;height:1.5pt" o:hralign="center" o:hrstd="t" o:hr="t" /></w:pict></w:r></w:p>"#);
                 self.first = true;
                 Ok(())
             }
             Block::RawBlock(format, xml) => {
                 if format.0 == "openxml" {
+                    out.element();
                     out.raw(xml);
                 }
                 Ok(())
@@ -146,7 +156,7 @@ impl Renderer<'_> {
             .get("custom-style")
             .map(|name| self.styles.custom(Kind::Paragraph, name, &self.budget))
             .transpose()?;
-        let bookmark = self.bookmark(out, &attr.id);
+        let bookmark = self.block_bookmark(out, &attr.id);
         let first = self.first;
         self.first = true;
         self.blocks(
@@ -161,7 +171,7 @@ impl Renderer<'_> {
             depth + 1,
         )?;
         self.first = first;
-        bookmark_end(out, bookmark);
+        block_bookmark_end(out, bookmark);
         Ok(())
     }
 
@@ -195,7 +205,7 @@ impl Renderer<'_> {
             flow.run
                 .styled(self.styles.id(Kind::Character, "SectionNumber"))
                 .text(out, &number);
-            flow.run.markup(out, "<w:tab/>");
+            flow.run.markup(out, "<w:tab />");
         }
         self.inlines(out, inlines, flow.run.with_attr(attr), depth + 1)?;
         bookmark_end(out, bookmark);
@@ -275,33 +285,33 @@ impl Renderer<'_> {
             self.styles
                 .id(Kind::Paragraph, explicit.or(flow.style).unwrap_or(ordinary))
         });
+        out.element();
         out.raw(r#"<w:p><w:pPr><w:pStyle w:val=""#);
         out.escaped(style);
-        out.raw("\"/>");
+        out.raw("\" />");
         let list = flow.list.take();
         if let Some(list) = list {
             let level = flow.level.saturating_sub(1);
             let _ = write!(
                 out,
-                "<w:numPr><w:ilvl w:val=\"{level}\"/><w:numId w:val=\"{list}\"/></w:numPr>"
+                "<w:numPr><w:ilvl w:val=\"{level}\" /><w:numId w:val=\"{list}\" /></w:numPr>"
             );
         }
         if flow.bidi {
-            out.raw("<w:bidi/>");
+            out.raw("<w:bidi />");
         }
         if flow.level > 0 && list.is_none() {
             let indent = 720 * flow.level;
-            let _ = write!(out, "<w:ind w:left=\"{indent}\" w:firstLine=\"0\"/>");
+            let _ = write!(out, "<w:ind w:left=\"{indent}\" w:firstLine=\"0\" />");
         }
         if let Some(align) = flow.alignment {
-            let _ = write!(out, "<w:jc w:val=\"{align}\"/>");
+            let _ = write!(out, "<w:jc w:val=\"{align}\" />");
         }
         out.raw("</w:pPr>");
         if std::mem::take(&mut flow.note) {
-            let run = flow
-                .run
-                .styled(self.styles.id(Kind::Character, "FootnoteReference"));
-            run.markup(out, "<w:footnoteRef/>");
+            out.raw("<w:r>\n  <w:rPr>\n    <w:rStyle w:val=\"");
+            out.escaped(self.styles.id(Kind::Character, "FootnoteReference"));
+            out.raw("\" />\n  </w:rPr>\n  <w:footnoteRef />\n</w:r>");
             flow.run.text(out, " ");
         }
         self.first = false;

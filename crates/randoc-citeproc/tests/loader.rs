@@ -11,6 +11,31 @@ use randoc_core::Context;
 
 const PARENT: &str = "<style xmlns=\"http://purl.org/net/xbiblio/csl\" class=\"in-text\" version=\"1.0\"><citation><layout><text value=\"p\"/></layout></citation></style>";
 
+#[test]
+fn style_urls_use_the_host_and_keep_the_query() {
+    const URL: &str = "https://example.org/style?version=1";
+
+    struct Host;
+    impl randoc_core::Host for Host {
+        fn fetch_url(
+            &mut self,
+            url: &str,
+            headers: &[(String, String)],
+        ) -> randoc_core::Result<(Vec<u8>, Option<String>)> {
+            assert_eq!(url, URL);
+            assert_eq!(headers, [("X-Version".to_owned(), "1".to_owned())]);
+            Ok((PARENT.as_bytes().to_vec(), None))
+        }
+    }
+
+    let mut context = Context::new(Box::new(Host));
+    context.state.request_headers = vec![("X-Version".into(), "1".into())];
+    assert!(randoc_citeproc::read_style(&mut context, URL).is_ok());
+    context.limits.max_resource_size = 1;
+    let error = randoc_citeproc::read_style(&mut context, URL).unwrap_err();
+    assert!(error.to_string().contains("larger than 1 bytes"));
+}
+
 fn dependent(href: &str) -> String {
     format!(
         "<style xmlns=\"http://purl.org/net/xbiblio/csl\" class=\"in-text\" version=\"1.0\"><info><link rel=\"independent-parent\" href=\"{href}\"/></info></style>"

@@ -14,7 +14,7 @@ pub struct LevelDef {
     /// Starting number (`w:start/@w:val`, default `1`).
     pub start: i64,
     /// Number format (`w:numFmt/@w:val`, e.g. `bullet`, `decimal`, `lowerRoman`).
-    pub num_fmt: Text,
+    pub num_fmt: Option<Text>,
     /// Level format text (`w:lvlText/@w:val`, e.g. `%1.`, `(%1)`, `%1)`).
     pub lvl_text: Text,
     /// Optional font on the level marker (`w:rPr/w:rFonts`).
@@ -155,7 +155,7 @@ impl Numbering {
             .or_else(|| (0..=8).contains(&ilvl).then(|| abs.get(&0)).flatten())?;
 
         let start = ov.and_then(|o| o.start_override).unwrap_or(lvl.start);
-        match lvl.num_fmt.as_str() {
+        match lvl.num_fmt.as_deref()? {
             "none" => None,
             "bullet" => {
                 // Whitespace-only bullet markers (e.g. `lvlText=" "`) represent
@@ -192,6 +192,13 @@ impl Numbering {
             .and_then(|n| n.overrides.get(&ilvl))
             .is_some_and(|o| o.start_override.is_some())
     }
+
+    /// Returns the shared numbering definition for a numbering instance.
+    pub fn abstract_id(&self, num_id: &str) -> Option<&str> {
+        self.nums
+            .get(num_id)
+            .map(|num| num.abstract_num_id.as_str())
+    }
 }
 
 fn parse_lvl(el: &XmlElement, ns: &DocxNs) -> Option<(i64, LevelDef)> {
@@ -204,7 +211,7 @@ fn parse_lvl(el: &XmlElement, ns: &DocxNs) -> Option<(i64, LevelDef)> {
     let num_fmt = ns
         .w_child(el, "numFmt")
         .and_then(|c| ns.w_attr(c, "val"))
-        .unwrap_or("decimal");
+        .map(Text::from);
     let lvl_text = ns
         .w_child(el, "lvlText")
         .and_then(|c| ns.w_attr(c, "val"))
@@ -226,7 +233,7 @@ fn parse_lvl(el: &XmlElement, ns: &DocxNs) -> Option<(i64, LevelDef)> {
         ilvl,
         LevelDef {
             start,
-            num_fmt: Text::from(num_fmt),
+            num_fmt,
             lvl_text: Text::from(lvl_text),
             font,
             p_style,

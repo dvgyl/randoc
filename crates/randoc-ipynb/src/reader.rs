@@ -188,6 +188,12 @@ impl Notebook<'_> {
         };
         let mut attr = Attr::new(id, vec!["cell".into(), kind.into()], Vec::new());
         let blocks = match kind {
+            "markdown" if self.options.extensions.contains(Extension::RawMarkdown) => {
+                vec![Block::RawBlock(
+                    Format("markdown".into()),
+                    text(required(cell, "source")?)?,
+                )]
+            }
             "markdown" | "heading" if kind == "markdown" || legacy => {
                 let mut source = text(required(cell, "source")?)?;
                 if kind == "heading" {

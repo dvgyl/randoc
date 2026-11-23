@@ -381,9 +381,6 @@ impl<'a> Render<'a> {
         depth: usize,
     ) -> Result<Doc> {
         let mut attr = attr.clone();
-        if !target.title.is_empty() {
-            attr.attributes.push(("title".into(), target.title.clone()));
-        }
         let url = target
             .url
             .replace('\\', "\\\\")
@@ -391,11 +388,8 @@ impl<'a> Render<'a> {
             .replace(')', "\\)");
         if !image && attr.has_class("uri") && stringify(nodes) == target.url {
             attr.classes.retain(|class| class != "uri");
-            return Ok(layout::literal(format!(
-                "<{}>{}",
-                target.url,
-                attributes(&attr)
-            )));
+            return Ok(layout::literal(format!("<{}>", target.url))
+                + link_attributes(&attr, &target.title));
         }
         if !image
             && attr.has_class("email")
@@ -405,23 +399,21 @@ impl<'a> Render<'a> {
                 .is_some_and(|mail| stringify(nodes) == mail)
         {
             attr.classes.retain(|class| class != "email");
-            return Ok(layout::literal(format!(
-                "<{}>{}",
-                &target.url[7..],
-                attributes(&attr)
-            )));
+            return Ok(layout::literal(format!("<{}>", &target.url[7..]))
+                + link_attributes(&attr, &target.title));
         }
+        let attr = link_attributes(&attr, &target.title);
         let start = if image { "![" } else { "[" };
         let label = self.inlines(nodes, depth)?;
         let tail = if self.options.reference_links {
             let index = self.references.len() + 1;
             self.references
                 .push(layout::literal(format!("[{index}]: {url}")));
-            format!("][{index}]{}", attributes(&attr))
+            format!("][{index}]")
         } else {
-            format!("]({url}){}", attributes(&attr))
+            format!("]({url})")
         };
-        Ok(layout::literal(start) + label + layout::literal(tail))
+        Ok(layout::literal(start) + label + layout::literal(tail) + attr)
     }
 }
 
@@ -429,10 +421,29 @@ fn block_attr(attr: &Attr) -> Doc {
     layout::literal(attributes(attr))
 }
 
+fn link_attributes(attr: &Attr, title: &str) -> Doc {
+    let mut parts = attribute_parts(attr);
+    if !title.is_empty() {
+        parts.insert(0, format!("title=\"{}\"", escape_attribute(title)));
+    }
+    if parts.is_empty() {
+        layout::empty()
+    } else {
+        layout::literal("{")
+            + layout::hsep(parts.into_iter().map(layout::literal))
+            + layout::literal("}")
+    }
+}
+
 fn attributes(attr: &Attr) -> String {
     if attr.is_empty() {
-        return String::new();
+        String::new()
+    } else {
+        format!("{{{}}}", attribute_parts(attr).join(" "))
     }
+}
+
+fn attribute_parts(attr: &Attr) -> Vec<String> {
     let mut parts = Vec::new();
     if !attr.id.is_empty() {
         parts.push(format!("#{}", attr.id));
@@ -443,7 +454,7 @@ fn attributes(attr: &Attr) -> String {
             .iter()
             .map(|(k, v)| format!("{k}=\"{}\"", escape_attribute(v))),
     );
-    format!("{{{}}}", parts.join(" "))
+    parts
 }
 
 fn escape_attribute(text: &str) -> String {

@@ -429,10 +429,15 @@ fn compare_zip(
                 ))
             } else {
                 let names: Vec<_> = a.entry_names().into_iter().map(str::to_owned).collect();
-                for name in names {
-                    let actual = a.read(&name).unwrap().unwrap();
-                    let expected = e.read(&name).unwrap().unwrap();
-                    counts.compare("chunkedhtml", &name, Ok(actual), &expected);
+                for entry in names {
+                    let actual = a.read(&entry).unwrap().unwrap();
+                    let expected = e.read(&entry).unwrap().unwrap();
+                    counts.compare(
+                        "chunkedhtml",
+                        &format!("{name}/{entry}"),
+                        Ok(actual),
+                        &expected,
+                    );
                 }
                 None
             }
@@ -650,6 +655,157 @@ fn review_cases(oracle: &Oracle, counts: &mut Counts) {
         &doc,
         &WriterOptions::default(),
     );
+}
+
+#[test]
+#[ignore = "requires the Pandoc 3.13 executable"]
+fn chunked_html_default_template_and_table_of_contents_match_pandoc() {
+    let oracle = Oracle::new();
+    let mut counts = Counts::default();
+    let input = br#"{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[]}"#;
+    for (name, metadata, variables, toc) in [
+        ("empty", &[][..], &[][..], false),
+        (
+            "title",
+            &[
+                "title=A Title",
+                "author=Ann Author",
+                "author=Bob Writer",
+                "date=2024-01-02",
+            ][..],
+            &[][..],
+            false,
+        ),
+        (
+            "many",
+            &[
+                "title=A Title",
+                "subtitle=Sub",
+                "author=Ann Author",
+                "date=2024-01-02",
+                "abstract=The abstract.",
+                "keywords=k1",
+                "keywords=k2",
+                "lang=en-US",
+                "institute=Inst",
+                "subject=Subj",
+                "description=Desc",
+            ][..],
+            &[
+                ("header-includes", "<!-- h1 -->"),
+                ("include-before", "Before."),
+                ("include-after", "After."),
+                ("css", "a.css"),
+                ("fontsize", "11pt"),
+                ("geometry", "margin=1in"),
+                ("classoption", "twocolumn"),
+                ("mainfont", "Serif"),
+                ("linkcolor", "blue"),
+                ("papersize", "a4"),
+            ][..],
+            true,
+        ),
+    ] {
+        let mut args = vec!["-f", "json", "-t", "json", "-s"];
+        for value in metadata {
+            args.extend(["-M", value]);
+        }
+        let output = oracle.run(&args, input);
+        assert!(output.status.success());
+        let doc = json::from_json(std::str::from_utf8(&output.stdout).unwrap()).unwrap();
+
+        args[3] = "chunkedhtml";
+        let mut options = WriterOptions::default();
+        options.table_of_contents = toc;
+        options.number_sections = toc;
+        if toc {
+            args.extend(["--toc", "-N"]);
+        }
+        let variable_args: Vec<_> = variables
+            .iter()
+            .map(|&(key, value)| {
+                options.variables.insert(key, Val::text(value));
+                format!("{key}={value}")
+            })
+            .collect();
+        for value in &variable_args {
+            args.extend(["-V", value]);
+        }
+        compare_zip(
+            &oracle,
+            &mut counts,
+            name,
+            oracle.run(&args, input),
+            &doc,
+            &options,
+        );
+    }
+
+    for (name, source, toc) in [
+        ("body with TOC", b"Body.\n".as_slice(), true),
+        ("headings with TOC", b"# A\n\nBody.\n\n## B\n\n# C\n", true),
+        (
+            "headings without TOC",
+            b"# A\n\nBody.\n\n## B\n\n# C\n",
+            false,
+        ),
+    ] {
+        let doc = oracle.ast("markdown", source, true);
+        let mut args = vec!["-f", "markdown", "-t", "chunkedhtml"];
+        if toc {
+            args.push("--toc");
+        }
+        let mut options = WriterOptions::default();
+        options.table_of_contents = toc;
+        compare_zip(
+            &oracle,
+            &mut counts,
+            name,
+            oracle.run(&args, source),
+            &doc,
+            &options,
+        );
+    }
+    counts.finish();
+}
+
+#[test]
+#[ignore = "requires the Pandoc 3.13 executable"]
+fn ansi_standalone_title_block_matches_pandoc() {
+    let oracle = Oracle::new();
+    let input = b"% A Title\n% Ann Author; Bob Writer\n% 2024-01-02\n\nBody.\n";
+    let doc = oracle.ast("markdown", input, true);
+    let template = load_template("ansi");
+    for (wrap, wrap_text) in [
+        ("auto", WrapOption::WrapAuto),
+        ("none", WrapOption::WrapNone),
+    ] {
+        let mut options = WriterOptions::default();
+        options.template = Some(template.clone());
+        options.columns = 24;
+        options.wrap_text = wrap_text;
+        let expected = oracle.run(
+            &[
+                "-f",
+                "markdown",
+                "-t",
+                "ansi",
+                "-s",
+                "--columns",
+                "24",
+                "--wrap",
+                wrap,
+            ],
+            input,
+        );
+        assert!(expected.status.success(), "{:?}", expected.stderr);
+        let actual = writer("ansi")
+            .unwrap()
+            .write(&doc, &options, &mut Context::native())
+            .unwrap()
+            .into_bytes();
+        assert_eq!(first_difference(&actual, &expected.stdout), None, "{wrap}");
+    }
 }
 
 #[test]

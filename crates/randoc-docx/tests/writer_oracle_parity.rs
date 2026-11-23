@@ -232,7 +232,12 @@ fn uses_reference_from_host_and_checks_response_size() {
     let mut archive = Archive::open(&output, ArchiveLimits::default()).unwrap();
     assert!(archive.contains("word/header1.xml"));
     let styles = String::from_utf8(read_part(&mut archive, "word/styles.xml")).unwrap();
-    assert!(styles.contains(r#"<w:wordWrap w:val="off"/><w:shd w:val="clear" w:fill="303030"/>"#));
+    // Pandoc 3.13 keeps the `SourceCode` style of the reference unchanged and
+    // adds the token styles of the theme.
+    assert!(styles.contains(
+        r#"<w:style w:type="paragraph" w:styleId="SourceCode"><w:name w:val="Source Code" /></w:style>"#
+    ));
+    assert!(styles.contains(r#"w:styleId="KeywordTok"><w:name w:val="KeywordTok" /><w:basedOn w:val="VerbatimChar" /><w:rPr><w:color w:val="f0dfaf" /><w:shd w:val="clear" w:fill="303030" /></w:rPr>"#));
 
     context.limits.max_resource_size = size - 1;
     let error = randoc_docx::writer("docx")
@@ -715,5 +720,229 @@ fn repaired_tables_and_figure_layout_match_oracle() {
         "{}/7 repaired table and figure comparisons",
         7 - differences.len()
     );
+    assert!(differences.is_empty(), "{}", differences.join("\n"));
+}
+
+/// Replaces entries of a ZIP archive, keeping the entry order.
+fn replace_entries(archive: &[u8], replacements: &[(&str, &str)]) -> Vec<u8> {
+    let mut source = Archive::open(archive, ArchiveLimits::default()).unwrap();
+    let mut output = ArchiveWriter::new();
+    for name in source
+        .entry_names()
+        .into_iter()
+        .map(str::to_owned)
+        .collect::<Vec<_>>()
+    {
+        let bytes = replacements
+            .iter()
+            .find(|(entry, _)| *entry == name)
+            .map_or_else(
+                || source.read(&name).unwrap().unwrap(),
+                |(_, xml)| xml.as_bytes().to_vec(),
+            );
+        output.write_deflated(&name, &bytes).unwrap();
+    }
+    output.finish().unwrap()
+}
+
+/// Returns each difference between two DOCX archives, entry by entry.
+/// Pandoc takes each copied part that `reference` lacks, and each settings
+/// element that it lacks, from its own reference document, a GPL data file
+/// (I-DATA-01). Only `settings.docx` has each of those settings elements.
+fn entry_differences(label: &str, actual: &[u8], expected: &[u8], reference: &[u8]) -> Vec<String> {
+    let reference = Archive::open(reference, ArchiveLimits::default()).unwrap();
+    let licensed = |name: &str| {
+        (name == "word/settings.xml" && !label.starts_with("settings.docx"))
+            || ([
+                "docProps/app.xml",
+                "word/theme/theme1.xml",
+                "word/fontTable.xml",
+                "word/webSettings.xml",
+            ]
+            .contains(&name)
+                && !reference.contains(name))
+    };
+    let mut a = Archive::open(actual, ArchiveLimits::default()).unwrap();
+    let mut b = Archive::open(expected, ArchiveLimits::default()).unwrap();
+    let names: Vec<String> = b.entry_names().into_iter().map(str::to_owned).collect();
+    let mut differences = Vec::new();
+    if a.entry_names() != b.entry_names() {
+        differences.push(format!(
+            "{label}: entry order\n  randoc {:?}\n  pandoc {:?}",
+            a.entry_names(),
+            b.entry_names()
+        ));
+    }
+    for name in names {
+        if licensed(&name) || !a.contains(&name) {
+            continue;
+        }
+        let left = a.read(&name).unwrap().unwrap();
+        let right = b.read(&name).unwrap().unwrap();
+        if left != right {
+            let at = left.iter().zip(&right).take_while(|(x, y)| x == y).count();
+            let show = |bytes: &[u8]| {
+                String::from_utf8_lossy(&bytes[at.saturating_sub(80)..bytes.len().min(at + 160)])
+                    .into_owned()
+            };
+            differences.push(format!(
+                "{label}: {name} at byte {at}\n  randoc {:?}\n  pandoc {:?}",
+                show(&left),
+                show(&right)
+            ));
+        }
+    }
+    differences
+}
+
+#[test]
+#[ignore = "Requires Pandoc 3.13."]
+fn shared_reference_entries_match_oracle() {
+    let scratch = Scratch::new("entries");
+    let dir = &scratch.0;
+    // A project-owned reference document: Randoc's output for an empty document.
+    let epoch = PureHost {
+        environment: BTreeMap::from([("SOURCE_DATE_EPOCH".into(), EPOCH.into())]),
+        ..PureHost::default()
+    };
+    let base = writer(
+        &Pandoc::default(),
+        &WriterOptions::default(),
+        &mut Context::new(Box::new(epoch)),
+    );
+    let numbering = format!(
+        r#"<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:numbering xmlns:w="{W}" xmlns:x="urn:x">
+  <w:numPicBullet w:numPicBulletId="0"><w:pict/></w:numPicBullet>
+  <w:abstractNum w:abstractNumId="5" x:a="2"><w:nsid w:val="00000005"/></w:abstractNum>
+  <w:abstractNum w:abstractNumId="991"><w:nsid w:val="ABCDEF01"/></w:abstractNum>
+  <w:num w:numId="7"><w:abstractNumId w:val="5"/></w:num>
+  <w:num w:numId="1001"><w:abstractNumId w:val="991"/></w:num>
+  <w:numIdMacAtCleanup w:val="3"/>
+</w:numbering>"#
+    );
+    let mut base_archive = Archive::open(&base, ArchiveLimits::default()).unwrap();
+    let styles = String::from_utf8(read_part(&mut base_archive, "word/styles.xml"))
+        .unwrap()
+        .replacen(
+            &format!(r#"<w:styles xmlns:w="{W}">"#),
+            &format!(
+                "<w:styles xmlns:mc=\"urn:mc\" xmlns:w=\"{W}\" mc:Ignorable=\"w14\">\n  <!-- c -->\n  "
+            ),
+            1,
+        )
+        .replacen("</w:style><w:style", "</w:style>\n  <w:style", 3);
+    let section = "<w:sectPr xmlns:x=\"urn:x\" w:rsidR=\"00\"><w:pgSz w:w=\"12240\" w:h=\"15840\"/>\n      <w:pgMar w:top=\"1440\" w:right=\"1440\" w:bottom=\"1440\" w:left=\"1440\" w:header=\"720\" w:footer=\"720\" w:gutter=\"0\"/><w:footnotePr>\n        <w:numRestart w:val=\"eachSect\"/>\n      </w:footnotePr><w:cols w:space=\"720\">t&apos;x</w:cols></w:sectPr>";
+    let document = String::from_utf8(read_part(&mut base_archive, "word/document.xml")).unwrap();
+    let start = document.find("<w:sectPr").unwrap();
+    let end = document.find("</w:sectPr>").unwrap() + "</w:sectPr>".len();
+    let document = format!("{}{section}{}", &document[..start], &document[end..]);
+    // A reference without the token styles of highlighting.
+    let plain_styles = {
+        let styles = String::from_utf8(read_part(&mut base_archive, "word/styles.xml")).unwrap();
+        let tokens = styles
+            .find(r#"<w:style w:type="character" w:customStyle="1" w:styleId="KeywordTok">"#)
+            .unwrap();
+        format!("{}</w:styles>", &styles[..tokens])
+    };
+    // Project-owned values for each element of the settings of Pandoc's own
+    // reference document, and one element that Pandoc drops.
+    let settings = format!(
+        r#"<?xml version="1.0" encoding="UTF-8"?>
+<w:settings xmlns:w="{W}"><w:listSeparator w:val=";"/><w:zoom w:percent="90"/><w:embedSystemFonts w:val="0"/><w:proofState w:spelling="dirty" w:grammar="dirty"/><w:stylePaneFormatFilter w:val="0001"/><w:doNotTrackMoves w:val="0"/><w:defaultTabStop w:val="700"/><w:drawingGridHorizontalSpacing w:val="200"/><w:drawingGridVerticalSpacing w:val="200"/><w:displayHorizontalDrawingGridEvery w:val="2"/><w:displayVerticalDrawingGridEvery w:val="2"/><w:characterSpacingControl w:val="compressPunctuation"/><w:savePreviewPicture w:val="0"/><w:rsids><w:rsidRoot w:val="00A1B2C3"/></w:rsids><w:themeFontLang w:val="fr-FR"/><w:clrSchemeMapping w:bg1="light1" w:t1="dark1"/><w:decimalSymbol w:val=","/><w:footnotePr><w:numFmt w:val="lowerRoman"/></w:footnotePr><w:evenAndOddHeaders/></w:settings>"#
+    );
+    let references = [
+        ("base.docx", base.clone()),
+        (
+            "settings.docx",
+            replace_entries(&base, &[("word/settings.xml", &settings)]),
+        ),
+        (
+            "plain.docx",
+            replace_entries(&base, &[("word/styles.xml", &plain_styles)]),
+        ),
+        (
+            "numbering.docx",
+            replace_entries(&base, &[("word/numbering.xml", &numbering)]),
+        ),
+        ("headers.docx", reference()),
+        (
+            "layout.docx",
+            replace_entries(
+                &base,
+                &[
+                    ("word/styles.xml", &styles),
+                    ("word/document.xml", &document),
+                ],
+            ),
+        ),
+    ];
+    for (name, bytes) in &references {
+        std::fs::write(dir.join(name), bytes).unwrap();
+    }
+    let cases: &[(&str, String, &[&str])] = &[
+        ("core", format!("---\ntitle: The Title\nauthor: Ann Author\ndate: 2024-01-02\n---\n\n# Heading one\n\nSome *emphasis*, **strong**, `code`, a [link](https://example.com) and a note.[^1]\n\n## Heading two\n\n- item one\n- item two\n\n1. first\n2. second\n\n> A quote.\n\n```\nprint(\"hi\")\n```\n\n| A | B |\n|---|---|\n| 1 | 2 |\n\n![An image]({GIF})\n\n$x^2$\n\n[^1]: The note."), &[]),
+        ("runs", "Lead a b \"quoted *text*\" 'single' a\nsoft  break.\n\nA 中文 B and A中 B.\n\n `code`, a [x y](u) z.".into(), &[]),
+        ("blocks", format!("---\ntitle: T\nabstract: |\n  Abs one.\n\n  Abs two.\n---\n\n::: {{#d1}}\nIn div.\n:::\n\n---\n\n```{{=openxml}}\n<w:p><w:r><w:t>raw1</w:t></w:r></w:p><w:p><w:r><w:t>raw2</w:t></w:r></w:p>\n```\n\nTerm\n: Def one.\n\n    Def two.\n\n- a\n    - b\n\n> q1\n>\n> q2\n\n| x\n| y\n\nNote.[^1]\n\n+---+---+\n| a | b |\n|   |   |\n| c |   |\n+---+---+\n\n: Cap {{#tbl}}\n\n![Fig]({GIF}){{#fig}}\n\n[^1]: N1.\n\n    N2."), &["--toc"]),
+        ("numbering", "1. one\n2. two\n\n(a) alpha\n(b) beta\n\niv) roman\nv) next\n\n- [ ] task\n- [x] done\n\n(@) example\n(@) again\n\n3. three\n    - inner".into(), &[]),
+        ("escaping", "---\ntitle: \"T ' \\\" < &\"\n---\n\nit's \"q\" <a> & b\n\n![alt ' \" < &](GIFSRC \"ti'tle\")".replace("GIFSRC", GIF), &[]),
+        ("highlight", "```rust\nlet x = 1; // c\n```\n\nText.".into(), &[]),
+        ("zenburn", "```rust\nfn f() {}\n```".into(), &["--syntax-highlighting=zenburn"]),
+        ("custom styles", "::: {custom-style=\"Local Style\"}\nA [span]{custom-style=\"Accent Text\"}.\n:::".into(), &[]),
+        ("comments", "Text [note]{.comment-start id=\"7\" author=\"Alex\" date=\"2020-01-01T00:00:00Z\"}a comment[]{.comment-end id=\"7\"} end.".into(), &[]),
+    ];
+    let mut differences = Vec::new();
+    let mut matched = 0;
+    let mut total = 0;
+    for (reference, _) in &references {
+        for (label, source, extra) in cases {
+            let label = format!("{reference}/{label}");
+            let json = oracle(dir, &["-f", "markdown", "-t", "json"], source.as_bytes());
+            let reference_arg = format!("--reference-doc={reference}");
+            let mut args = vec!["-f", "json", "-t", "docx", &reference_arg, "-o", "-"];
+            args.extend(extra.iter());
+            let expected = oracle(dir, &args, &json);
+            let mut options = WriterOptions::default();
+            options.reference_doc = Some((*reference).into());
+            options.table_of_contents = extra.contains(&"--toc");
+            if extra.contains(&"--syntax-highlighting=zenburn") {
+                options.highlight_style = Some("zenburn".into());
+            }
+            let host = PureHost {
+                files: references
+                    .iter()
+                    .map(|(name, bytes)| ((*name).into(), bytes.clone()))
+                    .collect(),
+                environment: BTreeMap::from([("SOURCE_DATE_EPOCH".into(), EPOCH.into())]),
+                ..PureHost::default()
+            };
+            let actual = writer(&ast(&json), &options, &mut Context::new(Box::new(host)));
+            if let Some(dump) = std::env::var_os("RANDOC_DOCX_DUMP") {
+                let stem = label.replace(['/', '.'], "-");
+                std::fs::write(
+                    Path::new(&dump).join(format!("randoc-{stem}.docx")),
+                    &actual,
+                )
+                .unwrap();
+                std::fs::write(
+                    Path::new(&dump).join(format!("oracle-{stem}.docx")),
+                    &expected,
+                )
+                .unwrap();
+            }
+            let reference_bytes = &references
+                .iter()
+                .find(|(name, _)| name == reference)
+                .unwrap()
+                .1;
+            let found = entry_differences(&label, &actual, &expected, reference_bytes);
+            total += 1;
+            if found.is_empty() {
+                matched += 1;
+            }
+            differences.extend(found);
+        }
+    }
+    eprintln!("{matched}/{total} DOCX archives match entry by entry");
     assert!(differences.is_empty(), "{}", differences.join("\n"));
 }

@@ -2,6 +2,7 @@ use randoc_ast::{Block, Inline, ListAttributes, ListNumberDelim, ListNumberStyle
 use randoc_core::{Extension, Result};
 
 use super::Parser;
+use super::blocks::Boundaries;
 
 #[derive(Clone, Copy)]
 pub(super) struct Marker<'a> {
@@ -66,13 +67,19 @@ impl Marker<'_> {
 }
 
 impl Parser<'_> {
+    /// Reads the list that starts at `lines[start]` and returns it with its
+    /// number of lines. `boundaries` belong to `lines`.
     pub(super) fn list(
         &mut self,
         lines: &[&str],
+        start: usize,
+        boundaries: &Boundaries,
         first: Marker<'_>,
         depth: usize,
     ) -> Result<(Block, usize)> {
         self.check_depth(depth + 1)?;
+        let offset = start;
+        let lines = &lines[start..];
         let fancy = self.enabled(Extension::FancyLists);
         let tasks = self.enabled(Extension::TaskLists);
         let definitions = first.ordering.is_none() && definition(first.text).is_some();
@@ -136,9 +143,15 @@ impl Parser<'_> {
                     blank = 0;
                 }
                 child.push(&line[item.indent + 1..]);
+                // A block belongs to the item when its first line does. Its other
+                // lines keep their indentation.
+                if let Some(end) = boundaries.block_end(offset + position) {
+                    child.extend(&lines[position + 1..=end - offset]);
+                    position = end - offset;
+                }
                 position += 1;
             }
-            let mut blocks = self.blocks(&child, depth + 1)?;
+            let mut blocks = self.item_blocks(&child, depth + 1)?;
             if let Some(checkbox) = checkbox {
                 if let Some(Block::Para(text) | Block::Plain(text)) = blocks.first_mut() {
                     text.splice(0..0, [Inline::Str(checkbox.into()), Inline::Space]);
@@ -216,6 +229,24 @@ impl Parser<'_> {
             },
             position,
         ))
+    }
+}
+
+impl Parser<'_> {
+    /// Reads the blocks of a list item. The text on the line of the marker always
+    /// starts a paragraph.
+    fn item_blocks(&mut self, lines: &[&str], depth: usize) -> Result<Vec<Block>> {
+        if lines.first().is_none_or(|line| line.trim().is_empty()) {
+            return self.blocks(lines, depth);
+        }
+        let end = self.paragraph_end(lines, &Boundaries::new(lines), 0);
+        let text = self.inlines(&lines[..end].join("\n"), depth + 1)?;
+        let mut blocks = Vec::new();
+        if !text.is_empty() {
+            blocks.push(Block::Para(text));
+        }
+        blocks.extend(self.blocks(&lines[end..], depth)?);
+        Ok(blocks)
     }
 }
 

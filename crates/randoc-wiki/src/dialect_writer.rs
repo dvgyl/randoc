@@ -197,7 +197,10 @@ impl Renderer<'_> {
                 }
                 Task::Container(add_break) => {
                     let mut piece: Piece = values.pop().unwrap_or_default();
-                    piece.after += usize::from(add_break);
+                    if add_break {
+                        piece.final_break = piece.after.max(1);
+                        piece.after = piece.final_break + 1;
+                    }
                     values.push(piece);
                 }
                 Task::Decorate(prefix, suffix, after) => {

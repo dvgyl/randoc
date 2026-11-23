@@ -3,7 +3,9 @@ use std::collections::HashMap;
 
 use randoc_ast::MathType;
 
-const PATTERNS: [&str; 10] = [">>", ">", "@@", "\\)", "\\]", "$$", "$", "]", "[", "\n"];
+const PATTERNS: [&str; 11] = [
+    ">>", ">", "@@", "\\)", "\\]", "$$", "$", "]", "[", "\n", "}",
+];
 
 pub(super) struct Index {
     markup: HashMap<usize, usize>,
@@ -13,7 +15,9 @@ pub(super) struct Index {
     macros: HashMap<usize, usize>,
     matches: [Vec<usize>; PATTERNS.len()],
     math_close: HashMap<usize, usize>,
+    environment_ends: HashMap<String, Vec<usize>>,
     offsets: [Cell<usize>; PATTERNS.len()],
+    word: Cell<(usize, usize)>,
 }
 
 impl Index {
@@ -26,7 +30,9 @@ impl Index {
             macros: HashMap::new(),
             matches: std::array::from_fn(|_| Vec::new()),
             math_close: HashMap::new(),
+            environment_ends: HashMap::new(),
             offsets: std::array::from_fn(|_| Cell::new(0)),
+            word: Cell::new((0, 0)),
         };
         let mut closing = [(); 6].map(|()| Vec::new());
         let mut quote_end = [None; 2];
@@ -128,6 +134,16 @@ impl Index {
             {
                 result.macros.insert(pos, end);
             }
+            if let Some(name) = tail
+                .strip_prefix("\\end{")
+                .and_then(crate::reader::blocks::latex_name)
+            {
+                result
+                    .environment_ends
+                    .entry(name.to_owned())
+                    .or_default()
+                    .push(pos + 6 + name.len());
+            }
             for (pattern, matches) in PATTERNS.iter().zip(&mut result.matches) {
                 if tail.starts_with(pattern) {
                     matches.push(pos);
@@ -182,11 +198,34 @@ impl Index {
             .then(|| (end + 2, destination, Some(&text[start..end])))
     }
 
-    fn next_match(&self, start: usize, pattern: &str) -> Option<usize> {
+    pub fn next_match(&self, start: usize, pattern: &str) -> Option<usize> {
         let id = PATTERNS.iter().position(|p| *p == pattern)?;
         let positions = &self.matches[id];
         let offset = positions.partition_point(|&pos| pos >= start);
         positions.get(offset.checked_sub(1)?).copied()
+    }
+
+    /// Returns the end of the run of letters, digits, `-` and `_` at `start`.
+    /// A start inside the last run gives the same end without a new scan.
+    pub fn word_end(&self, text: &str, start: usize) -> usize {
+        let (first, end) = self.word.get();
+        if first <= start && start <= end && end > first {
+            return end;
+        }
+        let end = start
+            + text[start..]
+                .find(|c: char| !(c.is_alphanumeric() || "-_".contains(c)))
+                .unwrap_or(text.len() - start);
+        self.word.set((start, end));
+        end
+    }
+
+    /// Returns the end of the first `\\end{NAME}` after `pos`.
+    pub fn environment_end(&self, name: &str, pos: usize) -> Option<usize> {
+        let ends = self.environment_ends.get(name)?;
+        // The positions are in falling order.
+        let count = ends.partition_point(|&end| end > pos);
+        ends.get(count.checked_sub(1)?).copied()
     }
 
     pub fn citation(&self, pos: usize) -> Option<usize> {

@@ -136,6 +136,7 @@ edge/unicode-emphasis
 edge/unicode-rtl
 edge/unicode-astral-code
 edge/unicode-wide-simple-table
+edge/unicode-escaped-symbol
 edge/duplicate-ids-explicit
 edge/duplicate-ids-mixed
 edge/duplicate-auto-and-div
@@ -172,6 +173,7 @@ extensions/auto-identifiers-on
 extensions/auto-identifiers-off
 extensions/autolink-bare-uris-on
 extensions/autolink-bare-uris-off
+extensions/autolink-bare-uris-trailing-paren
 extensions/backtick-code-blocks-on
 extensions/backtick-code-blocks-off
 extensions/blank-before-blockquote-on
@@ -226,6 +228,7 @@ extensions/inline-notes-on
 extensions/inline-notes-off
 extensions/intraword-underscores-on
 extensions/intraword-underscores-off
+extensions/latex-macros-on
 extensions/latex-macros-off
 extensions/line-blocks-on
 extensions/line-blocks-off
@@ -233,13 +236,18 @@ extensions/link-attributes-on
 extensions/link-attributes-off
 extensions/lists-without-preceding-blankline-on
 extensions/lists-without-preceding-blankline-off
+extensions/literate-haskell-on
 extensions/literate-haskell-off
+extensions/literate-haskell-latex-code
 extensions/mark-on
 extensions/mark-off
+extensions/markdown-attribute-on
+extensions/markdown-attribute-off
 extensions/markdown-in-html-blocks-on
 extensions/markdown-in-html-blocks-off
 extensions/mmd-header-identifiers-on
 extensions/mmd-header-identifiers-off
+extensions/mmd-link-attributes-on
 extensions/mmd-link-attributes-off
 extensions/mmd-title-block-on
 extensions/mmd-title-block-off
@@ -347,6 +355,7 @@ inlines/code-entities-literal
 inlines/code-trailing-backslash
 inlines/escape-backslash-space
 inlines/escape-backslash-newline
+inlines/escape-nonpunct
 inlines/escape-backslash-backslash
 inlines/escape-angle-brackets
 inlines/escape-pipe-tilde-caret
@@ -433,6 +442,7 @@ links/reference-indented-three
 links/reference-indented-four
 links/reference-with-attributes
 links/reference-in-list
+links/reference-empty-label
 links/reference-bracket-in-label
 links/image-inline
 links/image-title
@@ -589,6 +599,7 @@ manual/definition-list-compact
 manual/example-list-numbering
 manual/example-list-label
 manual/example-list-repeated-label
+manual/example-list-start-number
 manual/ending-list-code-absorbed
 manual/ending-list-comment
 manual/ending-list-two-lists
@@ -649,6 +660,7 @@ manual/raw-tex-block
 manual/raw-attribute-ms
 manual/raw-attribute-inline
 manual/raw-attribute-openxml
+manual/latex-macros
 manual/autolinks
 manual/inline-links
 manual/mailto-link
@@ -663,6 +675,8 @@ manual/internal-reference-link
 manual/images
 manual/implicit-figure
 manual/implicit-figure-suppressed
+manual/implicit-figure-alt
+manual/implicit-figure-latex-placement
 manual/link-attributes
 manual/image-width-percent
 manual/fenced-div
@@ -687,6 +701,7 @@ manual/tex-math-gfm-inline
 manual/mmd-title-block
 manual/abbreviations
 manual/alerts
+manual/mmd-link-attributes
 manual/short-superscript
 manual/short-subscript
 manual/wikilinks-title-after-pipe
@@ -715,6 +730,7 @@ metadata/yaml-single-quoted
 metadata/yaml-dots-terminator
 metadata/yaml-not-at-start
 metadata/yaml-multiple-blocks
+metadata/yaml-later-block-same-key
 metadata/yaml-empty-block
 metadata/yaml-blank-line-after-open
 metadata/yaml-invalid
@@ -736,6 +752,7 @@ metadata/title-block-title-only
 metadata/title-block-markup
 metadata/title-block-off
 metadata/title-block-not-first
+metadata/title-block-and-yaml
 metadata/yaml-alias-limit-nodes
 metadata/yaml-alias-limit-chars
 metadata/yaml-alias-under-limit
@@ -753,6 +770,7 @@ notes-citations/note-lazy-continuation
 notes-citations/note-inside-note
 notes-citations/note-in-heading
 notes-citations/note-in-table
+notes-citations/note-label-with-spaces
 notes-citations/note-empty-definition
 notes-citations/inline-note-nested-brackets
 notes-citations/inline-note-with-markup
@@ -772,6 +790,7 @@ notes-citations/cite-key-braced
 notes-citations/cite-email-not-cite
 notes-citations/cite-in-note
 notes-citations/cite-numbers-note-num
+notes-citations/cite-with-emphasis
 notes-citations/cite-suffix-only-locator
 notes-citations/cite-bracket-no-at
 notes-citations/cite-unicode-key
@@ -807,15 +826,22 @@ raw/html-bad-tag
 raw/html-lt-not-tag
 raw/html-span-markdown
 raw/html-div-markdown-attribute
+raw/html-raw-off
 raw/native-divs-off
 raw/native-spans-off
 raw/markdown-in-html-off
 raw/tex-command-inline
 raw/tex-environment
+raw/tex-unknown-command
+raw/tex-command-in-word
 raw/tex-dollar-in-command
+raw/tex-unclosed-environment
+raw/tex-unclosed-brace
 raw/tex-raw-off
 raw/tex-macro-definition-only
+raw/tex-macro-used-in-math
 raw/tex-macros-off
+raw/tex-def-macro
 raw/raw-attribute-latex-block
 raw/raw-attribute-html-block
 raw/raw-attribute-inline-latex
@@ -998,8 +1024,11 @@ review/s2-nested-bracketed-spans
 review/s2-nested-native-spans
 review/s2-nested-inline-notes
 review/s2-native-span-with-a-bracket-that-closes-outside
+review/s2-native-span-with-a-bracket-that-opens-inside
 review/s2-native-span-with-code-that-closes-outside
 review/s2-link-text-with-a-quote-and-math
+review/s2-native-span-with-a-quote-that-closes-outside
+review/s2-link-text-with-a-tex-environment
 review/s2b-html-indented-text
 review/s2b-html-indented-inline-tags
 review/s2b-html-eight-spaces
@@ -1097,6 +1126,7 @@ review/s3b-comment-in-quote
 review/s3b-math-env-equation
 review/s3b-math-env-align-star
 review/s3b-math-env-in-item
+review/s3b-math-env-blank-line
 review/s3b-tex-env-cases-is-block
 review/s3b-heading-code-attr
 review/s3b-heading-link-attr
@@ -1292,6 +1322,7 @@ review/s4b-nested-list-line-two-blanks-then-sibling
 review/s4b-bare-uri-closing-parentheses
 review/s4b-simple-table-many-columns
 review/s4b-backslash-math-unclosed-then-closed
+review/s4b-environment-end-names-overlap
 review/s4b-metadata-nested-divs
 review/s4b-reference-groups-without-closers
 review/s4b-abbreviation-escaped-period
@@ -1389,6 +1420,7 @@ variants/phpextra-abbreviation
 variants/phpextra-pipe-table
 variants/phpextra-fenced-tilde
 variants/phpextra-fenced-backtick
+variants/phpextra-markdown-attribute
 variants/phpextra-link-attributes
 variants/phpextra-no-smart
 variants/phpextra-no-auto-id
@@ -1396,6 +1428,7 @@ variants/phpextra-no-strikeout
 variants/phpextra-intraword
 variants/mmd-title-block
 variants/mmd-header-identifier
+variants/mmd-link-attributes
 variants/mmd-short-subsuperscripts
 variants/mmd-math-double-backslash
 variants/mmd-footnote

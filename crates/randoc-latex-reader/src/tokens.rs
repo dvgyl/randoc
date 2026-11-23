@@ -13,8 +13,15 @@ const MAX_NAME_LENGTH: usize = 64;
 const MAX_URL_LENGTH: usize = 8192;
 
 /// The environments whose body is verbatim text.
-pub(crate) const VERBATIM_ENVIRONMENTS: &[&str] =
-    &["verbatim", "Verbatim", "lstlisting", "minted", "comment"];
+pub(crate) const VERBATIM_ENVIRONMENTS: &[&str] = &[
+    "verbatim",
+    "Verbatim",
+    "lstlisting",
+    "minted",
+    "comment",
+    "filecontents",
+    "filecontents*",
+];
 
 /// One token.
 #[derive(Debug, Clone, PartialEq)]
@@ -68,6 +75,8 @@ pub(crate) struct Tok {
     pub(crate) column: u32,
     /// The number of macro expansions that made this token. Source tokens have 0.
     pub(crate) depth: u32,
+    /// A control sequence copied by `\let` before it had a macro definition.
+    pub(crate) frozen: bool,
 }
 
 impl Tok {
@@ -83,6 +92,8 @@ pub(crate) fn tokenize(input: &str) -> Vec<Tok> {
         index: 0,
         line: 1,
         column: 1,
+        at_letter: false,
+        expl_syntax: false,
         out: Vec::new(),
         line_end: 0,
         line_last: HashMap::new(),
@@ -95,6 +106,8 @@ struct Tokenizer {
     index: usize,
     line: u32,
     column: u32,
+    at_letter: bool,
+    expl_syntax: bool,
     out: Vec<Tok>,
     /// The end of the line that `line_last` describes.
     line_end: usize,
@@ -129,6 +142,7 @@ impl Tokenizer {
             line,
             column,
             depth: 0,
+            frozen: false,
         });
     }
 
@@ -196,7 +210,14 @@ impl Tokenizer {
         }
         let at_end = self.index + length + self.count_while(length, |c| c == ' ' || c == '\t')
             >= self.chars.len();
-        let kind = if breaks == 0 && !at_end {
+        let after_escaped_newline = self
+            .out
+            .iter()
+            .rev()
+            .take(2)
+            .find(|tok| tok.kind != Kind::Space)
+            .is_some_and(|tok| tok.kind == Kind::Symbol('\n'));
+        let kind = if breaks == 0 && !at_end && !after_escaped_newline {
             Kind::Newline
         } else {
             Kind::Par
@@ -205,7 +226,11 @@ impl Tokenizer {
     }
 
     fn control_sequence(&mut self) {
-        let letters = self.count_while(1, |c| c.is_ascii_alphabetic());
+        let letters = self.count_while(1, |c| {
+            c.is_ascii_alphabetic()
+                || (self.at_letter && c == '@')
+                || (self.expl_syntax && matches!(c, ':' | '_'))
+        });
         if letters == 0 {
             match self.peek(1) {
                 Some('\n')
@@ -226,7 +251,7 @@ impl Tokenizer {
             .collect();
         if matches!(name.as_str(), "begingroup" | "endgroup") {
             let spaces = self.count_while(letters + 1, |c| matches!(c, ' ' | '\t'));
-            let kind = if name == "begingroup" {
+            let kind = if matches!(name.as_str(), "begingroup") {
                 Kind::Open
             } else {
                 Kind::Close
@@ -241,6 +266,10 @@ impl Tokenizer {
         }
         self.take(Kind::Word(name.clone()), letters + 1);
         match name.as_str() {
+            "makeatletter" => self.at_letter = true,
+            "makeatother" => self.at_letter = false,
+            "ExplSyntaxOn" => self.expl_syntax = true,
+            "ExplSyntaxOff" => self.expl_syntax = false,
             "verb" => self.verb(),
             "lstinline" | "mintinline" => self.inline_listing(&name),
             "begin" => self.verbatim_environment(),

@@ -465,3 +465,69 @@ fn selects_a_supported_switch_case_or_its_default() {
         .collect();
     assert_eq!(words, ["Second", "Third"]);
 }
+
+#[test]
+fn reads_stylesheets_as_plain_files_as_pandoc_does() {
+    use randoc_core::Host;
+    use randoc_templates::Val;
+
+    struct Sandboxed(PureHost);
+    impl Host for Sandboxed {
+        fn is_sandboxed(&self) -> bool {
+            true
+        }
+        fn read_file(&mut self, path: &str) -> std::io::Result<Vec<u8>> {
+            self.0.read_file(path)
+        }
+    }
+    let files = || {
+        let mut host = PureHost::default();
+        host.files
+            .insert("sub/real.css".into(), b"p { color: red; }".to_vec());
+        host
+    };
+    let write = |css: &[&str], meta: bool, host: Box<dyn Host>| {
+        let mut doc = Pandoc::default();
+        let mut options = WriterOptions::default();
+        let list = Val::List(css.iter().map(|&path| Val::from(path)).collect());
+        if meta {
+            let paths = css.iter().map(|&path| MetaValue::MetaString(path.into()));
+            doc.meta.insert("css", MetaValue::MetaList(paths.collect()));
+        } else {
+            options.variables.insert("css", list);
+        }
+        let mut context = Context::new(host);
+        context.state.resource_path = vec!["sub".into()];
+        super::writer("epub3")
+            .unwrap()
+            .write(&doc, &options, &mut context)
+            .map(|output| output.into_bytes())
+    };
+    let open_error = |path: &str| {
+        Error::Io(format!(
+            "{path}: openBinaryFile: does not exist (No such file or directory)"
+        ))
+    };
+    for meta in [false, true] {
+        for (css, missing) in [
+            (&["a.css"][..], "a.css"),
+            (&["real.css"], "real.css"),
+            (&["data:text/css,p{}"], "data:text/css,p{}"),
+            (&["file:///sub/real.css"], "file:///sub/real.css"),
+            (&["sub/real.css", "b.css"], "b.css"),
+        ] {
+            let error = write(css, meta, Box::new(files())).unwrap_err();
+            assert_eq!(error, open_error(missing), "{css:?}");
+            assert_eq!(error.exit_code(), 1);
+        }
+        let error = write(&["sub/real.css"], meta, Box::new(Sandboxed(files()))).unwrap_err();
+        assert_eq!(error, Error::ResourceNotFound("sub/real.css".into()));
+        assert_eq!(error.exit_code(), 99);
+        let bytes = write(&["sub/real.css"], meta, Box::new(files())).unwrap();
+        let mut zip = Archive::open(&bytes, ArchiveLimits::default()).unwrap();
+        assert_eq!(
+            zip.read("EPUB/styles/stylesheet1.css").unwrap().unwrap(),
+            b"p { color: red; }"
+        );
+    }
+}

@@ -19,7 +19,7 @@ use crate::{path, tree, xhtml};
 
 const XHTML: &str = "application/xhtml+xml";
 const XML: &str = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-const IBOOKS: &str = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<display_options><platform name=\"*\"><option name=\"specified-fonts\">true</option></platform></display_options>\n";
+const IBOOKS: &str = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<display_options>\n  <platform name=\"*\">\n    <option name=\"specified-fonts\">true</option>\n  </platform>\n</display_options>\n";
 
 pub(crate) struct EpubWriter(pub EpubVersion);
 
@@ -100,7 +100,7 @@ fn write(
         page_limit,
     };
     let mut rendered = Vec::new();
-    let mut chapter_fields = pages.context("", "", "../");
+    let mut chapter_fields = pages.context("", None, "../");
     for (index, chapter) in chapters.iter().enumerate() {
         let html = write_epub_chapter(&chapter.blocks, options, context, version)?;
         let (body, remote) = embed_markup(&html.body, &mut resources, context)?;
@@ -135,7 +135,7 @@ fn write(
             .0
             .unwrap_or((600, 800));
         resources.add_media(source, item)?;
-        let mut fields = pages.context(&metadata.title, "frontmatter", "../");
+        let mut fields = pages.context(&metadata.title, None, "../");
         fields.insert("coverpage", Val::Bool(true));
         if let Some(resource) = resources.media.last() {
             fields.insert("cover-image", Val::text(path::basename(&resource.href)));
@@ -150,7 +150,7 @@ fn write(
     let title_page = if options.epub_title_page {
         let title_content = title_fields(&doc.meta, options, context, version)?;
         let has_title = title_content.get("title").is_some();
-        let mut fields = pages.context(&metadata.title, "frontmatter", "../");
+        let mut fields = pages.context(&metadata.title, Some("frontmatter"), "../");
         fields.insert("titlepage", Val::Bool(true));
         fields.0.extend(title_content.0);
         Some((pages.render(&fields)?, has_title))
@@ -171,7 +171,7 @@ fn write(
         .as_deref()
         .filter(|title| !title.is_empty())
         .unwrap_or("-");
-    let mut nav_fields = pages.context(nav_title, "frontmatter", "");
+    let mut nav_fields = pages.context(nav_title, Some("frontmatter"), "");
     for key in ["include-before", "include-after"] {
         nav_fields.0.remove(key);
     }
@@ -233,7 +233,7 @@ fn write(
         cover_page.is_some(),
     );
     let container = format!(
-        "{XML}<container version=\"1.0\" xmlns=\"urn:oasis:names:tc:opendocument:xmlns:container\">\n<rootfiles><rootfile full-path=\"{}\" media-type=\"application/oebps-package+xml\" /></rootfiles>\n</container>\n",
+        "{XML}<container version=\"1.0\" xmlns=\"urn:oasis:names:tc:opendocument:xmlns:container\">\n  <rootfiles>\n    <rootfile full-path=\"{}\" media-type=\"application/oebps-package+xml\" />\n  </rootfiles>\n</container>\n",
         path::join(subdir, "content.opf")
     );
 
@@ -299,10 +299,12 @@ struct Pages<'a> {
 }
 
 impl Pages<'_> {
-    fn context(&self, title: &str, matter: &str, prefix: &str) -> TemplateContext {
+    fn context(&self, title: &str, matter: Option<&str>, prefix: &str) -> TemplateContext {
         let mut fields = self.fields.clone();
         fields.insert("pagetitle", Val::text(path::escape(title)));
-        fields.insert("body-type", Val::text(matter));
+        if let Some(matter) = matter {
+            fields.insert("body-type", Val::text(matter));
+        }
         fields.insert(
             "css",
             Val::List(

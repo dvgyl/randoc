@@ -596,3 +596,124 @@ fn epub_commands() {
     }
     eprintln!("EPUB command cases: 4/4");
 }
+
+fn oracle_in(dir: &Path, args: &[&str]) -> std::process::Output {
+    Command::new(std::env::var_os("RANDOC_ORACLE_PANDOC").unwrap())
+        .current_dir(dir)
+        .args(args)
+        .env("SOURCE_DATE_EPOCH", "1700000000")
+        .stdin(Stdio::null())
+        .output()
+        .unwrap()
+}
+
+#[test]
+#[ignore = "requires Pandoc 3.13"]
+fn epub_writer_entries_match_with_a_shared_css_file() {
+    let dir = std::env::temp_dir().join(format!("randoc-epub-css-{}", std::process::id()));
+    std::fs::create_dir_all(&dir).unwrap();
+    let css = b"p { color: red; }\n".to_vec();
+    std::fs::write(dir.join("style.css"), &css).unwrap();
+    let source = "---\ntitle: Book\nsubtitle: Sub\nauthor: [Ann, Bob]\nlang: en-US\nrights: CC0\nidentifier: urn:uuid:7f6b2c1e-3a5d-4e8f-9b0a-1c2d3e4f5a6b\n---\n\n# One\n\nText with a [link](#two) and a note.[^n]\n\n## One sub\n\n# Two {#two}\n\nFinal.\n\n[^n]: Note.\n";
+    std::fs::write(dir.join("book.md"), source).unwrap();
+    let json = oracle_in(&dir, &["book.md", "-t", "json"]).stdout;
+    let doc = randoc_ast::json::from_json(std::str::from_utf8(&json).unwrap()).unwrap();
+    let mut differences = Vec::new();
+    for format in ["epub2", "epub3"] {
+        let output = oracle_in(
+            &dir,
+            &[
+                "book.md",
+                "-t",
+                format,
+                "--toc",
+                "-N",
+                "--css=style.css",
+                "-o",
+                "-",
+            ],
+        );
+        assert!(output.status.success());
+        let mut options = WriterOptions::default();
+        options.table_of_contents = true;
+        options.number_sections = true;
+        options
+            .variables
+            .insert("css", randoc_templates::Val::List(vec!["style.css".into()]));
+        let mut host = PureHost::default();
+        host.files.insert("style.css".into(), css.clone());
+        host.environment
+            .insert("SOURCE_DATE_EPOCH".into(), "1700000000".into());
+        let actual = write_epub(format, &doc, &options, &mut Context::new(Box::new(host)));
+        let mut a = Archive::open(&actual, ArchiveLimits::default()).unwrap();
+        let mut b = Archive::open(&output.stdout, ArchiveLimits::default()).unwrap();
+        assert_eq!(a.entry_names(), b.entry_names(), "{format}");
+        let names: Vec<String> = b.entry_names().into_iter().map(str::to_owned).collect();
+        for name in names {
+            if a.read(&name).unwrap() != b.read(&name).unwrap() {
+                differences.push(format!("{format}: {name}"));
+            }
+        }
+    }
+    let _ = std::fs::remove_dir_all(&dir);
+    assert!(differences.is_empty(), "{differences:?}");
+}
+
+#[test]
+#[ignore = "requires Pandoc 3.13"]
+fn missing_stylesheets_fail_as_in_pandoc() {
+    let dir = std::env::temp_dir().join(format!("randoc-epub-nocss-{}", std::process::id()));
+    std::fs::create_dir_all(dir.join("sub")).unwrap();
+    std::fs::write(dir.join("sub/real.css"), "p {}").unwrap();
+    std::fs::write(dir.join("in.md"), "hi").unwrap();
+    for (args, path, sandbox) in [
+        (&["--css=a.css"][..], "a.css", false),
+        (&["-V", "css=a.css"], "a.css", false),
+        (
+            &["--css=real.css", "--resource-path=sub"],
+            "real.css",
+            false,
+        ),
+        (&["--css=data:text/css,p{}"], "data:text/css,p{}", false),
+        (&["--css=sub/real.css", "--sandbox"], "sub/real.css", true),
+    ] {
+        let mut all = vec!["in.md", "-t", "epub", "-o", "out.epub"];
+        all.extend(args);
+        let output = oracle_in(&dir, &all);
+        let expected = if sandbox {
+            format!("File '{path}' not found in resource path\n")
+        } else {
+            format!("{path}: openBinaryFile: does not exist (No such file or directory)\n")
+        };
+        assert_eq!(
+            String::from_utf8_lossy(&output.stderr),
+            expected,
+            "{args:?}"
+        );
+        assert_eq!(
+            output.status.code(),
+            Some(if sandbox { 99 } else { 1 }),
+            "{args:?}"
+        );
+        // The unit test `reads_stylesheets_as_plain_files_as_pandoc_does`
+        // covers the sandbox with a sandboxed host.
+        if sandbox {
+            continue;
+        }
+        let mut options = WriterOptions::default();
+        options
+            .variables
+            .insert("css", randoc_templates::Val::List(vec![path.into()]));
+        let mut host = PureHost::default();
+        host.files.insert("sub/real.css".into(), b"p {}".to_vec());
+        let mut context = Context::new(Box::new(host));
+        context.state.resource_path = vec!["sub".into()];
+        let error = randoc_epub::writer("epub3")
+            .unwrap()
+            .write(&Pandoc::default(), &options, &mut context)
+            .unwrap_err();
+        assert_eq!(format!("{error}\n"), expected, "{args:?}");
+        assert_eq!(error.exit_code(), 1);
+    }
+    let _ = std::fs::remove_dir_all(&dir);
+}

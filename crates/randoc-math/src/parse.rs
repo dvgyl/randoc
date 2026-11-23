@@ -47,7 +47,7 @@ const EXPECTING_COLUMNS: &str = r#"expecting "%", "\\label", "\\tag", "\\nonumbe
 /// The line that the oracle adds for eof in a group after an item.
 const EXPECTING_BRACE_AFTER: &str = r#"expecting "\\", "{", "\\operatorname", letter, digit, ".", "!", "'", "''", "'''", "''''", "*", "+", ",", "-", ".", "/", ":", ":=", ";", "<", "=", ">", "?", "@", "~", "_", "^", "'", "\\left", "\\lVert", "\\hyperref", "``", "''", "`", "~", "\\ ", "\\\"", "\\#", "\\$", "\\%", "\\&", "\\'", "\\.", "\\=", "\\AA", "\\AE", "\\L", "\\O", "\\OE", "\\^", "\\_", "\\`", "\\aa", "\\ae", "\\c", "\\char", "\\l", "\\ldots", "\\o", "\\oe", "\\quad", "\\ss", "\\textasciicircum", "\\textasciitilde", "\\textbackslash", "\\u", "\\v", "\\{", "\\}", "\\~", white space or "}""#;
 /// The line that the oracle adds for eof in a group with no item.
-const EXPECTING_BRACE_START: &str = r#"expecting white space, "%", "\\label", "\\tag", "\\nonumber", whitespace, "\\allowbreak", "\\", "{", "\\operatorname", letter, digit, ".", "!", "'", "''", "'''", "''''", "*", "+", ",", "-", ".", "/", ":", ":=", ";", "<", "=", ">", "?", "@", "~", "_", "^", "'", "\\left", "\\lVert", "\\hyperref", "``", "''", "`", "~", "\\ ", "\\\"", "\\#", "\\$", "\\%", "\\&", "\\'", "\\.", "\\=", "\\AA", "\\AE", "\\L", "\\O", "\\OE", "\\^", "\\_", "\\`", "\\aa", "\\ae", "\\c", "\\char", "\\l", "\\ldots", "\\o", "\\oe", "\\quad", "\\ss", "\\textasciicircum", "\\textasciitilde", "\\textbackslash", "\\u", "\\v", "\\{", "\\}", "\\~" or "}""#;
+const BRACE_START_TOKENS: &str = r#""%", "\\label", "\\tag", "\\nonumber", whitespace, "\\allowbreak", "\\", "{", "\\operatorname", letter, digit, ".", "!", "'", "''", "'''", "''''", "*", "+", ",", "-", ".", "/", ":", ":=", ";", "<", "=", ">", "?", "@", "~", "_", "^", "'", "\\left", "\\lVert", "\\hyperref", "``", "''", "`", "~", "\\ ", "\\\"", "\\#", "\\$", "\\%", "\\&", "\\'", "\\.", "\\=", "\\AA", "\\AE", "\\L", "\\O", "\\OE", "\\^", "\\_", "\\`", "\\aa", "\\ae", "\\c", "\\char", "\\l", "\\ldots", "\\o", "\\oe", "\\quad", "\\ss", "\\textasciicircum", "\\textasciitilde", "\\textbackslash", "\\u", "\\v", "\\{", "\\}", "\\~""#;
 /// The line that the oracle adds for an unexpected character at the top level after an item.
 const EXPECTING_END_AFTER: &str = r#"expecting "\\", "{", "\\operatorname", letter, digit, ".", "!", "'", "''", "'''", "''''", "*", "+", ",", "-", ".", "/", ":", ":=", ";", "<", "=", ">", "?", "@", "~", "_", "^", "'", "\\left", "\\lVert", "\\hyperref", "``", "''", "`", "~", "\\ ", "\\\"", "\\#", "\\$", "\\%", "\\&", "\\'", "\\.", "\\=", "\\AA", "\\AE", "\\L", "\\O", "\\OE", "\\^", "\\_", "\\`", "\\aa", "\\ae", "\\c", "\\char", "\\l", "\\ldots", "\\o", "\\oe", "\\quad", "\\ss", "\\textasciicircum", "\\textasciitilde", "\\textbackslash", "\\u", "\\v", "\\{", "\\}", "\\~" or end of input"#;
 /// The line that the oracle adds for an unexpected character at the top level with no item.
@@ -84,6 +84,7 @@ const NEGATIVE: Space = space("-0.167em", "\u{200a}");
 const TEXT_EDGE: Space = space("0.333em", "");
 
 const SPACES: &[(&str, Space)] = &[
+    ("\n", MEDIUM),
     (" ", MEDIUM),
     ("!", NEGATIVE),
     (",", THIN),
@@ -591,13 +592,21 @@ impl Parser {
         let mut items = Vec::new();
         let mut over = None;
         loop {
+            let starts_with_space = self.peek().is_some_and(is_tex_space);
             self.skip_space();
             match self.peek() {
                 None if matches!(stop, Stop::End | Stop::Right) => break,
                 None => {
                     let start = items.is_empty() && over.is_none();
+                    if stop == Stop::Brace && start {
+                        let expected = if starts_with_space {
+                            format!(r#"space, {BRACE_START_TOKENS}, white space or "}}""#)
+                        } else {
+                            format!(r#"white space, {BRACE_START_TOKENS} or "}}""#)
+                        };
+                        return self.fail(format!("unexpected eof\n  expecting {expected}"));
+                    }
                     let expecting = match stop {
-                        Stop::Brace if start => EXPECTING_BRACE_START,
                         Stop::Brace => EXPECTING_BRACE_AFTER,
                         Stop::Bracket => EXPECTING_BRACKET,
                         Stop::Cell => EXPECTING_CELL,

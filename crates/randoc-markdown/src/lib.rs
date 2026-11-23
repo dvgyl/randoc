@@ -108,7 +108,14 @@ fn read_sources(
         .first()
         .map(|source| source.name.clone())
         .unwrap_or_default();
-    read_markdown(&sources.concat(), &name, options, context)
+    let mut parser = block::Parser::new(options, &name, context.limits.max_nesting_depth);
+    if options
+        .extensions
+        .contains(randoc_core::Extension::RebaseRelativePaths)
+    {
+        parser.set_sources(sources);
+    }
+    parse(&sources.concat(), parser, context)
 }
 
 /// Reads Markdown text into a document.
@@ -120,8 +127,11 @@ pub fn read_markdown(
     options: &ReaderOptions,
     context: &mut Context,
 ) -> Result<Pandoc> {
-    let max_depth = context.limits.max_nesting_depth;
-    let mut parser = block::Parser::new(options, source_name, max_depth);
+    let parser = block::Parser::new(options, source_name, context.limits.max_nesting_depth);
+    parse(text, parser, context)
+}
+
+fn parse(text: &str, mut parser: block::Parser, context: &mut Context) -> Result<Pandoc> {
     let result = parser.parse_document(text);
     for message in parser.take_log() {
         context.report(message);
@@ -140,6 +150,90 @@ mod tests {
         options.extensions = default_extensions(format);
         let mut context = Context::pure();
         read_markdown(text, "", &options, &mut context).unwrap_or_default()
+    }
+
+    #[test]
+    fn a_url_citation_key_keeps_its_internal_slashes() {
+        use randoc_ast::{Block, Inline};
+        let doc = read_with(
+            "[@url:http://example.org/article]. @url:https://example.org/path.",
+            "markdown",
+        );
+        assert!(matches!(
+            doc.blocks.as_slice(),
+            [Block::Para(inlines)] if matches!(
+                inlines.as_slice(),
+                [Inline::Cite(first, _), Inline::Str(period), Inline::Space,
+                 Inline::Cite(second, _), Inline::Str(last_period)]
+                    if first[0].id == "url:http://example.org/article"
+                        && second[0].id == "url:https://example.org/path"
+                        && period == "." && last_period == "."
+            )
+        ));
+    }
+
+    #[test]
+    fn author_in_text_citations_share_a_note_number() {
+        use randoc_ast::{Block, CitationMode, Inline};
+
+        for (source, suffix, prefix) in [
+            ("@a [p. 33; @b]", "p.\u{a0}33", vec![]),
+            (
+                "@a [p.12; see also @b]",
+                "p.12",
+                vec![
+                    Inline::Str("see".into()),
+                    Inline::Space,
+                    Inline::Str("also".into()),
+                ],
+            ),
+        ] {
+            let doc = read_with(source, "markdown");
+            let [Block::Para(inlines)] = doc.blocks.as_slice() else {
+                panic!("Expected one paragraph");
+            };
+            let [Inline::Cite(citations, _)] = inlines.as_slice() else {
+                panic!("Expected one citation group");
+            };
+            let [first, second] = citations.as_slice() else {
+                panic!("Expected two citations");
+            };
+            assert_eq!(first.id, "a");
+            assert_eq!(first.mode, CitationMode::AuthorInText);
+            assert_eq!(first.suffix, [Inline::Str(suffix.into())]);
+            assert_eq!(second.id, "b");
+            assert_eq!(second.prefix, prefix);
+            assert_eq!(second.mode, CitationMode::NormalCitation);
+            assert_eq!((first.note_num, second.note_num), (1, 1));
+        }
+    }
+
+    #[test]
+    fn an_abbreviation_keeps_a_space_before_a_citation() {
+        use randoc_ast::{Block, Inline};
+        let doc = read_with("al. [@k] and al. example", "markdown");
+        assert!(matches!(
+            doc.blocks.as_slice(),
+            [Block::Para(inlines)] if matches!(
+                inlines.as_slice(),
+                [Inline::Str(abbr), Inline::Space, Inline::Cite(..), Inline::Space,
+                 Inline::Str(join), Inline::Space, Inline::Str(example)]
+                    if abbr == "al." && join == "and" && example == "al.\u{a0}example"
+            )
+        ));
+    }
+
+    #[test]
+    fn a_nested_list_can_end_a_tight_ordered_list_item() {
+        use randoc_ast::Block;
+        let doc = read_with("1. First\n    * Nested\n\n1. Second\n", "markdown");
+        assert!(matches!(
+            doc.blocks.as_slice(),
+            [Block::OrderedList(_, items)]
+                if matches!(items.as_slice(), [first, second]
+                    if matches!(first.as_slice(), [Block::Plain(_), Block::BulletList(_)])
+                        && matches!(second.as_slice(), [Block::Plain(_)]))
+        ));
     }
 
     /// `pandoc -t native -s`: the key `*` of `nocite: '@*'` and of the

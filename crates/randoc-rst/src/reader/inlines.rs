@@ -82,10 +82,16 @@ fn closing(text: &str, start: usize, marker: &str) -> Option<usize> {
         #[cfg(test)]
         CLOSER_STEPS.with(|steps| steps.set(steps.get() + 1));
         let i = start + offset;
-        if (!escaped || marker == "``")
-            && (marker.starts_with('`') || prev.is_some_and(|c| !c.is_whitespace()))
+        if !escaped
+            && (marker == "`" || prev.is_some_and(|c| !c.is_whitespace()))
             && text[i..].strip_prefix(marker).is_some_and(|tail| {
-                after(first(tail)) || marker.starts_with('`') && tail.starts_with('`')
+                if marker == "|" {
+                    true
+                } else if marker == "`" {
+                    first(tail).is_none_or(|c| !c.is_alphanumeric())
+                } else {
+                    after(first(tail))
+                }
             })
         {
             return Some(i);
@@ -233,16 +239,48 @@ fn internal_name(text: &str) -> Option<&str> {
     Some(&text[..end])
 }
 
+fn inline_whitespace(c: char) -> bool {
+    c.is_whitespace() && c != '\u{a0}'
+}
+
+fn trim_inline_end(text: &str) -> &str {
+    text.trim_end_matches(inline_whitespace)
+}
+
 impl Parser<'_> {
     pub(super) fn inlines(&mut self, text: &str, pos: &SourcePos) -> Vec<Inline> {
+        let text = text.trim_matches(inline_whitespace);
+        self.scan(text, pos, 0, text.len(), &mut |_| text.len())
+    }
+
+    /// Reads a paragraph. A double-backtick literal can extend past the end
+    /// of the paragraph. Resume at the end of the paragraph that contains it.
+    pub(super) fn paragraph(
+        &mut self,
+        text: &str,
+        end: usize,
+        pos: &SourcePos,
+        mut paragraph_end: impl FnMut(usize) -> usize,
+    ) -> Vec<Inline> {
+        let trimmed = text[..end].trim_start_matches(inline_whitespace);
+        let start = end - trimmed.len();
         self.scan(
-            text.trim_matches(|c: char| c.is_whitespace() && c != '\u{a0}'),
+            &text[start..],
             pos,
             0,
+            trim_inline_end(trimmed).len(),
+            &mut |close| paragraph_end(start + close) - start,
         )
     }
 
-    fn scan(&mut self, text: &str, pos: &SourcePos, depth: usize) -> Vec<Inline> {
+    fn scan(
+        &mut self,
+        text: &str,
+        pos: &SourcePos,
+        depth: usize,
+        mut end: usize,
+        paragraph_end: &mut dyn FnMut(usize) -> usize,
+    ) -> Vec<Inline> {
         let smart = self.enabled(Extension::Smart);
         let ealb = self.enabled(Extension::EastAsianLineBreaks);
         const MISSING: usize = usize::MAX;
@@ -256,8 +294,9 @@ impl Parser<'_> {
         let mut email_end_offset = 0;
         let mut name_start = 0;
         let mut non_name_end = 0;
-        while let Some(c) = first(&text[cursor..]) {
-            let rest = &text[cursor..];
+        let mut invalid_name_end = 0;
+        while let Some(c) = first(&text[cursor..end]) {
+            let rest = &text[cursor..end];
             let next = cursor + c.len_utf8();
             if c.is_whitespace() && c != '\u{a0}' {
                 flush(&mut word, &mut out);
@@ -314,6 +353,8 @@ impl Parser<'_> {
                 if parsed.is_none()
                     && (before(prev)
                         || boundary
+                        || matches!(c, ':' | '|')
+                        || rest.starts_with("``")
                         || c == '`' && prev == Some('`') && word.is_empty())
                 {
                     let role = if c == ':' && cursor >= role_end {
@@ -367,15 +408,25 @@ impl Parser<'_> {
                             }
                             let start = cursor + offset + marker.len();
                             if closers[kind] <= start {
-                                closers[kind] = closing(text, start, marker).unwrap_or(MISSING);
+                                closers[kind] = if kind == 2 {
+                                    text[start..].find(marker).map(|offset| start + offset)
+                                } else {
+                                    closing(&text[..end], start, marker)
+                                }
+                                .unwrap_or(MISSING);
                             }
-                            let end = closers[kind];
-                            if end == MISSING || end <= start {
+                            let close = closers[kind];
+                            if close == MISSING || close < start || close == start && kind != 2 {
                                 continue;
                             }
-                            let value = &text[start..end];
-                            let mut size = end + marker.len() - cursor;
-                            let suffix = &rest[size..];
+                            let after_close = close + marker.len();
+                            if after_close > end {
+                                end = trim_inline_end(&text[..paragraph_end(after_close)]).len();
+                                closers.fill(0);
+                            }
+                            let value = &text[start..close];
+                            let mut size = after_close - cursor;
+                            let suffix = &text[after_close..end];
                             if kind == 3
                                 && role.is_none()
                                 && !internal
@@ -407,14 +458,23 @@ impl Parser<'_> {
                                         .unwrap_or(&self.default_role);
                                     self.role(name, value)
                                 }
-                                4 => self.reference(Reference::Substitution(value.to_owned()), pos),
+                                4 => {
+                                    let linked = suffix.starts_with('_');
+                                    size += usize::from(linked);
+                                    self.reference(
+                                        Reference::Substitution(value.to_owned(), linked),
+                                        pos,
+                                    )
+                                }
                                 _ => Inline::Quoted(
                                     if kind == 5 {
                                         QuoteType::SingleQuote
                                     } else {
                                         QuoteType::DoubleQuote
                                     },
-                                    self.scan(value, pos, depth + 1),
+                                    self.scan(value, pos, depth + 1, value.len(), &mut |_| {
+                                        value.len()
+                                    }),
                                 ),
                             };
                             parsed = Some((size, inline));
@@ -425,6 +485,7 @@ impl Parser<'_> {
                 if parsed.is_none()
                     && c == '_'
                     && non_name_end <= name_start
+                    && invalid_name_end <= name_start
                     && word.chars().next_back().is_some_and(char::is_alphanumeric)
                 {
                     let len = if rest.starts_with("__") { 2 } else { 1 };
@@ -465,7 +526,18 @@ impl Parser<'_> {
             if word.is_empty() {
                 name_start = 0;
                 non_name_end = 0;
+                invalid_name_end = 0;
             } else {
+                if word
+                    .chars()
+                    .rev()
+                    .take(2)
+                    .filter(|&c| !c.is_alphanumeric() && name_char(c))
+                    .count()
+                    == 2
+                {
+                    invalid_name_end = word.len();
+                }
                 if word
                     .chars()
                     .next_back()
@@ -554,6 +626,7 @@ impl Parser<'_> {
             "literal" | "code" => Inline::Code(Attr::new("", classes, Vec::new()), value.into()),
             "raw" => Inline::RawInline(Format::new(format.unwrap_or_default()), value.into()),
             "math" => Inline::Math(MathType::InlineMath, value.into()),
+            "mark" => Inline::Span(attr("", &["mark"]), text()),
             "RFC" | "PEP" | "rfc-reference" | "pep-reference" if value.parse::<u64>().is_ok() => {
                 let rfc = matches!(base, "RFC" | "rfc-reference");
                 let name = format!("{} {value}", if rfc { "RFC" } else { "PEP" });

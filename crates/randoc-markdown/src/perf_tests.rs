@@ -475,6 +475,63 @@ fn nested_containers_with_unclosed_fences_grow_linearly() {
     );
 }
 
+/// Raw TeX, literate Haskell, MultiMarkdown attributes and the attribute
+/// `markdown`: forms that read ahead for a closer.
+#[test]
+fn raw_tex_and_extension_forms_grow_linearly() {
+    const FORMS: &[(&str, &str)] = &[
+        ("markdown", "x \\foo{"),
+        ("markdown", "x \\begin{x} "),
+        ("markdown", "p \\section{a} "),
+        ("markdown", "\\a b\n"),
+        ("markdown", "\\emph{x}\n"),
+        ("markdown", "\\begin{x}a\\end{x}\n\n"),
+        ("markdown", "\\begin{align}\nq\n\n"),
+        ("markdown", "p \\begin{x}\n\n"),
+        ("markdown", "\\begin{x}\n\n"),
+        ("markdown", "\\def\\x{y}\n\n$\\x$\n\n"),
+        ("markdown+literate_haskell", "\\begin{code}\n"),
+        ("markdown+literate_haskell", "> a\n"),
+        ("markdown+mmd_link_attributes", "[r]: /u w=\"\n"),
+        ("markdown+markdown_attribute", "<div markdown=\"1\">\n"),
+        ("markdown+autolink_bare_uris", "(a"),
+    ];
+    let worker = std::thread::Builder::new().stack_size(1 << 30).spawn(|| {
+        let slow = faster_than_linear(FORMS, 250, 1000);
+        assert!(slow.is_empty(), "faster than linear: {slow:?}");
+    });
+    assert!(
+        matches!(worker.map(|handle| handle.join()), Ok(Ok(()))),
+        "the raw TeX step test failed"
+    );
+}
+
+/// I-MD-76: 4,000 nested HTML containers that each hold an unclosed fence
+/// line, with and without the closing tags at the end.
+#[test]
+fn four_thousand_containers_with_unclosed_fences_grow_linearly() {
+    let worker = std::thread::Builder::new().stack_size(1 << 30).spawn(|| {
+        let steps = |levels: usize, closer: &str| {
+            let text = "<section>\n```a\n".repeat(levels) + &closer.repeat(levels);
+            read_steps(&text)
+        };
+        for closer in ["", "</section>\n"] {
+            let (small, large) = (steps(1000, closer), steps(4000, closer));
+            eprintln!(
+                "I-MD-76 closer {closer:?}: {small} steps for 1,000 levels, {large} for 4,000"
+            );
+            assert!(
+                large <= small * 4 * 2,
+                "closer {closer:?}: {small} steps for 1,000 levels, {large} for 4,000"
+            );
+        }
+    });
+    assert!(
+        matches!(worker.map(|handle| handle.join()), Ok(Ok(()))),
+        "the 4,000 container fence step test failed"
+    );
+}
+
 #[test]
 fn headings_with_distinct_unmatched_code_grow_linearly() {
     let worker = std::thread::Builder::new().stack_size(1 << 30).spawn(|| {

@@ -276,6 +276,111 @@ fn chunked_html_has_navigation_and_resolves_local_links() {
 }
 
 #[test]
+fn chunked_html_renders_an_empty_table_of_contents_when_requested() {
+    let doc = Pandoc {
+        blocks: vec![Block::Para(vec![Inline::Str("Body.".into())])],
+        ..Pandoc::default()
+    };
+    for table_of_contents in [false, true] {
+        let mut options = WriterOptions::default();
+        options.table_of_contents = table_of_contents;
+        let mut context = Context::pure();
+        let bytes = write("chunkedhtml", &doc, &options, &mut context).expect("ZIP output");
+        let mut archive = Archive::open(&bytes, ArchiveLimits::from_limits(&context.limits))
+            .expect("ZIP archive");
+        let index = archive
+            .read("index.html")
+            .expect("read index")
+            .expect("index");
+        let expected =
+            b"<nav id=\"TOC\" role=\"doc-toc\">\n<ul class=\"task-list\">\n</ul>\n</nav>";
+        assert_eq!(
+            index.windows(expected.len()).any(|bytes| bytes == expected),
+            table_of_contents
+        );
+        let chunk = archive
+            .read("0--1.html")
+            .expect("read chunk")
+            .expect("chunk");
+        assert!(
+            !chunk
+                .windows(b"id=\"TOC\"".len())
+                .any(|bytes| bytes == b"id=\"TOC\"")
+        );
+    }
+}
+
+#[test]
+fn ansi_title_block_centers_groups_and_uses_italics_for_the_date() {
+    let mut doc = Pandoc::default();
+    for (key, value) in [("title", "Title"), ("subtitle", "Sub"), ("date", "Date")] {
+        doc.meta.insert(key, MetaValue::MetaString(value.into()));
+    }
+    doc.meta.insert(
+        "author",
+        MetaValue::MetaList(
+            ["Ann", "Bob"]
+                .into_iter()
+                .map(|name| MetaValue::MetaString(name.into()))
+                .collect(),
+        ),
+    );
+    let mut options = WriterOptions::default();
+    options.columns = 22;
+    options.template = Some(super::default_template("ansi", 128).expect("ANSI template"));
+    let output = write("ansi", &doc, &options, &mut Context::pure()).expect("ANSI output");
+    assert_eq!(
+        output,
+        concat!(
+            "        \x1b[1m\x1b[23m\x1b[39m\x1b[49m\x1b[24m\x1b[29mTitle\x1b[0m\n",
+            "         Sub\n",
+            "           \n",
+            "         Ann\n",
+            "         Bob\n",
+            "           \n",
+            "         \x1b[22m\x1b[3m\x1b[39m\x1b[49m\x1b[24m\x1b[29mDate\x1b[0m\n",
+            "           \n",
+            " ────────────────────\n\n",
+            "\x1b[0m\x1b]8;;\x1b\\",
+        )
+        .as_bytes(),
+    );
+}
+
+#[test]
+fn context_normalizes_standalone_a_series_paper_sizes() {
+    use randoc_templates::{Template, Val};
+
+    let mut options = WriterOptions::default();
+    options.template = Some(
+        Template::compile::<String>("context", "$papersize$|$meta-json$", 128, &mut |_| {
+            Ok(String::new())
+        })
+        .expect("ConTeXt template"),
+    );
+    let mut doc = Pandoc::default();
+    doc.meta
+        .insert("papersize", MetaValue::MetaString("a4".into()));
+    for (value, expected) in [
+        (None, "A4"),
+        (Some(Val::text("a04")), "A04"),
+        (Some(Val::text("a4,letter")), "a4,letter"),
+        (Some(Val::text("b5")), "b5"),
+        (Some(Val::List(vec![Val::text("a4")])), "a4"),
+    ] {
+        if let Some(value) = value {
+            options.variables.insert("papersize", value);
+        }
+        let output =
+            write("context", &doc, &options, &mut Context::pure()).expect("ConTeXt output");
+        assert_eq!(
+            output,
+            format!(r#"{expected}|{{"papersize":"a4"}}"#).as_bytes()
+        );
+    }
+}
+
+#[test]
 fn ansi_charges_table_padding_without_charging_existing_cells() {
     use randoc_ast::{Cell, ColSpec, Row, Table, TableBody};
 

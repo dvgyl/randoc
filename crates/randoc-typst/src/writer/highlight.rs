@@ -82,6 +82,11 @@ impl Renderer<'_> {
                 literal(lines.join("\n"))
             });
         }
+        let source = if block {
+            source.strip_suffix('\n').unwrap_or(source)
+        } else {
+            source
+        };
         let lang = if self.options.highlight_method == HighlightMethod::None {
             None
         } else {

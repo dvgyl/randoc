@@ -74,9 +74,7 @@ impl Renderer<'_> {
                 let listing = !classes.is_empty() || attr.has_class("numberLines");
                 let marker = if listing { "----" } else { "...." };
                 let mut output = String::new();
-                if !attr.id.is_empty() {
-                    output.push_str(&format!("[[{}]]\n", attr.id));
-                }
+                let code = code.strip_suffix('\n').unwrap_or(code);
                 if listing {
                     let numbers = if attr.has_class("numberLines") {
                         "%linesnum"
@@ -130,7 +128,7 @@ impl Renderer<'_> {
                     && let [Inline::Image(image_attr, label, target)] = inlines.as_slice()
                 {
                     let caption = self.caption(caption, table);
-                    let image = self.image(image_attr, label, target, true);
+                    let image = self.image(image_attr, label, target, true, false, false);
                     let id = if attr.id.is_empty() {
                         empty()
                     } else {

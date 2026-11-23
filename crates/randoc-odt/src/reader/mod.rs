@@ -384,4 +384,71 @@ mod tests {
         assert!(matches!(error, Err(error) if error.exit_code() == 64
             && error.to_string().contains("Expected office:document at the root of the flat OpenDocument file")));
     }
+
+    #[test]
+    fn list_item_start_values_do_not_change_the_list_start() -> Result<()> {
+        let styles = r#"<text:list-style style:name="Steps"><text:list-level-style-number text:level="1" style:num-format="1" style:num-suffix="."/></text:list-style>"#;
+        let item = |start: &str, text: &str| {
+            format!(
+                r#"<text:list-item text:start-value="{start}"><text:p>{text}</text:p></text:list-item>"#
+            )
+        };
+        let body = format!(
+            r#"<text:list text:style-name="Steps">{}{}</text:list><text:list text:style-name="Steps" text:continue-numbering="true">{}</text:list>"#,
+            item("4", "a"),
+            item("9", "b"),
+            item("7", "c")
+        );
+        let doc = flat(styles, &body, &mut Context::pure())?;
+        let starts: Vec<i64> = doc
+            .blocks
+            .iter()
+            .filter_map(|block| match block {
+                Block::OrderedList(attributes, _) => Some(attributes.start),
+                _ => None,
+            })
+            .collect();
+        assert_eq!(starts, [1, 3]);
+        Ok(())
+    }
+
+    #[test]
+    fn code_keeps_the_plain_text_of_its_inlines() -> Result<()> {
+        let styles = r#"<style:style style:name="Preformatted_20_Text" style:family="paragraph"/><style:style style:name="Source_20_Text" style:family="text"/>"#;
+        let body = r#"<text:p text:style-name="Preformatted_20_Text">a<text:tab/>b<text:line-break/>c  <text:s text:c="2"/>d</text:p><text:p>e <text:span text:style-name="Source_20_Text">f<text:line-break/>g</text:span></text:p>"#;
+        let doc = flat(styles, body, &mut Context::pure())?;
+        let code = |text: &str| Inline::Code(Default::default(), text.into());
+        assert_eq!(
+            doc.blocks,
+            vec![
+                Block::CodeBlock(Default::default(), "a b c  d".into()),
+                Block::Para(vec![Inline::Str("e".into()), Inline::Space, code("f g")]),
+            ]
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn line_breaks_absorb_adjacent_spaces() -> Result<()> {
+        let body = r#"<text:p>a <text:line-break/> b<text:line-break/><text:tab/>c<text:line-break/><text:s text:c="2"/>d<text:tab/>
+e</text:p>"#;
+        let doc = flat("", body, &mut Context::pure())?;
+        let word = |text: &str| Inline::Str(text.into());
+        assert_eq!(
+            doc.blocks,
+            vec![Block::Para(vec![
+                word("a"),
+                Inline::LineBreak,
+                word("b"),
+                Inline::LineBreak,
+                word("c"),
+                Inline::LineBreak,
+                Inline::Space,
+                word("d"),
+                Inline::SoftBreak,
+                word("e"),
+            ])]
+        );
+        Ok(())
+    }
 }

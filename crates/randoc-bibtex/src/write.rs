@@ -1,14 +1,38 @@
-use randoc_ast::{Attr, Block, Inline, MetaValue, Pandoc};
+use randoc_ast::{Attr, Block, Inline, Meta, MetaValue, Pandoc};
 use randoc_citeproc::case_transform::add_text_case;
 use randoc_citeproc::reference::{Date, DateParts, raw_date_edtf};
 use randoc_citeproc::types::TextCase;
+use randoc_core::shared::meta_context::meta_to_context;
 use randoc_core::shared::stringify_meta;
-use randoc_core::{Context, Extension, Result, WrapOption, WriterOptions};
-use randoc_layout::{Doc, braces, hang, literal};
+use randoc_core::{Context, Error, Extension, Result, WrapOption, WriterOptions};
+use randoc_layout::{Doc, braces, hang, literal, space};
+use randoc_templates::Val;
 
 use crate::{Fields, bib::MONTHS, depth_error, words};
 
 pub(crate) fn write(
+    doc: &Pandoc,
+    options: &WriterOptions,
+    context: &mut Context,
+    latex: bool,
+) -> Result<String> {
+    let body = entries(doc, options, context, latex)?;
+    let Some(template) = &options.template else {
+        return Ok(body);
+    };
+    // Pandoc gives the template only the variables, never the metadata.
+    let mut fields = meta_to_context(
+        &Meta::default(),
+        &options.variables,
+        context.limits.max_nesting_depth,
+        &mut |_| Ok(Doc::default()),
+        &mut |_| Ok(Doc::default()),
+    )?;
+    fields.insert("body", Val::text(body.strip_suffix('\n').unwrap_or(&body)));
+    Ok(template.render(&fields).render(None))
+}
+
+fn entries(
     doc: &Pandoc,
     options: &WriterOptions,
     context: &mut Context,
@@ -28,6 +52,8 @@ pub(crate) fn write(
         None
     };
     let mut output = String::new();
+    // Each field renders the whole template, so its text has a total budget.
+    let mut template_budget = context.limits.max_input_size;
     for entry in entries {
         let MetaValue::MetaMap(map) = entry else {
             continue;
@@ -45,6 +71,7 @@ pub(crate) fn write(
             context,
             latex,
             fields: Vec::new(),
+            template_budget: &mut template_budget,
         };
         let kind = writer.fields()?;
         output.push_str(&format!("@{kind}{{{},\n", stringify_meta(id)));
@@ -178,6 +205,7 @@ struct EntryWriter<'a> {
     context: &'a mut Context,
     latex: bool,
     fields: Vec<Doc>,
+    template_budget: &'a mut u64,
 }
 
 impl EntryWriter<'_> {
@@ -225,12 +253,7 @@ impl EntryWriter<'_> {
                 self.render(target, &render_names(value))?;
             }
         }
-        let publisher = match bib_kind {
-            "phdthesis" | "mastersthesis" => "school",
-            "techreport" | "report" => "institution",
-            _ => "publisher",
-        };
-        self.normal("publisher", publisher)?;
+        self.normal("publisher", "publisher")?;
         if let Some(value) = self.map.get("title") {
             let mut content = inlines(value);
             if lang.is_empty() || lang == "en" || lang.starts_with("en-") {
@@ -273,9 +296,12 @@ impl EntryWriter<'_> {
         if self.latex {
             self.normal("version", "version")?;
         }
-        if !matches!(bib_kind, "phdthesis" | "mastersthesis") {
-            self.normal("genre", "type")?;
-        }
+        let thesis_type = match genre.as_str() {
+            "mathesis" => "mastersthesis",
+            "phdthesis" => "phdthesis",
+            _ => "",
+        };
+        self.field("type", literal(thesis_type));
         self.dates()?;
         self.normal("publisher-place", "address")?;
         if !self.latex {
@@ -331,10 +357,30 @@ impl EntryWriter<'_> {
     }
 
     fn render(&mut self, key: &str, inlines: &[Inline]) -> Result<()> {
-        if !inlines.is_empty() {
-            let contents = randoc_latex::inlines_to_doc(inlines, self.options, self.context)?;
-            self.field(key, contents);
+        if inlines.is_empty() {
+            return Ok(());
         }
+        let contents = if self.options.template.is_some() {
+            // Pandoc renders each field as a standalone LaTeX document with
+            // the template, and then joins the words of that text.
+            let field = Pandoc {
+                meta: Meta::default(),
+                blocks: vec![Block::Plain(inlines.to_vec())],
+            };
+            let text = randoc_latex::write_latex(&field, self.options, self.context)?;
+            *self.template_budget = self
+                .template_budget
+                .checked_sub(text.len() as u64)
+                .ok_or_else(|| {
+                    Error::App("the standalone fields exceed the input size limit".into())
+                })?;
+            let mut words = text.split_whitespace().map(literal);
+            let first = words.next().unwrap_or_default();
+            words.fold(first, |doc, word| doc + space() + word)
+        } else {
+            randoc_latex::inlines_to_doc(inlines, self.options, self.context)?
+        };
+        self.field(key, contents);
         Ok(())
     }
 

@@ -55,6 +55,8 @@ impl Writer<'_> {
                         | Block::OrderedList(..)
                         | Block::RawBlock(..)
                         | Block::DefinitionList(_)
+                        | Block::CodeBlock(..)
+                        | Block::Table(_)
                 ) {
                 out.above(doc)
             } else {
@@ -138,7 +140,7 @@ impl Writer<'_> {
                     let mut definitions = Doc::default();
                     let mut loose = false;
                     for blocks in defs {
-                        let doc = self.blocks(blocks, depth)?;
+                        let doc = self.indented_blocks(blocks, depth)?;
                         definitions = if loose {
                             definitions.above_blank(doc)
                         } else {
@@ -191,6 +193,15 @@ impl Writer<'_> {
         header.above_blank(nest(3, literal(body)))
     }
 
+    pub(super) fn indented_blocks(&mut self, blocks: &[Block], depth: usize) -> Result<Doc> {
+        let body = self.blocks(blocks, depth)?;
+        Ok(if matches!(blocks.first(), Some(Block::BlockQuote(_))) {
+            literal("..").above_blank(body)
+        } else {
+            body
+        })
+    }
+
     fn list(
         &mut self,
         items: &[Vec<Block>],
@@ -202,7 +213,7 @@ impl Writer<'_> {
         let mut out = Doc::default();
         let mut blank = false;
         for (item, marker) in items.iter().zip(markers) {
-            let body = self.blocks(item, depth)?;
+            let body = self.indented_blocks(item, depth)?;
             let doc = hang(width, literal(format!("{marker:<width$}")), body);
             out = if blank {
                 out.above_blank(doc)
@@ -245,7 +256,7 @@ impl Writer<'_> {
         if !attr.id.is_empty() {
             header = header.above(literal(format!("   :name: {}", attr.id)));
         }
-        Ok(header.above_blank(nest(3, self.blocks(content, depth)?)))
+        Ok(header.above_blank(nest(3, self.indented_blocks(content, depth)?)))
     }
 
     fn figure(

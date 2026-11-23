@@ -127,16 +127,29 @@ impl Html<'_> {
     }
 
     /// Returns highlighted inline code, or `None` for plain code.
-    pub(crate) fn highlighted_code(&mut self, attr: &Attr, code: &str) -> Option<Doc> {
+    pub(crate) fn highlighted_code(
+        &mut self,
+        attr: &Attr,
+        code: &str,
+        variable: bool,
+    ) -> Option<Doc> {
         let highlighted = self.highlight(attr, code)?;
         let opts = self.format_options(attr, "", &highlighted.language);
         let inline = randoc_highlight::html_inline(&opts, &highlighted.lines);
-        let mut attrs = inline.attributes;
+        let mut attrs = Attrs::new();
         if !attr.id.is_empty() {
             attrs.push(("id".to_owned(), self.prefixed(&attr.id)));
         }
         attrs.extend(self.key_values(&attr.attributes));
-        Some(self.inline_element("code", &attrs, lit(&inline.content)))
+        let body = lit(&inline.content);
+        if variable {
+            let code = self.inline_element("code", &inline.attributes, body);
+            Some(self.inline_element("var", &attrs, code))
+        } else {
+            let mut code_attrs = inline.attributes;
+            code_attrs.extend(attrs);
+            Some(self.inline_element("code", &code_attrs, body))
+        }
     }
 }
 
@@ -211,6 +224,23 @@ mod tests {
         let blocks = vec![code_block("", &["rust"], "fn x")];
         let html = write(&doc(blocks), &options, &mut Context::pure(), Version::Html5).unwrap();
         assert_eq!(html, "<pre class=\"rust\"><code>fn x</code></pre>");
+    }
+
+    #[test]
+    fn inline_variable_wraps_highlighted_code() {
+        let attr =
+            randoc_ast::Attr::new("number", vec!["variable".into(), "python".into()], vec![]);
+        let document = doc(vec![Block::Para(vec![Inline::Code(attr, "24".into())])]);
+        let mut options = WriterOptions::default();
+        options.wrap_text = WrapOption::WrapNone;
+        let html = write(&document, &options, &mut Context::pure(), Version::Html5).unwrap();
+        assert_eq!(
+            html,
+            r#"<p><var id="number"><code class="sourceCode python variable"><span class="dv">24</span></code></var></p>"#,
+        );
+        options.highlight_style = None;
+        let html = write(&document, &options, &mut Context::pure(), Version::Html5).unwrap();
+        assert_eq!(html, r#"<p><var id="number" class="python">24</var></p>"#);
     }
 
     #[test]

@@ -26,7 +26,7 @@ impl Render<'_> {
             Block::BlockQuote(body) => {
                 blankline() + fenced("quote", &chomp(self.blocks(body, depth + 1)?)) + blankline()
             }
-            Block::CodeBlock(attr, code) => code_block(attr, code) + blankline(),
+            Block::CodeBlock(attr, code) => code_block(attr, code, "") + blankline(),
             Block::RawBlock(format, text) if raw_format(format) => literal(text) + cr(),
             Block::RawBlock(format, text) if format == "html" => {
                 blankline()
@@ -68,7 +68,7 @@ impl Render<'_> {
                 let caption = self.caption(caption, depth)?;
                 caption + anchor(attr) + self.blocks(body, depth + 1)? + blankline()
             }
-            Block::Table(table) => blankline() + self.table(table, depth)? + blankline(),
+            Block::Table(table) => self.table(table, depth)? + blankline(),
         })
     }
 
@@ -101,7 +101,8 @@ impl Render<'_> {
             tags.reverse();
             let tags = format!(":{}:", tags.join(":"));
             let width = real_length(&title).saturating_add(real_length(&tags));
-            title.push_str(&" ".repeat(72usize.saturating_sub(width).max(1)));
+            let columns = usize::try_from(self.options.columns).unwrap_or(0);
+            title.push_str(&" ".repeat(columns.saturating_sub(width).max(1)));
             title.push_str(&tags);
         }
         if !attr.is_empty() {
@@ -135,9 +136,9 @@ impl Render<'_> {
         attr: Option<ListAttributes>,
         depth: usize,
     ) -> Result<Doc> {
-        let loose = items
-            .iter()
-            .any(|item| item.iter().any(|block| matches!(block, Block::Para(_))));
+        let loose = items.iter().any(|item| {
+            !ends_with_plain(item) || item.iter().any(|block| matches!(block, Block::Para(_)))
+        });
         let mut output = Doc::default();
         for (i, item) in items.iter().enumerate() {
             let marker = if let Some(attr) = attr {
@@ -179,8 +180,14 @@ impl Render<'_> {
                     cr()
                 };
                 tail + sep + self.blocks(&item[1..], depth + 1)?
-            } else {
+            } else if item
+                .first()
+                .is_none_or(|block| matches!(block, Block::Plain(_) | Block::Para(_)))
+            {
                 self.blocks(item, depth + 1)?
+            } else {
+                // A marker line of its own: the first block cannot follow the marker.
+                cr() + self.blocks(item, depth + 1)?
             };
             output += hang(indent, literal(prefix), chomp(content));
             output += if loose { blankline() } else { cr() };
@@ -205,12 +212,38 @@ impl Render<'_> {
                 .flatten()
                 .any(|block| matches!(block, Block::Para(_)));
             output += hang(2, literal("- "), term + literal(" :: ") + chomp(content));
-            output += if loose { blankline() } else { cr() };
+            output += if loose || !definitions.last().is_none_or(|item| ends_with_plain(item)) {
+                blankline()
+            } else {
+                cr()
+            };
         }
         Ok(chomp(output))
     }
 
     fn div(&mut self, attr: &Attr, blocks: &[Block], depth: usize) -> Result<Doc> {
+        // Jupyter notebook cells: the source of a code cell and the result of its
+        // execution.
+        match (attr.classes.as_slice(), blocks) {
+            ([cell, code], [Block::CodeBlock(code_attr, text), rest @ ..])
+                if cell == "cell" && code == "code" && !code_attr.classes.is_empty() =>
+            {
+                return Ok(code_block(code_attr, text, "jupyter-")
+                    + blankline()
+                    + self.blocks(rest, depth + 1)?);
+            }
+            ([output, result], [Block::CodeBlock(_, text)])
+                if output == "output" && result == "execute_result" =>
+            {
+                let mut lines = String::from("#+RESULTS:");
+                for line in text.lines().filter(|line| !line.is_empty()) {
+                    lines.push_str("\n: ");
+                    lines.push_str(line);
+                }
+                return Ok(literal(lines) + cr());
+            }
+            _ => {}
+        }
         match attr.classes.as_slice() {
             [name, class] if class == "drawer" => {
                 let body = chomp(self.blocks(blocks, depth + 1)?);
@@ -259,10 +292,29 @@ impl Render<'_> {
                         .join(" ");
                     prefix += literal(format!("#+attr_html: {pairs}")) + cr();
                 }
-                Ok(prefix + fenced(class, &chomp(self.blocks(blocks, depth + 1)?)) + blankline())
+                Ok(blankline()
+                    + prefix
+                    + fenced(class, &chomp(self.blocks(blocks, depth + 1)?))
+                    + blankline())
             }
-            _ => Ok(anchor(attr) + self.blocks(blocks, depth + 1)? + blankline()),
+            _ => Ok(blankline() + anchor(attr) + self.blocks(blocks, depth + 1)? + blankline()),
         }
+    }
+}
+
+/// Returns `true` when a list item ends with plain text, so that the next item
+/// can follow without a blank line.
+fn ends_with_plain(item: &[Block]) -> bool {
+    match item.last() {
+        None | Some(Block::Plain(_)) => true,
+        Some(Block::BulletList(items) | Block::OrderedList(_, items)) => {
+            items.last().is_none_or(|item| ends_with_plain(item))
+        }
+        Some(Block::DefinitionList(items)) => items
+            .last()
+            .and_then(|(_, definitions)| definitions.last())
+            .is_none_or(|item| ends_with_plain(item)),
+        Some(_) => false,
     }
 }
 
@@ -282,7 +334,7 @@ fn fenced(class: &str, body: &Doc) -> Doc {
         + literal(format!("#+end_{class}"))
 }
 
-fn code_block(attr: &Attr, code: &str) -> Doc {
+fn code_block(attr: &Attr, code: &str, language_prefix: &str) -> Doc {
     let mut head = if attr.id.is_empty() {
         String::new()
     } else {
@@ -300,7 +352,7 @@ fn code_block(attr: &Attr, code: &str) -> Doc {
             "bash" => "sh",
             lang => lang,
         };
-        head.push_str(&format!("#+begin_src {lang}"));
+        head.push_str(&format!("#+begin_src {language_prefix}{lang}"));
         "src"
     } else {
         head.push_str("#+begin_example");

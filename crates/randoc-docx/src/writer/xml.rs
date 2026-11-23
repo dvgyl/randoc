@@ -50,6 +50,16 @@ impl Budget {
         Xml {
             content: String::new(),
             budget: self.clone(),
+            lines: false,
+        }
+    }
+
+    /// Returns a buffer for a sequence of body elements: Pandoc writes each
+    /// top-level element of the body on its own line.
+    pub(super) fn lines(&self) -> Xml {
+        Xml {
+            lines: true,
+            ..self.xml()
         }
     }
 }
@@ -57,6 +67,7 @@ impl Budget {
 pub(super) struct Xml {
     content: String,
     budget: Budget,
+    lines: bool,
 }
 
 impl Xml {
@@ -72,9 +83,8 @@ impl Xml {
                 '<' => "&lt;",
                 '>' => "&gt;",
                 '"' => "&quot;",
-                '\r' => "&#13;",
-                '\n' => "&#10;",
-                '\t' => "&#9;",
+                '\'' => "&#39;",
+                '\t' | '\n' | '\r' => continue,
                 '\0'..='\u{1F}' | '\u{FFFE}' | '\u{FFFF}' => "",
                 _ => continue,
             };
@@ -95,7 +105,27 @@ impl Xml {
     }
 
     pub(super) fn append(&mut self, other: Xml) {
+        if !other.content.is_empty() {
+            self.element();
+        }
         self.content.push_str(&other.content);
+    }
+
+    /// Returns an empty buffer with the line mode of this buffer, for
+    /// elements that the caller appends later.
+    pub(super) fn fragment(&self) -> Xml {
+        Xml {
+            lines: self.lines,
+            ..self.budget.xml()
+        }
+    }
+
+    /// Starts a top-level element: in line mode, each element after the
+    /// first starts on a new line.
+    pub(super) fn element(&mut self) {
+        if self.lines && !self.content.is_empty() {
+            self.raw("\n");
+        }
     }
 }
 
@@ -109,6 +139,14 @@ impl Write for Xml {
 
 pub(super) fn bookmark_end(out: &mut Xml, id: Option<u64>) {
     if let Some(id) = id {
-        let _ = write!(out, "<w:bookmarkEnd w:id=\"{id}\"/>");
+        let _ = write!(out, "<w:bookmarkEnd w:id=\"{id}\" />");
     }
+}
+
+/// Ends a bookmark that surrounds whole blocks: a top-level element.
+pub(super) fn block_bookmark_end(out: &mut Xml, id: Option<u64>) {
+    if id.is_some() {
+        out.element();
+    }
+    bookmark_end(out, id);
 }

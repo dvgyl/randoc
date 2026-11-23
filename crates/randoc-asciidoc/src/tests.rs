@@ -489,11 +489,11 @@ fn table_copies_parse_includes_once() -> randoc_core::Result<()> {
 
 #[test]
 fn description_list_paragraphs_scale_linearly() -> randoc_core::Result<()> {
-    fn run(count: usize) -> randoc_core::Result<std::time::Duration> {
+    fn run(count: usize) -> randoc_core::Result<usize> {
         let text = format!("a:: x\ny\n\n{}b:: z", "body\n\n".repeat(count));
-        let start = std::time::Instant::now();
+        reader::DEFINITION_CHECKS.with(|checks| checks.set(0));
         let doc = read(&text, &mut Context::pure())?;
-        let elapsed = start.elapsed();
+        let checks = reader::DEFINITION_CHECKS.with(std::cell::Cell::get);
         assert_eq!(doc.blocks.len(), count + 2);
         let Block::DefinitionList(first) = &doc.blocks[0] else {
             panic!("Missing first description list");
@@ -505,14 +505,15 @@ fn description_list_paragraphs_scale_linearly() -> randoc_core::Result<()> {
                 .iter()
                 .all(|block| matches!(block, Block::Para(_)))
         );
-        Ok(elapsed)
+        assert!(checks >= count);
+        Ok(checks)
     }
 
     let small = run(2_000)?;
     let large = run(16_000)?;
     assert!(
-        large < small * 24 + std::time::Duration::from_millis(200),
-        "2,000 paragraphs took {small:?}. 16,000 paragraphs took {large:?}."
+        large <= small * 9,
+        "2,000 paragraphs needed {small} definition checks. 16,000 needed {large}."
     );
     Ok(())
 }
@@ -575,4 +576,93 @@ fn expansion_allowance_depends_on_input_size() {
     context.limits.max_input_size = 2_000;
     let error = read(&padded, &mut context).expect_err("Expected capped limit");
     assert!(error.to_string().contains("reference expansion"));
+}
+
+#[test]
+fn revision_lines_need_a_space_after_the_comma() -> randoc_core::Result<()> {
+    let meta = |revision: &str| -> randoc_core::Result<Vec<(String, String)>> {
+        let doc = read(
+            &format!("= T\nAnn Author\n{revision}\n\nbody\n"),
+            &mut Context::pure(),
+        )?;
+        Ok(["version", "date", "remark"]
+            .into_iter()
+            .filter_map(|key| {
+                doc.meta
+                    .get(key)
+                    .map(|value| (key.to_owned(), randoc_core::shared::stringify_meta(value)))
+            })
+            .collect())
+    };
+    let pairs = |items: &[(&str, &str)]| -> Vec<(String, String)> {
+        items
+            .iter()
+            .map(|(key, value)| ((*key).to_owned(), (*value).to_owned()))
+            .collect()
+    };
+    assert_eq!(meta("a,b")?, pairs(&[]));
+    assert_eq!(meta("v1.0,2024")?, pairs(&[]));
+    assert_eq!(meta("v1, 2024:x")?, pairs(&[]));
+    assert_eq!(
+        meta("x: y, z")?,
+        pairs(&[("version", "x: y"), ("date", "z")])
+    );
+    assert_eq!(
+        meta("v1.0, 2024: re, mark")?,
+        pairs(&[("version", "1.0"), ("date", "2024"), ("remark", "re, mark")])
+    );
+    assert_eq!(
+        meta("v1, 2024:")?,
+        pairs(&[("version", "1"), ("date", "2024"), ("remark", "")])
+    );
+    assert_eq!(meta("v2: remark")?, pairs(&[("version", "2: remark")]));
+    Ok(())
+}
+
+#[test]
+fn attribute_lines_end_paragraphs() -> randoc_core::Result<()> {
+    let doc = read("text\n[foo]\nmore\n", &mut Context::pure())?;
+    assert_eq!(
+        doc.blocks,
+        [
+            Block::Para(vec![Inline::Str("text".into())]),
+            Block::Para(vec![Inline::Str("more".into())]),
+        ]
+    );
+    Ok(())
+}
+
+#[test]
+fn image_alt_text_keeps_commas_and_inline_markup() -> randoc_core::Result<()> {
+    let image = |alt: Vec<Inline>| {
+        Inline::Image(Attr::default(), alt, randoc_ast::Target::new("x.png", ""))
+    };
+    let document = Pandoc {
+        meta: randoc_ast::Meta::default(),
+        blocks: vec![Block::Para(vec![
+            image(vec![
+                Inline::Str("a,".into()),
+                Inline::Space,
+                Inline::Emph(vec![Inline::Str("b".into())]),
+            ]),
+            Inline::Space,
+            Inline::Link(
+                Attr::default(),
+                vec![image(vec![
+                    Inline::Str("c,".into()),
+                    Inline::Space,
+                    Inline::Str("d".into()),
+                ])],
+                randoc_ast::Target::new("u", ""),
+            ),
+        ])],
+    };
+    let output = writer::write(
+        &document,
+        &WriterOptions::default(),
+        &mut Context::pure(),
+        writer::Dialect::Modern,
+    )?;
+    assert_eq!(output, "image:x.png[a, _b_] link:u[image:x.png[c&#44; d]]");
+    Ok(())
 }

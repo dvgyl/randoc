@@ -324,8 +324,18 @@ fn reference_map(
 ) -> (Vec<Reference<Vec<Inline>>>, HashMap<String, usize>) {
     let mut seen = HashSet::new();
     let mut kept: Vec<Reference<Vec<Inline>>> = Vec::with_capacity(references.len());
-    for reference in references.into_iter().rev() {
+    for mut reference in references.into_iter().rev() {
         if seen.insert(reference.id.clone()) {
+            for value in reference.variables.values_mut() {
+                if let crate::reference::Val::Date(date) = value
+                    && date.parts.is_empty()
+                    && let Some(literal) = &date.literal
+                    && let Some((start, end)) = literal.split_once('_')
+                    && let Some(range) = crate::reference::raw_date_edtf(&format!("{start}/{end}"))
+                {
+                    *date = range;
+                }
+            }
             kept.push(reference);
         }
     }
@@ -820,6 +830,53 @@ mod tests {
             items: ids.iter().map(|id| CitationItem::new(id)).collect(),
             ..Citation::default()
         }
+    }
+
+    #[test]
+    fn literal_date_ranges_render_in_citations_and_the_bibliography() {
+        let style = format!(
+            r#"<style {NS} version="1.0"><citation><layout delimiter="; "><date variable="issued"><date-part name="year"/></date></layout></citation><bibliography><layout><date variable="issued"><date-part name="year"/></date></layout></bibliography></style>"#
+        );
+        let dates = [
+            ("range", "1996_2004", vec![]),
+            ("open-end", "1996_", vec![]),
+            ("open-start", "_2004", vec![]),
+            ("text", "ca_2004", vec![]),
+            ("slash", "1996/2004", vec![]),
+            (
+                "parts",
+                "1996_2004",
+                vec![crate::reference::DateParts(vec![2010])],
+            ),
+        ];
+        let ids: Vec<_> = dates.iter().map(|(id, _, _)| *id).collect();
+        let refs = dates
+            .into_iter()
+            .map(|(id, literal, parts)| {
+                let mut r = reference(id, "");
+                r.variables.insert(
+                    Variable::new("issued"),
+                    Val::Date(crate::reference::Date {
+                        literal: Some(literal.to_owned()),
+                        parts,
+                        ..Default::default()
+                    }),
+                );
+                r
+            })
+            .collect();
+        assert_eq!(
+            texts(&style, refs, &[citation(&ids)]),
+            [
+                "1996–2004; 1996–; 2004; ca_2004; 1996/2004; 1996_2004",
+                "range=1996–2004",
+                "open-end=1996–",
+                "open-start=2004",
+                "text=ca_2004",
+                "slash=1996/2004",
+                "parts=1996_2004"
+            ]
+        );
     }
 
     #[test]

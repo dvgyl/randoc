@@ -106,6 +106,15 @@ pub(super) fn write(
     )
 }
 
+fn heading_style(level: i64, attr: &Attr) -> String {
+    let suffix = if attr.has_class("unnumbered") {
+        " (unnumbered)"
+    } else {
+        ""
+    };
+    format!("Header{level}{suffix}")
+}
+
 fn xml(text: &str) -> String {
     let mut out = String::new();
     escape_xml_attr(text, &mut out);
@@ -167,14 +176,19 @@ impl Renderer<'_> {
                 self.paragraph(&combine(prefix, "Paragraph"), "", items, "", None)
             }
             Block::Header(level, attr, items) => self.paragraph(
-                &combine(prefix, &format!("Header{level}")),
+                &combine(prefix, &heading_style(*level, attr)),
                 &attr.id,
                 items,
                 "",
                 None,
             ),
             Block::CodeBlock(_, code) => {
-                self.paragraph(&combine(prefix, "CodeBlock"), "", &[], code, None)
+                let payload = if code.ends_with('\n') {
+                    format!("{code}    ")
+                } else {
+                    code.clone()
+                };
+                self.paragraph(&combine(prefix, "CodeBlock"), "", &[], &payload, None)
             }
             Block::LineBlock(lines) => {
                 let mut items = Vec::new();
@@ -192,7 +206,7 @@ impl Renderer<'_> {
             {
                 if let Some((Block::Header(level, _, items), rest)) = blocks.split_first() {
                     let heading = self.paragraph(
-                        &combine(prefix, &format!("Header{level}")),
+                        &combine(prefix, &heading_style(*level, attr)),
                         &attr.id,
                         items,
                         "",
@@ -737,14 +751,31 @@ impl Renderer<'_> {
                 "\n              <PathPointType Anchor=\"{x} {y}\" LeftDirection=\"{x} {y}\" RightDirection=\"{x} {y}\" />"
             );
         }
-        let uri = if url.contains("://") {
-            xml(url)
+        let (contents, link) = if let Some((_, encoded)) = url
+            .strip_prefix("data:")
+            .and_then(|data| data.split_once(";base64,"))
+        {
+            let encoded = encoded.replace("]]>", "]]]]><![CDATA[>");
+            (
+                format!(
+                    "\n          <Contents>\n            <![CDATA[{encoded}]]>\n          </Contents>"
+                ),
+                String::new(),
+            )
         } else {
-            format!("file:{}", xml(url))
+            let uri = if url.contains("://") {
+                xml(url)
+            } else {
+                format!("file:{}", xml(url))
+            };
+            (
+                String::new(),
+                format!("\n        <Link Self=\"ueb\" LinkResourceURI=\"{uri}\" />"),
+            )
         };
         let _ = write!(
             out,
-            "\n            </PathPointArray>\n          </GeometryPathType>\n        </PathGeometry>\n      </Properties>\n      <Image Self=\"ue6\" ItemTransform=\"{} 0 0 {} -{x} -{y}\">\n        <Properties>\n          <Profile type=\"string\">\n            $ID/Embedded\n          </Profile>\n          <GraphicBounds Left=\"0\" Top=\"0\" Right=\"{}\" Bottom=\"{}\" />\n        </Properties>\n        <Link Self=\"ueb\" LinkResourceURI=\"{uri}\" />\n      </Image>\n    </Rectangle>\n  </CharacterStyleRange>",
+            "\n            </PathPointArray>\n          </GeometryPathType>\n        </PathGeometry>\n      </Properties>\n      <Image Self=\"ue6\" ItemTransform=\"{} 0 0 {} -{x} -{y}\">\n        <Properties>\n          <Profile type=\"string\">\n            $ID/Embedded\n          </Profile>\n          <GraphicBounds Left=\"0\" Top=\"0\" Right=\"{}\" Bottom=\"{}\" />{contents}\n        </Properties>{link}\n      </Image>\n    </Rectangle>\n  </CharacterStyleRange>",
             decimals(scale_x),
             decimals(scale_y),
             decimals(w / scale_x),

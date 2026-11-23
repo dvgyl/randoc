@@ -224,12 +224,13 @@ impl Parser<'_> {
             } else if wiki_url_start(self.wiki, tail)
                 && (at == start || !scan.text[..at].ends_with(char::is_alphanumeric))
             {
-                let len = url_end(tail);
+                let len = url_end_with_pipe(tail, self.wiki == Wiki::Media);
                 let url = &tail[..len];
+                let target = url.replace('|', "%7C");
                 result.push(link(
                     Attr::default(),
                     vec![Inline::Str(url.into())],
-                    url,
+                    &target,
                     "",
                 ));
                 at += len;
@@ -373,8 +374,15 @@ impl Parser<'_> {
             {
                 return Ok(Some((region.end, Some(Inline::Space))));
             }
-            if let Some(tag) = scan.tags.get(&at).filter(|tag| tag.end <= end) {
-                return self.tag_inline(scan, at, *tag, region);
+            if tail.starts_with('<')
+                && let Some(tag) = scan
+                    .tags
+                    .get(&at)
+                    .copied()
+                    .or_else(|| crate::scan::tag_at(&scan.text[..end], at))
+                && tag.end <= end
+            {
+                return self.tag_inline(scan, at, tag, region);
             }
         }
         if let Some(r) = region {
@@ -454,24 +462,53 @@ impl Parser<'_> {
         Ok(Some(code_runs(items, &attr)))
     }
 
-    fn reference(&mut self, scan: &Scan<'_>, region: Region, depth: usize) -> Result<Parsed> {
-        let body = &scan.text[region.body..region.close];
-        let mut content = if body.starts_with([' ', '\t'])
-            && self.logical_line(scan, region.body, region.close) == region.close
+    fn reference(
+        &mut self,
+        scan: &Scan<'_>,
+        mut region: Region,
+        mut depth: usize,
+    ) -> Result<Parsed> {
+        let end = region.end;
+        let mut nested = 0;
+        while !scan.ref_definition_lines.contains_key(&region.body)
+            && scan
+                .tags
+                .get(&region.body)
+                .is_some_and(|tag| tag.name.eq_ignore_ascii_case("ref"))
+            && let Some(inner) = scan.region(region.body, region.close)
+            && inner.end == region.close
         {
-            vec![Block::Plain(self.inlines(
-                scan,
-                region.body,
-                region.close,
-                depth,
-            )?)]
-        } else {
-            self.block_range(scan, region.body, region.close, depth)?
-        };
+            // A note that contains only another note needs no block parser frame.
+            depth += 1;
+            self.depth(depth)?;
+            nested += 1;
+            region = inner;
+        }
+        let body = &scan.text[region.body..region.close];
+        let mut content =
+            if let Some(&(first_close, next_line)) = scan.ref_definition_lines.get(&region.body) {
+                let mut blocks = self.block_range(scan, region.body, first_close, depth)?;
+                blocks.extend(self.block_range(scan, next_line, region.close, depth)?);
+                blocks
+            } else if body.starts_with([' ', '\t'])
+                && self.logical_line(scan, region.body, region.close) == region.close
+            {
+                vec![Block::Plain(self.inlines(
+                    scan,
+                    region.body,
+                    region.close,
+                    depth,
+                )?)]
+            } else {
+                self.block_range(scan, region.body, region.close, depth)?
+            };
         if let [Block::Para(items)] = content.as_mut_slice() {
             content = vec![Block::Plain(std::mem::take(items))];
         }
-        Ok(Some((region.end, Some(Inline::Note(content)))))
+        for _ in 0..nested {
+            content = vec![Block::Plain(vec![Inline::Note(content)])];
+        }
+        Ok(Some((end, Some(Inline::Note(content)))))
     }
 
     fn tag_inline(
@@ -753,7 +790,7 @@ impl Parser<'_> {
             if !url_start(inner) {
                 return Ok(None);
             }
-            let size = url_end(inner);
+            let size = url_end_with_pipe(inner, self.wiki == Wiki::Media);
             let url = &inner[..size];
             let rest = &inner[size..];
             if !rest.is_empty() && !rest.starts_with(char::is_whitespace) {
@@ -767,7 +804,12 @@ impl Parser<'_> {
             };
             (url, label)
         };
-        Ok(Some((r.end, Some(link(attr, content, url, "")))))
+        let target = if self.wiki == Wiki::Media {
+            std::borrow::Cow::Owned(url.replace('|', "%7C"))
+        } else {
+            std::borrow::Cow::Borrowed(url)
+        };
+        Ok(Some((r.end, Some(link(attr, content, &target, "")))))
     }
 
     fn doku_image(&mut self, scan: &Scan<'_>, r: Region, depth: usize) -> Result<Inline> {
@@ -967,10 +1009,17 @@ fn matches_scheme(text: &str, schemes: &[&str]) -> bool {
 }
 
 fn url_end(text: &str) -> usize {
+    url_end_with_pipe(text, false)
+}
+
+fn url_end_with_pipe(text: &str, allow_pipe: bool) -> usize {
     let mut end = 0;
     let mut parentheses = 0usize;
     for (at, c) in text.char_indices() {
-        if c.is_whitespace() || matches!(c, '<' | '>' | '[' | ']' | '"' | '\'' | '{' | '}' | '|') {
+        if c.is_whitespace()
+            || matches!(c, '<' | '>' | '[' | ']' | '"' | '\'' | '{' | '}')
+            || c == '|' && !allow_pipe
+        {
             break;
         }
         if c == '(' {
@@ -985,7 +1034,7 @@ fn url_end(text: &str) -> usize {
         end = at + c.len_utf8();
     }
     text[..end]
-        .trim_end_matches(['.', ',', ':', ';', '!', '?'])
+        .trim_end_matches(['.', ',', ':', ';', '!', '?', '|'])
         .len()
 }
 

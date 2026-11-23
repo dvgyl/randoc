@@ -2,9 +2,12 @@
 
 #![allow(clippy::expect_used, clippy::panic, clippy::unwrap_used)]
 
+use std::sync::{Mutex, PoisonError};
 use std::time::{Duration, Instant};
 
 use randoc_core::{Context, Reader, ReaderOptions, Sources};
+
+static TIMING_LOCK: Mutex<()> = Mutex::new(());
 
 fn elapsed(format: &str, input: &str) -> Duration {
     let Some(Reader::Text(reader)) = randoc_wiki::reader(format) else {
@@ -22,6 +25,22 @@ fn elapsed(format: &str, input: &str) -> Duration {
     start.elapsed()
 }
 
+fn assert_scales(format: &str, unit: &str, repeats: usize) {
+    let _guard = TIMING_LOCK.lock().unwrap_or_else(PoisonError::into_inner);
+    let small = unit.repeat(repeats);
+    let large = unit.repeat(4 * repeats);
+    let mut reference = Duration::MAX;
+    let mut test = Duration::MAX;
+    for _ in 0..3 {
+        reference = reference.min(elapsed(format, &small));
+        test = test.min(elapsed(format, &large));
+    }
+    assert!(
+        test < reference * 9 + Duration::from_millis(150),
+        "{format} {unit:?}: {reference:?} and {test:?}"
+    );
+}
+
 #[test]
 fn unmatched_delimiter_scan_scales_with_input_size() {
     for (format, unit) in [
@@ -33,18 +52,7 @@ fn unmatched_delimiter_scan_scales_with_input_size() {
         ("dokuwiki", "((note "),
         ("jira", "[open "),
     ] {
-        let small = unit.repeat(8_000);
-        let large = unit.repeat(32_000);
-        let mut reference = Duration::MAX;
-        let mut test = Duration::MAX;
-        for _ in 0..3 {
-            reference = reference.min(elapsed(format, &small));
-            test = test.min(elapsed(format, &large));
-        }
-        assert!(
-            test < reference * 9 + Duration::from_millis(150),
-            "{format} {unit:?}: {reference:?} and {test:?}"
-        );
+        assert_scales(format, unit, 8_000);
     }
 }
 
@@ -59,19 +67,6 @@ fn additional_readers_scan_unmatched_delimiters_once() {
         ("twiki", "@_x_"),
         ("vimwiki", "{{$\n"),
     ] {
-        let small = unit.repeat(2_000);
-        let large = unit.repeat(8_000);
-        let reference = (0..3)
-            .map(|_| elapsed(format, &small))
-            .min()
-            .unwrap_or_default();
-        let test = (0..3)
-            .map(|_| elapsed(format, &large))
-            .min()
-            .unwrap_or_default();
-        assert!(
-            test < reference * 9 + Duration::from_millis(150),
-            "{format} {unit:?}: {reference:?} and {test:?}"
-        );
+        assert_scales(format, unit, 2_000);
     }
 }

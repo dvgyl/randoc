@@ -5,8 +5,9 @@ use randoc_core::shared::auto_identifier;
 use randoc_core::{Extension, Result};
 
 use super::Parser;
-use super::directives::{Affiliated, attributes, directive, words};
+use super::directives::{Affiliated, attributes, block_parameters, directive, words};
 use super::lists::marker;
+use super::tables::grid_table_len;
 use crate::shared::code_line;
 
 pub(super) fn heading(line: &str) -> Option<(i64, &str)> {
@@ -94,7 +95,39 @@ fn latex_env(line: &str) -> Option<&str> {
     latex_name(line.trim_start().strip_prefix("\\begin{")?)
 }
 
-fn latex_name(text: &str) -> Option<&str> {
+/// Returns `true` for a LaTeX math environment, which Org reads as inline text.
+pub(super) fn math_environment(name: &str) -> bool {
+    matches!(
+        name.trim_end_matches('*'),
+        "equation"
+            | "align"
+            | "gather"
+            | "multline"
+            | "flalign"
+            | "alignat"
+            | "eqnarray"
+            | "displaymath"
+            | "math"
+    )
+}
+
+/// Returns the name of a dynamic block start line `#+BEGIN: NAME PARAMETERS`
+/// and its parameters.
+fn dynamic_block(line: &str) -> Option<(&str, &str)> {
+    let rest = line.trim_start();
+    if !rest.get(..8)?.eq_ignore_ascii_case("#+begin:") {
+        return None;
+    }
+    let rest = rest[8..].trim();
+    let (name, args) = rest.split_once(char::is_whitespace).unwrap_or((rest, ""));
+    (!name.is_empty()).then(|| (name, args.trim()))
+}
+
+fn dynamic_end(line: &str) -> bool {
+    line.trim().eq_ignore_ascii_case("#+end:")
+}
+
+pub(super) fn latex_name(text: &str) -> Option<&str> {
     let len = text
         .bytes()
         .take_while(|byte| byte.is_ascii_alphanumeric() || b"*-_".contains(byte))
@@ -134,6 +167,7 @@ pub(super) struct Boundaries {
     ends: HashMap<usize, usize>,
     drawers: Vec<Option<usize>>,
     latex: HashMap<usize, usize>,
+    dynamic: HashMap<usize, usize>,
 }
 
 impl Boundaries {
@@ -144,7 +178,16 @@ impl Boundaries {
         let mut end_drawer = None;
         let mut latex = HashMap::new();
         let mut latex_ends = HashMap::new();
+        let mut dynamic = HashMap::new();
+        let mut dynamic_close = None;
         for (index, line) in lines.iter().enumerate().rev() {
+            if dynamic_end(line) {
+                dynamic_close = Some(index);
+            } else if dynamic_block(line).is_some()
+                && let Some(end) = dynamic_close
+            {
+                dynamic.insert(index, end);
+            }
             if let Some((name, _)) = block_mark(line, "#+end_") {
                 next_end.insert(name.to_ascii_lowercase(), index);
             } else if let Some((name, args)) = block_mark(line, "#+begin_")
@@ -153,10 +196,13 @@ impl Boundaries {
             {
                 ends.insert(index, end);
             }
-            for (offset, marker) in line.match_indices("\\end{") {
-                if let Some(env) = latex_name(&line[offset + marker.len()..]) {
-                    latex_ends.insert(env, index);
-                }
+            // A LaTeX block ends with a line whose `\\end{NAME}` has no text after it.
+            let content = line.trim_end();
+            if let Some(offset) = content.rfind("\\end{")
+                && let Some(env) = latex_name(&content[offset + 5..])
+                && offset + 5 + env.len() + 1 == content.len()
+            {
+                latex_ends.insert(env, index);
             }
             if let Some(env) = latex_env(line)
                 && let Some(&end) = latex_ends.get(env)
@@ -178,6 +224,7 @@ impl Boundaries {
             ends,
             drawers,
             latex,
+            dynamic,
         }
     }
 
@@ -189,6 +236,7 @@ impl Boundaries {
         self.block_end(index)
             .or(self.drawers[index])
             .or_else(|| self.latex.get(&index).copied())
+            .or_else(|| self.dynamic.get(&index).copied())
     }
 
     pub(super) fn headings<'a>(
@@ -325,6 +373,11 @@ impl Parser<'_> {
                 output.extend(lines[start..index].iter().map(|line| raw_org(line)));
                 break;
             };
+            if let Some(count) = grid_table_len(&lines[index..]) {
+                output.push(self.grid_table(&lines[index..index + count], &affiliated, depth)?);
+                index += count;
+                continue;
+            }
             if line.trim_start().starts_with('|') {
                 let first = index;
                 while lines
@@ -360,6 +413,16 @@ impl Parser<'_> {
                     }
                     index = finish;
                 }
+                continue;
+            }
+            if let Some((name, args)) = dynamic_block(line)
+                && let Some(&end) = boundaries.dynamic.get(&index)
+            {
+                let body = self.blocks(&lines[index + 1..end], depth + 1)?;
+                let mut attr = Attr::new("", vec![name.into()], vec![]);
+                attr.attributes.extend(block_parameters(args));
+                output.push(Block::Div(attr, body));
+                index = end + 1;
                 continue;
             }
             if start < index {
@@ -439,35 +502,18 @@ impl Parser<'_> {
                 continue;
             }
             if let Some(item) = marker(line, self.enabled(Extension::FancyLists)) {
-                let (block, count) = self.list(&lines[index..], item, depth)?;
+                let (block, count) = self.list(lines, index, &boundaries, item, depth)?;
                 output.push(block);
                 index += count;
                 continue;
             }
             if self.setting("tex", "t") != "verbatim"
                 && let Some(&end) = boundaries.latex.get(&index)
-                && let Some(env) = latex_env(line)
+                && latex_env(line).is_some_and(|env| !math_environment(env))
             {
                 if self.setting("tex", "t") != "nil" {
                     let text = lines[index..=end].join("\n");
-                    let format = Format::new("latex");
-                    let math = matches!(
-                        env.trim_end_matches('*'),
-                        "equation"
-                            | "align"
-                            | "gather"
-                            | "multline"
-                            | "flalign"
-                            | "alignat"
-                            | "eqnarray"
-                            | "displaymath"
-                            | "math"
-                    );
-                    output.push(if math {
-                        Block::Para(vec![Inline::RawInline(format, text)])
-                    } else {
-                        Block::RawBlock(format, format!("{text}\n"))
-                    });
+                    output.push(Block::RawBlock(Format::new("latex"), format!("{text}\n")));
                 }
                 index = end + 1;
                 continue;
@@ -521,21 +567,36 @@ impl Parser<'_> {
         boundaries: &Boundaries,
         start: usize,
     ) -> usize {
-        let mut index = start + 1;
-        while lines.get(index).is_some_and(|line| {
-            !line.trim().is_empty()
-                && heading(line).is_none()
-                && !comment(line)
-                && !line.trim_start().starts_with(['|'])
-                && !line.trim_start().starts_with("#+")
-                && marker(line, self.enabled(Extension::FancyLists)).is_none()
-                && note_definition(line).is_none()
-                && fixed(line).is_none()
-                && !rule(line)
-                && boundaries.drawers[index].is_none()
-                && (self.setting("tex", "t") == "verbatim"
-                    || !boundaries.latex.contains_key(&index))
-        }) {
+        let verbatim = self.setting("tex", "t") == "verbatim";
+        // A LaTeX math environment is inline text: the paragraph goes on after it.
+        let inline_end = |index: usize| {
+            boundaries
+                .latex
+                .get(&index)
+                .copied()
+                .filter(|_| !verbatim && latex_env(lines[index]).is_some_and(math_environment))
+        };
+        let mut index = inline_end(start).unwrap_or(start) + 1;
+        while let Some(line) = lines.get(index) {
+            if let Some(end) = inline_end(index) {
+                index = end + 1;
+                continue;
+            }
+            if line.trim().is_empty()
+                || heading(line).is_some()
+                || comment(line)
+                || line.trim_start().starts_with('|')
+                || line.trim_start().starts_with("+-")
+                || line.trim_start().starts_with("#+")
+                || marker(line, self.enabled(Extension::FancyLists)).is_some()
+                || note_definition(line).is_some()
+                || fixed(line).is_some()
+                || rule(line)
+                || boundaries.drawers[index].is_some()
+                || (!verbatim && boundaries.latex.contains_key(&index))
+            {
+                break;
+            }
             index += 1;
         }
         index
@@ -760,6 +821,11 @@ impl Parser<'_> {
                 }
                 Block::LineBlock(verse)
             }
+            "abstract" if name == "abstract" => {
+                let body = self.blocks(lines, depth + 1)?;
+                self.meta.insert("abstract", MetaValue::MetaBlocks(body));
+                return Ok(vec![]);
+            }
             _ => {
                 let mut body = self.blocks(lines, depth + 1)?;
                 let mut attr = affiliated.attr();
@@ -782,6 +848,7 @@ impl Parser<'_> {
                     attr.classes.push(kind);
                 } else {
                     attr.classes.push(name.into());
+                    attr.attributes.extend(block_parameters(args));
                 }
                 Block::Div(attr, body)
             }
@@ -807,6 +874,8 @@ fn raw_org(line: &str) -> Block {
     Block::RawBlock(Format::new("org"), line.trim_start().into())
 }
 
+/// Returns the lines of the results of a source block: the element after a
+/// `#+RESULTS:` line, or an element whose affiliated keywords include one.
 fn result_range(
     lines: &[&str],
     boundaries: &Boundaries,
@@ -817,39 +886,65 @@ fn result_range(
         .iter()
         .position(|line| !line.trim().is_empty())?;
     let mark = index + offset;
-    let (key, value) = directive(lines[mark])?;
-    if !key.eq_ignore_ascii_case("results") || !value.is_empty() {
-        return None;
+    if results_marker(lines[mark]) {
+        return Some((mark + 1, result_end(lines, boundaries, mark + 1, fancy)));
     }
-    let start = mark + 1;
-    let first = lines.get(start).copied().unwrap_or_default();
-    let end = if fixed(first).is_some() {
-        lines[start..]
-            .iter()
-            .take_while(|line| fixed(line).is_some())
-            .count()
-            + start
+    let keywords = affiliated_lines(&lines[mark..]);
+    lines[mark..mark + keywords]
+        .iter()
+        .any(|line| results_marker(line))
+        .then(|| (mark, result_end(lines, boundaries, mark, fancy)))
+}
+
+fn results_marker(line: &str) -> bool {
+    directive(line)
+        .is_some_and(|(key, value)| key.eq_ignore_ascii_case("results") && value.is_empty())
+}
+
+fn affiliated_lines(lines: &[&str]) -> usize {
+    let mut affiliated = Affiliated::default();
+    lines
+        .iter()
+        .take_while(|line| affiliated.read(line))
+        .count()
+}
+
+/// Returns the end of the element that starts at `start`. Affiliated keywords
+/// before an element that does not take them are each an element of their own.
+fn result_end(lines: &[&str], boundaries: &Boundaries, start: usize, fancy: bool) -> usize {
+    let keywords = affiliated_lines(&lines[start..]);
+    let element = start + keywords;
+    let first = lines.get(element).copied().unwrap_or_default();
+    if let Some(count) = grid_table_len(&lines[element..]) {
+        element + count
     } else if first.trim_start().starts_with('|') {
-        lines[start..]
-            .iter()
-            .take_while(|line| line.trim_start().starts_with('|'))
-            .count()
-            + start
-    } else if let Some(end) = boundaries.ends.get(&start) {
+        element
+            + lines[element..]
+                .iter()
+                .take_while(|line| line.trim_start().starts_with('|'))
+                .count()
+    } else if let Some(end) = boundaries.ends.get(&element) {
         end + 1
+    } else if keywords > 0 {
+        start + 1
+    } else if fixed(first).is_some() {
+        element
+            + lines[element..]
+                .iter()
+                .take_while(|line| fixed(line).is_some())
+                .count()
     } else {
-        lines[start..]
-            .iter()
-            .take_while(|line| {
-                !line.trim().is_empty()
-                    && directive(line).is_none()
-                    && heading(line).is_none()
-                    && marker(line, fancy).is_none()
-            })
-            .count()
-            + start
-    };
-    Some((start, end))
+        element
+            + lines[element..]
+                .iter()
+                .take_while(|line| {
+                    !line.trim().is_empty()
+                        && directive(line).is_none()
+                        && heading(line).is_none()
+                        && marker(line, fancy).is_none()
+                })
+                .count()
+    }
 }
 
 fn property(line: &str) -> Option<(&str, &str)> {
@@ -907,6 +1002,27 @@ fn block_text(lines: &[&str], preserve: bool, unescape: bool) -> String {
     text
 }
 
+/// Adds the classes and attributes for the language of a source block.
+pub(super) fn language(lang: &str, attr: &mut Attr) {
+    if let Some(lang) = lang.strip_prefix("jupyter-") {
+        attr.classes.extend([lang.into(), "code".into()]);
+        return;
+    }
+    let mapped = match lang {
+        "C" => "c",
+        "R" => "r",
+        "emacs-lisp" | "lisp" => "commonlisp",
+        "js" => "javascript",
+        "sh" => "bash",
+        "sqlite" => "sql",
+        _ => lang,
+    };
+    attr.classes.push(mapped.into());
+    if mapped != lang {
+        attr.attributes.push(("org-language".into(), lang.into()));
+    }
+}
+
 fn code_attributes(kind: &str, args: &str, affiliated: &Affiliated<'_>) -> Option<(Attr, bool)> {
     let mut attr = Attr::default();
     let mut args = words(args).peekable();
@@ -919,23 +1035,7 @@ fn code_attributes(kind: &str, args: &str, affiliated: &Affiliated<'_>) -> Optio
         {
             return None;
         }
-        if let Some(lang) = lang.strip_prefix("jupyter-") {
-            attr.classes.extend([lang.into(), "code".into()]);
-        } else {
-            let mapped = match lang {
-                "C" => "c",
-                "R" => "r",
-                "emacs-lisp" | "lisp" => "commonlisp",
-                "js" => "javascript",
-                "sh" => "bash",
-                "sqlite" => "sql",
-                _ => lang,
-            };
-            attr.classes.push(mapped.into());
-            if mapped != lang {
-                attr.attributes.push(("org-language".into(), lang.into()));
-            }
-        }
+        language(lang, &mut attr);
     }
     let mut preserve = false;
     if args.next_if_eq(&"-i").is_some() {

@@ -7,7 +7,7 @@ use std::cell::RefCell;
 use randoc_ast::Pandoc;
 use randoc_core::shared::meta_context::meta_to_context;
 use randoc_core::{Context, Error, Extension, Result, WrapOption, WriterOptions};
-use randoc_layout::{Doc, chomp, vsep};
+use randoc_layout::{Doc, chomp, literal, vsep};
 use randoc_templates::Val;
 
 use crate::shared::STACK_LIMIT;
@@ -45,6 +45,16 @@ pub(super) fn write(
     } else {
         randoc_templates::Context::new()
     };
+    let mut org_options = randoc_templates::Context::new();
+    if writer.enabled(Extension::SmartQuotes) {
+        org_options.insert("'", literal("t"));
+    }
+    if !writer.enabled(Extension::SpecialStrings) {
+        org_options.insert("-", literal("nil"));
+    }
+    if !org_options.0.is_empty() && fields.get("options").is_none() {
+        fields.insert("options", Val::Map(org_options));
+    }
     let body = writer.blocks(&doc.blocks, 0)?;
     let body = chomp(vsep([body, vsep(std::mem::take(&mut writer.notes))]));
     if let Some(template) = &options.template {

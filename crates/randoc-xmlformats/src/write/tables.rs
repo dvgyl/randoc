@@ -88,7 +88,11 @@ impl Write<'_> {
                 foot
             });
         }
-        let mut attrs = self.id(&table.attr.id);
+        let mut attrs = if jats {
+            self.id(&table.attr.id)
+        } else {
+            String::new()
+        };
         if db {
             if !table.attr.classes.is_empty() {
                 attrs.push_str(&self.attr("class", &table.attr.classes.join(" ")));

@@ -1,6 +1,6 @@
 #![allow(clippy::expect_used, clippy::panic, clippy::unwrap_used)]
 
-use randoc_ast::{Attr, Block, Inline, Pandoc, Target};
+use randoc_ast::{Attr, Block, Format, Inline, Pandoc, Target};
 use randoc_core::{Context, Reader, ReaderOptions, Sources, WriterOptions, default_extensions};
 use randoc_templates::{Template, Val};
 
@@ -55,6 +55,79 @@ fn named_mediawiki_references_report_an_unexpected_closer() {
                 .contains("unexpected (TagClose \"ref\",\"</ref>\")")
         );
     }
+}
+
+#[test]
+fn mediawiki_note_definition_passes_over_a_closing_tag_on_its_line() {
+    let input = "A<ref>{{topic}}: one</ref> ignored\n\nTwo<ref>nested</ref> three</ref> End";
+    let doc = read("mediawiki", input, &mut Context::pure()).unwrap();
+    let [Block::Para(items)] = doc.blocks.as_slice() else {
+        panic!("expected one paragraph");
+    };
+    let [
+        Inline::Str(start),
+        Inline::Note(note),
+        Inline::Space,
+        Inline::Str(end),
+    ] = items.as_slice()
+    else {
+        panic!("expected a note between two words");
+    };
+    assert_eq!((start.as_str(), end.as_str()), ("A", "End"));
+    assert!(matches!(
+        note.as_slice(),
+        [Block::RawBlock(..), Block::DefinitionList(_), Block::Para(items)]
+            if items == &[
+                Inline::Str("Two".into()),
+                Inline::Note(vec![Block::Plain(vec![Inline::Str("nested".into())])]),
+                Inline::Space,
+                Inline::Str("three".into())
+            ]
+    ));
+    let input = "A<ref>{{topic}}: one</ref> ignored";
+    assert!(read("mediawiki", input, &mut Context::pure()).is_err());
+}
+
+#[test]
+fn mediawiki_cell_markers_split_code_and_comments() {
+    let input = concat!(
+        "{|\n|<syntaxhighlight lang=\"txt\">code\n",
+        "!text <abbr>T</abbr>\n</syntaxhighlight>\n",
+        "<!--\n|-\n|<pre>visible</pre>\n -->\n|}"
+    );
+    let doc = read("mediawiki", input, &mut Context::pure()).unwrap();
+    let [Block::Table(table)] = doc.blocks.as_slice() else {
+        panic!("expected a table");
+    };
+    let rows = &table.bodies[0].body;
+    assert_eq!(rows.len(), 2);
+    assert!(rows[0].cells[0].content.is_empty());
+    assert!(matches!(
+        rows[0].cells[1].content.as_slice(),
+        [Block::Para(items), Block::RawBlock(_, close), Block::Para(_)]
+            if close == "</syntaxhighlight>"
+                && matches!(&items[2], Inline::RawInline(_, tag) if tag == "<abbr>")
+    ));
+    assert!(matches!(
+        rows[1].cells[0].content.first(),
+        Some(Block::CodeBlock(_, code)) if code == "visible"
+    ));
+}
+
+#[test]
+fn mediawiki_bare_links_encode_internal_pipes() {
+    let doc = read(
+        "mediawiki",
+        "File:image.png|caption http://example.org|[[Next]]",
+        &mut Context::pure(),
+    )
+    .unwrap();
+    assert!(matches!(
+        doc.blocks.as_slice(),
+        [Block::Para(items)] if matches!(items.as_slice(),
+            [Inline::Link(_, _, first), Inline::Space, Inline::Link(_, _, second), Inline::Str(pipe), Inline::Link(..)]
+                if first.url == "File:image.png%7Ccaption" && second.url == "http://example.org" && pipe == "|")
+    ));
 }
 
 #[test]
@@ -180,6 +253,56 @@ fn writer_templates_render_the_body_and_includes() {
         assert_eq!(bytes, expected.as_bytes());
     }
     assert!(super::writer("creole").is_none());
+}
+
+#[test]
+fn jira_writes_div_anchors_before_the_content() {
+    let paragraph = || Block::Para(vec![Inline::Str("Text".into())]);
+    let div = |id, children| Block::Div(Attr::new(id, vec![], vec![]), children);
+    let code = || Block::CodeBlock(Attr::default(), "Code".into());
+    let panel = Block::Div(
+        Attr::new("panel", vec![], vec![("color".into(), "red".into())]),
+        vec![paragraph()],
+    );
+    let code_panel = Block::Div(
+        Attr::new("code", vec!["panel".into()], vec![]),
+        vec![code()],
+    );
+    for (block, expected) in [
+        (div("empty", vec![]), "{anchor:empty}\n\n"),
+        (div("para", vec![paragraph()]), "{anchor:para}Text\n\n"),
+        (
+            div("outer", vec![div("inner", vec![paragraph()])]),
+            "{anchor:outer}{anchor:inner}Text\n\n",
+        ),
+        (
+            div("outer", vec![div("", vec![code()])]),
+            "{anchor:outer}\n\n{noformat}\nCode{noformat}\n",
+        ),
+        (panel, "{panel:color=red}\n{anchor:panel}Text\n{panel}\n"),
+        (
+            code_panel,
+            "{panel}\n{anchor:code}\n\n{noformat}\nCode{noformat}{panel}\n",
+        ),
+        (
+            div(
+                "raw",
+                vec![Block::RawBlock(Format("jira".into()), "Raw\n".into())],
+            ),
+            "{anchor:raw}Raw\n\n\n",
+        ),
+    ] {
+        let doc = Pandoc {
+            blocks: vec![block, paragraph()],
+            ..Pandoc::default()
+        };
+        let actual = super::writer("jira")
+            .unwrap()
+            .write(&doc, &WriterOptions::default(), &mut Context::pure())
+            .unwrap()
+            .into_bytes();
+        assert_eq!(actual, format!("{expected}Text\n").as_bytes());
+    }
 }
 
 #[test]

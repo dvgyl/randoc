@@ -1069,6 +1069,8 @@ fn marker(line: &str) -> Option<Marker<'_>> {
 }
 
 fn definition(line: &str) -> Option<(&str, usize, &str)> {
+    #[cfg(test)]
+    super::DEFINITION_CHECKS.with(|checks| checks.set(checks.get() + 1));
     let line = line.trim();
     let (term, rest) = line.split_once("::")?;
     let content = rest.trim_start_matches(':');

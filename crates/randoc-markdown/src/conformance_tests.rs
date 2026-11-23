@@ -367,6 +367,28 @@ fn latex_writer_inline_inputs_match_the_oracle_reader() {
     }
 }
 
+/// The Markdown inputs of writer suites that the reader of wave 7 reads as
+/// the oracle does.
+#[test]
+fn writer_suite_inputs_of_wave_7_match_the_oracle_reader() {
+    const UNITS: &[(&str, &str, &str)] = &[
+        ("latex-writer", "blocks", "block-38"),
+        ("latex-writer", "blocks", "block-39"),
+        ("latex-writer", "tables", "table-4"),
+        ("html-writer", "figures", "figure-implicit-alt-differs"),
+        ("html-writer", "footnotes", "note-heading-in-note"),
+        ("html-writer", "wrapping", "long-quoted"),
+    ];
+    for (suite, name, id) in UNITS {
+        let path = conformance_dir().join(format!("cases/{suite}/{name}.toml"));
+        let results = file_results(&path, suite, name);
+        assert!(
+            results.contains(&(format!("{name}/{id}"), true)),
+            "{suite}/{name}/{id}"
+        );
+    }
+}
+
 #[test]
 fn bracketed_span_classes_wrap_in_source_order() {
     let (stdout, _, exit) = run_case("markdown", "# H [a]{#i .smallcaps .x .ul .smallcaps k=v}");

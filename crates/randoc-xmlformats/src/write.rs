@@ -1,4 +1,5 @@
 mod fb2;
+mod languages;
 mod tables;
 
 use std::cell::RefCell;
@@ -12,6 +13,7 @@ use randoc_core::{
     Context, Extension, HtmlMathMethod, Result, TextWriter, TopLevelDivision, WrapOption,
     WriterOptions,
     shared::{
+        is_haskell_alphanum,
         meta_context::{meta_to_context, normalize_date},
         sections::make_sections,
         stringify, stringify_meta,
@@ -140,7 +142,7 @@ struct Write<'a> {
     depth: usize,
     notes: Vec<Doc>,
     refs: Vec<Doc>,
-    bibliography: std::collections::HashMap<String, &'a MetaValue>,
+    bibliography: Vec<(String, &'a Fields)>,
     binaries: Vec<Doc>,
     remaining_media: usize,
     remaining_encoded_media: usize,
@@ -218,6 +220,11 @@ impl Write<'_> {
         self.attr(key, id)
     }
 
+    fn language(&self, attr: &Attr) -> String {
+        attr.get("lang")
+            .map_or_else(String::new, |lang| self.attr("xml:lang", lang))
+    }
+
     fn lines(&self, blocks: Vec<Doc>) -> Doc {
         if self.fb() {
             hcat(blocks)
@@ -257,7 +264,7 @@ impl Write<'_> {
         let output = match block {
             Block::Plain(inlines) | Block::Para(inlines) => {
                 if let [Inline::Image(a, alt, target)] = inlines.as_slice()
-                    && self.fb()
+                    && (self.fb() || jats)
                 {
                     return self.image(a, alt, target, true);
                 }
@@ -305,19 +312,59 @@ impl Write<'_> {
                         vcat([title, self.blocks(rest, level + 1)?]),
                     ));
                 }
+                if (docbook || self.dialect == Dialect::Tei)
+                    && !a.id.is_empty()
+                    && let [Block::Para(inlines)] = children.as_slice()
+                {
+                    return self.paragraph_with_id(inlines, &a.id);
+                }
                 if docbook && !a.id.is_empty() {
                     vcat([
                         empty_tag("anchor", &self.id(&a.id)),
                         self.blocks(children, level)?,
                     ])
                 } else if jats && a.id == "refs" {
+                    let mut refs = Vec::new();
+                    let mut mixed = Vec::new();
+                    let mut heading = tagged("title", "", Doc::default());
+                    // Element citations list the cited references in the
+                    // order of the metadata, whatever the div holds.
+                    for (id, fields) in &self.bibliography {
+                        refs.push(container(
+                            "ref",
+                            &self.id(&format!("ref-{id}")),
+                            self.citation(fields),
+                        ));
+                    }
                     for reference in children {
-                        if let Block::Div(a, blocks) = reference {
-                            let citation = self.citation(a, blocks)?;
-                            self.refs.push(container("ref", &self.id(&a.id), citation));
+                        match reference {
+                            Block::Div(a, blocks) if refs.is_empty() => {
+                                let citation = tagged("mixed-citation", "", self.caption(blocks)?);
+                                mixed.push(container("ref", &self.id(&a.id), citation));
+                            }
+                            Block::Header(_, _, inlines) => {
+                                heading = tagged("title", "", self.inlines(inlines)?);
+                            }
+                            _ => {}
                         }
                     }
+                    self.refs.push(heading);
+                    self.refs.extend(if refs.is_empty() { mixed } else { refs });
                     Doc::default()
+                } else if jats && (!a.id.is_empty() || a.get("lang").is_some()) {
+                    let tag = if children
+                        .iter()
+                        .all(|block| matches!(block, Block::Plain(_)))
+                    {
+                        "p"
+                    } else {
+                        "boxed-text"
+                    };
+                    container(
+                        tag,
+                        &(self.id(&jats_div_id(&a.id)) + &self.language(a)),
+                        self.blocks(children, level)?,
+                    )
                 } else {
                     self.blocks(children, level)?
                 }
@@ -384,80 +431,110 @@ impl Write<'_> {
         Ok(output)
     }
 
-    fn citation(&mut self, attr: &Attr, blocks: &[Block]) -> Result<Doc> {
-        let reference_id = attr.id.strip_prefix("ref-").unwrap_or(&attr.id);
-        if self.opts.extensions.contains(Extension::ElementCitations)
-            && let Some(MetaValue::MetaMap(reference)) = self.bibliography.get(reference_id)
+    fn citation(&self, reference: &Fields) -> Doc {
+        let mut fields = Vec::new();
+        fields.extend(self.citation_names(reference, "author"));
+        for (key, tag) in [("title", "article-title"), ("container-title", "source")] {
+            if let Some(value) = reference.get(key) {
+                fields.push(tagged(tag, "", self.esc(&stringify_meta(value))));
+            }
+        }
+        fields.extend(self.citation_names(reference, "editor"));
+        for (key, tag) in [
+            ("publisher", "publisher-name"),
+            ("publisher-place", "publisher-loc"),
+        ] {
+            if let Some(value) = reference.get(key) {
+                fields.push(tagged(tag, "", self.esc(&stringify_meta(value))));
+            }
+        }
+        if let Some(MetaValue::MetaMap(issued)) = reference.get("issued")
+            && let Some(MetaValue::MetaList(dates)) = issued.get("date-parts")
+            && let Some(MetaValue::MetaList(parts)) = dates.first()
+            && let Some(year) = parts.first()
         {
-            let kind = reference
-                .get("type")
-                .map(stringify_meta)
-                .unwrap_or_default();
-            let kind = match kind.as_str() {
-                "article-journal" | "article-magazine" | "article-newspaper" => "journal",
-                "paper-conference" => "confproc",
-                "webpage" => "web",
-                "" => "other",
-                other => other,
-            };
-            let mut fields = Vec::new();
-            if let Some(MetaValue::MetaList(authors)) = reference.get("author") {
-                let names = authors.iter().filter_map(|author| {
-                    let MetaValue::MetaMap(author) = author else {
-                        return None;
-                    };
-                    let fields = [
-                        ("family", "surname"),
-                        ("given", "given-names"),
-                        ("suffix", "suffix"),
-                    ]
-                    .into_iter()
-                    .filter_map(|(key, tag)| {
-                        Some(tagged(tag, "", self.esc(&stringify_meta(author.get(key)?))))
-                    });
-                    Some(container("name", "", vcat(fields)))
-                });
-                fields.push(container(
-                    "person-group",
-                    " person-group-type=\"author\"",
-                    vcat(names),
-                ));
+            let year = stringify_meta(year);
+            let month = parts
+                .get(1)
+                .map(|value| format!("{:0>2}", stringify_meta(value)));
+            let day = parts
+                .get(2)
+                .map(|value| format!("{:0>2}", stringify_meta(value)));
+            let iso = std::iter::once(year.as_str())
+                .chain(month.as_deref())
+                .chain(day.as_deref())
+                .collect::<Vec<_>>()
+                .join("-");
+            let date = tagged("year", &self.attr("iso-8601-date", &iso), self.esc(&year));
+            fields.push(
+                date + hcat([("month", month), ("day", day)].into_iter().filter_map(
+                    |(tag, value)| value.map(|value| tagged(tag, "", self.esc(&value))),
+                )),
+            );
+        }
+        for key in ["volume", "issue"] {
+            if let Some(value) = reference.get(key) {
+                fields.push(tagged(key, "", self.esc(&stringify_meta(value))));
             }
-            for (key, tag) in [
-                ("title", "article-title"),
-                ("container-title", "source"),
-                ("volume", "volume"),
-                ("issue", "issue"),
-                ("publisher", "publisher-name"),
-                ("publisher-place", "publisher-loc"),
-                ("page-first", "fpage"),
-            ] {
-                if let Some(value) = reference.get(key) {
-                    fields.push(tagged(tag, "", self.esc(&stringify_meta(value))));
-                }
-            }
-            if let Some(MetaValue::MetaMap(issued)) = reference.get("issued")
-                && let Some(MetaValue::MetaList(dates)) = issued.get("date-parts")
-                && let Some(MetaValue::MetaList(parts)) = dates.first()
-            {
-                for (tag, part) in ["year", "month", "day"].into_iter().zip(parts) {
-                    fields.push(tagged(tag, "", self.esc(&stringify_meta(part))));
-                }
-            }
-            if let Some(doi) = reference.get("DOI") {
-                fields.push(tagged(
-                    "pub-id",
-                    " pub-id-type=\"doi\"",
-                    self.esc(&stringify_meta(doi)),
-                ));
-            }
-            return Ok(container(
-                "element-citation",
-                &self.attr("publication-type", kind),
-                vcat(fields),
+        }
+        if let Some(doi) = reference.get("DOI") {
+            fields.push(tagged(
+                "pub-id",
+                " pub-id-type=\"doi\"",
+                self.esc(&stringify_meta(doi)),
             ));
         }
-        Ok(tagged("mixed-citation", "", self.caption(blocks)?))
+        if let Some(page) = reference.get("page") {
+            let page = stringify_meta(page);
+            let (first, last) = page.split_once(['-', '–', '—']).unwrap_or((&page, ""));
+            fields.push(tagged("fpage", "", self.esc(first.trim())));
+            if !last.is_empty() {
+                fields.push(tagged("lpage", "", self.esc(last.trim())));
+            }
+        } else if let Some(page) = reference.get("page-first") {
+            fields.push(tagged("fpage", "", self.esc(&stringify_meta(page))));
+        }
+        let attrs = reference.get("type").map_or_else(String::new, |kind| {
+            self.attr("publication-type", &stringify_meta(kind))
+        });
+        container("element-citation", &attrs, vcat(fields))
+    }
+
+    fn citation_names(
+        &self,
+        reference: &std::collections::BTreeMap<String, MetaValue>,
+        key: &str,
+    ) -> Option<Doc> {
+        let MetaValue::MetaList(authors) = reference.get(key)? else {
+            return None;
+        };
+        let names = authors.iter().filter_map(|author| {
+            let MetaValue::MetaMap(author) = author else {
+                return None;
+            };
+            if let Some(literal) = author.get("literal") {
+                return Some(tagged(
+                    "string-name",
+                    "",
+                    self.esc(&stringify_meta(literal)),
+                ));
+            }
+            let fields = [
+                ("family", "surname"),
+                ("given", "given-names"),
+                ("suffix", "suffix"),
+            ]
+            .into_iter()
+            .filter_map(|(key, tag)| {
+                Some(tagged(tag, "", self.esc(&stringify_meta(author.get(key)?))))
+            });
+            Some(tagged("name", "", hcat(fields)))
+        });
+        Some(container(
+            "person-group",
+            &self.attr("person-group-type", key),
+            vcat(names),
+        ))
     }
 
     fn wrapper_paragraphs(&mut self, blocks: &[Block], level: usize) -> Result<Doc> {
@@ -492,6 +569,17 @@ impl Write<'_> {
         };
         let section = level.saturating_sub(offset);
         let mut attrs = self.id(&a.id);
+        if docbook && !a.classes.is_empty() {
+            let roles = a
+                .classes
+                .iter()
+                .filter(|class| *class != "section")
+                .cloned()
+                .collect::<Vec<_>>();
+            if !roles.is_empty() {
+                attrs.push_str(&self.attr("role", &roles.join(" ")));
+            }
+        }
         let tag = match self.dialect {
             Dialect::Fb2 => {
                 let title = compact_tag("p", "", self.inlines(title)?);
@@ -539,16 +627,21 @@ impl Write<'_> {
     }
 
     fn paragraph(&mut self, inlines: &[Inline]) -> Result<Doc> {
+        self.paragraph_with_id(inlines, "")
+    }
+
+    fn paragraph_with_id(&mut self, inlines: &[Inline], id: &str) -> Result<Doc> {
         let contents = self.inlines(inlines)?;
+        let attrs = self.id(id);
         Ok(
             if self.dialect.docbook() && inlines.contains(&Inline::LineBreak) {
-                flush(tagged("literallayout", "", contents))
+                flush(tagged("literallayout", &attrs, contents))
             } else if self.dialect.docbook() {
-                container("para", "", contents)
+                container("para", &attrs, contents)
             } else if self.fb() {
                 compact_tag("p", "", self.fb2_prefix(self.fb2_indent)? + contents)
             } else {
-                tagged("p", "", contents)
+                tagged("p", &attrs, contents)
             },
         )
     }
@@ -569,14 +662,12 @@ impl Write<'_> {
     }
 
     fn code(&mut self, a: &Attr, value: &str) -> Result<Doc> {
-        let contents = self.esc(value);
+        let source = value.strip_suffix('\n').unwrap_or(value);
+        let contents = self.esc(if self.dialect.jats() { value } else { source });
         Ok(if self.dialect.docbook() {
-            let mut attrs = self.id(&a.id);
+            let mut attrs = String::new();
             if let Some(class) = a.classes.iter().find(|c| *c != "numberLines") {
                 attrs.push_str(&self.attr("language", class));
-            }
-            if a.has_class("numberLines") {
-                attrs.push_str(" linenumbering=\"numbered\"");
             }
             literal(format!("<programlisting{attrs}>"))
                 + flush(literal("\n") + contents + literal("\n</programlisting>"))
@@ -587,12 +678,13 @@ impl Write<'_> {
                 .map_or(("preformat", String::new()), |lang| {
                     ("code", self.attr("language", lang))
                 });
+            let attrs = self.id(&a.id) + &attrs;
             literal(format!("<{tag}{attrs}>")) + flush(contents + literal(format!("</{tag}>")))
         } else if self.fb() {
             empty_tag("empty-line", "")
                 + hcat(
                     value
-                        .split('\n')
+                        .split_terminator('\n')
                         .map(|line| {
                             Ok(tagged(
                                 "p",
@@ -608,7 +700,8 @@ impl Write<'_> {
                 )
                 + empty_tag("empty-line", "")
         } else {
-            let classes = escape(&a.classes.join(" "), false).replace('\'', "&apos;");
+            let classes =
+                escape(languages::tei_language(&a.classes), false).replace('\'', "&apos;");
             literal(format!("<ab type='codeblock {classes}'>"))
                 + flush(literal("\n") + contents + literal("\n</ab>"))
         })
@@ -687,8 +780,21 @@ impl Write<'_> {
                 let text = self.inlines(content)?;
                 return Ok(if !a.id.is_empty() && self.dialect.docbook() {
                     empty_tag("anchor", &self.id(&a.id)) + text
-                } else if self.dialect == Dialect::Tei && !a.id.is_empty() {
-                    tagged("seg", &self.id(&a.id), text)
+                } else if self.dialect.jats() {
+                    let mut attrs = self.id(&a.id) + &self.language(a);
+                    if let Some(class) = a.classes.first() {
+                        attrs.push_str(&self.attr("content-type", class));
+                        tagged("named-content", &attrs, text)
+                    } else {
+                        if let Some(style) = a.get("style") {
+                            attrs.push_str(&self.attr("style", style));
+                        }
+                        if attrs.is_empty() {
+                            text
+                        } else {
+                            tagged("styled-content", &attrs, text)
+                        }
+                    }
                 } else {
                     text
                 });
@@ -792,10 +898,16 @@ impl Write<'_> {
             }
         } else if self.dialect.jats() {
             if let Some(url) = target.url.strip_prefix('#') {
+                if !label.is_empty() {
+                    attrs.push_str(&self.attr("alt", &stringify(label)));
+                }
+                attrs.push_str(&self.attr("rid", url));
                 if let Some(typ) = a.get("ref-type") {
                     attrs.push_str(&self.attr("ref-type", typ));
                 }
-                attrs.push_str(&self.attr("rid", url));
+                if label.is_empty() {
+                    return Ok(empty_tag("xref", &attrs));
+                }
                 "xref"
             } else {
                 attrs.push_str(" ext-link-type=\"uri\"");
@@ -924,13 +1036,33 @@ impl Write<'_> {
         }
         if self.dialect.docbook() {
             let mut attrs = self.attr("fileref", &target.url);
+            if !a.id.is_empty() {
+                attrs.push_str(&self.attr("id", &a.id));
+            }
+            if !a.classes.is_empty() {
+                attrs.push_str(&self.attr("role", &a.classes.join(" ")));
+            }
             for (key, db) in [("width", "width"), ("height", "depth")] {
                 if let Some(value) = a.get(key) {
                     attrs.push_str(&self.attr(db, value));
                 }
             }
-            let image = container("imageobject", "", empty_tag("imagedata", &attrs));
-            let phrase = tagged("phrase", "", self.inlines(alt)?);
+            // Pandoc gives the title only to an inline image.
+            let info = if target.title.is_empty() || block {
+                Doc::default()
+            } else {
+                container(
+                    "objectinfo",
+                    "",
+                    tagged("title", "", self.esc(&target.title)),
+                )
+            };
+            let image = container(
+                "imageobject",
+                "",
+                vcat([info, empty_tag("imagedata", &attrs)]),
+            );
+            let phrase = tagged("phrase", "", self.esc(&text));
             let desc = if block {
                 tagged("textobject", "", phrase)
             } else {
@@ -942,12 +1074,12 @@ impl Write<'_> {
                 } else {
                     "inlinemediaobject"
                 },
-                &self.id(&a.id),
+                "",
                 vcat([image, desc]),
             ));
         }
         if self.dialect == Dialect::Tei {
-            let mut attrs = self.attr("url", &target.url);
+            let mut attrs = self.attr("url", &target.url) + &self.id(&a.id);
             for key in ["width", "height"] {
                 if let Some(value) = a.get(key) {
                     attrs.push_str(&self.attr(key, value));
@@ -960,7 +1092,7 @@ impl Write<'_> {
             };
             return Ok(container(
                 "figure",
-                &self.id(&a.id),
+                "",
                 vcat([
                     tagged("head", "", self.inlines(alt)?),
                     empty_tag("graphic", &attrs),
@@ -970,12 +1102,11 @@ impl Write<'_> {
         }
         let tag = if block { "graphic" } else { "inline-graphic" };
         let mut attrs = self.id(&a.id);
-        if let Some((left, right)) =
-            mime_from_extension(&target.url).and_then(|mime| mime.split_once('/'))
-        {
-            attrs.push_str(&self.attr("mimetype", left));
-            attrs.push_str(&self.attr("mime-subtype", right));
-        }
+        let (mime, subtype) = mime_from_extension(&target.url)
+            .and_then(|mime| mime.split_once('/'))
+            .unwrap_or(("image", ""));
+        attrs.push_str(&self.attr("mimetype", mime));
+        attrs.push_str(&self.attr("mime-subtype", subtype));
         attrs.push_str(&self.attr("xlink:href", &target.url));
         if !target.title.is_empty() {
             attrs.push_str(&self.attr("xlink:title", &target.title));
@@ -983,7 +1114,7 @@ impl Write<'_> {
         Ok(if alt.is_empty() {
             empty_tag(tag, &attrs)
         } else {
-            container(tag, &attrs, tagged("alt-text", "", self.inlines(alt)?))
+            container(tag, &attrs, tagged("alt-text", "", self.esc(&text)))
         })
     }
 
@@ -1278,17 +1409,45 @@ impl Write<'_> {
     }
 }
 
-fn reference_index(doc: &Pandoc) -> std::collections::HashMap<String, &MetaValue> {
+fn jats_div_id(id: &str) -> String {
+    use std::fmt::Write as _;
+
+    let mut output = String::new();
+    for (index, ch) in id.chars().enumerate() {
+        let letter = is_haskell_alphanum(ch) && !ch.is_numeric();
+        let continuation = ch.is_ascii_digit()
+            || matches!(ch, '.' | '-' | '\u{00B7}' | '\u{0300}'..='\u{036F}' | '\u{203F}'..='\u{2040}');
+        let valid = letter || ch == '_' || index > 0 && continuation;
+        if valid {
+            output.push(ch);
+        } else {
+            let _ = write!(output, "U{:04X}", u32::from(ch));
+        }
+    }
+    output
+}
+
+type Fields = std::collections::BTreeMap<String, MetaValue>;
+
+/// Returns the cited references with their identifiers, in metadata order.
+fn reference_index(doc: &Pandoc) -> Vec<(String, &Fields)> {
     let Some(MetaValue::MetaList(references)) = doc.meta.get("references") else {
-        return std::collections::HashMap::new();
+        return Vec::new();
     };
+    let mut cited = std::collections::HashSet::new();
+    randoc_ast::walk::query_inlines(doc, |inline| {
+        if let Inline::Cite(citations, _) = inline {
+            cited.extend(citations.iter().map(|citation| citation.id.clone()));
+        }
+    });
     references
         .iter()
         .filter_map(|reference| {
             let MetaValue::MetaMap(fields) = reference else {
                 return None;
             };
-            Some((stringify_meta(fields.get("id")?), reference))
+            let id = stringify_meta(fields.get("id")?);
+            (cited.contains(&id) || cited.contains("*")).then_some((id, fields))
         })
         .collect()
 }

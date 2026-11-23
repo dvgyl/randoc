@@ -29,7 +29,7 @@ impl Renderer<'_> {
             bidi,
             ..Flow::default()
         };
-        let mut body = self.budget.xml();
+        let mut body = self.budget.lines();
         self.blocks(&mut body, &doc.blocks, flow, 0)?;
         let abstract_meta = doc.meta.0.get("abstract");
         let options = self.options;
@@ -41,13 +41,15 @@ impl Renderer<'_> {
             &mut |blocks: &[Block]| {
                 let mut renderer = renderer.borrow_mut();
                 let is_abstract = matches!(abstract_meta, Some(MetaValue::MetaBlocks(value)) if std::ptr::eq(value.as_slice(), blocks));
-                let mut out = renderer.budget.xml();
                 let is_title = ["title", "subtitle", "author", "date"].iter().any(|name| {
                     matches!(doc.meta.0.get(*name), Some(MetaValue::MetaBlocks(value)) if std::ptr::eq(value.as_slice(), blocks))
                 });
+                let mut out;
                 if is_title && let [Block::Plain(inlines) | Block::Para(inlines)] = blocks {
+                    out = renderer.budget.xml();
                     renderer.inlines(&mut out, inlines, run, 0)?;
                 } else {
+                    out = renderer.budget.lines();
                     renderer.blocks(
                         &mut out,
                         blocks,
@@ -194,12 +196,12 @@ impl Renderer<'_> {
         let mut out = self.budget.xml();
         out.raw(r#"<w:sdt><w:sdtPr><w:docPartObj><w:docPartGallery w:val=""#);
         out.escaped(gallery);
-        out.raw(r#""/><w:docPartUnique/></w:docPartObj></w:sdtPr><w:sdtContent>"#);
+        out.raw(r#"" /><w:docPartUnique /></w:docPartObj></w:sdtPr><w:sdtContent>"#);
         self.open_paragraph(&mut out, &mut flow, Some("TOCHeading"));
         self.inlines(&mut out, title, flow.run, 0)?;
-        out.raw(r#"</w:p><w:p><w:r><w:fldChar w:fldCharType="begin" w:dirty="true"/><w:instrText xml:space="preserve">"#);
+        out.raw(r#"</w:p><w:p><w:r><w:fldChar w:fldCharType="begin" w:dirty="true" /><w:instrText xml:space="preserve">"#);
         out.escaped(instruction);
-        out.raw(r#"</w:instrText><w:fldChar w:fldCharType="separate"/><w:fldChar w:fldCharType="end"/></w:r></w:p></w:sdtContent></w:sdt>"#);
+        out.raw(r#"</w:instrText><w:fldChar w:fldCharType="separate" /><w:fldChar w:fldCharType="end" /></w:r></w:p></w:sdtContent></w:sdt>"#);
         out.into_string()
     }
 }
@@ -207,7 +209,7 @@ impl Renderer<'_> {
 pub(super) fn core(budget: &Budget, meta: &Meta, timestamp: i64) -> Result<String> {
     let mut out = budget.xml();
     out.raw(DECL);
-    out.raw(r#"<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">"#);
+    out.raw(r#"<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">"#);
     for (name, tag, optional, separator) in [
         ("title", "dc:title", false, ""),
         ("author", "dc:creator", false, "; "),
@@ -249,13 +251,22 @@ pub(super) fn core(budget: &Budget, meta: &Meta, timestamp: i64) -> Result<Strin
 pub(super) fn custom(budget: &Budget, meta: &Meta) -> Result<String> {
     let mut out = budget.xml();
     out.raw(DECL);
-    out.raw(r#"<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/custom-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">"#);
-    let fields = meta.0.iter().filter(|(name, _)| {
-        !matches!(
-            name.as_str(),
-            "title" | "author" | "description" | "lang" | "subject" | "keywords"
-        )
-    });
+    out.raw(r#"<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/custom-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes""#);
+    let mut fields = meta
+        .0
+        .iter()
+        .filter(|(name, _)| {
+            !matches!(
+                name.as_str(),
+                "title" | "author" | "description" | "lang" | "subject" | "keywords"
+            )
+        })
+        .peekable();
+    if fields.peek().is_none() {
+        out.raw(" />");
+        return out.into_string();
+    }
+    out.raw(">");
     for (index, (name, value)) in fields.enumerate() {
         let _ = write!(
             out,

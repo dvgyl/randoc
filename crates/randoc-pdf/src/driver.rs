@@ -1,6 +1,6 @@
 use std::io;
 
-use randoc_ast::Pandoc;
+use randoc_ast::{MetaValue, Pandoc};
 use randoc_core::{Error, Host, Limits, ProcessOutput, ProcessRequest, Result, Text};
 
 use crate::plan::Engine;
@@ -300,12 +300,12 @@ fn diagnostic(log: Option<&[u8]>, output: &ProcessOutput, stderr_forwarded: bool
     let mut excerpt = first.to_owned();
     for line in lines {
         excerpt.push_str(line);
-        if line
-            .strip_prefix("l.")
-            .is_some_and(|line| line.starts_with(|ch: char| ch.is_ascii_digit()))
-        {
+        if line.starts_with("l.") {
             break;
         }
+    }
+    if !excerpt.ends_with('\n') {
+        excerpt.push('\n');
     }
     excerpt
 }
@@ -333,7 +333,14 @@ fn wkhtmltopdf_options(doc: &Pandoc, options: &PdfOptions<'_>) -> Vec<Text> {
             .variables
             .get(key)
             .cloned()
-            .or_else(|| doc.meta.get(key).map(randoc_core::shared::stringify_meta))
+            .or_else(|| {
+                doc.meta.get(key).and_then(|value| match value {
+                    MetaValue::MetaString(_)
+                    | MetaValue::MetaInlines(_)
+                    | MetaValue::MetaBlocks(_) => Some(randoc_core::shared::stringify_meta(value)),
+                    _ => None,
+                })
+            })
             .or_else(|| fallback.map(Text::from));
         if let Some(value) = value {
             args.extend([flag.into(), value]);

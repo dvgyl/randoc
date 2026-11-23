@@ -61,9 +61,13 @@ fn target_line(text: &str) -> Option<(&str, &str)> {
     if let Some(quoted) = text.strip_prefix('`') {
         return quoted.split_once("`:");
     }
+    let mut escaped = false;
     text.char_indices().find_map(|(i, c)| {
+        let was_escaped = escaped;
+        escaped = c == '\\' && !escaped;
         let after = &text[i + c.len_utf8()..];
-        (c == ':' && (after.is_empty() || after.starts_with(' '))).then_some((&text[..i], after))
+        (c == ':' && !was_escaped && (after.is_empty() || after.starts_with(' ')))
+            .then_some((&text[..i], after))
     })
 }
 
@@ -247,7 +251,11 @@ impl Parser<'_> {
             .unwrap_or_default()
             .trim_start();
         let (body, end) = indented(input, i + 1, 1);
+        if text.is_empty() && body.first().is_some_and(|line| line.blank()) {
+            return Ok((Vec::new(), i + 1));
+        }
         if let Some((name, value)) = target_line(text) {
+            let name = name.replace("\\", "");
             let value = value.trim();
             let continuation = if skip_blanks(&body, 0) == 0 {
                 joined(&body)
@@ -259,12 +267,16 @@ impl Parser<'_> {
                 self.anonymous.push_back(target(&value));
             } else if value.is_empty() {
                 targets.push(name.to_owned());
-                self.ids.register(name);
+                self.ids.register(&name);
                 self.targets
-                    .insert(key(name), TargetDef::Url(format!("#{name}")));
+                    .insert(key(&name), TargetDef::Url(format!("#{name}")));
                 return Ok((Vec::new(), i + 1));
             } else {
-                self.targets.insert(key(name), target(&value));
+                for alias in targets.drain(..) {
+                    self.targets
+                        .insert(key(&alias), TargetDef::Indirect(key(&name)));
+                }
+                self.targets.insert(key(&name), target(&value));
             }
             return Ok((Vec::new(), end));
         }
@@ -308,25 +320,29 @@ impl Parser<'_> {
             };
             return Ok((Vec::new(), end));
         }
+        let code = matches!(kind, "code" | "code-block" | "sourcecode" | "raw");
         let mut arg = arg.trim().to_owned();
         let mut fields = Vec::new();
         let mut start = 0;
-        while let Some(line) = body
-            .get(start)
-            .filter(|l| !l.blank() && field_line(l.text).is_none())
-        {
+        while let Some(line) = body.get(start).filter(|l| {
+            !l.blank() && field_line(if code { l.text.trim_start() } else { l.text }).is_none()
+        }) {
             if !arg.is_empty() {
                 arg.push('\n');
             }
             arg.push_str(line.text);
             start += 1;
         }
-        while let Some((key, val)) = body.get(start).and_then(|l| field_line(l.text)) {
+        while let Some((key, val)) = body
+            .get(start)
+            .and_then(|l| field_line(if code { l.text.trim_start() } else { l.text }))
+        {
+            let margin = body[start].indent();
             start += 1;
             let mut value = val.to_owned();
             if body
                 .get(start)
-                .is_some_and(|next| !next.blank() && next.indent() > 0)
+                .is_some_and(|next| !next.blank() && next.indent() > margin)
             {
                 let end = body[start..]
                     .iter()
@@ -499,16 +515,25 @@ impl Parser<'_> {
                     .collect(),
             ),
             "math" => {
-                let text = joined(body);
-                let inlines = std::iter::once(arg)
-                    .chain(text.split("\n\n"))
-                    .map(str::trim)
+                let margin = body.first().map_or(0, |line| line.indent());
+                let argument = arg.lines().map(str::trim).collect::<Vec<_>>().join("\n");
+                let inlines = std::iter::once(argument)
+                    .chain(
+                        body.split(|line| line.blank())
+                            .filter(|part| !part.is_empty())
+                            .map(|part| {
+                                part.iter()
+                                    .map(|line| line.cut(margin.min(line.indent())).text.trim_end())
+                                    .collect::<Vec<_>>()
+                                    .join("\n")
+                            }),
+                    )
                     .filter(|s| !s.is_empty())
                     .map(|eq| {
                         let text = if eq.contains("\\\\\n") && !eq.starts_with("\\begin{") {
                             format!("\\begin{{aligned}}\n{eq}\n\\end{{aligned}}")
                         } else {
-                            eq.into()
+                            eq
                         };
                         Inline::Math(MathType::DisplayMath, text)
                     })

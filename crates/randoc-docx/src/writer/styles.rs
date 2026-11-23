@@ -2,10 +2,11 @@ use std::borrow::Cow;
 use std::collections::{HashMap, HashSet};
 use std::fmt::Write;
 
-use randoc_archive::xml::{QName, XmlDoc, XmlElement, XmlNode};
+use randoc_archive::xml::XmlDoc;
 use randoc_core::{Error, HighlightMethod, Result, WriterOptions};
 use randoc_highlight::{Color, Registry, Style, TokenType};
 
+use super::package::{end_tag, start_tag, write_nodes};
 use super::xml::{Budget, DECL, W, Xml};
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
@@ -30,7 +31,6 @@ pub(super) struct Styles {
     ids: HashSet<String>,
     extra: Xml,
     theme: Option<Style>,
-    used_tokens: HashSet<TokenType>,
 }
 
 impl Styles {
@@ -44,7 +44,6 @@ impl Styles {
             ids: HashSet::new(),
             extra: budget.xml(),
             theme: highlight_theme(options)?,
-            used_tokens: HashSet::new(),
         };
         if let Some(reference) = reference {
             for element in reference.root.children_local("style") {
@@ -76,7 +75,7 @@ impl Styles {
                 && let Some(background) = background
             {
                 let properties = format!(
-                    r#"<w:pPr><w:wordWrap w:val="off"/><w:shd w:val="clear" w:fill="{}"/></w:pPr>"#,
+                    r#"<w:pPr><w:wordWrap w:val="off" /><w:shd w:val="clear" w:fill="{}" /></w:pPr>"#,
                     color(background)
                 );
                 let missing = !styles.ids.contains(styles.id(Kind::Paragraph, name));
@@ -88,7 +87,7 @@ impl Styles {
         for level in 1..=10 {
             let outline = level - 1;
             let properties = format!(
-                "<w:pPr><w:keepNext/><w:outlineLvl w:val=\"{outline}\"/></w:pPr><w:rPr><w:b/><w:sz w:val=\"28\"/></w:rPr>"
+                "<w:pPr><w:keepNext /><w:outlineLvl w:val=\"{outline}\" /></w:pPr><w:rPr><w:b /><w:sz w:val=\"28\" /></w:rPr>"
             );
             styles.standard(
                 Kind::Paragraph,
@@ -108,7 +107,7 @@ impl Styles {
             "",
             reference.is_none(),
         );
-        styles.standard(Kind::Table, "Table", "Table", r#"<w:tblPr><w:tblBorders><w:top w:val="single"/><w:bottom w:val="single"/></w:tblBorders></w:tblPr>"#, reference.is_none());
+        styles.standard(Kind::Table, "Table", "Table", r#"<w:tblPr><w:tblBorders><w:top w:val="single" /><w:bottom w:val="single" /></w:tblBorders></w:tblPr>"#, reference.is_none());
         budget.check()?;
         Ok(styles)
     }
@@ -160,13 +159,18 @@ impl Styles {
             Kind::Table => self.id(kind, "Table"),
         }
         .to_owned();
+        let properties = if kind == Kind::Character {
+            ""
+        } else {
+            "<w:qFormat />"
+        };
         definition(
             &mut self.extra,
             kind,
             &id,
             name,
             Some(&base),
-            "<w:qFormat/>",
+            properties,
             false,
         );
         self.names.insert((kind, name.to_lowercase()), id.clone());
@@ -177,124 +181,84 @@ impl Styles {
         self.theme.is_some()
     }
 
-    pub(super) fn token(&mut self, token: TokenType, budget: &Budget) -> Result<String> {
-        let name = format!("{}Tok", token.name());
-        if self.used_tokens.insert(token)
-            && let Some(theme) = &self.theme
-        {
+    pub(super) fn token(token: TokenType) -> String {
+        format!("{}Tok", token.name())
+    }
+
+    /// Adds a character style for each token type that the reference lacks.
+    /// Pandoc adds all of them, in this order, when highlighting is on.
+    fn token_styles(&mut self, budget: &Budget) -> Result<()> {
+        let Some(theme) = &self.theme else {
+            return Ok(());
+        };
+        let base = self.id(Kind::Character, "VerbatimChar").to_owned();
+        for token in TokenType::ALL {
+            let name = Self::token(token);
+            if !self.ids.insert(name.clone()) {
+                continue;
+            }
             let style = theme.token_styles.get(&token).copied().unwrap_or_default();
             let mut properties = budget.xml();
-            properties.raw("<w:rPr>");
             if style.bold {
-                properties.raw("<w:b/><w:bCs/>");
+                properties.raw("<w:b />");
             }
             if style.italic {
-                properties.raw("<w:i/><w:iCs/>");
+                properties.raw("<w:i />");
             }
             if let Some(value) = style.color.or(theme.default_color) {
-                let _ = write!(properties, "<w:color w:val=\"{}\"/>", color(value));
+                let _ = write!(properties, "<w:color w:val=\"{}\" />", color(value));
             }
             if style.underline {
-                properties.raw(r#"<w:u w:val="single"/>"#);
+                properties.raw(r#"<w:u w:val="single" />"#);
             }
             if let Some(value) = style.background.or(theme.background_color) {
                 let _ = write!(
                     properties,
-                    "<w:shd w:val=\"clear\" w:fill=\"{}\"/>",
+                    "<w:shd w:val=\"clear\" w:fill=\"{}\" />",
                     color(value)
                 );
             }
-            properties.raw("</w:rPr>");
-            let base = self.id(Kind::Character, "VerbatimChar").to_owned();
-            if self.ids.insert(name.clone()) {
-                definition(
-                    &mut self.extra,
-                    Kind::Character,
-                    &name,
-                    &name,
-                    Some(&base),
-                    &properties.into_string()?,
-                    false,
-                );
-            }
+            let properties = if properties.is_empty() {
+                "<w:rPr />".to_owned()
+            } else {
+                format!("<w:rPr>{}</w:rPr>", properties.into_string()?)
+            };
+            definition(
+                &mut self.extra,
+                Kind::Character,
+                &name,
+                &name,
+                Some(&base),
+                &properties,
+                false,
+            );
         }
-        Ok(name)
+        budget.check()
     }
 
-    pub(super) fn finish(self, reference: Option<XmlDoc>, budget: &Budget) -> Result<String> {
+    pub(super) fn finish(mut self, reference: Option<XmlDoc>, budget: &Budget) -> Result<String> {
+        self.token_styles(budget)?;
         let mut out = budget.xml();
         out.raw(DECL);
-        let _ = write!(out, "<w:styles xmlns:w=\"{W}\">");
-        if let Some(mut reference) = reference {
-            if let Some(background) = self.theme.as_ref().and_then(|theme| theme.background_color)
-                && let Some(style) = reference.root.children.iter_mut().find_map(|node| {
-                    let XmlNode::Element(element) = node else {
-                        return None;
-                    };
-                    (element.name.local == "style"
-                        && element.attr(W, "styleId")
-                            == Some(self.id(Kind::Paragraph, "SourceCode")))
-                    .then_some(element)
-                })
-            {
-                shade_source_code(style, background);
-            }
-            super::package::reference_children(&mut out, reference.root);
+        if reference.is_none() {
+            let _ = write!(out, "<w:styles xmlns:w=\"{W}\">");
         }
-        out.append(self.extra);
-        out.raw("</w:styles>");
+        if let Some(reference) = reference {
+            start_tag(&mut out, &reference.root);
+            out.raw(">");
+            write_nodes(&mut out, &reference.root.children);
+            out.append(self.extra);
+            end_tag(&mut out, &reference.root);
+        } else {
+            out.append(self.extra);
+            out.raw("</w:styles>");
+        }
         out.into_string()
     }
 }
 
-fn shade_source_code(style: &mut XmlElement, background: Color) {
-    let qname = |local: &str| QName {
-        ns: Some(W.into()),
-        prefix: Some("w".into()),
-        local: local.into(),
-    };
-    let element = |local: &str, attrs: Vec<(QName, String)>| {
-        XmlNode::Element(XmlElement {
-            name: qname(local),
-            attrs,
-            ns_decls: Vec::new(),
-            children: Vec::new(),
-        })
-    };
-    let index = style.children.iter().position(|node| {
-        matches!(node, XmlNode::Element(child) if child.name.local == "pPr" && child.name.ns.as_deref() == Some(W))
-    }).unwrap_or_else(|| {
-        let index = style.children.iter().position(|node| {
-            matches!(node, XmlNode::Element(child) if child.name.local == "rPr" && child.name.ns.as_deref() == Some(W))
-        }).unwrap_or(style.children.len());
-        style.children.insert(index, element("pPr", Vec::new()));
-        index
-    });
-    if let XmlNode::Element(properties) = &mut style.children[index] {
-        for (local, attrs) in [
-            ("wordWrap", vec![(qname("val"), "off".into())]),
-            (
-                "shd",
-                vec![
-                    (qname("val"), "clear".into()),
-                    (qname("fill"), color(background)),
-                ],
-            ),
-        ] {
-            let node = element(local, attrs);
-            if let Some(existing) = properties.children.iter_mut().find(|node| {
-                matches!(node, XmlNode::Element(child) if child.name.local == local && child.name.ns.as_deref() == Some(W))
-            }) {
-                *existing = node;
-            } else {
-                properties.children.push(node);
-            }
-        }
-    }
-}
-
 fn color(color: Color) -> String {
-    format!("{:02X}{:02X}{:02X}", color.r, color.g, color.b)
+    format!("{:02x}{:02x}{:02x}", color.r, color.g, color.b)
 }
 
 fn definition(
@@ -306,21 +270,23 @@ fn definition(
     properties: &str,
     default: bool,
 ) {
-    let _ = write!(out, "<w:style w:type=\"{}\" w:styleId=\"", kind.name());
-    out.escaped(id);
-    if default {
-        out.raw(r#"" w:default="1"#);
-    }
+    let _ = write!(out, "<w:style w:type=\"{}\"", kind.name());
     if base.is_some() {
-        out.raw(r#"" w:customStyle="1"#);
+        out.raw(r#" w:customStyle="1""#);
     }
-    out.raw(r#""><w:name w:val=""#);
+    out.raw(r#" w:styleId=""#);
+    out.escaped(id);
+    out.raw("\"");
+    if default {
+        out.raw(r#" w:default="1""#);
+    }
+    out.raw(r#"><w:name w:val=""#);
     out.escaped(name);
-    out.raw("\"/>");
+    out.raw("\" />");
     if let Some(base) = base {
         out.raw(r#"<w:basedOn w:val=""#);
         out.escaped(base);
-        out.raw("\"/>");
+        out.raw("\" />");
     }
     out.raw(properties);
     out.raw("</w:style>");
@@ -361,22 +327,22 @@ const PARAGRAPH: &[(&str, &str, &str)] = &[
     (
         "Compact",
         "Compact",
-        r#"<w:pPr><w:spacing w:after="0"/></w:pPr>"#,
+        r#"<w:pPr><w:spacing w:after="0" /></w:pPr>"#,
     ),
     (
         "BlockText",
         "Block Text",
-        r#"<w:pPr><w:ind w:left="360" w:right="360"/></w:pPr>"#,
+        r#"<w:pPr><w:ind w:left="360" w:right="360" /></w:pPr>"#,
     ),
     (
         "Title",
         "Title",
-        r#"<w:rPr><w:b/><w:sz w:val="48"/></w:rPr>"#,
+        r#"<w:rPr><w:b /><w:sz w:val="48" /></w:rPr>"#,
     ),
     (
         "Subtitle",
         "Subtitle",
-        r#"<w:rPr><w:sz w:val="32"/></w:rPr>"#,
+        r#"<w:rPr><w:sz w:val="32" /></w:rPr>"#,
     ),
     ("Author", "Author", ""),
     ("Date", "Date", ""),
@@ -384,39 +350,39 @@ const PARAGRAPH: &[(&str, &str, &str)] = &[
     (
         "AbstractTitle",
         "Abstract Title",
-        r#"<w:rPr><w:b/></w:rPr>"#,
+        r#"<w:rPr><w:b /></w:rPr>"#,
     ),
     (
         "TOCHeading",
         "TOC Heading",
-        r#"<w:basedOn w:val="Heading1"/><w:pPr><w:keepNext/><w:outlineLvl w:val="9"/></w:pPr><w:rPr><w:b/></w:rPr>"#,
+        r#"<w:basedOn w:val="Heading1" /><w:pPr><w:keepNext /><w:outlineLvl w:val="9" /></w:pPr><w:rPr><w:b /></w:rPr>"#,
     ),
     (
         "DefinitionTerm",
         "Definition Term",
-        r#"<w:rPr><w:b/></w:rPr>"#,
+        r#"<w:rPr><w:b /></w:rPr>"#,
     ),
     (
         "Definition",
         "Definition",
-        r#"<w:pPr><w:ind w:left="360"/></w:pPr>"#,
+        r#"<w:pPr><w:ind w:left="360" /></w:pPr>"#,
     ),
     (
         "FootnoteText",
         "Footnote Text",
-        r#"<w:rPr><w:sz w:val="20"/></w:rPr>"#,
+        r#"<w:rPr><w:sz w:val="20" /></w:rPr>"#,
     ),
     ("CommentText", "Comment Text", ""),
     ("SourceCode", "Source Code", ""),
     (
         "CaptionedFigure",
         "Captioned Figure",
-        r#"<w:pPr><w:keepNext/><w:jc w:val="center"/></w:pPr>"#,
+        r#"<w:pPr><w:keepNext /><w:jc w:val="center" /></w:pPr>"#,
     ),
     (
         "Figure",
         "Figure",
-        r#"<w:pPr><w:jc w:val="center"/></w:pPr>"#,
+        r#"<w:pPr><w:jc w:val="center" /></w:pPr>"#,
     ),
     ("ImageCaption", "Image Caption", ""),
     ("TableCaption", "Table Caption", ""),
@@ -427,23 +393,23 @@ const CHARACTER: &[(&str, &str, &str)] = &[
     (
         "VerbatimChar",
         "Verbatim Char",
-        r#"<w:rPr><w:rFonts w:ascii="Courier New" w:hAnsi="Courier New"/></w:rPr>"#,
+        r#"<w:rPr><w:rFonts w:ascii="Courier New" w:hAnsi="Courier New" /></w:rPr>"#,
     ),
     (
         "Hyperlink",
         "Hyperlink",
-        r#"<w:rPr><w:color w:val="0563C1"/><w:u w:val="single"/></w:rPr>"#,
+        r#"<w:rPr><w:color w:val="0563C1" /><w:u w:val="single" /></w:rPr>"#,
     ),
     (
         "FootnoteReference",
         "Footnote Reference",
-        r#"<w:rPr><w:vertAlign w:val="superscript"/></w:rPr>"#,
+        r#"<w:rPr><w:vertAlign w:val="superscript" /></w:rPr>"#,
     ),
     ("CommentReference", "Comment Reference", ""),
     ("SectionNumber", "Section Number", ""),
     (
         "Mark",
         "Mark",
-        r#"<w:rPr><w:highlight w:val="yellow"/></w:rPr>"#,
+        r#"<w:rPr><w:highlight w:val="yellow" /></w:rPr>"#,
     ),
 ];

@@ -2029,17 +2029,24 @@ impl Html<'_> {
                 self.inline_element("span", &attrs, body)
             }
             Inline::Code(attr, code) => {
+                let variable = attr.classes.iter().position(|class| class == "variable");
                 if !self.obfuscating
-                    && let Some(doc) = self.highlighted_code(attr, code)
+                    && let Some(doc) = self.highlighted_code(attr, code, variable.is_some())
                 {
                     return Ok(doc);
                 }
-                let body = if self.obfuscating {
-                    lit(&obfuscate(code))
+                if let Some(index) = variable {
+                    let mut attr = attr.clone();
+                    attr.classes.remove(index);
+                    self.inline_element("var", &self.attrs(&attr), self.text(code))
                 } else {
-                    lit(&self.escape(code))
-                };
-                self.inline_element("code", &self.attrs(attr), body)
+                    let body = if self.obfuscating {
+                        lit(&obfuscate(code))
+                    } else {
+                        lit(&self.escape(code))
+                    };
+                    self.inline_element("code", &self.attrs(attr), body)
+                }
             }
             Inline::Space if self.obfuscating => lit("&#32;"),
             Inline::SoftBreak if self.obfuscating => match self.options.wrap_text {
@@ -2069,9 +2076,8 @@ impl Html<'_> {
     }
 
     /// Renders a span. As in Pandoc, the first of the classes `smallcaps`,
-    /// `underline`, `mark` and `kbd` gives the element and keeps the
-    /// attributes; the classes before it go away. Each later class of these
-    /// four gives an element inside it. The `csl-no-*` classes become styles.
+    /// `underline`, `mark`, `kbd` and `abbr` gives the element and keeps
+    /// the attributes. Each later special class gives an element inside it.
     fn span(&mut self, attr: &Attr, content: &[Inline], depth: usize) -> Result<Doc> {
         // Pandoc applies each special class, also a repeated one, before it
         // removes repeated names from the class list.
@@ -2095,6 +2101,7 @@ impl Html<'_> {
                 .collect();
             let rest: Vec<Text> = after
                 .iter()
+                .rev()
                 .filter(|c| special_span_element(c).is_none())
                 .cloned()
                 .collect();
@@ -2245,7 +2252,9 @@ impl Html<'_> {
     }
 
     fn image(&self, attr: &Attr, content: &[Inline], target: &Target) -> Doc {
-        let mut attrs = vec![("src".to_owned(), self.url(&target.url))];
+        let src = if self.revealjs() { "data-src" } else { "src" };
+        let url = self.url(&target.url);
+        let mut attrs = vec![(src.to_owned(), url.clone())];
         if !target.title.is_empty() {
             attrs.push(("title".to_owned(), target.title.clone()));
         }
@@ -2277,11 +2286,27 @@ impl Html<'_> {
         );
         attrs.extend(self.attrs(&Attr::new(attr.id.clone(), attr.classes.clone(), pairs)));
         attrs.extend(sizes);
-        // An `alt` pair takes the place of the description.
-        if !content.is_empty() && attr.get("alt").is_none() {
-            attrs.push(("alt".to_owned(), stringify(content)));
+        match image_element(&target.url) {
+            "img" => {
+                // An `alt` pair takes the place of the description.
+                if !content.is_empty() && attr.get("alt").is_none() {
+                    attrs.push(("alt".to_owned(), stringify(content)));
+                }
+                self.void("img", &attrs)
+            }
+            "embed" => self.void("embed", &attrs),
+            element => {
+                attrs.push(("controls".to_owned(), String::new()));
+                let label = if content.is_empty() {
+                    if element == "audio" { "Audio" } else { "Video" }.to_owned()
+                } else {
+                    stringify(content)
+                };
+                let fallback =
+                    self.inline_element("a", &[("href".to_owned(), url)], self.text(&label));
+                self.inline_element(element, &attrs, fallback)
+            }
         }
-        self.void("img", &attrs)
     }
 
     fn math(&mut self, kind: MathType, tex: &str, depth: usize) -> Result<Doc> {
@@ -2489,7 +2514,51 @@ fn special_span_element(class: &str) -> Option<&'static str> {
         "underline" => Some("u"),
         "mark" => Some("mark"),
         "kbd" => Some("kbd"),
+        "abbr" => Some("abbr"),
         _ => None,
+    }
+}
+
+/// Selects an HTML element for the type of media in an image target.
+fn image_element(url: &str) -> &'static str {
+    if let Some(data) = url.strip_prefix("data:") {
+        return match data.split([';', ',']).next().unwrap_or_default() {
+            mime if mime.starts_with("image/") => "img",
+            mime if mime.starts_with("video/") => "video",
+            mime if mime.starts_with("audio/") => "audio",
+            _ => "embed",
+        };
+    }
+    let path = url.split(['?', '#']).next().unwrap_or_default();
+    let path = match path
+        .strip_prefix("//")
+        .or_else(|| path.split_once("://").map(|(_, rest)| rest))
+    {
+        Some(authority) => authority.split_once('/').map_or("", |(_, path)| path),
+        None => path,
+    };
+    let extension = path
+        .rsplit('/')
+        .next()
+        .and_then(|name| name.rsplit_once('.'));
+    match extension
+        .map(|(_, ext)| ext.to_ascii_lowercase())
+        .as_deref()
+    {
+        Some(
+            "3g2" | "3gp" | "3gpp" | "asf" | "asx" | "avi" | "f4v" | "flv" | "m4v" | "mkv" | "mov"
+            | "mp4" | "mpeg" | "mpg" | "ogv" | "qt" | "vob" | "webm" | "wmv",
+        ) => "video",
+        Some(
+            "aac" | "aif" | "aifc" | "aiff" | "au" | "caf" | "flac" | "m4a" | "mid" | "midi"
+            | "mka" | "mp2" | "mp3" | "mpga" | "oga" | "ogg" | "opus" | "ra" | "ram" | "rm" | "snd"
+            | "spx" | "wav" | "weba" | "wma",
+        ) => "audio",
+        Some(
+            "bin" | "docx" | "html" | "m3u" | "m3u8" | "mts" | "ogx" | "pdf" | "rmvb" | "rtx"
+            | "swf" | "ts" | "txt" | "xml" | "zip",
+        ) => "embed",
+        _ => "img",
     }
 }
 
@@ -2953,6 +3022,48 @@ mod tests {
             blocks,
         };
         write(&doc, options, &mut Context::pure(), Version::Html5)
+    }
+
+    #[test]
+    fn abbreviation_preserves_attributes_and_nests_special_classes() {
+        let mut options = WriterOptions::default();
+        options.wrap_text = WrapOption::WrapNone;
+        let attr = Attr::new(
+            "name",
+            ["drop", "abbr", "first", "kbd", "last"]
+                .map(Text::from)
+                .to_vec(),
+            vec![("title".into(), "Doctor".into())],
+        );
+        let span = Inline::Span(attr, vec![Inline::Str("Dr.".into())]);
+        assert_eq!(
+            render(vec![Block::Para(vec![span])], &options).unwrap(),
+            r#"<p><abbr id="name" class="last first" title="Doctor"><kbd>Dr.</kbd></abbr></p>"#,
+        );
+    }
+
+    #[test]
+    fn media_links_use_plain_labels_and_keep_size_attributes() {
+        let mut options = WriterOptions::default();
+        options.wrap_text = WrapOption::WrapNone;
+        let video = Inline::Image(
+            Attr::new("clip", vec![], vec![("width".into(), "24px".into())]),
+            vec![Inline::Emph(vec![Inline::Str("Show clip".into())])],
+            Target::new("a.MP4?x=1&y=2#t=1", "Clip"),
+        );
+        let audio = Inline::Image(Attr::default(), vec![], Target::new("b.oga", ""));
+        assert_eq!(
+            render(
+                vec![Block::Para(vec![video]), Block::Para(vec![audio])],
+                &options
+            )
+            .unwrap(),
+            concat!(
+                r#"<p><video src="a.MP4?x=1&amp;y=2#t=1" title="Clip" id="clip" width="24" controls=""><a href="a.MP4?x=1&amp;y=2#t=1">Show clip</a></video></p>"#,
+                "\n",
+                r#"<p><audio src="b.oga" controls=""><a href="b.oga">Audio</a></audio></p>"#,
+            ),
+        );
     }
 
     /// Replays the oracle matrices of `tools/sections.py`, `tools/classes.py`,

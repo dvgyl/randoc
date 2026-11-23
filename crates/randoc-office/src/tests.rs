@@ -31,19 +31,19 @@ fn xlsx(cells: &str, strings: &str, target: &str) -> Vec<u8> {
         (
             "_rels/.rels",
             &format!(
-                r#"<Relationships xmlns="{RELS}"><Relationship Id="rId1" Type="{R}/officeDocument" Target="xl/workbook.xml"/></Relationships>"#
+                r#"<Relationships xmlns="{RELS}"><Relationship Id="rId1" Type="{R}/officeDocument" Target="xl/workbook.xml" /></Relationships>"#
             ),
         ),
         (
             "xl/workbook.xml",
             &format!(
-                r#"<workbook xmlns="{S}" xmlns:r="{R}"><sheets><sheet name="Data Set" r:id="rId1"/></sheets></workbook>"#
+                r#"<workbook xmlns="{S}" xmlns:r="{R}"><sheets><sheet name="Data Set" r:id="rId1" /></sheets></workbook>"#
             ),
         ),
         (
             "xl/_rels/workbook.xml.rels",
             &format!(
-                r#"<Relationships xmlns="{RELS}"><Relationship Id="rId1" Type="{R}/worksheet" Target="{target}"/><Relationship Id="rId2" Type="{R}/sharedStrings" Target="sharedStrings.xml"/><Relationship Id="rId3" Type="{R}/styles" Target="styles.xml"/></Relationships>"#
+                r#"<Relationships xmlns="{RELS}"><Relationship Id="rId1" Type="{R}/worksheet" Target="{target}" /><Relationship Id="rId2" Type="{R}/sharedStrings" Target="sharedStrings.xml" /><Relationship Id="rId3" Type="{R}/styles" Target="styles.xml" /></Relationships>"#
             ),
         ),
         (
@@ -59,7 +59,7 @@ fn xlsx(cells: &str, strings: &str, target: &str) -> Vec<u8> {
         (
             "xl/styles.xml",
             &format!(
-                r#"<styleSheet xmlns="{S}"><fonts><font><b val="0"/><i/></font></fonts><cellXfs><xf fontId="4"/></cellXfs></styleSheet>"#
+                r#"<styleSheet xmlns="{S}"><fonts><font><b val="0" /><i /></font></fonts><cellXfs><xf fontId="4" /></cellXfs></styleSheet>"#
             ),
         ),
     ])
@@ -100,10 +100,18 @@ fn para(text: &str) -> Block {
     Block::Para(vec![Inline::Str(text.into())])
 }
 
+fn untitled_slide_heading() -> Block {
+    Block::Header(
+        2,
+        Attr::new("slide-1", vec![], vec![]),
+        vec![Inline::Str("Slide 1".into())],
+    )
+}
+
 #[test]
 fn xlsx_reads_serials_sparse_cells_and_fonts() {
     let bytes = xlsx(
-        r#"<c r="C3" t="s"><v>0</v></c><c r="D3" s="0"><v>43363</v></c><c r="D4"><v>35287</v></c><c r="E6"/>"#,
+        r#"<c r="C3" t="s"><v>0</v></c><c r="D3" s="0"><v>43363</v></c><c r="D4"><v>35287</v></c><c r="E6" />"#,
         "<si><r><t>00</t></r><r><t>1</t></r></si>",
         "worksheets/sheet.xml",
     );
@@ -233,13 +241,13 @@ fn pptx_reader_on_two_mib_stack() {
                 (
                     "ppt/presentation.xml",
                     &format!(
-                        r#"<p:presentation xmlns:p="{P}" xmlns:r="{R}"><p:sldIdLst><p:sldId r:id="slide"/></p:sldIdLst></p:presentation>"#
+                        r#"<p:presentation xmlns:p="{P}" xmlns:r="{R}"><p:sldIdLst><p:sldId r:id="slide" /></p:sldIdLst></p:presentation>"#
                     ),
                 ),
                 (
                     "ppt/_rels/presentation.xml.rels",
                     &format!(
-                        r#"<Relationships xmlns="{RELS}"><Relationship Id="slide" Type="{R}/slide" Target="slides/custom.xml"/></Relationships>"#
+                        r#"<Relationships xmlns="{RELS}"><Relationship Id="slide" Type="{R}/slide" Target="slides/custom.xml" /></Relationships>"#
                     ),
                 ),
                 (
@@ -253,7 +261,7 @@ fn pptx_reader_on_two_mib_stack() {
             ])
         };
         let doc = read("pptx", &make(2000), &mut context).unwrap();
-        assert_eq!(doc.blocks, [para("OK")]);
+        assert_eq!(doc.blocks, [untitled_slide_heading(), para("OK")]);
         drop(doc);
         assert!(read("pptx", &make(2100), &mut context).is_err());
     });
@@ -276,7 +284,7 @@ fn pptx_writer_on_two_mib_stack() {
         let bytes = write(&doc, &options, &mut context).unwrap();
         assert_eq!(
             read("pptx", &bytes, &mut context).unwrap().blocks,
-            [para("deep")]
+            [untitled_slide_heading(), para("deep")]
         );
         context.limits.max_nesting_depth = 150;
         assert!(
@@ -302,7 +310,7 @@ fn pptx_writer_on_two_mib_stack() {
         let bytes = write(&doc, &options, &mut context).unwrap();
         assert_eq!(
             read("pptx", &bytes, &mut context).unwrap().blocks,
-            [para("deep block")]
+            [untitled_slide_heading(), para("deep block")]
         );
         doc.blocks = vec![Block::BlockQuote(std::mem::take(&mut doc.blocks))];
         assert!(
@@ -539,7 +547,7 @@ fn pptx_packages_math_links_notes_images_and_animation() {
         resolve_target(toc, &rel.target).as_deref(),
         Some("ppt/slides/slide4.xml")
     );
-    let notes = get(&mut archive, "ppt/notesSlides/randocNotes2.xml");
+    let notes = get(&mut archive, "ppt/notesSlides/notesSlide1.xml");
     assert!(notes.find("Speaker one").unwrap() < notes.find("Speaker two").unwrap());
     assert!(get(&mut archive, "ppt/slides/slide4.xml").contains("1. Endnote"));
     assert!(get(&mut archive, "docProps/core.xml").contains("2023-11-14T22:13:20Z"));
@@ -570,6 +578,48 @@ fn pptx_reference_lookup_prefers_explicit_resource() {
     let bytes = write(&doc, &options, &mut context).unwrap();
     let result = read("pptx", &bytes, &mut context).unwrap();
     assert_eq!(result.blocks.len(), 1);
+}
+
+#[test]
+fn pptx_reference_skips_unsafe_zip_entries() {
+    let mut doc = Pandoc::default();
+    doc.blocks.push(para("Slide body"));
+    let mut options = WriterOptions::default();
+    let original = write(&doc, &options, &mut Context::pure()).unwrap();
+    let limits = ArchiveLimits::from_limits(&Limits::default());
+    let mut archive = Archive::open(&original, limits).unwrap();
+    let mut reference = ArchiveWriter::new();
+    for name in archive
+        .entry_names()
+        .into_iter()
+        .map(str::to_owned)
+        .collect::<Vec<_>>()
+    {
+        let bytes = archive.read(&name).unwrap().unwrap();
+        reference.write_stored(&name, &bytes).unwrap();
+    }
+    let unsafe_names = [
+        "../outside.txt",
+        "/absolute.txt",
+        "C:drive.txt",
+        "ppt//bad.txt",
+    ];
+    for name in unsafe_names {
+        reference.write_stored(name, b"unsafe").unwrap();
+    }
+    reference.write_stored("custom/safe.txt", b"safe").unwrap();
+    let host = PureHost {
+        files: BTreeMap::from([("reference.pptx".into(), reference.finish().unwrap())]),
+        ..PureHost::default()
+    };
+    let mut context = Context::new(Box::new(host));
+    options.reference_doc = Some("reference.pptx".into());
+    let output = write(&doc, &options, &mut context).unwrap();
+    let mut result = Archive::open(&output, limits).unwrap();
+    assert_eq!(result.read("custom/safe.txt").unwrap().unwrap(), b"safe");
+    for name in unsafe_names {
+        assert!(!result.contains(name), "{name}");
+    }
 }
 
 fn part(archive: &mut Archive<'_>, path: &str) -> XmlDoc {
@@ -617,8 +667,8 @@ fn xlsx_accepts_dense_sheet_with_zero_padding_budget() {
 fn xlsx_trims_trailing_rows_without_visible_text() {
     let bytes = xlsx(
         concat!(
-            r#"<c r="A1"/><c r="A2"><v>2</v></c><c r="B2" s="0"/>"#,
-            r#"<c r="A3" s="0"/><c r="A4" s="0" t="str"><v> </v></c>"#,
+            r#"<c r="A1" /><c r="A2"><v>2</v></c><c r="B2" s="0" />"#,
+            r#"<c r="A3" s="0" /><c r="A4" s="0" t="str"><v> </v></c>"#,
             r#"<c r="C5" t="str"><v> &#xA; </v></c>"#,
         ),
         "",
@@ -663,7 +713,7 @@ fn pptx_charges_only_generated_cells() {
     };
     let bytes = write(&document(table.clone()), &options, &mut context).unwrap();
     let doc = read("pptx", &bytes, &mut context).unwrap();
-    let Block::Table(dense) = &doc.blocks[0] else {
+    let [Block::Header(..), Block::Table(dense)] = doc.blocks.as_slice() else {
         panic!("table")
     };
     assert_eq!(dense.head.rows[0].cells.len(), 2);
@@ -733,9 +783,9 @@ fn pptx_highlights_code_with_the_selected_style() {
         String::from_utf8(archive.read("ppt/slides/slide1.xml").unwrap().unwrap()).unwrap()
     };
     let pygments = slide(&options);
-    assert!(pygments.contains(r#"<a:pPr lvl="0" indent="0"><a:buNone/>"#));
-    assert!(pygments.contains(r#"<a:rPr b="1"><a:solidFill><a:srgbClr val="007020"/></a:solidFill><a:latin typeface="Courier"/></a:rPr><a:t>def</a:t>"#));
-    assert!(pygments.contains("<a:br/>"));
+    assert!(pygments.contains(r#"<a:pPr lvl="0" indent="0"><a:buNone />"#));
+    assert!(pygments.contains(r#"<a:rPr b="1"><a:solidFill><a:srgbClr val="007020" /></a:solidFill><a:latin typeface="Courier" /></a:rPr><a:t>def</a:t>"#));
+    assert!(pygments.contains("<a:br />"));
     options.highlight_method = HighlightMethod::Style("monochrome".into());
     assert_ne!(slide(&options), pygments);
     options.highlight_method = HighlightMethod::None;
@@ -800,9 +850,9 @@ fn pptx_master_styles_and_ordered_list_indents() {
     assert_eq!(theme.root.attr_unqualified("name"), Some("Randoc"));
     let slide = String::from_utf8(pkg.read("ppt/slides/slide1.xml").unwrap().unwrap()).unwrap();
     assert!(slide.contains(
-        r#"<a:pPr lvl="0" indent="-342900" marL="342900"><a:buAutoNum type="arabicPeriod"/>"#
+        r#"<a:pPr lvl="0" indent="-342900" marL="342900"><a:buAutoNum type="arabicPeriod" />"#
     ));
-    assert!(slide.contains(r#"<a:pPr lvl="1" indent="-342900" marL="685800"><a:buAutoNum type="arabicPeriod" startAt="4"/>"#));
+    assert!(slide.contains(r#"<a:pPr lvl="1" indent="-342900" marL="685800"><a:buAutoNum type="arabicPeriod" startAt="4" />"#));
 }
 
 #[test]
@@ -910,12 +960,12 @@ fn pptx_toc_handles_minimum_heading_level_and_keeps_column_notes() {
     let bytes = write(&doc, &options, &mut context).unwrap();
     let mut package = Archive::open(&bytes, ArchiveLimits::from_limits(&context.limits)).unwrap();
     let toc = String::from_utf8(package.read("ppt/slides/slide1.xml").unwrap().unwrap()).unwrap();
-    assert!(toc.contains(r#"<a:pPr lvl="0"/>"#));
+    assert!(toc.contains(r#"<a:pPr lvl="0" />"#));
     assert!(toc.contains("Minimum level"));
     assert!(!toc.contains(">Notes<"));
     let notes = String::from_utf8(
         package
-            .read("ppt/notesSlides/randocNotes3.xml")
+            .read("ppt/notesSlides/notesSlide1.xml")
             .unwrap()
             .unwrap(),
     )

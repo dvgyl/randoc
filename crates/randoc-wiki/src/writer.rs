@@ -68,7 +68,10 @@ pub(crate) fn write(
         }
         Ok(template.render(fields).render(None))
     } else if writer.notes.is_empty() {
-        if body.trim_end_matches('\n').is_empty() {
+        if wiki == Wiki::Doku && matches!(doc.blocks.last(), Some(Block::Div(..))) {
+            body.pop();
+            Ok(body)
+        } else if body.trim_end_matches('\n').is_empty() {
             Ok(String::new())
         } else {
             body.truncate(body.trim_end_matches('\n').len());
@@ -114,11 +117,38 @@ impl Writer<'_> {
     }
 
     fn blocks(&mut self, blocks: &[Block], depth: usize) -> Result<String> {
+        self.blocks_after_anchor(blocks, depth, false)
+    }
+
+    fn blocks_after_anchor(
+        &mut self,
+        blocks: &[Block],
+        depth: usize,
+        mut after_anchor: bool,
+    ) -> Result<String> {
         self.depth(depth)?;
         let mut out = String::new();
         let mut skipped_raw = false;
         for block in blocks {
-            let text = self.block(block, depth)?;
+            let text = if after_anchor && let Block::Div(attr, children) = block {
+                self.jira_div(attr, children, depth + 1, true)?
+            } else {
+                let text = self.block(block, depth)?;
+                if after_anchor
+                    && !text.is_empty()
+                    && !matches!(
+                        block,
+                        Block::Plain(_)
+                            | Block::Para(_)
+                            | Block::LineBlock(_)
+                            | Block::RawBlock(..)
+                    )
+                {
+                    out.push_str("\n\n");
+                }
+                text
+            };
+            after_anchor &= text.is_empty();
             if self.wiki == Wiki::Doku && text.is_empty() && matches!(block, Block::RawBlock(..)) {
                 if !skipped_raw {
                     out.push('\n');
@@ -193,6 +223,13 @@ impl Writer<'_> {
                 _ => "----\n\n".into(),
             },
             Block::CodeBlock(attr, code) => self.code(attr, code),
+            Block::RawBlock(format, text) if self.wiki == Wiki::Jira && format == "jira" => {
+                if text.is_empty() {
+                    String::new()
+                } else {
+                    format!("{text}\n\n")
+                }
+            }
             Block::RawBlock(format, text)
                 if format.0 == self.wiki.name()
                     || self.wiki == Wiki::Media && format.0 == "html" =>
@@ -229,6 +266,9 @@ impl Writer<'_> {
                 self.in_figure = previous;
                 result?
             }
+            Block::Div(attr, blocks) if self.wiki == Wiki::Jira => {
+                self.jira_div(attr, blocks, depth + 1, false)?
+            }
             Block::Div(attr, blocks) => {
                 let content = self.blocks(blocks, depth + 1)?;
                 match self.wiki {
@@ -237,15 +277,7 @@ impl Writer<'_> {
                         html_attr(attr),
                         ensure_newline(content)
                     ),
-                    Wiki::Jira if attr.has_class("panel") => format!(
-                        "{{panel{}}}\n{}{{panel}}\n",
-                        jira_args(attr),
-                        ensure_newline(content.trim_end_matches('\n').into())
-                    ),
-                    Wiki::Jira if let Some(color) = attr.get("color") => format!(
-                        "{{color:{color}}}\n{}\n{{color}}\n",
-                        content.trim_end_matches('\n')
-                    ),
+                    Wiki::Doku if content.is_empty() => "\n\n".into(),
                     Wiki::Doku => content + "\n",
                     _ => content,
                 }
@@ -258,6 +290,35 @@ impl Writer<'_> {
                 format!("{}\n\n", lines.join(self.line_break()))
             }
         })
+    }
+
+    fn jira_div(
+        &mut self,
+        attr: &Attr,
+        blocks: &[Block],
+        depth: usize,
+        after_anchor: bool,
+    ) -> Result<String> {
+        let panel = attr.has_class("panel") || !attr.attributes.is_empty();
+        let has_anchor = !attr.id.is_empty();
+        let content =
+            self.blocks_after_anchor(blocks, depth, has_anchor || after_anchor && !panel)?;
+        let content = if has_anchor {
+            let content = if content.is_empty() { "\n\n" } else { &content };
+            format!("{{anchor:{}}}{content}", attr.id)
+        } else {
+            content
+        };
+        if panel {
+            let separator = if after_anchor { "\n\n" } else { "" };
+            let content = content.strip_suffix('\n').unwrap_or(&content);
+            Ok(format!(
+                "{separator}{{panel{}}}\n{content}{{panel}}\n",
+                jira_args(attr)
+            ))
+        } else {
+            Ok(content)
+        }
     }
 
     fn definitions(
@@ -395,13 +456,18 @@ impl Writer<'_> {
             }
             Wiki::Doku => {
                 let lang = lang.map_or_else(String::new, |lang| format!(" {lang}"));
-                format!("<code{lang}>\n{code}\n</code>\n\n")
+                format!("<code{lang}>\n{}</code>\n\n", ensure_newline(code.into()))
             }
             Wiki::Jira => {
-                if let Some(lang) = lang {
-                    format!("{{code:{lang}}}\n{code}\n{{code}}\n")
+                let anchor = if attr.id.is_empty() {
+                    String::new()
                 } else {
-                    format!("{{noformat}}\n{code}{{noformat}}\n")
+                    format!("{{anchor:{}}}\n\n", attr.id)
+                };
+                if let Some(lang) = lang {
+                    format!("{anchor}{{code:{lang}}}\n{code}\n{{code}}\n")
+                } else {
+                    format!("{anchor}{{noformat}}\n{code}{{noformat}}\n")
                 }
             }
             Wiki::Creole => String::new(),
@@ -421,7 +487,7 @@ impl Writer<'_> {
             Wiki::Jira if matches!(blocks, [Block::Para(_) | Block::Plain(_)]) => {
                 format!("bq. {body}\n")
             }
-            Wiki::Jira => format!("{{quote}}\n{body}{{quote}}\n"),
+            Wiki::Jira => format!("{{quote}}\n{body}\n{{quote}}\n"),
             Wiki::Doku => {
                 let mut out = String::new();
                 for block in blocks {
@@ -944,7 +1010,9 @@ impl Writer<'_> {
             format!("{width}x{height}")
         };
         Ok(match self.wiki {
-            Wiki::Media if url_start(url) => format!("<nowiki></nowiki>{url}<nowiki></nowiki>"),
+            Wiki::Media if url_start(url) || url.starts_with("data:") => {
+                format!("<nowiki></nowiki>{url}<nowiki></nowiki>")
+            }
             Wiki::Media => {
                 let mut out = format!("[[File:{url}");
                 let thumb_title = thumb.then(|| target.title.strip_prefix("fig:")).flatten();
@@ -999,17 +1067,17 @@ impl Writer<'_> {
             }
             Wiki::Jira => {
                 let mut args = attr.classes.clone();
-                args.extend(
-                    attr.attributes
-                        .iter()
-                        .map(|(key, value)| format!("{key}={value}")),
-                );
                 if !target.title.is_empty() {
                     args.push(format!("title={}", target.title));
                 }
                 if !body.is_empty() {
                     args.push(format!("alt={body}"));
                 }
+                args.extend(
+                    attr.attributes
+                        .iter()
+                        .map(|(key, value)| format!("{key}={value}")),
+                );
                 if args.is_empty() {
                     format!("!{url}!")
                 } else {

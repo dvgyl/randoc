@@ -38,6 +38,10 @@ impl<V> Scoped<V> {
         self.values.get(name).map(|(value, _)| value)
     }
 
+    pub(crate) fn is_empty(&self) -> bool {
+        self.values.is_empty()
+    }
+
     pub(crate) fn contains_key(&self, name: &str) -> bool {
         self.values.contains_key(name)
     }

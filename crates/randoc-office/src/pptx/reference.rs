@@ -1,6 +1,7 @@
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::fmt::Write;
 
+use randoc_archive::media::is_safe_media_path;
 use randoc_archive::opc::{self, Relationship};
 use randoc_archive::xml::{XmlElement, XmlNode, escape_xml_attr};
 use randoc_ast::Text;
@@ -23,12 +24,12 @@ pub(super) const NAMESPACES: &str = concat!(
 pub(super) const TYPES: &str = "http://schemas.openxmlformats.org/package/2006/content-types";
 const MIME: &str = "application/vnd.openxmlformats-officedocument.";
 pub(super) const TREE: &str = concat!(
-    r#"<p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr>"#,
-    r#"<p:grpSpPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/>"#,
-    r#"<a:chOff x="0" y="0"/><a:chExt cx="0" cy="0"/></a:xfrm></p:grpSpPr>"#
+    r#"<p:nvGrpSpPr><p:cNvPr id="1" name="" /><p:cNvGrpSpPr /><p:nvPr /></p:nvGrpSpPr>"#,
+    r#"<p:grpSpPr><a:xfrm><a:off x="0" y="0" /><a:ext cx="0" cy="0" />"#,
+    r#"<a:chOff x="0" y="0" /><a:chExt cx="0" cy="0" /></a:xfrm></p:grpSpPr>"#
 );
-const COLORS: &str = r#"<p:clrMap bg1="lt1" tx1="dk1" bg2="lt2" tx2="dk2" accent1="accent1" accent2="accent2" accent3="accent3" accent4="accent4" accent5="accent5" accent6="accent6" hlink="hlink" folHlink="folHlink"/>"#;
-pub(super) const COLOR_OVERRIDE: &str = "<p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr>";
+const COLORS: &str = r#"<p:clrMap bg1="lt1" tx1="dk1" bg2="lt2" tx2="dk2" accent1="accent1" accent2="accent2" accent3="accent3" accent4="accent4" accent5="accent5" accent6="accent6" hlink="hlink" folHlink="folHlink" />"#;
+pub(super) const COLOR_OVERRIDE: &str = "<p:clrMapOvr><a:masterClrMapping /></p:clrMapOvr>";
 
 #[derive(Clone, Copy)]
 pub(super) enum Layout {
@@ -104,7 +105,7 @@ impl Bounds {
     pub fn transform(self, prefix: &str) -> String {
         let Self { x, y, w, h } = self;
         format!(
-            r#"<{prefix}:xfrm><a:off x="{x}" y="{y}"/><a:ext cx="{w}" cy="{h}"/></{prefix}:xfrm>"#
+            r#"<{prefix}:xfrm><a:off x="{x}" y="{y}" /><a:ext cx="{w}" cy="{h}" /></{prefix}:xfrm>"#
         )
     }
 
@@ -135,6 +136,7 @@ pub(super) struct Reference {
     pub main_rels: Vec<Relationship>,
     pub root_rels: Vec<Relationship>,
     pub notes_master: String,
+    next_part_number: HashMap<(String, String), usize>,
     layouts: Vec<LayoutPart>,
     width: i64,
     height: i64,
@@ -181,7 +183,7 @@ impl Reference {
     pub fn add_xml(&mut self, path: String, kind: &str, xml: String) {
         self.overrides
             .insert(path.clone(), format!("{MIME}{kind}+xml"));
-        self.parts.insert(path, xml.into_bytes());
+        self.parts.insert(path, with_declaration(xml).into_bytes());
     }
 
     pub fn add_rels(&mut self, owner: &str, relationships: &[Relationship]) {
@@ -195,8 +197,8 @@ impl Reference {
         if !self.notes_master.is_empty() {
             return;
         }
-        let path = unused_path(&self.parts, "ppt/notesMasters/randocNotesMaster", "xml");
-        let theme = unused_path(&self.parts, "ppt/theme/randocNotesTheme", "xml");
+        let path = self.unused_path("ppt/notesMasters/notesMaster", "xml");
+        let theme = self.unused_path("ppt/theme/theme", "xml");
         self.add_xml(theme.clone(), "theme", theme_xml());
         self.add_xml(
             path.clone(),
@@ -215,12 +217,27 @@ impl Reference {
         self.notes_master = path;
     }
 
+    pub fn unused_path(&mut self, prefix: &str, ext: &str) -> String {
+        let number = self
+            .next_part_number
+            .entry((prefix.to_owned(), ext.to_owned()))
+            .or_insert(1);
+        loop {
+            let path = format!("{prefix}{number}.{ext}");
+            *number += 1;
+            if !self.parts.contains_key(&path) {
+                return path;
+            }
+        }
+    }
+
     fn import(package: &mut Package<'_>, context: &mut Context) -> Result<Self> {
         let mut roots = package.relationships("")?;
         let main_path = roots
             .iter()
             .find(|rel| rel_kind(rel, "officeDocument"))
             .and_then(|rel| internal_target("", rel))
+            .filter(|path| is_safe_media_path(path))
             .ok_or_else(|| package.error("Missing presentation relationship"))?;
         let main = package.xml(&main_path)?;
         let mut main_rels = package.relationships(&main_path)?;
@@ -270,7 +287,7 @@ impl Reference {
             .and_then(|rel| internal_target(&main_path, rel))
             .unwrap_or_default();
         while let Some(path) = queue.pop() {
-            if !seen.insert(path.clone()) {
+            if !is_safe_media_path(&path) || !seen.insert(path.clone()) {
                 continue;
             }
             let relations = package.relationships(&path)?;
@@ -328,6 +345,34 @@ impl Reference {
             }
             parts.insert(path, bytes);
         }
+        // Pandoc keeps the other entries of the reference too, such as a theme
+        // that no part uses, but not its slides and their notes.
+        let names: Vec<String> = package
+            .archive
+            .entry_names()
+            .into_iter()
+            .map(str::to_owned)
+            .collect();
+        for name in names {
+            if seen.contains(&name)
+                || parts.contains_key(&name)
+                || !is_safe_media_path(&name)
+                || name.starts_with("ppt/slides/")
+                || name.starts_with("ppt/notesSlides/")
+                || matches!(
+                    name.as_str(),
+                    "[Content_Types].xml"
+                        | "_rels/.rels"
+                        | "docProps/core.xml"
+                        | "docProps/custom.xml"
+                )
+            {
+                continue;
+            }
+            seen.insert(name.clone());
+            let bytes = package.read(&name)?;
+            parts.insert(name, bytes);
+        }
         overrides.retain(|path, _| seen.contains(path));
         let mut reference = Self {
             parts,
@@ -338,6 +383,7 @@ impl Reference {
             main_rels,
             root_rels: roots,
             notes_master,
+            next_part_number: HashMap::new(),
             layouts: Vec::new(),
             width,
             height,
@@ -347,8 +393,8 @@ impl Reference {
             .filter(|layout| !layouts.contains_key(layout.name()))
             .collect();
         if !missing.is_empty() {
-            let master = unused_path(&reference.parts, "ppt/slideMasters/randocMaster", "xml");
-            let theme = unused_path(&reference.parts, "ppt/theme/randocTheme", "xml");
+            let master = reference.unused_path("ppt/slideMasters/randocMaster", "xml");
+            let theme = reference.unused_path("ppt/theme/randocTheme", "xml");
             let fallback = reference.add_master(&master, &theme, &missing, "randocLayout");
             reference.register_master(&master, &package.xml_limits)?;
             for (layout, part) in missing.into_iter().zip(fallback) {
@@ -390,7 +436,7 @@ impl Reference {
             .ok_or_else(|| Error::App("No slide master relationship ID is available".into()))?;
         let rel_id = &rel.id;
         let entry =
-            format!(r#"<p:sldMasterId xmlns:p="{P}" xmlns:r="{R}" id="{id}" r:id="{rel_id}"/>"#);
+            format!(r#"<p:sldMasterId xmlns:p="{P}" xmlns:r="{R}" id="{id}" r:id="{rel_id}" />"#);
         let parse = |text| {
             randoc_archive::xml::parse(text, limits, randoc_archive::xml::XmlOptions::default())
                 .map(|doc| XmlNode::Element(doc.root))
@@ -413,7 +459,7 @@ impl Reference {
         let width = 9_144_000;
         let height = 6_858_000;
         let main = format!(
-            r#"<p:presentation {NAMESPACES}><p:sldMasterIdLst><p:sldMasterId id="2147483648" r:id="rId1"/></p:sldMasterIdLst><p:sldSz cx="{width}" cy="{height}" type="screen4x3"/><p:notesSz cx="{height}" cy="{width}"/></p:presentation>"#
+            r#"<p:presentation {NAMESPACES}><p:sldMasterIdLst><p:sldMasterId id="2147483648" r:id="rId1" /></p:sldMasterIdLst><p:sldSz cx="{width}" cy="{height}" type="screen4x3" /><p:notesSz cx="{height}" cy="{width}" /></p:presentation>"#
         );
         let main = PartXml::parse(&main, &xml_limits(&context.limits))
             .map_err(|error| Error::App(error.format_pandoc()))?;
@@ -445,6 +491,7 @@ impl Reference {
                 false,
             )],
             notes_master: String::new(),
+            next_part_number: HashMap::new(),
             layouts: Vec::new(),
             width,
             height,
@@ -480,7 +527,7 @@ impl Reference {
             reference.add_xml(
                 format!("ppt/{file}"),
                 name,
-                format!("<{root} {NAMESPACES}{attributes}/>"),
+                format!("<{root} {NAMESPACES}{attributes} />"),
             );
         }
         Ok(reference)
@@ -503,12 +550,12 @@ impl Reference {
         let mut layout_ids = String::new();
         for (index, &layout) in kinds.iter().enumerate() {
             let number = index + 1;
-            let path = unused_path(&self.parts, &format!("ppt/slideLayouts/{prefix}"), "xml");
+            let path = self.unused_path(&format!("ppt/slideLayouts/{prefix}"), "xml");
             let target = relative_target(master, &path);
             master_rels.push(relationship(number + 1, "slideLayout", target, false));
             let _ = write!(
                 layout_ids,
-                r#"<p:sldLayoutId id="{}" r:id="rId{}"/>"#,
+                r#"<p:sldLayoutId id="{}" r:id="rId{}" />"#,
                 2_147_483_649usize + index,
                 number + 1
             );
@@ -519,7 +566,7 @@ impl Reference {
                 let position = default_bounds(layout, slot, self.width, self.height).transform("a");
                 let _ = write!(
                     shapes,
-                    r#"<p:sp><p:nvSpPr><p:cNvPr id="{}" name="{kind}"/><p:cNvSpPr/><p:nvPr><p:ph type="{kind}" idx="{slot}"/></p:nvPr></p:nvSpPr><p:spPr>{position}</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>"#,
+                    r#"<p:sp><p:nvSpPr><p:cNvPr id="{}" name="{kind}" /><p:cNvSpPr /><p:nvPr><p:ph type="{kind}" idx="{slot}" /></p:nvPr></p:nvSpPr><p:spPr>{position}</p:spPr><p:txBody><a:bodyPr /><a:lstStyle /><a:p /></p:txBody></p:sp>"#,
                     index + 2
                 );
             }
@@ -548,7 +595,7 @@ impl Reference {
 
 fn master_styles() -> String {
     let mut styles = String::from(concat!(
-        "<p:txStyles><p:titleStyle><a:lvl1pPr><a:buNone/><a:defRPr sz=\"3200\"/></a:lvl1pPr>",
+        "<p:txStyles><p:titleStyle><a:lvl1pPr><a:buNone /><a:defRPr sz=\"3200\" /></a:lvl1pPr>",
         "</p:titleStyle><p:bodyStyle>"
     ));
     for level in 1..=9 {
@@ -556,10 +603,10 @@ fn master_styles() -> String {
         let bullet = ["•", "◦", "▪"][(level - 1) % 3];
         let _ = write!(
             styles,
-            r#"<a:lvl{level}pPr marL="{margin}" indent="-285750"><a:buFont typeface="Arial"/><a:buChar char="{bullet}"/><a:defRPr sz="2000"/></a:lvl{level}pPr>"#
+            r#"<a:lvl{level}pPr marL="{margin}" indent="-285750"><a:buFont typeface="Arial" /><a:buChar char="{bullet}" /><a:defRPr sz="2000" /></a:lvl{level}pPr>"#
         );
     }
-    styles.push_str("</p:bodyStyle><p:otherStyle><a:defPPr><a:buNone/><a:defRPr sz=\"2000\"/></a:defPPr></p:otherStyle></p:txStyles>");
+    styles.push_str("</p:bodyStyle><p:otherStyle><a:defPPr><a:buNone /><a:defRPr sz=\"2000\" /></a:defPPr></p:otherStyle></p:txStyles>");
     styles
 }
 
@@ -610,27 +657,17 @@ fn theme_xml() -> String {
     for (name, value) in colors {
         let _ = write!(
             palette,
-            r#"<a:{name}><a:srgbClr val="{value}"/></a:{name}>"#
+            r#"<a:{name}><a:srgbClr val="{value}" /></a:{name}>"#
         );
     }
-    let font = r#"<a:latin typeface="Arial"/><a:ea typeface=""/><a:cs typeface=""/>"#;
-    let fill = r#"<a:solidFill><a:schemeClr val="phClr"/></a:solidFill>"#;
+    let font = r#"<a:latin typeface="Arial" /><a:ea typeface="" /><a:cs typeface="" />"#;
+    let fill = r#"<a:solidFill><a:schemeClr val="phClr" /></a:solidFill>"#;
     let fills = fill.repeat(3);
     let lines = format!("<a:ln>{fill}</a:ln>").repeat(3);
-    let effects = "<a:effectStyle><a:effectLst/></a:effectStyle>".repeat(3);
+    let effects = "<a:effectStyle><a:effectLst /></a:effectStyle>".repeat(3);
     format!(
         r#"<a:theme xmlns:a="{A}" name="Randoc"><a:themeElements><a:clrScheme name="Randoc">{palette}</a:clrScheme><a:fontScheme name="Arial"><a:majorFont>{font}</a:majorFont><a:minorFont>{font}</a:minorFont></a:fontScheme><a:fmtScheme name="Randoc"><a:fillStyleLst>{fills}</a:fillStyleLst><a:lnStyleLst>{lines}</a:lnStyleLst><a:effectStyleLst>{effects}</a:effectStyleLst><a:bgFillStyleLst>{fills}</a:bgFillStyleLst></a:fmtScheme></a:themeElements></a:theme>"#
     )
-}
-
-pub(super) fn unused_path(parts: &BTreeMap<String, Vec<u8>>, prefix: &str, ext: &str) -> String {
-    for number in 1.. {
-        let path = format!("{prefix}{number}.{ext}");
-        if !parts.contains_key(&path) {
-            return path;
-        }
-    }
-    unreachable!()
 }
 
 pub(super) fn relative_target(owner: &str, target: &str) -> String {
@@ -664,8 +701,24 @@ pub(super) fn relationship(
     }
 }
 
+/// Starts a part that Randoc writes with the XML declaration, as Pandoc does.
+pub(super) fn with_declaration(xml: String) -> String {
+    if xml.starts_with("<?xml") {
+        xml
+    } else {
+        format!("{DECLARATION}{xml}")
+    }
+}
+
+pub(super) const DECLARATION: &str = r#"<?xml version="1.0" encoding="UTF-8"?>"#;
+
 pub(super) fn relationship_xml(relationships: &[Relationship]) -> String {
-    let mut xml = format!(r#"<Relationships xmlns="{RELS}">"#);
+    let mut xml = format!(r#"{DECLARATION}<Relationships xmlns="{RELS}""#);
+    if relationships.is_empty() {
+        xml.push_str(" />");
+        return xml;
+    }
+    xml.push('>');
     for rel in relationships {
         xml.push_str("<Relationship Id=\"");
         escape_xml_attr(&rel.id, &mut xml);
@@ -676,7 +729,7 @@ pub(super) fn relationship_xml(relationships: &[Relationship]) -> String {
         if rel.external {
             xml.push_str("\" TargetMode=\"External");
         }
-        xml.push_str("\"/>");
+        xml.push_str("\" />");
     }
     xml.push_str("</Relationships>");
     xml

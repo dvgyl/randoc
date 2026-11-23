@@ -12,7 +12,9 @@ fn escape(text: &str) -> String {
     while let Some(c) = chars.next() {
         let before = prev.is_none_or(|c: char| c.is_whitespace() || "-:/'\"<([{".contains(c));
         let after = chars.peek().is_none_or(|next| {
-            next.is_whitespace() || "-:/'\">)]}.,;!?".contains(*next) || *next == '_' && c == '_'
+            next.is_whitespace()
+                || "-:/'\">)]}.,;!?".contains(*next)
+                || c == '_' && matches!(next, '_' | '*' | '`' | '|')
         });
         let standalone_backtick =
             c == '`' && prev.is_none() && chars.peek().is_some_and(|c| c.is_whitespace());
@@ -53,6 +55,7 @@ fn escape_smart(mut text: &str) -> String {
                 out.push('\\');
                 out.push(c);
             }
+            '\u{2019}' => out.push('\''),
             '\u{2026}' => out.push_str("..."),
             '\u{2013}' => out.push_str("--"),
             '\u{2014}' => out.push_str("---"),
@@ -151,6 +154,9 @@ impl Writer<'_> {
             Inline::Strikeout(ils) => wrap("[STRIKEOUT:", literal(escape(&stringify(ils))), "]"),
             Inline::Subscript(ils) => wrap(":sub:`", literal(escape(&stringify(ils))), "`"),
             Inline::Superscript(ils) => wrap(":sup:`", literal(escape(&stringify(ils))), "`"),
+            Inline::Span(attr, ils) if attr.has_class("mark") => {
+                wrap(":mark:`", self.inlines(ils, depth)?, "`")
+            }
             Inline::Span(_, ils) | Inline::SmallCaps(ils) | Inline::Cite(_, ils) => {
                 self.inlines(ils, depth)?
             }
@@ -206,9 +212,8 @@ impl Writer<'_> {
             Inline::Image(a, label, target) => self.image(a, label, target, None, depth)?,
             Inline::Note(blocks) => {
                 let number = self.notes.len() + 1;
-                self.notes.push(Doc::default());
-                let body = self.blocks(blocks, depth)?;
-                self.notes[number - 1] = literal(format!(".. [{number}]")).above(nest(3, body));
+                self.check_depth(depth)?;
+                self.notes.push((blocks.clone(), depth));
                 literal(format!(" [{number}]_"))
             }
         })
@@ -237,7 +242,49 @@ impl Writer<'_> {
             }
         }
         let mark = if strong { "**" } else { "*" };
-        Ok(wrap(mark, self.inline_sequence(plain, depth)?, mark))
+        let mut docs = Vec::new();
+        let mut start = 0;
+        for (index, inline) in plain.iter().enumerate() {
+            if matches!(inline, Inline::Link(..) | Inline::Image(..)) {
+                if start < index {
+                    let run = &plain[start..index];
+                    let first = usize::from(matches!(run.first(), Some(Inline::Space)));
+                    let end = run.len() - usize::from(matches!(run.last(), Some(Inline::Space)));
+                    if first > 0 {
+                        docs.push(space());
+                    }
+                    if first < end {
+                        docs.push(wrap(
+                            mark,
+                            self.inline_sequence(run[first..end].iter().copied(), depth)?,
+                            mark,
+                        ));
+                    }
+                    if end > 0 && end < run.len() {
+                        docs.push(space());
+                    }
+                }
+                docs.push(self.inline(inline, depth)?);
+                start = index + 1;
+            }
+        }
+        if start == 0 {
+            return Ok(wrap(mark, self.inline_sequence(plain, depth)?, mark));
+        }
+        if start < plain.len() {
+            if matches!(plain[start], Inline::Space) {
+                docs.push(space());
+                start += 1;
+            }
+            if start < plain.len() {
+                docs.push(wrap(
+                    mark,
+                    self.inline_sequence(plain[start..].iter().copied(), depth)?,
+                    mark,
+                ));
+            }
+        }
+        Ok(hcat(docs))
     }
 
     fn link(&mut self, label: &[Inline], target: &Target, depth: usize) -> Result<Doc> {
@@ -321,8 +368,24 @@ pub(super) fn image_options(
     if !a.id.is_empty() {
         out.push(literal(format!("   :name: {}", a.id)));
     }
-    if !a.classes.is_empty() {
-        out.push(literal(format!("   :class: {}", a.classes.join(" "))));
+    match a.classes.as_slice() {
+        [align]
+            if matches!(
+                align.as_str(),
+                "align-top" | "align-middle" | "align-bottom"
+            ) =>
+        {
+            out.push(literal(format!("   :align: {}", &align[6..])));
+        }
+        [align]
+            if matches!(
+                align.as_str(),
+                "align-left" | "align-center" | "align-right"
+            ) => {}
+        classes if !classes.is_empty() => {
+            out.push(literal(format!("   :class: {}", classes.join(" "))));
+        }
+        _ => {}
     }
     for name in ["width", "height"] {
         if let Some(value) = a.get(name) {

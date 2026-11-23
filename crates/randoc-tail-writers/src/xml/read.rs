@@ -128,7 +128,7 @@ fn decode(nodes: &[XmlNode], max_depth: usize, budget: &mut usize) -> Result<Vec
                     return Err(error("the document is nested too deeply"));
                 }
                 let children = child_kind(kind, name)?;
-                if name == "Str" {
+                if matches!(name, "Str" | "MetaBool") {
                     values.extend(build(element, Vec::new(), budget)?);
                     continue;
                 }

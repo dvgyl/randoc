@@ -68,12 +68,24 @@ impl SlideReader<'_, '_> {
             return Ok(());
         };
         let rels = rel_index(self.package.relationships(path)?);
+        let title = tree
+            .children_ns(P, "sp")
+            .find(|shape| is_title(shape))
+            .and_then(|shape| shape.child(P, "txBody"))
+            .map(body_text)
+            .filter(|title| !title.is_empty())
+            .unwrap_or_else(|| format!("Slide {number}"));
+        output.push(Block::Header(
+            2,
+            Attr::new(format!("slide-{number}"), vec![], vec![]),
+            vec![Inline::Str(title)],
+        ));
         for shape in tree
             .elements()
             .filter(|el| el.name.ns.as_deref() == Some(P))
         {
             match shape.name.local.as_str() {
-                "sp" => shape_text(shape, number, output),
+                "sp" if !is_title(shape) => shape_text(shape, output),
                 "pic" => {
                     if let Some(image) = self.image(path, &rels, shape)? {
                         output.push(Block::Para(vec![image]));
@@ -308,44 +320,56 @@ fn body_text(body: &XmlElement) -> String {
         .join(" ")
 }
 
-fn shape_text(shape: &XmlElement, number: usize, output: &mut Vec<Block>) {
+fn is_title(shape: &XmlElement) -> bool {
+    matches!(
+        shape
+            .child(P, "nvSpPr")
+            .and_then(|props| props.child(P, "nvPr"))
+            .and_then(|props| props.child(P, "ph"))
+            .and_then(|ph| ph.attr_unqualified("type")),
+        Some("title" | "ctrTitle")
+    )
+}
+
+fn shape_text(shape: &XmlElement, output: &mut Vec<Block>) {
     let Some(body) = shape.child(P, "txBody") else {
         return;
     };
-    let ph = shape
-        .child(P, "nvSpPr")
-        .and_then(|props| props.child(P, "nvPr"))
-        .and_then(|props| props.child(P, "ph"));
-    let kind = ph.and_then(|ph| ph.attr_unqualified("type"));
-    if matches!(kind, Some("title" | "ctrTitle")) {
-        let mut title = body_text(body);
-        if title.is_empty() {
-            title = format!("Slide {number}");
-        }
-        output.push(Block::Header(
-            2,
-            Attr::new(format!("slide-{number}"), vec![], vec![]),
-            vec![Inline::Str(title)],
-        ));
-        return;
-    }
-    let default_bullet = ph.is_some() && matches!(kind, None | Some("body" | "obj"));
     let mut bullets = Vec::new();
+    let mut previous_level = None;
     for para in body.children_ns(A, "p") {
-        let properties = para.child(A, "pPr");
-        let is_bullet = properties.map_or(default_bullet, |props| {
-            props.child(A, "buNone").is_none()
-                && (props.child(A, "buChar").is_some() || props.child(A, "buAutoNum").is_some())
-        });
+        let level = bullet_level(para);
+        if level != previous_level {
+            flush_bullets(&mut bullets, output);
+        }
+        previous_level = level;
         let content = vec![Inline::Str(paragraph_text(para))];
-        if is_bullet {
+        if level.is_some() {
             bullets.push(vec![Block::Plain(content)]);
         } else {
-            flush_bullets(&mut bullets, output);
             output.push(Block::Para(content));
         }
     }
     flush_bullets(&mut bullets, output);
+}
+
+fn bullet_level(para: &XmlElement) -> Option<u8> {
+    let props = para.child(A, "pPr");
+    let explicit = props.is_some_and(|props| props.child(A, "buChar").is_some());
+    let symbol = para.children_ns(A, "r").any(|run| {
+        matches!(
+            run.child(A, "rPr")
+                .and_then(|props| props.child(A, "sym"))
+                .and_then(|sym| sym.attr_unqualified("typeface")),
+            Some("Wingdings" | "Wingdings 2" | "Wingdings 3")
+        )
+    });
+    (explicit || symbol).then(|| {
+        props
+            .and_then(|props| props.attr_unqualified("lvl"))
+            .and_then(|level| level.parse().ok())
+            .unwrap_or(0)
+    })
 }
 
 fn flush_bullets(bullets: &mut Vec<Vec<Block>>, output: &mut Vec<Block>) {

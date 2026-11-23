@@ -57,6 +57,19 @@ pub(crate) fn write(
         Format::T2t if matches!(doc.blocks.last(), Some(Block::Figure(_, caption, _)) if !caption.long.is_empty()) => {
             2
         }
+        Format::T2t
+            if matches!(doc.blocks.last(), Some(Block::Div(_, blocks))
+            if !body.is_empty() && !matches!(blocks.last(), Some(Block::Plain(_)))) =>
+        {
+            2
+        }
+        Format::Textile
+            if state.notes.is_empty()
+                && let Some(Block::CodeBlock(_, code)) = doc.blocks.last()
+                && textile_native_code(code) =>
+        {
+            1 + usize::from(code.ends_with('\n')) + usize::from(options.template.is_none())
+        }
         Format::Textile => state.notes.last().map_or(0, |note| {
             textile_note_spacing(note.blocks.last(), note.compact)
                 + usize::from(options.template.is_none())
@@ -77,23 +90,25 @@ pub(crate) fn write(
     if format == Format::T2t && options.table_of_contents {
         vars.insert("toc", Val::Bool(true));
     }
+    let body_is_empty = body.is_empty();
     vars.insert("body", Val::text(body));
     let mut text = template
         .render_limited(&vars, budget, budget)
         .ok_or_else(output_limit)?;
     if format == Format::Vimdoc
         && randoc_data::default_template("vimdoc").is_some_and(|source| source == template.source())
-        && let Some(Val::Simple(toc)) = vars.get("toc")
     {
-        let toc = state.render_unwrapped(toc)?;
-        let offset = text.find(&toc).map(|start| start + toc.len());
-        if let Some(offset) = offset
-            && text[offset..].starts_with("\n\n\n")
-        {
-            let after = &text[offset + 3..];
-            if after.starts_with(['=', '-']) {
+        if let Some(Val::Simple(toc)) = vars.get("toc") {
+            let toc = state.render_unwrapped(toc)?;
+            let offset = text.find(&toc).map(|start| start + toc.len());
+            if let Some(offset) = offset
+                && text[offset..].starts_with("\n\n\n")
+                && text[offset + 3..].starts_with(['=', '-'])
+            {
                 text.remove(offset);
             }
+        } else if body_is_empty && let Some(offset) = text.rfind("\n\n\n\n\n vim:tw=") {
+            text.replace_range(offset..offset + 3, "");
         }
     }
     Ok(text)
@@ -318,7 +333,6 @@ impl<'a, 'd> State<'a, 'd> {
                 Haddock if attr.has_class("identifier") => format!("'{s}'"),
                 Haddock if attr.has_class("module") => format!("\"{s}\""),
                 Haddock => format!("@{}@", escape(f, s)),
-                Vimdoc if s.starts_with(':') && !attr.id.is_empty() => s.clone(),
                 Vimdoc => format!("`{s}`"),
                 _ => s.clone(),
             }),
@@ -375,18 +389,29 @@ impl<'a, 'd> State<'a, 'd> {
             Inline::Span(attr, xs) if f == Textile && attr.has_class("underline") => {
                 self.enclose(xs, ("+", "+"))?
             }
-            Inline::Span(attr, xs) if f == Vimdoc && !attr.id.is_empty() => {
-                let doc = self.inlines(xs)?;
-                let label = self.render_unwrapped(&doc)?;
-                self.charge_generated(self.columns)?;
-                literal(self.vim_tag(&label, &attr.id, true))
+            Inline::Span(attr, xs) if f == Muse && !attr.is_empty() => {
+                let mut span = Doc::default();
+                if !attr.id.is_empty() {
+                    span += literal(format!("#{}", attr.id));
+                    if !xs.is_empty() {
+                        span += literal(" ");
+                    }
+                }
+                if attr.id.is_empty() || !xs.is_empty() {
+                    let open = attr.classes.first().map_or_else(
+                        || "<class>".into(),
+                        |class| format!("<class name=\"{class}\">"),
+                    );
+                    span += literal(open) + self.inlines(xs)? + literal("</class>");
+                }
+                span
             }
             Inline::Span(attr, xs) if f == Vimdoc && attr.has_class("smallcaps") => {
                 let doc = self.inlines(xs)?;
                 literal(self.render_unwrapped(&doc)?.to_uppercase())
             }
-            Inline::Span(attr, xs) if f == Haddock && !attr.id.is_empty() => {
-                literal(format!("#{}#", attr.id)) + self.inlines(xs)?
+            Inline::Span(attr, xs) if f == Haddock && !attr.id.is_empty() && xs.is_empty() => {
+                literal(format!("#{}#", attr.id))
             }
             Inline::Span(_, xs) | Inline::Cite(_, xs) => self.inlines(xs)?,
         };
@@ -528,22 +553,26 @@ impl<'a, 'd> State<'a, 'd> {
         } else {
             &target.title
         };
+        let dimension = |name| {
+            attr.get(name)
+                .and_then(randoc_html::shared::Dimension::parse)
+        };
         Ok(literal(match self.format {
             Format::Textile => {
-                let mut style = String::new();
-                for name in ["width", "height"] {
-                    if let Some(value) = attr
-                        .get(name)
-                        .and_then(randoc_html::shared::Dimension::parse)
-                    {
-                        let css = dimension_css(value, self.options.dpi);
-                        style.push_str(&format!("{name}:{css};"));
-                    }
-                }
-                let style = if style.is_empty() {
-                    style
+                let (width, height) = (dimension("width"), dimension("height"));
+                let style = if width.is_none() && height.is_none() {
+                    String::new()
                 } else {
-                    format!("{{{style}}}")
+                    let css = |value: Option<randoc_html::shared::Dimension>| {
+                        value.map_or_else(
+                            || "auto".into(),
+                            |value| {
+                                dimension_pixels(&value, self.options.dpi)
+                                    .map_or_else(|| value.css(), |pixels| format!("{pixels}px"))
+                            },
+                        )
+                    };
+                    format!("{{width:{};height:{};}}", css(width), css(height))
                 };
                 if title.is_empty() {
                     format!("!{style}{url}!")
@@ -559,10 +588,20 @@ impl<'a, 'd> State<'a, 'd> {
                 }
             }
             Format::T2t => {
+                let pixels = |name| {
+                    dimension(name).and_then(|value| dimension_pixels(&value, self.options.dpi))
+                };
+                let size = match (pixels("width"), pixels("height")) {
+                    (width, Some(height)) => {
+                        format!("?{}x{height}", width.as_deref().unwrap_or("0"))
+                    }
+                    (Some(width), None) => format!("?{width}"),
+                    (None, None) => String::new(),
+                };
                 if title.is_empty() {
-                    format!("[{url}]")
+                    format!("[{url}{size}]")
                 } else {
-                    format!("[{url}|{title}]")
+                    format!("[{url}{size}|{title}]")
                 }
             }
             Format::Haddock => {
@@ -627,9 +666,9 @@ impl<'a, 'd> State<'a, 'd> {
                 let blanks = match (self.format, previous, block) {
                     (Format::Textile, Some(Block::Para(_)), _) if self.textile_definition => 0,
                     (Format::Textile, Some(Block::CodeBlock(_, text)), _)
-                        if !text.contains("\n\n") =>
+                        if textile_native_code(text) =>
                     {
-                        2
+                        2 + usize::from(text.ends_with('\n'))
                     }
                     (Format::Textile, Some(Block::BlockQuote(quote)), _)
                         if matches!(quote.as_slice(), [Block::Para(_)] | [Block::Plain(_)]) =>
@@ -656,7 +695,7 @@ impl<'a, 'd> State<'a, 'd> {
                         2
                     }
                     (Format::T2t, Some(Block::CodeBlock(..)), _)
-                        if top_level && !matches!(block, Block::Para(_)) =>
+                        if top_level && !matches!(block, Block::Para(_) | Block::CodeBlock(..)) =>
                     {
                         2
                     }
@@ -884,7 +923,7 @@ impl<'a, 'd> State<'a, 'd> {
     fn code_block(&self, attr: &Attr, code: &str) -> Doc {
         let lang = attr.classes.first().map_or("", String::as_str);
         literal(match self.format {
-            Format::Textile if code.contains("\n\n") || code.starts_with('\n') => {
+            Format::Textile if !textile_native_code(code) => {
                 let class = if lang.is_empty() {
                     String::new()
                 } else {
@@ -904,8 +943,15 @@ impl<'a, 'd> State<'a, 'd> {
                 };
                 format!("bc{class}. {code}")
             }
-            Format::Muse => format!("<example>\n{code}\n</example>"),
-            Format::T2t => format!("```\n{code}\n```"),
+            Format::Muse | Format::T2t => {
+                let (open, close) = if self.format == Format::Muse {
+                    ("<example>", "</example>")
+                } else {
+                    ("```", "```")
+                };
+                let newline = if code.ends_with('\n') { "" } else { "\n" };
+                format!("{open}\n{code}{newline}{close}")
+            }
             Format::Haddock => code
                 .lines()
                 .map(|s| {
@@ -1024,17 +1070,18 @@ impl<'a, 'd> State<'a, 'd> {
                 .flat_map(|(_, definitions)| definitions)
                 .any(|blocks| matches!(blocks.first(), Some(Block::Para(_))));
         for (term, definitions) in items {
-            let term = if self.format == Format::Vimdoc {
-                if let [Inline::Code(attr, code)] = term.as_slice()
-                    && !attr.id.is_empty()
-                {
+            let term = match (self.format, term.as_slice()) {
+                (Format::Vimdoc, [Inline::Code(attr, code)]) if !attr.id.is_empty() => {
                     self.charge_generated(self.columns)?;
                     literal(self.vim_tag(code, &attr.id, true))
-                } else {
-                    self.inlines(term)?
                 }
-            } else {
-                self.inlines(term)?
+                (Format::Vimdoc, [Inline::Span(attr, xs)]) if !attr.id.is_empty() => {
+                    let doc = self.inlines(xs)?;
+                    let label = self.render_unwrapped(&doc)?;
+                    self.charge_generated(self.columns)?;
+                    literal(self.vim_tag(&label, &attr.id, true))
+                }
+                _ => self.inlines(term)?,
             };
             let mut row = match self.format {
                 Format::Textile => literal("<dt>") + term + literal("</dt>"),
@@ -1504,6 +1551,7 @@ impl<'a, 'd> State<'a, 'd> {
 
     fn html_table(&mut self, table: &Table) -> Result<Doc> {
         let mut table = table.clone();
+        table.attr.id.clear();
         if table
             .col_specs
             .iter()
@@ -1700,7 +1748,15 @@ fn textile_attributes(attr: &Attr) -> String {
     text
 }
 
+fn textile_native_code(code: &str) -> bool {
+    !code.starts_with('\n') && !code.contains("\n\n")
+}
+
 fn escape(format: Format, s: &str) -> String {
+    if format == Format::Muse && s.contains(['*', '=', '#', '<', '|']) {
+        let text = s.replace("</verbatim>", "<</verbatim><verbatim>/verbatim>");
+        return format!("<verbatim>{text}</verbatim>");
+    }
     let mut out = String::new();
     for c in s.chars() {
         let replacement = match (format, c) {
@@ -1718,12 +1774,6 @@ fn escape(format: Format, s: &str) -> String {
             (Format::Textile, '—') => " -- ",
             (Format::Textile, '–') => " - ",
             (Format::Textile, '…') => "...",
-            (Format::Muse, '*' | '=' | '#' | '<') => {
-                out.push_str("<verbatim>");
-                out.push(c);
-                out.push_str("</verbatim>");
-                continue;
-            }
             (Format::Haddock, '/' | '\'' | '`' | '"' | '@' | '<' | '\\') => {
                 out.push('\\');
                 out.push(c);
@@ -1903,20 +1953,21 @@ fn vim_variables(
     Ok(())
 }
 
-fn dimension_css(dimension: randoc_html::shared::Dimension, dpi: i64) -> String {
+fn dimension_pixels(dimension: &randoc_html::shared::Dimension, dpi: i64) -> Option<String> {
     use randoc_html::shared::{Dimension, Unit};
     let pixels = match dimension {
-        Dimension::Pixel(value) => return format!("{value}px"),
+        Dimension::Pixel(value) => return Some(value.clone()),
         Dimension::Length(value, unit) => match unit {
             Unit::Inch => value * dpi as f64,
             Unit::Centimeter => value / 2.54 * dpi as f64,
             Unit::Millimeter => value / 25.4 * dpi as f64,
             Unit::Point => value / 72.0 * dpi as f64,
             Unit::Pica => value / 6.0 * dpi as f64,
-            _ => return dimension.css(),
+            Unit::Em => value * (16.5 / 96.0) * dpi as f64,
+            Unit::Percent => return None,
         },
     };
-    format!("{}px", pixels.floor())
+    Some(format!("{}", pixels.floor()))
 }
 
 enum Content<'a> {

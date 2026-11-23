@@ -4,10 +4,8 @@
 //! of `allkeys.txt` and `UnicodeData.txt` 13.0.0 (Unicode License), written
 //! by `tools/collation_tables.py`.
 //!
-//! The tailorings of the library (the orders of languages such as Swedish)
-//! come from Perl data files with other licence terms; this port has none,
-//! and a tailored language sorts in root order (row I-CITE-17 of
-//! `docs/ISSUES.md`).
+//! Spanish treats ñ as a separate letter after n. Other languages use root
+//! order with the options for their language tag.
 
 use std::cmp::Ordering;
 use std::collections::{HashMap, VecDeque};
@@ -169,10 +167,23 @@ impl Table {
 
     /// `getCollationElements`, with the discontiguous matches of
     /// unblocked non-starters.
-    fn collation_elements(&self, cps: Vec<u32>) -> Vec<Element> {
+    fn collation_elements(&self, cps: Vec<u32>, spanish: bool) -> Vec<Element> {
         let mut out = Vec::with_capacity(cps.len());
         let mut queue: VecDeque<u32> = cps.into();
         while let Some(&c) = queue.front() {
+            let decomposed_enye = matches!(c, 0x4E | 0x6E) && queue.get(1) == Some(&0x303);
+            if spanish && (decomposed_enye || matches!(c, 0xD1 | 0xF1)) {
+                let base = if matches!(c, 0x4E | 0xD1) { 0x4E } else { 0x6E };
+                if let Some(([element], _, _)) = self.longest_prefix([&base].into_iter()) {
+                    // The root table leaves a slot after the primary weight of n.
+                    out.push(Element {
+                        l1: element.l1 + 1,
+                        ..*element
+                    });
+                    queue.drain(..1 + usize::from(decomposed_enye));
+                    continue;
+                }
+            }
             let Some((elements, consumed, mut node)) = self.longest_prefix(queue.iter()) else {
                 queue.pop_front();
                 out.extend(implicit_weight(c));
@@ -317,6 +328,8 @@ pub struct Collator {
     pub upper_first: bool,
     /// The text is normalized to NFD first.
     pub normalize: bool,
+    /// The Spanish alphabet puts ñ between n and o.
+    pub spanish: bool,
 }
 
 impl Collator {
@@ -350,6 +363,7 @@ impl Collator {
                 None => matches!(language, "mt" | "da" | "cu"),
             },
             normalize: keyword("kk") != Some("false"),
+            spanish: language == "es",
         }
     }
 
@@ -361,7 +375,7 @@ impl Collator {
         } else {
             text.chars().map(u32::from).collect()
         };
-        let mut elements = table.collation_elements(cps);
+        let mut elements = table.collation_elements(cps, self.spanish);
         let shifted = self.variable == VariableWeighting::Shifted;
         if shifted {
             shift_variables(&mut elements);
@@ -480,6 +494,21 @@ mod tests {
         assert_eq!(order(&collator, &["b", "B"]), ["B", "b"]);
         let fr_ca = crate::lang::parse_lang("fr-CA").ok();
         assert!(Collator::for_lang(fr_ca.as_ref()).french_accents);
+    }
+
+    #[test]
+    fn spanish_sorts_enye_after_n() {
+        let lang = crate::lang::parse_lang("es").ok();
+        let collator = Collator::for_lang(lang.as_ref());
+        assert_eq!(
+            order(&collator, &["Oñate", "Olmos", "Onush"]),
+            ["Olmos", "Onush", "Oñate"]
+        );
+        assert_eq!(collator.compare("Oñate", "On\u{303}ate"), Ordering::Equal);
+        assert_eq!(
+            order(&collator, &["o", "Ñ", "ñ", "n"]),
+            ["n", "ñ", "Ñ", "o"]
+        );
     }
 
     #[test]

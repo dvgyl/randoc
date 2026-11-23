@@ -71,6 +71,30 @@ fn writes_fragment_and_round_trips_punctuation() {
 }
 
 #[test]
+fn code_blocks_omit_one_final_newline() {
+    let cases = [
+        ("", ""),
+        ("x", "x"),
+        ("x\n", "x"),
+        ("x\ny\n", "x\\line\ny"),
+        ("x\n\n", "x\\line\n"),
+    ];
+    for (input, body) in cases {
+        let doc = Pandoc {
+            blocks: vec![Block::CodeBlock(Attr::default(), input.into())],
+            ..Pandoc::default()
+        };
+        let expected =
+            format!("{{\\pard \\ql \\f0 \\fs24 \\sa180 \\li0 \\fi0 \\f1 \\fs24 {body}\\par}}\n");
+        assert_eq!(
+            write(&doc, &mut Context::pure()).unwrap(),
+            expected.as_bytes(),
+            "{input:?}"
+        );
+    }
+}
+
+#[test]
 fn reports_parse_errors_at_the_bad_character() {
     let error = read(r"{\rtf1 \'zz}", &mut Context::pure()).unwrap_err();
     assert_eq!(error.exit_code(), 64);
@@ -227,6 +251,36 @@ fn finds_images_in_resource_paths_and_bounds_file_reads() {
     ctx.limits.max_resource_size = size - 1;
     let fallback = String::from_utf8(write(&doc, &mut ctx).unwrap()).unwrap();
     assert!(fallback.contains(r"{\cf1 [image: p.png]\cf0}"));
+}
+
+#[test]
+fn empty_table_of_contents_adds_no_line_before_an_include() {
+    let doc = Pandoc::default();
+    let mut options = WriterOptions::default();
+    options.template = Some(
+        randoc_templates::Template::compile::<String>(
+            "default.rtf",
+            randoc_data::default_template("rtf").unwrap(),
+            128,
+            &mut |_| Ok(String::new()),
+        )
+        .unwrap(),
+    );
+    options.variables.insert("include-before", "Before.");
+    let writer = randoc_rtf::writer("rtf").unwrap();
+    let expected = writer
+        .write(&doc, &options, &mut Context::pure())
+        .unwrap()
+        .into_bytes();
+    assert!(String::from_utf8_lossy(&expected).contains("\\hyphauto\n\nBefore.\n"));
+    options.table_of_contents = true;
+    assert_eq!(
+        writer
+            .write(&doc, &options, &mut Context::pure())
+            .unwrap()
+            .into_bytes(),
+        expected
+    );
 }
 
 #[test]

@@ -5,6 +5,7 @@ use randoc_ast::{
     Attr, Block, Citation, CitationMode, Format, Inline, MathType, QuoteType, Target, Text,
 };
 use randoc_core::Extension;
+use randoc_latex_reader::{CommandClass, RawKind};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::ops::Range;
@@ -14,6 +15,9 @@ use crate::block::{Parser, escape_uri, html_attr, html_tag_len, normalize_key};
 
 /// The format of a marker inline that the parser removes after merging.
 const NOTHING: &str = "\u{0}nothing";
+
+/// The number of characters that the raw TeX of one command can use.
+const RAW_TEX_WINDOW: usize = 1024;
 
 /// Comes before an escaped period in a `Str`, so that the word before it
 /// is no abbreviation: Pandoc joins only a word that holds its period.
@@ -195,8 +199,6 @@ struct Tables {
     env_ends: Option<HashMap<Text, Vec<usize>>>,
     /// For each `(`, the index of its `)`, or `u32::MAX`.
     parens: Option<Vec<u32>>,
-    /// For each `{`, the index of its `}`, or `u32::MAX`.
-    braces: Option<Vec<u32>>,
     /// For each `<span>` tag, the start of its closing tag.
     spans: Option<HashMap<usize, usize>>,
 }
@@ -892,9 +894,11 @@ impl Inl<'_> {
 
     fn str_run(&mut self) -> Vec<Inline> {
         let start = self.i;
+        // A bare URI can start at each letter or digit after another character.
+        let uris = self.ext(Extension::AutolinkBareUris);
         self.i += 1;
         while let Some(c) = self.cur() {
-            if self.is_special(c) {
+            if self.is_special(c) || (uris && c.is_alphanumeric() && !is_alnum(self.prev())) {
                 break;
             }
             self.i += 1;
@@ -1001,7 +1005,7 @@ impl Inl<'_> {
                 self.i += 2;
                 vec![Inline::Str(c.to_string())]
             }
-            Some(c) if c.is_ascii_alphabetic() && self.ext(Extension::RawTex) => {
+            Some(c) if c.is_alphabetic() && self.ext(Extension::RawTex) => {
                 if let Some(out) = self.raw_tex() {
                     return out;
                 }
@@ -1015,49 +1019,65 @@ impl Inl<'_> {
         }
     }
 
+    /// Reads raw TeX with `randoc_latex_reader::raw_tex_inline`. An
+    /// environment reaches its end; a command reads a bounded text.
     fn raw_tex(&mut self) -> Option<Vec<Inline>> {
         let start = self.i;
-        let mut k = self.i + 1;
-        while self.s.get(k).is_some_and(char::is_ascii_alphabetic) {
-            k += 1;
-        }
-        let name = self.text(start + 1, k);
-        if name == "begin" {
-            if self.s.get(k) != Some(&'{') {
+        let (text, raw) = if self.starts_with("\\begin{") {
+            let close = self.find(Find::Char('}'), start + 7)?;
+            let env = self.text(start + 7, close);
+            let pos = self.env_end(&env, close)?;
+            let text = self.text(start, pos + env.chars().count() + 6);
+            let raw = randoc_latex_reader::raw_tex_inline(&text)?;
+            (text, raw)
+        } else {
+            if self.starts_with("\\end")
+                && !self.s.get(start + 4).is_some_and(|c| c.is_alphabetic())
+            {
                 return None;
             }
-            let close = self.find(Find::Char('}'), k)?;
-            let env = self.text(k + 1, close);
-            let end = format!("\\end{{{env}}}");
-            let pos = self.env_end(&env, close)?;
-            let raw = self.text(start, pos + end.chars().count());
-            self.i = start + raw.chars().count();
-            return Some(vec![Inline::RawInline(Format::new("tex"), raw)]);
-        }
-        loop {
-            match self.s.get(k) {
-                Some('{') => match self.brace_close(k) {
-                    Some(j) => k = j + 1,
-                    None => break,
-                },
-                Some('[') if self.s.get(k + 1) != Some(&']') => {
-                    let mut j = k;
-                    while self.s.get(j).is_some_and(|c| *c != ']' && *c != '\n') {
-                        j += 1;
-                    }
-                    if self.s.get(j) != Some(&']') {
-                        break;
-                    }
-                    k = j + 1;
+            // A short text first: most commands end in it. A command that
+            // fails there or reaches its end reads the long text, when a
+            // closing brace can follow.
+            let short_end = (start + 64).min(self.s.hi);
+            let short = self.text(start, short_end);
+            let long_helps = short_end < self.s.hi && self.find(Find::Char('}'), start).is_some();
+            match randoc_latex_reader::raw_tex_inline(&short) {
+                Some(raw) if raw.len < short.len() || !long_helps => (short, raw),
+                None if !long_helps => return None,
+                _ => {
+                    let text = self.text(start, (start + RAW_TEX_WINDOW).min(self.s.hi));
+                    let raw = randoc_latex_reader::raw_tex_inline(&text)?;
+                    (text, raw)
                 }
-                _ => break,
             }
+        };
+        if matches!(
+            raw.kind,
+            RawKind::Environment { math: false } | RawKind::Command(CommandClass::Block)
+        ) && self.window != Window::Text
+        {
+            // The inline text of a link, a span or a note ends at raw TeX
+            // that is a block, as at a block tag.
+            self.s.hi = self.i;
+            self.p.block_tag_cuts += 1;
+            return Some(Vec::new());
         }
-        self.i = k;
-        Some(vec![Inline::RawInline(
-            Format::new("tex"),
-            self.text(start, k),
-        )])
+        let content = if raw.kind == RawKind::Definition {
+            self.p.define_macros(&raw.text);
+            raw.text
+        } else {
+            let mut expanded = self.p.expand_raw_inline(&raw.text);
+            if expanded != raw.text {
+                let trimmed = raw.text.trim_end_matches([' ', '\t']);
+                if !expanded.ends_with(char::is_whitespace) {
+                    expanded.push_str(&raw.text[trimmed.len()..]);
+                }
+            }
+            expanded
+        };
+        self.i = start + text.get(..raw.len)?.chars().count();
+        Some(vec![Inline::RawInline(Format::new("tex"), content)])
     }
 
     fn backslash_math(&mut self, slashes: usize) -> Option<Vec<Inline>> {
@@ -1072,10 +1092,8 @@ impl Inl<'_> {
         let pos = self.find_pattern(&closer, start)?;
         let body = self.text(start, pos);
         self.i = pos + closer.chars().count();
-        Some(vec![Inline::Math(
-            kind,
-            body.trim_matches(SPACE).to_string(),
-        )])
+        let body = self.p.expand_math(body.trim_matches(SPACE));
+        Some(vec![Inline::Math(kind, body)])
     }
 
     /// Parses an emphasis opener. An emphasis writes its result into one
@@ -1484,17 +1502,6 @@ impl Inl<'_> {
         self.inside(close)
     }
 
-    /// Returns the `}` that matches the `{` at `open`; a backslash escapes
-    /// the next character.
-    fn brace_close(&mut self, open: usize) -> Option<usize> {
-        if self.ix.tables.borrow().braces.is_none() {
-            let braces = self.widened(|inl| inl.pair_matches('{', '}'));
-            self.ix.tables.borrow_mut().braces = Some(braces);
-        }
-        let close = *self.ix.tables.borrow().braces.as_ref()?.get(open)?;
-        self.inside(close)
-    }
-
     fn paren_matches(&mut self) -> Vec<u32> {
         self.pair_matches('(', ')')
     }
@@ -1536,7 +1543,18 @@ impl Inl<'_> {
 
     fn bracket(&mut self, image: bool) -> Option<Vec<Inline>> {
         let open = if image { self.i + 1 } else { self.i };
-        let close = self.matching_bracket(open)?;
+        let Some(close) = self.matching_bracket(open) else {
+            let crosses = self
+                .ix
+                .tables
+                .borrow()
+                .brackets
+                .as_ref()
+                .and_then(|b| b.get(open).copied())
+                .is_some_and(|k| k != u32::MAX);
+            self.note_crossing(crosses);
+            return None;
+        };
         // Inside a link, a bracket can only be a note, a citation or a wiki
         // link. Without a copy of each label, nested brackets stay linear.
         if self.in_link
@@ -1591,7 +1609,7 @@ impl Inl<'_> {
         }
         if (self.ext(Extension::WikilinksTitleAfterPipe)
             || self.ext(Extension::WikilinksTitleBeforePipe))
-            && !image
+            && (!self.in_link || image)
             && close > open + 2
             && self.s.get(open + 1) == Some(&'[')
             && self.s.get(close - 1) == Some(&']')
@@ -1607,11 +1625,12 @@ impl Inl<'_> {
             self.i = close + 1;
             let text = self.sub(title.trim_matches(SPACE), true);
             let attr = Attr::new("", vec!["wikilink".into()], vec![]);
-            return Some(vec![Inline::Link(
-                attr,
-                text,
-                Target::new(escape_uri(url.trim_matches(SPACE)), ""),
-            )]);
+            let target = Target::new(url.trim_matches(SPACE), "");
+            return Some(vec![if image {
+                Inline::Image(attr, text, target)
+            } else {
+                Inline::Link(attr, text, target)
+            }]);
         }
         if let Some(out) = self.reference_link(image, open, close) {
             return Some(out);
@@ -1621,7 +1640,7 @@ impl Inl<'_> {
             && self
                 .find(Find::Char('@'), open + 1)
                 .is_some_and(|at| at < close)
-            && let Some(cites) = self.citations(&self.text(open + 1, close))
+            && let Some(cites) = self.citations(&split_citations(&self.text(open + 1, close)))
         {
             let raw = self.text(self.i, close + 1);
             self.i = close + 1;
@@ -1636,7 +1655,11 @@ impl Inl<'_> {
         // is text in the same way, so that `[a][b](u)` has no link.
         let mut out = self.bracket_text(open + 1..close);
         let mut last = close;
-        let second = self.second_label(close);
+        // An empty second label stays for the next parse when the empty
+        // reference exists: `[a][]` is the text `[a]` and a link.
+        let second = self
+            .second_label(close)
+            .filter(|&(start, end)| end > start + 1 || !self.p.refs.contains_key(""));
         if let Some((start, label_end)) = second {
             if start > close + 1 && !self.text(close + 1, start).contains('\n') {
                 out.push(Inline::Space);
@@ -1865,7 +1888,7 @@ impl Inl<'_> {
             .trailing_attr(Extension::LinkAttributes)
             .unwrap_or_default();
         let url = escape_uri(&decode_entities(&unescape(&url.replace('\n', " "))));
-        let target = Target::new(url, title);
+        let target = Target::new(self.p.rebase_inline_target(url), title);
         // In Pandoc, the text of an inline link does not advance the note
         // number and does not mark a note as used.
         let note_number = self.p.note_number;
@@ -1906,8 +1929,18 @@ impl Inl<'_> {
                 .get(&key)
                 .map(|t| (t.clone(), Attr::default()))
         });
-        let (target, attr) = found?;
+        let (target, mut attr) = found?;
         self.i = k;
+        if let Some(mut local) = self.trailing_attr(Extension::LinkAttributes) {
+            if !local.id.is_empty() {
+                attr.id = local.id;
+            }
+            local.classes.append(&mut attr.classes);
+            attr.classes = local.classes;
+            attr.attributes
+                .retain(|(key, _)| !local.attributes.iter().any(|(other, _)| key == other));
+            attr.attributes.append(&mut local.attributes);
+        }
         Some(vec![self.make_link(image, open + 1..close, target, attr)])
     }
 
@@ -1959,18 +1992,16 @@ impl Inl<'_> {
         self.p.note_number
     }
 
-    fn citations(&mut self, label: &str) -> Option<Vec<Citation>> {
-        let mut parts = Vec::new();
-        for part in split_citations(label) {
-            parts.push(find_cite_key(part)?);
-        }
+    fn citations(&mut self, parts: &[&str]) -> Option<Vec<Citation>> {
+        let keys = parts
+            .iter()
+            .map(|part| find_cite_key(part))
+            .collect::<Option<Vec<_>>>()?;
         let saved_note_number = self.p.note_number;
         let note_num = self.cite_note_num();
-        let _ = parts;
         let failures = self.p.emphasis_failures;
         let mut cites = Vec::new();
-        for part in split_citations(label) {
-            let at = find_cite_key(part)?;
+        for (part, at) in parts.iter().zip(keys) {
             let (prefix_text, rest) = part.split_at(at.0);
             let mut prefix_text = prefix_text.to_string();
             let mode = if prefix_text.ends_with('-') {
@@ -1979,7 +2010,7 @@ impl Inl<'_> {
             } else {
                 CitationMode::NormalCitation
             };
-            let key = at.1.clone();
+            let key = at.1;
             let suffix_text = rest.get(at.2..).unwrap_or("");
             let prefix = trim_inlines(self.sub(prefix_text.trim_start_matches(SPACE), false));
             let suffix = self.suffix(suffix_text);
@@ -2067,26 +2098,34 @@ impl Inl<'_> {
             && let Some(end) = self.matching_bracket(k)
         {
             let inner = self.text(k + 1, end);
-            if inner.contains('@') && find_cite_key(&inner).is_some() {
-                let after = self.s.get(end + 1).copied();
-                if after != Some('(') && after != Some('{') {
-                    let saved = self.p.note_number;
-                    if !self.p.in_note {
-                        self.p.note_number = note_num - 1;
-                    }
-                    if let Some(cites) = self.citations(&inner) {
-                        more = cites;
-                        self.i = end + 1;
-                    }
-                    self.p.note_number = saved.max(note_num);
+            let parts = split_citations(&inner);
+            let (first, rest) = parts.split_first()?;
+            let (suffix_text, remaining) = if find_cite_key(first).is_some() {
+                (None, parts.as_slice())
+            } else {
+                (Some(*first), rest)
+            };
+            let after = self.s.get(end + 1).copied();
+            if !matches!(after, Some('(' | '{')) && !remaining.is_empty() {
+                let saved = self.p.note_number;
+                if !self.p.in_note {
+                    self.p.note_number = note_num - 1;
                 }
-            } else if !inner.starts_with('^') {
-                // A note reference after the key is not a suffix.
-                let after = self.s.get(end + 1).copied();
-                if after != Some('(') && after != Some('[') && after != Some('{') {
-                    suffix = self.suffix(inner.trim_matches(SPACE));
+                if let Some(cites) = self.citations(remaining) {
+                    more = cites;
+                    if let Some(text) = suffix_text {
+                        suffix = self.suffix(text);
+                    }
                     self.i = end + 1;
                 }
+                self.p.note_number = saved;
+            } else if parts.len() == 1
+                && suffix_text.is_some()
+                && !inner.starts_with('^')
+                && !matches!(after, Some('(' | '[' | '{'))
+            {
+                suffix = self.suffix(inner.trim_matches(SPACE));
+                self.i = end + 1;
             }
         }
         let raw = self.text(start, self.i);
@@ -2129,6 +2168,13 @@ impl Inl<'_> {
     fn caret(&mut self) -> Option<Vec<Inline>> {
         if self.peek(1) == Some('[') && self.ext(Extension::InlineNotes) {
             let close = self.matching_bracket(self.i + 1)?;
+            if self.ext(Extension::Superscript)
+                && self.ext(Extension::BracketedSpans)
+                && self.s.get(close + 1) == Some(&'{')
+                && let Some(out) = self.delimited(1, Stop::Superscript, Inline::Superscript)
+            {
+                return Some(out);
+            }
             let start = self.i + 2;
             self.i = close + 1;
             self.p.note_number += 1;
@@ -2259,12 +2305,14 @@ impl Inl<'_> {
                 let close_end = self
                     .find(Find::Char('>'), close)
                     .map_or(self.s.len(), |k| k + 1);
-                let failures = (self.p.emphasis_failures, self.p.block_tag_cuts);
+                let counts =
+                    |p: &Parser| (p.emphasis_failures, p.block_tag_cuts, p.crossing_closers);
+                let failures = counts(self.p);
                 let content = self.sub_window(tag_end..close, false, Window::Element);
-                // An emphasis with no closer would take the closing tag, and
-                // a block tag ends the content before it, so the tags stay
-                // raw HTML.
-                if (self.p.emphasis_failures, self.p.block_tag_cuts) == failures {
+                // An emphasis with no closer, a bracket or a quote whose
+                // closer follows would take the closing tag, and a block tag
+                // ends the content before it, so the tags stay raw HTML.
+                if counts(self.p) == failures {
                     let attr = html_attr(&tag);
                     self.i = close_end;
                     return Some(vec![make_span(attr, content)]);
@@ -2287,10 +2335,8 @@ impl Inl<'_> {
                 return None;
             }
             self.i = k + 2;
-            return Some(vec![Inline::Math(
-                MathType::DisplayMath,
-                body.trim_matches(SPACE).to_string(),
-            )]);
+            let body = self.p.expand_math(body.trim_matches(SPACE));
+            return Some(vec![Inline::Math(MathType::DisplayMath, body)]);
         }
         if is_space(self.peek(1)) {
             return None;
@@ -2308,7 +2354,9 @@ impl Inl<'_> {
         }
         let before = k.checked_sub(1).and_then(|j| self.s.get(j)).copied();
         if k == start
-            || (!after_comment && is_space(before))
+            || (!after_comment
+                && is_space(before)
+                && k.checked_sub(2).and_then(|j| self.s.get(j)) != Some(&'\\'))
             || self.s.get(k + 1).is_some_and(char::is_ascii_digit)
         {
             return None;
@@ -2318,6 +2366,7 @@ impl Inl<'_> {
             body.truncate(body.trim_end_matches(SPACE).len());
         }
         self.i = k + 1;
+        let body = self.p.expand_math(&body);
         Some(vec![Inline::Math(MathType::InlineMath, body)])
     }
 
@@ -2365,6 +2414,10 @@ impl Inl<'_> {
         if self.failed_before(start, Construct::Opener(Stop::DoubleQuote))
             || self.find(Find::Char('"'), start + 1).is_none()
         {
+            let crosses = self
+                .widened(|inl| inl.find_in_buffer(Find::Char('"'), start + 1))
+                .is_some();
+            self.note_crossing(crosses);
             self.i = start + 1;
             return Some(vec![Inline::Str("\u{201c}".into())]);
         }
@@ -2385,7 +2438,7 @@ impl Inl<'_> {
             self.i += 1;
             return Some(vec![Inline::Quoted(
                 QuoteType::DoubleQuote,
-                merge(contents),
+                trim_inlines(merge(contents)),
             )]);
         }
         self.remember_failure(start, Construct::Opener(Stop::DoubleQuote));
@@ -2393,14 +2446,36 @@ impl Inl<'_> {
         Some(vec![Inline::Str("\u{201c}".into())])
     }
 
+    /// Tells whether a closing single quote follows `start` in the window,
+    /// and notes a closer after the window.
+    fn single_closer(&mut self, start: usize) -> bool {
+        if self.find(Find::QuoteCloser, start + 1).is_some() {
+            return true;
+        }
+        let crosses = self
+            .widened(|inl| inl.find_in_buffer(Find::QuoteCloser, start + 1))
+            .is_some();
+        self.note_crossing(crosses);
+        false
+    }
+
+    /// Counts a bracket or a quote in the contents of a native span, outside
+    /// other delimiters, whose closer follows the contents.
+    fn note_crossing(&mut self, crosses: bool) {
+        if crosses && self.window == Window::Element && self.closing == 0 {
+            self.p.crossing_closers += 1;
+        }
+    }
+
     fn single_quote(&mut self) -> Vec<Inline> {
         let start = self.i;
         if !is_alnum(self.prev())
             && !is_space(self.peek(1))
+            && !(matches!(self.prev(), Some('*' | '_')) && is_alnum(self.peek(1)))
             && !self.peek(1).is_some_and(|c| ");-?".contains(c))
             && !self.failed_before(start, Construct::Opener(Stop::SingleQuote))
             && self.quotes & 1 == 0
-            && self.find(Find::QuoteCloser, start + 1).is_some()
+            && self.single_closer(start)
         {
             self.i += 1;
             // A single quote cannot open inside a single quote.
@@ -2411,7 +2486,10 @@ impl Inl<'_> {
                 && !contents.is_empty()
             {
                 self.i += 1;
-                return vec![Inline::Quoted(QuoteType::SingleQuote, merge(contents))];
+                return vec![Inline::Quoted(
+                    QuoteType::SingleQuote,
+                    trim_inlines(merge(contents)),
+                )];
             }
             self.remember_failure(start, Construct::Opener(Stop::SingleQuote));
             self.i = start;
@@ -2690,28 +2768,26 @@ fn cite_key(s: &str) -> Option<(Text, usize)> {
         }
         return Some((key.to_string(), close + 3));
     }
-    let chars: Vec<char> = rest.chars().collect();
-    let first = *chars.first()?;
+    let mut chars = rest.char_indices().peekable();
+    let (_, first) = chars.next()?;
     // `*` starts a key too, for the `nocite: '@*'` of all references
     // (oracle: `@*x` is the key `*x`, `@**` the key `*` and a `*`).
     if !(first.is_alphanumeric() || first == '_' || first == '*') {
         return None;
     }
-    let mut k = 1;
-    while let Some(&c) = chars.get(k) {
+    let mut len = first.len_utf8();
+    while let Some((offset, c)) = chars.next() {
         let inner_punct = ":.#$%&-+?<>~/".contains(c)
-            && chars
-                .get(k + 1)
-                .is_some_and(|d| d.is_alphanumeric() || *d == '_');
+            && chars.peek().is_some_and(|&(_, next)| {
+                next.is_alphanumeric() || next == '_' || (next == '/' && matches!(c, ':' | '/'))
+            });
         if c.is_alphanumeric() || c == '_' || inner_punct {
-            k += 1;
+            len = offset + c.len_utf8();
         } else {
             break;
         }
     }
-    let key: Text = chars.get(..k)?.iter().collect();
-    let len = key.len() + 1;
-    Some((key, len))
+    Some((rest.get(..len)?.into(), len + 1))
 }
 
 /// Finds the citation key in one part of a bracketed citation.
@@ -2998,24 +3074,40 @@ pub(crate) fn merge(xs: Vec<Inline>) -> Vec<Inline> {
     out
 }
 
-/// Joins an abbreviation and the next word with a non-breaking space.
+/// Joins an abbreviation and the next word with a non-breaking space, also
+/// inside the elements that a window parses with its own text.
 pub(crate) fn join_abbreviations(
     xs: Vec<Inline>,
     abbreviations: &std::collections::BTreeSet<Text>,
 ) -> Vec<Inline> {
     let mut out: Vec<Inline> = Vec::with_capacity(xs.len());
-    let mut iter = xs.into_iter().peekable();
-    while let Some(x) = iter.next() {
+    let mut iter = xs.into_iter();
+    while let Some(mut x) = iter.next() {
+        if let Inline::Emph(inner)
+        | Inline::Strong(inner)
+        | Inline::Strikeout(inner)
+        | Inline::Superscript(inner)
+        | Inline::Subscript(inner)
+        | Inline::Quoted(_, inner) = &mut x
+        {
+            *inner = join_abbreviations(std::mem::take(inner), abbreviations);
+        }
         if let Inline::Str(s) = &x {
             let word = s
                 .rsplit(|c: char| !c.is_alphanumeric() && c != '.')
                 .next()
                 .unwrap_or(s);
-            if abbreviations.contains(word) && matches!(iter.peek(), Some(Inline::Space)) {
+            if abbreviations.contains(word)
+                && matches!(iter.as_slice().first(), Some(Inline::Space))
+                && !matches!(
+                    iter.as_slice().get(1),
+                    Some(Inline::Cite(..) | Inline::Note(_))
+                )
+            {
                 let mut joined = s.clone();
                 iter.next();
                 joined.push('\u{a0}');
-                if let Some(Inline::Str(next)) = iter.peek() {
+                if let Some(Inline::Str(next)) = iter.as_slice().first() {
                     joined.push_str(next);
                     iter.next();
                 }

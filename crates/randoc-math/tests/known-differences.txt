@@ -521,7 +521,6 @@ inline	I	\\'
 inline	I	\\.
 inline	I	\\=
 inline	I	\\L
-inline	I	\\\n
 inline	I	\\`
 inline	I	\\alpha\\beta\\gamma + \\mathop{\\sqrt{x}}
 inline	I	\\alpha\\beta\\gamma + \\mathop{\\sqrt{x}} + y
@@ -1041,7 +1040,6 @@ inline	I	a+b+c+d+e+f+g+h+i+j+k+l+m+n+\\operatorname{a_b} + y
 inline	I	a, \\hspace{1em} b
 inline	I	a: \\hspace{1em} b
 inline	I	a;\\hspace{1em} b
-inline	I	a\\\nb
 inline	I	a\\hspace{ 1em }b
 inline	I	a\\hspace{-1em}b
 inline	I	a\\hspace{0.5em}b
@@ -1701,8 +1699,6 @@ inline-warning	D	x^{\\left\\langle\\sqrt{x}\\right\t}
 inline-warning	D	x^{\\left|\\sqrt{x}\\right }
 inline-warning	D	x^{\\left|\\sqrt{x}\\right}
 inline-warning	D	x^{\\scriptstyle }
-inline-warning	D	x^{\n  \n  
-inline-warning	D	x^{\n\n
 inline-warning	D	x_\n  \n  
 inline-warning	D	x_\n\n
 inline-warning	D	x_{\\left.\\frac{x}{y}\\right }
@@ -2659,8 +2655,6 @@ inline-warning	I	x^{\\left|\\sqrt{x}\\right}
 inline-warning	I	x^{\\mathop{T}&}
 inline-warning	I	x^{\\scriptstyle }
 inline-warning	I	x^{\\stackrel{a}{=}&}
-inline-warning	I	x^{\n  \n  
-inline-warning	I	x^{\n\n
 inline-warning	I	x_\n  \n  
 inline-warning	I	x_\n\n
 inline-warning	I	x_{\\left.\\frac{x}{y}\\right }
@@ -3296,7 +3290,6 @@ mathml	I	\\'
 mathml	I	\\.
 mathml	I	\\=
 mathml	I	\\L
-mathml	I	\\\n
 mathml	I	\\`
 mathml	I	\\alpha\\beta\\gamma + \\mathop{\\sqrt{x}}
 mathml	I	\\alpha\\beta\\gamma + \\mathop{\\sqrt{x}} + y
@@ -3994,7 +3987,6 @@ mathml	I	a+b+c+d+e+f+g+h+i+j+k+l+m+n+\\operatorname{a_b} + y
 mathml	I	a, \\hspace{1em} b
 mathml	I	a: \\hspace{1em} b
 mathml	I	a;\\hspace{1em} b
-mathml	I	a\\\nb
 mathml	I	a\\hspace{ 1em }b
 mathml	I	a\\hspace{-1em}b
 mathml	I	a\\hspace{0.5em}b
@@ -4613,8 +4605,6 @@ mathml-warning	D	x^{\\left\\langle\\sqrt{x}\\right\t}
 mathml-warning	D	x^{\\left|\\sqrt{x}\\right }
 mathml-warning	D	x^{\\left|\\sqrt{x}\\right}
 mathml-warning	D	x^{\\scriptstyle }
-mathml-warning	D	x^{\n  \n  
-mathml-warning	D	x^{\n\n
 mathml-warning	D	x_\n  \n  
 mathml-warning	D	x_\n\n
 mathml-warning	D	x_{\\left.\\frac{x}{y}\\right }
@@ -5424,8 +5414,6 @@ mathml-warning	I	x^{\\left|\\sqrt{x}\\right}
 mathml-warning	I	x^{\\mathop{T}&}
 mathml-warning	I	x^{\\scriptstyle }
 mathml-warning	I	x^{\\stackrel{a}{=}&}
-mathml-warning	I	x^{\n  \n  
-mathml-warning	I	x^{\n\n
 mathml-warning	I	x_\n  \n  
 mathml-warning	I	x_\n\n
 mathml-warning	I	x_{\\left.\\frac{x}{y}\\right }

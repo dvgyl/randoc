@@ -231,14 +231,9 @@ impl<'doc> Renderer<'_, 'doc> {
                     }
                 }
                 Inline::Link(_, label, Target { url, .. }) => {
-                    if self.format == Format::Man && url.contains(':') && !url.starts_with('#') {
-                        let (start, end, target) = if let Some(target) = url.strip_prefix("mailto:")
-                        {
-                            (".MT", ".ME", target)
-                        } else {
-                            (".UR", ".UE", url.as_str())
-                        };
-                        let mut request = format!("\\c\n{start} {target}\n");
+                    if self.format == Format::Man && super::uri::is_uri(url) {
+                        let (start, end, target) = man_link(url);
+                        let mut request = format!("\\c\n{start}\n");
                         if stringify(label) != target && !label.is_empty() {
                             request.push_str(&self.render_inlines(
                                 label,
@@ -264,20 +259,30 @@ impl<'doc> Renderer<'_, 'doc> {
                         self.inlines(label, font, level + 1, wrap, out)?;
                     }
                 }
-                Inline::Image(_, label, Target { url: src, title }) => {
+                Inline::Image(attr, label, Target { url: src, .. }) => {
+                    let mut text = self.render_inlines(label, font, level + 1, false)?;
                     if self.format == Format::Man {
-                        let text = self.render_inlines(label, font, level + 1, false)?;
-                        let image = if title.is_empty() {
-                            format!("[IMAGE: {text}]")
+                        if text.is_empty() {
+                            text = "image".into();
+                        }
+                        let image = if super::uri::is_uri(src) {
+                            let (start, end, _) = man_link(src);
+                            format!("[IMAGE: \\c\n{start}\n{text}\n{end} \\c\n]")
                         } else {
-                            format!("[IMAGE: {text}] \\\" \"{}\"", self.escape(title))
+                            format!("[IMAGE: {text}]")
                         };
                         out.push(literal(image));
                     } else {
-                        let text = self.render_inlines(label, font, level + 1, false)?;
+                        let width = attr
+                            .get("width")
+                            .and_then(|width| image_points(width, self.options.dpi))
+                            .map_or_else(String::new, |pts| format!(" \"{pts:.0}p\""));
                         out.extend([
                             cr(),
-                            literal(format!("[IMAGE: {text}] \\\" \"{}\"", self.escape(src))),
+                            literal(format!(
+                                "[IMAGE: {text}] \\\" \"{}\"{width}",
+                                self.escape(src)
+                            )),
                             cr(),
                         ]);
                         if iter
@@ -405,4 +410,41 @@ fn simple_math(renderer: &Renderer<'_, '_>, inlines: &[Inline], font: Font) -> S
         }
     }
     out
+}
+
+fn image_points(width: &str, dpi: i64) -> Option<f64> {
+    let end = width
+        .find(|c: char| !c.is_ascii_digit() && c != '.')
+        .unwrap_or(width.len());
+    let (number, unit) = width.split_at(end);
+    let number: f64 = number.parse().ok()?;
+    let scale = match unit.trim_start() {
+        "" | "px" => 72.0 / dpi.max(1) as f64,
+        "cm" => 72.0 / 2.54,
+        "mm" => 72.0 / 25.4,
+        "in" | "inch" => 72.0,
+        "pt" => 1.0,
+        "pc" => 12.0,
+        "em" => 12.0,
+        "%" => 0.0,
+        _ => return None,
+    };
+    let points = number * scale;
+    points.is_finite().then_some(points)
+}
+
+/// Returns the start request with its target, the end request and the
+/// target of a man link. An e-mail address uses `.MT`, and an empty target
+/// leaves no space after the request name.
+fn man_link(url: &str) -> (String, &'static str, &str) {
+    let (start, end, target) = match url.strip_prefix("mailto:") {
+        Some(address) => (".MT", ".ME", address),
+        None => (".UR", ".UE", url),
+    };
+    let start = if target.is_empty() {
+        start.to_owned()
+    } else {
+        format!("{start} {target}")
+    };
+    (start, end, target)
 }

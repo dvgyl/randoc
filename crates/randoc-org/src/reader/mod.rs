@@ -7,7 +7,7 @@ mod tables;
 use std::collections::{HashMap, HashSet};
 
 use randoc_ast::{Meta, Pandoc};
-use randoc_core::shared::IdentifierSet;
+use randoc_core::shared::{IdentifierSet, auto_identifier};
 use randoc_core::{Context, Error, Extension, ReaderOptions, Result, Sources};
 
 use crate::shared::STACK_LIMIT;
@@ -23,6 +23,8 @@ struct Parser<'a> {
     custom_keywords: bool,
     select: Vec<String>,
     exclude: Vec<String>,
+    custom_exclude: bool,
+    titles: Vec<String>,
     targets: HashSet<String>,
     notes: HashMap<String, Footnote>,
     active_notes: Vec<String>,
@@ -71,6 +73,8 @@ pub(super) fn read(
         custom_keywords: false,
         select: vec!["export".into()],
         exclude: vec!["noexport".into()],
+        custom_exclude: false,
+        titles: Vec::new(),
         targets: HashSet::new(),
         notes: HashMap::new(),
         active_notes: Vec::new(),
@@ -90,6 +94,15 @@ pub(super) fn read(
     for source in &sources.0 {
         parser.source.clone_from(&source.name);
         parser.collect(&source.text.lines().collect::<Vec<_>>(), 0);
+    }
+    // The identifier of the title is taken before any heading gets one.
+    if !parser.titles.is_empty() {
+        let title = parser.titles.join("\n");
+        let text = parser.inlines(&title, 1)?;
+        let id = auto_identifier(&text, options.extensions);
+        if !id.is_empty() {
+            parser.ids.register(&id);
+        }
     }
     parser.select_active = sources
         .0

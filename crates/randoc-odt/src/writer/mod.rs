@@ -2,6 +2,7 @@
 
 mod inline;
 mod package;
+mod show;
 mod tables;
 
 use std::cell::RefCell;
@@ -12,6 +13,7 @@ use randoc_archive::xml::escape_xml_attr;
 use randoc_ast::{
     Attr, Block, Caption, ListAttributes, ListNumberDelim, ListNumberStyle, MetaValue, Pandoc,
 };
+use randoc_citeproc::Lang;
 use randoc_core::shared::meta_context::meta_to_context;
 use randoc_core::{
     BinaryWriter, CaptionPosition, Context, Error, Extension, LogMessage, Result, TemplateWriter,
@@ -78,7 +80,10 @@ struct Renderer<'a> {
     format: Format,
     resources: Resources,
     text_styles: Vec<String>,
-    text_style_index: HashMap<u8, usize>,
+    text_style_index: HashMap<(u8, BTreeSet<Lang>), usize>,
+    /// The languages of the enclosing divs and spans. The greatest one
+    /// gives the language of the text.
+    languages: BTreeSet<Lang>,
     paragraph_styles: Vec<String>,
     paragraph_style_index: HashMap<(String, String), String>,
     list_styles: BTreeMap<(u8, u8), String>,
@@ -91,9 +96,7 @@ struct Renderer<'a> {
     figure_count: usize,
     quote_depth: usize,
     references: HashMap<String, &'static str>,
-    custom_styles: BTreeSet<(String, &'static str)>,
     registry: Option<randoc_highlight::Registry>,
-    highlighted: bool,
 }
 
 fn render(
@@ -111,6 +114,7 @@ fn render(
         resources,
         text_styles: Vec::new(),
         text_style_index: HashMap::new(),
+        languages: BTreeSet::new(),
         paragraph_styles: Vec::new(),
         paragraph_style_index: HashMap::new(),
         list_styles: BTreeMap::new(),
@@ -123,9 +127,7 @@ fn render(
         figure_count: 0,
         quote_depth: 0,
         references: HashMap::new(),
-        custom_styles: BTreeSet::new(),
         registry: highlight_registry(options),
-        highlighted: false,
     };
     if renderer.has(Extension::XrefsName) || renderer.has(Extension::XrefsNumber) {
         renderer.collect_references(&doc.blocks, 0)?;
@@ -197,8 +199,6 @@ fn render(
     } else {
         body.render(width)
     };
-    renderer.resources.custom_styles = renderer.custom_styles;
-    renderer.resources.highlighted = renderer.highlighted;
     Ok((content, renderer.resources))
 }
 
@@ -306,11 +306,10 @@ impl Renderer<'_> {
             }
             Block::Div(attr, blocks) => {
                 let custom = attr.get("custom-style");
-                if let Some(custom) = custom {
-                    self.custom_styles.insert((custom.into(), "paragraph"));
-                }
                 let inner_style = custom.or_else(|| (style != BODY).then_some(style));
-                let body = self.blocks(blocks, inner_style, depth + 1, custom.is_none())?;
+                let body = self.with_language(attr, |renderer| {
+                    renderer.blocks(blocks, inner_style, depth + 1, custom.is_none())
+                })?;
                 if attr.id.is_empty() {
                     body
                 } else {
@@ -569,12 +568,10 @@ impl Renderer<'_> {
         });
         match highlighted {
             Some(Ok(code)) => {
-                self.highlighted = true;
                 vcat(code.lines.iter().map(|line| {
-                    let mut at_start = true;
+                    // Pandoc escapes the text of each token on its own.
                     let spans = hcat(line.iter().map(|(kind, value)| {
-                        let content = code_text(value, tab_stop, at_start);
-                        at_start = false;
+                        let content = code_text(value, tab_stop, true);
                         span(&format!("{}Tok", kind.name()), text(content))
                     }));
                     para("Preformatted_20_Text", cr() + spans + cr())
@@ -602,8 +599,10 @@ fn highlight_registry(options: &WriterOptions) -> Option<randoc_highlight::Regis
     Some(registry)
 }
 
+/// Writes one paragraph for each line. As with Haskell's `lines`, a final
+/// line break does not start one more line.
 fn plain_code(code: &str, tab_stop: usize) -> Doc {
-    vcat(code.split('\n').map(|line| {
+    vcat(code.split_terminator('\n').map(|line| {
         para(
             "Preformatted_20_Text",
             text(code_text(line, tab_stop, true)),

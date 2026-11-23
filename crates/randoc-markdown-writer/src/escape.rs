@@ -185,7 +185,7 @@ impl W<'_> {
         if self.in_heading {
             return escaped;
         }
-        if alone && (raw == "-" || raw == "+") {
+        if raw == "-" || raw == "+" {
             return format!("\\{raw}");
         }
         if alone && raw == "%" && self.has(Extension::PandocTitleBlock) {
@@ -198,6 +198,20 @@ impl W<'_> {
                 .all(|c| c.is_alphanumeric() || c == '_' || c == '-')
         {
             return format!("\\(@{}\\)", self.escape_text(label));
+        }
+        if raw
+            .as_bytes()
+            .get(..9)
+            .is_some_and(|n| n.iter().all(u8::is_ascii_digit))
+            && raw
+                .as_bytes()
+                .get(9)
+                .is_some_and(|b| matches!(b, b'.' | b')'))
+        {
+            return match escaped.split_at_checked(9) {
+                Some((digits, suffix)) => format!("{digits}\\{suffix}"),
+                None => escaped,
+            };
         }
         if alone && let Some(marker) = ordered_marker(raw) {
             return marker;
@@ -235,7 +249,7 @@ pub(crate) fn ordered_marker(text: &str) -> Option<Text> {
                     .chars()
                     .all(|c| c.is_ascii_lowercase() || c.is_ascii_uppercase() && delim == ')'))
             || number == "#"
-            || is_roman(number);
+            || (delim != '.' || number.len() > 1 || open) && is_roman(number);
     if !valid {
         return None;
     }
@@ -248,8 +262,11 @@ pub(crate) fn ordered_marker(text: &str) -> Option<Text> {
 
 /// Returns `true` when this escaped text starts a list item or a block
 /// quote that can interrupt a paragraph.
-pub(crate) fn is_interrupting_marker(text: &str) -> bool {
+pub(crate) fn is_interrupting_marker(text: &str, in_list: bool) -> bool {
     matches!(text, "-" | "+" | "*" | ">" | "1." | "1)")
+        || in_list
+            && (ordered_marker(text).is_some()
+                || matches!(text.as_bytes(), [letter, b'.'] if letter.is_ascii_uppercase()))
 }
 
 #[cfg(test)]

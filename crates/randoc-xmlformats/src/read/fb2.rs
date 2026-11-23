@@ -1,5 +1,5 @@
 use randoc_archive::media::{base64_decode_lenient, media_key};
-use randoc_ast::{Block, MetaValue};
+use randoc_ast::{Attr, Block, Inline, MetaValue, Target};
 use randoc_core::{LogMessage, MediaItem, Result};
 
 use super::metadata::name_parts;
@@ -54,12 +54,7 @@ impl<'a> Read<'a, '_> {
                 Block::LineBlock(lines)
             }
             "empty-line" => Block::HorizontalRule,
-            "image" => {
-                let Some(image) = self.image(el, depth)? else {
-                    return Ok(());
-                };
-                Block::Para(vec![image])
-            }
+            "image" => Block::Para(vec![image(el, true)]),
             "binary" | "table" => return Ok(()),
             _ => {
                 self.context.report(LogMessage::IgnoredElement(tag.into()));
@@ -145,4 +140,19 @@ impl<'a> Read<'a, '_> {
         }
         Ok(())
     }
+}
+
+pub(super) fn image(el: &Element, block: bool) -> Inline {
+    let href = attr(el, "href");
+    let alt = el.attr_local("alt").map(|text| Inline::Str(text.into()));
+    let (attributes, title) = if block {
+        (id(el), attr(el, "title"))
+    } else {
+        (Attr::default(), "")
+    };
+    Inline::Image(
+        attributes,
+        alt.into_iter().collect(),
+        Target::new(href.strip_prefix('#').unwrap_or(href), title),
+    )
 }

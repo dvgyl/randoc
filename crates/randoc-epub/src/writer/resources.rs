@@ -4,6 +4,7 @@ use std::io::ErrorKind;
 use randoc_archive::media::{
     decode_data_uri, extension_for_mime, image_size_and_mime, mime_from_extension,
 };
+use randoc_core::error::io_error;
 use randoc_core::{Context, Error, LogMessage, MediaItem, Result};
 use randoc_templates::Val;
 
@@ -210,7 +211,7 @@ pub(super) fn styles(
                     _ => DEFAULT_CSS.as_bytes().to_vec(),
                 }
             } else {
-                fetch(&source, context)?.contents
+                stylesheet(&source, context)?
             };
             resources.charge(bytes.len())?;
             let id = format!("stylesheet{}", index + 1);
@@ -222,6 +223,23 @@ pub(super) fn styles(
             })
         })
         .collect()
+}
+
+/// Reads a stylesheet as Pandoc does: a plain file path, without the resource
+/// path, URLs or data URIs. Under `--sandbox` Pandoc reads no stylesheet, also
+/// when the command line names the file.
+fn stylesheet(source: &str, context: &mut Context) -> Result<Vec<u8>> {
+    if context.host().is_sandboxed() {
+        return Err(Error::ResourceNotFound(source.into()));
+    }
+    let limit = usize::try_from(context.limits.max_resource_size).unwrap_or(usize::MAX);
+    context
+        .host()
+        .read_file_limited(source, limit)
+        .map_err(|error| match error.kind() {
+            ErrorKind::FileTooLarge => Error::App(error.to_string()),
+            _ => io_error(source, "openBinaryFile", &error),
+        })
 }
 
 pub(super) fn font(source: &str, context: &mut Context) -> Result<Resource> {

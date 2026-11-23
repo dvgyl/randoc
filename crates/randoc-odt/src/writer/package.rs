@@ -1,5 +1,5 @@
 use std::borrow::Cow;
-use std::collections::{BTreeMap, BTreeSet, HashSet};
+use std::collections::{BTreeMap, HashSet};
 use std::fmt::Write;
 use std::path::Path;
 
@@ -7,7 +7,7 @@ use randoc_archive::media::{
     base64_encode, decode_data_uri, decode_percent_bytes, extension_for_mime, image_size_and_mime,
     is_safe_media_path, mime_from_extension,
 };
-use randoc_archive::xml::{self, XmlDoc, XmlLimits, XmlNode, XmlOptions};
+use randoc_archive::xml::{self, XmlDoc, XmlElement, XmlLimits, XmlNode, XmlOptions};
 use randoc_archive::zip::{Archive, ArchiveError, ArchiveLimits, ArchiveWriter};
 use randoc_ast::{Attr, Inline, MathType, Meta, MetaValue, Pandoc, Target};
 use randoc_citeproc::{Lang, parse_lang};
@@ -18,22 +18,32 @@ use randoc_layout::{Doc, text};
 
 use crate::ns::{self, OFFICE, STYLE, is_el};
 
-use super::{Format, Renderer, attribute, escaped, render, span};
+use super::{Format, Renderer, attribute, escaped, render, show, span};
 
 const MIME: &str = "application/vnd.oasis.opendocument.text";
 const FORMULA_MIME: &str = "application/vnd.oasis.opendocument.formula";
 const XML: &str = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
 const MANIFEST_FILE: &str = "META-INF/manifest.xml";
+const XLINK: &str = "http://www.w3.org/1999/xlink";
+const OOO: &str = "http://openoffice.org/2004/office";
+const GRDDL: &str = "http://www.w3.org/2003/g/data-view#";
 
 #[derive(Default)]
 pub(super) struct Resources {
     parts: BTreeMap<String, Part>,
-    pub(super) custom_styles: BTreeSet<(String, &'static str)>,
-    pub(super) highlighted: bool,
-    formulas: BTreeSet<String>,
+    /// The parts that the conversion adds, in order. Pandoc puts each new
+    /// part in front of the others, so the archive holds them in reverse.
+    added: Vec<String>,
+    /// The entries of the reference document in its order. Pandoc keeps
+    /// this order for the entries that it does not add.
+    layout: Vec<String>,
     next_index: usize,
     added_bytes: u64,
 }
+
+/// The entries of the reference document when the conversion has none.
+/// Pandoc's own reference gives this order.
+const DEFAULT_LAYOUT: [&str; 3] = ["manifest.rdf", "styles.xml", "meta.xml"];
 
 struct Part {
     media_type: String,
@@ -41,6 +51,12 @@ struct Part {
 }
 
 impl Resources {
+    /// Adds a part that the conversion makes, such as a picture or a formula.
+    fn add(&mut self, path: String, media_type: impl Into<String>, bytes: Vec<u8>) {
+        self.added.push(path.clone());
+        self.insert(path, media_type, bytes);
+    }
+
     fn insert(&mut self, path: String, media_type: impl Into<String>, bytes: Vec<u8>) {
         self.parts.insert(
             path,
@@ -72,28 +88,9 @@ pub(super) fn write_odt(
     let (reference, resources) = reference(options, context, true)?;
     let (content, mut resources) = render(doc, options, context, Format::Odt, resources)?;
     let stamp = timestamp(context);
-    let meta = format!(
-        "{XML}<office:document-meta xmlns:office=\"{OFFICE}\" xmlns:dc=\"{}\" xmlns:meta=\"{}\" office:version=\"1.3\">{}</office:document-meta>",
-        ns::DC,
-        ns::META,
-        metadata(&doc.meta, stamp)
-    );
+    let meta = meta_xml(&doc.meta, stamp);
     let lang = document_language(&doc.meta, context);
-    let styles = styles_xml(reference, options, &resources, lang.as_ref(), context)?;
-    if !resources.parts.contains_key("manifest.rdf") {
-        let rdf = concat!(
-            "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" ",
-            "xmlns:pkg=\"http://docs.oasis-open.org/ns/office/1.2/meta/pkg#\">",
-            "<pkg:Document rdf:about=\"\"><pkg:hasPart rdf:resource=\"content.xml\" />",
-            "<pkg:hasPart rdf:resource=\"styles.xml\" /></pkg:Document></rdf:RDF>",
-        );
-        resources.charge(context, rdf.len(), 1)?;
-        resources.insert(
-            "manifest.rdf".into(),
-            "application/rdf+xml",
-            rdf.as_bytes().to_vec(),
-        );
-    }
+    let styles = styles_xml(reference, options, lang.as_ref(), context)?;
     resources.charge(
         context,
         content
@@ -116,15 +113,44 @@ pub(super) fn write_odt(
     archive
         .write_stored_with_time("mimetype", MIME.as_bytes(), Some(stamp))
         .map_err(zip_error)?;
-    archive
-        .write_deflated_with_time(MANIFEST_FILE, manifest.as_bytes(), Some(stamp))
-        .map_err(zip_error)?;
-    for (name, part) in resources.parts {
+    let mut parts = resources.parts;
+    let mut write = |name: &str, bytes: &[u8]| {
         archive
-            .write_deflated_with_time(&name, &part.bytes, Some(stamp))
-            .map_err(zip_error)?;
+            .write_deflated_with_time(name, bytes, Some(stamp))
+            .map_err(zip_error)
+    };
+    let meta = parts
+        .remove("meta.xml")
+        .map(|part| part.bytes)
+        .unwrap_or_default();
+    write("meta.xml", &meta)?;
+    write(MANIFEST_FILE, manifest.as_bytes())?;
+    for name in std::iter::once("content.xml")
+        .chain(resources.added.iter().rev().map(String::as_str))
+        .chain(resources.layout.iter().map(String::as_str))
+    {
+        if let Some(part) = parts.remove(name) {
+            write(name, &part.bytes)?;
+        }
+    }
+    for (name, part) in parts {
+        write(&name, &part.bytes)?;
     }
     archive.finish().map_err(zip_error)
+}
+
+/// Writes `meta.xml` with one line for each element, as Pandoc does.
+fn meta_xml(meta: &Meta, stamp: i64) -> String {
+    let mut out = format!(
+        "{XML}<office:document-meta xmlns:office=\"{OFFICE}\" xmlns:xlink=\"{XLINK}\" xmlns:dc=\"{}\" xmlns:meta=\"{}\" xmlns:ooo=\"{OOO}\" xmlns:grddl=\"{GRDDL}\" office:version=\"1.3\">\n  <office:meta>\n",
+        ns::DC,
+        ns::META
+    );
+    for element in metadata(meta, stamp) {
+        let _ = writeln!(out, "    {element}");
+    }
+    out.push_str("  </office:meta>\n</office:document-meta>");
+    out
 }
 
 pub(super) fn write_fodt(
@@ -133,122 +159,135 @@ pub(super) fn write_fodt(
     context: &mut Context,
 ) -> Result<String> {
     let (reference, resources) = reference(options, context, false)?;
-    let (content, resources) = render(doc, options, context, Format::Fodt, resources)?;
+    let (content, _) = render(doc, options, context, Format::Fodt, resources)?;
     let lang = document_language(&doc.meta, context);
-    let styles = styles_xml(reference, options, &resources, lang.as_ref(), context)?;
-    let mut content = parse_xml(&content, "content.xml", context)?.root;
+    let styles = styles_xml(reference, options, lang.as_ref(), context)?;
+    let content = parse_xml(&content, "content.xml", context)?.root;
     if !is_el(&content, OFFICE, "document-content") && !is_el(&content, OFFICE, "document") {
         return Err(Error::App(
             "The FODT template must produce an OpenDocument root element.".into(),
         ));
     }
-    content.name.local = "document".into();
-    if content.attr(OFFICE, "mimetype").is_none() {
-        let prefix = content.name.prefix.clone().unwrap_or_else(|| {
-            let mut prefix = "odf".to_owned();
-            while content
-                .ns_decls
-                .iter()
-                .any(|(key, _)| key.as_deref() == Some(prefix.as_str()))
-            {
-                prefix.push('_');
-            }
-            content
-                .ns_decls
-                .push((Some(prefix.clone().into()), OFFICE.into()));
-            prefix.into()
-        });
-        content.attrs.push((
-            xml::QName {
-                ns: Some(OFFICE.into()),
-                prefix: Some(prefix),
-                local: "mimetype".into(),
-            },
-            MIME.into(),
-        ));
-    }
-    let meta = format!(
-        "<office:meta xmlns:office=\"{OFFICE}\" xmlns:dc=\"{}\" xmlns:meta=\"{}\">",
-        ns::DC,
-        ns::META
-    );
-    let meta = metadata(&doc.meta, timestamp(context)).replacen("<office:meta>", &meta, 1);
+    let meta = meta_xml(&doc.meta, timestamp(context));
     let meta = parse_xml(&meta, "meta.xml", context)?.root;
     let styles = parse_xml(&styles, "styles.xml", context)?.root;
-    let mut style_nodes = styles
-        .children
-        .into_iter()
-        .filter_map(|node| {
-            let XmlNode::Element(mut child) = node else {
-                return None;
-            };
-            if child.name.ns.as_deref() != Some(OFFICE) {
-                return None;
-            }
-            for (prefix, ns) in &styles.ns_decls {
-                if !child.ns_decls.iter().any(|(key, _)| key == prefix) {
-                    child.ns_decls.push((prefix.clone(), ns.clone()));
-                }
-            }
-            Some(child)
-        })
-        .collect::<Vec<_>>();
+    Ok(flat_document(content, &styles, meta))
+}
 
-    content
-        .children
-        .retain(|node| !matches!(node, XmlNode::Element(el) if is_el(el, OFFICE, "meta")));
-    let mut output_nodes = vec![XmlNode::Element(meta)];
+/// Joins the parts of an ODT package into one flat document, as Pandoc does.
+/// The root has the attributes and namespace declarations of all parts in
+/// the order of their names. The sections of `content.xml` come first in
+/// each section, then the elements of the same section in `styles.xml`.
+fn flat_document(content: XmlElement, styles: &XmlElement, meta: XmlElement) -> String {
+    let mut attributes = BTreeMap::new();
+    for root in [&content, styles, &meta] {
+        for (prefix, uri) in &root.ns_decls {
+            let name = prefix
+                .as_ref()
+                .map_or_else(|| "xmlns".to_owned(), |prefix| format!("xmlns:{prefix}"));
+            attributes.entry(name).or_insert_with(|| uri.to_string());
+        }
+        for (name, value) in &root.attrs {
+            attributes
+                .entry(qualified_name(name))
+                .or_insert_with(|| value.to_string());
+        }
+    }
+    let office = content
+        .name
+        .prefix
+        .as_ref()
+        .map(|prefix| prefix.to_string())
+        .or_else(|| {
+            attributes.iter().find_map(|(name, uri)| {
+                name.strip_prefix("xmlns:")
+                    .filter(|_| uri == OFFICE)
+                    .map(str::to_owned)
+            })
+        })
+        .unwrap_or_else(|| {
+            attributes.insert("xmlns:odf".into(), OFFICE.into());
+            "odf".into()
+        });
+    attributes
+        .entry(format!("{office}:mimetype"))
+        .or_insert_with(|| MIME.into());
+    let root = match &content.name.prefix {
+        Some(prefix) => format!("{prefix}:document"),
+        None => "document".into(),
+    };
+
+    let section = |root: &XmlElement, name: &str| {
+        root.elements()
+            .find(|element| is_el(element, OFFICE, name))
+            .cloned()
+    };
+    let mut sections = vec![
+        meta.elements()
+            .find(|element| is_el(element, OFFICE, "meta"))
+            .cloned(),
+    ];
     for name in [
         "font-face-decls",
         "styles",
         "automatic-styles",
         "master-styles",
     ] {
-        let existing = content.children.iter().position(
-            |node| matches!(node, XmlNode::Element(element) if is_el(element, OFFICE, name)),
-        );
-        let inherited = style_nodes
-            .iter()
-            .position(|node| is_el(node, OFFICE, name))
-            .map(|index| style_nodes.remove(index));
-        let current = existing.and_then(|index| match content.children.remove(index) {
-            XmlNode::Element(el) => Some(el),
-            XmlNode::Text(_) => None,
-        });
-        match (inherited, current) {
-            (Some(mut base), Some(mut generated)) => {
-                // Keep the namespace bindings of both files on their own nodes.
-                for child in &mut base.children {
-                    if let XmlNode::Element(child) = child {
-                        for (prefix, ns) in &base.ns_decls {
-                            if !child.ns_decls.iter().any(|(key, _)| key == prefix) {
-                                child.ns_decls.push((prefix.clone(), ns.clone()));
-                            }
-                        }
-                    }
-                }
-                if name == "font-face-decls" {
-                    let fonts: HashSet<_> = base
+        sections.push(match (section(&content, name), section(styles, name)) {
+            (Some(mut generated), Some(inherited)) => {
+                let fonts: HashSet<String> = generated
+                    .elements()
+                    .filter_map(|font| font.attr(STYLE, "name").map(str::to_owned))
+                    .collect();
+                generated.children.extend(
+                    inherited
                         .elements()
-                        .filter_map(|child| child.attr(STYLE, "name"))
-                        .collect();
-                    generated.children.retain(|node| {
-                        !matches!(node, XmlNode::Element(child) if child.attr(STYLE, "name").is_some_and(|font| fonts.contains(font)))
-                    });
-                }
-                base.children.append(&mut generated.children);
-                generated.children = base.children;
-                output_nodes.push(XmlNode::Element(generated));
+                        .filter(|element| {
+                            name != "font-face-decls"
+                                || element
+                                    .attr(STYLE, "name")
+                                    .is_none_or(|font| !fonts.contains(font))
+                        })
+                        .cloned()
+                        .map(XmlNode::Element),
+                );
+                Some(generated)
             }
-            (Some(node), None) | (None, Some(node)) => output_nodes.push(XmlNode::Element(node)),
-            (None, None) => {}
-        }
+            (generated, inherited) => generated.or(inherited),
+        });
     }
-    output_nodes.append(&mut content.children);
-    content.children = output_nodes;
-    let mut out = XML.to_owned();
-    content.write_to(&mut out);
-    Ok(out)
+    let merged = [
+        "meta",
+        "font-face-decls",
+        "styles",
+        "automatic-styles",
+        "master-styles",
+    ];
+    let rest = content
+        .elements()
+        .filter(|element| !merged.iter().any(|name| is_el(element, OFFICE, name)))
+        .cloned()
+        .map(Some);
+
+    let mut out = format!("{}<{root}", show::DECLARATION);
+    for (name, value) in &attributes {
+        let _ = write!(out, " {name}=\"");
+        show::escape(&mut out, value);
+        out.push('"');
+    }
+    out.push('>');
+    for element in sections.into_iter().chain(rest).flatten() {
+        show::element(&mut out, &element);
+    }
+    let _ = write!(out, "</{root}>");
+    out
+}
+
+fn qualified_name(name: &xml::QName) -> String {
+    match &name.prefix {
+        Some(prefix) => format!("{prefix}:{}", name.local),
+        None => name.local.to_string(),
+    }
 }
 
 fn zip_error(error: ArchiveError) -> Error {
@@ -290,6 +329,11 @@ fn reference(
             Error::Parse(format!("Could not parse reference-doc {path:?}: {error}"))
         })?;
         let styles = archive.read("styles.xml").map_err(zip_error)?;
+        resources.layout = archive
+            .entry_names()
+            .into_iter()
+            .map(str::to_owned)
+            .collect();
         if copy_parts {
             let names: Vec<_> = archive
                 .entry_names()
@@ -307,6 +351,7 @@ fn reference(
         return Ok((styles, resources));
     }
     let mut styles = None;
+    resources.layout = DEFAULT_LAYOUT.map(str::to_owned).to_vec();
     if let Some(dir) = data_dir {
         let path = format!("{dir}/odt/styles.xml");
         if is_file(context, &path) {
@@ -319,9 +364,26 @@ fn reference(
                     let bytes = context.read_file_limited(&path, limit)?;
                     resources.charge(context, bytes.len(), 1)?;
                     resources.insert(name.into(), part_type(name), bytes);
+                    if !resources.layout.iter().any(|entry| entry == name) {
+                        resources.layout.push(name.into());
+                    }
                 }
             }
         }
+    }
+    if copy_parts && !resources.parts.contains_key("manifest.rdf") {
+        let rdf = concat!(
+            "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" ",
+            "xmlns:pkg=\"http://docs.oasis-open.org/ns/office/1.2/meta/pkg#\">",
+            "<pkg:Document rdf:about=\"\"><pkg:hasPart rdf:resource=\"content.xml\" />",
+            "<pkg:hasPart rdf:resource=\"styles.xml\" /></pkg:Document></rdf:RDF>",
+        );
+        resources.charge(context, rdf.len(), 1)?;
+        resources.insert(
+            "manifest.rdf".into(),
+            "application/rdf+xml",
+            rdf.as_bytes().to_vec(),
+        );
     }
     Ok((styles, resources))
 }
@@ -378,35 +440,53 @@ fn part_type(path: &str) -> &'static str {
         "application/xml"
     } else if path.ends_with(".rdf") {
         "application/rdf+xml"
+    } else if path.ends_with(".txt") {
+        "text/plain"
     } else {
         mime_from_extension(path).unwrap_or("application/octet-stream")
     }
 }
 
+/// Writes the manifest as Pandoc does: `content.xml`, the added parts in
+/// reverse order, the other parts in the order of the reference, and then the
+/// folder of each formula part, one time for each part in it.
 fn manifest(resources: &Resources) -> String {
     let mut out = format!(
         "{XML}<manifest:manifest xmlns:manifest=\"{}\" manifest:version=\"1.3\">\n  <manifest:file-entry manifest:media-type=\"{MIME}\" manifest:full-path=\"/\" manifest:version=\"1.3\" />\n",
         ns::MANIFEST
     );
-    for (path, kind) in resources
-        .parts
-        .iter()
-        .map(|(path, part)| (path.as_str(), part.media_type.as_str()))
-    {
+    let mut seen = HashSet::new();
+    let listed: Vec<&str> = std::iter::once("content.xml")
+        .chain(resources.added.iter().rev().map(String::as_str))
+        .chain(resources.layout.iter().map(String::as_str))
+        .chain(resources.parts.keys().map(String::as_str))
+        .filter(|path| {
+            *path != "mimetype"
+                && *path != MANIFEST_FILE
+                && resources.parts.contains_key(*path)
+                && seen.insert(*path)
+        })
+        .collect();
+    for path in &listed {
         let _ = writeln!(
             out,
             "  <manifest:file-entry manifest:media-type=\"{}\" manifest:full-path=\"{}\" />",
-            escaped(kind),
+            escaped(&resources.parts[*path].media_type),
             escaped(path)
         );
     }
-    for path in &resources.formulas {
-        let _ = writeln!(
-            out,
-            "  <manifest:file-entry manifest:media-type=\"{FORMULA_MIME}\" manifest:full-path=\"{path}/\" />"
-        );
+    for path in &listed {
+        if path.starts_with("Formula-")
+            && let Some((folder, _)) = path.split_once('/')
+        {
+            let _ = writeln!(
+                out,
+                "  <manifest:file-entry manifest:media-type=\"{FORMULA_MIME}\" manifest:full-path=\"{}/\" />",
+                escaped(folder)
+            );
+        }
     }
-    out.push_str("</manifest:manifest>\n");
+    out.push_str("</manifest:manifest>");
     out
 }
 
@@ -443,7 +523,6 @@ fn localize_styles(element: &mut xml::XmlElement, lang: &Lang) {
 fn styles_xml(
     reference: Option<Vec<u8>>,
     options: &WriterOptions,
-    resources: &Resources,
     lang: Option<&Lang>,
     context: &Context,
 ) -> Result<String> {
@@ -454,13 +533,11 @@ fn styles_xml(
             file: "'styles.xml'".into(),
             message: error.to_string(),
         })?;
-    let additions = extra_styles(options, resources);
+    let additions = extra_styles(options);
     if let Some(reference) = reference {
         let mut root = parse_xml(&reference, "styles.xml", context)?.root;
         if let Some(lang) = lang {
             localize_styles(&mut root, lang);
-        } else if additions.is_empty() {
-            return Ok(reference);
         }
         let index =
             match root.children.iter().position(
@@ -477,33 +554,31 @@ fn styles_xml(
                 }
             };
         if let Some(XmlNode::Element(styles)) = root.children.get_mut(index) {
-            let names = styles
-                .elements()
-                .filter_map(|element| element.attr(STYLE, "name").map(str::to_owned))
-                .collect::<HashSet<_>>();
-            for (name, definition) in additions {
-                if !names.contains(&name) {
-                    let definition = definition.replacen(
-                        "<style:style",
-                        &format!(
-                            "<style:style xmlns:style=\"{STYLE}\" xmlns:fo=\"{}\"",
-                            ns::FO
-                        ),
-                        1,
-                    );
-                    styles.children.push(XmlNode::Element(
-                        parse_xml(&definition, "styles.xml", context)?.root,
-                    ));
-                }
+            // Pandoc appends the styles also when the reference has a style
+            // of the same name.
+            for definition in additions {
+                let definition = definition.replacen(
+                    "<style:style",
+                    &format!(
+                        "<style:style xmlns:style=\"{STYLE}\" xmlns:fo=\"{}\"",
+                        ns::FO
+                    ),
+                    1,
+                );
+                let mut element = parse_xml(&definition, "styles.xml", context)?.root;
+                // The declarations only serve the parse: the root of the
+                // reference declares these prefixes.
+                element.ns_decls.clear();
+                styles.children.push(XmlNode::Element(element));
             }
         }
-        let mut out = XML.to_owned();
-        root.write_to(&mut out);
+        let mut out = show::DECLARATION.to_owned();
+        show::element(&mut out, &root);
         return Ok(out);
     }
 
     let mut out = default_styles(lang);
-    for (_, style) in additions {
+    for style in additions {
         out.push_str(&style);
     }
     out.push_str("</office:styles><office:automatic-styles><style:page-layout style:name=\"PageLayout\"><style:page-layout-properties fo:page-width=\"21cm\" fo:page-height=\"29.7cm\" fo:margin=\"2cm\" style:print-orientation=\"portrait\" /></style:page-layout></office:automatic-styles><office:master-styles><style:master-page style:name=\"Standard\" style:page-layout-name=\"PageLayout\" /></office:master-styles></office:document-styles>");
@@ -628,25 +703,17 @@ fn default_styles(lang: Option<&Lang>) -> String {
     out
 }
 
-fn extra_styles(options: &WriterOptions, resources: &Resources) -> BTreeMap<String, String> {
-    let mut styles = BTreeMap::new();
-    for (name, family) in &resources.custom_styles {
-        styles.insert(
-            name.clone(),
-            format!(
-                "<style:style style:name=\"{}\" style:family=\"{family}\" />",
-                escaped(name)
-            ),
-        );
-    }
-    if resources.highlighted {
-        let palette = options
-            .highlight_theme
-            .as_ref()
-            .and_then(|file| std::str::from_utf8(&file.bytes).ok())
-            .and_then(|value| Style::from_json(value).ok())
-            .or_else(|| options.highlight_style.as_deref().and_then(Style::builtin))
-            .unwrap_or_default();
+/// Returns the styles that Pandoc adds to `styles.xml`: one text style for
+/// each token type, in this order, when highlighting is on.
+fn extra_styles(options: &WriterOptions) -> Vec<String> {
+    let mut styles = Vec::new();
+    let palette = options
+        .highlight_theme
+        .as_ref()
+        .and_then(|file| std::str::from_utf8(&file.bytes).ok())
+        .and_then(|value| Style::from_json(value).ok())
+        .or_else(|| options.highlight_style.as_deref().and_then(Style::builtin));
+    if let Some(palette) = palette {
         for kind in TokenType::ALL {
             let name = format!("{}Tok", kind.name());
             let style = palette.token_styles.get(&kind).copied().unwrap_or_default();
@@ -654,19 +721,19 @@ fn extra_styles(options: &WriterOptions, resources: &Resources) -> BTreeMap<Stri
             if let Some(color) = style.color.or(palette.default_color) {
                 let _ = write!(props, " fo:color=\"{color}\"");
             }
-            if let Some(color) = style.background.or(palette.background_color) {
+            if let Some(color) = style.background {
                 let _ = write!(props, " fo:background-color=\"{color}\"");
-            }
-            if style.bold {
-                props.push_str(" fo:font-weight=\"bold\"");
             }
             if style.italic {
                 props.push_str(" fo:font-style=\"italic\"");
             }
+            if style.bold {
+                props.push_str(" fo:font-weight=\"bold\"");
+            }
             if style.underline {
                 props.push_str(" style:text-underline-style=\"solid\"");
             }
-            styles.insert(name.clone(), format!("<style:style style:name=\"{name}\" style:family=\"text\"><style:text-properties{props} /></style:style>"));
+            styles.push(format!("<style:style style:name=\"{name}\" style:family=\"text\"><style:text-properties{props} /></style:style>"));
         }
     }
     styles
@@ -700,11 +767,12 @@ fn iso_time(unix_seconds: i64) -> String {
     )
 }
 
-fn metadata(meta: &Meta, timestamp: i64) -> String {
-    let mut out = format!(
-        "<office:meta><meta:generator>Randoc/{}</meta:generator>",
+/// Returns the child elements of `office:meta`.
+fn metadata(meta: &Meta, timestamp: i64) -> Vec<String> {
+    let mut out = vec![format!(
+        "<meta:generator>Randoc/{}</meta:generator>",
         env!("CARGO_PKG_VERSION")
-    );
+    )];
     for (field, tag) in [
         ("title", "dc:title"),
         ("description", "dc:description"),
@@ -727,14 +795,12 @@ fn metadata(meta: &Meta, timestamp: i64) -> String {
             })
             .unwrap_or_default();
         if field != "lang" || !value.is_empty() {
-            let _ = write!(out, "<{tag}>{}</{tag}>", escaped(&value));
+            out.push(format!("<{tag}>{}</{tag}>", escaped(&value)));
         }
     }
     let date = iso_time(timestamp);
-    let _ = write!(
-        out,
-        "<meta:creation-date>{date}</meta:creation-date><dc:date>{date}</dc:date>"
-    );
+    out.push(format!("<meta:creation-date>{date}</meta:creation-date>"));
+    out.push(format!("<dc:date>{date}</dc:date>"));
     for (name, value) in &meta.0 {
         if matches!(
             name.as_str(),
@@ -743,15 +809,13 @@ fn metadata(meta: &Meta, timestamp: i64) -> String {
             continue;
         }
         if let Some(value) = meta_text(value) {
-            let _ = write!(
-                out,
+            out.push(format!(
                 "<meta:user-defined meta:name=\"{}\" meta:value-type=\"string\">{}</meta:user-defined>",
                 escaped(name),
                 escaped(&value)
-            );
+            ));
         }
     }
-    out.push_str("</office:meta>");
     out
 }
 
@@ -789,9 +853,9 @@ impl Renderer<'_> {
                 }
                 index += 1;
             };
-            let content = format!("{XML}{math}");
+            let content = format!("<?xml version='1.0' ?>\n{math}\n");
             let settings = format!(
-                "{XML}<office:document-settings xmlns:office=\"{OFFICE}\" xmlns:config=\"{}\" office:version=\"1.3\"><office:settings><config:config-item-set config:name=\"ooo:configuration-settings\"><config:config-item config:name=\"IsTextMode\" config:type=\"boolean\">{is_inline}</config:config-item></config:config-item-set></office:settings></office:document-settings>",
+                "{XML}<office:document-settings xmlns:office=\"{OFFICE}\" xmlns:xlink=\"{XLINK}\" xmlns:config=\"{}\" xmlns:ooo=\"{OOO}\" office:version=\"1.3\">\n  <office:settings><config:config-item-set config:name=\"ooo:configuration-settings\"><config:config-item config:name=\"IsTextMode\" config:type=\"boolean\">{is_inline}</config:config-item></config:config-item-set></office:settings>\n</office:document-settings>",
                 ns::CONFIG
             );
             self.resources.charge(
@@ -799,18 +863,17 @@ impl Renderer<'_> {
                 content.len().saturating_add(settings.len()),
                 2,
             )?;
-            self.resources.insert(
+            self.resources.add(
                 format!("{path}/content.xml"),
                 "application/xml",
                 content.into_bytes(),
             );
-            self.resources.insert(
+            self.resources.add(
                 format!("{path}/settings.xml"),
                 "application/xml",
                 settings.into_bytes(),
             );
             self.resources.next_index = index + 2;
-            self.resources.formulas.insert(path.clone());
             format!(
                 "<draw:object xlink:href=\"{path}/\" xlink:type=\"simple\" xlink:show=\"embed\" xlink:actuate=\"onLoad\" />"
             )
@@ -902,7 +965,7 @@ impl Renderer<'_> {
                             }
                         }
                         self.resources.charge(self.context, bytes.len(), 1)?;
-                        self.resources.insert(reference.clone(), mime, bytes);
+                        self.resources.add(reference.clone(), mime, bytes);
                     }
                 }
                 None => {
@@ -1416,6 +1479,84 @@ mod tests {
             write_odt(&doc, &options, &mut context),
             Err(Error::Io(_))
         ));
+        Ok(())
+    }
+
+    #[test]
+    fn flat_document_sorts_root_attributes_and_merges_font_faces() -> Result<()> {
+        let doc = Pandoc {
+            blocks: vec![Block::Para(vec![Inline::Code(Attr::default(), "x".into())])],
+            ..Pandoc::default()
+        };
+        let fodt = write_fodt(&doc, &WriterOptions::default(), &mut Context::pure())?;
+        assert!(fodt.starts_with(concat!(
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><office:document ",
+            "office:mimetype=\"application/vnd.oasis.opendocument.text\" ",
+            "office:version=\"1.3\" xmlns:chart="
+        )));
+        assert!(fodt.contains("xmlns:grddl="), "{fodt}");
+        assert_eq!(fodt.matches("<style:font-face ").count(), 1, "{fodt}");
+        assert!(
+            fodt.contains("</office:meta><office:font-face-decls>"),
+            "{fodt}"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn languages_and_formats_style_each_run_of_words() -> Result<()> {
+        let attr = |lang: &str| {
+            Attr::new(
+                String::new(),
+                Vec::new(),
+                vec![("lang".into(), lang.into())],
+            )
+        };
+        let word = |text: &str| Inline::Str(text.into());
+        let doc = Pandoc {
+            blocks: vec![Block::Div(
+                attr("fr-CA"),
+                vec![Block::Para(vec![
+                    Inline::Span(Attr::new("s", Vec::new(), Vec::new()), vec![word("a")]),
+                    Inline::Emph(vec![word("b"), Inline::Code(Attr::default(), "c".into())]),
+                    Inline::Note(vec![Block::Para(vec![word("n")])]),
+                ])],
+            )],
+            ..Pandoc::default()
+        };
+        let fodt = write_fodt(&doc, &WriterOptions::default(), &mut Context::pure())?;
+        assert!(fodt.contains(concat!(
+            "<text:bookmark-start text:name=\"s\" /><text:span text:style-name=\"T1\">a</text:span>",
+            "<text:bookmark-end text:name=\"s\" /><text:span text:style-name=\"T2\">b</text:span>",
+            "<text:span text:style-name=\"Source_20_Text\">c</text:span>"
+        )), "{fodt}");
+        assert!(
+            fodt.contains("<text:p text:style-name=\"Footnote\">n</text:p>"),
+            "{fodt}"
+        );
+        assert!(fodt.contains(concat!(
+            "<style:style style:name=\"T2\" style:family=\"text\"><style:text-properties ",
+            "fo:country=\"CA\" fo:font-style=\"italic\" fo:language=\"fr\" ",
+            "style:font-style-asian=\"italic\" style:font-style-complex=\"italic\" /></style:style>"
+        )), "{fodt}");
+        Ok(())
+    }
+
+    #[test]
+    fn a_final_line_break_in_code_adds_no_paragraph() -> Result<()> {
+        let doc = Pandoc {
+            blocks: vec![Block::CodeBlock(Attr::default(), "a\n\nb\n".into())],
+            ..Pandoc::default()
+        };
+        let mut options = WriterOptions::default();
+        options.highlight_style = None;
+        let fodt = write_fodt(&doc, &options, &mut Context::pure())?;
+        assert_eq!(
+            fodt.matches("<text:p text:style-name=\"Preformatted_20_Text\"")
+                .count(),
+            3,
+            "{fodt}"
+        );
         Ok(())
     }
 }

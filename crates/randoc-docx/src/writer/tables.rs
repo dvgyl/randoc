@@ -6,9 +6,9 @@ use randoc_core::{CaptionPosition, Error, Extension, Result, Term};
 
 use super::Renderer;
 use super::blocks::Flow;
-use super::inlines::plain_text;
+use super::inlines::Piece;
 use super::styles::Kind;
-use super::xml::{Xml, bookmark_end};
+use super::xml::{Xml, block_bookmark_end, bookmark_end};
 
 #[derive(Clone, Copy, Default)]
 struct Span {
@@ -33,7 +33,7 @@ impl Renderer<'_> {
 
         self.table_count += 1;
         let above = self.options.table_caption_position == CaptionPosition::CaptionAbove;
-        let bookmark = self.bookmark(out, &table.attr.id);
+        let bookmark = self.block_bookmark(out, &table.attr.id);
         if above {
             self.caption(out, &table.attr, &table.caption, false, flow, depth + 1)?;
         }
@@ -46,40 +46,55 @@ impl Renderer<'_> {
             .get("custom-style")
             .map(|name| self.styles.custom(Kind::Table, name, &self.budget))
             .transpose()?;
-        out.raw(r#"<w:tbl><w:tblPr><w:tblStyle w:val=""#);
-        out.escaped(
+        let mut tbl = self.budget.xml();
+        tbl.raw(r#"<w:tbl><w:tblPr><w:tblStyle w:val=""#);
+        tbl.escaped(
             style
                 .as_deref()
                 .unwrap_or_else(|| self.styles.id(Kind::Table, "Table")),
         );
-        out.raw("\"/>");
+        tbl.raw("\" />");
         if fixed {
-            out.raw(r#"<w:tblW w:type="pct" w:w="5000"/><w:tblLayout w:type="fixed"/>"#);
+            let total: f64 = table
+                .col_specs
+                .iter()
+                .filter_map(|spec| match spec.width {
+                    ColWidth::ColWidth(width) => Some(width),
+                    ColWidth::ColWidthDefault => None,
+                })
+                .sum();
+            let _ = write!(
+                tbl,
+                r#"<w:tblW w:type="pct" w:w="{}" /><w:tblLayout w:type="fixed" />"#,
+                (total * 5000.0).round_ties_even() as i64
+            );
         } else {
-            out.raw(r#"<w:tblW w:type="auto" w:w="0"/>"#);
+            tbl.raw(r#"<w:tblW w:type="auto" w:w="0" />"#);
         }
         let first_row = u8::from(!table.head.rows.is_empty());
         let first_col = u8::from(table.bodies.iter().any(|body| body.row_head_columns > 0));
         let look = first_row * 0x20 + first_col * 0x80;
         let _ = write!(
-            out,
-            r#"<w:tblLook w:firstRow="{first_row}" w:lastRow="0" w:firstColumn="{first_col}" w:lastColumn="0" w:noHBand="0" w:noVBand="0" w:val="{look:04X}"/>"#
+            tbl,
+            r#"<w:tblLook w:firstRow="{first_row}" w:lastRow="0" w:firstColumn="{first_col}" w:lastColumn="0" w:noHBand="0" w:noVBand="0" w:val="{look:04X}" />"#
         );
         if !table.caption.long.is_empty() {
-            out.raw(r#"<w:tblCaption w:val=""#);
-            out.escaped(&stringify_blocks(&table.caption.long));
-            out.raw("\"/>");
+            tbl.raw(r#"<w:tblCaption w:val=""#);
+            tbl.escaped(&stringify_blocks(&table.caption.long));
+            tbl.raw("\" />");
         }
-        out.raw("</w:tblPr><w:tblGrid>");
+        tbl.raw("</w:tblPr><w:tblGrid>");
         for column in &table.col_specs {
             let fraction = match column.width {
                 ColWidth::ColWidth(width) if width.is_finite() && width >= 0.0 => width.min(1.0),
                 _ => 1.0 / cols as f64,
             };
-            let width = (fraction * self.width as f64).round() as i64;
-            let _ = write!(out, "<w:gridCol w:w=\"{width}\"/>");
+            // Pandoc sizes table columns for a fixed text width of 7920
+            // twips; the page of the reference document changes only images.
+            let width = (fraction * 7920.0).round() as i64;
+            let _ = write!(tbl, "<w:gridCol w:w=\"{width}\" />");
         }
-        out.raw("</w:tblGrid>");
+        tbl.raw("</w:tblGrid>");
         let mut active = vec![Span::default(); cols];
         let sections = std::iter::once((table.head.rows.as_slice(), true, 0))
             .chain(table.bodies.iter().flat_map(|body| {
@@ -93,7 +108,7 @@ impl Renderer<'_> {
         for (rows, header, row_head) in sections {
             for (index, row) in rows.iter().enumerate() {
                 self.table_row(
-                    out,
+                    &mut tbl,
                     table,
                     row,
                     header,
@@ -105,11 +120,12 @@ impl Renderer<'_> {
                 )?;
             }
         }
-        out.raw("</w:tbl>");
+        tbl.raw("</w:tbl>");
+        out.append(tbl);
         if !above {
             self.caption(out, &table.attr, &table.caption, false, flow, depth + 1)?;
         }
-        bookmark_end(out, bookmark);
+        block_bookmark_end(out, bookmark);
         self.first = true;
         Ok(())
     }
@@ -140,7 +156,7 @@ impl Renderer<'_> {
     ) -> Result<()> {
         out.raw("<w:tr>");
         if header {
-            out.raw(r#"<w:trPr><w:tblHeader w:val="on"/></w:trPr>"#);
+            out.raw(r#"<w:trPr><w:tblHeader w:val="on" /></w:trPr>"#);
         }
         let mut column = 0;
         let mut cells = row.cells.iter();
@@ -151,13 +167,13 @@ impl Renderer<'_> {
                     entry.rows -= 1;
                 }
                 open_cell(out, span.cols, Some("continue"));
-                out.raw("<w:p><w:pPr/></w:p></w:tc>");
+                out.raw("<w:p><w:pPr /></w:p></w:tc>");
                 column += span.cols;
                 continue;
             }
             let align = table.col_specs[column].align;
             let mut cell_flow = Flow {
-                style: Some("Compact"),
+                compact: true,
                 alignment: alignment(align),
                 run: flow.run,
                 bidi: flow.bidi,
@@ -229,7 +245,11 @@ impl Renderer<'_> {
             }
         }
         let above = self.options.figure_caption_position == CaptionPosition::CaptionAbove;
-        let mut content = self.budget.xml();
+        let mut content = if single_image.is_some() {
+            out.fragment()
+        } else {
+            self.budget.xml()
+        };
         if let Some(style) = single_image {
             self.blocks(
                 &mut content,
@@ -244,10 +264,10 @@ impl Renderer<'_> {
             self.charge_cells(1, blocks.len())?;
             content.raw(r#"<w:tbl><w:tblPr><w:tblStyle w:val=""#);
             content.escaped(self.styles.id(Kind::Table, "FigureTable"));
-            content.raw(r#""/><w:tblW w:type="auto" w:w="0"/><w:jc w:val="center"/><w:tblLook w:firstRow="0" w:lastRow="0" w:firstColumn="0" w:lastColumn="0"/></w:tblPr><w:tblGrid>"#);
+            content.raw(r#"" /><w:tblW w:type="auto" w:w="0" /><w:jc w:val="center" /><w:tblLook w:firstRow="0" w:lastRow="0" w:firstColumn="0" w:lastColumn="0" /></w:tblPr><w:tblGrid>"#);
             let width = (self.width as f64 / blocks.len().max(1) as f64).round() as i64;
             for _ in blocks {
-                let _ = write!(content, "<w:gridCol w:w=\"{width}\"/>");
+                let _ = write!(content, "<w:gridCol w:w=\"{width}\" />");
             }
             content.raw("</w:tblGrid>");
             if !blocks.is_empty() {
@@ -280,9 +300,9 @@ impl Renderer<'_> {
             }
             content.raw("</w:tbl>");
         }
-        let mut label = self.budget.xml();
+        let mut label = out.fragment();
         self.caption(&mut label, attr, caption, true, flow, depth + 1)?;
-        let bookmark = self.bookmark(out, &attr.id);
+        let bookmark = self.block_bookmark(out, &attr.id);
         if above {
             out.append(label);
             out.append(content);
@@ -290,7 +310,7 @@ impl Renderer<'_> {
             out.append(content);
             out.append(label);
         }
-        bookmark_end(out, bookmark);
+        block_bookmark_end(out, bookmark);
         self.first = true;
         Ok(())
     }
@@ -308,9 +328,10 @@ impl Renderer<'_> {
         depth: usize,
     ) -> Result<()> {
         let mut content = self.budget.xml();
+        self.first = true;
         self.blocks(&mut content, blocks, flow, depth)?;
         if content.is_empty() {
-            out.raw("<w:p/>");
+            out.raw("<w:p />");
         } else {
             out.append(content);
         }
@@ -358,12 +379,9 @@ impl Renderer<'_> {
         let remainder = if let Some((Block::Plain(inlines) | Block::Para(inlines), remainder)) =
             caption.long.split_first()
         {
-            if inlines.iter().all(|inline| plain_text(inline).is_some()) {
-                self.plain(out, inlines, flow.run, ": ")?;
-            } else {
-                flow.run.text(out, ": ");
-                self.inlines(out, inlines, flow.run, depth + 1)?;
-            }
+            let mut pieces = vec![Piece::Text(": ")];
+            pieces.extend(inlines.iter().map(Piece::Inline));
+            self.pieces(out, &pieces, flow.run, depth + 1)?;
             remainder
         } else {
             &caption.long
@@ -384,15 +402,15 @@ fn alignment(align: Alignment) -> Option<&'static str> {
 
 fn open_cell(out: &mut Xml, cols: usize, merge: Option<&str>) {
     if cols == 1 && merge.is_none() {
-        out.raw("<w:tc><w:tcPr/>");
+        out.raw("<w:tc><w:tcPr />");
         return;
     }
     out.raw("<w:tc><w:tcPr>");
     if cols > 1 || merge == Some("continue") {
-        let _ = write!(out, "<w:gridSpan w:val=\"{cols}\"/>");
+        let _ = write!(out, "<w:gridSpan w:val=\"{cols}\" />");
     }
     if let Some(merge) = merge {
-        let _ = write!(out, "<w:vMerge w:val=\"{merge}\"/>");
+        let _ = write!(out, "<w:vMerge w:val=\"{merge}\" />");
     }
     out.raw("</w:tcPr>");
 }

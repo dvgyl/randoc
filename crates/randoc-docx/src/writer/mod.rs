@@ -47,7 +47,7 @@ impl BinaryWriter for DocxWriter {
             options,
             context,
             styles: styles::Styles::new(reference.styles.as_ref(), options, &budget)?,
-            numbering: numbering::Numbering::new(reference.numbering.as_ref()),
+            numbering: numbering::Numbering::new(),
             registry: styles::registry(options)?,
             notes: budget.xml(),
             comments: budget.xml(),
@@ -126,10 +126,20 @@ impl Renderer<'_> {
         let id = self.id();
         let _ = write!(
             out,
-            "<w:bookmarkStart w:id=\"{id}\" w:name=\"{}\"/>",
+            "<w:bookmarkStart w:id=\"{id}\" w:name=\"{}\" />",
             bookmark_name(name)
         );
         Some(id)
+    }
+}
+
+impl Renderer<'_> {
+    /// Starts a bookmark that surrounds whole blocks: a top-level element.
+    fn block_bookmark(&mut self, out: &mut Xml, name: &str) -> Option<u64> {
+        if !name.is_empty() {
+            out.element();
+        }
+        self.bookmark(out, name)
     }
 }
 

@@ -1,5 +1,5 @@
 use randoc_ast::{Attr, Block, Inline, MathType, QuoteType, Target};
-use randoc_core::{WrapOption, shared};
+use randoc_core::WrapOption;
 use randoc_layout::{Doc, cr, empty, hcat, literal, space, text};
 
 use super::{Dialect, Renderer};
@@ -96,7 +96,9 @@ impl Renderer<'_> {
             }
             Inline::RawInline(..) => empty(),
             Inline::Link(_, body, target) => self.link(body, target, in_table),
-            Inline::Image(attr, body, target) => self.image(attr, body, target, false),
+            Inline::Image(attr, body, target) => {
+                self.image(attr, body, target, false, in_link, in_table)
+            }
             Inline::Note(blocks) => match blocks.as_slice() {
                 [Block::Para(body) | Block::Plain(body)] => wrap("footnote:[", body, "]"),
                 [] => literal("footnote:[]"),
@@ -151,10 +153,17 @@ impl Renderer<'_> {
         ])
     }
 
-    pub(super) fn image(&self, attr: &Attr, body: &[Inline], target: &Target, figure: bool) -> Doc {
+    pub(super) fn image(
+        &self,
+        attr: &Attr,
+        body: &[Inline],
+        target: &Target,
+        figure: bool,
+        in_link: bool,
+        in_table: bool,
+    ) -> Doc {
         let prefix = if figure { "image::" } else { "image:" };
-        let alt = shared::stringify(body).replace(',', "&#44;");
-        let mut options = vec![alt];
+        let mut options = Vec::new();
         if !target.title.is_empty() {
             options.push(format!("title=\"{}\"", target.title.replace('"', "&quot;")));
         }
@@ -171,7 +180,13 @@ impl Renderer<'_> {
                 }
             }
         }
-        literal(format!("{prefix}{}[{}]", target.url, options.join(",")))
+        let alt = self.inlines(body, in_link, in_table);
+        let options = if options.is_empty() {
+            String::new()
+        } else {
+            format!(",{}", options.join(","))
+        };
+        literal(format!("{prefix}{}[", target.url)) + alt + literal(format!("{options}]"))
     }
 }
 

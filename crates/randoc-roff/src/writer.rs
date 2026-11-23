@@ -1,6 +1,7 @@
 mod highlight;
 mod inline;
 mod table;
+mod uri;
 
 use randoc_ast::{
     Block, Inline, ListAttributes, ListNumberDelim, ListNumberStyle, MetaValue, Pandoc,

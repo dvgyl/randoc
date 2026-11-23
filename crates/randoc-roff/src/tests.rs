@@ -488,10 +488,10 @@ fn ms_keeps_first_paragraph_state_across_blocks() {
 }
 
 #[test]
-fn ms_uses_plain_code_for_python_without_a_user_definition() {
+fn ms_uses_plain_code_for_an_unknown_language() {
     let doc = Pandoc {
         blocks: vec![Block::CodeBlock(
-            super::escape::attr("python"),
+            super::escape::attr("unknown-language"),
             "print(1)".into(),
         )],
         ..Pandoc::default()
@@ -602,4 +602,39 @@ fn mdoc_matches_nested_enclosures_and_preserves_punctuation() {
     assert_eq!(content[0], Inline::Str("[[[".into()));
     assert!(content.contains(&Inline::Str("]]".into())));
     assert_eq!(content.last(), Some(&Inline::Str("tail.".into())));
+}
+
+#[test]
+fn man_writer_links_images_only_for_known_schemes() {
+    let image = |alt: &str, url: &str| {
+        let alt = if alt.is_empty() {
+            Vec::new()
+        } else {
+            vec![Inline::Str(alt.into())]
+        };
+        Inline::Image(Attr::default(), alt, randoc_ast::Target::new(url, ""))
+    };
+    let man = |inline: Inline| {
+        let doc = Pandoc {
+            blocks: vec![Block::Para(vec![inline])],
+            ..Pandoc::default()
+        };
+        render("man", &doc, &WriterOptions::default(), &mut Context::pure()).unwrap()
+    };
+    assert_eq!(
+        man(image("", "http://x-y.org/a-b.png")),
+        ".PP\n[IMAGE: \\c\n.UR http://x-y.org/a-b.png\nimage\n.UE \\c\n]"
+    );
+    assert_eq!(
+        man(image("alt", "mailto:a-b@c.org")),
+        ".PP\n[IMAGE: \\c\n.MT a-b@c.org\nalt\n.ME \\c\n]"
+    );
+    assert_eq!(man(image("alt", "foo:b-ar.png")), ".PP\n[IMAGE: alt]");
+    assert_eq!(man(image("", "a.png")), ".PP\n[IMAGE: image]");
+    let link = Inline::Link(
+        Attr::default(),
+        vec![Inline::Str("a".into())],
+        randoc_ast::Target::new("foo:bar", ""),
+    );
+    assert_eq!(man(link), ".PP\na");
 }

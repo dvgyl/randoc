@@ -394,13 +394,8 @@ impl DocumentState<'_, '_> {
             .or(declared.as_deref())
             .unwrap_or("application/octet-stream");
         let ext = extension_for_mime(mime).unwrap_or("bin");
-        let stem = format!("ppt/media/randoc-{hash}");
-        let path = if reference.parts.contains_key(&format!("{stem}.{ext}")) {
-            super::reference::unused_path(&reference.parts, &stem, ext)
-        } else {
-            format!("{stem}.{ext}")
-        };
         self.charge(bytes.len())?;
+        let path = reference.unused_path("ppt/media/image", ext);
         reference.overrides.insert(path.clone(), mime.into());
         reference.parts.insert(path.clone(), bytes);
         let media = Media {
@@ -423,7 +418,7 @@ fn write_slide(
     let mut relationships = output.relationships;
     if let Some(notes) = output.notes {
         reference.add_notes_master();
-        let note_path = format!("ppt/notesSlides/randocNotes{}.xml", index + 1);
+        let note_path = reference.unused_path("ppt/notesSlides/notesSlide", "xml");
         relationships.push(relationship(
             relationships.len() + 1,
             "notesSlide",
@@ -509,7 +504,7 @@ fn finish(
         let id = attr(&id);
         let _ = write!(
             notes_xml,
-            r#"<p:notesMasterIdLst xmlns:p="{P}" xmlns:r="{R}"><p:notesMasterId r:id="{id}"/></p:notesMasterIdLst>"#
+            r#"<p:notesMasterIdLst xmlns:p="{P}" xmlns:r="{R}"><p:notesMasterId r:id="{id}" /></p:notesMasterIdLst>"#
         );
     }
     let mut slide_xml = format!(r#"<p:sldIdLst xmlns:p="{P}" xmlns:r="{R}">"#);
@@ -517,7 +512,7 @@ fn finish(
         let rel = make_rel("slide", relative_target(&reference.main_path, path));
         let _ = write!(
             slide_xml,
-            r#"<p:sldId id="{}" r:id="{}"/>"#,
+            r#"<p:sldId id="{}" r:id="{}" />"#,
             index + 256,
             rel.id
         );
@@ -534,11 +529,14 @@ fn finish(
     properties::add(&mut reference, doc, stamp, slides.len());
     let root_rels = std::mem::take(&mut reference.root_rels);
     reference.add_rels("", &root_rels);
-    let mut types = format!(r#"<Types xmlns="{TYPES}">"#);
+    let mut types = format!(
+        r#"{}<Types xmlns="{TYPES}">"#,
+        super::reference::DECLARATION
+    );
     for (ext, mime) in &reference.defaults {
         let _ = write!(
             types,
-            r#"<Default Extension="{}" ContentType="{}"/>"#,
+            r#"<Default Extension="{}" ContentType="{}" />"#,
             attr(ext),
             attr(mime)
         );
@@ -546,7 +544,7 @@ fn finish(
     for (part, mime) in &reference.overrides {
         let _ = write!(
             types,
-            r#"<Override PartName="/{}" ContentType="{}"/>"#,
+            r#"<Override PartName="/{}" ContentType="{}" />"#,
             attr(part),
             attr(mime)
         );

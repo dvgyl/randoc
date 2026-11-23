@@ -15,7 +15,8 @@ use std::sync::Arc;
 use randoc_ast::{Citation, CitationMode, Inline, Meta, MetaValue, Pandoc};
 use randoc_citeproc::filter::BibFormat;
 use randoc_core::{
-    Context, Error, Limits, Reader, ReaderOptions, Result, Sources, Writer, WriterOptions,
+    Context, Error, Limits, Reader, ReaderOptions, Result, Sources, TemplateWriter, Writer,
+    WriterOptions,
 };
 use randoc_latex_reader::{FieldOptions, parse_field_inlines};
 
@@ -68,11 +69,11 @@ pub fn writer(format: &str) -> Option<Writer> {
         "biblatex" => true,
         _ => return None,
     };
-    Some(Writer::Text(Arc::new(
+    Some(Writer::Text(Arc::new(TemplateWriter(
         move |doc: &Pandoc, options: &WriterOptions, context: &mut Context| {
             write::write(doc, options, context, latex)
         },
-    )))
+    ))))
 }
 
 /// Reads bibliography references for the citation filter.
@@ -516,5 +517,165 @@ mod tests {
             output,
             "@book{key,\n  author = {{A and B}},\n  title = {The {lower} and {{ABC}} Book}\n}\n"
         );
+    }
+
+    fn read_doc(format: &str, input: &str) -> Pandoc {
+        let Reader::Text(reader) = reader(format).unwrap() else {
+            panic!()
+        };
+        reader
+            .read(
+                &Sources::from_text(input),
+                &ReaderOptions::default(),
+                &mut Context::pure(),
+            )
+            .unwrap()
+    }
+
+    fn write_doc(format: &str, doc: &Pandoc, options: &WriterOptions) -> String {
+        let Writer::Text(writer) = writer(format).unwrap() else {
+            panic!()
+        };
+        writer.write(doc, options, &mut Context::pure()).unwrap()
+    }
+
+    fn standalone(format: &str, source: &str) -> WriterOptions {
+        let mut options = WriterOptions::default();
+        options.template = Some(
+            randoc_templates::Template::compile::<String>(format, source, 32, &mut |path| {
+                Err(path.to_owned())
+            })
+            .unwrap(),
+        );
+        options
+    }
+
+    #[test]
+    fn reader_maps_howpublished_and_eventtitle_and_omits_the_techreport_genre() {
+        let items = bib(
+            "@techreport{r,institution={Inst},howpublished={Field bulletin},publisher={Pub},eventtitle={Annual Lamp Meeting}}",
+            BibFormat::BibTeX,
+        )
+        .unwrap();
+        let entry = map(&items[0]);
+        assert!(!entry.contains_key("genre"));
+        assert_eq!(
+            entry["publisher"],
+            MetaValue::MetaInlines(words("Inst; Field bulletin; Pub"))
+        );
+        assert_eq!(
+            entry["event"],
+            MetaValue::MetaInlines(words("Annual lamp meeting"))
+        );
+        let items = bib(
+            "@inproceedings{t,crossref={p}}@proceedings{p,eventtitle={Annual Lamp Meeting}}",
+            BibFormat::BibLaTeX,
+        )
+        .unwrap();
+        for item in &items {
+            assert_eq!(
+                map(item)["event"],
+                MetaValue::MetaInlines(words("Annual lamp meeting"))
+            );
+        }
+    }
+
+    #[test]
+    fn writer_uses_publisher_and_writes_only_thesis_types() {
+        for (kind, genre, bibtex, biblatex, field_type) in [
+            ("report", "Inspection report", "techreport", "report", None),
+            ("thesis", "", "phdthesis", "phdthesis", None),
+            (
+                "thesis",
+                "mathesis",
+                "mastersthesis",
+                "mastersthesis",
+                Some("mastersthesis"),
+            ),
+            (
+                "report",
+                "phdthesis",
+                "techreport",
+                "report",
+                Some("phdthesis"),
+            ),
+            ("book", "mathesis", "book", "book", Some("mastersthesis")),
+        ] {
+            let mut doc = read_doc("bibtex", "@misc{k,publisher={Lab}}");
+            let Some(MetaValue::MetaList(items)) = doc.meta.0.get_mut("references") else {
+                panic!()
+            };
+            let MetaValue::MetaMap(entry) = &mut items[0] else {
+                panic!()
+            };
+            string(entry, "type", kind);
+            if !genre.is_empty() {
+                string(entry, "genre", genre);
+            }
+            for (format, name) in [("bibtex", bibtex), ("biblatex", biblatex)] {
+                let mut expected = format!("@{name}{{k,\n  publisher = {{Lab}}");
+                if let Some(value) = field_type {
+                    expected.push_str(&format!(",\n  type = {{{value}}}"));
+                }
+                expected.push_str("\n}\n");
+                assert_eq!(
+                    write_doc(format, &doc, &WriterOptions::default()),
+                    expected,
+                    "{kind} {genre} {format}"
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn standalone_output_uses_the_variables_and_the_default_template() {
+        let doc = read_doc("biblatex", "@article{id,\n  annote = \"annotation\"\n}\n");
+        let source = randoc_data::default_template("biblatex").unwrap();
+        let mut options = standalone("default.biblatex", source);
+        assert_eq!(
+            write_doc("biblatex", &doc, &options),
+            "@article{id,\n  annote = {annotation}\n}\n"
+        );
+        options.variables.insert("include-before", "Before.");
+        options.variables.insert("header-includes", "<!-- h1 -->");
+        let empty = Pandoc::default();
+        assert_eq!(
+            write_doc("bibtex", &empty, &options),
+            "<!-- h1 -->\nBefore.\n"
+        );
+        assert!(writer("bibtex").unwrap().renders_template());
+    }
+
+    #[test]
+    fn standalone_fields_go_through_the_template_like_pandoc() {
+        let mut doc = read_doc("bibtex", "@book{k,title={T},note={a note}}");
+        doc.meta
+            .insert("title", MetaValue::MetaString("Ignored".into()));
+        let mut options = standalone("t", "L1\n\nL2 $body$ $title$ $meta-json$|$foo$\n");
+        options.variables.insert("foo", "bar");
+        assert_eq!(
+            write_doc("biblatex", &doc, &options),
+            "L1\n\nL2 @book{k,\n  title = {L1 L2 T {}|bar},\n  note = {L1 L2 a note {}|bar}\n}  {}|bar\n"
+        );
+    }
+
+    #[test]
+    fn standalone_fields_share_one_template_budget() {
+        let input = (0..8)
+            .map(|i| format!("@book{{k{i},title={{T}},note={{N}}}}"))
+            .collect::<String>();
+        let doc = read_doc("bibtex", &input);
+        let options = standalone("t", &format!("{}$body$\n", "x".repeat(64)));
+        let Writer::Text(writer) = writer("bibtex").unwrap() else {
+            panic!()
+        };
+        let mut context = Context::pure();
+        context.limits.max_input_size = 1024;
+        assert!(matches!(
+            writer.write(&doc, &options, &mut context),
+            Err(Error::App(message)) if message.contains("input size limit")
+        ));
+        context.limits.max_input_size = 4096;
+        assert!(writer.write(&doc, &options, &mut context).is_ok());
     }
 }

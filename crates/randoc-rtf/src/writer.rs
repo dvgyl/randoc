@@ -122,7 +122,7 @@ pub(crate) fn write(
     if options.table_of_contents {
         let toc = renderer.toc(&doc.blocks)?;
         if fields.get("toc").is_none() {
-            fields.insert("toc", Val::Bool(true));
+            fields.insert("toc", Val::Bool(!toc.is_empty()));
         }
         if fields.get("table-of-contents").is_none() {
             fields.insert("table-of-contents", Val::text(toc));
@@ -202,7 +202,7 @@ impl Renderer<'_> {
             Block::CodeBlock(_, text) => {
                 paragraph_start(out, p, false);
                 let _ = write!(out, "\\f1 \\fs{} ", p.size);
-                escape(out, text);
+                escape(out, text.strip_suffix('\n').unwrap_or(text));
                 out.push_str("\\par}\n");
             }
             Block::HorizontalRule => {

@@ -9,14 +9,21 @@
 
 use randoc_ast::{Attr, Block, Inline, Pandoc, Text};
 use randoc_core::{Extension, ReferenceLocation, Result};
-use randoc_layout::{Doc, blankline, chomp, cr, empty, hang, literal, nest, space, vcat};
+use randoc_layout::{
+    Doc, blankline, chomp, cr, double_quotes, empty, hang, literal, nest, space, vcat,
+};
 use randoc_templates::{Context as TemplateContext, Template, Val};
 
 use crate::{Variant, W, depth_error};
 
 impl W<'_> {
     /// Renders a document into its template.
-    pub(crate) fn standalone(&mut self, doc: &Pandoc, template: &Template) -> Result<Doc> {
+    pub(crate) fn standalone(
+        &mut self,
+        doc: &Pandoc,
+        blocks: &[Block],
+        template: &Template,
+    ) -> Result<Doc> {
         let mut context = self.meta_context(&doc.meta)?;
         let json = context.0.remove("meta-json");
         let title_block = if doc.meta.0.is_empty() {
@@ -27,11 +34,11 @@ impl W<'_> {
         // The table of contents comes before the body, so that its link
         // references come first.
         let toc = if self.opts.table_of_contents {
-            Some(self.toc(&doc.blocks)?)
+            Some(self.toc(blocks)?)
         } else {
             None
         };
-        let body = self.document(&doc.blocks)?;
+        let body = self.document(blocks)?;
         // A variable replaces a metadata field, and `meta-json` replaces both.
         for (key, value) in &self.opts.variables.0 {
             context.insert(key.clone(), value.clone());
@@ -507,10 +514,7 @@ fn yaml_scalar(value: &Val) -> Doc {
             if text.contains('\n') {
                 literal("|") + cr() + chomp(doc.clone())
             } else if needs_quotes(&text) {
-                literal(format!(
-                    "\"{}\"",
-                    text.replace('\\', "\\\\").replace('"', "\\\"")
-                ))
+                double_quotes(doc.map_text(&|part| part.replace('\\', "\\\\").replace('"', "\\\"")))
             } else {
                 doc.clone()
             }

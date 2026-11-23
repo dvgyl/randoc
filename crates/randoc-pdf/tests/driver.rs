@@ -446,6 +446,34 @@ fn engine_failure_reports_tex_excerpt_and_forwards_stderr() {
 }
 
 #[test]
+fn tex_failure_excerpt_includes_the_first_source_line() {
+    for (log, excerpt) in [
+        (
+            "preamble\n! Error detail\nl. 5 invalid input\nfooter\n",
+            "! Error detail\nl. 5 invalid input\n",
+        ),
+        (
+            "preamble\n! Error detail\nl. source context\nfooter\n",
+            "! Error detail\nl. source context\n",
+        ),
+        (
+            "preamble\n! Error detail\nl.5 invalid input",
+            "! Error detail\nl.5 invalid input\n",
+        ),
+    ] {
+        let mut host = tex_host([Pass {
+            status: 1,
+            log: log.as_bytes().to_vec(),
+            ..Pass::default()
+        }]);
+        assert_eq!(
+            render_tex(&mut host, "pdflatex"),
+            Err(Error::Pdf(excerpt.into()))
+        );
+    }
+}
+
+#[test]
 fn missing_file_output_reports_exit_43() {
     for engine in ["pdflatex", "latexmk", "tectonic", "context"] {
         let result = render(
@@ -736,6 +764,51 @@ fn wkhtmltopdf_page_flags_use_variables_and_document_metadata() -> Result<()> {
             "--margin-left",
             "1.25in",
             "--enable-local-file-access"
+        ]
+    );
+    Ok(())
+}
+
+#[test]
+fn wkhtmltopdf_uses_only_text_metadata_for_page_flags() -> Result<()> {
+    let mut doc = Pandoc::default();
+    doc.meta.insert("papersize", MetaValue::MetaBool(false));
+    doc.meta.insert(
+        "title",
+        MetaValue::MetaList(vec![MetaValue::MetaString("A title".into())]),
+    );
+    doc.meta
+        .insert("pagetitle", MetaValue::MetaString("Browser title".into()));
+    doc.meta
+        .insert("margin-top", MetaValue::MetaMap(BTreeMap::new()));
+    doc.meta.insert(
+        "margin-right",
+        MetaValue::MetaInlines(vec![Inline::Str("2cm".into())]),
+    );
+    doc.meta.insert(
+        "margin-left",
+        MetaValue::MetaBlocks(vec![Block::Para(vec![Inline::Str("3cm".into())])]),
+    );
+    let mut host = Mock::default();
+    render(
+        &mut host,
+        "wkhtmltopdf",
+        &mut Context::pure(),
+        &doc,
+        PdfOptions::default(),
+    )?;
+    assert_eq!(
+        &host.calls[0].argv[..9],
+        &[
+            "--margin-bottom",
+            "1.2in",
+            "--margin-top",
+            "1.25in",
+            "--margin-right",
+            "2cm",
+            "--margin-left",
+            "3cm",
+            "--enable-local-file-access",
         ]
     );
     Ok(())

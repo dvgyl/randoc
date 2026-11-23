@@ -516,5 +516,8 @@ fn toc(sections: &[Section], options: &WriterOptions) -> String {
             Event::EndList => out.push_str("</ul>"),
         }
     }
+    if out.is_empty() {
+        return "<ul class=\"task-list\">\n</ul>".into();
+    }
     out.trim_start_matches('\n').into()
 }

@@ -5,9 +5,8 @@
 //! tags, text and comments. It is a port of `tagsoup`, the lenient tokenizer
 //! that Pandoc uses. The module `parse` builds the tree from the tokens with
 //! rules that were found with Pandoc as a black box.
-//!
-//! The reader reports `iframe` elements as skipped content.
 
+mod iframe;
 mod parse;
 mod table;
 mod text;
@@ -52,11 +51,28 @@ fn read_html(
     options: &ReaderOptions,
     context: &mut Context,
 ) -> Result<Pandoc> {
+    let limits = context.limits;
+    let mut iframes = iframe::Iframes::new(context);
+    let (doc, logs) = read_document(input, source, options, limits, &mut iframes)?;
+    for message in logs {
+        context.report(message);
+    }
+    Ok(doc)
+}
+
+fn read_document(
+    input: &str,
+    source: &str,
+    options: &ReaderOptions,
+    limits: randoc_core::Limits,
+    iframes: &mut iframe::Iframes<'_>,
+) -> Result<(Pandoc, Vec<LogMessage>)> {
     let mut tokens = tokens::tokenize(input);
     canonicalize(&mut tokens);
     let extensions = options.extensions;
-    let limits = context.limits;
+    let mut read_iframe = |src: &str, depth| iframes.read(src, options, depth);
     let mut parser = Parser::new(input, &tokens, extensions, source.to_owned(), &limits);
+    parser.read_iframe = Some(&mut read_iframe);
     let mut blocks = parser.document().map_err(|stop| {
         Error::Parse(match stop {
             Stop::TooDeep => Text::from("the document is nested too deeply"),
@@ -91,18 +107,23 @@ fn read_html(
     let mut missing_notes = Vec::new();
     resolve_notes(&mut blocks, notes, &position, &mut missing_notes);
     logs.sort_by_key(|(index, _)| *index);
-    for (_, message) in logs.into_iter().chain(missing_notes) {
-        context.report(message);
-    }
-    let blocks = main_content(blocks);
+    let messages = logs
+        .into_iter()
+        .chain(missing_notes)
+        .map(|(_, message)| message);
+    let mut blocks = main_content(blocks);
+    parser.resolve_iframes(&mut blocks);
     let mut document_meta = Meta::default();
     for (key, value) in parser.meta {
         document_meta.insert(key, value);
     }
-    Ok(Pandoc {
-        meta: document_meta,
-        blocks,
-    })
+    Ok((
+        Pandoc {
+            meta: document_meta,
+            blocks,
+        },
+        messages.collect(),
+    ))
 }
 
 /// Returns the main content of the document. When the tree has `Div`
@@ -578,18 +599,143 @@ mod tests {
         );
     }
 
+    #[test]
+    fn svg_data_keeps_close_tags_for_empty_circles() {
+        let (blocks, _) = read_with("<svg><circle/><rect></rect></svg>", &[]);
+        // The encoded content is <svg><circle></circle><rect /></svg>.
+        assert!(blocks.contains(
+            "data:image/svg+xml;base64,PHN2Zz48Y2lyY2xlPjwvY2lyY2xlPjxyZWN0IC8+PC9zdmc+"
+        ));
+    }
+
+    #[test]
+    fn iframe_with_a_relative_source_reports_the_oracle_warning() {
+        let (blocks, logs) = read_with(r#"<iframe src="x.html"></iframe>"#, &[]);
+        assert_eq!(blocks, "[]");
+        assert!(matches!(&logs[..], [
+            LogMessage::Fetching(source),
+            LogMessage::CouldNotFetchResource(resource, reason),
+            LogMessage::SkippedContent(_, _)
+        ] if source == "x.html" && resource == source
+            && reason == "Could not fetch x.html\nInvalidUrlException \"x.html\" \"Invalid URL\""));
+    }
+
+    #[test]
+    fn iframe_with_a_data_image_uses_its_source_as_the_image_target() {
+        let src = "data:image/png;base64,YQ==";
+        let input = format!(r#"<iframe id="box" src="{src}"><!-- empty --></iframe>"#);
+        let mut context = Context::pure();
+        let document =
+            read_html(&input, SOURCE_NAME, &ReaderOptions::default(), &mut context).unwrap();
+        assert_eq!(
+            document.blocks,
+            [Block::Div(
+                randoc_ast::Attr::new("", vec!["iframe".into()], Vec::new()),
+                vec![Block::Plain(vec![Inline::Image(
+                    randoc_ast::Attr::default(),
+                    Vec::new(),
+                    randoc_ast::Target::new(src, "")
+                )])]
+            )]
+        );
+        assert!(context.log().is_empty());
+    }
+
+    #[test]
+    fn iframe_html_fetch_respects_the_host_sandbox_and_nesting_limit() {
+        const URL: &str = "https://example.invalid/frame";
+        const INPUT: &str = r#"<iframe src="https://example.invalid/frame"></iframe>"#;
+        const INNER: &str = "https://example.invalid/inner";
+        struct Host {
+            sandboxed: bool,
+        }
+        impl randoc_core::Host for Host {
+            fn is_sandboxed(&self) -> bool {
+                self.sandboxed
+            }
+
+            fn fetch_url(
+                &mut self,
+                url: &str,
+                _: &[(Text, Text)],
+            ) -> Result<(Vec<u8>, Option<Text>)> {
+                assert!(!self.sandboxed);
+                assert_eq!(url, URL);
+                let html = format!(r#"<h1>Example</h1><iframe src="{INNER}"></iframe>"#);
+                Ok((html.into_bytes(), Some("text/html; charset=UTF-8".into())))
+            }
+        }
+
+        let mut options = ReaderOptions::default();
+        options.extensions = Extensions::from_list(&[Extension::AutoIdentifiers]);
+        let mut context = Context::new(Box::new(Host { sandboxed: false }));
+        context.limits.max_nesting_depth = 2;
+        let input = format!("<h1>Example</h1>{INPUT}");
+        let doc = read_html(&input, SOURCE_NAME, &options, &mut context).unwrap();
+        assert!(
+            matches!(&doc.blocks[..], [Block::Header(_, a, _), Block::Div(_, child)]
+            if matches!(&child[..], [Block::Header(_, b, _)] if a.id == "example" && a.id == b.id))
+        );
+        assert!(context.log().iter().any(|log| matches!(
+            log,
+            LogMessage::CouldNotFetchResource(url, detail)
+                if url == INNER && detail.contains("nested too deeply")
+        )));
+
+        let mut context = Context::new(Box::new(Host { sandboxed: true }));
+        for input in [
+            INPUT,
+            r#"<iframe src="data:text/html,%3Cp%3Etest"></iframe>"#,
+        ] {
+            let doc = read_html(input, SOURCE_NAME, &options, &mut context).unwrap();
+            assert!(doc.blocks.is_empty());
+        }
+        assert!(
+            context
+                .log()
+                .iter()
+                .all(|log| !matches!(log, LogMessage::Fetching(_)))
+        );
+    }
+
+    #[test]
+    fn a_row_span_past_the_section_merges_later_sections() {
+        let rows = r#"<tbody id="body"><tr><td>b</tr></tbody>
+            <tfoot><tr><td>c</tr></tfoot>"#;
+        let first = "<tr><th rowspan=2>h</tr>";
+        for tag in ["thead", "tbody"] {
+            let input = format!(r#"<table><{tag} id="first">{first}</{tag}>{rows}</table>"#);
+            let mut context = Context::pure();
+            let doc =
+                read_html(&input, SOURCE_NAME, &ReaderOptions::default(), &mut context).unwrap();
+            let [Block::Table(table)] = doc.blocks.as_slice() else {
+                panic!("expected a table");
+            };
+            assert!(table.foot.rows.is_empty());
+            if tag == "thead" {
+                assert_eq!(table.head.attr.id, "first");
+                assert_eq!(table.head.rows.len(), 3);
+                assert_eq!(table.head.rows[0].cells[0].row_span, 2);
+                assert!(table.bodies.is_empty());
+            } else {
+                let [body] = table.bodies.as_slice() else {
+                    panic!("expected one table body");
+                };
+                assert_eq!(body.attr.id, "first");
+                assert_eq!(body.head.len() + body.body.len(), 3);
+            }
+        }
+    }
+
     /// The units of `conformance/cases/html-reader` that differ from Pandoc.
     /// Each one has a row in `docs/ISSUES.md`.
     const KNOWN_DIFFERENCES: &[&str] = &[
-        "blocks/blocks-028",
         "blocks/blocks-037",
         "extensions/extensions-016",
         "extensions/math-038",
         "extensions/math-189",
         "extensions/tex-100",
         "inlines/inlines-029",
-        "tables/rowhead-024",
-        "tables/rowhead-028",
     ];
 
     /// Runs the reader as the program does and returns the standard output,
@@ -604,7 +750,7 @@ mod tests {
                     .log()
                     .iter()
                     .filter(|message| message.level() == randoc_core::Verbosity::Warning)
-                    .map(|message| format!("[WARNING] {}\n", message.text()))
+                    .map(LogMessage::render)
                     .collect();
                 (format!("{}\n", json::to_json(&doc)), warnings, 0)
             }
