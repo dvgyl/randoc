@@ -55,6 +55,10 @@ pub struct ProcessRequest<'a> {
     pub working_directory: Option<&'a str>,
     /// Child environment changes. A value of `None` removes the variable.
     pub environment: &'a [(Text, Option<Text>)],
+    /// The maximum number of standard output bytes. `None` sets no limit.
+    pub max_stdout_bytes: Option<u64>,
+    /// The maximum number of standard error bytes. `None` sets no limit.
+    pub max_stderr_bytes: Option<u64>,
 }
 
 /// The result of a process that ran to its end.
@@ -241,11 +245,15 @@ pub trait Host: Send {
         Err(not_available(program))
     }
 
-    /// Runs a child process with an optional working directory and environment.
+    /// Runs a child process with optional directory, environment, and output limits.
     ///
     /// Hosts that implement only `run_process` accept requests with no overrides.
     fn run_process_with(&mut self, request: &ProcessRequest<'_>) -> io::Result<ProcessOutput> {
-        if request.working_directory.is_none() && request.environment.is_empty() {
+        if request.working_directory.is_none()
+            && request.environment.is_empty()
+            && request.max_stdout_bytes.is_none()
+            && request.max_stderr_bytes.is_none()
+        {
             self.run_process(request.program, request.arguments, request.input)
         } else {
             Err(not_available(request.program))
@@ -741,6 +749,8 @@ impl Host for NativeHost {
             input,
             working_directory: None,
             environment: &[],
+            max_stdout_bytes: None,
+            max_stderr_bytes: None,
         })
     }
 
@@ -769,22 +779,58 @@ impl Host for NativeHost {
         }
         let mut child = command.spawn()?;
         let stdin = child.stdin.take();
-        let input = request.input;
-        let output = std::thread::scope(|scope| {
-            // A separate writer, so that a process that writes much output
-            // before it reads all of its input does not block both sides.
+        let stdout = child.stdout.take();
+        let stderr = child.stderr.take();
+        let mut stdout_bytes = Vec::new();
+        let mut stderr_bytes = Vec::new();
+        let status = std::thread::scope(|scope| {
             if let Some(mut stdin) = stdin {
                 scope.spawn(move || {
                     // The process can end before it reads all of its input.
-                    let _ = stdin.write_all(input);
+                    let _ = stdin.write_all(request.input);
                 });
             }
-            child.wait_with_output()
+            let (stdout_ready, done) = std::sync::mpsc::channel();
+            let stderr_ready = stdout_ready.clone();
+            let stdout_bytes = &mut stdout_bytes;
+            let stderr_bytes = &mut stderr_bytes;
+            scope.spawn(move || {
+                let result = read_process_pipe(
+                    stdout,
+                    request.max_stdout_bytes,
+                    "Standard output",
+                    stdout_bytes,
+                );
+                let _ = stdout_ready.send(result);
+            });
+            scope.spawn(move || {
+                let result = read_process_pipe(
+                    stderr,
+                    request.max_stderr_bytes,
+                    "Standard error",
+                    stderr_bytes,
+                );
+                let _ = stderr_ready.send(result);
+            });
+
+            // Stop the child before the scope waits for the other threads.
+            for _ in 0..2 {
+                let result = done
+                    .recv()
+                    .map_err(io::Error::other)
+                    .and_then(|result| result);
+                if let Err(error) = result {
+                    let _ = child.kill();
+                    let _ = child.wait();
+                    return Err(error);
+                }
+            }
+            child.wait()
         })?;
         Ok(ProcessOutput {
-            exit_code: exit_code(output.status),
-            stdout: output.stdout,
-            stderr: output.stderr,
+            exit_code: exit_code(status),
+            stdout: stdout_bytes,
+            stderr: stderr_bytes,
         })
     }
 
@@ -805,6 +851,31 @@ impl Host for NativeHost {
         }
         Err(last_error.unwrap_or_else(|| io::Error::from(io::ErrorKind::AlreadyExists)))
     }
+}
+
+fn read_process_pipe(
+    pipe: Option<impl io::Read>,
+    limit: Option<u64>,
+    name: &str,
+    bytes: &mut Vec<u8>,
+) -> io::Result<()> {
+    use std::io::Read;
+
+    let Some(mut pipe) = pipe else {
+        return Ok(());
+    };
+    if let Some(limit) = limit {
+        pipe.take(limit.saturating_add(1)).read_to_end(bytes)?;
+        if bytes.len() as u64 > limit {
+            return Err(io::Error::new(
+                io::ErrorKind::FileTooLarge,
+                format!("{name} exceeds {limit} bytes."),
+            ));
+        }
+    } else {
+        pipe.read_to_end(bytes)?;
+    }
+    Ok(())
 }
 
 #[cfg(unix)]
@@ -1301,6 +1372,8 @@ mod tests {
                 ("RANDOC_CHILD_TEST".into(), Some("child".into())),
                 ("RANDOC_CHILD_REMOVED".into(), None),
             ],
+            max_stdout_bytes: None,
+            max_stderr_bytes: None,
         };
         let mut host = NativeHost;
         host.set_environment_variable("RANDOC_CHILD_TEST", Some("host"))
@@ -1323,6 +1396,40 @@ mod tests {
         );
         assert_eq!(std::env::current_dir().unwrap(), parent_dir);
         assert!(PureHost::default().run_process_with(&request).is_err());
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn process_output_limits_apply_to_each_pipe() {
+        let mut host = NativeHost;
+        let request = ProcessRequest {
+            program: "/bin/sh",
+            arguments: &["-c".into(), "printf out; printf err >&2".into()],
+            input: &[],
+            working_directory: None,
+            environment: &[],
+            max_stdout_bytes: Some(3),
+            max_stderr_bytes: Some(3),
+        };
+        let output = host.run_process_with(&request).unwrap();
+        assert_eq!(output.stdout, b"out");
+        assert_eq!(output.stderr, b"err");
+
+        // The child fills one pipe and leaves the other open. It never reads stdin.
+        let input = vec![0; 128 * 1024];
+        for script in [
+            "while :; do printf 'too much output'; done",
+            "while :; do printf 'too much output' >&2; done",
+        ] {
+            let error = host
+                .run_process_with(&ProcessRequest {
+                    arguments: &["-c".into(), script.into()],
+                    input: &input,
+                    ..request
+                })
+                .unwrap_err();
+            assert_eq!(error.kind(), io::ErrorKind::FileTooLarge);
+        }
     }
 
     #[derive(Default)]

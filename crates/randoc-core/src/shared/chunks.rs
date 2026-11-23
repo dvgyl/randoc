@@ -41,8 +41,6 @@ pub fn split_into_chunks(
     number_sections: bool,
     depth: usize,
 ) -> Result<Vec<Chunk>> {
-    // The shared section and tree operations use recursive traversal.
-    let depth = depth.min(128);
     inspect_tree(&doc.blocks, std::iter::empty(), depth, |_| {})?;
     let mut blocks = doc.blocks.clone();
     let mut ids = IdentifierSet::new();
@@ -186,6 +184,29 @@ mod tests {
     use randoc_ast::{Attr, Target};
 
     use super::*;
+
+    #[test]
+    fn chunks_use_the_callers_depth_limit() {
+        let mut blocks = vec![Block::Header(
+            1,
+            Attr::default(),
+            vec![Inline::Str("Deep".into())],
+        )];
+        for _ in 0..150 {
+            blocks = vec![Block::Div(Attr::default(), blocks)];
+        }
+        let doc = Pandoc {
+            blocks,
+            ..Pandoc::default()
+        };
+        assert_eq!(
+            split_into_chunks(&doc, 2, "%i.html", true, 200)
+                .unwrap()
+                .len(),
+            1
+        );
+        assert!(split_into_chunks(&doc, 2, "%i.html", true, 10).is_err());
+    }
 
     #[test]
     fn chunks_keep_section_metadata_and_resolve_links() {

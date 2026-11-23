@@ -1,0 +1,53 @@
+<language name="Python" extensions="*.py;*.pyw">
+  <highlighting>
+    <contexts>
+      <context name="Python" attribute="Normal" lineEndContext="#stay">
+        <RegExpr String="[rRuUbBfF]{0,2}&quot;&quot;&quot;" attribute="String" context="Triple double"/>
+        <RegExpr String="[rRuUbBfF]{0,2}'''" attribute="String" context="Triple single"/>
+        <RegExpr String="[rRuUbBfF]{0,2}&quot;" attribute="String" context="Double"/>
+        <RegExpr String="[rRuUbBfF]{0,2}'" attribute="String" context="Single"/>
+        <DetectChar char="#" attribute="Comment" context="Comment"/>
+        <RegExpr String="(?:0[xX][0-9a-fA-F_]+|0[oO][0-7_]+|0[bB][01_]+)\b" attribute="Base number"/>
+        <RegExpr String="(?:(?:[0-9][0-9_]*\.(?:[0-9][0-9_]*)?|\.[0-9][0-9_]*)(?:[eE][+-]?[0-9][0-9_]*)?|[0-9][0-9_]*[eE][+-]?[0-9][0-9_]*)(?:[jJ])?" attribute="Float"/>
+        <RegExpr String="[0-9][0-9_]*[jJ]?" attribute="Integer"/>
+        <RegExpr String="(?:def|class|lambda|del|assert|global|nonlocal|with|as|async|await|yield|raise|import|from|pass|return)\b" attribute="Keyword"/>
+        <RegExpr String="(?:break|continue|elif|else|except|finally|for|if|try|while)\b" attribute="Control flow"/>
+        <RegExpr String="(?:and|or|not|in|is)\b|[+*/%&amp;|^~&lt;&gt;=!-]" attribute="Operator"/>
+        <RegExpr String="(?:False|None|True)\b" attribute="Constant"/>
+        <RegExpr String="(?:abs|bool|dict|enumerate|float|int|len|list|max|min|open|print|range|set|str|sum|tuple|zip)\b" attribute="Built-in"/>
+        <DetectIdentifier attribute="Normal"/>
+      </context>
+      <context name="Comment" attribute="Comment" lineEndContext="#pop"/>
+      <context name="Double" attribute="String" lineEndContext="#pop">
+        <RegExpr String="\\." attribute="Escape"/>
+        <DetectChar char="&quot;" attribute="String" context="#pop"/>
+      </context>
+      <context name="Single" attribute="String" lineEndContext="#pop">
+        <RegExpr String="\\." attribute="Escape"/>
+        <DetectChar char="'" attribute="String" context="#pop"/>
+      </context>
+      <context name="Triple double" attribute="String" lineEndContext="#stay">
+        <RegExpr String="\\." attribute="Escape"/>
+        <StringDetect String="&quot;&quot;&quot;" attribute="String" context="#pop"/>
+      </context>
+      <context name="Triple single" attribute="String" lineEndContext="#stay">
+        <RegExpr String="\\." attribute="Escape"/>
+        <StringDetect String="'''" attribute="String" context="#pop"/>
+      </context>
+    </contexts>
+    <itemDatas>
+      <itemData name="Normal" defStyleNum="dsNormal"/>
+      <itemData name="String" defStyleNum="dsString"/>
+      <itemData name="Escape" defStyleNum="dsSpecialChar"/>
+      <itemData name="Comment" defStyleNum="dsComment"/>
+      <itemData name="Base number" defStyleNum="dsBaseN"/>
+      <itemData name="Float" defStyleNum="dsFloat"/>
+      <itemData name="Integer" defStyleNum="dsDecVal"/>
+      <itemData name="Keyword" defStyleNum="dsKeyword"/>
+      <itemData name="Control flow" defStyleNum="dsControlFlow"/>
+      <itemData name="Operator" defStyleNum="dsOperator"/>
+      <itemData name="Constant" defStyleNum="dsConstant"/>
+      <itemData name="Built-in" defStyleNum="dsBuiltIn"/>
+    </itemDatas>
+  </highlighting>
+</language>
