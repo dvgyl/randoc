@@ -43,6 +43,8 @@ pub struct ReaderOptions {
     pub track_changes: TrackChanges,
     /// `true` when the reader must remove HTML comments.
     pub strip_comments: bool,
+    /// The name and value pairs for Typst inputs.
+    pub typst_inputs: Vec<(Text, Text)>,
 }
 
 impl Default for ReaderOptions {
@@ -60,6 +62,7 @@ impl Default for ReaderOptions {
             default_image_extension: Text::new(),
             track_changes: TrackChanges::default(),
             strip_comments: false,
+            typst_inputs: Vec::new(),
         }
     }
 }
@@ -163,6 +166,20 @@ pub struct LoadedFile {
     pub bytes: std::sync::Arc<[u8]>,
 }
 
+/// How a writer highlights code.
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub enum HighlightMethod {
+    /// Use the default method for the format.
+    #[default]
+    Default,
+    /// Use the format's own syntax highlighting.
+    Idiomatic,
+    /// Disable syntax highlighting.
+    None,
+    /// Use a named style or a theme file.
+    Style(Text),
+}
+
 /// The options of a writer. The fields match the writer options of Pandoc.
 ///
 /// The coordinator adds a field when a writer needs one. Make a value with
@@ -217,6 +234,8 @@ pub struct WriterOptions {
     pub top_level_division: TopLevelDivision,
     /// `true` to use the `listings` package in LaTeX.
     pub listings: bool,
+    /// The requested syntax highlighting method.
+    pub highlight_method: HighlightMethod,
     /// The highlighting style name or path. `None` disables highlighting.
     pub highlight_style: Option<Text>,
     /// Pre-loaded highlighting theme file bytes when `highlight_style` names
@@ -284,6 +303,7 @@ impl Default for WriterOptions {
             slide_level: None,
             top_level_division: TopLevelDivision::default(),
             listings: false,
+            highlight_method: HighlightMethod::default(),
             highlight_style: Some(Text::from("pygments")),
             highlight_theme: None,
             setext_headers: false,

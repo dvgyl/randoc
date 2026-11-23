@@ -1013,6 +1013,37 @@ impl MediaBag {
     }
 }
 
+/// A document label that can use a translation.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Term {
+    /// Label for an abstract.
+    Abstract,
+    /// Label for a figure.
+    Figure,
+    /// Label for a table.
+    Table,
+    /// Heading for the table of contents.
+    Contents,
+    /// Heading for the reference list.
+    References,
+    /// Label for a code listing.
+    Listing,
+    /// Label for an appendix.
+    Appendix,
+    /// Label for a proof.
+    Proof,
+    /// Label for a note.
+    Note,
+    /// Label for a warning.
+    Warning,
+    /// Label for a tip.
+    Tip,
+    /// Label for an important notice.
+    Important,
+    /// Label for a caution.
+    Caution,
+}
+
 /// The settings that all steps of one conversion share.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CommonState {
@@ -1026,6 +1057,8 @@ pub struct CommonState {
     pub output_file: Option<Text>,
     /// The user data directory.
     pub user_data_dir: Option<Text>,
+    /// The translations for the document language.
+    pub translations: Option<BTreeMap<Text, Text>>,
     /// The URL of the source document, for relative resource URLs.
     pub source_url: Option<Text>,
     /// The headers for each network request.
@@ -1044,6 +1077,7 @@ impl Default for CommonState {
             input_files: Vec::new(),
             output_file: None,
             user_data_dir: None,
+            translations: None,
             source_url: None,
             request_headers: Vec::new(),
             no_check_certificate: false,
@@ -1078,6 +1112,31 @@ impl fmt::Debug for Context {
 }
 
 impl Context {
+    /// Returns the translation of a label or its English text.
+    pub fn term(&self, term: Term) -> Text {
+        let key = match term {
+            Term::Abstract => "Abstract",
+            Term::Figure => "Figure",
+            Term::Table => "Table",
+            Term::Contents => "Contents",
+            Term::References => "References",
+            Term::Listing => "Listing",
+            Term::Appendix => "Appendix",
+            Term::Proof => "Proof",
+            Term::Note => "Note",
+            Term::Warning => "Warning",
+            Term::Tip => "Tip",
+            Term::Important => "Important",
+            Term::Caution => "Caution",
+        };
+        self.state
+            .translations
+            .as_ref()
+            .and_then(|translations| translations.get(key))
+            .cloned()
+            .unwrap_or_else(|| key.to_owned())
+    }
+
     /// Makes a context that uses `host` for system access.
     pub fn new(host: Box<dyn Host>) -> Self {
         Context {

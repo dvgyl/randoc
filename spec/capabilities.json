@@ -600,10 +600,10 @@
     },
     "bits": {
       "read": {
-        "passing": 0,
+        "passing": 40,
         "total": 40
       },
-      "status": "failing"
+      "status": "passing"
     },
     "commonmark": {
       "read": {
@@ -803,10 +803,10 @@
     },
     "ris": {
       "read": {
-        "passing": 0,
+        "passing": 40,
         "total": 40
       },
-      "status": "failing"
+      "status": "passing"
     },
     "rst": {
       "end_to_end": {
@@ -1545,7 +1545,7 @@
     "toc": {
       "status": "partial",
       "units": {
-        "passing": 99,
+        "passing": 107,
         "total": 146
       }
     },
@@ -2027,10 +2027,10 @@
       "passing": 72
     },
     "input_formats": {
-      "failing": 10,
+      "failing": 8,
       "not_started": 27,
       "partial": 5,
-      "passing": 10
+      "passing": 12
     },
     "options": {
       "not_started": 1,
@@ -2043,7 +2043,7 @@
       "passing": 12
     },
     "units": {
-      "passing": 62889,
+      "passing": 63000,
       "total": 63771
     }
   }

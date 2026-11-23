@@ -1,5 +1,7 @@
 //! Pandoc 3.13 compatible DOCX reader built on `randoc-archive`.
 
+#![forbid(unsafe_code)]
+
 mod convert;
 mod ns;
 mod numbering;
@@ -7,10 +9,13 @@ mod omml;
 mod styles;
 mod symbol;
 
+/// DOCX writer implementation.
+pub mod writer;
+
 use std::sync::Arc;
 
 use randoc_ast::Pandoc;
-use randoc_core::{BinaryReader, Context, Reader, ReaderOptions, Result};
+use randoc_core::{BinaryReader, Context, Reader, ReaderOptions, Result, Writer};
 
 /// Returns the DOCX reader when `format == "docx"`.
 pub fn reader(format: &str) -> Option<Reader> {
@@ -18,6 +23,11 @@ pub fn reader(format: &str) -> Option<Reader> {
         "docx" => Some(Reader::Binary(Arc::new(DocxReader))),
         _ => None,
     }
+}
+
+/// Returns the DOCX writer when the format is supported.
+pub fn writer(_format: &str) -> Option<Writer> {
+    None
 }
 
 struct DocxReader;

@@ -10,11 +10,14 @@
 //! The rules come from the output of Pandoc 3.13. See `tools/probe.py` and
 //! `tests/oracle.tsv`.
 
+mod eqn;
 mod macros;
+mod omml;
 mod parse;
 mod render;
 mod symbols;
 mod tree;
+mod typst;
 mod unprintable;
 
 use randoc_ast::{Inline, MathType};
@@ -29,8 +32,7 @@ pub enum MathError {
         /// The description of the problem.
         message: String,
     },
-    /// The formula is valid, but the output cannot show it. Only the inline
-    /// list has this failure (for example a fraction).
+    /// The renderer cannot represent the formula.
     Unsupported,
 }
 
@@ -154,6 +156,28 @@ pub fn to_mathml_flavor(
 pub fn to_inlines(_kind: MathType, tex: &str, max_depth: usize) -> Result<Vec<Inline>, MathError> {
     let items = parse(tex, max_depth)?;
     render::inlines(&items).map_err(|render::Unsupported| MathError::Unsupported)
+}
+
+/// Converts TeX to a Typst math body without dollar signs.
+pub fn to_typst(kind: MathType, tex: &str, max_depth: usize) -> Result<String, MathError> {
+    let items = parse(tex, max_depth)?;
+    typst::render(&items, kind == MathType::DisplayMath)
+        .map_err(|render::Unsupported| MathError::Unsupported)
+}
+
+/// Converts TeX to an Office Math Markup Language `<m:oMath>` element.
+/// The caller adds `<m:oMathPara>` for display math.
+pub fn to_omml(kind: MathType, tex: &str, max_depth: usize) -> Result<String, MathError> {
+    let items = parse(tex, max_depth)?;
+    omml::render(&items, kind == MathType::DisplayMath)
+        .map_err(|render::Unsupported| MathError::Unsupported)
+}
+
+/// Converts TeX to an eqn body without delimiters.
+pub fn to_eqn(kind: MathType, tex: &str, max_depth: usize) -> Result<String, MathError> {
+    let items = parse(tex, max_depth)?;
+    eqn::render(&items, kind == MathType::DisplayMath)
+        .map_err(|render::Unsupported| MathError::Unsupported)
 }
 
 #[cfg(test)]

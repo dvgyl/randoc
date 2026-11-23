@@ -437,6 +437,7 @@ Each entry gives the difference from Pandoc 3.13, its reason and its state.
 | I-BIB-01 | BibTeX and BibLaTeX readers | A cycle in `crossref` or `xdata` returns a limit error. Pandoc can hang on the same input. | Deliberate. |
 | I-XML-01 | DocBook, JATS, and TEI writers | The writers omit the requested `identifier_prefix` on section identifiers. The Lua replay records this difference. | Open. |
 | I-XML-02 | JATS writers | The writers omit the section label when the `number_sections` option is set. The Lua replay records this difference. | Open. |
+| I-TERM-01 | Localized document labels | Writers that use the shared term lookup use English when the user data directory has no translation for a label. | Deliberate. |
 
 ## Harness limits
 

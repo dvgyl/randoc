@@ -6,13 +6,13 @@ use std::io::{IsTerminal, Read};
 
 use randoc::ast::{Block, Inline, Meta, MetaValue, Pandoc};
 use randoc::{
-    Context, Error, Extension, FormatSpec, LogMessage, Output, Reader, ReaderOptions, Result,
-    Source, Sources, Verbosity, WrapOption, WriterOptions, formats,
+    Context, Error, Extension, FormatSpec, HighlightMethod, LogMessage, Output, Reader,
+    ReaderOptions, Result, Source, Sources, Verbosity, WrapOption, WriterOptions, formats,
 };
 
 use crate::cli::HIGHLIGHT_STYLES;
 use crate::lua::ScriptKind;
-use crate::settings::{Eol, Filter, Settings};
+use crate::settings::{Eol, Filter, Settings, VarValue};
 use crate::subsystem::{self, Subsystem};
 use crate::template::{Includes, TemplateFiles, TemplateText};
 use randoc_yaml::{Entrance, Kind, Limits, Node, Value};
@@ -781,6 +781,7 @@ fn reader_options(settings: &Settings, extensions: randoc::Extensions) -> Reader
     options.default_image_extension = settings.default_image_extension.clone();
     options.track_changes = settings.track_changes;
     options.strip_comments = settings.strip_comments;
+    options.typst_inputs = settings.typst_inputs.clone();
     options
 }
 
@@ -951,6 +952,12 @@ fn writer_options(settings: &Settings, extensions: randoc::Extensions) -> Writer
     options.html_q_tags = settings.html_q_tags;
     options.slide_level = settings.slide_level;
     options.top_level_division = settings.top_level_division;
+    options.highlight_method = match settings.syntax_highlighting.as_str() {
+        "default" => HighlightMethod::Default,
+        "idiomatic" => HighlightMethod::Idiomatic,
+        "none" => HighlightMethod::None,
+        style => HighlightMethod::Style(style.to_owned()),
+    };
     options.listings = settings.syntax_highlighting == "idiomatic";
     options.highlight_style = match settings.syntax_highlighting.as_str() {
         "none" | "idiomatic" => None,
@@ -1383,6 +1390,64 @@ pub fn data_file(data_dir: &str, folder: &str, name: &str) -> String {
     } else {
         data_path(data_dir, &format!("{folder}/{name}"))
     }
+}
+
+/// Gets the language from a template variable or the document metadata.
+fn document_language(doc: &Pandoc, settings: &Settings) -> Option<String> {
+    settings
+        .variables
+        .iter()
+        .rev()
+        .find(|(name, _)| name == "lang")
+        .and_then(|(_, value)| match value {
+            VarValue::Text(lang) => Some(lang.clone()),
+            VarValue::Json(value) => value.as_str().map(str::to_owned),
+        })
+        .or_else(|| doc.meta.get("lang").map(randoc::shared::stringify_meta))
+}
+
+// Restrict language tags to one path component.
+fn valid_language_tag(lang: &str) -> bool {
+    lang.split('-')
+        .all(|part| !part.is_empty() && part.bytes().all(|byte| byte.is_ascii_alphanumeric()))
+}
+
+/// Loads string labels for the full language tag or its base language.
+fn read_translations(
+    lang: &str,
+    data_dir: &str,
+    context: &mut Context,
+) -> Option<BTreeMap<String, String>> {
+    if !valid_language_tag(lang) {
+        return None;
+    }
+    let base = lang.split_once('-').map(|(base, _)| base);
+    let max_bytes = usize::try_from(context.limits.max_resource_size).unwrap_or(usize::MAX);
+    [Some(lang), base].into_iter().flatten().find_map(|tag| {
+        let path = data_file(data_dir, "translations", &format!("{tag}.yaml"));
+        if !context.host().file_exists(&path) {
+            return None;
+        }
+        let bytes = context.host().read_file_limited(&path, max_bytes).ok()?;
+        let text = crate::node::decode_text(&bytes).ok()?;
+        let root = randoc_yaml::parse(&text, Limits::default()).ok()?;
+        let Kind::Mapping(entries) = root.kind else {
+            return None;
+        };
+        Some(
+            entries
+                .into_iter()
+                .filter_map(
+                    |(key, value)| match (key.value().ok()?, value.value().ok()?) {
+                        (Value::String(key), Value::String(value)) => {
+                            Some((key.to_owned(), value.to_owned()))
+                        }
+                        _ => None,
+                    },
+                )
+                .collect(),
+        )
+    })
 }
 
 /// Joins a resource folder and a name as Pandoc does. A folder that is empty
@@ -2074,7 +2139,7 @@ fn convert(
                 &to_spec.name,
                 data_dir,
                 &reader_options,
-                &settings.typst_inputs,
+                &reader_options.typst_inputs,
                 context,
             )?,
             Filter::Lua(path) => {
@@ -2105,6 +2170,8 @@ fn convert(
             }
         };
     }
+    context.state.translations = document_language(&doc, settings)
+        .and_then(|lang| read_translations(&lang, data_dir, context));
     // Pandoc shifts the headings after the filters.
     shift_headings(&mut doc, settings.shift_heading_level_by);
     if let Some(dir) = &settings.extract_media {
@@ -2370,6 +2437,39 @@ mod tests {
         let result = convert(&settings, &inputs, "/u", &mut context)
             .map(|bytes| String::from_utf8_lossy(&bytes).into_owned());
         (result, context)
+    }
+
+    #[test]
+    fn loads_document_translations_and_uses_english_for_missing_labels() {
+        use randoc::Term;
+
+        let files = [
+            ("in.md", "---\nlang: zz-XY\n---\n\nSample\n"),
+            (
+                "/u/translations/zz.yaml",
+                "Abstract: Sample abstract label\nTable: false\n",
+            ),
+            (
+                "/u/translations/zz-AB.yaml",
+                "Abstract: Regional abstract label\n",
+            ),
+        ];
+        let (result, context) = convert_files(&files, &["in.md"], |settings| {
+            settings.from = Some("markdown".to_owned());
+        });
+        result.unwrap();
+        assert_eq!(context.term(Term::Abstract), "Sample abstract label");
+        assert_eq!(context.term(Term::Figure), "Figure");
+        assert_eq!(context.term(Term::Table), "Table");
+
+        let (result, context) = convert_files(&files, &["in.md"], |settings| {
+            settings.from = Some("markdown".to_owned());
+            settings
+                .variables
+                .push(("lang".to_owned(), VarValue::Text("zz-AB".to_owned())));
+        });
+        result.unwrap();
+        assert_eq!(context.term(Term::Abstract), "Regional abstract label");
     }
 
     #[test]

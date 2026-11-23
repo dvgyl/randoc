@@ -293,8 +293,10 @@ dependencies = [
  "randoc-native",
  "randoc-odt",
  "randoc-org",
+ "randoc-roff",
  "randoc-rst",
  "randoc-rtf",
+ "randoc-typst",
  "randoc-wiki",
  "randoc-xmlformats",
 ]
@@ -389,6 +391,11 @@ dependencies = [
  "randoc-ast",
  "randoc-citeproc",
  "randoc-core",
+ "randoc-data",
+ "randoc-highlight",
+ "randoc-layout",
+ "randoc-math",
+ "randoc-templates",
  "serde_json",
 ]
 
@@ -565,6 +572,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "randoc-roff"
+version = "0.1.0"
+dependencies = [
+ "randoc-ast",
+ "randoc-core",
+ "randoc-data",
+ "randoc-highlight",
+ "randoc-layout",
+ "randoc-math",
+ "randoc-templates",
+ "serde_json",
+]
+
+[[package]]
 name = "randoc-rst"
 version = "0.1.0"
 dependencies = [
@@ -596,6 +617,20 @@ dependencies = [
  "randoc-ast",
  "randoc-data",
  "randoc-layout",
+ "serde_json",
+]
+
+[[package]]
+name = "randoc-typst"
+version = "0.1.0"
+dependencies = [
+ "randoc-ast",
+ "randoc-core",
+ "randoc-data",
+ "randoc-highlight",
+ "randoc-layout",
+ "randoc-math",
+ "randoc-templates",
  "serde_json",
 ]
 
