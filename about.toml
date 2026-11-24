@@ -1,0 +1,11 @@
+accepted = [
+    "MIT",
+    "Apache-2.0",
+    "Zlib",
+    "Unlicense",
+    "CC0-1.0",
+    "MIT-0",
+    "Unicode-3.0",
+]
+ignore-build-dependencies = true
+ignore-dev-dependencies = true

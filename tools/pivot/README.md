@@ -8,7 +8,7 @@ math and seeded combinations of document elements.
 Run the generator from the repository root. Give it a new output path.
 
 ```sh
-. "/Volumes/Extreme Pro/Randoc/env/env.sh"
+. "${RANDOC_ENV:-../env}/env.sh"
 python3 -B tools/pivot/generate.py --out "$TMPDIR/pivot.jsonl"
 ```
 

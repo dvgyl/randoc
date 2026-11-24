@@ -1,0 +1,40 @@
+name: Difference from Pandoc 3.13
+description: Report a command that gives a different result in Randoc and Pandoc 3.13.
+body:
+  - type: textarea
+    id: command
+    attributes:
+      label: Command
+      description: Enter the command and all options. Include any setup commands.
+      render: sh
+    validations:
+      required: true
+  - type: textarea
+    id: input
+    attributes:
+      label: Input
+      description: Paste the smallest input that shows the difference, or attach the input file.
+    validations:
+      required: true
+  - type: textarea
+    id: pandoc-output
+    attributes:
+      label: Pandoc 3.13 output
+      description: Include the output, any diagnostics, and the exit code.
+    validations:
+      required: true
+  - type: textarea
+    id: randoc-output
+    attributes:
+      label: Randoc output
+      description: Include the output, any diagnostics, and the exit code.
+    validations:
+      required: true
+  - type: textarea
+    id: version
+    attributes:
+      label: Randoc version
+      description: Paste the output of `randoc --version`.
+      render: text
+    validations:
+      required: true
