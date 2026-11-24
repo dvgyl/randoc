@@ -360,6 +360,7 @@ dependencies = [
  "quick-xml",
  "randoc-ast",
  "randoc-core",
+ "randoc-data",
 ]
 
 [[package]]
@@ -516,8 +517,8 @@ version = "0.1.0"
 dependencies = [
  "randoc-archive",
  "randoc-ast",
- "randoc-commonmark",
  "randoc-core",
+ "randoc-markdown",
  "randoc-markdown-writer",
  "serde",
  "serde_json",
@@ -528,6 +529,7 @@ name = "randoc-latex"
 version = "0.1.0"
 dependencies = [
  "randoc-ast",
+ "randoc-citeproc",
  "randoc-core",
  "randoc-highlight",
  "randoc-layout",

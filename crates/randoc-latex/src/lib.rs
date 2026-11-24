@@ -79,6 +79,18 @@ fn write(
     // The class lookup below reads the variables, also for a fragment.
     standalone::check_variable_depth(&options.variables, max_depth)?;
     let mut writer = LatexWriter::new(options, max_depth, beamer)?;
+    if options.cite_method == CiteMethod::Biblatex
+        && let Some(lang) = doc
+            .meta
+            .get("lang")
+            .map(randoc_core::shared::stringify_meta)
+    {
+        if randoc_citeproc::parse_lang(&lang).is_err() {
+            writer.warnings.push(LogMessage::InvalidLang(lang));
+        } else {
+            writer.citation_lang = Some(lang);
+        }
+    }
     if options.variables.get("csquotes").is_none() {
         writer.csquotes = doc.meta.get("csquotes").is_some();
     }
@@ -188,6 +200,8 @@ pub(crate) struct LatexWriter<'a> {
     pub(crate) beamer: bool,
     pub(crate) smart: bool,
     pub(crate) csquotes: bool,
+    /// The language of the BibLaTeX page labels.
+    citation_lang: Option<String>,
     pub(crate) max_depth: usize,
     pub(crate) depth: usize,
     /// `true` when the writer skips notes, images and spans with an
@@ -275,6 +289,7 @@ impl<'a> LatexWriter<'a> {
                 .variables
                 .get("csquotes")
                 .is_some_and(standalone::csquotes_enabled),
+            citation_lang: None,
             max_depth,
             depth: 0,
             skip_invalid: false,

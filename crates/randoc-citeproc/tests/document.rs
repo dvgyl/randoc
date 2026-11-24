@@ -321,12 +321,9 @@ fn a_document_without_citations_or_references_skips_the_default_style() {
 
     let mut context = Context::pure();
     let with_citation = document("", &["unknown"], &[1]);
-    assert!(
-        filter(&mut context, &with_citation)
-            .unwrap_err()
-            .to_string()
-            .contains("default.csl")
-    );
+    let output = filter(&mut context, &with_citation).unwrap();
+    assert!(randoc_ast::json::to_json(&output).contains("unknown?"));
+    assert_eq!(context.log().len(), 1);
     let with_style = document(r#""csl":{"t":"MetaString","c":"missing.csl"}"#, &[], &[]);
     assert!(
         matches!(filter(&mut context, &with_style), Err(randoc_core::Error::ResourceNotFound(name)) if name == "missing.csl")
@@ -382,4 +379,73 @@ fn an_external_bibliography_reader_can_recognize_biblatex_files() {
     )
     .unwrap();
     assert!(called);
+}
+
+#[test]
+fn wave10_documents_match_the_oracle() {
+    use randoc_ast::MetaValue;
+
+    let mut failures = Vec::new();
+    for line in include_str!("replay/wave10-engine.txt")
+        .lines()
+        .filter(|line| !line.starts_with('#'))
+    {
+        let [id, style, input, files, metadata, expected] =
+            line.split('\t').collect::<Vec<_>>()[..]
+        else {
+            panic!("Invalid replay row");
+        };
+        let parse_meta = |meta: &str| {
+            let json = format!(r#"{{"pandoc-api-version":[1,23,1],"meta":{meta},"blocks":[]}}"#);
+            randoc_ast::json::from_json(&json).unwrap().meta
+        };
+        let mut host = PureHost::default();
+        for (name, value) in parse_meta(files).0 {
+            let MetaValue::MetaString(contents) = value else {
+                panic!("Invalid fixture file");
+            };
+            host.files.insert(name, contents.into_bytes());
+        }
+        host.files.insert("s.csl".into(), style.as_bytes().to_vec());
+        host.files.insert(
+            "dd/csl/locales/locales-en-US.xml".into(),
+            include_bytes!("replay/document-locale.xml").to_vec(),
+        );
+        let mut context = Context::new(Box::new(host));
+        context.state.user_data_dir = Some("dd".into());
+        let metadata = parse_meta(metadata);
+        let mut find = |context: &mut Context, name: &str| {
+            context.host().file_exists(name).then(|| name.to_owned())
+        };
+        let mut yaml = |_: &mut Context, _: &str, _: &str| Ok(Vec::new());
+        let mut bib = |_: &mut Context, _: &str, path: &str, _| {
+            let Some(MetaValue::MetaList(references)) = metadata.get(path) else {
+                panic!("Missing metadata for {path}");
+            };
+            Ok(references.clone())
+        };
+        let mut doc = randoc_ast::json::from_json(input).unwrap();
+        let expected = randoc_ast::json::from_json(expected).unwrap();
+        process_citations(
+            &mut context,
+            &mut doc,
+            Hooks {
+                find_resource: &mut find,
+                yaml_references: &mut yaml,
+                bib_references: Some(&mut bib),
+            },
+        )
+        .unwrap();
+        if doc != expected {
+            let index = doc
+                .blocks
+                .iter()
+                .zip(&expected.blocks)
+                .position(|(a, b)| a != b);
+            let got = index.map_or(doc.blocks.as_slice(), |n| &doc.blocks[n..=n]);
+            let want = index.map_or(expected.blocks.as_slice(), |n| &expected.blocks[n..=n]);
+            failures.push(format!("{id}\n  got: {got:?}\n  expected: {want:?}"));
+        }
+    }
+    assert!(failures.is_empty(), "{}", failures.join("\n"));
 }

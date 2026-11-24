@@ -1,0 +1,2017 @@
+tag	name	form	single	multiple	gender	gender_form	match	source
+af-ZA	page	long	bladsy	bladsye				observed
+af-ZA	page	short	bl.	ble.				observed
+ar	page	long	صفحة	صفحات				observed
+ar	page	short	ص	ص				observed
+bal-PK	page	long	تاکدیم	تاکدیم				observed
+bal-PK	page	short	تاکدیم	تاکدیم				observed
+bg-BG	page	long	страница	страници				observed
+bg-BG	page	short	стр.	стр.				observed
+brh-PK	page	long	پنہ	پنہ‌غاک				observed
+brh-PK	page	short	پنہ	پنہ‌غاک				observed
+ca-AD	page	long	pàgina	pàgines				observed
+ca-AD	page	short	p.	pp.				observed
+cs-CZ	page	long	strana	strany				observed
+cs-CZ	page	short	s.	s.				observed
+cy-GB	page	long	tudalen	tudalennau				observed
+cy-GB	page	short	t.	tt.				observed
+da-DK	page	long	side	sider				observed
+da-DK	page	short	s.	s.				observed
+de-AT	page	long	Seite	Seiten				observed
+de-AT	page	short	S.	S.				observed
+de-CH	page	long	Seite	Seiten				observed
+de-CH	page	short	S.	S.				observed
+de-DE	accessed	long	zugegriffen					observed
+de-DE	act	long	Akt	Akte				linguistic
+de-DE	act	short	Akt					linguistic
+de-DE	ad	long	 n. Chr.					observed
+de-DE	advance-online-publication	long	Online-Vorabpublikation					linguistic
+de-DE	album	long	Album					linguistic
+de-DE	and	long	und					linguistic
+de-DE	and	short	&					linguistic
+de-DE	and	symbol	&					linguistic
+de-DE	and others	long	und andere					linguistic
+de-DE	anonymous	long	anonym					linguistic
+de-DE	anonymous	short	anon.					linguistic
+de-DE	appendix	long	Anhang	Anhänge				linguistic
+de-DE	appendix	short	Anh.					linguistic
+de-DE	article	long	Artikel					linguistic
+de-DE	article-journal	long	Zeitschriftenartikel					linguistic
+de-DE	article-locator	long	Artikel					linguistic
+de-DE	article-locator	short	Art.					linguistic
+de-DE	article-magazine	long	Magazinartikel					linguistic
+de-DE	article-newspaper	long	Zeitungsartikel					linguistic
+de-DE	at	long	bei					linguistic
+de-DE	audio-recording	long	Tonaufnahme					linguistic
+de-DE	author	long						linguistic
+de-DE	author	verb	verfasst von					linguistic
+de-DE	available at	long	verfügbar unter					linguistic
+de-DE	bc	long	 v. Chr.					linguistic
+de-DE	bce	long	 v. u. Z.					linguistic
+de-DE	bill	long	Gesetzentwurf					linguistic
+de-DE	book	long	Buch	Bücher				linguistic
+de-DE	book	short	Buch	Bücher				linguistic
+de-DE	broadcast	long	Sendung					linguistic
+de-DE	by	long	von					linguistic
+de-DE	canon	long	Kanon	Kanones				linguistic
+de-DE	ce	long	 u. Z.					linguistic
+de-DE	chair	long	Vorsitz	Vorsitzende				linguistic
+de-DE	chapter	long	Kapitel					linguistic
+de-DE	chapter	short	Kap.					linguistic
+de-DE	chapter-number	long	Kapitelnummer					linguistic
+de-DE	circa	long	ungefähr					linguistic
+de-DE	circa	short	ca.					linguistic
+de-DE	citation-number	long	Zitiernummer					linguistic
+de-DE	cited	long	zitiert					linguistic
+de-DE	classic	long	Klassiker					linguistic
+de-DE	close-inner-quote	long	‘					linguistic
+de-DE	close-quote	long	“					linguistic
+de-DE	collection	long	Sammlung					linguistic
+de-DE	collection-editor	long	Reihenherausgeber					linguistic
+de-DE	collection-number	long	Reihennummer					linguistic
+de-DE	colon	long	:					linguistic
+de-DE	column	long	Spalte	Spalten				linguistic
+de-DE	column	short	Sp.					linguistic
+de-DE	comma	long	,					linguistic
+de-DE	compiler	long	Kompilator	Kompilatoren				linguistic
+de-DE	compiler	short	Komp.					linguistic
+de-DE	compiler	verb	zusammengestellt von					linguistic
+de-DE	composer	long	Komponist	Komponisten				linguistic
+de-DE	composer	verb	komponiert von					linguistic
+de-DE	container-author	long	Autor des Gesamtwerks	Autoren des Gesamtwerks				linguistic
+de-DE	contributor	long	Mitwirkender	Mitwirkende				linguistic
+de-DE	curator	long	Kurator	Kuratoren				linguistic
+de-DE	dataset	long	Datensatz					linguistic
+de-DE	director	long	Regisseur	Regisseure				linguistic
+de-DE	director	short	Regie					linguistic
+de-DE	director	verb	Regie von					linguistic
+de-DE	director	verb-short	Regie					linguistic
+de-DE	document	long	Dokument					linguistic
+de-DE	edition	long	Auflage	Auflagen				linguistic
+de-DE	edition	short	Aufl.					linguistic
+de-DE	editor	long	Herausgeber					linguistic
+de-DE	editor	short	Hrsg.					linguistic
+de-DE	editor	verb	herausgegeben von					linguistic
+de-DE	editor	verb-short	Hrsg.					linguistic
+de-DE	editor-translator	long	Herausgeber und Übersetzer					linguistic
+de-DE	editorial-director	long	Redaktionsleiter					linguistic
+de-DE	editortranslator	long	Herausgeber und Übersetzer					linguistic
+de-DE	editortranslator	short	Hrsg. & Übers.					observed
+de-DE	editortranslator	verb	herausgegeben und übersetzt von					linguistic
+de-DE	editortranslator	verb-short	Hrsg. und Übers.					linguistic
+de-DE	elocation	long	elektronische Fundstelle	elektronische Fundstellen				linguistic
+de-DE	entry	long	Eintrag					linguistic
+de-DE	entry-dictionary	long	Wörterbucheintrag					linguistic
+de-DE	entry-encyclopedia	long	Lexikonartikel					linguistic
+de-DE	equation	long	Gleichung	Gleichungen				linguistic
+de-DE	equation	short	Gl.					linguistic
+de-DE	et-al	long	u. a.					observed
+de-DE	event	long	Veranstaltung					linguistic
+de-DE	executive-producer	long	ausführender Produzent	ausführende Produzenten				linguistic
+de-DE	figure	long	Abbildung	Abbildungen				linguistic
+de-DE	figure	short	Abb.					linguistic
+de-DE	film	long	Film					linguistic
+de-DE	first-reference-note-number	long	Nummer des ersten Verweises					linguistic
+de-DE	folio	long	Blatt	Blätter				linguistic
+de-DE	folio	short	Bl.					linguistic
+de-DE	forthcoming	long	i. E.					observed
+de-DE	from	long	von					linguistic
+de-DE	graphic	long	Grafik					linguistic
+de-DE	guest	long	Gast	Gäste				linguistic
+de-DE	hearing	long	Anhörung					linguistic
+de-DE	henceforth	long	im Folgenden					linguistic
+de-DE	host	long	Gastgeber					linguistic
+de-DE	ibid	long	ebd.					linguistic
+de-DE	illustrator	long	Illustrator	Illustratoren				linguistic
+de-DE	illustrator	short	Ill.					linguistic
+de-DE	illustrator	verb	illustriert von					linguistic
+de-DE	in	long	in					linguistic
+de-DE	in press	long	im Druck					linguistic
+de-DE	internet	long	Internet					linguistic
+de-DE	interview	long	Interview					linguistic
+de-DE	interviewer	long	Interviewer					linguistic
+de-DE	interviewer	verb	interviewt von					linguistic
+de-DE	issue	long	Nummer	Nummern				linguistic
+de-DE	issue	short	Nr.					linguistic
+de-DE	legal_case	long	Gerichtsfall					linguistic
+de-DE	legislation	long	Gesetzgebung					linguistic
+de-DE	letter	long	Brief					linguistic
+de-DE	line	long	Zeile	Zeilen				linguistic
+de-DE	line	short	Z.					linguistic
+de-DE	loc-cit	long	a. a. O.					linguistic
+de-DE	long-ordinal-01	long	erste					linguistic
+de-DE	long-ordinal-02	long	zweite					linguistic
+de-DE	long-ordinal-03	long	dritte					linguistic
+de-DE	long-ordinal-04	long	vierte					linguistic
+de-DE	long-ordinal-05	long	fünfte					linguistic
+de-DE	long-ordinal-06	long	sechste					linguistic
+de-DE	long-ordinal-07	long	siebte					linguistic
+de-DE	long-ordinal-08	long	achte					linguistic
+de-DE	long-ordinal-09	long	neunte					linguistic
+de-DE	long-ordinal-10	long	zehnte					linguistic
+de-DE	manuscript	long	Manuskript					linguistic
+de-DE	map	long	Karte					linguistic
+de-DE	month-01	long	Januar					linguistic
+de-DE	month-01	short	Jan.					linguistic
+de-DE	month-02	long	Februar					linguistic
+de-DE	month-02	short	Feb.					linguistic
+de-DE	month-03	long	März					linguistic
+de-DE	month-03	short	März					linguistic
+de-DE	month-04	long	April					linguistic
+de-DE	month-04	short	Apr.					linguistic
+de-DE	month-05	long	Mai					linguistic
+de-DE	month-05	short	Mai					linguistic
+de-DE	month-06	long	Juni					linguistic
+de-DE	month-06	short	Juni					linguistic
+de-DE	month-07	long	Juli					linguistic
+de-DE	month-07	short	Juli					linguistic
+de-DE	month-08	long	August					linguistic
+de-DE	month-08	short	Aug.					linguistic
+de-DE	month-09	long	September					linguistic
+de-DE	month-09	short	Sep.					linguistic
+de-DE	month-10	long	Oktober					linguistic
+de-DE	month-10	short	Okt.					linguistic
+de-DE	month-11	long	November					linguistic
+de-DE	month-11	short	Nov.					linguistic
+de-DE	month-12	long	Dezember					linguistic
+de-DE	month-12	short	Dez.					linguistic
+de-DE	motion_picture	long	Film					linguistic
+de-DE	musical_score	long	Partitur					linguistic
+de-DE	narrator	long	Erzähler					linguistic
+de-DE	narrator	verb	erzählt von					linguistic
+de-DE	no date	long	ohne Jahr					linguistic
+de-DE	no date	short	o. J.					observed
+de-DE	no-place	long	ohne Ort					linguistic
+de-DE	no-place	short	o. O.					linguistic
+de-DE	no-publisher	long	ohne Verlag					linguistic
+de-DE	no-publisher	short	o. V.					linguistic
+de-DE	note	long	Anmerkung	Anmerkungen				linguistic
+de-DE	note	short	Anm.					linguistic
+de-DE	number	long	Nummer	Nummern				linguistic
+de-DE	number	short	Nr.					linguistic
+de-DE	number-of-pages	long	Seitenzahl					linguistic
+de-DE	number-of-volumes	long	Bandzahl					linguistic
+de-DE	on	long	am					linguistic
+de-DE	online	long	online					linguistic
+de-DE	op-cit	long	a. a. O.					linguistic
+de-DE	open-inner-quote	long	‚					linguistic
+de-DE	open-quote	long	„					linguistic
+de-DE	opus	long	Opus	Opera				linguistic
+de-DE	opus	short	op.					linguistic
+de-DE	ordinal	long	.					linguistic
+de-DE	organizer	long	Organisator	Organisatoren				linguistic
+de-DE	organizer	verb	organisiert von					linguistic
+de-DE	original-author	long	Originalautor	Originalautoren				linguistic
+de-DE	original-work-published	long	Original veröffentlicht					linguistic
+de-DE	page	long	Seite	Seiten				observed
+de-DE	page	short	S.	S.				observed
+de-DE	page-first	long	erste Seite					linguistic
+de-DE	page-range-delimiter	long	–					linguistic
+de-DE	pamphlet	long	Broschüre					linguistic
+de-DE	paper-conference	long	Tagungsbeitrag					linguistic
+de-DE	paragraph	long	Absatz	Absätze				linguistic
+de-DE	paragraph	short	Abs.					linguistic
+de-DE	paragraph	symbol	Abs.					linguistic
+de-DE	part	long	Teil	Teile				linguistic
+de-DE	part	short	Tl.					linguistic
+de-DE	patent	long	Patent					linguistic
+de-DE	performance	long	Aufführung					linguistic
+de-DE	performer	long	Darsteller					linguistic
+de-DE	performer	verb	aufgeführt von					linguistic
+de-DE	periodical	long	Periodikum					linguistic
+de-DE	personal-communication	long	persönliche Mitteilung					linguistic
+de-DE	personal_communication	long	persönliche Mitteilung					linguistic
+de-DE	podcast	long	Podcast					linguistic
+de-DE	podcast-episode	long	Podcastfolge					linguistic
+de-DE	post	long	Beitrag					linguistic
+de-DE	post-weblog	long	Blogbeitrag					linguistic
+de-DE	preprint	long	Vorabdruck					linguistic
+de-DE	presented at	long	vorgestellt bei					linguistic
+de-DE	printing	long	Druck	Drucke				linguistic
+de-DE	producer	long	Produzent	Produzenten				linguistic
+de-DE	producer	verb	produziert von					linguistic
+de-DE	radio-broadcast	long	Radiosendung					linguistic
+de-DE	radio-series	long	Radioreihe					linguistic
+de-DE	radio-series-episode	long	Folge einer Radioreihe					linguistic
+de-DE	recipient	long	Empfänger					linguistic
+de-DE	recipient	verb	an					linguistic
+de-DE	reference	long	Verweis	Verweise				linguistic
+de-DE	reference	short	Ref.					linguistic
+de-DE	regulation	long	Verordnung					linguistic
+de-DE	report	long	Bericht					linguistic
+de-DE	retrieved	long	abgerufen					linguistic
+de-DE	review	long	Rezension					linguistic
+de-DE	review-book	long	Buchbesprechung					linguistic
+de-DE	review-of	long	Rezension von					linguistic
+de-DE	reviewed-author	long	rezensierter Autor	rezensierte Autoren				linguistic
+de-DE	rule	long	Regel	Regeln				linguistic
+de-DE	scale	long	Maßstab					linguistic
+de-DE	scene	long	Szene	Szenen				linguistic
+de-DE	script-writer	long	Drehbuchautor	Drehbuchautoren				linguistic
+de-DE	script-writer	verb	Drehbuch von					linguistic
+de-DE	season-01	long	Frühling					linguistic
+de-DE	season-02	long	Sommer					linguistic
+de-DE	season-03	long	Herbst					linguistic
+de-DE	season-04	long	Winter					linguistic
+de-DE	section	long	Abschnitt	Abschnitte				linguistic
+de-DE	section	short	Abschn.					linguistic
+de-DE	section	symbol	§	§§				linguistic
+de-DE	semicolon	long	;					linguistic
+de-DE	series-creator	long	Serienschöpfer					linguistic
+de-DE	software	long	Software					linguistic
+de-DE	song	long	Lied					linguistic
+de-DE	special-issue	long	Sonderheft					linguistic
+de-DE	special-section	long	Sonderteil					linguistic
+de-DE	speech	long	Rede					linguistic
+de-DE	standard	long	Norm					linguistic
+de-DE	sub-verbo	long	unter dem Stichwort					linguistic
+de-DE	sub-verbo	short	s. v.					linguistic
+de-DE	supplement	long	Beilage	Beilagen				linguistic
+de-DE	supplement	short	Beil.					linguistic
+de-DE	table	long	Tabelle	Tabellen				linguistic
+de-DE	table	short	Tab.					linguistic
+de-DE	television-broadcast	long	Fernsehsendung					linguistic
+de-DE	television-series	long	Fernsehserie					linguistic
+de-DE	television-series-episode	long	Serienfolge					linguistic
+de-DE	thesis	long	Abschlussarbeit					linguistic
+de-DE	timestamp	long	Zeitmarke	Zeitmarken				linguistic
+de-DE	title-locator	long	Titel					linguistic
+de-DE	title-locator	short	Tit.					linguistic
+de-DE	translator	long	Übersetzer					linguistic
+de-DE	translator	short	Übers.					linguistic
+de-DE	translator	verb	übersetzt von					linguistic
+de-DE	translator	verb-short	Übers.					linguistic
+de-DE	treaty	long	Vertrag					linguistic
+de-DE	verse	long	Vers	Verse				linguistic
+de-DE	verse	short	V.					linguistic
+de-DE	version	long	Version	Versionen				linguistic
+de-DE	version	short	Ver.					linguistic
+de-DE	video	long	Video					linguistic
+de-DE	volume	long	Band	Bände				linguistic
+de-DE	volume	short	Bd.	Bde.				linguistic
+de-DE	webpage	long	Webseite					linguistic
+de-DE	working-paper	long	Arbeitspapier					linguistic
+el-GR	page	long	σελίδα	σελίδες				observed
+el-GR	page	short	σελ.	σελ.				observed
+en-GB	accessed	long	accessed					linguistic
+en-GB	act	long	act	acts				linguistic
+en-GB	act	short	act					linguistic
+en-GB	ad	long	 AD					linguistic
+en-GB	advance-online-publication	long	advance online publication					linguistic
+en-GB	album	long	album					linguistic
+en-GB	and	long	and					linguistic
+en-GB	and	short	&					linguistic
+en-GB	and	symbol	&					linguistic
+en-GB	and others	long	and others					linguistic
+en-GB	anonymous	long	anonymous					linguistic
+en-GB	anonymous	short	anon.					linguistic
+en-GB	appendix	long	appendix	appendices				linguistic
+en-GB	appendix	short	app.	apps.				linguistic
+en-GB	article	long	article					linguistic
+en-GB	article-journal	long	journal article					linguistic
+en-GB	article-locator	long	article	articles				linguistic
+en-GB	article-locator	short	art.	arts.				linguistic
+en-GB	article-magazine	long	magazine article					linguistic
+en-GB	article-newspaper	long	newspaper article					linguistic
+en-GB	at	long	at					linguistic
+en-GB	audio-recording	long	audio recording					linguistic
+en-GB	author	long						linguistic
+en-GB	author	verb	written by					linguistic
+en-GB	available at	long	available at					linguistic
+en-GB	bc	long	 BC					linguistic
+en-GB	bce	long	 BCE					linguistic
+en-GB	bill	long	bill					linguistic
+en-GB	book	long	book	books				linguistic
+en-GB	book	short	bk.	bks.				linguistic
+en-GB	broadcast	long	broadcast					linguistic
+en-GB	by	long	by					linguistic
+en-GB	canon	long	canon	canons				linguistic
+en-GB	ce	long	 CE					linguistic
+en-GB	chair	long	chair	chairs				linguistic
+en-GB	chapter	long	chapter	chapters				linguistic
+en-GB	chapter	short	ch.	chs.				linguistic
+en-GB	chapter-number	long	chapter number					linguistic
+en-GB	circa	long	circa					linguistic
+en-GB	circa	short	ca.					linguistic
+en-GB	citation-number	long	citation number					linguistic
+en-GB	cited	long	cited					linguistic
+en-GB	classic	long	classic					linguistic
+en-GB	close-inner-quote	long	”					linguistic
+en-GB	close-quote	long	’					linguistic
+en-GB	collection	long	collection					linguistic
+en-GB	collection-editor	long	series editor	series editors				linguistic
+en-GB	collection-number	long	series number					linguistic
+en-GB	colon	long	:					linguistic
+en-GB	column	long	column	columns				linguistic
+en-GB	column	short	col.	cols.				linguistic
+en-GB	comma	long	,					linguistic
+en-GB	compiler	long	compiler	compilers				linguistic
+en-GB	compiler	short	comp.	comps.				linguistic
+en-GB	compiler	verb	compiled by					linguistic
+en-GB	composer	long	composer	composers				linguistic
+en-GB	composer	verb	composed by					linguistic
+en-GB	container-author	long	container author	container authors				linguistic
+en-GB	contributor	long	contributor	contributors				linguistic
+en-GB	curator	long	curator	curators				linguistic
+en-GB	dataset	long	data set					linguistic
+en-GB	director	long	director	directors				linguistic
+en-GB	director	short	dir.	dirs.				linguistic
+en-GB	director	verb	directed by					linguistic
+en-GB	director	verb-short	dir.					linguistic
+en-GB	document	long	document					linguistic
+en-GB	edition	long	edition	editions				linguistic
+en-GB	edition	short	edn					observed
+en-GB	editor	long	editor	editors				linguistic
+en-GB	editor	short	ed.	eds				observed
+en-GB	editor	verb	edited by					linguistic
+en-GB	editor	verb-short	ed.					linguistic
+en-GB	editor-translator	long	editor and translator					linguistic
+en-GB	editorial-director	long	editorial director	editorial directors				linguistic
+en-GB	editortranslator	long	editor and translator	editors and translators				linguistic
+en-GB	editortranslator	short	ed. & trans.					linguistic
+en-GB	editortranslator	verb	edited and translated by					linguistic
+en-GB	editortranslator	verb-short	ed. & trans.					linguistic
+en-GB	elocation	long	electronic locator	electronic locators				linguistic
+en-GB	entry	long	entry					linguistic
+en-GB	entry-dictionary	long	dictionary entry					linguistic
+en-GB	entry-encyclopedia	long	encyclopedia entry					linguistic
+en-GB	equation	long	equation	equations				linguistic
+en-GB	equation	short	eq.	eqs.				linguistic
+en-GB	et-al	long	et al.					linguistic
+en-GB	event	long	event					linguistic
+en-GB	executive-producer	long	executive producer	executive producers				linguistic
+en-GB	figure	long	figure	figures				linguistic
+en-GB	figure	short	fig.	figs.				linguistic
+en-GB	film	long	film					linguistic
+en-GB	first-reference-note-number	long	first reference number					linguistic
+en-GB	folio	long	folio	folios				linguistic
+en-GB	folio	short	fol.	fols.				linguistic
+en-GB	forthcoming	long	forthcoming					linguistic
+en-GB	from	long	from					linguistic
+en-GB	graphic	long	graphic					linguistic
+en-GB	guest	long	guest	guests				linguistic
+en-GB	hearing	long	hearing					linguistic
+en-GB	henceforth	long	henceforth					linguistic
+en-GB	host	long	host	hosts				linguistic
+en-GB	ibid	long	ibid.					linguistic
+en-GB	illustrator	long	illustrator	illustrators				linguistic
+en-GB	illustrator	short	illus.					linguistic
+en-GB	illustrator	verb	illustrated by					linguistic
+en-GB	in	long	in					linguistic
+en-GB	in press	long	in press					linguistic
+en-GB	internet	long	Internet					linguistic
+en-GB	interview	long	interview					linguistic
+en-GB	interviewer	long	interviewer	interviewers				linguistic
+en-GB	interviewer	verb	interviewed by					linguistic
+en-GB	issue	long	issue	issues				linguistic
+en-GB	issue	short	no.	nos.				linguistic
+en-GB	legal_case	long	legal case					linguistic
+en-GB	legislation	long	legislation					linguistic
+en-GB	letter	long	letter					linguistic
+en-GB	line	long	line	lines				linguistic
+en-GB	line	short	l.	ll.				linguistic
+en-GB	loc-cit	long	loc. cit.					linguistic
+en-GB	long-ordinal-01	long	first					linguistic
+en-GB	long-ordinal-02	long	second					linguistic
+en-GB	long-ordinal-03	long	third					linguistic
+en-GB	long-ordinal-04	long	fourth					linguistic
+en-GB	long-ordinal-05	long	fifth					linguistic
+en-GB	long-ordinal-06	long	sixth					linguistic
+en-GB	long-ordinal-07	long	seventh					linguistic
+en-GB	long-ordinal-08	long	eighth					linguistic
+en-GB	long-ordinal-09	long	ninth					linguistic
+en-GB	long-ordinal-10	long	tenth					linguistic
+en-GB	manuscript	long	manuscript					linguistic
+en-GB	map	long	map					linguistic
+en-GB	month-01	long	January					linguistic
+en-GB	month-01	short	Jan.					linguistic
+en-GB	month-02	long	February					linguistic
+en-GB	month-02	short	Feb.					linguistic
+en-GB	month-03	long	March					linguistic
+en-GB	month-03	short	Mar.					linguistic
+en-GB	month-04	long	April					linguistic
+en-GB	month-04	short	Apr.					linguistic
+en-GB	month-05	long	May					linguistic
+en-GB	month-05	short	May					linguistic
+en-GB	month-06	long	June					linguistic
+en-GB	month-06	short	June					linguistic
+en-GB	month-07	long	July					linguistic
+en-GB	month-07	short	July					linguistic
+en-GB	month-08	long	August					linguistic
+en-GB	month-08	short	Aug.					linguistic
+en-GB	month-09	long	September					linguistic
+en-GB	month-09	short	Sept.					linguistic
+en-GB	month-10	long	October					linguistic
+en-GB	month-10	short	Oct.					linguistic
+en-GB	month-11	long	November					linguistic
+en-GB	month-11	short	Nov.					linguistic
+en-GB	month-12	long	December					linguistic
+en-GB	month-12	short	Dec.					linguistic
+en-GB	motion_picture	long	motion picture					linguistic
+en-GB	musical_score	long	musical score					linguistic
+en-GB	narrator	long	narrator	narrators				linguistic
+en-GB	narrator	verb	narrated by					linguistic
+en-GB	no date	long	no date					linguistic
+en-GB	no date	short	n.d.					linguistic
+en-GB	no-place	long	no place					linguistic
+en-GB	no-place	short	s.l.					linguistic
+en-GB	no-publisher	long	no publisher					linguistic
+en-GB	no-publisher	short	s.n.					linguistic
+en-GB	note	long	note	notes				linguistic
+en-GB	note	short	n.	nn.				linguistic
+en-GB	number	long	number	numbers				linguistic
+en-GB	number	short	no.	nos.				linguistic
+en-GB	number-of-pages	long	page count					linguistic
+en-GB	number-of-volumes	long	volume count					linguistic
+en-GB	on	long	on					linguistic
+en-GB	online	long	online					linguistic
+en-GB	op-cit	long	op. cit.					linguistic
+en-GB	open-inner-quote	long	“					linguistic
+en-GB	open-quote	long	‘					linguistic
+en-GB	opus	long	opus	opera				linguistic
+en-GB	opus	short	op.	opp.				linguistic
+en-GB	ordinal	long	th					linguistic
+en-GB	ordinal-01	long	st				last-digit	linguistic
+en-GB	ordinal-02	long	nd				last-digit	linguistic
+en-GB	ordinal-03	long	rd				last-digit	linguistic
+en-GB	ordinal-11	long	th				last-two-digits	linguistic
+en-GB	ordinal-12	long	th				last-two-digits	linguistic
+en-GB	ordinal-13	long	th				last-two-digits	linguistic
+en-GB	organizer	long	organizer	organizers				linguistic
+en-GB	organizer	verb	organized by					linguistic
+en-GB	original-author	long	original author	original authors				linguistic
+en-GB	original-work-published	long	original work published					linguistic
+en-GB	page	long	page	pages				observed
+en-GB	page	short	p.	pp.				observed
+en-GB	page-first	long	first page					linguistic
+en-GB	page-range-delimiter	long	–					linguistic
+en-GB	pamphlet	long	pamphlet					linguistic
+en-GB	paper-conference	long	conference paper					linguistic
+en-GB	paragraph	long	paragraph	paragraphs				linguistic
+en-GB	paragraph	short	para.	paras.				linguistic
+en-GB	paragraph	symbol	¶	¶¶				linguistic
+en-GB	part	long	part	parts				linguistic
+en-GB	part	short	pt.	pts.				linguistic
+en-GB	patent	long	patent					linguistic
+en-GB	performance	long	performance					linguistic
+en-GB	performer	long	performer	performers				linguistic
+en-GB	performer	verb	performed by					linguistic
+en-GB	periodical	long	periodical					linguistic
+en-GB	personal-communication	long	personal communication					linguistic
+en-GB	personal_communication	long	personal communication					linguistic
+en-GB	podcast	long	podcast					linguistic
+en-GB	podcast-episode	long	podcast episode					linguistic
+en-GB	post	long	post					linguistic
+en-GB	post-weblog	long	blog post					linguistic
+en-GB	preprint	long	preprint					linguistic
+en-GB	presented at	long	presented at					linguistic
+en-GB	printing	long	printing	printings				linguistic
+en-GB	producer	long	producer	producers				linguistic
+en-GB	producer	verb	produced by					linguistic
+en-GB	radio-broadcast	long	radio broadcast					linguistic
+en-GB	radio-series	long	radio series					linguistic
+en-GB	radio-series-episode	long	radio episode					linguistic
+en-GB	recipient	long	recipient	recipients				linguistic
+en-GB	recipient	verb	to					linguistic
+en-GB	reference	long	reference	references				linguistic
+en-GB	reference	short	ref.	refs.				linguistic
+en-GB	regulation	long	regulation					linguistic
+en-GB	report	long	report					linguistic
+en-GB	retrieved	long	retrieved					linguistic
+en-GB	review	long	review					linguistic
+en-GB	review-book	long	book review					linguistic
+en-GB	review-of	long	review of					linguistic
+en-GB	reviewed-author	long	reviewed author	reviewed authors				linguistic
+en-GB	rule	long	rule	rules				linguistic
+en-GB	scale	long	scale					linguistic
+en-GB	scene	long	scene	scenes				linguistic
+en-GB	script-writer	long	scriptwriter	scriptwriters				linguistic
+en-GB	script-writer	verb	script by					linguistic
+en-GB	season-01	long	Spring					linguistic
+en-GB	season-02	long	Summer					linguistic
+en-GB	season-03	long	Autumn					linguistic
+en-GB	season-04	long	Winter					linguistic
+en-GB	section	long	section	sections				linguistic
+en-GB	section	short	sect.	sects.				linguistic
+en-GB	section	symbol	§	§§				linguistic
+en-GB	semicolon	long	;					linguistic
+en-GB	series-creator	long	series creator	series creators				linguistic
+en-GB	software	long	software					linguistic
+en-GB	song	long	song					linguistic
+en-GB	special-issue	long	special issue					linguistic
+en-GB	special-section	long	special section					linguistic
+en-GB	speech	long	speech					linguistic
+en-GB	standard	long	standard					linguistic
+en-GB	sub-verbo	long	under the word					linguistic
+en-GB	sub-verbo	short	s.v.	s.vv.				linguistic
+en-GB	supplement	long	supplement	supplements				linguistic
+en-GB	supplement	short	suppl.	suppls.				linguistic
+en-GB	table	long	table	tables				linguistic
+en-GB	table	short	tbl.	tbls.				linguistic
+en-GB	television-broadcast	long	television broadcast					linguistic
+en-GB	television-series	long	television series					linguistic
+en-GB	television-series-episode	long	television episode					linguistic
+en-GB	thesis	long	thesis					linguistic
+en-GB	timestamp	long	timestamp	timestamps				linguistic
+en-GB	title-locator	long	title	titles				linguistic
+en-GB	title-locator	short	tit.	tits.				linguistic
+en-GB	translator	long	translator	translators				linguistic
+en-GB	translator	short	trans.					linguistic
+en-GB	translator	verb	translated by					linguistic
+en-GB	translator	verb-short	trans.					linguistic
+en-GB	treaty	long	treaty					linguistic
+en-GB	verse	long	verse	verses				linguistic
+en-GB	verse	short	v.	vv.				linguistic
+en-GB	version	long	version	versions				linguistic
+en-GB	version	short	v.	vv.				linguistic
+en-GB	video	long	video					linguistic
+en-GB	volume	long	volume	volumes				linguistic
+en-GB	volume	short	vol.	vols				observed
+en-GB	webpage	long	web page					linguistic
+en-GB	working-paper	long	working paper					linguistic
+en-US	accessed	long	accessed					linguistic
+en-US	act	long	act	acts				linguistic
+en-US	act	short	act					linguistic
+en-US	ad	long	 AD					linguistic
+en-US	advance-online-publication	long	advance online publication					linguistic
+en-US	album	long	album					linguistic
+en-US	and	long	and					linguistic
+en-US	and	short	&					linguistic
+en-US	and	symbol	&					linguistic
+en-US	and others	long	and others					linguistic
+en-US	anonymous	long	anonymous					linguistic
+en-US	anonymous	short	anon.					linguistic
+en-US	appendix	long	appendix	appendices				linguistic
+en-US	appendix	short	app.	apps.				linguistic
+en-US	article	long	article					linguistic
+en-US	article-journal	long	journal article					linguistic
+en-US	article-locator	long	article	articles				linguistic
+en-US	article-locator	short	art.	arts.				linguistic
+en-US	article-magazine	long	magazine article					linguistic
+en-US	article-newspaper	long	newspaper article					linguistic
+en-US	at	long	at					linguistic
+en-US	audio-recording	long	audio recording					linguistic
+en-US	author	long						linguistic
+en-US	author	verb	written by					linguistic
+en-US	available at	long	available at					linguistic
+en-US	bc	long	 BC					linguistic
+en-US	bce	long	 BCE					linguistic
+en-US	bill	long	bill					linguistic
+en-US	book	long	book	books				linguistic
+en-US	book	short	bk.	bks.				linguistic
+en-US	broadcast	long	broadcast					linguistic
+en-US	by	long	by					linguistic
+en-US	canon	long	canon	canons				linguistic
+en-US	ce	long	 CE					linguistic
+en-US	chair	long	chair	chairs				linguistic
+en-US	chapter	long	chapter	chapters				linguistic
+en-US	chapter	short	chap.	chaps.				linguistic
+en-US	chapter-number	long	chapter number					linguistic
+en-US	circa	long	circa					linguistic
+en-US	circa	short	ca.					linguistic
+en-US	citation-number	long	citation number					linguistic
+en-US	cited	long	cited					linguistic
+en-US	classic	long	classic					linguistic
+en-US	close-inner-quote	long	’					linguistic
+en-US	close-quote	long	”					linguistic
+en-US	collection	long	collection					linguistic
+en-US	collection-editor	long	series editor	series editors				linguistic
+en-US	collection-number	long	series number					linguistic
+en-US	colon	long	:					linguistic
+en-US	column	long	column	columns				linguistic
+en-US	column	short	col.	cols.				linguistic
+en-US	comma	long	,					linguistic
+en-US	compiler	long	compiler	compilers				linguistic
+en-US	compiler	short	comp.	comps.				linguistic
+en-US	compiler	verb	compiled by					linguistic
+en-US	composer	long	composer	composers				linguistic
+en-US	composer	verb	composed by					linguistic
+en-US	container-author	long	container author	container authors				linguistic
+en-US	contributor	long	contributor	contributors				linguistic
+en-US	curator	long	curator	curators				linguistic
+en-US	dataset	long	data set					linguistic
+en-US	director	long	director	directors				linguistic
+en-US	director	short	dir.	dirs.				linguistic
+en-US	director	verb	directed by					linguistic
+en-US	director	verb-short	dir.					linguistic
+en-US	document	long	document					linguistic
+en-US	edition	long	edition	editions				linguistic
+en-US	edition	short	ed.	eds.				linguistic
+en-US	editor	long	editor	editors				linguistic
+en-US	editor	short	ed.	eds.				linguistic
+en-US	editor	verb	edited by					linguistic
+en-US	editor	verb-short	ed.					linguistic
+en-US	editor-translator	long	editor and translator					linguistic
+en-US	editorial-director	long	editorial director	editorial directors				linguistic
+en-US	editortranslator	long	editor and translator	editors and translators				linguistic
+en-US	editortranslator	short	ed. & trans.					linguistic
+en-US	editortranslator	verb	edited and translated by					linguistic
+en-US	editortranslator	verb-short	ed. & trans.					linguistic
+en-US	elocation	long	electronic locator	electronic locators				linguistic
+en-US	entry	long	entry					linguistic
+en-US	entry-dictionary	long	dictionary entry					linguistic
+en-US	entry-encyclopedia	long	encyclopedia entry					linguistic
+en-US	equation	long	equation	equations				linguistic
+en-US	equation	short	eq.	eqs.				linguistic
+en-US	et-al	long	et al.					linguistic
+en-US	event	long	event					linguistic
+en-US	executive-producer	long	executive producer	executive producers				linguistic
+en-US	figure	long	figure	figures				linguistic
+en-US	figure	short	fig.	figs.				linguistic
+en-US	film	long	film					linguistic
+en-US	first-reference-note-number	long	first reference number					linguistic
+en-US	folio	long	folio	folios				linguistic
+en-US	folio	short	fol.	fols.				linguistic
+en-US	forthcoming	long	forthcoming					linguistic
+en-US	from	long	from					linguistic
+en-US	graphic	long	graphic					linguistic
+en-US	guest	long	guest	guests				linguistic
+en-US	hearing	long	hearing					linguistic
+en-US	henceforth	long	henceforth					linguistic
+en-US	host	long	host	hosts				linguistic
+en-US	ibid	long	ibid.					linguistic
+en-US	illustrator	long	illustrator	illustrators				linguistic
+en-US	illustrator	short	illus.					linguistic
+en-US	illustrator	verb	illustrated by					linguistic
+en-US	in	long	in					linguistic
+en-US	in press	long	in press					linguistic
+en-US	internet	long	Internet					linguistic
+en-US	interview	long	interview					linguistic
+en-US	interviewer	long	interviewer	interviewers				linguistic
+en-US	interviewer	verb	interviewed by					linguistic
+en-US	issue	long	issue	issues				linguistic
+en-US	issue	short	no.	nos.				linguistic
+en-US	legal_case	long	legal case					linguistic
+en-US	legislation	long	legislation					linguistic
+en-US	letter	long	letter					linguistic
+en-US	line	long	line	lines				linguistic
+en-US	line	short	l.	ll.				linguistic
+en-US	loc-cit	long	loc. cit.					linguistic
+en-US	long-ordinal-01	long	first					linguistic
+en-US	long-ordinal-02	long	second					linguistic
+en-US	long-ordinal-03	long	third					linguistic
+en-US	long-ordinal-04	long	fourth					linguistic
+en-US	long-ordinal-05	long	fifth					linguistic
+en-US	long-ordinal-06	long	sixth					linguistic
+en-US	long-ordinal-07	long	seventh					linguistic
+en-US	long-ordinal-08	long	eighth					linguistic
+en-US	long-ordinal-09	long	ninth					linguistic
+en-US	long-ordinal-10	long	tenth					linguistic
+en-US	manuscript	long	manuscript					linguistic
+en-US	map	long	map					linguistic
+en-US	month-01	long	January					linguistic
+en-US	month-01	short	Jan.					linguistic
+en-US	month-02	long	February					linguistic
+en-US	month-02	short	Feb.					linguistic
+en-US	month-03	long	March					linguistic
+en-US	month-03	short	Mar.					linguistic
+en-US	month-04	long	April					linguistic
+en-US	month-04	short	Apr.					linguistic
+en-US	month-05	long	May					linguistic
+en-US	month-05	short	May					linguistic
+en-US	month-06	long	June					linguistic
+en-US	month-06	short	June					linguistic
+en-US	month-07	long	July					linguistic
+en-US	month-07	short	July					linguistic
+en-US	month-08	long	August					linguistic
+en-US	month-08	short	Aug.					linguistic
+en-US	month-09	long	September					linguistic
+en-US	month-09	short	Sept.					linguistic
+en-US	month-10	long	October					linguistic
+en-US	month-10	short	Oct.					linguistic
+en-US	month-11	long	November					linguistic
+en-US	month-11	short	Nov.					linguistic
+en-US	month-12	long	December					linguistic
+en-US	month-12	short	Dec.					linguistic
+en-US	motion_picture	long	motion picture					linguistic
+en-US	musical_score	long	musical score					linguistic
+en-US	narrator	long	narrator	narrators				linguistic
+en-US	narrator	verb	narrated by					linguistic
+en-US	no date	long	no date					linguistic
+en-US	no date	short	n.d.					linguistic
+en-US	no-place	long	no place					linguistic
+en-US	no-place	short	s.l.					linguistic
+en-US	no-publisher	long	no publisher					linguistic
+en-US	no-publisher	short	s.n.					linguistic
+en-US	note	long	note	notes				linguistic
+en-US	note	short	n.	nn.				linguistic
+en-US	number	long	number	numbers				linguistic
+en-US	number	short	no.	nos.				linguistic
+en-US	number-of-pages	long	page count					linguistic
+en-US	number-of-volumes	long	volume count					linguistic
+en-US	on	long	on					linguistic
+en-US	online	long	online					linguistic
+en-US	op-cit	long	op. cit.					linguistic
+en-US	open-inner-quote	long	‘					linguistic
+en-US	open-quote	long	“					linguistic
+en-US	opus	long	opus	opera				linguistic
+en-US	opus	short	op.	opp.				linguistic
+en-US	ordinal	long	th					linguistic
+en-US	ordinal-01	long	st				last-digit	linguistic
+en-US	ordinal-02	long	nd				last-digit	linguistic
+en-US	ordinal-03	long	rd				last-digit	linguistic
+en-US	ordinal-11	long	th				last-two-digits	linguistic
+en-US	ordinal-12	long	th				last-two-digits	linguistic
+en-US	ordinal-13	long	th				last-two-digits	linguistic
+en-US	organizer	long	organizer	organizers				linguistic
+en-US	organizer	verb	organized by					linguistic
+en-US	original-author	long	original author	original authors				linguistic
+en-US	original-work-published	long	original work published					linguistic
+en-US	page	long	page	pages				observed
+en-US	page	short	p.	pp.				observed
+en-US	page-first	long	first page					linguistic
+en-US	page-range-delimiter	long	–					linguistic
+en-US	pamphlet	long	pamphlet					linguistic
+en-US	paper-conference	long	conference paper					linguistic
+en-US	paragraph	long	paragraph	paragraphs				linguistic
+en-US	paragraph	short	para.	paras.				linguistic
+en-US	paragraph	symbol	¶	¶¶				linguistic
+en-US	part	long	part	parts				linguistic
+en-US	part	short	pt.	pts.				linguistic
+en-US	patent	long	patent					linguistic
+en-US	performance	long	performance					linguistic
+en-US	performer	long	performer	performers				linguistic
+en-US	performer	verb	performed by					linguistic
+en-US	periodical	long	periodical					linguistic
+en-US	personal-communication	long	personal communication					linguistic
+en-US	personal_communication	long	personal communication					linguistic
+en-US	podcast	long	podcast					linguistic
+en-US	podcast-episode	long	podcast episode					linguistic
+en-US	post	long	post					linguistic
+en-US	post-weblog	long	blog post					linguistic
+en-US	preprint	long	preprint					linguistic
+en-US	presented at	long	presented at					linguistic
+en-US	printing	long	printing	printings				linguistic
+en-US	producer	long	producer	producers				linguistic
+en-US	producer	verb	produced by					linguistic
+en-US	radio-broadcast	long	radio broadcast					linguistic
+en-US	radio-series	long	radio series					linguistic
+en-US	radio-series-episode	long	radio episode					linguistic
+en-US	recipient	long	recipient	recipients				linguistic
+en-US	recipient	verb	to					linguistic
+en-US	reference	long	reference	references				linguistic
+en-US	reference	short	ref.	refs.				linguistic
+en-US	regulation	long	regulation					linguistic
+en-US	report	long	report					linguistic
+en-US	retrieved	long	retrieved					linguistic
+en-US	review	long	review					linguistic
+en-US	review-book	long	book review					linguistic
+en-US	review-of	long	review of					linguistic
+en-US	reviewed-author	long	reviewed author	reviewed authors				linguistic
+en-US	rule	long	rule	rules				linguistic
+en-US	scale	long	scale					linguistic
+en-US	scene	long	scene	scenes				linguistic
+en-US	script-writer	long	scriptwriter	scriptwriters				linguistic
+en-US	script-writer	verb	script by					linguistic
+en-US	season-01	long	Spring					linguistic
+en-US	season-02	long	Summer					linguistic
+en-US	season-03	long	Autumn					linguistic
+en-US	season-04	long	Winter					linguistic
+en-US	section	long	section	sections				linguistic
+en-US	section	short	sec.	secs.				linguistic
+en-US	section	symbol	§	§§				linguistic
+en-US	semicolon	long	;					linguistic
+en-US	series-creator	long	series creator	series creators				linguistic
+en-US	software	long	software					linguistic
+en-US	song	long	song					linguistic
+en-US	special-issue	long	special issue					linguistic
+en-US	special-section	long	special section					linguistic
+en-US	speech	long	speech					linguistic
+en-US	standard	long	standard					linguistic
+en-US	sub-verbo	long	under the word					linguistic
+en-US	sub-verbo	short	s.v.	s.vv.				linguistic
+en-US	supplement	long	supplement	supplements				linguistic
+en-US	supplement	short	suppl.	suppls.				linguistic
+en-US	table	long	table	tables				linguistic
+en-US	table	short	tbl.	tbls.				linguistic
+en-US	television-broadcast	long	television broadcast					linguistic
+en-US	television-series	long	television series					linguistic
+en-US	television-series-episode	long	television episode					linguistic
+en-US	thesis	long	thesis					linguistic
+en-US	timestamp	long	timestamp	timestamps				linguistic
+en-US	title-locator	long	title	titles				linguistic
+en-US	title-locator	short	tit.	tits.				linguistic
+en-US	translator	long	translator	translators				linguistic
+en-US	translator	short	trans.					linguistic
+en-US	translator	verb	translated by					linguistic
+en-US	translator	verb-short	trans.					linguistic
+en-US	treaty	long	treaty					linguistic
+en-US	verse	long	verse	verses				linguistic
+en-US	verse	short	v.	vv.				linguistic
+en-US	version	long	version	versions				linguistic
+en-US	version	short	v.	vv.				linguistic
+en-US	video	long	video					linguistic
+en-US	volume	long	volume	volumes				linguistic
+en-US	volume	short	vol.	vols.				linguistic
+en-US	webpage	long	web page					linguistic
+en-US	working-paper	long	working paper					linguistic
+es-CL	page	long	página	páginas				observed
+es-CL	page	short	p.	pp.				observed
+es-ES	accessed	long	accedido					observed
+es-ES	act	long	acto	actos				linguistic
+es-ES	act	short	acto					linguistic
+es-ES	ad	long	d. C.					observed
+es-ES	advance-online-publication	long	publicación anticipada en línea					linguistic
+es-ES	album	long	álbum					linguistic
+es-ES	and	long	y					linguistic
+es-ES	and	short	&					linguistic
+es-ES	and	symbol	&					linguistic
+es-ES	and others	long	y otros					linguistic
+es-ES	anonymous	long	anónimo					linguistic
+es-ES	anonymous	short	anón.					linguistic
+es-ES	appendix	long	apéndice	apéndices				linguistic
+es-ES	appendix	short	ap.					linguistic
+es-ES	article	long	artículo					linguistic
+es-ES	article-journal	long	artículo de revista					linguistic
+es-ES	article-locator	long	artículo	artículos				linguistic
+es-ES	article-locator	short	art.	arts.				linguistic
+es-ES	article-magazine	long	artículo de revista					linguistic
+es-ES	article-newspaper	long	artículo de periódico					linguistic
+es-ES	at	long	en					linguistic
+es-ES	audio-recording	long	grabación sonora					linguistic
+es-ES	author	long						linguistic
+es-ES	author	verb	escrito por					linguistic
+es-ES	available at	long	disponible en					linguistic
+es-ES	bc	long	 a. C.					linguistic
+es-ES	bce	long	 a. e. c.					linguistic
+es-ES	bill	long	proyecto de ley					linguistic
+es-ES	book	long	libro	libros				linguistic
+es-ES	book	short	lib.	libs.				linguistic
+es-ES	broadcast	long	emisión					linguistic
+es-ES	by	long	por					linguistic
+es-ES	canon	long	canon	cánones				linguistic
+es-ES	ce	long	 e. c.					linguistic
+es-ES	chair	long	presidente	presidentes				linguistic
+es-ES	chapter	long	capítulo	capítulos				linguistic
+es-ES	chapter	short	cap.	caps.				linguistic
+es-ES	chapter-number	long	número de capítulo					linguistic
+es-ES	circa	long	alrededor de					linguistic
+es-ES	circa	short	c.					linguistic
+es-ES	citation-number	long	número de cita					linguistic
+es-ES	cited	long	citado					linguistic
+es-ES	classic	long	clásico					linguistic
+es-ES	close-inner-quote	long	”					linguistic
+es-ES	close-quote	long	»					linguistic
+es-ES	collection	long	colección					linguistic
+es-ES	collection-editor	long	editor de colección	editores de colección				linguistic
+es-ES	collection-number	long	número de colección					linguistic
+es-ES	colon	long	:					linguistic
+es-ES	column	long	columna	columnas				linguistic
+es-ES	column	short	col.	cols.				linguistic
+es-ES	comma	long	,					linguistic
+es-ES	compiler	long	compilador	compiladores				linguistic
+es-ES	compiler	short	comp.	comps.				linguistic
+es-ES	compiler	verb	compilado por					linguistic
+es-ES	composer	long	compositor	compositores				linguistic
+es-ES	composer	verb	compuesto por					linguistic
+es-ES	container-author	long	autor de la obra	autores de la obra				linguistic
+es-ES	contributor	long	colaborador	colaboradores				linguistic
+es-ES	curator	long	curador	curadores				linguistic
+es-ES	dataset	long	conjunto de datos					linguistic
+es-ES	director	long	director	directores				linguistic
+es-ES	director	short	dir.	dirs.				linguistic
+es-ES	director	verb	dirigido por					linguistic
+es-ES	director	verb-short	dir.					linguistic
+es-ES	document	long	documento					linguistic
+es-ES	edition	long	edición	ediciones				linguistic
+es-ES	edition	short	ed.	eds.				linguistic
+es-ES	editor	long	editor	editores				linguistic
+es-ES	editor	short	ed.	eds.				linguistic
+es-ES	editor	verb	editado por					linguistic
+es-ES	editor	verb-short	ed.					linguistic
+es-ES	editor-translator	long	editor y traductor					linguistic
+es-ES	editorial-director	long	director editorial	directores editoriales				linguistic
+es-ES	editortranslator	long	editor y traductor	editores y traductores				linguistic
+es-ES	editortranslator	short	ed. y trad.					linguistic
+es-ES	editortranslator	verb	editado y traducido por					linguistic
+es-ES	editortranslator	verb-short	ed. y trad.					linguistic
+es-ES	elocation	long	localizador electrónico	localizadores electrónicos				linguistic
+es-ES	entry	long	entrada					linguistic
+es-ES	entry-dictionary	long	entrada de diccionario					linguistic
+es-ES	entry-encyclopedia	long	entrada de enciclopedia					linguistic
+es-ES	equation	long	ecuación	ecuaciones				linguistic
+es-ES	equation	short	ec.	ecs.				linguistic
+es-ES	et-al	long	et al.					observed
+es-ES	event	long	evento					linguistic
+es-ES	executive-producer	long	productor ejecutivo	productores ejecutivos				linguistic
+es-ES	figure	long	figura	figuras				linguistic
+es-ES	figure	short	fig.	figs.				linguistic
+es-ES	film	long	película					linguistic
+es-ES	first-reference-note-number	long	número de la primera referencia					linguistic
+es-ES	folio	long	folio	folios				linguistic
+es-ES	folio	short	f.	ff.				linguistic
+es-ES	forthcoming	long	previsto					observed
+es-ES	from	long	de					linguistic
+es-ES	graphic	long	imagen					linguistic
+es-ES	guest	long	invitado	invitados				linguistic
+es-ES	hearing	long	audiencia					linguistic
+es-ES	henceforth	long	en adelante					linguistic
+es-ES	host	long	presentador	presentadores				linguistic
+es-ES	ibid	long	ibíd.					linguistic
+es-ES	illustrator	long	ilustrador	ilustradores				linguistic
+es-ES	illustrator	short	il.					linguistic
+es-ES	illustrator	verb	ilustrado por					linguistic
+es-ES	in	long	en					linguistic
+es-ES	in press	long	en imprenta					observed
+es-ES	internet	long	Internet					linguistic
+es-ES	interview	long	entrevista					linguistic
+es-ES	interviewer	long	entrevistador	entrevistadores				linguistic
+es-ES	interviewer	verb	entrevistado por					linguistic
+es-ES	issue	long	número	números				linguistic
+es-ES	issue	short	n.º	núms.				linguistic
+es-ES	legal_case	long	caso judicial					linguistic
+es-ES	legislation	long	legislación					linguistic
+es-ES	letter	long	carta					linguistic
+es-ES	line	long	línea	líneas				linguistic
+es-ES	line	short	l.	ll.				linguistic
+es-ES	loc-cit	long	loc. cit.					linguistic
+es-ES	long-ordinal-01	long	primero					linguistic
+es-ES	long-ordinal-02	long	segundo					linguistic
+es-ES	long-ordinal-03	long	tercero					linguistic
+es-ES	long-ordinal-04	long	cuarto					linguistic
+es-ES	long-ordinal-05	long	quinto					linguistic
+es-ES	long-ordinal-06	long	sexto					linguistic
+es-ES	long-ordinal-07	long	séptimo					linguistic
+es-ES	long-ordinal-08	long	octavo					linguistic
+es-ES	long-ordinal-09	long	noveno					linguistic
+es-ES	long-ordinal-10	long	décimo					linguistic
+es-ES	manuscript	long	manuscrito					linguistic
+es-ES	map	long	mapa					linguistic
+es-ES	month-01	long	enero					linguistic
+es-ES	month-01	short	ene.					linguistic
+es-ES	month-02	long	febrero					linguistic
+es-ES	month-02	short	feb.					linguistic
+es-ES	month-03	long	marzo					linguistic
+es-ES	month-03	short	mar.					linguistic
+es-ES	month-04	long	abril					linguistic
+es-ES	month-04	short	abr.					linguistic
+es-ES	month-05	long	mayo					linguistic
+es-ES	month-05	short	may.					linguistic
+es-ES	month-06	long	junio					linguistic
+es-ES	month-06	short	jun.					linguistic
+es-ES	month-07	long	julio					linguistic
+es-ES	month-07	short	jul.					linguistic
+es-ES	month-08	long	agosto					linguistic
+es-ES	month-08	short	ago.					linguistic
+es-ES	month-09	long	septiembre					linguistic
+es-ES	month-09	short	sep.					observed
+es-ES	month-10	long	octubre					linguistic
+es-ES	month-10	short	oct.					linguistic
+es-ES	month-11	long	noviembre					linguistic
+es-ES	month-11	short	nov.					linguistic
+es-ES	month-12	long	diciembre					linguistic
+es-ES	month-12	short	dic.					linguistic
+es-ES	motion_picture	long	película					linguistic
+es-ES	musical_score	long	partitura					linguistic
+es-ES	narrator	long	narrador	narradores				linguistic
+es-ES	narrator	verb	narrado por					linguistic
+es-ES	no date	long	sin fecha					linguistic
+es-ES	no date	short	s. f.					observed
+es-ES	no-place	long	sin lugar					linguistic
+es-ES	no-place	short	s. l.					linguistic
+es-ES	no-publisher	long	sin editorial					linguistic
+es-ES	no-publisher	short	s. e.					linguistic
+es-ES	note	long	nota	notas				linguistic
+es-ES	note	short	n.					linguistic
+es-ES	number	long	número	números				linguistic
+es-ES	number	short	n.º	núms.				linguistic
+es-ES	number-of-pages	long	número de páginas					linguistic
+es-ES	number-of-volumes	long	número de volúmenes					linguistic
+es-ES	on	long	el					linguistic
+es-ES	online	long	en línea					linguistic
+es-ES	op-cit	long	op. cit.					linguistic
+es-ES	open-inner-quote	long	“					linguistic
+es-ES	open-quote	long	«					linguistic
+es-ES	opus	long	opus					linguistic
+es-ES	opus	short	op.					linguistic
+es-ES	ordinal	long	.º					linguistic
+es-ES	ordinal	long	.ª			feminine		linguistic
+es-ES	ordinal	long	.º			masculine		linguistic
+es-ES	organizer	long	organizador	organizadores				linguistic
+es-ES	organizer	verb	organizado por					linguistic
+es-ES	original-author	long	autor original	autores originales				linguistic
+es-ES	original-work-published	long	obra original publicada					linguistic
+es-ES	page	long	página	páginas				observed
+es-ES	page	short	p.	pp.				observed
+es-ES	page-first	long	primera página					linguistic
+es-ES	page-range-delimiter	long	–					linguistic
+es-ES	pamphlet	long	folleto					linguistic
+es-ES	paper-conference	long	ponencia					linguistic
+es-ES	paragraph	long	párrafo	párrafos				linguistic
+es-ES	paragraph	short	párr.	párrs.				linguistic
+es-ES	paragraph	symbol	¶					linguistic
+es-ES	part	long	parte	partes				linguistic
+es-ES	part	short	pt.	pts.				linguistic
+es-ES	patent	long	patente					linguistic
+es-ES	performance	long	representación					linguistic
+es-ES	performer	long	intérprete	intérpretes				linguistic
+es-ES	performer	verb	interpretado por					linguistic
+es-ES	periodical	long	publicación periódica					linguistic
+es-ES	personal-communication	long	comunicación personal					linguistic
+es-ES	personal_communication	long	comunicación personal					linguistic
+es-ES	podcast	long	pódcast					linguistic
+es-ES	podcast-episode	long	episodio de pódcast					linguistic
+es-ES	post	long	publicación					linguistic
+es-ES	post-weblog	long	entrada de blog					linguistic
+es-ES	preprint	long	prepublicación					linguistic
+es-ES	presented at	long	presentado en					linguistic
+es-ES	printing	long	impresión	impresiones				linguistic
+es-ES	producer	long	productor	productores				linguistic
+es-ES	producer	verb	producido por					linguistic
+es-ES	radio-broadcast	long	emisión de radio					linguistic
+es-ES	radio-series	long	serie radiofónica					linguistic
+es-ES	radio-series-episode	long	episodio radiofónico					linguistic
+es-ES	recipient	long	destinatario	destinatarios				linguistic
+es-ES	recipient	verb	a					linguistic
+es-ES	reference	long	referencia	referencias				linguistic
+es-ES	reference	short	ref.	refs.				linguistic
+es-ES	regulation	long	reglamento					linguistic
+es-ES	report	long	informe					linguistic
+es-ES	retrieved	long	recuperado					linguistic
+es-ES	review	long	reseña					linguistic
+es-ES	review-book	long	reseña de libro					linguistic
+es-ES	review-of	long	reseña de					linguistic
+es-ES	reviewed-author	long	autor reseñado	autores reseñados				linguistic
+es-ES	rule	long	regla	reglas				linguistic
+es-ES	scale	long	escala					linguistic
+es-ES	scene	long	escena	escenas				linguistic
+es-ES	script-writer	long	guionista	guionistas				linguistic
+es-ES	script-writer	verb	guion de					linguistic
+es-ES	season-01	long	primavera					linguistic
+es-ES	season-02	long	verano					linguistic
+es-ES	season-03	long	otoño					linguistic
+es-ES	season-04	long	invierno					linguistic
+es-ES	section	long	sección	secciones				linguistic
+es-ES	section	short	sec.					observed
+es-ES	section	symbol	§	§§				linguistic
+es-ES	semicolon	long	;					linguistic
+es-ES	series-creator	long	creador de la serie	creadores de la serie				linguistic
+es-ES	software	long	programa informático					linguistic
+es-ES	song	long	canción					linguistic
+es-ES	special-issue	long	número especial					linguistic
+es-ES	special-section	long	sección especial					linguistic
+es-ES	speech	long	discurso					linguistic
+es-ES	standard	long	norma					linguistic
+es-ES	sub-verbo	long	bajo la voz					linguistic
+es-ES	sub-verbo	short	s. v.					linguistic
+es-ES	supplement	long	suplemento	suplementos				linguistic
+es-ES	supplement	short	supl.					linguistic
+es-ES	table	long	tabla	tablas				linguistic
+es-ES	table	short	tab.	tabs.				linguistic
+es-ES	television-broadcast	long	emisión de televisión					linguistic
+es-ES	television-series	long	serie de televisión					linguistic
+es-ES	television-series-episode	long	episodio de serie televisiva					linguistic
+es-ES	thesis	long	tesis					linguistic
+es-ES	timestamp	long	marca de tiempo	marcas de tiempo				linguistic
+es-ES	title-locator	long	título	títulos				linguistic
+es-ES	title-locator	short	tít.	títs.				linguistic
+es-ES	translator	long	traductor	traductores				linguistic
+es-ES	translator	short	trad.	trads.				linguistic
+es-ES	translator	verb	traducido por					linguistic
+es-ES	translator	verb-short	trad.					linguistic
+es-ES	treaty	long	tratado					linguistic
+es-ES	verse	long	verso	versos				linguistic
+es-ES	verse	short	v.	vv.				linguistic
+es-ES	version	long	versión	versiones				linguistic
+es-ES	version	short	v.					linguistic
+es-ES	video	long	vídeo					linguistic
+es-ES	volume	long	volumen	volúmenes				linguistic
+es-ES	volume	short	vol.	vols.				linguistic
+es-ES	webpage	long	página web					linguistic
+es-ES	working-paper	long	documento de trabajo					linguistic
+es-MX	page	long	página	páginas				observed
+es-MX	page	short	p.	pp.				observed
+et-EE	page	long	lehekülg	leheküljed				observed
+et-EE	page	short	lk	lk				observed
+eu	page	long	orrialdea	orrialdeak				observed
+eu	page	short	or.	or.				observed
+fa-IR	page	long	صفحه	صفحات				observed
+fa-IR	page	short	ص	صص				observed
+fi-FI	page	long	sivu	sivut				observed
+fi-FI	page	short	s.	s.				observed
+fr-CA	page	long	page	pages				observed
+fr-CA	page	short	p.	p.				observed
+fr-FR	accessed	long	consulté le					observed
+fr-FR	act	long	acte	actes				linguistic
+fr-FR	act	short	acte					linguistic
+fr-FR	ad	long	apr. J.-C.					observed
+fr-FR	advance-online-publication	long	publication en ligne anticipée					linguistic
+fr-FR	album	long	album					linguistic
+fr-FR	and	long	et					linguistic
+fr-FR	and	short	&					linguistic
+fr-FR	and	symbol	&					linguistic
+fr-FR	and others	long	et autres					linguistic
+fr-FR	anonymous	long	anonyme					linguistic
+fr-FR	anonymous	short	an.					linguistic
+fr-FR	appendix	long	annexe	annexes				linguistic
+fr-FR	appendix	short	ann.					linguistic
+fr-FR	article	long	article					linguistic
+fr-FR	article-journal	long	article de revue					linguistic
+fr-FR	article-locator	long	article	articles				linguistic
+fr-FR	article-locator	short	art.					linguistic
+fr-FR	article-magazine	long	article de magazine					linguistic
+fr-FR	article-newspaper	long	article de journal					linguistic
+fr-FR	at	long	à					linguistic
+fr-FR	audio-recording	long	enregistrement sonore					linguistic
+fr-FR	author	long						linguistic
+fr-FR	author	verb	écrit par					linguistic
+fr-FR	available at	long	disponible à					linguistic
+fr-FR	bc	long	 av. J.-C.					linguistic
+fr-FR	bce	long	 av. n. è.					linguistic
+fr-FR	bill	long	projet de loi					linguistic
+fr-FR	book	long	livre	livres				linguistic
+fr-FR	book	short	liv.					linguistic
+fr-FR	broadcast	long	émission					linguistic
+fr-FR	by	long	par					linguistic
+fr-FR	canon	long	canon	canons				linguistic
+fr-FR	ce	long	 de n. è.					linguistic
+fr-FR	chair	long	président	présidents				linguistic
+fr-FR	chapter	long	chapitre	chapitres				linguistic
+fr-FR	chapter	short	chap.					linguistic
+fr-FR	chapter-number	long	numéro de chapitre					linguistic
+fr-FR	circa	long	vers					linguistic
+fr-FR	circa	short	v.					linguistic
+fr-FR	citation-number	long	numéro de citation					linguistic
+fr-FR	cited	long	cité					linguistic
+fr-FR	classic	long	classique					linguistic
+fr-FR	close-inner-quote	long	”					linguistic
+fr-FR	close-quote	long	 »					linguistic
+fr-FR	collection	long	collection					linguistic
+fr-FR	collection-editor	long	directeur de collection	directeurs de collection				linguistic
+fr-FR	collection-number	long	numéro de collection					linguistic
+fr-FR	colon	long	 :					linguistic
+fr-FR	column	long	colonne	colonnes				linguistic
+fr-FR	column	short	col.					linguistic
+fr-FR	comma	long	,					linguistic
+fr-FR	compiler	long	compilateur	compilateurs				linguistic
+fr-FR	compiler	short	comp.					linguistic
+fr-FR	compiler	verb	compilé par					linguistic
+fr-FR	composer	long	compositeur	compositeurs				linguistic
+fr-FR	composer	verb	composé par					linguistic
+fr-FR	container-author	long	auteur du recueil	auteurs du recueil				linguistic
+fr-FR	contributor	long	collaborateur	collaborateurs				linguistic
+fr-FR	curator	long	commissaire	commissaires				linguistic
+fr-FR	dataset	long	jeu de données					linguistic
+fr-FR	director	long	réalisateur	réalisateurs				linguistic
+fr-FR	director	short	réal.					linguistic
+fr-FR	director	verb	réalisé par					linguistic
+fr-FR	director	verb-short	réal.					linguistic
+fr-FR	document	long	document					linguistic
+fr-FR	edition	long	édition	éditions				linguistic
+fr-FR	edition	short	éd.					linguistic
+fr-FR	editor	long	éditeur	éditeurs				linguistic
+fr-FR	editor	short	éd.					linguistic
+fr-FR	editor	verb	sous la direction de					linguistic
+fr-FR	editor	verb-short	éd.					linguistic
+fr-FR	editor-translator	long	éditeur et traducteur					linguistic
+fr-FR	editorial-director	long	directeur de rédaction	directeurs de rédaction				linguistic
+fr-FR	editortranslator	long	éditeur et traducteur	éditeurs et traducteurs				linguistic
+fr-FR	editortranslator	short	éd. et trad.					linguistic
+fr-FR	editortranslator	verb	édité et traduit par					linguistic
+fr-FR	editortranslator	verb-short	éd. et trad.					linguistic
+fr-FR	elocation	long	repère électronique	repères électroniques				linguistic
+fr-FR	entry	long	entrée					linguistic
+fr-FR	entry-dictionary	long	entrée de dictionnaire					linguistic
+fr-FR	entry-encyclopedia	long	article encyclopédique					linguistic
+fr-FR	equation	long	équation	équations				linguistic
+fr-FR	equation	short	équ.					linguistic
+fr-FR	et-al	long	et al.					linguistic
+fr-FR	event	long	événement					linguistic
+fr-FR	executive-producer	long	producteur exécutif	producteurs exécutifs				linguistic
+fr-FR	figure	long	figure	figures				linguistic
+fr-FR	figure	short	fig.					linguistic
+fr-FR	film	long	film					linguistic
+fr-FR	first-reference-note-number	long	numéro du premier renvoi					linguistic
+fr-FR	folio	long	folio	folios				linguistic
+fr-FR	folio	short	fol.					linguistic
+fr-FR	forthcoming	long	à paraître					linguistic
+fr-FR	from	long	de					linguistic
+fr-FR	graphic	long	image					linguistic
+fr-FR	guest	long	invité	invités				linguistic
+fr-FR	hearing	long	audition					linguistic
+fr-FR	henceforth	long	ci-après					linguistic
+fr-FR	host	long	animateur	animateurs				linguistic
+fr-FR	ibid	long	ibid.					linguistic
+fr-FR	illustrator	long	illustrateur	illustrateurs				linguistic
+fr-FR	illustrator	short	ill.					linguistic
+fr-FR	illustrator	verb	illustré par					linguistic
+fr-FR	in	long	dans					linguistic
+fr-FR	in press	long	sous presse					linguistic
+fr-FR	internet	long	Internet					linguistic
+fr-FR	interview	long	entretien					linguistic
+fr-FR	interviewer	long	intervieweur	intervieweurs				linguistic
+fr-FR	interviewer	verb	interrogé par					linguistic
+fr-FR	issue	long	numéro	numéros				linguistic
+fr-FR	issue	short	nᵒ	nᵒ				linguistic
+fr-FR	legal_case	long	affaire judiciaire					linguistic
+fr-FR	legislation	long	législation					linguistic
+fr-FR	letter	long	lettre					linguistic
+fr-FR	line	long	ligne	lignes				linguistic
+fr-FR	line	short	l.					linguistic
+fr-FR	loc-cit	long	loc. cit.					linguistic
+fr-FR	long-ordinal-01	long	premier					linguistic
+fr-FR	long-ordinal-01	long	première			feminine		linguistic
+fr-FR	long-ordinal-02	long	deuxième					linguistic
+fr-FR	long-ordinal-03	long	troisième					linguistic
+fr-FR	long-ordinal-04	long	quatrième					linguistic
+fr-FR	long-ordinal-05	long	cinquième					linguistic
+fr-FR	long-ordinal-06	long	sixième					linguistic
+fr-FR	long-ordinal-07	long	septième					linguistic
+fr-FR	long-ordinal-08	long	huitième					linguistic
+fr-FR	long-ordinal-09	long	neuvième					linguistic
+fr-FR	long-ordinal-10	long	dixième					linguistic
+fr-FR	manuscript	long	manuscrit					linguistic
+fr-FR	map	long	carte					linguistic
+fr-FR	month-01	long	janvier					linguistic
+fr-FR	month-01	short	janv.					linguistic
+fr-FR	month-02	long	février					linguistic
+fr-FR	month-02	short	févr.					linguistic
+fr-FR	month-03	long	mars					linguistic
+fr-FR	month-03	short	mars					linguistic
+fr-FR	month-04	long	avril					linguistic
+fr-FR	month-04	short	avr.					linguistic
+fr-FR	month-05	long	mai					linguistic
+fr-FR	month-05	short	mai					linguistic
+fr-FR	month-06	long	juin					linguistic
+fr-FR	month-06	short	juin					linguistic
+fr-FR	month-07	long	juillet					linguistic
+fr-FR	month-07	short	juil.					linguistic
+fr-FR	month-08	long	août					linguistic
+fr-FR	month-08	short	août					linguistic
+fr-FR	month-09	long	septembre					linguistic
+fr-FR	month-09	short	sept.					linguistic
+fr-FR	month-10	long	octobre					linguistic
+fr-FR	month-10	short	oct.					linguistic
+fr-FR	month-11	long	novembre					linguistic
+fr-FR	month-11	short	nov.					linguistic
+fr-FR	month-12	long	décembre					linguistic
+fr-FR	month-12	short	déc.					linguistic
+fr-FR	motion_picture	long	film					linguistic
+fr-FR	musical_score	long	partition					linguistic
+fr-FR	narrator	long	narrateur	narrateurs				linguistic
+fr-FR	narrator	verb	raconté par					linguistic
+fr-FR	no date	long	sans date					linguistic
+fr-FR	no date	short	s. d.					observed
+fr-FR	no-place	long	sans lieu					linguistic
+fr-FR	no-place	short	s. l.					linguistic
+fr-FR	no-publisher	long	sans éditeur					linguistic
+fr-FR	no-publisher	short	s. n.					linguistic
+fr-FR	note	long	note	notes				linguistic
+fr-FR	note	short	n.					linguistic
+fr-FR	number	long	numéro	numéros				linguistic
+fr-FR	number	short	n°					linguistic
+fr-FR	number-of-pages	long	nombre de pages					linguistic
+fr-FR	number-of-volumes	long	nombre de volumes					linguistic
+fr-FR	on	long	le					linguistic
+fr-FR	online	long	en ligne					linguistic
+fr-FR	op-cit	long	op. cit.					linguistic
+fr-FR	open-inner-quote	long	“					linguistic
+fr-FR	open-quote	long	« 					linguistic
+fr-FR	opus	long	opus					linguistic
+fr-FR	opus	short	op.					linguistic
+fr-FR	ordinal	long	e					linguistic
+fr-FR	ordinal-01	long	er				whole-number	linguistic
+fr-FR	ordinal-01	long	re			feminine	whole-number	linguistic
+fr-FR	ordinal-01	long	er			masculine	whole-number	linguistic
+fr-FR	organizer	long	organisateur	organisateurs				linguistic
+fr-FR	organizer	verb	organisé par					linguistic
+fr-FR	original-author	long	auteur original	auteurs originaux				linguistic
+fr-FR	original-work-published	long	œuvre originale publiée					linguistic
+fr-FR	page	long	page	pages				observed
+fr-FR	page	short	p.	p.				observed
+fr-FR	page-first	long	première page					linguistic
+fr-FR	page-range-delimiter	long	‑					linguistic
+fr-FR	pamphlet	long	brochure					linguistic
+fr-FR	paper-conference	long	communication de congrès					linguistic
+fr-FR	paragraph	long	paragraphe	paragraphes				linguistic
+fr-FR	paragraph	short	par.					linguistic
+fr-FR	paragraph	symbol	¶					linguistic
+fr-FR	part	long	partie	parties				linguistic
+fr-FR	part	short	part.					linguistic
+fr-FR	patent	long	brevet					linguistic
+fr-FR	performance	long	représentation					linguistic
+fr-FR	performer	long	interprète	interprètes				linguistic
+fr-FR	performer	verb	interprété par					linguistic
+fr-FR	periodical	long	périodique					linguistic
+fr-FR	personal-communication	long	communication personnelle					linguistic
+fr-FR	personal_communication	long	communication personnelle					linguistic
+fr-FR	podcast	long	podcast					linguistic
+fr-FR	podcast-episode	long	épisode de podcast					linguistic
+fr-FR	post	long	publication					linguistic
+fr-FR	post-weblog	long	billet de blog					linguistic
+fr-FR	preprint	long	prépublication					linguistic
+fr-FR	presented at	long	présenté à					linguistic
+fr-FR	printing	long	tirage	tirages				linguistic
+fr-FR	producer	long	producteur	producteurs				linguistic
+fr-FR	producer	verb	produit par					linguistic
+fr-FR	radio-broadcast	long	émission de radio					linguistic
+fr-FR	radio-series	long	série radiophonique					linguistic
+fr-FR	radio-series-episode	long	épisode radiophonique					linguistic
+fr-FR	recipient	long	destinataire	destinataires				linguistic
+fr-FR	recipient	verb	à					linguistic
+fr-FR	reference	long	référence	références				linguistic
+fr-FR	reference	short	réf.					linguistic
+fr-FR	regulation	long	règlement					linguistic
+fr-FR	report	long	rapport					linguistic
+fr-FR	retrieved	long	récupéré					linguistic
+fr-FR	review	long	compte rendu					linguistic
+fr-FR	review-book	long	compte rendu de livre					linguistic
+fr-FR	review-of	long	compte rendu de					linguistic
+fr-FR	reviewed-author	long	auteur recensé	auteurs recensés				linguistic
+fr-FR	rule	long	règle	règles				linguistic
+fr-FR	scale	long	échelle					linguistic
+fr-FR	scene	long	scène	scènes				linguistic
+fr-FR	script-writer	long	scénariste	scénaristes				linguistic
+fr-FR	script-writer	verb	scénario de					linguistic
+fr-FR	season-01	long	printemps					linguistic
+fr-FR	season-02	long	été					linguistic
+fr-FR	season-03	long	automne					linguistic
+fr-FR	season-04	long	hiver					linguistic
+fr-FR	section	long	section	sections				linguistic
+fr-FR	section	short	sect.					linguistic
+fr-FR	section	symbol	§	§§				linguistic
+fr-FR	semicolon	long	 ;					linguistic
+fr-FR	series-creator	long	créateur de série	créateurs de série				linguistic
+fr-FR	software	long	logiciel					linguistic
+fr-FR	song	long	chanson					linguistic
+fr-FR	special-issue	long	numéro spécial					linguistic
+fr-FR	special-section	long	section spéciale					linguistic
+fr-FR	speech	long	discours					linguistic
+fr-FR	standard	long	norme					linguistic
+fr-FR	sub-verbo	long	au mot					linguistic
+fr-FR	sub-verbo	short	s. v.					linguistic
+fr-FR	supplement	long	supplément	suppléments				linguistic
+fr-FR	supplement	short	suppl.					linguistic
+fr-FR	table	long	tableau	tableaux				linguistic
+fr-FR	table	short	tabl.					linguistic
+fr-FR	television-broadcast	long	émission télévisée					linguistic
+fr-FR	television-series	long	série télévisée					linguistic
+fr-FR	television-series-episode	long	épisode de série télévisée					linguistic
+fr-FR	thesis	long	thèse					linguistic
+fr-FR	timestamp	long	repère temporel	repères temporels				linguistic
+fr-FR	title-locator	long	titre	titres				linguistic
+fr-FR	title-locator	short	tit.					linguistic
+fr-FR	translator	long	traducteur	traducteurs				linguistic
+fr-FR	translator	short	trad.					linguistic
+fr-FR	translator	verb	traduit par					linguistic
+fr-FR	translator	verb-short	trad.					linguistic
+fr-FR	treaty	long	traité					linguistic
+fr-FR	verse	long	vers					linguistic
+fr-FR	verse	short	v.	v.				linguistic
+fr-FR	version	long	version	versions				linguistic
+fr-FR	version	short	v.					linguistic
+fr-FR	video	long	vidéo					linguistic
+fr-FR	volume	long	volume	volumes				linguistic
+fr-FR	volume	short	vol.					linguistic
+fr-FR	webpage	long	page web					linguistic
+fr-FR	working-paper	long	document de travail					linguistic
+gl-ES	page	long	páxina	páxinas				observed
+gl-ES	page	short	páx.	páxs.				observed
+he-IL	page	long	עמוד	עמודים				observed
+he-IL	page	short	’עמ	’עמ				observed
+hi-IN	page	long	पृष्ठ	पृष्ठ				observed
+hi-IN	page	short	पृ.	पृ.				observed
+hr-HR	page	long	stranica	stranice				observed
+hr-HR	page	short	str.	str.				observed
+hu-HU	page	long	oldal	oldal				observed
+hu-HU	page	short	o.	o.				observed
+id-ID	page	long	halaman	halaman				observed
+id-ID	page	short	hlm.	hlm.				observed
+is-IS	page	long	blaðsíða	blaðsíður				observed
+is-IS	page	short	bls.	bls.				observed
+it-IT	accessed	long	consultato					observed
+it-IT	act	long	atto	atti				linguistic
+it-IT	act	short	atto					linguistic
+it-IT	ad	long	d.C.					observed
+it-IT	advance-online-publication	long	pubblicazione online anticipata					linguistic
+it-IT	album	long	album					linguistic
+it-IT	and	long	e					linguistic
+it-IT	and	short	&					linguistic
+it-IT	and	symbol	&					linguistic
+it-IT	and others	long	e altri					linguistic
+it-IT	anonymous	long	anonimo					linguistic
+it-IT	anonymous	short	anon.					linguistic
+it-IT	appendix	long	appendice	appendici				linguistic
+it-IT	appendix	short	app.					linguistic
+it-IT	article	long	articolo					linguistic
+it-IT	article-journal	long	articolo di rivista					linguistic
+it-IT	article-locator	long	articolo	articoli				linguistic
+it-IT	article-locator	short	art.					linguistic
+it-IT	article-magazine	long	articolo di periodico					linguistic
+it-IT	article-newspaper	long	articolo di giornale					linguistic
+it-IT	at	long	presso					linguistic
+it-IT	audio-recording	long	registrazione audio					linguistic
+it-IT	author	long						linguistic
+it-IT	author	verb	scritto da					linguistic
+it-IT	available at	long	disponibile presso					linguistic
+it-IT	bc	long	 a.C.					linguistic
+it-IT	bce	long	 a.e.v.					linguistic
+it-IT	bill	long	disegno di legge					linguistic
+it-IT	book	long	libro	libri				linguistic
+it-IT	book	short	lib.					linguistic
+it-IT	broadcast	long	trasmissione					linguistic
+it-IT	by	long	di					linguistic
+it-IT	canon	long	canone	canoni				linguistic
+it-IT	ce	long	 e.v.					linguistic
+it-IT	chair	long	presidente	presidenti				linguistic
+it-IT	chapter	long	capitolo	capitoli				linguistic
+it-IT	chapter	short	cap.					linguistic
+it-IT	chapter-number	long	numero di capitolo					linguistic
+it-IT	circa	long	circa					linguistic
+it-IT	circa	short	ca.					linguistic
+it-IT	citation-number	long	numero di citazione					linguistic
+it-IT	cited	long	citato					linguistic
+it-IT	classic	long	classico					linguistic
+it-IT	close-inner-quote	long	”					linguistic
+it-IT	close-quote	long	»					linguistic
+it-IT	collection	long	collezione					linguistic
+it-IT	collection-editor	long	curatore di collana	curatori di collana				linguistic
+it-IT	collection-number	long	numero di collana					linguistic
+it-IT	colon	long	:					linguistic
+it-IT	column	long	colonna	colonne				linguistic
+it-IT	column	short	col.					linguistic
+it-IT	comma	long	,					linguistic
+it-IT	compiler	long	compilatore	compilatori				linguistic
+it-IT	compiler	short	comp.					linguistic
+it-IT	compiler	verb	compilato da					linguistic
+it-IT	composer	long	compositore	compositori				linguistic
+it-IT	composer	verb	composto da					linguistic
+it-IT	container-author	long	autore del volume	autori del volume				linguistic
+it-IT	contributor	long	collaboratore	collaboratori				linguistic
+it-IT	curator	long	curatore	curatori				linguistic
+it-IT	dataset	long	insieme di dati					linguistic
+it-IT	director	long	regista	registi				linguistic
+it-IT	director	short	reg.					linguistic
+it-IT	director	verb	diretto da					linguistic
+it-IT	director	verb-short	reg.					linguistic
+it-IT	document	long	documento					linguistic
+it-IT	edition	long	edizione	edizioni				linguistic
+it-IT	edition	short	ed.					linguistic
+it-IT	editor	long	curatore	curatori				linguistic
+it-IT	editor	short	a c. di					observed
+it-IT	editor	verb	a cura di					linguistic
+it-IT	editor	verb-short	a c. di					linguistic
+it-IT	editor-translator	long	curatore e traduttore					linguistic
+it-IT	editorial-director	long	direttore editoriale	direttori editoriali				linguistic
+it-IT	editortranslator	long	curatore e traduttore	curatori e traduttori				linguistic
+it-IT	editortranslator	short	cur. e trad.					linguistic
+it-IT	editortranslator	verb	a cura e traduzione di					linguistic
+it-IT	editortranslator	verb-short	cur. e trad.					linguistic
+it-IT	elocation	long	identificatore elettronico	identificatori elettronici				linguistic
+it-IT	entry	long	voce					linguistic
+it-IT	entry-dictionary	long	voce di dizionario					linguistic
+it-IT	entry-encyclopedia	long	voce enciclopedica					linguistic
+it-IT	equation	long	equazione	equazioni				linguistic
+it-IT	equation	short	eq.					linguistic
+it-IT	et-al	long	et al.					linguistic
+it-IT	event	long	evento					linguistic
+it-IT	executive-producer	long	produttore esecutivo	produttori esecutivi				linguistic
+it-IT	figure	long	figura	figure				linguistic
+it-IT	figure	short	fig.					linguistic
+it-IT	film	long	film					linguistic
+it-IT	first-reference-note-number	long	numero del primo rinvio					linguistic
+it-IT	folio	long	foglio	fogli				linguistic
+it-IT	folio	short	f.	ff.				linguistic
+it-IT	forthcoming	long	in corso di pubblicazione					linguistic
+it-IT	from	long	da					linguistic
+it-IT	graphic	long	immagine					linguistic
+it-IT	guest	long	ospite	ospiti				linguistic
+it-IT	hearing	long	audizione					linguistic
+it-IT	henceforth	long	di seguito					linguistic
+it-IT	host	long	conduttore	conduttori				linguistic
+it-IT	ibid	long	ibid.					linguistic
+it-IT	illustrator	long	illustratore	illustratori				linguistic
+it-IT	illustrator	short	ill.					linguistic
+it-IT	illustrator	verb	illustrato da					linguistic
+it-IT	in	long	in					linguistic
+it-IT	in press	long	in stampa					linguistic
+it-IT	internet	long	Internet					linguistic
+it-IT	interview	long	intervista					linguistic
+it-IT	interviewer	long	intervistatore	intervistatori				linguistic
+it-IT	interviewer	verb	intervistato da					linguistic
+it-IT	issue	long	fascicolo	fascicoli				linguistic
+it-IT	issue	short	n.	nn.				linguistic
+it-IT	legal_case	long	causa giudiziaria					linguistic
+it-IT	legislation	long	legislazione					linguistic
+it-IT	letter	long	lettera					linguistic
+it-IT	line	long	riga	righe				linguistic
+it-IT	line	short	r.					linguistic
+it-IT	loc-cit	long	loc. cit.					linguistic
+it-IT	long-ordinal-01	long	primo					linguistic
+it-IT	long-ordinal-02	long	secondo					linguistic
+it-IT	long-ordinal-03	long	terzo					linguistic
+it-IT	long-ordinal-04	long	quarto					linguistic
+it-IT	long-ordinal-05	long	quinto					linguistic
+it-IT	long-ordinal-06	long	sesto					linguistic
+it-IT	long-ordinal-07	long	settimo					linguistic
+it-IT	long-ordinal-08	long	ottavo					linguistic
+it-IT	long-ordinal-09	long	nono					linguistic
+it-IT	long-ordinal-10	long	decimo					linguistic
+it-IT	manuscript	long	manoscritto					linguistic
+it-IT	map	long	carta geografica					linguistic
+it-IT	month-01	long	gennaio					linguistic
+it-IT	month-01	short	gen.					linguistic
+it-IT	month-02	long	febbraio					linguistic
+it-IT	month-02	short	feb.					linguistic
+it-IT	month-03	long	marzo					linguistic
+it-IT	month-03	short	mar.					linguistic
+it-IT	month-04	long	aprile					linguistic
+it-IT	month-04	short	apr.					linguistic
+it-IT	month-05	long	maggio					linguistic
+it-IT	month-05	short	mag.					linguistic
+it-IT	month-06	long	giugno					linguistic
+it-IT	month-06	short	giu.					linguistic
+it-IT	month-07	long	luglio					linguistic
+it-IT	month-07	short	lug.					linguistic
+it-IT	month-08	long	agosto					linguistic
+it-IT	month-08	short	ago.					linguistic
+it-IT	month-09	long	settembre					linguistic
+it-IT	month-09	short	set.					linguistic
+it-IT	month-10	long	ottobre					linguistic
+it-IT	month-10	short	ott.					linguistic
+it-IT	month-11	long	novembre					linguistic
+it-IT	month-11	short	nov.					linguistic
+it-IT	month-12	long	dicembre					linguistic
+it-IT	month-12	short	dic.					linguistic
+it-IT	motion_picture	long	film					linguistic
+it-IT	musical_score	long	partitura					linguistic
+it-IT	narrator	long	narratore	narratori				linguistic
+it-IT	narrator	verb	narrato da					linguistic
+it-IT	no date	long	senza data					linguistic
+it-IT	no date	short	s.d.					linguistic
+it-IT	no-place	long	senza luogo					linguistic
+it-IT	no-place	short	s.l.					linguistic
+it-IT	no-publisher	long	senza editore					linguistic
+it-IT	no-publisher	short	s.n.					linguistic
+it-IT	note	long	nota	note				linguistic
+it-IT	note	short	n.	nn.				linguistic
+it-IT	number	long	numero	numeri				linguistic
+it-IT	number	short	n.	nn.				linguistic
+it-IT	number-of-pages	long	numero di pagine					linguistic
+it-IT	number-of-volumes	long	numero di volumi					linguistic
+it-IT	on	long	il					linguistic
+it-IT	online	long	online					linguistic
+it-IT	op-cit	long	op. cit.					linguistic
+it-IT	open-inner-quote	long	“					linguistic
+it-IT	open-quote	long	«					linguistic
+it-IT	opus	long	opera	opere				linguistic
+it-IT	opus	short	op.					linguistic
+it-IT	ordinal	long	º					linguistic
+it-IT	ordinal	long	ª			feminine		linguistic
+it-IT	ordinal	long	º			masculine		linguistic
+it-IT	organizer	long	organizzatore	organizzatori				linguistic
+it-IT	organizer	verb	organizzato da					linguistic
+it-IT	original-author	long	autore originale	autori originali				linguistic
+it-IT	original-work-published	long	opera originale pubblicata					linguistic
+it-IT	page	long	pagina	pagine				observed
+it-IT	page	short	p.	pp.				observed
+it-IT	page-first	long	prima pagina					linguistic
+it-IT	page-range-delimiter	long	–					linguistic
+it-IT	pamphlet	long	opuscolo					linguistic
+it-IT	paper-conference	long	contributo a convegno					linguistic
+it-IT	paragraph	long	paragrafo	paragrafi				linguistic
+it-IT	paragraph	short	par.					linguistic
+it-IT	paragraph	symbol	¶					linguistic
+it-IT	part	long	parte	parti				linguistic
+it-IT	part	short	pt.					linguistic
+it-IT	patent	long	brevetto					linguistic
+it-IT	performance	long	esecuzione					linguistic
+it-IT	performer	long	interprete	interpreti				linguistic
+it-IT	performer	verb	interpretato da					linguistic
+it-IT	periodical	long	periodico					linguistic
+it-IT	personal-communication	long	comunicazione personale					linguistic
+it-IT	personal_communication	long	comunicazione personale					linguistic
+it-IT	podcast	long	podcast					linguistic
+it-IT	podcast-episode	long	episodio di podcast					linguistic
+it-IT	post	long	messaggio					linguistic
+it-IT	post-weblog	long	articolo di blog					linguistic
+it-IT	preprint	long	preprint					linguistic
+it-IT	presented at	long	presentato a					linguistic
+it-IT	printing	long	tiratura	tirature				linguistic
+it-IT	producer	long	produttore	produttori				linguistic
+it-IT	producer	verb	prodotto da					linguistic
+it-IT	radio-broadcast	long	trasmissione radiofonica					linguistic
+it-IT	radio-series	long	serie radiofonica					linguistic
+it-IT	radio-series-episode	long	episodio radiofonico					linguistic
+it-IT	recipient	long	destinatario	destinatari				linguistic
+it-IT	recipient	verb	a					linguistic
+it-IT	reference	long	riferimento	riferimenti				linguistic
+it-IT	reference	short	rif.					linguistic
+it-IT	regulation	long	regolamento					linguistic
+it-IT	report	long	rapporto					linguistic
+it-IT	retrieved	long	recuperato					linguistic
+it-IT	review	long	recensione					linguistic
+it-IT	review-book	long	recensione di un libro					linguistic
+it-IT	review-of	long	recensione di					linguistic
+it-IT	reviewed-author	long	autore recensito	autori recensiti				linguistic
+it-IT	rule	long	regola	regole				linguistic
+it-IT	scale	long	scala					linguistic
+it-IT	scene	long	scena	scene				linguistic
+it-IT	script-writer	long	sceneggiatore	sceneggiatori				linguistic
+it-IT	script-writer	verb	sceneggiatura di					linguistic
+it-IT	season-01	long	primavera					linguistic
+it-IT	season-02	long	estate					linguistic
+it-IT	season-03	long	autunno					linguistic
+it-IT	season-04	long	inverno					linguistic
+it-IT	section	long	sezione	sezioni				linguistic
+it-IT	section	short	sez.					linguistic
+it-IT	section	symbol	§	§§				linguistic
+it-IT	semicolon	long	;					linguistic
+it-IT	series-creator	long	creatore della serie	creatori della serie				linguistic
+it-IT	software	long	software					linguistic
+it-IT	song	long	canzone					linguistic
+it-IT	special-issue	long	numero speciale					linguistic
+it-IT	special-section	long	sezione speciale					linguistic
+it-IT	speech	long	discorso					linguistic
+it-IT	standard	long	norma					linguistic
+it-IT	sub-verbo	long	alla voce					linguistic
+it-IT	sub-verbo	short	s.v.					linguistic
+it-IT	supplement	long	supplemento	supplementi				linguistic
+it-IT	supplement	short	suppl.					linguistic
+it-IT	table	long	tabella	tabelle				linguistic
+it-IT	table	short	tab.					linguistic
+it-IT	television-broadcast	long	trasmissione televisiva					linguistic
+it-IT	television-series	long	serie televisiva					linguistic
+it-IT	television-series-episode	long	episodio di serie televisiva					linguistic
+it-IT	thesis	long	tesi					linguistic
+it-IT	timestamp	long	marcatore temporale	marcatori temporali				linguistic
+it-IT	title-locator	long	titolo	titoli				linguistic
+it-IT	title-locator	short	tit.					linguistic
+it-IT	translator	long	traduttore	traduttori				linguistic
+it-IT	translator	short	trad.					linguistic
+it-IT	translator	verb	tradotto da					linguistic
+it-IT	translator	verb-short	trad.					linguistic
+it-IT	treaty	long	trattato					linguistic
+it-IT	verse	long	verso	versi				linguistic
+it-IT	verse	short	v.	vv.				linguistic
+it-IT	version	long	versione	versioni				linguistic
+it-IT	version	short	v.					linguistic
+it-IT	video	long	video					linguistic
+it-IT	volume	long	volume	volumi				linguistic
+it-IT	volume	short	vol.	voll.				linguistic
+it-IT	webpage	long	pagina web					linguistic
+it-IT	working-paper	long	documento di lavoro					linguistic
+ja-JP	page	long	ページ	ページ				observed
+ja-JP	page	short	p.	pp.				observed
+km-KH	page	long	ទំព័រ	ទំព័រ				observed
+km-KH	page	short	p.	pp.				observed
+ko-KR	page	long	페이지	페이지				observed
+ko-KR	page	short	p	pp				observed
+la	page	long	pagina	paginae				observed
+la	page	short	p.	pp.				observed
+lij-IT	page	long	pagina	pagine				observed
+lij-IT	page	short	p.	pp.				observed
+lt-LT	page	long	puslapis	puslapiai				observed
+lt-LT	page	short	p.	p.				observed
+lv-LV	page	long	lappuse	lappuses				observed
+lv-LV	page	short	lpp.	lpp.				observed
+mn-MN	page	long	хуудас	хуудаснууд				observed
+mn-MN	page	short	p	pp				observed
+ms-MY	page	long	halaman	halaman				observed
+ms-MY	page	short	hlm.	hlm.				observed
+nb-NO	page	long	side	side				observed
+nb-NO	page	short	s.	s.				observed
+nl-NL	page	long	pagina	pagina’s				observed
+nl-NL	page	short	p.	pp.				observed
+nn-NO	page	long	side	side				observed
+nn-NO	page	short	s.	s.				observed
+pa-PK	page	long	صفحہ	صفحے				observed
+pa-PK	page	short	صفحہ	صفحے				observed
+pl-PL	page	long	strona	strony				observed
+pl-PL	page	short	s.	s.				observed
+pt-BR	page	long	página	páginas				observed
+pt-BR	page	short	p.	p.				observed
+pt-PT	page	long	página	páginas				observed
+pt-PT	page	short	p.	pp.				observed
+ro-RO	page	long	pagina	paginile				observed
+ro-RO	page	short	p.	pp.				observed
+ru-RU	page	long	страница	страницы				observed
+ru-RU	page	short	с.	сс.				observed
+sk-SK	page	long	strana	strany				observed
+sk-SK	page	short	s.	s.				observed
+sl-SI	page	long	stran	strani				observed
+sl-SI	page	short	str.	str.				observed
+sr-RS	page	long	страница	странице				observed
+sr-RS	page	short	стр.	стр.				observed
+sv-SE	page	long	sida	sidor				observed
+sv-SE	page	short	s.	s.				observed
+th-TH	page	long	หน้า	หน้า				observed
+th-TH	page	short	น.	น.				observed
+tr-TR	page	long	sayfa	sayfalar				observed
+tr-TR	page	short	s.	ss.				observed
+uk-UA	page	long	С.	С.				observed
+uk-UA	page	short	с.	с.				observed
+vi-VN	page	long	trang	trang				observed
+vi-VN	page	short	tr	tr				observed
+zh-CN	accessed	long	见于					observed
+zh-CN	act	long	幕					linguistic
+zh-CN	act	short	幕					linguistic
+zh-CN	ad	long	公元					linguistic
+zh-CN	advance-online-publication	long	网络首发					linguistic
+zh-CN	album	long	专辑					linguistic
+zh-CN	and	long	和					linguistic
+zh-CN	and	short	和					linguistic
+zh-CN	and	symbol	和					linguistic
+zh-CN	and others	long	等					linguistic
+zh-CN	anonymous	long	佚名					linguistic
+zh-CN	anonymous	short	佚名					linguistic
+zh-CN	appendix	long	附录					linguistic
+zh-CN	appendix	short	附录					linguistic
+zh-CN	article	long	文章					linguistic
+zh-CN	article-journal	long	期刊文章					linguistic
+zh-CN	article-locator	long	条					linguistic
+zh-CN	article-locator	short	条					linguistic
+zh-CN	article-magazine	long	杂志文章					linguistic
+zh-CN	article-newspaper	long	报纸文章					linguistic
+zh-CN	at	long	于					linguistic
+zh-CN	audio-recording	long	录音					linguistic
+zh-CN	author	long						linguistic
+zh-CN	author	verb	撰写					linguistic
+zh-CN	available at	long	可查阅于					linguistic
+zh-CN	bc	long	公元前					linguistic
+zh-CN	bce	long	公元前					linguistic
+zh-CN	bill	long	法案					linguistic
+zh-CN	book	long	书					linguistic
+zh-CN	book	short	书					linguistic
+zh-CN	broadcast	long	广播					linguistic
+zh-CN	by	long	由					linguistic
+zh-CN	canon	long	教规					linguistic
+zh-CN	ce	long	公元					linguistic
+zh-CN	chair	long	主持人					linguistic
+zh-CN	chapter	long	章					linguistic
+zh-CN	chapter	short	章					linguistic
+zh-CN	chapter-number	long	章号					linguistic
+zh-CN	circa	long	约					linguistic
+zh-CN	circa	short	约					linguistic
+zh-CN	citation-number	long	引文编号					linguistic
+zh-CN	cited	long	引用					linguistic
+zh-CN	classic	long	经典著作					linguistic
+zh-CN	close-inner-quote	long	〉					linguistic
+zh-CN	close-quote	long	》					linguistic
+zh-CN	collection	long	馆藏					linguistic
+zh-CN	collection-editor	long	丛书主编					linguistic
+zh-CN	collection-number	long	丛书编号					linguistic
+zh-CN	colon	long	：					linguistic
+zh-CN	column	long	栏					linguistic
+zh-CN	column	short	栏					linguistic
+zh-CN	comma	long	，					linguistic
+zh-CN	compiler	long	编纂者					linguistic
+zh-CN	compiler	short	编纂					linguistic
+zh-CN	compiler	verb	编纂					linguistic
+zh-CN	composer	long	作曲者					linguistic
+zh-CN	composer	verb	作曲					linguistic
+zh-CN	container-author	long	总集作者					linguistic
+zh-CN	contributor	long	参与者					linguistic
+zh-CN	curator	long	策展人					linguistic
+zh-CN	dataset	long	数据集					linguistic
+zh-CN	director	long	导演					linguistic
+zh-CN	director	short	导演					linguistic
+zh-CN	director	verb	导演					linguistic
+zh-CN	director	verb-short	导演					linguistic
+zh-CN	document	long	文档					linguistic
+zh-CN	edition	long	版					linguistic
+zh-CN	edition	short	版					linguistic
+zh-CN	editor	long	编者					linguistic
+zh-CN	editor	short	编					linguistic
+zh-CN	editor	verb	编辑					linguistic
+zh-CN	editor	verb-short	编					linguistic
+zh-CN	editor-translator	long	编译者					linguistic
+zh-CN	editorial-director	long	编辑主任					linguistic
+zh-CN	editortranslator	long	编译者					linguistic
+zh-CN	editortranslator	short	编译					linguistic
+zh-CN	editortranslator	verb	编译					linguistic
+zh-CN	editortranslator	verb-short	编译					linguistic
+zh-CN	elocation	long	电子定位号					linguistic
+zh-CN	entry	long	条目					linguistic
+zh-CN	entry-dictionary	long	词典条目					linguistic
+zh-CN	entry-encyclopedia	long	百科条目					linguistic
+zh-CN	equation	long	等式					linguistic
+zh-CN	equation	short	式					linguistic
+zh-CN	et-al	long	等					linguistic
+zh-CN	event	long	活动					linguistic
+zh-CN	executive-producer	long	执行制片人					linguistic
+zh-CN	figure	long	图					linguistic
+zh-CN	figure	short	图					linguistic
+zh-CN	film	long	影片					linguistic
+zh-CN	first-reference-note-number	long	首次引用注号					linguistic
+zh-CN	folio	long	叶					linguistic
+zh-CN	folio	short	叶					linguistic
+zh-CN	forthcoming	long	即将出版					linguistic
+zh-CN	from	long	自					linguistic
+zh-CN	graphic	long	图像					linguistic
+zh-CN	guest	long	嘉宾					linguistic
+zh-CN	hearing	long	听证会					linguistic
+zh-CN	henceforth	long	下称					linguistic
+zh-CN	host	long	主持人					linguistic
+zh-CN	ibid	long	同上					linguistic
+zh-CN	illustrator	long	插图作者					linguistic
+zh-CN	illustrator	short	绘					linguistic
+zh-CN	illustrator	verb	插图					linguistic
+zh-CN	in	long	载于					linguistic
+zh-CN	in press	long	送印中					observed
+zh-CN	internet	long	互联网					linguistic
+zh-CN	interview	long	访谈					linguistic
+zh-CN	interviewer	long	采访者					linguistic
+zh-CN	interviewer	verb	采访					linguistic
+zh-CN	issue	long	期					linguistic
+zh-CN	issue	short	期					linguistic
+zh-CN	legal_case	long	判例					linguistic
+zh-CN	legislation	long	法规					linguistic
+zh-CN	letter	long	信函					linguistic
+zh-CN	line	long	行					linguistic
+zh-CN	line	short	行					linguistic
+zh-CN	loc-cit	long	同处					linguistic
+zh-CN	long-ordinal-01	long	第一					linguistic
+zh-CN	long-ordinal-02	long	第二					linguistic
+zh-CN	long-ordinal-03	long	第三					linguistic
+zh-CN	long-ordinal-04	long	第四					linguistic
+zh-CN	long-ordinal-05	long	第五					linguistic
+zh-CN	long-ordinal-06	long	第六					linguistic
+zh-CN	long-ordinal-07	long	第七					linguistic
+zh-CN	long-ordinal-08	long	第八					linguistic
+zh-CN	long-ordinal-09	long	第九					linguistic
+zh-CN	long-ordinal-10	long	第十					linguistic
+zh-CN	manuscript	long	手稿					linguistic
+zh-CN	map	long	地图					linguistic
+zh-CN	month-01	long	一月					linguistic
+zh-CN	month-01	short	1月					linguistic
+zh-CN	month-02	long	二月					linguistic
+zh-CN	month-02	short	2月					linguistic
+zh-CN	month-03	long	三月					linguistic
+zh-CN	month-03	short	3月					linguistic
+zh-CN	month-04	long	四月					linguistic
+zh-CN	month-04	short	4月					linguistic
+zh-CN	month-05	long	五月					linguistic
+zh-CN	month-05	short	5月					linguistic
+zh-CN	month-06	long	六月					linguistic
+zh-CN	month-06	short	6月					linguistic
+zh-CN	month-07	long	七月					linguistic
+zh-CN	month-07	short	7月					linguistic
+zh-CN	month-08	long	八月					linguistic
+zh-CN	month-08	short	8月					linguistic
+zh-CN	month-09	long	九月					linguistic
+zh-CN	month-09	short	9月					linguistic
+zh-CN	month-10	long	十月					linguistic
+zh-CN	month-10	short	10月					linguistic
+zh-CN	month-11	long	十一月					linguistic
+zh-CN	month-11	short	11月					linguistic
+zh-CN	month-12	long	十二月					linguistic
+zh-CN	month-12	short	12月					linguistic
+zh-CN	motion_picture	long	影片					linguistic
+zh-CN	musical_score	long	乐谱					linguistic
+zh-CN	narrator	long	解说者					linguistic
+zh-CN	narrator	verb	解说					linguistic
+zh-CN	no date	long	日期不详					linguistic
+zh-CN	no date	short	不详					linguistic
+zh-CN	no-place	long	出版地不详					linguistic
+zh-CN	no-place	short	出版地不详					linguistic
+zh-CN	no-publisher	long	出版者不详					linguistic
+zh-CN	no-publisher	short	出版者不详					linguistic
+zh-CN	note	long	注					linguistic
+zh-CN	note	short	注					linguistic
+zh-CN	number	long	编号					linguistic
+zh-CN	number	short	号					linguistic
+zh-CN	number-of-pages	long	页数					linguistic
+zh-CN	number-of-volumes	long	卷数					linguistic
+zh-CN	on	long	于					linguistic
+zh-CN	online	long	在线					linguistic
+zh-CN	op-cit	long	前引著作					linguistic
+zh-CN	open-inner-quote	long	〈					linguistic
+zh-CN	open-quote	long	《					linguistic
+zh-CN	opus	long	作品					linguistic
+zh-CN	opus	short	作品					linguistic
+zh-CN	ordinal	long						linguistic
+zh-CN	organizer	long	组织者					linguistic
+zh-CN	organizer	verb	组织					linguistic
+zh-CN	original-author	long	原作者					linguistic
+zh-CN	original-work-published	long	原作出版于					linguistic
+zh-CN	page	long	页	页				observed
+zh-CN	page	short	页	页				observed
+zh-CN	page-first	long	首页					linguistic
+zh-CN	page-range-delimiter	long	～					linguistic
+zh-CN	pamphlet	long	小册子					linguistic
+zh-CN	paper-conference	long	会议论文					linguistic
+zh-CN	paragraph	long	段					linguistic
+zh-CN	paragraph	short	段					linguistic
+zh-CN	paragraph	symbol	段					linguistic
+zh-CN	part	long	部分					linguistic
+zh-CN	part	short	部					linguistic
+zh-CN	patent	long	专利					linguistic
+zh-CN	performance	long	演出					linguistic
+zh-CN	performer	long	表演者					linguistic
+zh-CN	performer	verb	表演					linguistic
+zh-CN	periodical	long	期刊					linguistic
+zh-CN	personal-communication	long	私人通信					linguistic
+zh-CN	personal_communication	long	私人通信					linguistic
+zh-CN	podcast	long	播客					linguistic
+zh-CN	podcast-episode	long	播客单集					linguistic
+zh-CN	post	long	帖子					linguistic
+zh-CN	post-weblog	long	博客文章					linguistic
+zh-CN	preprint	long	预印本					linguistic
+zh-CN	presented at	long	发表于					linguistic
+zh-CN	printing	long	印次					linguistic
+zh-CN	producer	long	制片人					linguistic
+zh-CN	producer	verb	制作					linguistic
+zh-CN	radio-broadcast	long	广播节目					linguistic
+zh-CN	radio-series	long	广播系列					linguistic
+zh-CN	radio-series-episode	long	广播系列单集					linguistic
+zh-CN	recipient	long	收件人					linguistic
+zh-CN	recipient	verb	致					linguistic
+zh-CN	reference	long	参考					linguistic
+zh-CN	reference	short	参					linguistic
+zh-CN	regulation	long	规章					linguistic
+zh-CN	report	long	报告					linguistic
+zh-CN	retrieved	long	获取					linguistic
+zh-CN	review	long	评论					linguistic
+zh-CN	review-book	long	书评					linguistic
+zh-CN	review-of	long	评论对象					linguistic
+zh-CN	reviewed-author	long	被评论作者					linguistic
+zh-CN	rule	long	规则					linguistic
+zh-CN	scale	long	比例尺					linguistic
+zh-CN	scene	long	场					linguistic
+zh-CN	script-writer	long	编剧					linguistic
+zh-CN	script-writer	verb	编剧					linguistic
+zh-CN	season-01	long	春					linguistic
+zh-CN	season-02	long	夏					linguistic
+zh-CN	season-03	long	秋					linguistic
+zh-CN	season-04	long	冬					linguistic
+zh-CN	section	long	节					linguistic
+zh-CN	section	short	节					linguistic
+zh-CN	section	symbol	节					linguistic
+zh-CN	semicolon	long	；					linguistic
+zh-CN	series-creator	long	系列创作者					linguistic
+zh-CN	software	long	软件					linguistic
+zh-CN	song	long	歌曲					linguistic
+zh-CN	special-issue	long	特刊					linguistic
+zh-CN	special-section	long	专题					linguistic
+zh-CN	speech	long	演讲					linguistic
+zh-CN	standard	long	标准					linguistic
+zh-CN	sub-verbo	long	见词条					linguistic
+zh-CN	sub-verbo	short	见					linguistic
+zh-CN	supplement	long	增刊					linguistic
+zh-CN	supplement	short	增刊					linguistic
+zh-CN	table	long	表					linguistic
+zh-CN	table	short	表					linguistic
+zh-CN	television-broadcast	long	电视节目					linguistic
+zh-CN	television-series	long	电视系列					linguistic
+zh-CN	television-series-episode	long	电视系列单集					linguistic
+zh-CN	thesis	long	学位论文					linguistic
+zh-CN	timestamp	long	时间码					linguistic
+zh-CN	title-locator	long	标题					linguistic
+zh-CN	title-locator	short	标题					linguistic
+zh-CN	translator	long	译者					linguistic
+zh-CN	translator	short	译					linguistic
+zh-CN	translator	verb	翻译					linguistic
+zh-CN	translator	verb-short	译					linguistic
+zh-CN	treaty	long	条约					linguistic
+zh-CN	verse	long	诗节					linguistic
+zh-CN	verse	short	节					linguistic
+zh-CN	version	long	版本					linguistic
+zh-CN	version	short	版					linguistic
+zh-CN	video	long	视频					linguistic
+zh-CN	volume	long	卷					linguistic
+zh-CN	volume	short	卷					linguistic
+zh-CN	webpage	long	网页					linguistic
+zh-CN	working-paper	long	工作论文					linguistic
+zh-TW	page	long	頁	頁				observed
+zh-TW	page	short	頁	頁				observed

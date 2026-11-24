@@ -12,7 +12,7 @@
 //! - [`parse_style`] and [`read_style`]: a style from text or from a file.
 //! - [`parse_locale`]: a locale file.
 //! - [`style_locale`]: the locale of a style, from the locale files of the
-//!   data directory ([`locale_path`]) and the locales inside the style.
+//!   data directory ([`locale_path`]), built-in data and locales inside the style.
 //! - [`reference`](mod@reference): the reference model and its CSL JSON form.
 //! - [`markup`]: the markup inside CSL JSON strings.
 //! - [`csljson`]: the reader and the writer of the format `csljson`.
@@ -57,6 +57,7 @@ mod unicode_class;
 mod xml;
 
 pub use error::CiteprocError;
+pub use filter::{PageLabel, biblatex_page_label};
 pub use lang::{Lang, parse_lang, render_lang};
 pub use loader::{
     DEFAULT_STYLE_FILE, LOCALES_FOLDER, locale_path, parse_style, read_default_style, read_locale,

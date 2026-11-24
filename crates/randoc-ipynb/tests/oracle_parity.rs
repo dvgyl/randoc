@@ -101,6 +101,41 @@ fn test_dir() -> PathBuf {
 }
 
 #[test]
+#[ignore = "Requires the Pandoc oracle"]
+fn markdown_cells_use_the_notebook_extensions() {
+    let sources = [
+        "see www.example.org and http://x.org",
+        "a\n- b",
+        "x<span>y</span>",
+        "Term\n: def",
+        "H~2~O and 2^10^",
+        "[x]{.c}",
+        "see <b>x</b>",
+    ];
+    let cells: Vec<_> = sources
+        .into_iter()
+        .map(|source| serde_json::json!({"cell_type":"markdown","metadata":{},"source":source}))
+        .collect();
+    let input = serde_json::json!({"nbformat":4,"nbformat_minor":0,"metadata":{},"cells":cells})
+        .to_string();
+
+    for format in ["ipynb", "ipynb-raw_html"] {
+        let expected: Value =
+            serde_json::from_str(&oracle(&["-f", format, "-t", "json"], &input)).unwrap();
+        let mut options = ReaderOptions::default();
+        options.extensions = randoc_core::FormatSpec::parse(format).extensions().unwrap();
+        let Reader::Text(reader) = randoc_ipynb::reader("ipynb").unwrap() else {
+            unreachable!()
+        };
+        let doc = reader
+            .read(&Sources::from_text(&input), &options, &mut Context::pure())
+            .unwrap();
+        let actual = serde_json::from_str(&json::to_json(&doc)).unwrap();
+        assert_eq!(check(&expected, &actual, ""), None, "{format}");
+    }
+}
+
+#[test]
 #[ignore = "Requires the Pandoc oracle and corpus"]
 fn corpus() {
     let root = PathBuf::from(env::var_os("RANDOC_CORPUS").unwrap());

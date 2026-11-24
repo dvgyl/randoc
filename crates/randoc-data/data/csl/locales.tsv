@@ -1,0 +1,61 @@
+tag	punctuation_in_quote	limit_day_ordinals_to_day_1	text_date	numeric_date	source
+af-ZA					linguistic
+ar					linguistic
+bal-PK					linguistic
+bg-BG					linguistic
+brh-PK					linguistic
+ca-AD					linguistic
+cs-CZ					linguistic
+cy-GB					linguistic
+da-DK					linguistic
+de-AT					linguistic
+de-CH					linguistic
+de-DE	false	false	{day}. {month:long} {year}	{day:numeric-leading-zeros}.{month:numeric-leading-zeros}.{year}	linguistic
+el-GR					linguistic
+en-GB	false	false	{day} {month:long} {year}	{day:numeric-leading-zeros}/{month:numeric-leading-zeros}/{year}	linguistic
+en-US	true	false	{month:long} {day}, {year}	{month:numeric-leading-zeros}/{day:numeric-leading-zeros}/{year}	linguistic
+es-CL					linguistic
+es-ES	false	false	{day} de {month:long} de {year}	{day:numeric-leading-zeros}/{month:numeric-leading-zeros}/{year}	linguistic
+es-MX					linguistic
+et-EE					linguistic
+eu					linguistic
+fa-IR					linguistic
+fi-FI					linguistic
+fr-CA					linguistic
+fr-FR	false	true	{day:ordinal} {month:long} {year}	{day:numeric-leading-zeros}/{month:numeric-leading-zeros}/{year}	linguistic
+gl-ES					linguistic
+he-IL					linguistic
+hi-IN					linguistic
+hr-HR					linguistic
+hu-HU					linguistic
+id-ID					linguistic
+is-IS					linguistic
+it-IT	false	false	{day} {month:long} {year}	{day:numeric-leading-zeros}/{month:numeric-leading-zeros}/{year}	linguistic
+ja-JP					linguistic
+km-KH					linguistic
+ko-KR					linguistic
+la					linguistic
+lij-IT					linguistic
+lt-LT					linguistic
+lv-LV					linguistic
+mn-MN					linguistic
+ms-MY					linguistic
+nb-NO					linguistic
+nl-NL					linguistic
+nn-NO					linguistic
+pa-PK					linguistic
+pl-PL					linguistic
+pt-BR					linguistic
+pt-PT					linguistic
+ro-RO					linguistic
+ru-RU					linguistic
+sk-SK					linguistic
+sl-SI					linguistic
+sr-RS					linguistic
+sv-SE					linguistic
+th-TH					linguistic
+tr-TR					linguistic
+uk-UA					linguistic
+vi-VN					linguistic
+zh-CN	false	false	{year}年{month:numeric}月{day}日	{year}-{month:numeric-leading-zeros}-{day:numeric-leading-zeros}	linguistic
+zh-TW					linguistic

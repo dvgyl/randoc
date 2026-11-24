@@ -36,6 +36,8 @@ pub enum Style {
     Subscript,
     /// `<span class="nocase">`: no case change.
     NoCase,
+    /// A span with empty attributes from reference metadata.
+    PlainSpan,
 }
 
 /// A part of formatted text.
@@ -559,6 +561,7 @@ pub fn render(markup: &[Markup]) -> String {
                     Style::Superscript => ("<sup>", c, "</sup>"),
                     Style::Subscript => ("<sub>", c, "</sub>"),
                     Style::Baseline => ("<span class=\"baseline\">", c, "</span>"),
+                    Style::PlainSpan => ("", c, ""),
                 };
                 out.push_str(open);
                 (parts, inner, close)

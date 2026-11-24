@@ -1,9 +1,12 @@
-//! Templates and document labels that Randoc embeds.
+//! Templates, document labels and citation data that Randoc embeds.
 //!
-//! The files are the Pandoc data templates (BSD-3-Clause option) and the
-//! dzslides template (WTFPL). Each file is embedded with `include_str!`.
+//! The Pandoc data templates use the BSD-3-Clause option. The dzslides
+//! template uses the WTFPL. Randoc prepared the document labels and CSL data.
 
+pub mod csl;
 pub mod terms;
+
+pub use csl::{DEFAULT_STYLE, locale_tags, locale_xml, page_labels};
 
 /// Every embedded template file. Each entry is the path under `data/` and the content.
 /// The slice is sorted by path.

@@ -13,7 +13,7 @@ use std::collections::BTreeMap;
 use std::sync::Arc;
 
 use randoc_ast::{
-    Block, Citation, CitationMode, Inline, MathType, Meta, MetaValue, Pandoc, QuoteType, Text,
+    Attr, Block, Citation, CitationMode, Inline, MathType, Meta, MetaValue, Pandoc, QuoteType, Text,
 };
 use randoc_core::shared::stringify_meta;
 use randoc_core::{Context, Error, Reader, ReaderOptions, Result, Sources, Writer, WriterOptions};
@@ -356,6 +356,7 @@ fn markup_to_inlines(markup: &[Markup]) -> Vec<Inline> {
                     Style::Superscript => out.push(Inline::Superscript(inner)),
                     Style::Subscript => out.push(Inline::Subscript(inner)),
                     Style::NoCase => out.push(span("nocase", inner)),
+                    Style::PlainSpan => out.push(Inline::Span(Attr::default(), inner)),
                     Style::Normal | Style::Baseline => out.extend(inner),
                 }
             }
@@ -658,6 +659,7 @@ fn inlines_to_markup(inlines: &[Inline], depth: usize) -> Result<Vec<Markup>> {
             Inline::Math(MathType::DisplayMath, math) => out.push(text(format!("$${math}$$"))),
             Inline::RawInline(..) | Inline::Note(_) => {}
             Inline::Span(attr, i) => match attr.classes.as_slice() {
+                [] if *attr == Attr::default() => out.push(styled(Style::PlainSpan, i)?),
                 [class] if class == "nocase" => out.push(styled(Style::NoCase, i)?),
                 [class] if class.starts_with("csl-") => {
                     out.push(Markup::Div(class.clone(), inner(i)?));

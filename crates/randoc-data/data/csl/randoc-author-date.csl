@@ -1,0 +1,683 @@
+<?xml version="1.0" encoding="utf-8"?>
+<style xmlns="http://purl.org/net/xbiblio/csl" version="1.0" class="in-text"
+       page-range-format="chicago-16" demote-non-dropping-particle="display-and-sort">
+  <info>
+    <title>Randoc Author–Date</title>
+    <id>urn:randoc:style:author-date</id>
+    <category citation-format="author-date"/>
+    <summary>Author–date citations and a bibliography with a hanging indent.</summary>
+    <updated>2026-11-24T00:00:00+00:00</updated>
+    <rights>MIT OR Apache-2.0</rights>
+  </info>
+
+  <!-- M01.09, M03.09, S34, S52: format the short and full titles. -->
+  <macro name="rd-title">
+    <choose>
+      <if type="patent"><text text-case="capitalize-first" variable="title"/></if>
+      <else-if type="article-journal article-magazine article-newspaper chapter" match="any">
+        <choose>
+          <if variable="container-title"><text variable="title" quotes="true" text-case="title"/></if>
+          <else><text variable="title" font-style="italic" text-case="title"/></else>
+        </choose>
+      </else-if>
+      <else-if type="book report software motion_picture graphic map musical_score document" match="any">
+        <text variable="title" font-style="italic" text-case="title"/>
+      </else-if>
+      <else-if type="thesis webpage post-weblog paper-conference dataset manuscript entry entry-encyclopedia entry-dictionary article" match="any">
+        <text variable="title" quotes="true" text-case="title"/>
+      </else-if>
+      <else><text variable="title" font-style="italic" text-case="title"/></else>
+    </choose>
+  </macro>
+  <!-- S44, S52: substitute the short title in citations. -->
+  <macro name="rd-short-title">
+    <choose>
+      <if type="legal_case"><text variable="title" form="short" font-style="italic"/></if>
+      <else-if type="patent"><text variable="title" form="short" text-case="capitalize-first"/></else-if>
+      <else-if type="article-journal article-magazine article-newspaper chapter" match="any">
+        <choose>
+          <if variable="container-title"><text variable="title" form="short" quotes="true" text-case="title"/></if>
+          <else><text variable="title" form="short" font-style="italic" text-case="title"/></else>
+        </choose>
+      </else-if>
+      <else-if type="book report software motion_picture graphic map musical_score document" match="any">
+        <text variable="title" form="short" font-style="italic" text-case="title"/>
+      </else-if>
+      <else-if type="thesis webpage post-weblog paper-conference dataset manuscript entry entry-encyclopedia entry-dictionary article" match="any">
+        <text variable="title" form="short" quotes="true" text-case="title"/>
+      </else-if>
+      <else><text variable="title" form="short" font-style="italic" text-case="title"/></else>
+    </choose>
+  </macro>
+  <!-- M04.09, M09.09, M13.09: use the publication as the name if applicable. -->
+  <macro name="rd-publication-heading">
+    <choose>
+      <if type="article-magazine article-newspaper paper-conference entry-encyclopedia entry-dictionary" match="any">
+        <text variable="container-title" font-style="italic" text-case="title"/>
+      </if>
+      <else-if type="webpage"><text variable="container-title" text-case="title"/></else-if>
+      <else-if type="software"><text variable="publisher"/></else-if>
+    </choose>
+  </macro>
+  <!-- M01.01–M01.09, S23, S30: cite a short name or its substitute. -->
+  <macro name="rd-who">
+    <choose>
+      <if type="legal_case"><text macro="rd-short-title"/></if>
+      <else-if type="entry-encyclopedia entry-dictionary" match="any">
+        <names variable="author">
+          <name form="short" and="text" initialize-with=". "/>
+          <substitute>
+            <text macro="rd-publication-heading"/>
+            <text macro="rd-short-title"/>
+          </substitute>
+        </names>
+      </else-if>
+      <else>
+        <names variable="author">
+          <name form="short" and="text" initialize-with=". "/>
+          <substitute>
+            <names variable="editor"/>
+            <names variable="translator"/>
+            <names variable="director"/>
+            <text macro="rd-publication-heading"/>
+            <text macro="rd-short-title"/>
+          </substitute>
+        </names>
+      </else>
+    </choose>
+  </macro>
+  <!-- M01.01–M01.09, S05, S24, S55: invert the first name and label substitute roles. -->
+  <macro name="rd-entry-heading">
+    <names variable="author">
+      <name and="text" name-as-sort-order="first" initialize="false" delimiter-precedes-last="always"/>
+      <substitute>
+        <names variable="editor"><name and="text" name-as-sort-order="first" initialize="false" delimiter-precedes-last="always"/><label form="short" prefix=", "/></names>
+        <names variable="translator"><name and="text" name-as-sort-order="first" initialize="false" delimiter-precedes-last="always"/><label form="short" prefix=", "/></names>
+        <names variable="director"><name and="text" name-as-sort-order="first" initialize="false" delimiter-precedes-last="always"/><label form="short" prefix=", "/></names>
+        <text macro="rd-publication-heading"/>
+        <text macro="rd-title"/>
+      </substitute>
+    </names>
+  </macro>
+  <!-- S24, S28, S36, S40: sort by creator, then date and title. -->
+  <macro name="rd-sort-heading">
+    <names variable="author">
+      <name name-as-sort-order="all" initialize="false"/>
+      <substitute>
+        <names variable="editor"/>
+        <names variable="translator"/>
+        <names variable="director"/>
+        <text macro="rd-publication-heading"/>
+        <text variable="title"/>
+      </substitute>
+    </names>
+  </macro>
+  <!-- S37: put a hyphen before an undated year suffix. -->
+  <macro name="rd-undated">
+    <text form="short" term="no date"/>
+    <text prefix="-" variable="year-suffix"/>
+  </macro>
+  <!-- M01.10–M01.15, S37, S40: select the citation year or status. -->
+  <macro name="rd-when">
+    <choose>
+      <if variable="issued">
+        <group delimiter=" ">
+          <date variable="original-date" prefix="[" suffix="]"><date-part name="year"/></date>
+          <group>
+            <date variable="issued"><date-part name="year"/></date>
+            <text variable="year-suffix"/>
+          </group>
+        </group>
+      </if>
+      <else-if variable="status"><text variable="status"/></else-if>
+      <else>
+        <text macro="rd-undated"/>
+      </else>
+    </choose>
+  </macro>
+  <!-- M01.10–M01.15, S37, S39, S40: select the bibliography year or status. -->
+  <macro name="rd-entry-year">
+    <choose>
+      <if variable="issued">
+        <group delimiter=" ">
+          <date variable="original-date" prefix="(" suffix=")"><date-part name="year"/></date>
+          <group>
+            <date variable="issued"><date-part name="year"/></date>
+            <text variable="year-suffix"/>
+          </group>
+        </group>
+      </if>
+      <else-if variable="status"><text variable="status" text-case="capitalize-first"/></else-if>
+      <else>
+        <text macro="rd-undated"/>
+      </else>
+    </choose>
+  </macro>
+  <!-- S08, S43, S47: omit the page label and keep other locator labels. -->
+  <macro name="rd-pinpoint">
+    <choose>
+      <if locator="page"><text variable="locator"/></if>
+      <else><group delimiter=" "><label variable="locator" form="short"/><text variable="locator"/></group></else>
+    </choose>
+  </macro>
+  <!-- M03.07, M02.07, S27, S55: credit contributors who did not replace the author. -->
+  <macro name="rd-secondary">
+    <group delimiter=". ">
+      <choose>
+        <if variable="editor">
+          <choose>
+            <if variable="author">
+              <names delimiter=". " variable="editor translator">
+                <label form="verb" text-case="capitalize-first" suffix=" "/>
+                <name and="text"/>
+              </names>
+            </if>
+          </choose>
+        </if>
+        <else>
+          <names variable="translator">
+            <label form="verb" text-case="capitalize-first" suffix=" "/>
+            <name and="text"/>
+          </names>
+        </else>
+      </choose>
+      <!-- Give direction a separate credit after editing and translation. -->
+      <names variable="director">
+        <label suffix=" " form="verb" text-case="capitalize-first"/>
+        <name and="text"/>
+      </names>
+    </group>
+  </macro>
+  <!-- M02.07, S27, S57: place contributor credits after the container title. -->
+  <macro name="rd-container-credits">
+    <names delimiter=", " variable="editor translator">
+      <label suffix=" " form="verb"/>
+      <name and="text"/>
+    </names>
+  </macro>
+  <!-- M01.16, S03: format numeric editions as ordinals. -->
+  <macro name="rd-edition">
+    <choose>
+      <if is-numeric="edition">
+        <group delimiter=" "><number variable="edition" form="ordinal"/><label variable="edition" form="short"/></group>
+      </if>
+      <else><text variable="edition"/></else>
+    </choose>
+  </macro>
+  <!-- M01.17, S21, S45: distinguish a volume number and a volume count. -->
+  <macro name="rd-volume">
+    <choose>
+      <if variable="volume"><group delimiter=" "><label variable="volume" form="short"/><number variable="volume"/></group></if>
+      <else><group delimiter=" "><number variable="number-of-volumes"/><text term="volume" form="short" plural="true"/></group></else>
+    </choose>
+  </macro>
+  <!-- M01.18, S26, S57: attach a number to the series title. -->
+  <macro name="rd-series">
+    <choose>
+      <if is-numeric="collection-number">
+        <group delimiter=" ">
+          <text variable="collection-title" text-case="title"/>
+          <number variable="collection-number"/>
+        </group>
+      </if>
+      <else>
+        <!-- Separate a label such as 2.5 from the series title. -->
+        <group delimiter=", ">
+          <text text-case="title" variable="collection-title"/>
+          <text variable="collection-number"/>
+        </group>
+      </else>
+    </choose>
+  </macro>
+  <!-- M02, M17–M19, S21, S57: cite a work in a named collection. -->
+  <macro name="rd-book-container">
+    <choose>
+      <if variable="container-title volume-title" match="any">
+        <group delimiter=", ">
+          <!-- Join the introductory term and the title without a comma. -->
+          <group delimiter=" ">
+            <text term="in" text-case="capitalize-first"/>
+            <choose>
+              <if variable="volume-title"><text variable="volume-title" font-style="italic" text-case="title"/></if>
+              <else><text variable="container-title" font-style="italic" text-case="title"/></else>
+            </choose>
+          </group>
+          <text macro="rd-container-credits"/>
+          <text macro="rd-edition"/>
+          <choose>
+            <if variable="volume-title">
+              <group delimiter=" ">
+                <text macro="rd-volume"/>
+                <text value="of"/>
+                <text variable="container-title" font-style="italic" text-case="title"/>
+              </group>
+            </if>
+            <else><text macro="rd-volume"/></else>
+          </choose>
+        </group>
+      </if>
+      <else><text macro="rd-edition"/></else>
+    </choose>
+  </macro>
+  <!-- M01.01, M01.14, S31, S54: use place when the publisher is absent. -->
+  <macro name="rd-imprint">
+    <group delimiter=", ">
+      <choose>
+        <if variable="publisher"><text variable="publisher"/></if>
+        <else><text variable="publisher-place"/></else>
+      </choose>
+      <choose>
+        <if variable="issued">
+          <choose>
+            <if variable="publisher publisher-place" match="any"><text variable="status"/></if>
+            <else><text variable="status" text-case="capitalize-first"/></else>
+          </choose>
+        </if>
+      </choose>
+    </group>
+  </macro>
+  <!-- M05.11–M05.12, S20, S29: render the date within the publication year. -->
+  <macro name="rd-calendar">
+    <date variable="issued" delimiter=" ">
+      <date-part name="month"/>
+      <date-part name="day"/>
+    </date>
+  </macro>
+  <!-- M05.14, M09.14, M13.14: put a status before the publication date. -->
+  <macro name="rd-calendar-status">
+    <choose>
+      <if variable="issued">
+        <!-- The main date field displays the status when no date exists. -->
+        <group delimiter=" ">
+          <choose>
+            <if variable="status">
+              <choose>
+                <if type="webpage article-newspaper post-weblog" match="any"><text variable="status" text-case="capitalize-first"/></if>
+                <else><text variable="status"/></else>
+              </choose>
+            </if>
+            <else-if type="software"><text value="released"/></else-if>
+          </choose>
+          <text macro="rd-calendar"/>
+        </group>
+      </if>
+    </choose>
+  </macro>
+  <!-- M03, M04, S06, S25, S27: render the journal's volume, issue and pages. -->
+  <macro name="rd-journal">
+    <choose>
+      <if variable="volume issue" match="any">
+        <group delimiter=": ">
+          <!-- The colon separates the pagination from the serial details. -->
+          <group delimiter=" ">
+            <group delimiter=", ">
+              <text variable="container-title" font-style="italic" text-case="title"/>
+              <text variable="collection-title"/>
+              <choose>
+                <if variable="collection-title"><text macro="rd-volume"/></if>
+                <else-if variable="author editor translator" match="none">
+                  <choose>
+                    <if type="article-magazine"><text macro="rd-volume" text-case="capitalize-first"/></if>
+                  </choose>
+                </else-if>
+              </choose>
+            </group>
+            <choose>
+              <if variable="collection-title" match="none">
+                <choose>
+                  <if type="article-magazine">
+                    <choose><if variable="author editor translator" match="any"><number variable="volume"/></if></choose>
+                  </if>
+                  <else><number variable="volume"/></else>
+                </choose>
+              </if>
+            </choose>
+            <choose>
+              <if variable="volume issue" match="all"><number variable="issue" prefix="(" suffix=")"/></if>
+              <else>
+                <group delimiter=" ">
+                  <group delimiter=" " prefix=", ">
+                    <label variable="issue" form="short"/>
+                    <number variable="issue"/>
+                  </group>
+                  <date variable="issued" prefix="(" suffix=")"><date-part name="month"/></date>
+                </group>
+              </else>
+            </choose>
+          </group>
+          <text variable="page"/>
+        </group>
+      </if>
+      <else>
+        <group delimiter=", ">
+          <text variable="container-title" font-style="italic" text-case="title"/>
+          <text macro="rd-calendar"/>
+          <text variable="page"/>
+        </group>
+      </else>
+    </choose>
+  </macro>
+  <!-- M06, S32, S51: format an unedited proceeding or a conference event. -->
+  <macro name="rd-conference">
+    <choose>
+      <if variable="editor">
+        <group delimiter=". ">
+          <text macro="rd-book-container"/>
+          <text macro="rd-series"/>
+          <text macro="rd-imprint"/>
+        </group>
+      </if>
+      <else-if variable="container-title">
+        <group delimiter=", ">
+          <group delimiter=". ">
+            <group delimiter=", ">
+              <text variable="container-title" font-style="italic" text-case="title"/>
+              <text variable="collection-title"/>
+              <text macro="rd-calendar-status"/>
+            </group>
+            <text macro="rd-edition"/>
+          </group>
+          <text variable="page"/>
+        </group>
+      </else-if>
+      <else>
+        <group delimiter=". ">
+          <group delimiter=", ">
+            <!-- Introduce the event as a presentation. -->
+            <group delimiter=" ">
+              <text value="Paper"/>
+              <text value="presented at"/>
+              <text variable="event-title"/>
+            </group>
+            <date variable="event-date" form="text"/>
+            <text variable="event-place"/>
+          </group>
+          <text macro="rd-calendar-status"/>
+        </group>
+      </else>
+    </choose>
+  </macro>
+  <!-- M05, M09, M10, S29, S42: format dated periodicals and web publications. -->
+  <macro name="rd-news">
+    <group delimiter=", ">
+      <choose>
+        <if type="webpage"><text variable="container-title" text-case="title"/></if>
+        <else><text variable="container-title" font-style="italic" text-case="title"/></else>
+      </choose>
+      <choose>
+        <if type="article-newspaper post-weblog" match="any"><text variable="collection-title"/></if>
+      </choose>
+      <text macro="rd-calendar-status"/>
+    </group>
+  </macro>
+  <!-- M15, M16: render a reporter citation or patent number. -->
+  <macro name="rd-legal">
+    <choose>
+      <if type="legal_case">
+        <group delimiter=", ">
+          <text variable="title" text-case="title"/>
+          <group delimiter=" ">
+            <number variable="volume"/>
+            <text variable="container-title"/>
+            <!-- Place the page before the court and year. -->
+            <text variable="page"/>
+            <group delimiter=" " prefix="(" suffix=")">
+              <text variable="authority"/>
+              <date variable="issued"><date-part name="year"/></date>
+            </group>
+          </group>
+        </group>
+      </if>
+      <else>
+        <group delimiter=", ">
+          <!-- Identify the patent authority and number before its date. -->
+          <group delimiter=" ">
+            <text variable="authority"/>
+            <text term="patent" text-case="capitalize-first"/>
+            <text variable="number"/>
+          </group>
+          <date variable="issued" form="text" prefix="issued "/>
+        </group>
+      </else>
+    </choose>
+  </macro>
+  <!-- M18, M19: credit a preprint and identify its series and issue. -->
+  <macro name="rd-working-paper">
+    <group delimiter=". ">
+      <text variable="genre"/>
+      <text macro="rd-book-container"/>
+      <group delimiter=", ">
+        <group delimiter=", ">
+          <text variable="collection-title" text-case="title"/>
+          <group delimiter=" ">
+            <text term="volume" form="short"/>
+            <text variable="collection-number"/>
+          </group>
+        </group>
+        <group delimiter=" "><label variable="issue" form="short"/><number variable="issue"/></group>
+      </group>
+      <group delimiter=", ">
+        <choose><if variable="genre" match="none"><text term="preprint" text-case="capitalize-first"/></if></choose>
+        <text variable="publisher"/>
+        <text macro="rd-calendar-status"/>
+      </group>
+    </group>
+  </macro>
+  <!-- M01, M07, M08, M11–M14: identify the edition, publisher and medium. -->
+  <macro name="rd-standalone">
+    <group delimiter=". ">
+      <choose>
+        <if type="motion_picture"><text variable="genre" text-case="capitalize-first"/></if>
+        <else><text variable="number"/></else>
+      </choose>
+      <choose>
+        <if type="software"><text variable="version" prefix="V. "/></if>
+        <else-if type="dataset"><text variable="version" prefix="Version "/></else-if>
+      </choose>
+      <choose>
+        <if type="motion_picture">
+          <text macro="rd-edition"/>
+          <text macro="rd-secondary"/>
+        </if>
+        <else>
+          <text macro="rd-secondary"/>
+          <text macro="rd-edition"/>
+        </else>
+      </choose>
+      <choose>
+        <if variable="container-title"><text macro="rd-book-container"/></if>
+        <else><text macro="rd-volume"/></else>
+      </choose>
+      <text macro="rd-series"/>
+      <choose>
+        <if type="thesis">
+          <group delimiter=", ">
+            <text variable="genre"/>
+            <text macro="rd-imprint"/>
+          </group>
+        </if>
+        <else-if type="dataset software manuscript" match="any">
+          <group delimiter=", ">
+            <text variable="publisher"/>
+            <choose>
+              <if type="software">
+                <choose>
+                  <if variable="author editor translator" match="any"><text macro="rd-calendar-status"/></if>
+                  <else><text macro="rd-calendar-status" text-case="capitalize-first"/></else>
+                </choose>
+              </if>
+              <else><text macro="rd-calendar-status"/></else>
+            </choose>
+          </group>
+        </else-if>
+        <else><text macro="rd-imprint"/></else>
+      </choose>
+      <text variable="medium" text-case="capitalize-first"/>
+      <text variable="archive_location"/>
+      <text variable="archive"/>
+    </group>
+  </macro>
+  <!-- M01–M19: order publication details after the title by work type. -->
+  <macro name="rd-where">
+    <choose>
+      <if type="chapter entry-encyclopedia entry-dictionary" match="any">
+        <group delimiter=". ">
+          <text macro="rd-book-container"/>
+          <text macro="rd-series"/>
+          <choose>
+            <if type="entry-encyclopedia entry-dictionary" match="any">
+              <choose>
+                <if variable="DOI URL" match="any">
+                  <group delimiter=", "><text macro="rd-imprint"/><text macro="rd-calendar"/></group>
+                </if>
+                <else><text macro="rd-imprint"/></else>
+              </choose>
+            </if>
+            <else><text macro="rd-imprint"/></else>
+          </choose>
+        </group>
+      </if>
+      <else-if type="article"><text macro="rd-working-paper"/></else-if>
+      <else-if type="article-journal article-magazine" match="any">
+        <group delimiter=". ">
+          <text macro="rd-secondary"/>
+          <text macro="rd-journal"/>
+        </group>
+      </else-if>
+      <else-if type="article-newspaper webpage post-weblog" match="any">
+        <group delimiter=". ">
+          <text variable="section"/>
+          <text variable="genre"/>
+          <text macro="rd-secondary"/>
+          <choose><if type="webpage"><group delimiter=". "><text macro="rd-edition"/><text macro="rd-volume"/></group></if></choose>
+          <text macro="rd-news"/>
+          <choose><if type="post-weblog"><text macro="rd-edition"/></if></choose>
+        </group>
+      </else-if>
+      <else-if type="paper-conference">
+        <group delimiter=". ">
+          <choose><if variable="editor" match="none"><text macro="rd-secondary"/></if></choose>
+          <text macro="rd-conference"/>
+        </group>
+      </else-if>
+      <else-if type="patent"><text macro="rd-legal"/></else-if>
+      <else><text macro="rd-standalone"/></else>
+    </choose>
+  </macro>
+  <!-- S50, S54: include an access date for an undated item with a URL. -->
+  <macro name="rd-accessed-on">
+    <choose>
+      <if variable="issued" match="none">
+        <choose>
+          <if variable="accessed">
+            <text text-case="capitalize-first" term="accessed" suffix=" "/>
+            <date form="text" variable="accessed"/>
+          </if>
+        </choose>
+      </if>
+    </choose>
+  </macro>
+  <!-- M01.19–M01.20, S14: prefer the DOI when both identifiers exist. -->
+  <macro name="rd-access">
+    <choose>
+      <if variable="DOI"><text variable="DOI" prefix="https://doi.org/"/></if>
+      <else-if variable="URL">
+        <group delimiter=". ">
+          <text macro="rd-accessed-on"/>
+          <text variable="URL"/>
+        </group>
+      </else-if>
+    </choose>
+  </macro>
+
+  <!-- S39: sort entries with dates before entries without dates. -->
+  <macro name="rd-sort-dated">
+    <choose>
+      <if variable="issued"><text value="0"/></if>
+      <else><text value="1"/></else>
+    </choose>
+  </macro>
+  <!-- S29: sort by year, then by the publication type and date for equal titles. -->
+  <macro name="rd-sort-year">
+    <date variable="issued" form="numeric" date-parts="year"/>
+  </macro>
+  <!-- S29: place web pages before newspaper entries with the same title. -->
+  <macro name="rd-sort-publication">
+    <choose>
+      <if type="webpage"><text value="1"/></if>
+      <else-if type="article-newspaper"><text value="2"/></else-if>
+    </choose>
+  </macro>
+  <!-- S29: compare the month range before comparing individual days. -->
+  <macro name="rd-sort-month">
+    <date variable="issued" form="numeric" date-parts="year-month"/>
+  </macro>
+
+  <citation et-al-min="3" et-al-use-first="1" disambiguate-add-givenname="true"
+            givenname-disambiguation-rule="by-cite" disambiguate-add-year-suffix="true"
+            collapse="year">
+    <layout delimiter="; " prefix="(" suffix=")">
+      <group delimiter=", ">
+        <choose>
+          <if variable="issued"><group delimiter=" "><text macro="rd-who"/><text macro="rd-when"/></group></if>
+          <else>
+            <text macro="rd-who"/>
+            <choose>
+              <if type="entry-encyclopedia entry-dictionary" match="any">
+                <choose><if variable="status"><text macro="rd-when"/></if></choose>
+              </if>
+              <else><text macro="rd-when"/></else>
+            </choose>
+          </else>
+        </choose>
+        <choose>
+          <if type="entry-encyclopedia entry-dictionary" match="any">
+            <choose>
+              <if variable="author" match="none"><text variable="title" quotes="true" prefix="under "/></if>
+            </choose>
+          </if>
+        </choose>
+        <text macro="rd-pinpoint"/>
+      </group>
+    </layout>
+  </citation>
+  <bibliography hanging-indent="true" et-al-min="11" et-al-use-first="3">
+    <sort>
+      <key macro="rd-sort-heading"/>
+      <key macro="rd-sort-dated"/>
+      <key macro="rd-sort-year"/>
+      <key variable="original-date"/>
+      <key variable="title"/>
+      <key macro="rd-sort-publication"/>
+      <key macro="rd-sort-month"/>
+      <key variable="issued"/>
+    </sort>
+    <layout suffix=".">
+      <choose>
+        <if type="legal_case"><group delimiter=". "><text macro="rd-legal"/><text macro="rd-access"/></group></if>
+        <else-if type="entry-encyclopedia entry-dictionary" match="any">
+          <choose>
+            <if variable="author">
+              <group delimiter=". ">
+                <text macro="rd-entry-heading"/>
+                <text macro="rd-entry-year"/>
+                <text macro="rd-title"/>
+                <text macro="rd-where"/>
+                <text macro="rd-access"/>
+              </group>
+            </if>
+          </choose>
+        </else-if>
+        <else>
+          <group delimiter=". ">
+            <text macro="rd-entry-heading"/>
+            <text macro="rd-entry-year"/>
+            <text macro="rd-title"/>
+            <text macro="rd-where"/>
+            <text macro="rd-access"/>
+          </group>
+        </else>
+      </choose>
+    </layout>
+  </bibliography>
+</style>

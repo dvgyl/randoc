@@ -86,3 +86,20 @@ version 2 text (http://www.wtfpl.net/).
 
   0. You just DO WHAT THE FUCK YOU WANT TO.
 ```
+
+## Citation data
+
+Randoc prepared `data/csl/terms.tsv`, `data/csl/locales.tsv` and
+`data/csl/randoc-author-date.csl` under `MIT OR Apache-2.0`.
+
+The locale tables use the term identifiers and syntax from the
+[CSL 1.0.2 specification](https://docs.citationstyles.org/en/stable/specification.html).
+Rows marked `linguistic` use independent linguistic knowledge and
+bibliographic conventions. An empty author label lets a style print the
+author name alone. Rows marked `observed` use targeted tests with
+Pandoc 3.13. The `L-<tag>` rows in the
+[probe log](../../docs/csl/probe-log.tsv) record these values.
+
+The Randoc Author–Date style uses independent macros and rules from the
+[author-date behaviour specification](../../docs/csl/author-date-behaviour.md).
+The specification records Pandoc 3.13 output for synthetic inputs.

@@ -598,6 +598,7 @@ pub fn markup_to_inlines(
                     MarkupStyle::SmallCaps => add_font_variant(FontVariant::SmallCaps, inner),
                     MarkupStyle::Superscript => add_vertical_align(VerticalAlign::Sup, inner),
                     MarkupStyle::Subscript => add_vertical_align(VerticalAlign::Sub, inner),
+                    MarkupStyle::PlainSpan => vec![Inline::Span(Attr::default(), inner)],
                     MarkupStyle::NoCase => add_text_case(
                         locale.language.as_ref(),
                         TextCase::PreserveCase,

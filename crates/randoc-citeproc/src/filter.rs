@@ -140,18 +140,21 @@ pub fn process_citations(context: &mut Context, doc: &mut Pandoc, mut hooks: Hoo
     };
     let locale = crate::loader::style_locale(context, &style, lang.as_ref())?;
 
-    let references = collect_references(context, doc, &mut hooks)?
-        .into_iter()
-        .map(|reference| to_inlines(reference, &locale, max_depth))
-        .collect::<Result<Vec<_>>>()?;
+    let mut ris_ids = Vec::new();
+    let references = load_references(context, doc, &mut hooks, |entries| {
+        ris_ids.extend(entries.iter().map(|entry| entry.id.clone()));
+    })?
+    .into_iter()
+    .map(|reference| to_inlines(reference, &locale, max_depth))
+    .collect::<Result<Vec<_>>>()?;
     let abbreviations = match meta_text(doc, "citation-abbreviations") {
         Some(file) => Some(read_abbreviations(context, &file, &mut hooks)?),
         None => None,
     };
 
-    let terms = locator_terms(&locale);
+    let terms = locator_terms(&locale, &LOCATOR_NAMES);
     let collected = collect_citations(doc, &terms);
-    let mut nocite: Vec<String> = Vec::new();
+    let mut nocite = ris_ids;
     if let Some(value) = doc.meta.get("nocite") {
         walk::query_inlines(value, |inline| {
             if let Inline::Cite(citations, _) = inline {
@@ -240,9 +243,10 @@ pub fn process_citations(context: &mut Context, doc: &mut Pandoc, mut hooks: Hoo
             .into_iter()
             .map(|(id, inlines)| {
                 let mut inlines = clean_quotes(inlines);
-                if style.options.second_field_align.is_some()
-                    && let Some(Inline::Span(attr, content)) = inlines.first_mut()
-                    && attr.classes == ["csl-left-margin"]
+                if let [Inline::Span(left, content), Inline::Span(right, _), ..] =
+                    inlines.as_mut_slice()
+                    && left.classes == ["csl-left-margin"]
+                    && right.classes == ["csl-right-inline"]
                     && !matches!(content.last(), Some(Inline::Space))
                 {
                     content.push(Inline::Space);
@@ -267,11 +271,24 @@ pub fn collect_references(
     doc: &Pandoc,
     hooks: &mut Hooks<'_>,
 ) -> Result<Vec<Reference<Vec<Markup>>>> {
+    load_references(context, doc, hooks, |_| {})
+}
+
+fn load_references(
+    context: &mut Context,
+    doc: &Pandoc,
+    hooks: &mut Hooks<'_>,
+    mut include_ris: impl FnMut(&[Reference<Vec<Markup>>]),
+) -> Result<Vec<Reference<Vec<Markup>>>> {
     let max_depth = context.limits.max_nesting_depth;
     let mut references = Vec::new();
     let mut budget = context.limits.max_resource_size;
     for file in bibliography_files(doc) {
-        references.extend(read_bibliography(context, &file, hooks, &mut budget)?);
+        let entries = read_bibliography(context, &file, hooks, &mut budget)?;
+        if matches!(format_of(&file), Some(Format::Bib(BibFormat::Ris))) {
+            include_ris(&entries);
+        }
+        references.extend(entries);
     }
     if let Some(MetaValue::MetaList(items)) = doc.meta.get("references") {
         for item in items {
@@ -806,9 +823,9 @@ const LOCATOR_NAMES: [&str; 17] = [
     "volume",
 ];
 
-fn locator_terms(locale: &Locale) -> Vec<(String, String)> {
+fn locator_terms(locale: &Locale, names: &[&str]) -> Vec<(String, String)> {
     let mut out: Vec<(String, String)> = Vec::new();
-    for name in LOCATOR_NAMES {
+    for &name in names {
         for (_, text) in locale.terms.get(name).into_iter().flatten() {
             let text = text.to_lowercase();
             if !text.is_empty() && !out.iter().any(|(t, _)| *t == text) {
@@ -823,22 +840,19 @@ fn locator_terms(locale: &Locale) -> Vec<(String, String)> {
 
 /// A unit of a suffix for the locator parser.
 #[derive(Debug, Clone)]
-enum Unit {
+enum Unit<'a> {
     Char(char),
     Space,
-    Other(String, Inline),
+    Other(&'a Inline),
 }
 
-fn units(inlines: &[Inline]) -> Vec<Unit> {
+fn units(inlines: &[Inline]) -> Vec<Unit<'_>> {
     let mut out = Vec::new();
     for inline in inlines {
         match inline {
             Inline::Str(text) => out.extend(text.chars().map(Unit::Char)),
             Inline::Space | Inline::SoftBreak => out.push(Unit::Space),
-            other => out.push(Unit::Other(
-                stringify(std::slice::from_ref(other)),
-                other.clone(),
-            )),
+            other => out.push(Unit::Other(other)),
         }
     }
     out
@@ -847,7 +861,7 @@ fn units(inlines: &[Inline]) -> Vec<Unit> {
 /// The inlines of the units after a locator. Pandoc's parser splits the
 /// text at each punctuation character and each space character, and the
 /// rest keeps the parts.
-fn units_to_inlines(units: &[Unit]) -> Vec<Inline> {
+fn units_to_inlines(units: &[Unit<'_>]) -> Vec<Inline> {
     let mut out = Vec::new();
     let mut text = String::new();
     for unit in units {
@@ -867,11 +881,11 @@ fn units_to_inlines(units: &[Unit]) -> Vec<Inline> {
                 }
                 out.push(Inline::Space);
             }
-            Unit::Other(_, inline) => {
+            Unit::Other(inline) => {
                 if !text.is_empty() {
                     out.push(Inline::Str(std::mem::take(&mut text)));
                 }
-                out.push(inline.clone());
+                out.push((*inline).clone());
             }
         }
     }
@@ -881,23 +895,85 @@ fn units_to_inlines(units: &[Unit]) -> Vec<Inline> {
     out
 }
 
-fn units_text(units: &[Unit]) -> String {
+fn units_text(units: &[Unit<'_>]) -> String {
     units
         .iter()
         .map(|u| match u {
             Unit::Char(c) => c.to_string(),
             Unit::Space => " ".to_owned(),
-            Unit::Other(text, _) => text.clone(),
+            Unit::Other(inline) => stringify(std::slice::from_ref(*inline)),
         })
         .collect()
 }
 
-fn is_space_unit(unit: Option<&Unit>) -> bool {
+fn is_space_unit(unit: Option<&Unit<'_>>) -> bool {
     match unit {
         Some(Unit::Space) => true,
         Some(Unit::Char(c)) => c.is_whitespace(),
         _ => false,
     }
+}
+
+/// The position immediately after a page label and its following spaces.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PageLabel {
+    /// The index of the first inline to keep.
+    pub inline_index: usize,
+    /// The number of initial bytes to remove from that inline if it is text.
+    pub byte_offset: usize,
+}
+
+/// Finds an explicit page label that BibLaTeX will supply itself.
+///
+/// An absent or invalid language uses English. A valid language without
+/// an exact or primary locale has no page labels.
+pub fn biblatex_page_label(suffix: &[Inline], lang: Option<&str>) -> Option<PageLabel> {
+    let language = lang
+        .and_then(|tag| parse_lang(tag).ok())
+        .unwrap_or_else(crate::lang::Lang::en_us);
+    let locale =
+        crate::loader::builtin_locale(&crate::locale::locale_code(&language)).or_else(|| {
+            let dialect = crate::locale::primary_dialect(&language)?;
+            crate::loader::builtin_locale(&crate::locale::locale_code(&dialect))
+        })?;
+    let terms = locator_terms(locale, &["page"]);
+    let us = units(suffix);
+    let mut start = usize::from(matches!(us.first(), Some(Unit::Char(','))));
+    while is_space_unit(us.get(start)) {
+        start += 1;
+    }
+    if matches!(us.get(start), Some(Unit::Char('{'))) {
+        start += 1;
+        while is_space_unit(us.get(start)) {
+            start += 1;
+        }
+    }
+    let (_, mut after) = match_label(&terms, &us, start)?;
+    while is_space_unit(us.get(after)) {
+        after += 1;
+    }
+    locator_word(&us, after, true)?;
+
+    // Each character in a Str is one unit. Every other inline is one unit.
+    for (inline_index, inline) in suffix.iter().enumerate() {
+        if let Inline::Str(text) = inline {
+            if let Some((byte_offset, _)) = text.char_indices().nth(after) {
+                return Some(PageLabel {
+                    inline_index,
+                    byte_offset,
+                });
+            }
+            after -= text.chars().count();
+        } else if after == 0 {
+            return Some(PageLabel {
+                inline_index,
+                byte_offset: 0,
+            });
+        } else {
+            after -= 1;
+        }
+    }
+    None
 }
 
 /// The locator of a suffix and the rest of the suffix (Pandoc's heuristic,
@@ -995,7 +1071,11 @@ fn parse_locator(
 
 /// The longest locator term at `start`, and the place after it. A term
 /// that ends with a letter cannot go on with a letter or a digit.
-fn match_label(terms: &[(String, String)], us: &[Unit], start: usize) -> Option<(String, usize)> {
+fn match_label(
+    terms: &[(String, String)],
+    us: &[Unit<'_>],
+    start: usize,
+) -> Option<(String, usize)> {
     let mut text = String::new();
     let mut ends = Vec::new();
     for (n, unit) in us.iter().enumerate().skip(start) {
@@ -1038,15 +1118,16 @@ fn is_word_char(c: char) -> bool {
 /// One word of a locator at `start` and the place after it. A word needs a
 /// digit; after an explicit label a roman numeral (or a range of them) also
 /// counts. A final period is not part of the word.
-fn locator_word(us: &[Unit], start: usize, roman: bool) -> Option<(String, usize)> {
+fn locator_word(us: &[Unit<'_>], start: usize, roman: bool) -> Option<(String, usize)> {
     let (word, end) = match us.get(start)? {
-        Unit::Other(_, Inline::Math(..)) => return None,
+        Unit::Other(Inline::Math(..)) => return None,
         // Formatted text counts only with a digit.
-        Unit::Other(text, _) => {
+        Unit::Other(inline) => {
+            let text = stringify(std::slice::from_ref(*inline));
             return text
                 .chars()
                 .any(|c| c.is_ascii_digit())
-                .then(|| (text.clone(), start + 1));
+                .then_some((text, start + 1));
         }
         Unit::Char(_) => {
             let mut end = start;
@@ -1297,6 +1378,22 @@ fn drop_doubled_periods(inlines: &mut Vec<Inline>) {
     }
 }
 
+/// Removes empty text nodes from inlines rebuilt after a punctuation move.
+struct RemoveEmptyText;
+
+impl walk::VisitorMut for RemoveEmptyText {
+    fn inlines(&mut self, inlines: &mut Vec<Inline>) {
+        inlines.retain(|inline| !matches!(inline, Inline::Str(text) if text.is_empty()));
+    }
+}
+
+fn leading_punctuation(text: &str) -> &str {
+    let end = text
+        .find(|c| !matches!(c, '.' | ',' | ';' | ':' | '!' | '?'))
+        .unwrap_or(text.len());
+    &text[..end]
+}
+
 impl walk::VisitorMut for MoveNotes {
     fn inlines(&mut self, inlines: &mut Vec<Inline>) {
         drop_doubled_periods(inlines);
@@ -1308,28 +1405,41 @@ impl walk::VisitorMut for MoveNotes {
         }
         let old = std::mem::take(inlines);
         let mut out: Vec<Inline> = Vec::with_capacity(old.len());
-        let mut iter = old.into_iter().peekable();
-        while let Some(inline) = iter.next() {
+        let mut iter = old.into_iter();
+        let mut next_inline = iter.next();
+        let mut after_note = false;
+        let mut rebuilt_at = None;
+        while let Some(inline) = next_inline.take() {
+            next_inline = iter.next();
+            let follows_moved_note = std::mem::take(&mut after_note);
             match inline {
-                Inline::Space | Inline::SoftBreak if matches!(iter.peek(), Some(Inline::Cite(_, content)) if starts_with_note(content)) =>
+                Inline::Space | Inline::SoftBreak if matches!(&next_inline, Some(Inline::Cite(_, content)) if starts_with_note(content)) =>
                     {}
                 Inline::Cite(citations, mut content)
                     if self.after_punctuation && ends_with_note(&content) =>
                 {
-                    let punctuation = match iter.peek() {
-                        Some(Inline::Str(text)) => text
-                            .chars()
-                            .take_while(|c| matches!(c, '.' | ',' | ';' | ':' | '!' | '?'))
-                            .collect::<String>(),
-                        _ => String::new(),
+                    let punctuation = match &next_inline {
+                        Some(Inline::Str(text)) => leading_punctuation(text),
+                        _ => "",
                     };
                     if punctuation.is_empty() {
                         out.push(Inline::Cite(citations, content));
                         continue;
                     }
-                    if let Some(Inline::Str(text)) = iter.next() {
-                        let rest = &text[punctuation.len()..];
-                        if content.len() == 1 {
+                    let punctuation_end = punctuation.len();
+                    if let Some(Inline::Str(text)) = next_inline.take() {
+                        next_inline = iter.next();
+                        let (punctuation, rest) = text.split_at(punctuation_end);
+                        if content.len() == 1 && !follows_moved_note {
+                            let mut punctuation = punctuation.to_owned();
+                            // Two notes with no text or space between them can share
+                            // the punctuation before the first note.
+                            if rest.is_empty()
+                                && matches!(&next_inline, Some(Inline::Cite(_, next)) if starts_with_note(next))
+                                && let Some(Inline::Str(next)) = iter.as_slice().first()
+                            {
+                                punctuation.push_str(leading_punctuation(next));
+                            }
                             match out.last_mut() {
                                 Some(Inline::Quoted(_, quoted))
                                     if self.punctuation_in_quote
@@ -1339,20 +1449,30 @@ impl walk::VisitorMut for MoveNotes {
                                 }
                                 _ => out.push(Inline::Str(punctuation)),
                             }
-                            out.push(Inline::Cite(citations, content));
-                        } else {
-                            let note = content.pop().unwrap_or(Inline::Space);
-                            content.push(Inline::Str(punctuation));
+                        } else if let Some(note) = content.last_mut() {
+                            let note = std::mem::replace(note, Inline::Str(punctuation.to_owned()));
                             content.push(note);
-                            out.push(Inline::Cite(citations, content));
                         }
-                        if !rest.is_empty() {
+                        out.push(Inline::Cite(citations, content));
+                        rebuilt_at.get_or_insert(out.len());
+                        if rest.is_empty() {
+                            after_note = true;
+                            if matches!(next_inline, Some(Inline::Space | Inline::SoftBreak)) {
+                                next_inline = iter.next();
+                                out.push(Inline::Space);
+                            }
+                        } else {
                             out.push(Inline::Str(rest.to_owned()));
                         }
                     }
                 }
                 other => out.push(other),
             }
+        }
+        if let Some(start) = rebuilt_at {
+            let mut tail = out.split_off(start);
+            walk::walk_mut(&mut tail, &mut RemoveEmptyText);
+            out.extend(tail);
         }
         *inlines = out;
     }

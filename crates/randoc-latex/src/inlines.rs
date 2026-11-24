@@ -631,7 +631,7 @@ impl LatexWriter<'_> {
     ) -> Result<Doc> {
         let prefix_doc = self.inlines(prefix)?;
         let mut suffix_doc = Doc::default();
-        for piece in clean_suffix(suffix, biblatex) {
+        for piece in clean_suffix(suffix, biblatex, self.citation_lang.as_deref()) {
             suffix_doc += match piece {
                 SuffixPiece::Text(text) => literal(self.escape(StringContext::Text, &text)),
                 SuffixPiece::Inline(inline) => self.inline(inline)?,
@@ -791,9 +791,6 @@ fn quote_meets_quote(previous: Option<&Inline>, current: &Inline) -> bool {
     ends_with_quote && starts_with_quote && one_quoted
 }
 
-/// The labels of page locators, which biblatex adds itself.
-const PAGE_LABELS: &[&str] = &["pp.", "p.", "pages", "page"];
-
 /// One part of a cleaned citation suffix.
 #[derive(Debug, PartialEq)]
 enum SuffixPiece<'a> {
@@ -815,7 +812,11 @@ fn is_space(piece: &SuffixPiece<'_>) -> bool {
 
 /// Removes a leading comma and locator braces from a citation suffix. For
 /// biblatex it also removes a page label.
-fn clean_suffix(suffix: &[Inline], biblatex: bool) -> Vec<SuffixPiece<'_>> {
+fn clean_suffix<'a>(
+    suffix: &'a [Inline],
+    biblatex: bool,
+    lang: Option<&str>,
+) -> Vec<SuffixPiece<'a>> {
     let mut items: Vec<SuffixPiece<'_>> = suffix
         .iter()
         .map(|inline| match inline {
@@ -836,22 +837,12 @@ fn clean_suffix(suffix: &[Inline], biblatex: bool) -> Vec<SuffixPiece<'_>> {
         }
     }
     if biblatex {
-        let first = after_spaces(&items, start);
-        let space_after = items.get(first + 1).is_some_and(is_space);
-        if let Some(SuffixPiece::Text(text)) = items.get_mut(first)
-            && let Some(rest) = PAGE_LABELS
-                .iter()
-                .find_map(|label| text.strip_prefix(label))
-        {
-            if let Some(value) = rest.strip_prefix('\u{a0}') {
-                *text = value.to_owned();
-                start = first;
-            } else if rest.is_empty() && space_after {
-                start = after_spaces(&items, first + 1);
+        if let Some(label) = randoc_citeproc::biblatex_page_label(suffix, lang) {
+            start = label.inline_index;
+            if let Some(Inline::Str(text)) = suffix.get(start) {
+                items[start] = SuffixPiece::Text(text[label.byte_offset..].replace(['{', '}'], ""));
             }
         }
-    }
-    if biblatex {
         // Biblatex sets the leading locators itself, so their emphasis goes.
         for piece in items.iter_mut().skip(start) {
             match piece {
@@ -1070,11 +1061,11 @@ mod tests {
             Inline::Space,
             Inline::Str("p.\u{a0}3".into()),
         ];
-        assert_eq!(clean_suffix(&suffix, false), vec![text("p.\u{a0}3")]);
-        assert_eq!(clean_suffix(&suffix, true), vec![text("3")]);
+        assert_eq!(clean_suffix(&suffix, false, None), vec![text("p.\u{a0}3")]);
+        assert_eq!(clean_suffix(&suffix, true, None), vec![text("3")]);
         let spaced = vec![Inline::Space, Inline::Str("{p.}".into())];
         assert_eq!(
-            clean_suffix(&spaced, false),
+            clean_suffix(&spaced, false, None),
             vec![SuffixPiece::Inline(&Inline::Space), text("p.")]
         );
         let labelled = vec![
@@ -1083,8 +1074,8 @@ mod tests {
             Inline::Space,
             Inline::Str("3".into()),
         ];
-        assert_eq!(clean_suffix(&labelled, true), vec![text("3")]);
+        assert_eq!(clean_suffix(&labelled, true, None), vec![text("3")]);
         let comma_word = vec![Inline::Str(",x".into())];
-        assert_eq!(clean_suffix(&comma_word, false), vec![text("x")]);
+        assert_eq!(clean_suffix(&comma_word, false, None), vec![text("x")]);
     }
 }

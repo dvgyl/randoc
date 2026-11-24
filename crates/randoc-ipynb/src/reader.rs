@@ -8,13 +8,11 @@ use randoc_archive::media::{
     base64_decode_lenient, decode_percent_bytes, extension_for_mime, sha1_hex,
 };
 use randoc_ast::{
-    Attr, Block, Format, Inline, ListNumberDelim, ListNumberStyle, Meta, MetaValue, Pandoc, Target,
+    Attr, Block, Format, Inline, Meta, MetaValue, Pandoc, Target,
     json::{JsonKind, JsonValue, parse_value},
-    walk::{VisitorMut, walk_inlines_mut, walk_mut},
+    walk::walk_inlines_mut,
 };
-use randoc_core::{
-    Context, Extension, IpynbOutput, MediaItem, Reader, ReaderOptions, Result, Sources, TextReader,
-};
+use randoc_core::{Context, Extension, IpynbOutput, MediaItem, ReaderOptions, Result, Sources};
 
 fn required<'a>(map: &Object<'a>, key: &str) -> Result<JsonValue<'a>> {
     map.get(key).copied().ok_or_else(invalid)
@@ -201,45 +199,14 @@ impl Notebook<'_> {
                     source = format!("{} {source}", "#".repeat(level));
                     attr.classes[1] = "markdown".into();
                 }
-                let Some(Reader::Text(reader)) = randoc_commonmark::reader("commonmark_x") else {
-                    return Err(invalid());
-                };
                 let mut options = self.options.clone();
                 options.standalone = false;
-                if options.extensions.contains(Extension::InlineCodeAttributes) {
-                    options.extensions.enable(Extension::Attributes);
-                }
-                let escaped_space = source.contains("\\ ");
-                let mut blocks = reader
-                    .read(&Sources::from_text(source), &options, self.context)?
-                    .blocks;
-                let mut normalize = MarkdownCell {
-                    reader: reader.as_ref(),
-                    options: &options,
-                    context: self.context,
-                    escaped_space,
-                    status: Ok(()),
-                };
-                walk_mut(&mut blocks, &mut normalize);
-                normalize.status?;
+                let mut blocks =
+                    randoc_markdown::read_markdown(&source, "", &options, self.context)?.blocks;
                 let attachments = optional_object(cell, "attachments")?;
                 let mut media = Ok(());
                 let mut resolved = HashSet::new();
                 walk_inlines_mut(&mut blocks, |inline| {
-                    if let Inline::Link(attr, label, target) = inline
-                        && attr.is_empty()
-                        && target.title.is_empty()
-                        && let [Inline::Str(text)] = label.as_slice()
-                    {
-                        if target.url.strip_prefix("mailto:") == Some(text) {
-                            attr.classes.push("email".into());
-                        } else if target.url == *text {
-                            attr.classes.push("uri".into());
-                        }
-                    }
-                    if let Inline::Math(_, text) = inline {
-                        *text = text.trim().into();
-                    }
                     if let Inline::Image(_, _, target) = inline
                         && let Some(name) = target.url.strip_prefix("attachment:")
                     {
@@ -510,138 +477,4 @@ fn strip_terminal(text: &str) -> String {
         }
     }
     out
-}
-
-struct MarkdownCell<'a> {
-    reader: &'a dyn TextReader,
-    options: &'a ReaderOptions,
-    context: &'a mut Context,
-    escaped_space: bool,
-    status: Result<()>,
-}
-
-impl VisitorMut for MarkdownCell<'_> {
-    fn inlines(&mut self, nodes: &mut Vec<Inline>) {
-        if self.escaped_space {
-            normalize_escaped_spaces(nodes);
-        }
-    }
-
-    fn block(&mut self, block: &mut Block) {
-        if let Block::OrderedList(attr, _) = block
-            && !self.options.extensions.contains(Extension::FancyLists)
-        {
-            attr.style = ListNumberStyle::DefaultStyle;
-            attr.delim = ListNumberDelim::DefaultDelim;
-            if !self.options.extensions.contains(Extension::Startnum) {
-                attr.start = 1;
-            }
-        }
-    }
-
-    fn blocks(&mut self, blocks: &mut Vec<Block>) {
-        for block in std::mem::take(blocks) {
-            let mut block = block;
-            if let Block::Para(nodes) = &mut block
-                && matches!(nodes.first(), Some(Inline::RawInline(format, text)) if format.0 == "html" && media_open(text))
-            {
-                if let Inline::RawInline(format, text) = nodes.remove(0) {
-                    blocks.push(Block::RawBlock(format, text));
-                }
-                if nodes.is_empty() {
-                    continue;
-                }
-            }
-            let Block::RawBlock(format, mut text) = block else {
-                blocks.push(block);
-                continue;
-            };
-            if format.0 != "html" {
-                blocks.push(Block::RawBlock(format, text));
-                continue;
-            }
-            text.truncate(text.trim_end_matches('\n').len());
-            let name = text
-                .strip_prefix('<')
-                .and_then(|tail| tail.split(|c: char| !c.is_ascii_alphanumeric()).next())
-                .unwrap_or_default();
-            if let Some(end) = html_tag_end(&text) {
-                if end == text.len()
-                    && matches!(
-                        name.to_ascii_lowercase().as_str(),
-                        "img" | "br" | "input" | "wbr"
-                    )
-                {
-                    blocks.push(Block::Para(vec![Inline::RawInline(format, text)]));
-                    continue;
-                }
-                if end < text.len()
-                    && matches!(name.to_ascii_lowercase().as_str(), "video" | "audio")
-                {
-                    let tail = text.split_off(end);
-                    blocks.push(Block::RawBlock(format, text));
-                    if self.status.is_ok() {
-                        match self.reader.read(
-                            &Sources::from_text(tail),
-                            self.options,
-                            self.context,
-                        ) {
-                            Ok(doc) => blocks.extend(doc.blocks),
-                            Err(error) => self.status = Err(error),
-                        }
-                    }
-                    continue;
-                }
-            }
-            blocks.push(Block::RawBlock(format, text));
-        }
-    }
-}
-
-fn media_open(text: &str) -> bool {
-    text.strip_prefix('<')
-        .and_then(|tail| tail.split(|c: char| !c.is_ascii_alphanumeric()).next())
-        .is_some_and(|tag| tag.eq_ignore_ascii_case("video") || tag.eq_ignore_ascii_case("audio"))
-}
-
-fn html_tag_end(text: &str) -> Option<usize> {
-    let mut quote = None;
-    for (index, c) in text.char_indices() {
-        match (quote, c) {
-            (Some(open), c) if c == open => quote = None,
-            (None, '\'' | '"') => quote = Some(c),
-            (None, '>') => return Some(index + 1),
-            _ => {}
-        }
-    }
-    None
-}
-
-// Restore escaped spaces in Markdown text after CommonMark tokenization.
-fn normalize_escaped_spaces(nodes: &mut Vec<Inline>) {
-    let mut input = std::mem::take(nodes).into_iter().peekable();
-    let mut prefix = String::new();
-    while let Some(node) = input.next() {
-        if let Inline::Str(mut text) = node {
-            if text.ends_with('\\') && matches!(input.peek(), Some(Inline::Space)) {
-                text.pop();
-                prefix.push_str(&text);
-                prefix.push('\u{a0}');
-                input.next();
-            } else if prefix.is_empty() {
-                nodes.push(Inline::Str(text));
-            } else {
-                prefix.push_str(&text);
-                nodes.push(Inline::Str(std::mem::take(&mut prefix)));
-            }
-        } else {
-            if !prefix.is_empty() {
-                nodes.push(Inline::Str(std::mem::take(&mut prefix)));
-            }
-            nodes.push(node);
-        }
-    }
-    if !prefix.is_empty() {
-        nodes.push(Inline::Str(prefix));
-    }
 }

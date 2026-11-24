@@ -11,6 +11,7 @@ authors.workspace = true
 [dependencies]
 randoc-ast = { workspace = true }
 randoc-core = { workspace = true }
+randoc-data = { workspace = true }
 quick-xml = { workspace = true }
 
 # The CPU time of the process for tests/time.rs. `ps` is refused in the

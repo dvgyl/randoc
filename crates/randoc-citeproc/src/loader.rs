@@ -1,13 +1,14 @@
-//! Styles and locales from files, through the [`Context`].
-//!
-//! Randoc has no built-in CSL locale and no built-in default style (decisions
-//! D1 and D2 of `docs/DATA_FILES_LICENCES.md`). They come from the data
-//! directory: `DATADIR/csl/locales/locales-TAG.xml` and `DATADIR/default.csl`.
+//! Loads built-in CSL data and files from the data directory.
+
+use std::sync::OnceLock;
 
 use randoc_core::{Context, Error};
 
 use crate::lang::Lang;
-use crate::locale::{FoundLocale, effective_language, get_locale, merge_locales, parse_locale};
+use crate::locale::{
+    FoundLocale, effective_language, get_locale, locale_code, merge_locales, parse_locale,
+    primary_dialect,
+};
 use crate::style;
 use crate::types::{Locale, Style};
 
@@ -222,7 +223,7 @@ pub fn read_style(context: &mut Context, path: &str) -> Result<Style, Error> {
     parse_style(context, &text)
 }
 
-/// Reads the default style `DATADIR/default.csl`.
+/// Reads `DATADIR/default.csl` or the built-in style if the file is absent.
 pub fn read_default_style(context: &mut Context) -> Result<Style, Error> {
     let path = context
         .state
@@ -231,19 +232,27 @@ pub fn read_default_style(context: &mut Context) -> Result<Style, Error> {
         .map(|dir| format!("{dir}/{DEFAULT_STYLE_FILE}"));
     match path {
         Some(path) if context.host().file_exists(&path) => read_style(context, &path),
-        _ => Err(Error::App(format!(
-            "Randoc has no built-in CSL style: put {DEFAULT_STYLE_FILE} in the data directory or use --csl"
-        ))),
+        _ => parse_style(context, randoc_data::csl::DEFAULT_STYLE),
     }
 }
 
-/// Reads the locale file of one code from the data directory. `None` means
-/// that the file does not exist.
-pub fn read_locale(context: &mut Context, code: &str) -> Result<FoundLocale, Error> {
-    let Some(data_dir) = context.state.user_data_dir.clone() else {
+/// Returns the parsed built-in locale for an exact tag.
+pub(crate) fn builtin_locale(code: &str) -> Option<&'static Locale> {
+    static LOCALES: OnceLock<Vec<OnceLock<Option<Locale>>>> = OnceLock::new();
+    let tags = randoc_data::csl::locale_tags();
+    let index = tags.binary_search(&code).ok()?;
+    LOCALES
+        .get_or_init(|| tags.iter().map(|_| OnceLock::new()).collect())
+        .get(index)?
+        .get_or_init(|| parse_locale(&randoc_data::csl::locale_xml(code)?, 16).ok())
+        .as_ref()
+}
+
+fn read_locale_file(context: &mut Context, code: &str) -> Result<FoundLocale, Error> {
+    let Some(data_dir) = context.state.user_data_dir.as_deref() else {
         return Ok(None);
     };
-    let path = locale_path(&data_dir, code);
+    let path = locale_path(data_dir, code);
     if !context.host().file_exists(&path) {
         return Ok(None);
     }
@@ -251,27 +260,58 @@ pub fn read_locale(context: &mut Context, code: &str) -> Result<FoundLocale, Err
     Ok(Some(parse_locale(&text, context.limits.max_nesting_depth)))
 }
 
-/// The locale of a style: the locale file of the language (the requested
-/// one, else the default locale of the style, else `en-US`), merged with the
-/// locales inside the style. As upstream, a missing or broken locale file
-/// gives `en-US`; without the file of `en-US` the result is an error.
+/// Reads the locale for an exact tag. A data-directory file overrides
+/// the built-in terms. Returns `None` if neither source has the tag.
+pub fn read_locale(context: &mut Context, code: &str) -> Result<FoundLocale, Error> {
+    let builtin = builtin_locale(code);
+    Ok(match read_locale_file(context, code)? {
+        Some(file) => Some(file.map(|locale| merge_builtin(locale, builtin))),
+        None => builtin.cloned().map(Ok),
+    })
+}
+
+fn merge_builtin(locale: Locale, builtin: Option<&Locale>) -> Locale {
+    match builtin {
+        Some(builtin) => locale.merge(builtin),
+        None => locale,
+    }
+}
+
+/// Returns the style locale. Style terms take precedence over data-directory
+/// terms, which take precedence over built-in terms.
 pub fn style_locale(
     context: &mut Context,
     style: &Style,
     requested: Option<&Lang>,
 ) -> Result<Locale, Error> {
     let language = effective_language(requested, style);
-    let mut lookup = |code: &str| read_locale(context, code);
-    let base = match get_locale(&language, &mut lookup)? {
-        Some(Ok(locale)) => locale,
-        _ => match read_locale(context, "en-US")? {
-            Some(Ok(locale)) => locale,
-            _ => {
-                return Err(Error::App(format!(
-                    "Randoc cannot find the CSL locale en-US: put locales-en-US.xml in DATADIR/{LOCALES_FOLDER}"
-                )));
-            }
-        },
+    let code = locale_code(&language);
+    let primary = primary_dialect(&language)
+        .as_ref()
+        .map(locale_code)
+        .filter(|tag| *tag != code);
+    let file = get_locale(&language, &mut |code| read_locale_file(context, code))?;
+    let exact = builtin_locale(&code);
+    let dialect = primary.as_deref().and_then(builtin_locale);
+    let base = if matches!(file, Some(Err(_)))
+        || (file.is_none() && exact.is_none() && dialect.is_none())
+    {
+        // A missing or malformed locale falls back to en-US.
+        read_locale(context, "en-US")?
+            .and_then(Result::ok)
+            .or_else(|| builtin_locale("en-US").cloned())
+            .unwrap_or_default()
+    } else {
+        let base = match (file, exact) {
+            (Some(Ok(file)), exact) => merge_builtin(file, exact),
+            (_, exact) => exact.cloned().unwrap_or_default(),
+        };
+        let base = merge_builtin(base, dialect);
+        if code == "en-US" || primary.as_deref() == Some("en-US") {
+            base
+        } else {
+            merge_builtin(base, builtin_locale("en-US"))
+        }
     };
     Ok(merge_locales(style, &language, &base))
 }
@@ -322,7 +362,7 @@ mod tests {
         let text = |locale: Locale| locale.terms["t"][0].1.clone();
         let tag = |t: &str| crate::lang::parse_lang(t).unwrap();
         assert_eq!(
-            text(style_locale(&mut ctx, &style, Some(&tag("de-AT"))).unwrap()),
+            text(style_locale(&mut ctx, &style, Some(&tag("de-1996"))).unwrap()),
             "de-DE"
         );
         assert_eq!(
@@ -349,19 +389,50 @@ mod tests {
     }
 
     #[test]
-    fn without_en_us_the_loader_gives_a_clear_error() {
-        let mut ctx = context(&[]);
+    fn embedded_locales_load_without_a_data_directory() {
+        let mut ctx = Context::pure();
+        for &tag in randoc_data::csl::locale_tags() {
+            let locale = read_locale(&mut ctx, tag).unwrap().unwrap().unwrap();
+            assert!(locale.terms.contains_key("page"), "{tag}");
+        }
+        assert_eq!(read_locale(&mut ctx, "xx").unwrap(), None);
         let style = parse_style(&mut ctx, &plain_style()).unwrap();
-        let error = style_locale(&mut ctx, &style, None).unwrap_err();
-        assert_eq!(error.exit_code(), 4);
-        assert!(
-            error
-                .to_string()
-                .contains("cannot find the CSL locale en-US"),
-            "{error}"
+        let sv = crate::lang::parse_lang("sv").unwrap();
+        let locale = style_locale(&mut ctx, &style, Some(&sv)).unwrap();
+        assert!(locale.terms["page"].iter().any(|(_, text)| text == "s."));
+        assert_eq!(locale.terms["et-al"][0].1, "et al.");
+    }
+
+    #[test]
+    fn a_partial_locale_overrides_only_its_own_terms() {
+        let file = r#"<locale xml:lang="de-DE"><terms>
+            <term name="page">file page</term>
+            <term name="and">file and</term>
+        </terms></locale>"#;
+        let mut ctx = context(&[("dd/csl/locales/locales-de-DE.xml", file)]);
+        let locale = read_locale(&mut ctx, "de-DE").unwrap().unwrap().unwrap();
+        assert_eq!(locale.terms["page"][0].1, "file page");
+        assert_eq!(locale.terms["and"][0].1, "file and");
+        assert_eq!(
+            locale.terms["month-01"],
+            builtin_locale("de-DE").unwrap().terms["month-01"]
         );
-        let mut no_dir = Context::pure();
-        assert!(matches!(read_locale(&mut no_dir, "en-US"), Ok(None)));
+
+        let style = parse_style(
+            &mut ctx,
+            &format!(
+                r#"<style {NS}><locale xml:lang="de"><terms>
+                <term name="page">style page</term></terms></locale>
+                <citation><layout><text value="x"/></layout></citation></style>"#
+            ),
+        )
+        .unwrap();
+        let de_at = crate::lang::parse_lang("de-AT").unwrap();
+        let locale = style_locale(&mut ctx, &style, Some(&de_at)).unwrap();
+        assert_eq!(locale.terms["page"][0].1, "style page");
+        assert_eq!(locale.terms["page"][1].1, "file page");
+        assert_eq!(locale.terms["and"][0].1, "file and");
+        assert!(locale.terms.contains_key("month-01"));
     }
 
     #[test]
@@ -369,18 +440,19 @@ mod tests {
         let style = plain_style();
         let mut ctx = context(&[("s.csl", &style), ("dd/default.csl", &style)]);
         assert!(read_style(&mut ctx, "s.csl").is_ok());
-        assert!(read_default_style(&mut ctx).is_ok());
+        assert_eq!(
+            read_default_style(&mut ctx).unwrap(),
+            read_style(&mut ctx, "s.csl").unwrap()
+        );
         let missing = read_style(&mut ctx, "nope.csl").unwrap_err();
         assert_eq!(
             missing.to_string(),
             "File 'nope.csl' not found in resource path"
         );
-        let mut empty = context(&[]);
-        let error = read_default_style(&mut empty).unwrap_err();
-        assert!(
-            error.to_string().contains("no built-in CSL style"),
-            "{error}"
-        );
+        let mut no_dir = Context::pure();
+        let built_in = parse_style(&mut no_dir, randoc_data::csl::DEFAULT_STYLE).unwrap();
+        assert_eq!(read_default_style(&mut no_dir).unwrap(), built_in);
+        assert_eq!(read_default_style(&mut context(&[])).unwrap(), built_in);
     }
 
     #[test]
