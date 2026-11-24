@@ -65,4 +65,4 @@ matrix["write_matrix"]("layout", {
         ("length", "return #a"),
         ("template Doc", "local d=P.template.apply('Hello $x$',{x=a}); return d,d:braces(),P.utils.type(d),P.template.apply('$d$',{d=d})"),
     ]),
-}, known=[("parameters", "L.update_column(a, -7)")])
+})

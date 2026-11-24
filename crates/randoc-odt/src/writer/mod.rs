@@ -423,7 +423,24 @@ impl Renderer<'_> {
                     _ => previous,
                 };
                 let body = self.with_language(attr, |renderer| {
-                    renderer.blocks(blocks, inner_style, depth + 1, custom.is_none())
+                    if attr.id == "refs" && attr.has_class("csl-bib-body") && custom.is_none() {
+                        renderer.check_depth(depth + 1)?;
+                        let mut entries = Vec::with_capacity(blocks.len());
+                        let mut first_entry = true;
+                        for block in blocks {
+                            let mut entry_style = inner_style.unwrap_or(BODY);
+                            if let Block::Div(entry, _) = block
+                                && entry.has_class("csl-entry")
+                            {
+                                entry_style = if first_entry { style } else { BODY };
+                                first_entry = false;
+                            }
+                            entries.push(renderer.block(block, entry_style, depth + 1)?);
+                        }
+                        Ok(vcat(entries))
+                    } else {
+                        renderer.blocks(blocks, inner_style, depth + 1, custom.is_none())
+                    }
                 });
                 self.direction = previous;
                 let body = body?;

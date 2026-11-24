@@ -230,7 +230,7 @@ mod tests {
 
     #[test]
     fn preserves_a_program_path_and_writer_extensions() -> Result<()> {
-        let path = "/Volumes/Extreme Pro/bin/xelatex.exe";
+        let path = "/work/tool bin/xelatex.exe";
         let plan = resolve_pdf_plan(None, Some(path))?;
         assert_eq!(plan.writer(), "latex");
         assert_eq!(plan.program(), path);

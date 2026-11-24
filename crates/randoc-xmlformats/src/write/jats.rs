@@ -1,6 +1,7 @@
 use std::fmt::Write as _;
 
-use randoc_core::shared::is_haskell_alphanum;
+use randoc_ast::MetaValue;
+use randoc_core::shared::{is_haskell_alphanum, stringify_meta};
 use randoc_templates::{Context, Val};
 
 pub(super) fn xml_id(id: &str) -> String {
@@ -67,4 +68,48 @@ fn credit_name(slug: &str) -> &'static str {
         "writing-review-editing" => "Writing – review &amp; editing",
         _ => "",
     }
+}
+
+pub(super) fn date_parts(value: &MetaValue) -> Option<Vec<String>> {
+    let parts = match value {
+        MetaValue::MetaMap(date) => {
+            if let Some(MetaValue::MetaList(dates)) = date.get("date-parts") {
+                let MetaValue::MetaList(parts) = dates.first()? else {
+                    return None;
+                };
+                parts.iter().take(3).map(stringify_meta).collect()
+            } else {
+                return date_parts(date.get("raw").or_else(|| date.get("literal"))?);
+            }
+        }
+        other => stringify_meta(other)
+            .trim()
+            .split('-')
+            .map(str::to_owned)
+            .collect::<Vec<_>>(),
+    };
+    let (year, rest) = parts.split_first()?;
+    if rest.len() > 2 || year.is_empty() || !year.bytes().all(|byte| byte.is_ascii_digit()) {
+        return None;
+    }
+    let month = rest
+        .first()
+        .map(|month| month.parse::<u8>().ok().filter(|n| (1..=12).contains(n)));
+    let day = rest
+        .get(1)
+        .map(|day| day.parse::<u8>().ok().filter(|n| (1..=31).contains(n)));
+    if matches!(month, Some(None)) || matches!(day, Some(None)) {
+        return None;
+    }
+    Some(
+        std::iter::once(year.clone())
+            .chain(
+                month
+                    .into_iter()
+                    .chain(day)
+                    .flatten()
+                    .map(|n| format!("{n:02}")),
+            )
+            .collect(),
+    )
 }

@@ -36,4 +36,4 @@ matrix["write_matrix"]("log", {
         ("error identity", "local sentinel={}; local ok,v=pcall(L.silence,function() error(sentinel) end); return ok, rawequal(v,sentinel)"),
         ("hold ends on error", "pcall(L.silence,function() L.warn('hidden'); error('abort') end); local old=#PANDOC_STATE.log; L.warn('visible'); return #PANDOC_STATE.log-old"),
     ]),
-}, known=[("silence", "error identity")])
+})

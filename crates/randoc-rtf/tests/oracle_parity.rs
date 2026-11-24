@@ -378,7 +378,7 @@ fn review_writer_cases() {
     let markers =
         r#"[BulletList [[],[BlockQuote [Header 2 ("",[],[]) [Str "A"],Para [Str "B"]]]]]"#;
     let tabs = r#"[CodeBlock ("",[],[]) "A\tB",Para [Str "C\tD"]]"#;
-    let math = r#"[Para [Math InlineMath "-x",Space,Math InlineMath "\\theta",Space,Math InlineMath "a-b",Space,Math InlineMath "x^2_i",Space,Math InlineMath "\\sin x",Space,Math InlineMath "\\frac{1}{2}",Space,Math InlineMath "\\unknown{x}"]]"#;
+    let math = r#"[Para [Math InlineMath "-x",Space,Math InlineMath "\\theta",Space,Math InlineMath "a-b",Space,Math InlineMath "x^2_i",Space,Math InlineMath "\\sin x",Space,Math InlineMath "\\frac{1}{2}",Space,Math InlineMath "\\unknown{x}",Space,Math InlineMath "\\mathbf{v}",Space,Math InlineMath "\\mathbf{A12+\\alpha_i}"]]"#;
     let table = |widths: &[ColWidth], content: Vec<Block>| {
         let col_specs = widths
             .iter()
@@ -421,6 +421,29 @@ fn review_writer_cases() {
         ],
     );
     let nested = document(Block::BlockQuote(vec![outside]));
+    let Block::Table(mut headers) = table(
+        &default,
+        vec![Block::Plain(vec![Inline::Str("Body".into())])],
+    ) else {
+        unreachable!()
+    };
+    for name in ["First", "Second"] {
+        headers.head.rows.push(Row {
+            cells: vec![Cell {
+                content: vec![Block::Plain(vec![Inline::Str(name.into())])],
+                ..Default::default()
+            }],
+            ..Default::default()
+        });
+    }
+    let headers = Block::Table(headers);
+    let list_table = document(Block::BulletList(vec![
+        vec![
+            Block::Para(vec![Inline::Str("Item".into())]),
+            headers.clone(),
+        ],
+        vec![headers.clone()],
+    ]));
     let mut options = WriterOptions::default();
     for (name, doc) in [
         ("List markers", read_native(markers.as_bytes())),
@@ -429,6 +452,8 @@ fn review_writer_cases() {
         ("Mixed columns", mixed),
         ("Fractional columns", fractional),
         ("Nested cells", nested),
+        ("Multiple header rows", document(headers)),
+        ("Table in a list", list_table),
     ] {
         let mut context = Context::pure();
         let expected = run_process(

@@ -1,18 +1,17 @@
-//! A part of `pandoc.template`: `compile` and `apply` (row I-LUA-27). A
-//! custom writer gets the compiled `Template` userdata of `--template` or of
-//! its `Template` global in `opts.template`, and `apply` renders it (keeping
-//! any resolved partials intact).
+//! Template lookup, compilation, and rendering for Lua.
 
 use std::cell::Cell;
 use std::rc::Rc;
 
-use mlua::{Lua, MetaMethod, UserData, UserDataMethods, Value};
+use mlua::{Lua, MetaMethod, Table, UserData, UserDataMethods, Value};
+use randoc_ast::{Inline, MetaValue};
 use randoc_core::{Context, Error};
 use randoc_templates::{Context as TemplateContext, Template, Val};
 
 use crate::construct::Call;
-use crate::layout::{doc_text, userdata as doc_userdata};
+use crate::layout::userdata as doc_userdata;
 use crate::peek::{Cx, LuaText, Peek, PeekError, depth_message, mismatch};
+use crate::push;
 
 /// Maximum total nodes visited when converting a Lua table to a
 /// [`TemplateContext`] (prevents exponential DAG-to-tree blowup such as
@@ -131,13 +130,23 @@ pub(crate) fn call(call: &Call, name: &str) -> Peek<Value> {
                 .ok_or_else(|| PeekError::Thrown("template render exceeded size limit".into()))?;
             doc_userdata(cx.lua, randoc_layout::literal(text))
         }
+        "meta_to_context" => {
+            let meta = call.required(0, "meta", |value| cx.meta(value))?;
+            let render_blocks = call.argument(1);
+            let render_inlines = call.argument(2);
+            let table = context_table(cx.lua)?;
+            for (key, value) in meta.0 {
+                table.raw_set(key, meta_value(cx, value, &render_blocks, &render_inlines)?)?;
+            }
+            Ok(Value::Table(table))
+        }
         other => Err(PeekError::Thrown(format!(
             "internal error: unknown function pandoc.template.{other}"
         ))),
     }
 }
 
-fn extract_template(cx: &Cx, value: &Value) -> Peek<Template> {
+pub(crate) fn extract_template(cx: &Cx, value: &Value) -> Peek<Template> {
     if let Value::UserData(ud) = value
         && let Ok(tpl) = ud.borrow::<LuaTemplate>()
     {
@@ -145,6 +154,161 @@ fn extract_template(cx: &Cx, value: &Value) -> Peek<Template> {
     }
     let source = cx.text(value)?;
     compile(cx, &source, None, None)
+}
+
+pub(crate) fn file(call: &Call, host: &mut Context) -> Peek<Value> {
+    let cx = call.cx;
+    let name = call.required(
+        0,
+        if call.name == "default" {
+            "format"
+        } else {
+            "filename"
+        },
+        |v| cx.text(v),
+    )?;
+    let limit = usize::try_from(host.limits.max_resource_size).unwrap_or(usize::MAX);
+    let data_name = if call.name == "default" {
+        if matches!(
+            name.as_str(),
+            "csljson" | "fb2" | "ipynb" | "json" | "native" | "pptx" | "xml"
+        ) {
+            return Ok(push::text(cx.lua, "")?);
+        }
+        format!("default.{}", template_format(&name))
+    } else {
+        if let Some(text) = read_text(host, &name, limit)? {
+            return Ok(push::text(cx.lua, &text)?);
+        }
+        name.rsplit('/').next().unwrap_or(&name).to_owned()
+    };
+    Ok(push::text(
+        cx.lua,
+        &data_template(host, &data_name, limit)?,
+    )?)
+}
+
+fn template_format(format: &str) -> &str {
+    match format {
+        "asciidoc_legacy" | "asciidoctor" => "asciidoc",
+        "bbcode_fluxbb" | "bbcode_hubzilla" | "bbcode_phpbb" | "bbcode_steam"
+        | "bbcode_xenforo" => "bbcode",
+        "commonmark_x" | "gfm" => "commonmark",
+        "docbook" => "docbook5",
+        "docx" => "openxml",
+        "epub" => "epub3",
+        "fodt" | "odt" => "opendocument",
+        "html" => "html5",
+        "jats" => "jats_archiving",
+        "markdown_github" | "markdown_mmd" | "markdown_phpextra" | "markdown_strict" => "markdown",
+        _ => format,
+    }
+}
+
+fn read_text(host: &mut Context, path: &str, limit: usize) -> Peek<Option<String>> {
+    match host.host().read_file_limited(path, limit) {
+        Ok(bytes) => String::from_utf8(bytes)
+            .map(|text| Some(text.trim_start_matches('\u{feff}').replace('\r', "")))
+            .map_err(|error| PeekError::Thrown(error.to_string())),
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(None),
+        Err(error) => Err(PeekError::Thrown(format!(
+            "Could not read template {path}: {error}"
+        ))),
+    }
+}
+
+fn data_template(host: &mut Context, name: &str, limit: usize) -> Peek<String> {
+    let path = format!("templates/{name}");
+    if let Some(directory) = host.state.user_data_dir.as_ref() {
+        let file = format!("{directory}/{path}");
+        if let Some(text) = read_text(host, &file, limit)? {
+            return Ok(text);
+        }
+    }
+    let text = builtin_template(name)
+        .ok_or_else(|| PeekError::Thrown(Error::CouldNotFindDataFile(path).to_string()))?;
+    if text.len() > limit {
+        return Err(PeekError::Thrown(
+            "template source exceeded size limit".into(),
+        ));
+    }
+    Ok(text.to_owned())
+}
+
+// Use the workspace's BSD-3-Clause templates without a second copy.
+fn builtin_template(name: &str) -> Option<&'static str> {
+    macro_rules! templates {
+        ($($name:literal),* $(,)?) => {
+            match name {
+                $($name => Some(include_str!(concat!("../../randoc-data/data/templates/", $name))),)*
+                _ => None,
+            }
+        };
+    }
+    templates! {
+        "affiliations.jats",
+        "after-header-includes.latex",
+        "article.jats_publishing",
+        "common.latex",
+        "default.ansi",
+        "default.asciidoc",
+        "default.bbcode",
+        "default.beamer",
+        "default.biblatex",
+        "default.bibtex",
+        "default.chunkedhtml",
+        "default.commonmark",
+        "default.context",
+        "default.djot",
+        "default.docbook4",
+        "default.docbook5",
+        "default.dokuwiki",
+        "default.dzslides",
+        "default.epub2",
+        "default.epub3",
+        "default.haddock",
+        "default.html4",
+        "default.html5",
+        "default.icml",
+        "default.jats_archiving",
+        "default.jats_articleauthoring",
+        "default.jats_publishing",
+        "default.jira",
+        "default.latex",
+        "default.man",
+        "default.markdown",
+        "default.markua",
+        "default.mediawiki",
+        "default.ms",
+        "default.muse",
+        "default.opendocument",
+        "default.openxml",
+        "default.opml",
+        "default.org",
+        "default.plain",
+        "default.revealjs",
+        "default.rst",
+        "default.rtf",
+        "default.s5",
+        "default.slideous",
+        "default.slidy",
+        "default.t2t",
+        "default.tei",
+        "default.texinfo",
+        "default.textile",
+        "default.typst",
+        "default.vimdoc",
+        "default.xwiki",
+        "default.zimwiki",
+        "document-metadata.latex",
+        "font-settings.latex",
+        "fonts.latex",
+        "hypersetup.latex",
+        "passoptions.latex",
+        "styles.citations.html",
+        "styles.html",
+        "template.typst",
+    }
 }
 
 pub(crate) fn compile_userdata(call: &Call, host: &mut Context) -> Peek<Value> {
@@ -180,53 +344,25 @@ fn compile(
             let Some(context) = context.as_deref_mut() else {
                 return Err(format!("Could not find template partial {partial}"));
             };
-            let name = format!(
-                "templates/{}",
-                partial.rsplit('/').next().unwrap_or(partial)
-            );
-            let file = context
-                .state
-                .user_data_dir
-                .as_ref()
-                .map(|dir| format!("{dir}/{name}"));
-            let from_path = if path.is_some() {
-                match context.host().read_file_limited(partial, remaining) {
-                    Ok(bytes) => Some(bytes),
-                    Err(error) if error.kind() == std::io::ErrorKind::NotFound => None,
-                    Err(error) => {
-                        return Err(format!(
-                            "Could not read template partial {partial}: {error}"
-                        ));
-                    }
-                }
+            let name = partial.rsplit('/').next().unwrap_or(partial);
+            let local = if path.is_some() {
+                read_text(context, partial, remaining).map_err(|error| error.text())?
             } else {
                 None
             };
-            let bytes =
-                match (from_path, file) {
-                    (Some(bytes), _) => bytes,
-                    (None, Some(file)) => context
-                        .host()
-                        .read_file_limited(&file, remaining)
-                        .map_err(|error| {
-                            if error.kind() == std::io::ErrorKind::NotFound {
-                                Error::CouldNotFindDataFile(name.clone()).to_string()
-                            } else {
-                                format!("Could not read template partial {file}: {error}")
-                            }
-                        })?,
-                    (None, None) => return Err(Error::CouldNotFindDataFile(name).to_string()),
-                };
-            remaining = remaining.checked_sub(bytes.len()).ok_or(limit_error)?;
-            let text = String::from_utf8(bytes).map_err(|error| error.to_string())?;
-            Ok(text.trim_start_matches('\u{feff}').replace('\r', ""))
+            let text = match local {
+                Some(text) => text,
+                None => data_template(context, name, remaining).map_err(|error| error.text())?,
+            };
+            remaining = remaining.checked_sub(text.len()).ok_or(limit_error)?;
+            Ok(text)
         },
     )
     .map_err(|error| PeekError::Thrown(error.to_string()))
 }
 
 /// The template context of a table: each string key with its value.
-fn context(cx: &Cx, value: &Value) -> Peek<TemplateContext> {
+pub(crate) fn context(cx: &Cx, value: &Value) -> Peek<TemplateContext> {
     let Value::Table(table) = value else {
         return Err(mismatch("table", value));
     };
@@ -282,12 +418,54 @@ fn template_value(cx: &Cx, value: &Value, level: usize, budget: &mut ContextBudg
             }
         }
         other => {
-            let text =
-                doc_text(other)?.ok_or_else(|| mismatch("string, boolean or table", other))?;
-            budget.charge(0, text.len())?;
-            Val::text(text)
+            let doc = crate::layout::read(cx, other)?;
+            budget.charge(0, doc.estimated_size())?;
+            Val::Simple(doc)
         }
     })
+}
+
+pub(crate) fn context_table(lua: &Lua) -> mlua::Result<Table> {
+    let table = lua.create_table()?;
+    let metatable = lua.create_table()?;
+    metatable.raw_set("__name", "pandoc Context")?;
+    table.set_metatable(Some(metatable))?;
+    Ok(table)
+}
+
+fn meta_value(cx: &Cx, value: MetaValue, blocks: &Value, inlines: &Value) -> Peek<Value> {
+    let render = |callback: &Value, value: Value| -> Peek<Value> {
+        let Value::Function(callback) = callback else {
+            return Err(PeekError::Thrown(format!(
+                "attempt to call a {} value",
+                crate::peek::lua_type_name(callback)
+            )));
+        };
+        let rendered = callback.call::<Value>(value)?;
+        doc_userdata(cx.lua, crate::layout::read(cx, &rendered)?)
+    };
+    match value {
+        MetaValue::MetaBool(flag) => Ok(Value::Boolean(flag)),
+        MetaValue::MetaString(text) => {
+            render(inlines, push::inlines(cx.lua, &[Inline::Str(text)])?)
+        }
+        MetaValue::MetaInlines(items) => render(inlines, push::inlines(cx.lua, &items)?),
+        MetaValue::MetaBlocks(items) => render(blocks, push::blocks(cx.lua, &items)?),
+        MetaValue::MetaList(items) => {
+            let table = cx.lua.create_table_with_capacity(items.len(), 0)?;
+            for (index, item) in items.into_iter().enumerate() {
+                table.raw_set(index + 1, meta_value(cx, item, blocks, inlines)?)?;
+            }
+            Ok(Value::Table(table))
+        }
+        MetaValue::MetaMap(items) => {
+            let table = context_table(cx.lua)?;
+            for (key, item) in items {
+                table.raw_set(key, meta_value(cx, item, blocks, inlines)?)?;
+            }
+            Ok(Value::Table(table))
+        }
+    }
 }
 
 #[cfg(test)]

@@ -4,8 +4,16 @@ use randoc_layout::{Doc, blankline, cr, empty, hcat, literal, nest, nowrap, vcat
 
 use super::{Dialect, Renderer};
 
+/// Number of enclosing lists of each kind.
+#[derive(Clone, Copy, Default)]
+pub(super) struct ListDepth {
+    bullet: usize,
+    ordered: usize,
+    definition: usize,
+}
+
 impl Renderer<'_> {
-    pub(super) fn blocks(&mut self, blocks: &[Block], list: usize, table: usize) -> Doc {
+    pub(super) fn blocks(&mut self, blocks: &[Block], list: ListDepth, table: usize) -> Doc {
         vsep(
             blocks
                 .iter()
@@ -14,14 +22,14 @@ impl Renderer<'_> {
         )
     }
 
-    fn block(&mut self, block: &Block, list: usize, table: usize) -> Doc {
+    fn block(&mut self, block: &Block, list: ListDepth, table: usize) -> Doc {
         match block {
             Block::Plain(inlines) | Block::Para(inlines) => {
-                let mut body = self.inlines(inlines, false, table > 0);
+                let mut body = self.paragraph(inlines, table > 0);
                 if starts_ordered(inlines) {
                     body = hcat([literal("{empty}"), body]);
                 }
-                if list > 0
+                if list.ordered + list.bullet + list.definition > 0
                     && matches!(inlines.as_slice(), [Inline::Math(MathType::DisplayMath, _)])
                 {
                     vcat([literal("+"), body])
@@ -29,14 +37,13 @@ impl Renderer<'_> {
                     body
                 }
             }
-            Block::LineBlock(lines) => vcat(lines.iter().enumerate().map(|(i, line)| {
-                let line = self.inlines(line, false, table > 0);
-                if i + 1 < lines.len() {
-                    hcat([line, literal(" +")])
-                } else {
-                    line
+            Block::LineBlock(lines) => {
+                let mut verse = literal("[verse]\n--");
+                for line in lines {
+                    verse = verse + literal("\n") + nowrap(self.inlines(line, false, table > 0));
                 }
-            })),
+                verse + literal("\n--")
+            }
             Block::Header(level, attr, title) => {
                 let extension = self.options.extensions;
                 let id = if (extension.contains(Extension::AutoIdentifiers)
@@ -107,12 +114,17 @@ impl Renderer<'_> {
             Block::BulletList(items) => self.list(items, None, list, table),
             Block::OrderedList(options, items) => self.list(items, Some(options), list, table),
             Block::DefinitionList(items) => {
-                let marker = ["::", ";;", ":::", ":::;"][list.min(3)];
+                let marker = ["::", ";;", ":::", ":::;"]
+                    [(list.ordered + list.bullet + list.definition).min(3)];
                 vcat(items.iter().map(|(term, definitions)| {
                     let label = hcat([self.inlines(term, false, table > 0), literal(marker)]);
+                    let depth = ListDepth {
+                        definition: list.definition + 1,
+                        ..list
+                    };
                     let definitions = definitions
                         .iter()
-                        .map(|definition| self.definition(definition, list + 1, table));
+                        .map(|definition| self.definition(definition, depth, table));
                     let mut docs = vec![label];
                     for (index, definition) in definitions.enumerate() {
                         if index > 0 {
@@ -168,7 +180,7 @@ impl Renderer<'_> {
         }
     }
 
-    fn division(&mut self, attr: &Attr, blocks: &[Block], list: usize, table: usize) -> Doc {
+    fn division(&mut self, attr: &Attr, blocks: &[Block], list: ListDepth, table: usize) -> Doc {
         let style = attr.classes.iter().find(|class| {
             matches!(
                 class.as_str(),
@@ -209,11 +221,17 @@ impl Renderer<'_> {
         &mut self,
         items: &[Vec<Block>],
         options: Option<&ListAttributes>,
-        level: usize,
+        mut depth: ListDepth,
         table: usize,
     ) -> Doc {
-        let marker = if options.is_some() { '.' } else { '*' };
-        let mark = format!("{} ", marker.to_string().repeat(level + 1));
+        let (marker, level) = if options.is_some() {
+            depth.ordered += 1;
+            (".", depth.ordered)
+        } else {
+            depth.bullet += 1;
+            ("*", depth.bullet)
+        };
+        let mark = format!("{} ", marker.repeat(level));
         let style = options.map_or_else(empty, |options| {
             let style = match options.style {
                 ListNumberStyle::LowerAlpha => "loweralpha",
@@ -236,19 +254,22 @@ impl Renderer<'_> {
             })
         });
         let items = vcat(items.iter().map(|item| {
-            let body = self.item(item, level + 1, table, options.is_some());
+            let body = self.item(item, depth, table);
             hcat([literal(&mark), body])
         }));
         vcat([style, items])
     }
 
-    fn definition(&mut self, blocks: &[Block], level: usize, table: usize) -> Doc {
+    fn definition(&mut self, blocks: &[Block], level: ListDepth, table: usize) -> Doc {
         vcat(blocks.iter().enumerate().map(|(index, block)| {
             let body = match block {
-                Block::OrderedList(options, items) => {
-                    nest(2, self.list(items, Some(options), 0, table))
+                Block::OrderedList(options, items) => nest(
+                    2,
+                    self.list(items, Some(options), ListDepth::default(), table),
+                ),
+                Block::BulletList(items) => {
+                    nest(2, self.list(items, None, ListDepth::default(), table))
                 }
-                Block::BulletList(items) => nest(2, self.list(items, None, 0, table)),
                 Block::CodeBlock(..) | Block::DefinitionList(_) => self.block(block, level, table),
                 _ => nest(2, self.block(block, level, table)),
             };
@@ -260,7 +281,7 @@ impl Renderer<'_> {
         }))
     }
 
-    fn item(&mut self, blocks: &[Block], level: usize, table: usize, ordered: bool) -> Doc {
+    fn item(&mut self, blocks: &[Block], level: ListDepth, table: usize) -> Doc {
         hcat(blocks.iter().enumerate().map(|(index, block)| {
             let block_doc = match block {
                 Block::Plain(inlines) | Block::Para(inlines) if index == 0 => {
@@ -272,7 +293,7 @@ impl Renderer<'_> {
                         vcat([
                             self.inlines(&inlines[..index], false, table > 0),
                             literal("+"),
-                            self.inlines(&inlines[index..], false, table > 0),
+                            self.paragraph(&inlines[index..], table > 0),
                         ])
                     } else if self.dialect != Dialect::Legacy
                         && let Some(Inline::Str(mark)) = inlines.first()
@@ -286,12 +307,8 @@ impl Renderer<'_> {
                         self.inlines(inlines, false, table > 0)
                     }
                 }
-                Block::BulletList(items) => {
-                    self.list(items, None, level - usize::from(ordered), table)
-                }
-                Block::OrderedList(options, items) => {
-                    self.list(items, Some(options), level - usize::from(!ordered), table)
-                }
+                Block::BulletList(items) => self.list(items, None, level, table),
+                Block::OrderedList(options, items) => self.list(items, Some(options), level, table),
                 _ => self.block(block, level, table),
             };
             if index == 0 {

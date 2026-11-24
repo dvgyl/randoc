@@ -398,19 +398,19 @@ impl Parser<'_> {
             parsed.col_span = (cell.end - cell.start) as i64;
             rendered[cell.row].cells.push(parsed);
         }
-        for row in &mut rendered {
-            if row.cells.iter().all(|cell| cell.content.len() <= 1) {
-                for cell in &mut row.cells {
-                    plain_first(&mut cell.content);
-                }
-            }
+        if rendered.iter().all(simple_row) {
+            rendered.iter_mut().for_each(plain_row);
         }
+        let columns = points
+            .last()
+            .copied()
+            .unwrap_or_default()
+            .max(usize::try_from(self.options.columns).unwrap_or_default())
+            .max(1);
         let cols = points
             .windows(2)
             .map(|p| ColSpec {
-                width: ColWidth::ColWidth(
-                    (p[1] - p[0]) as f64 / (self.options.columns.max(1) as f64),
-                ),
+                width: ColWidth::ColWidth((p[1] - p[0]) as f64 / columns as f64),
                 ..ColSpec::default()
             })
             .collect();
@@ -462,7 +462,17 @@ impl Parser<'_> {
             let widths = widths
                 .split(|c: char| c.is_whitespace() || c == ',')
                 .filter(|s| !s.is_empty() && widths != "auto");
-            let total = self.options.columns.max(1) as f64;
+            let columns = self.options.columns;
+            let total = if !table.head.rows.is_empty()
+                && body
+                    .first()
+                    .is_some_and(|line| full_rule(line.text.trim_end(), b'-'))
+            {
+                columns.saturating_sub(table.col_specs.len() as i64)
+            } else {
+                columns
+            };
+            let total = total.max(1) as f64;
             table.col_specs = table
                 .col_specs
                 .into_iter()

@@ -116,7 +116,9 @@ fn apply_file(
         .map_err(|error| Error::Parse(error.report(Entrance::DefaultsFile { name: &path })))?
         .to_owned();
     // Pandoc reads a file that starts with `{` as JSON, whatever its name.
-    let json = text.starts_with('{');
+    let json = text
+        .trim_start_matches([' ', '\t', '\n', '\r'])
+        .starts_with('{');
     let root = if json {
         match parse_json(&text) {
             Ok(node) => node,
@@ -1672,7 +1674,7 @@ verbosity: ERROR\nfail-if-warnings: true\nlog-file: l\n";
         let (result, _) = load(&[("x.json", "{")], "x.json");
         assert_eq!(
             result.unwrap_err().to_string(),
-            "Error parsing x.json:\nUnexpected end-of-input, expecting JSON value"
+            "Error parsing x.json:\nUnexpected end-of-input, expecting record key literal or }"
         );
     }
 }

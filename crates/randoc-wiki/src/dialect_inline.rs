@@ -13,6 +13,7 @@ enum Mark {
     Emph,
     StrongEmph,
     Underline,
+    Boxed,
     Strike,
     Sup,
     Sub,
@@ -40,6 +41,7 @@ fn rules(dialect: Dialect) -> &'static [Rule] {
             Rule("''", "''", Emph),
             Rule("===", "===", Underline),
             Rule("--", "--", Strike),
+            Rule("^", "^", Boxed),
         ],
         Dialect::TWiki => &[
             Rule("<!--", "-->", Comment),
@@ -49,7 +51,6 @@ fn rules(dialect: Dialect) -> &'static [Rule] {
             Rule("<em>", "</em>", Emph),
             Rule("<b>", "</b>", Strong),
             Rule("<strong>", "</strong>", Strong),
-            Rule("<u>", "</u>", Underline),
             Rule("__", "__", StrongEmph),
             Rule("_", "_", Emph),
             Rule("*", "*", Strong),
@@ -116,7 +117,7 @@ fn pairs(text: &str, dialect: Dialect, smart: bool) -> Vec<Pair> {
         for (rule, state) in &mut states {
             let Rule(open, close, mark) = *rule;
             let vim_style = dialect == Dialect::Vim && matches!(mark, Mark::Strong | Mark::Emph);
-            if ch == '\n' && dialect == Dialect::Vim {
+            if ch == '\n' && (dialect == Dialect::Vim || matches!(mark, Mark::Boxed)) {
                 state.end = None;
                 state.vim_closes.clear();
             }
@@ -125,6 +126,7 @@ fn pairs(text: &str, dialect: Dialect, smart: bool) -> Vec<Pair> {
             } else {
                 state.end
             };
+            let allows_repeat = dialect == Dialect::Tiki || matches!(mark, Mark::Sub);
             let can_close = tail.strip_prefix(close).is_some_and(|after| {
                 let needs_word_end = dialect != Dialect::Tiki
                     && open == close
@@ -133,20 +135,20 @@ fn pairs(text: &str, dialect: Dialect, smart: bool) -> Vec<Pair> {
                         Mark::Strong | Mark::Emph | Mark::StrongEmph | Mark::Quote(_)
                     )
                     && !after.starts_with(['*', '_']);
-                (dialect == Dialect::Tiki || !repeated(text, at, close, open, ch, left))
+                (allows_repeat || !repeated(text, at, close, open, ch, left))
                     && (!needs_word_end || !after.starts_with(char::is_alphanumeric))
                     && (open != close
                         || left.is_some_and(|c| !c.is_whitespace())
-                        || matches!(mark, Mark::Math | Mark::Code))
+                        || matches!(mark, Mark::Math | Mark::Code | Mark::Boxed))
             });
             if let Some(stop) = end
                 && stop > at + open.len()
                 && tail.starts_with(open)
                 && (open != close
                     || !tail[open.len()..].starts_with(char::is_whitespace)
-                    || matches!(mark, Mark::Math | Mark::Code))
+                    || matches!(mark, Mark::Math | Mark::Code | Mark::Boxed))
                 && (!matches!(mark, Mark::Quote(_)) || !within_word)
-                && (dialect == Dialect::Tiki || !repeated(text, at, open, close, ch, left))
+                && (allows_repeat || !repeated(text, at, open, close, ch, left))
             {
                 pairs.push(Pair {
                     start: at,
@@ -218,6 +220,7 @@ pub(super) fn parse(
     limit: usize,
     auto: bool,
     smart: bool,
+    tag_at_end: bool,
     copied: &mut u64,
 ) -> Result<Vec<Inline>> {
     let pairs = pairs(text, dialect, smart);
@@ -311,7 +314,7 @@ pub(super) fn parse(
             }
         }
         if dialect == Dialect::Vim && plain.is_empty() {
-            if let Some((len, tags)) = tag_inlines(tail) {
+            if let Some((len, tags)) = tag_inlines(tail, tag_at_end) {
                 frame.items.extend(tags);
                 at += len;
                 continue;
@@ -406,6 +409,20 @@ pub(super) fn parse(
                 }),
                 Mark::Math => Some(Inline::Math(MathType::InlineMath, content.into())),
                 Mark::Literal => Some(Inline::Str(content.into())),
+                Mark::Boxed => {
+                    let prefix = " NOT SUPPORTED: ^ (boxed) BEGIN: ";
+                    let suffix = " :END ";
+                    *copied = copied
+                        .checked_sub((prefix.len() + suffix.len()) as u64)
+                        .ok_or_else(|| {
+                            randoc_core::Error::Parse("Wiki inline output limit exceeded".into())
+                        })?;
+                    plain.push_str(prefix);
+                    plain.push_str(&text[at..resume]);
+                    plain.push_str(suffix);
+                    at = resume;
+                    continue;
+                }
                 Mark::Image if dialect == Dialect::Tiki => {
                     let attr = attrs(content);
                     attr.get("src").map(|src| {
@@ -421,7 +438,9 @@ pub(super) fn parse(
             };
             if atom.is_some() || matches!(mark, Mark::Comment) {
                 flush(&mut frame.items, &mut plain, dialect, smart);
-                frame.items.extend(atom);
+                if let Some(atom) = atom {
+                    push_inline(&mut frame.items, atom, dialect);
+                }
                 at = resume;
                 continue;
             }
@@ -475,7 +494,17 @@ fn flush(items: &mut Vec<Inline>, plain: &mut String, dialect: Dialect, smart: b
                 .replace("--", "–")
                 .replace('\'', "’");
         }
-        items.push(Inline::Str(value));
+        push_inline(items, Inline::Str(value), dialect);
+    }
+}
+
+fn push_inline(items: &mut Vec<Inline>, item: Inline, dialect: Dialect) {
+    if dialect == Dialect::Tiki
+        && let (Some(Inline::Str(previous)), Inline::Str(text)) = (items.last_mut(), &item)
+    {
+        previous.push_str(text);
+    } else {
+        items.push(item);
     }
 }
 
@@ -666,7 +695,7 @@ fn url_word(text: &str) -> &str {
     text[..end].trim_end_matches(['.', ',', ';', ':', '!', '?', ')'])
 }
 
-fn tag_inlines(text: &str) -> Option<(usize, Vec<Inline>)> {
+fn tag_inlines(text: &str, tag_at_end: bool) -> Option<(usize, Vec<Inline>)> {
     let body = text.strip_prefix(':')?;
     let mut at = 1;
     let mut items = Vec::new();
@@ -700,7 +729,9 @@ fn tag_inlines(text: &str) -> Option<(usize, Vec<Inline>)> {
         ));
         at += part.len();
     }
-    (at > 1).then_some((at, items))
+    let rest = &text[at..];
+    (at > 1 && (rest.starts_with(char::is_whitespace) || rest.is_empty() && tag_at_end))
+        .then_some((at, items))
 }
 
 #[derive(Default)]

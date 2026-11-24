@@ -6,7 +6,7 @@ use randoc_core::shared::{IdentifierSet, auto_identifier, stringify};
 use randoc_core::{Context, Error, Extension, Extensions, ReaderOptions, Result, Sources};
 
 use crate::dialect_inline::{class, parse, pipe_fields};
-use crate::scan::attrs;
+use crate::scan::{attrs, tag_at};
 use crate::{cell_error, depth_error};
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -55,6 +55,7 @@ struct Lines<'a> {
     lines: Vec<&'a str>,
     offsets: Vec<usize>,
     codes: Vec<usize>,
+    pre_closes: Vec<usize>,
     tables: Vec<usize>,
     math: Vec<usize>,
     macros: Vec<usize>,
@@ -109,6 +110,11 @@ impl<'a> Lines<'a> {
             lines,
             offsets,
             codes,
+            pre_closes: if dialect == Dialect::TWiki {
+                text.match_indices("</pre>").map(|(at, _)| at).collect()
+            } else {
+                Vec::new()
+            },
             tables,
             math,
             macros,
@@ -137,6 +143,16 @@ struct Parser {
 
 impl Parser {
     fn inlines(&mut self, text: &str, depth: usize, edges: bool) -> Result<Vec<Inline>> {
+        self.inlines_with_tag_end(text, depth, edges, true)
+    }
+
+    fn inlines_with_tag_end(
+        &mut self,
+        text: &str,
+        depth: usize,
+        edges: bool,
+        tag_at_end: bool,
+    ) -> Result<Vec<Inline>> {
         let limit = self.depth.checked_sub(depth).ok_or_else(depth_error)?;
         let tail = if edges { text } else { text.trim() };
         let mut items = parse(
@@ -145,6 +161,7 @@ impl Parser {
             limit,
             self.auto,
             self.dialect == Dialect::TWiki && self.extensions.contains(Extension::Smart),
+            tag_at_end,
             &mut self.copied,
         )?;
         if !edges {
@@ -167,27 +184,26 @@ impl Parser {
             let padded_suffix = self.dialect == Dialect::TWiki
                 && line.starts_with(char::is_whitespace)
                 && line.as_ptr() as usize - source.text.as_ptr() as usize != source.offsets[at];
-            if self.dialect == Dialect::TWiki && !padded_suffix {
-                match trimmed {
-                    "<noautolink>" | "</noautolink>" => {
-                        self.auto = trimmed.starts_with("</");
-                        at += 1;
-                        continue;
+            if self.dialect == Dialect::TWiki {
+                if quotes.len() > 1
+                    && let Some(tail) = line.trim_start().strip_prefix("</blockquote>")
+                {
+                    close_quote(&mut quotes);
+                    source.lines[at] = tail;
+                    continue;
+                }
+                if !padded_suffix && let Some((_, tail)) = twiki_open(line, "blockquote") {
+                    if quotes.len() > self.depth {
+                        return Err(depth_error());
                     }
-                    "<blockquote>" => {
-                        if quotes.len() > self.depth {
-                            return Err(depth_error());
-                        }
-                        quotes.push(Vec::new());
-                        at += 1;
-                        continue;
-                    }
-                    "</blockquote>" if quotes.len() > 1 => {
-                        close_quote(&mut quotes);
-                        at += 1;
-                        continue;
-                    }
-                    _ => {}
+                    quotes.push(Vec::new());
+                    source.lines[at] = tail;
+                    continue;
+                }
+                if !padded_suffix && matches!(trimmed, "<noautolink>" | "</noautolink>") {
+                    self.auto = trimmed.starts_with("</");
+                    at += 1;
+                    continue;
                 }
             }
             if trimmed.is_empty() || self.comment(line) || self.directive(line, quotes.len() - 1)? {
@@ -234,7 +250,7 @@ impl Parser {
 
     fn paragraph(
         &mut self,
-        source: &Lines<'_>,
+        source: &mut Lines<'_>,
         at: &mut usize,
         depth: usize,
     ) -> Result<Vec<Inline>> {
@@ -267,6 +283,14 @@ impl Parser {
                         && next_at(&source.macros, *at + 1).is_some())
                     && !line.contains("}%");
             }
+            if self.dialect == Dialect::TWiki
+                && depth > 0
+                && let Some((body, _)) = line.split_once("</blockquote>")
+            {
+                text.push_str(body.trim());
+                source.lines[*at] = &line[body.len()..];
+                break;
+            }
             text.push_str(line.trim());
             *at += 1;
         }
@@ -286,6 +310,9 @@ impl Parser {
                         line,
                         "<noautolink>" | "</noautolink>" | "<blockquote>" | "</blockquote>"
                     ) || line.starts_with("<verbatim")
+                        || twiki_open(line, "pre").is_some()
+                        || twiki_open(line, "blockquote").is_some()
+                        || line.starts_with("</blockquote>")
                         || pipe_line(line)
                 }
                 Dialect::Vim => {
@@ -428,6 +455,27 @@ impl Parser {
             }
             Dialect::TWiki | Dialect::Vim => {
                 let trimmed = line.trim_start();
+                if self.dialect == Dialect::TWiki
+                    && let Some((info, body)) = twiki_open(line, "pre")
+                {
+                    let start = body.as_ptr() as usize - source.text.as_ptr() as usize;
+                    let end = next_at(&source.pre_closes, start);
+                    let finish = end.unwrap_or(source.text.len());
+                    *at = source.lines.len();
+                    if let Some(end) = end {
+                        let stop = source.end_after(end);
+                        *at = stop;
+                        let closing = source.line(stop - 1);
+                        let start = closing.as_ptr() as usize - source.text.as_ptr() as usize;
+                        let tail = &closing[end - start + "</pre>".len()..];
+                        if !tail.trim().is_empty() {
+                            source.lines[stop - 1] = tail;
+                            *at = stop - 1;
+                        }
+                    }
+                    let code = source.text[start..finish].trim_matches(['\r', '\n']);
+                    return Ok(Some(Block::CodeBlock(attrs(info), code.into())));
+                }
                 let info = if self.dialect == Dialect::TWiki {
                     trimmed
                         .strip_prefix("<verbatim")
@@ -564,7 +612,12 @@ impl Parser {
                 } else {
                     field
                 };
-                let items = self.inlines(field, depth, tiki)?;
+                let items = self.inlines_with_tag_end(
+                    field,
+                    depth,
+                    tiki,
+                    self.dialect != Dialect::Vim || field.ends_with(char::is_whitespace),
+                )?;
                 row.cells.push(Cell {
                     content: if items.is_empty() && !tiki {
                         Vec::new()
@@ -705,6 +758,16 @@ impl Parser {
                 let new_kind = self.dialect != Dialect::Vim
                     && frames.last().is_some_and(|frame| frame.kind != mark.kind);
                 if sibling && new_kind {
+                    let item_depth = depth + frames.len();
+                    if self.dialect == Dialect::TWiki
+                        && let Some(item) =
+                            frames.last_mut().and_then(|frame| frame.items.last_mut())
+                    {
+                        let items = self.inlines(line, item_depth, false)?;
+                        append_item(item, items, self.dialect);
+                        *at += 1;
+                        continue;
+                    }
                     if frames.len() == 1 {
                         break;
                     }
@@ -771,7 +834,9 @@ impl Parser {
             }
             let continuation = match self.dialect {
                 Dialect::Tiki => line.strip_prefix('+'),
-                Dialect::TWiki => (indent(line) > limit).then_some(line),
+                Dialect::TWiki => (indent(line) > limit
+                    || indent(line) == limit && self.definition(line).is_some())
+                .then_some(line),
                 Dialect::Vim => (indent(line) > first.level).then_some(line),
             };
             let Some(text) = continuation else { break };
@@ -871,6 +936,16 @@ fn vim_ordered_marker(text: &str) -> bool {
             && (marker.len() == 1 && marker.bytes().all(|b| b.is_ascii_alphabetic())
                 || marker.bytes().all(|b| b"ivxlcdm".contains(&b))
                 || marker.bytes().all(|b| b"IVXLCDM".contains(&b)))
+}
+
+fn twiki_open<'a>(line: &'a str, name: &str) -> Option<(&'a str, &'a str)> {
+    let line = line.trim_start();
+    let body = line.strip_prefix('<')?;
+    if !body.starts_with(name) {
+        return None;
+    }
+    let tag = tag_at(line, 0)?;
+    (tag.name == name && !tag.single).then_some((tag.attrs, &line[tag.end..]))
 }
 
 fn next_at(positions: &[usize], start: usize) -> Option<usize> {

@@ -8,6 +8,7 @@ use std::sync::Arc;
 
 use randoc_layout::{literal, space};
 
+use crate::categories::{is_alphanumeric, is_letter};
 use crate::parsec::{Msg, PErr, Pos};
 use crate::render::{Align, Node, Pipe, Variable};
 use randoc_ast::json::{show_char, show_string};
@@ -328,7 +329,7 @@ impl<E> Parser<'_, E> {
     }
 
     fn letter(&mut self) -> R<char> {
-        let reply = self.satisfy(char::is_alphabetic);
+        let reply = self.satisfy(is_letter);
         Self::label(reply, "letter")
     }
 
@@ -968,7 +969,7 @@ impl<E> Parser<'_, E> {
             let name = a.step(s.many1(|s| {
                 s.or(
                     |s| {
-                        let reply = s.satisfy(char::is_alphanumeric);
+                        let reply = s.satisfy(is_alphanumeric);
                         Self::label(reply, "letter or digit")
                     },
                     |s| s.satisfy(|c| matches!(c, '_' | '-' | '.' | '/' | '\\')),
@@ -1074,7 +1075,7 @@ impl<E> Parser<'_, E> {
             let mut a = Acc::new(&s.pos);
             let first = a.step(s.letter())?;
             let rest =
-                a.step(s.many(|s| s.satisfy(|c| c.is_alphanumeric() || c == '_' || c == '-')))?;
+                a.step(s.many(|s| s.satisfy(|c| is_alphanumeric(c) || c == '_' || c == '-')))?;
             let part: String = std::iter::once(first).chain(rest).collect();
             a.step(s.guard(!RESERVED.contains(&part.as_str())))?;
             a.ok(part)

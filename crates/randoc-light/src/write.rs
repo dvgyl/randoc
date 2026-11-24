@@ -1,7 +1,8 @@
 use std::cell::RefCell;
 
 use randoc_ast::{
-    Alignment, Attr, Block, ColWidth, Inline, MathType, MetaValue, Pandoc, QuoteType, Table, Target,
+    Alignment, Attr, Block, ColWidth, Inline, MathType, MetaValue, Pandoc, QuoteType, Row, Table,
+    Target,
 };
 use randoc_core::shared::{meta_context, stringify};
 use randoc_core::{Context, Error, Result, WrapOption, WriterOptions};
@@ -47,7 +48,7 @@ pub(crate) fn write(
             .map(randoc_core::shared::stringify_meta)
         && !prefix.is_empty()
     {
-        state.vim_prefix = format!("{prefix}-{}", state.vim_prefix);
+        state.vim_prefix = format!("{prefix}-");
     }
     state.top_level = true;
     let body = state.blocks(&doc.blocks)?;
@@ -159,7 +160,7 @@ impl<'a, 'd> State<'a, 'd> {
             wrap_prefix_bytes: 0,
             notes: Vec::new(),
             list: Vec::new(),
-            vim_prefix: options.identifier_prefix.clone(),
+            vim_prefix: String::new(),
             top_level: false,
             textile_definition: false,
         }
@@ -212,15 +213,43 @@ impl<'a, 'd> State<'a, 'd> {
 
     fn inlines(&mut self, xs: &'d [Inline]) -> Result<Doc> {
         let mut out = Doc::default();
-        for (index, x) in xs.iter().enumerate() {
-            if self.format == Format::Muse
-                && matches!(x, Inline::Space | Inline::SoftBreak)
-                && matches!(xs.get(index + 1), Some(Inline::Note(_)))
-            {
-                out += literal(" ");
-            } else {
-                out += self.inline(x)?;
+        let mut index = 0;
+        while let Some(x) = xs.get(index) {
+            let start = index;
+            index += 1;
+            if self.format == Format::Muse {
+                if let Inline::Emph(items) = x {
+                    let mut body = self.inlines(items)?;
+                    while let Some(Inline::Emph(items)) = xs.get(index) {
+                        body += self.inlines(items)?;
+                        index += 1;
+                    }
+                    let previous = start.checked_sub(1).and_then(|pos| xs.get(pos));
+                    let next = xs.get(index);
+                    let (open, close) = if muse_emph_tag(previous, next) {
+                        ("<em>", "</em>")
+                    } else {
+                        ("*", "*")
+                    };
+                    out += literal(open) + body + literal(close);
+                    continue;
+                }
+                if matches!(x, Inline::Str(text) if text.strip_prefix('>').is_some_and(|rest| rest.is_empty() || rest.starts_with(char::is_whitespace)))
+                    && (start == 0
+                        || matches!(xs.get(start - 1), Some(Inline::LineBreak))
+                        || self.options.wrap_text == WrapOption::WrapPreserve
+                            && matches!(xs.get(start - 1), Some(Inline::SoftBreak)))
+                {
+                    out += literal("<verbatim></verbatim>");
+                }
+                if matches!(x, Inline::Space | Inline::SoftBreak)
+                    && matches!(xs.get(index), Some(Inline::Note(_)))
+                {
+                    out += literal(" ");
+                    continue;
+                }
             }
+            out += self.inline(x)?;
         }
         Ok(out)
     }
@@ -270,6 +299,7 @@ impl<'a, 'd> State<'a, 'd> {
                     Textile => ("+", "+"),
                     T2t => ("__", "__"),
                     Muse => ("<u>", "</u>"),
+                    Haddock => ("/", "/"),
                     _ => ("", ""),
                 },
             )?,
@@ -453,6 +483,18 @@ impl<'a, 'd> State<'a, 'd> {
             .collect::<Vec<_>>();
         while let Some((node, close)) = pending.pop() {
             match node {
+                None if close == "*"
+                    && matches!(pending.last(), Some((Some(XmlNode::Element(next)), _))
+                    if matches!(next.name.local.as_str(), "em" | "i")) =>
+                {
+                    let next_emphasis = pending.pop();
+                    // The next element continues the same emphasis run.
+                    // Its closing marker ends the run.
+                    if let Some((Some(XmlNode::Element(next)), _)) = next_emphasis {
+                        pending.push((None, "*"));
+                        pending.extend(next.children.iter().rev().map(|node| (Some(node), "")));
+                    }
+                }
                 None => out += literal(close),
                 Some(XmlNode::Text(text)) => {
                     if self.format == Format::Muse && text.contains(['=', '*', '[', ']']) {
@@ -482,7 +524,17 @@ impl<'a, 'd> State<'a, 'd> {
         let url = &target.url;
         let plain = stringify(xs);
         let auto = plain == *url || url.strip_prefix("mailto:") == Some(plain.as_str());
-        let label = if self.format == Format::Muse {
+        let label = if self.format == Format::Haddock {
+            let mut label = Doc::default();
+            for x in xs {
+                if let Inline::Image(_, alt, _) = x {
+                    label += literal(stringify(alt));
+                } else {
+                    label += self.inline(x)?;
+                }
+            }
+            label
+        } else if self.format == Format::Muse {
             let mut label = Doc::default();
             for x in xs {
                 if let Inline::Str(text) = x
@@ -545,8 +597,12 @@ impl<'a, 'd> State<'a, 'd> {
 
     fn image(&mut self, attr: &Attr, xs: &'d [Inline], target: &Target) -> Result<Doc> {
         let url = &target.url;
-        let doc = self.inlines(xs)?;
-        let alt = self.render_unwrapped(&doc)?;
+        let alt = if self.format == Format::Haddock {
+            stringify(xs)
+        } else {
+            let doc = self.inlines(xs)?;
+            self.render_unwrapped(&doc)?
+        };
         let title = if target.title.is_empty() || self.format == Format::Haddock && !alt.is_empty()
         {
             &alt
@@ -929,7 +985,7 @@ impl<'a, 'd> State<'a, 'd> {
                 } else {
                     format!(
                         " class=\"{}\"",
-                        randoc_html::shared::escape_attribute(lang, false)
+                        randoc_html::shared::escape_attribute(&attr.classes.join(" "), false)
                     )
                 };
                 let body = randoc_html::shared::escape_attribute(code, false);
@@ -939,7 +995,7 @@ impl<'a, 'd> State<'a, 'd> {
                 let class = if lang.is_empty() {
                     String::new()
                 } else {
-                    format!("({lang})")
+                    format!("({})", attr.classes.join(" "))
                 };
                 format!("bc{class}. {code}")
             }
@@ -1128,7 +1184,10 @@ impl<'a, 'd> State<'a, 'd> {
                 self.charge_indent(indent, breaks)?;
                 row = match self.format {
                     Format::Textile => {
-                        let body = if matches!(blocks.last(), Some(Block::BlockQuote(_))) {
+                        let body = if matches!(
+                            blocks.last(),
+                            Some(Block::BlockQuote(_) | Block::CodeBlock(..))
+                        ) {
                             body + layout::blankline()
                         } else if matches!(
                             blocks.last(),
@@ -1236,6 +1295,14 @@ impl<'a, 'd> State<'a, 'd> {
                 *text = text.replace('’', "'");
             }
         });
+        randoc_ast::walk::walk_blocks_mut(&mut block, |block| {
+            if let Block::CodeBlock(attr, code) = block
+                && textile_native_code(code)
+            {
+                let raw = self.code_block(attr, code).render(None);
+                *block = Block::RawBlock(randoc_ast::Format::new("html"), format!("{raw}\n\n"));
+            }
+        });
         let doc = self.html(&block)?;
         let source = self.render_unwrapped(&doc)?;
         let out = source
@@ -1297,6 +1364,43 @@ impl<'a, 'd> State<'a, 'd> {
         if self.format == Format::Textile && !native_textile_table(table) {
             return self.html_table(table);
         }
+        let grid = self.format == Format::Haddock
+            || self.format == Format::Muse
+                && table
+                    .col_specs
+                    .iter()
+                    .any(|col| col.width != ColWidth::ColWidthDefault);
+        if grid {
+            let mut remaining = self.budget;
+            let haddock = self.format == Format::Haddock;
+            let mut result = randoc_markdown_writer::render_grid_table(
+                table,
+                self.columns,
+                haddock,
+                self.context.limits.max_table_cells,
+                self.budget,
+                |cell| {
+                    let doc = self.blocks(&cell.content)?;
+                    let text = doc.render_limited(remaining).ok_or_else(output_limit)?;
+                    remaining -= text.len();
+                    Ok(doc)
+                },
+            )?;
+            if haddock {
+                let caption = self
+                    .blocks(&table.caption.long)?
+                    .render_limited(remaining)
+                    .ok_or_else(output_limit)?;
+                if !caption.is_empty() {
+                    result.push_str("\n\n");
+                    result.push_str(&caption);
+                }
+            }
+            if result.len() > self.budget {
+                return Err(output_limit());
+            }
+            return Ok(literal(result));
+        }
         let rows = table
             .head
             .rows
@@ -1310,6 +1414,7 @@ impl<'a, 'd> State<'a, 'd> {
             }))
             .chain(table.foot.rows.iter().map(|row| (row, false)));
         let mut cells = Vec::new();
+        let mut muse_docs = std::collections::HashMap::new();
         let mut headers = Vec::new();
         let mut widths = vec![0; columns];
         let mut generated = 0usize;
@@ -1324,6 +1429,9 @@ impl<'a, 'd> State<'a, 'd> {
                 let doc = self.blocks(&cell.content)?;
                 let content = doc.render_limited(remaining).ok_or_else(output_limit)?;
                 remaining -= content.len();
+                if self.format == Format::Muse {
+                    muse_docs.insert(std::ptr::from_ref(cell), doc);
+                }
                 widths[col] = widths[col].max(display_width(&content));
                 rendered.push(content);
             }
@@ -1395,15 +1503,19 @@ impl<'a, 'd> State<'a, 'd> {
                 }
                 lines.join("\n")
             }
-            Format::Haddock => self.grid_table(table, &cells, &headers, &caption, false)?,
-            Format::Muse
-                if table
-                    .col_specs
-                    .iter()
-                    .any(|col| col.width != ColWidth::ColWidthDefault)
-                    || cells.iter().flatten().any(|s| s.contains('\n')) =>
-            {
-                self.grid_table(table, &cells, &headers, "", true)?
+            Format::Muse if cells.iter().flatten().any(|s| s.contains('\n')) => {
+                randoc_markdown_writer::render_grid_table(
+                    table,
+                    self.columns,
+                    false,
+                    self.context.limits.max_table_cells,
+                    self.budget,
+                    |cell| {
+                        Ok(muse_docs
+                            .remove(&std::ptr::from_ref(cell))
+                            .unwrap_or_default())
+                    },
+                )?
             }
             Format::Muse => {
                 self.check_table_width(&widths, cells.len(), 4)?;
@@ -1435,7 +1547,7 @@ impl<'a, 'd> State<'a, 'd> {
                 lines.join("\n")
             }
             Format::Vimdoc => self.vim_table(table, &cells, &headers, &caption, widths)?,
-            Format::Opml => String::new(),
+            Format::Opml | Format::Haddock => String::new(),
         };
         if result.len() > self.budget {
             return Err(output_limit());
@@ -1549,158 +1661,107 @@ impl<'a, 'd> State<'a, 'd> {
         Ok(out)
     }
 
-    fn html_table(&mut self, table: &Table) -> Result<Doc> {
-        let mut table = table.clone();
-        table.attr.id.clear();
+    fn html_table(&mut self, table: &'d Table) -> Result<Doc> {
+        let columns = table.col_specs.len();
+        let rows = table.head.rows.len()
+            + table
+                .bodies
+                .iter()
+                .map(|body| body.head.len() + body.body.len())
+                .sum::<usize>()
+            + table.foot.rows.len();
+        if rows.saturating_mul(columns) > self.context.limits.max_table_cells {
+            return Err(output_limit());
+        }
+
+        let mut out = literal("<table>");
+        if !table.caption.long.is_empty() {
+            let mut caption = Doc::default();
+            for block in &table.caption.long {
+                caption = caption.above(self.block(block)?);
+            }
+            out = out.above(literal("<caption>") + caption + literal("</caption>"));
+        }
         if table
             .col_specs
             .iter()
-            .any(|column| column.align != Alignment::AlignDefault)
+            .any(|spec| spec.width != ColWidth::ColWidthDefault)
         {
-            for column in &mut table.col_specs {
-                if column.align == Alignment::AlignDefault {
-                    column.align = Alignment::AlignLeft;
-                }
+            for spec in &table.col_specs {
+                let percent = match spec.width {
+                    ColWidth::ColWidthDefault => 0.0,
+                    ColWidth::ColWidth(width) => (width * 100.0).floor(),
+                };
+                out = out.above(literal(format!("<col width=\"{percent:.0}%\" />")));
             }
         }
-        let mut block = Block::Table(Box::new(table));
-        randoc_ast::walk::walk_inlines_mut(&mut block, |x| {
-            if let Inline::Str(text) = x {
-                *text = text.replace('’', "'");
-            }
-        });
-        let doc = self.html(&block)?;
-        let html = self.render_unwrapped(&doc)?;
-        let mut result = String::new();
-        for line in html.lines() {
-            let line = line.trim_start();
-            if matches!(line, "<colgroup>" | "</colgroup>") {
-                continue;
-            }
-            if line.starts_with("<table style=\"width:") {
-                result.push_str("<table>\n");
-                continue;
-            }
-            if let Some(width) = line
-                .strip_prefix("<col style=\"width:")
-                .and_then(|s| s.split_once('%'))
-                .map(|(width, _)| width.trim())
-            {
-                result.push_str(&format!("<col width=\"{width}%\" />\n"));
-                continue;
-            }
-            let line = line
-                .replace(" class=\"header\"", "")
-                .replace(" class=\"odd\"", "")
-                .replace(" class=\"even\"", "")
-                .replace("style=\"text-align: right;\"", "align=\"right\"")
-                .replace("style=\"text-align: left;\"", "align=\"left\"")
-                .replace("style=\"text-align: center;\"", "align=\"center\"");
-            result.push_str(&line);
-            result.push('\n');
+
+        let mut spans = vec![0; columns];
+        let mut head = table.head.rows.iter();
+        if let Some(row) = head.next()
+            && row.cells.iter().any(|cell| !cell.content.is_empty())
+        {
+            out = out
+                .above(literal("<thead>"))
+                .above(self.textile_table_row(table, row, &mut spans, "th")?)
+                .above(literal("</thead>"));
         }
-        result.pop();
-        Ok(literal(result))
+        out = out.above(literal("<tbody>"));
+        for row in head {
+            out = out.above(self.textile_table_row(table, row, &mut spans, "td")?);
+        }
+        for body in &table.bodies {
+            spans.fill(0);
+            for row in body.head.iter().chain(&body.body) {
+                out = out.above(self.textile_table_row(table, row, &mut spans, "td")?);
+            }
+        }
+        spans.fill(0);
+        for row in &table.foot.rows {
+            out = out.above(self.textile_table_row(table, row, &mut spans, "td")?);
+        }
+        Ok(out.above(literal("</tbody>")).above(literal("</table>")))
     }
 
-    fn grid_table(
-        &self,
+    fn textile_table_row(
+        &mut self,
         table: &Table,
-        rows: &[Vec<String>],
-        headers: &[bool],
-        caption: &str,
-        muse: bool,
-    ) -> Result<String> {
-        let mut widths: Vec<_> = table
-            .col_specs
-            .iter()
-            .map(|spec| match spec.width {
-                ColWidth::ColWidth(fraction) if fraction.is_finite() && fraction > 0.0 => {
-                    ((fraction * self.columns as f64)
-                        .floor()
-                        .clamp(1.0, self.columns as f64) as usize)
-                        .saturating_sub(3)
-                        .max(1)
-                }
-                _ => 1,
-            })
-            .collect();
-        for row in rows {
-            for (i, s) in row.iter().enumerate() {
-                if table.col_specs[i].width == ColWidth::ColWidthDefault {
-                    widths[i] = widths[i].max(s.lines().map(display_width).max().unwrap_or(0));
-                } else {
-                    widths[i] =
-                        widths[i].max(s.split_whitespace().map(display_width).max().unwrap_or(0));
-                }
-            }
-        }
-        self.check_table_width(&widths, 1, 3)?;
-        let border = |mark: char, alignment: bool| {
-            let mut line = String::from("+");
-            for (i, &width) in widths.iter().enumerate() {
-                let (left, right) = if alignment {
-                    match table.col_specs[i].align {
-                        Alignment::AlignDefault
-                            if table.col_specs[i].width != ColWidth::ColWidthDefault
-                                && headers.first() == Some(&true) =>
-                        {
-                            (true, false)
-                        }
-                        Alignment::AlignLeft => (true, false),
-                        Alignment::AlignRight => (false, true),
-                        Alignment::AlignCenter => (true, true),
-                        _ => (false, false),
+        row: &'d Row,
+        spans: &mut [i64],
+        tag: &str,
+    ) -> Result<Doc> {
+        let mut out = literal("<tr>");
+        let mut cells = row.cells.iter();
+        for (column, spec) in table.col_specs.iter().enumerate() {
+            let align = match spec.align {
+                Alignment::AlignCenter => "center",
+                Alignment::AlignRight => "right",
+                _ => "left",
+            };
+            let mut content = Doc::default();
+            if spans[column] == 0
+                && let Some(cell) = cells.next()
+            {
+                let width = usize::try_from(cell.col_span.max(1)).unwrap_or(usize::MAX);
+                let end = column.saturating_add(width).min(spans.len());
+                spans[column..end].fill(cell.row_span.max(1));
+                content = self.blocks(&cell.content)?;
+                content += match cell.content.last() {
+                    Some(Block::Para(_)) => layout::cr(),
+                    Some(Block::CodeBlock(_, code)) if textile_native_code(code) => {
+                        layout::blankline()
                     }
-                } else {
-                    (false, false)
+                    _ => Doc::default(),
                 };
-                line.push(if left { ':' } else { mark });
-                line.extend(std::iter::repeat_n(mark, width));
-                line.push(if right { ':' } else { mark });
-                line.push('+');
             }
-            line
-        };
-        let base = border('-', false);
-        let mut out = if muse || headers.first() != Some(&true) {
-            border('-', true)
-        } else {
-            base.clone()
-        };
-        for (row, header) in rows.iter().zip(headers) {
-            let wrapped = row
-                .iter()
-                .zip(&widths)
-                .map(|(s, &width)| wrap_cell(s, width))
-                .collect::<Vec<_>>();
-            let height = wrapped.iter().map(Vec::len).max().unwrap_or(1);
-            for row in 0..height {
-                if out.len() > self.budget {
-                    return Err(output_limit());
-                }
-                out.push_str("\n|");
-                for (i, lines) in wrapped.iter().enumerate() {
-                    out.push(' ');
-                    out.push_str(&pad(
-                        lines.get(row).map_or("", String::as_str),
-                        widths[i],
-                        Alignment::AlignLeft,
-                    ));
-                    out.push_str(" |");
-                }
-            }
-            out.push('\n');
-            if *header && !muse {
-                out.push_str(&border('=', true));
-            } else {
-                out.push_str(&base);
-            }
+            spans[column] = spans[column].saturating_sub(1).max(0);
+            out = out.above(
+                literal(format!("<{tag} align=\"{align}\">"))
+                    + content
+                    + literal(format!("</{tag}>")),
+            );
         }
-        if !caption.is_empty() {
-            out.push_str(&format!("\n\n{caption}"));
-        }
-        Ok(out)
+        Ok(out.above(literal("</tr>")))
     }
 }
 
@@ -1752,8 +1813,19 @@ fn textile_native_code(code: &str) -> bool {
     !code.starts_with('\n') && !code.contains("\n\n")
 }
 
+fn muse_emph_tag(previous: Option<&Inline>, next: Option<&Inline>) -> bool {
+    matches!(previous, Some(Inline::Str(text)) if text.ends_with(char::is_alphanumeric)
+        && !muse_verbatim(text))
+        || matches!(next, Some(Inline::Str(text)) if text.starts_with(char::is_alphanumeric)
+            || muse_verbatim(text))
+}
+
+fn muse_verbatim(text: &str) -> bool {
+    text.contains(['*', '=', '#', '<', '|'])
+}
+
 fn escape(format: Format, s: &str) -> String {
-    if format == Format::Muse && s.contains(['*', '=', '#', '<', '|']) {
+    if format == Format::Muse && muse_verbatim(s) {
         let text = s.replace("</verbatim>", "<</verbatim><verbatim>/verbatim>");
         return format!("<verbatim>{text}</verbatim>");
     }

@@ -411,13 +411,28 @@ impl Renderer<'_> {
             )
             .chain(std::iter::once((&table.foot.rows[..], false)));
         let mut spans = vec![0; cols];
+        let mut row_paragraph = p;
         for (rows, head) in groups {
             spans.fill(0);
-            for row in rows {
-                self.row(out, row, table, &boundaries, &mut spans, head, p)?;
+            for (index, row) in rows.iter().enumerate() {
+                self.row(
+                    out,
+                    row,
+                    table,
+                    &boundaries,
+                    &mut spans,
+                    head && index == 0,
+                    row_paragraph,
+                )?;
+                row_paragraph.list = None;
+                row_paragraph.marker = None;
             }
         }
-        let p = Paragraph { list: None, ..p };
+        let p = Paragraph {
+            list: None,
+            marker: None,
+            ..p
+        };
         if table.caption.long.is_empty() {
             paragraph_start(out, p, false);
             out.push_str("\\par}\n");
@@ -474,13 +489,22 @@ impl Renderer<'_> {
                 let rows_left = usize::try_from(cell.row_span.saturating_sub(1)).unwrap_or(0);
                 spans[index..=index + covered].fill(rows_left);
                 out.push('{');
+                let Paragraph { list, marker, .. } = p;
                 let p = Paragraph {
                     table_depth: p.table_depth + 1,
                     align: col.align,
                     list: None,
+                    marker: None,
                     ..p
                 };
-                self.blocks(out, &cell.content, p)?;
+                if index == 0
+                    && let Some((first, rest)) = cell.content.split_first()
+                {
+                    self.block(out, first, Paragraph { list, marker, ..p })?;
+                    self.blocks(out, rest, p)?;
+                } else {
+                    self.blocks(out, &cell.content, p)?;
+                }
                 out.push_str("\\cell}\n");
             } else {
                 out.push_str("{\\cell}\n");
@@ -686,6 +710,10 @@ impl Renderer<'_> {
             Some("image/png") => "pngblip",
             Some("image/jpeg") => "jpegblip",
             _ => {
+                self.context.report(LogMessage::CouldNotFetchResource(
+                    url.clone(),
+                    "image is not a jpeg or png".into(),
+                ));
                 image_placeholder(out, url);
                 return Ok(());
             }

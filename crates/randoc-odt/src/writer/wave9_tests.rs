@@ -298,3 +298,29 @@ fn block_title_preserves_inline_styles_inside_one_paragraph() -> Result<()> {
     );
     Ok(())
 }
+
+#[test]
+fn bibliography_entries_use_first_paragraph_style_once() {
+    let entry = |id, body: &str| {
+        Block::Div(
+            Attr::new(id, vec!["csl-entry".into()], vec![]),
+            vec![Block::Para(vec![Inline::Str(body.into())])],
+        )
+    };
+    let doc = Pandoc {
+        blocks: vec![
+            Block::Header(1, Attr::default(), vec![Inline::Str("Works".into())]),
+            Block::Div(
+                Attr::new("refs", vec!["csl-bib-body".into()], vec![]),
+                vec![
+                    entry("ref-a", "First entry"),
+                    entry("ref-b", "Second entry"),
+                ],
+            ),
+        ],
+        ..Pandoc::default()
+    };
+    let output = write_opendocument(&doc, &WriterOptions::default(), &mut Context::pure()).unwrap();
+    assert!(output.contains("text:style-name=\"First_20_paragraph\">First entry"));
+    assert!(output.contains("text:style-name=\"Text_20_body\">Second entry"));
+}

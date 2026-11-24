@@ -300,3 +300,67 @@ fn extension_flags() {
         ast(&oracle(&["-f", &format, "-t", "json"], input).0, &actual);
     }
 }
+
+#[test]
+#[ignore = "Requires the Pandoc oracle."]
+fn longtail_block_quote_positions() {
+    let mut options = ReaderOptions::default();
+    options.extensions = FormatSpec::parse("djot+sourcepos").extensions().unwrap();
+    let Reader::Text(reader) = randoc_djot::reader("djot").unwrap() else {
+        unreachable!();
+    };
+    for source in [
+        "> A",
+        "> A\n> B",
+        "> - a",
+        "> - a\n> - b",
+        "a\nb",
+        "- a\n- b",
+    ] {
+        let (expected, _) = oracle(&["-f", "djot+sourcepos", "-t", "json"], source);
+        let actual = reader
+            .read(&Sources::from_text(source), &options, &mut Context::pure())
+            .unwrap();
+        ast(&expected, &actual);
+    }
+}
+
+#[test]
+#[ignore = "Requires the Pandoc oracle."]
+fn paragraph_rules_and_attribute_comments() {
+    for input in [
+        "text\n---\nmore\n\n---\n",
+        "text\n- - -\n\n***\n",
+        "![alt](image.png){width=50% height=3in}",
+        "![alt](image.png){width=50% ignored % height=\"3in\"}",
+        "![alt](image.png){width=\"50%\" height=3in}",
+    ] {
+        let (expected, _) = oracle(&["-f", "djot", "-t", "json"], input);
+        ast(&expected, &read(input, &mut Context::pure()));
+    }
+}
+
+#[test]
+#[ignore = "Requires the Pandoc oracle."]
+fn longtail_writer_parity() {
+    for (format, input) in [
+        ("markdown", "| one\n|   two\n\n[link](https://x/a(b))"),
+        (
+            "html",
+            "<table><tr><td colspan=\"2\"><p>A</p><p>B</p></td></tr><tr><td>C</td><td>D</td></tr></table>",
+        ),
+        (
+            "html",
+            "<table><tr><td colspan=\"2\">A</td></tr><tr><td>B</td><td>C</td></tr></table>",
+        ),
+        (
+            "html",
+            "<table><thead><tr><th>A</th><th>B</th></tr></thead><tr><td>one<br>two</td><td>C</td></tr></table>",
+        ),
+    ] {
+        let (tree, _) = oracle(&["-f", format, "-t", "json"], input);
+        let (expected, _) = oracle(&["-f", "json", "-t", "djot"], &tree);
+        let actual = write(&json::from_json(&tree).unwrap(), &WriterOptions::default());
+        assert_eq!(expected, actual, "{input}");
+    }
+}

@@ -200,7 +200,7 @@ impl<'a> Affiliated<'a> {
         };
         match key.to_ascii_lowercase().as_str() {
             "name" | "label" => self.id = value,
-            "results" => {}
+            "results" | "attr_latex" => {}
             "caption" => {
                 if !self.caption.is_empty() {
                     self.caption.push(' ');

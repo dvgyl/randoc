@@ -15,10 +15,18 @@ enum Kind {
     Space,
 }
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Style {
+    Default,
+    Bold,
+    Italic,
+    Roman,
+}
+
 pub(crate) fn render(out: &mut String, tex: &str, depth: usize) -> bool {
     let start = out.len();
     let mut input = tex;
-    if sequence(out, &mut input, depth, false).is_some() && input.is_empty() {
+    if sequence(out, &mut input, depth, false, Style::Default).is_some() && input.is_empty() {
         true
     } else {
         out.truncate(start);
@@ -26,7 +34,13 @@ pub(crate) fn render(out: &mut String, tex: &str, depth: usize) -> bool {
     }
 }
 
-fn sequence(out: &mut String, input: &mut &str, depth: usize, grouped: bool) -> Option<()> {
+fn sequence(
+    out: &mut String,
+    input: &mut &str,
+    depth: usize,
+    grouped: bool,
+    style: Style,
+) -> Option<()> {
     if depth == 0 {
         return None;
     }
@@ -39,8 +53,8 @@ fn sequence(out: &mut String, input: &mut &str, depth: usize, grouped: bool) -> 
             return grouped.then_some(());
         }
         let start = out.len();
-        let mut kind = atom(out, input, depth)?;
-        let has_scripts = scripts(out, input, depth, kind)?;
+        let mut kind = atom(out, input, depth, style)?;
+        let has_scripts = scripts(out, input, depth, kind, style)?;
         let space = match kind {
             Kind::Binary
                 if matches!(
@@ -78,7 +92,13 @@ fn sequence(out: &mut String, input: &mut &str, depth: usize, grouped: bool) -> 
     (!grouped).then_some(())
 }
 
-fn scripts(out: &mut String, input: &mut &str, depth: usize, kind: Kind) -> Option<bool> {
+fn scripts(
+    out: &mut String,
+    input: &mut &str,
+    depth: usize,
+    kind: Kind,
+    style: Style,
+) -> Option<bool> {
     let mut sub = None;
     let mut sup = None;
     *input = input.trim_start();
@@ -92,7 +112,7 @@ fn scripts(out: &mut String, input: &mut &str, depth: usize, kind: Kind) -> Opti
         }
         *input = input[1..].trim_start();
         let mut text = String::new();
-        atom(&mut text, input, depth - 1)?;
+        atom(&mut text, input, depth - 1, style)?;
         *target = Some(text);
         *input = input.trim_start();
     }
@@ -107,17 +127,18 @@ fn scripts(out: &mut String, input: &mut &str, depth: usize, kind: Kind) -> Opti
     Some(sub.is_some() || sup.is_some())
 }
 
-fn atom(out: &mut String, input: &mut &str, depth: usize) -> Option<Kind> {
+fn atom(out: &mut String, input: &mut &str, depth: usize, style: Style) -> Option<Kind> {
     use Kind::*;
     if depth == 0 {
         return None;
     }
+    let source = *input;
     let c = input.chars().next()?;
     *input = &input[c.len_utf8()..];
     let mut buf = [0; 4];
     let (kind, text) = match c {
         '{' => {
-            sequence(out, input, depth - 1, true)?;
+            sequence(out, input, depth - 1, true, style)?;
             return Some(Ordinary);
         }
         '\\' => {
@@ -158,6 +179,15 @@ fn atom(out: &mut String, input: &mut &str, depth: usize) -> Option<Kind> {
                     };
                     (if word == "left" { Open } else { Close }, text)
                 }
+                "mathbf" | "mathit" | "mathrm" => {
+                    let style = match word {
+                        "mathbf" => Style::Bold,
+                        "mathit" => Style::Italic,
+                        _ => Style::Roman,
+                    };
+                    *input = input.trim_start();
+                    return atom(out, input, depth - 1, style);
+                }
                 _ => command(word)?,
             }
         }
@@ -168,11 +198,29 @@ fn atom(out: &mut String, input: &mut &str, depth: usize) -> Option<Kind> {
         ',' | ';' => (Punctuation, &*c.encode_utf8(&mut buf)),
         '(' | '[' => (Open, &*c.encode_utf8(&mut buf)),
         ')' | ']' | '!' => (Close, &*c.encode_utf8(&mut buf)),
+        '0'..='9' if style != Style::Default => {
+            let digits = |text: &str| text.bytes().take_while(u8::is_ascii_digit).count();
+            let mut end = digits(source);
+            if let Some(fraction) = source[end..].strip_prefix('.') {
+                let count = digits(fraction);
+                if count > 0 {
+                    end += 1 + count;
+                }
+            }
+            *input = &source[end..];
+            (Ordinary, &source[..end])
+        }
         '0'..='9' | '.' | '/' | '|' => (Ordinary, &*c.encode_utf8(&mut buf)),
         _ => return None,
     };
-    if kind == Variable {
-        out.push_str("{\\i ");
+    let control = match style {
+        Style::Bold if kind != Space => Some("{\\b "),
+        Style::Italic if kind != Space => Some("{\\i "),
+        Style::Default if kind == Variable => Some("{\\i "),
+        _ => None,
+    };
+    if let Some(control) = control {
+        out.push_str(control);
         escape(out, text);
         out.push('}');
     } else {

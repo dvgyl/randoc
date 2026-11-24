@@ -1,0 +1,320 @@
+I	x	x
+I	x+y	x + y
+I	x-y	x - y
+I	x\cdot y	x cdot y
+I	x\times y	x times y
+I	x/y	x / y
+I	\frac{a}{b}	size*0.7 {a over b}
+I	\dfrac{a}{b}	{a over b}
+I	\tfrac{a}{b}	size*0.7 {a over b}
+I	x^2	x^2
+I	x_i	x_i
+I	x_i^2	x_i^2
+I	x^{10}	x^10
+I	\sqrt{x}	sqrt {x}
+I	\sqrt[3]{x}	nroot {3} {x}
+I	\sum_{i=1}^n i	sum_{{i = 1}}^n i
+I	\prod_{i} x_i	∏_i x_i
+I	\int_0^1 f(x)\,dx	int_0^1 f(x) dx
+I	\iint f	∬f
+I	\oint f	∮f
+I	\lim_{x\to 0} f	func lim_{{x toward 0}} f
+I	\alpha+\beta	%ialpha + %ibeta
+I	\Gamma	%GAMMA
+I	\infty	infinity
+I	\partial f	partial f
+I	\nabla f	nabla f
+I	a\le b	a &lt;= b
+I	a\ge b	a &gt;= b
+I	a\ne b	a &lt;&gt; b
+I	a\approx b	a approx b
+I	a\equiv b	a equiv b
+I	a\in B	a in B
+I	A\subset B	A subset B
+I	A\cup B	A union B
+I	A\cap B	A intersection B
+I	\forall x	forall x
+I	\exists x	exists x
+I	\neg p	neg p
+I	p\wedge q	p and q
+I	p\vee q	p or q
+I	\to	{} toward {}
+I	\Rightarrow	{} drarrow {}
+I	\leftrightarrow	{} leftrightarrow {}
+I	\left(x\right)	left ( x right )
+I	\left[x\right]	left [ x right ]
+I	\left\{x\right\}	left lbrace x right rbrace
+I	\left|x\right|	left lline x right rline
+I	\langle x\rangle	⟨x⟩
+I	(a)	(a)
+I	[a]	[a]
+I	\{a\}	left lbrace a right rbrace
+I	\mathbf{x}	bold nitalic x
+I	\mathit{x}	ital x
+I	\mathrm{d}	nitalic d
+I	\mathcal{L}	nitalic ℒ
+I	\mathbb{R}	nitalic ℝ
+I	\text{if }x	&quot;if &quot;x
+I	\operatorname{tr} A	func tr A
+I	\sin x	sin x
+I	\log x	log x
+I	\max_i x_i	func max_i x_i
+I	\hat{x}	hat x
+I	\bar{x}	bar x
+I	\vec{x}	vec x
+I	\tilde{x}	tilde x
+I	\dot{x}	dot x
+I	\ddot{x}	ddot x
+I	\overline{AB}	overline {{AB}}
+I	\underline{x}	underline x
+I	\overbrace{x}^{a}	x overbrace a
+I	\begin{matrix}a&b\\c&d\end{matrix}	matrix { a # b ## c # d }
+I	\begin{bmatrix}a\\b\end{bmatrix}	left [ matrix { a ## b } right ]
+I	\begin{cases}a&x>0\\b&x\le0\end{cases}	left lbrace matrix { alignl a # alignl x &gt; 0 ## alignl b # alignl x &lt;= 0 } right none
+I	\binom{n}{k}	left ( binom{n}{k} right )
+I	1.5	1.5
+I	-x	- x
+I	\pm x	{} plusminus x
+I	x'	x&#39;
+I	x''	x&#39;&#39;
+I	\ldots	dotslow
+I	\cdots	dotsaxis
+I	a,b	a, b
+I	a;b	a; b
+I	f(x)=x^2	f(x) = x^2
+I	e^{i\pi}+1=0	e^{{i%ipi}} + 1 = 0
+I	x \quad y	x ~ y
+I	x\,y	x y
+I	\{	{
+I	%	
+I	\#	#
+I	a\_b	a_b
+I	\$	$
+I	\mathrm{H_2O}	nitalic{H_2 O}
+I	\color{red}x	x
+I	\boxed{x}	\boxed{x}
+I	\phantom{x}	phantom x
+I	\stackrel{a}{=}	\overset{a}{=}
+I	\overset{a}{=}	\overset{a}{=}
+I	\underset{a}{=}	=_a
+I	\lfloor x\rfloor	⌊x⌋
+I	\lceil x\rceil	⌈x⌉
+I	\|x\|	left ldline x right rdline
+I	\mid	∣
+I	a\mid b	a∣b
+I	\circ	{} circ {}
+I	\ast	*
+I	\star	⋆
+I	\dagger	†
+I	\hbar	ℏ
+I	\ell	ℓ
+I	\Re	ℜ
+I	\aleph	ℵ
+I	\emptyset	emptyset
+I	\angle	∠
+I	\perp	{} ⟂ {}
+I	\parallel	{} parallel {}
+I	\sim	{} ∼ {}
+I	\simeq	{} ≃ {}
+I	\propto	{} prop {}
+I	\ll	{} ll {}
+I	\gg	{} gg {}
+I	\prec	{} ≺ {}
+I	\succ	{} ≻ {}
+I	\subseteq	{} subseteq {}
+I	\supseteq	{} supseteq {}
+I	\notin	{} notin {}
+I	\setminus	\
+I	\oplus	⊕
+I	\otimes	⊗
+I	\odot	⊙
+I	\bigcup_i A_i	⋃_i A_i
+I	\bigcap_i A_i	⋂_i A_i
+I	\coprod	∐
+I	\int\limits_a^b	int from a to b
+I	\sum\nolimits_i	sum_i
+I	x^{y^z}	x^{y^z}
+I	{x^y}^z	{x^y}^z
+I	x_{i_j}	x_{i_j}
+I	\frac{\frac{a}{b}}{c}	size*0.7 {size*0.7 {a over b} over c}
+I	\sqrt{\frac{a}{b}}	sqrt {size*0.7 {a over b}}
+I	\left(\frac{a}{b}\right)	left ( size*0.7 {a over b} right )
+I	a \over b	size*0.7 {a over b}
+I	\mathsf{x}	font sans nitalic x
+I	\mathtt{x}	font fixed nitalic x
+I	\mathfrak{g}	nitalic 𝔤
+I	\textbf{x}	bold {&quot;x&quot;}
+I	\textit{x}	ital x
+I	ab	ab
+I	abc	abc
+I	2x	2x
+I	x2	x2
+I	\alpha\beta	%ialpha %ibeta
+I	\sin^2 x	sin^2 x
+I	\det A	func det A
+I	\exp(x)	exp(x)
+I	\arg z	func arg z
+I	\gcd(a,b)	func gcd(a, b)
+I	\bmod	
+I	a \bmod b	a{ func mod b}
+I	\pmod{n}	(func mod n)
+D	x	x
+D	x+y	x + y
+D	x-y	x - y
+D	x\cdot y	x cdot y
+D	x\times y	x times y
+D	x/y	x / y
+D	\frac{a}{b}	{a over b}
+D	\dfrac{a}{b}	{a over b}
+D	\tfrac{a}{b}	size*0.7 {a over b}
+D	x^2	x^2
+D	x_i	x_i
+D	x_i^2	x_i^2
+D	x^{10}	x^10
+D	\sqrt{x}	sqrt {x}
+D	\sqrt[3]{x}	nroot {3} {x}
+D	\sum_{i=1}^n i	sum from i = 1 to n i
+D	\prod_{i} x_i	prod from i x_i
+D	\int_0^1 f(x)\,dx	int_0^1 f(x) dx
+D	\iint f	∬f
+D	\oint f	∮f
+D	\lim_{x\to 0} f	lim from x toward 0 f
+D	\alpha+\beta	%ialpha + %ibeta
+D	\Gamma	%GAMMA
+D	\infty	infinity
+D	\partial f	partial f
+D	\nabla f	nabla f
+D	a\le b	a &lt;= b
+D	a\ge b	a &gt;= b
+D	a\ne b	a &lt;&gt; b
+D	a\approx b	a approx b
+D	a\equiv b	a equiv b
+D	a\in B	a in B
+D	A\subset B	A subset B
+D	A\cup B	A union B
+D	A\cap B	A intersection B
+D	\forall x	forall x
+D	\exists x	exists x
+D	\neg p	neg p
+D	p\wedge q	p and q
+D	p\vee q	p or q
+D	\to	{} toward {}
+D	\Rightarrow	{} drarrow {}
+D	\leftrightarrow	{} leftrightarrow {}
+D	\left(x\right)	left ( x right )
+D	\left[x\right]	left [ x right ]
+D	\left\{x\right\}	left lbrace x right rbrace
+D	\left|x\right|	left lline x right rline
+D	\langle x\rangle	⟨x⟩
+D	(a)	(a)
+D	[a]	[a]
+D	\{a\}	left lbrace a right rbrace
+D	\mathbf{x}	bold nitalic x
+D	\mathit{x}	ital x
+D	\mathrm{d}	nitalic d
+D	\mathcal{L}	nitalic ℒ
+D	\mathbb{R}	nitalic ℝ
+D	\text{if }x	&quot;if &quot;x
+D	\operatorname{tr} A	func tr A
+D	\sin x	sin x
+D	\log x	log x
+D	\max_i x_i	{func max} csub {i} x_i
+D	\hat{x}	hat x
+D	\bar{x}	bar x
+D	\vec{x}	vec x
+D	\tilde{x}	tilde x
+D	\dot{x}	dot x
+D	\ddot{x}	ddot x
+D	\overline{AB}	overline {{AB}}
+D	\underline{x}	underline x
+D	\overbrace{x}^{a}	x overbrace a
+D	\begin{matrix}a&b\\c&d\end{matrix}	matrix { a # b ## c # d }
+D	\begin{bmatrix}a\\b\end{bmatrix}	left [ matrix { a ## b } right ]
+D	\begin{cases}a&x>0\\b&x\le0\end{cases}	left lbrace matrix { alignl a # alignl x &gt; 0 ## alignl b # alignl x &lt;= 0 } right none
+D	\binom{n}{k}	left ( binom{n}{k} right )
+D	1.5	1.5
+D	-x	- x
+D	\pm x	{} plusminus x
+D	x'	x&#39;
+D	x''	x&#39;&#39;
+D	\ldots	dotslow
+D	\cdots	dotsaxis
+D	a,b	a, b
+D	a;b	a; b
+D	f(x)=x^2	f(x) = x^2
+D	e^{i\pi}+1=0	e^{{i%ipi}} + 1 = 0
+D	x \quad y	x ~ y
+D	x\,y	x y
+D	\{	{
+D	%	
+D	\#	#
+D	a\_b	a_b
+D	\$	$
+D	\mathrm{H_2O}	nitalic{H_2 O}
+D	\color{red}x	x
+D	\boxed{x}	\boxed{x}
+D	\phantom{x}	phantom x
+D	\stackrel{a}{=}	\overset{a}{=}
+D	\overset{a}{=}	\overset{a}{=}
+D	\underset{a}{=}	=_a
+D	\lfloor x\rfloor	⌊x⌋
+D	\lceil x\rceil	⌈x⌉
+D	\|x\|	left ldline x right rdline
+D	\mid	∣
+D	a\mid b	a∣b
+D	\circ	{} circ {}
+D	\ast	*
+D	\star	⋆
+D	\dagger	†
+D	\hbar	ℏ
+D	\ell	ℓ
+D	\Re	ℜ
+D	\aleph	ℵ
+D	\emptyset	emptyset
+D	\angle	∠
+D	\perp	{} ⟂ {}
+D	\parallel	{} parallel {}
+D	\sim	{} ∼ {}
+D	\simeq	{} ≃ {}
+D	\propto	{} prop {}
+D	\ll	{} ll {}
+D	\gg	{} gg {}
+D	\prec	{} ≺ {}
+D	\succ	{} ≻ {}
+D	\subseteq	{} subseteq {}
+D	\supseteq	{} supseteq {}
+D	\notin	{} notin {}
+D	\setminus	\
+D	\oplus	⊕
+D	\otimes	⊗
+D	\odot	⊙
+D	\bigcup_i A_i	oper ∪ from i A_i
+D	\bigcap_i A_i	oper ∩ from i A_i
+D	\coprod	∐
+D	\int\limits_a^b	int from a to b
+D	\sum\nolimits_i	sum_i
+D	x^{y^z}	x^{y^z}
+D	{x^y}^z	{x^y}^z
+D	x_{i_j}	x_{i_j}
+D	\frac{\frac{a}{b}}{c}	{{a over b} over c}
+D	\sqrt{\frac{a}{b}}	sqrt {{a over b}}
+D	\left(\frac{a}{b}\right)	left ( {a over b} right )
+D	a \over b	{a over b}
+D	\mathsf{x}	font sans nitalic x
+D	\mathtt{x}	font fixed nitalic x
+D	\mathfrak{g}	nitalic 𝔤
+D	\textbf{x}	bold {&quot;x&quot;}
+D	\textit{x}	ital x
+D	ab	ab
+D	abc	abc
+D	2x	2x
+D	x2	x2
+D	\alpha\beta	%ialpha %ibeta
+D	\sin^2 x	sin^2 x
+D	\det A	func det A
+D	\exp(x)	exp(x)
+D	\arg z	func arg z
+D	\gcd(a,b)	func gcd(a, b)
+D	\bmod	
+D	a \bmod b	a{ func mod b}
+D	\pmod{n}	(func mod n)

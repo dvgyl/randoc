@@ -33,11 +33,8 @@ pub(crate) const KEPT_HTML: &str = "\u{0}kept-html";
 /// What ends a sequence of inlines.
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 enum Stop {
-    None,
     DoubleQuote,
     SingleQuote,
-    Superscript,
-    Subscript,
     Strikeout,
     Mark,
 }
@@ -153,6 +150,10 @@ enum Find {
     QuoteCloser,
     /// An unescaped dollar or percent sign.
     MathBoundary,
+    /// An unescaped TeX group delimiter.
+    MathBrace,
+    /// Unescaped space or newline in a script.
+    ScriptSpace,
     /// Two `$` characters.
     DoubleDollar,
     /// A blank line inside the text.
@@ -200,6 +201,8 @@ struct Tables {
     patterns: HashMap<Text, (usize, Option<usize>)>,
     /// The next closing dollar after the end of each TeX comment.
     math_comments: HashMap<usize, Option<MathEnd>>,
+    /// The closing brace of each TeX group, if present.
+    math_braces: HashMap<usize, Option<usize>>,
     /// The positions of each `\end{name}`, by name.
     env_ends: Option<HashMap<Text, Vec<usize>>>,
     /// For each `(`, the index of its `)`, or `u32::MAX`.
@@ -279,7 +282,7 @@ impl Parser {
         let depth = self.depth;
         let mut inl = Inl::new(self, chars, ix, in_link, depth);
         inl.window = kind;
-        let seq = inl.seq(Stop::None);
+        let seq = inl.seq();
         let mut out = match kind {
             Window::Text | Window::Label => normalize(seq),
             Window::Content | Window::Element => join_white_space(seq),
@@ -375,7 +378,9 @@ impl Inl<'_> {
         match kind {
             Find::Char(c) => at(k) == Some(c),
             Find::QuoteCloser => at(k) == Some('\'') && !is_alnum(at(k + 1)),
-            Find::MathBoundary => matches!(at(k), Some('$' | '%')) && !self.escaped(k),
+            Find::MathBoundary => matches!(at(k), Some('$' | '%' | '{')) && !self.escaped(k),
+            Find::MathBrace => matches!(at(k), Some('{' | '}' | '%')) && !self.escaped(k),
+            Find::ScriptSpace => matches!(at(k), Some(' ' | '\n' | '\t')) && !self.escaped(k),
             Find::DoubleDollar => at(k) == Some('$') && at(k + 1) == Some('$') && !self.escaped(k),
             Find::Unescaped(c) => at(k) == Some(c) && !self.escaped(k),
             Find::Space => at(k).is_some_and(char::is_whitespace),
@@ -479,7 +484,7 @@ impl Inl<'_> {
                     let mark = if quote == dq { '"' } else { '\'' };
                     match self.find(Find::Char(mark), quote + 1) {
                         Some(close) => k = close + 1,
-                        None => break gt.min(lt).min(self.s.len()),
+                        None => break if gt < lt { gt + 1 } else { lt },
                     }
                     continue;
                 }
@@ -634,10 +639,10 @@ impl Inl<'_> {
                     while self.s.get(k + n) == Some(&'`') {
                         n += 1;
                     }
-                    k = match self.code_closer(k, n) {
-                        Some(end) => end + n,
-                        None => k + n,
-                    };
+                    k = (1..=n)
+                        .rev()
+                        .find_map(|size| self.code_closer(k + n - 1, size).map(|end| end + size))
+                        .unwrap_or(k + n);
                     continue;
                 }
                 '<' => {
@@ -683,24 +688,16 @@ impl Inl<'_> {
 
     fn at_stop(&self, stop: Stop) -> bool {
         match stop {
-            Stop::None => false,
             Stop::DoubleQuote => self.cur() == Some('"'),
             Stop::SingleQuote => self.cur() == Some('\'') && !is_alnum(self.peek(1)),
-            Stop::Superscript => self.cur() == Some('^'),
-            Stop::Subscript => self.cur() == Some('~'),
             Stop::Strikeout => self.starts_with("~~"),
             Stop::Mark => self.starts_with("=="),
         }
     }
 
-    fn seq(&mut self, stop: Stop) -> Vec<Inline> {
+    fn seq(&mut self) -> Vec<Inline> {
         let mut out = Vec::new();
-        while self.i < self.s.len() && !self.at_stop(stop) && self.p.can_read() {
-            if matches!(stop, Stop::Superscript | Stop::Subscript)
-                && matches!(self.cur(), Some(' ' | '\n'))
-            {
-                break;
-            }
+        while self.i < self.s.len() && self.p.can_read() {
             let start = self.i;
             out.extend(self.inline());
             if self.i == start {
@@ -744,10 +741,7 @@ impl Inl<'_> {
             if self.at_stop(stop) {
                 break true;
             }
-            if self.i >= self.s.len()
-                || matches!(stop, Stop::Superscript | Stop::Subscript)
-                    && matches!(self.cur(), Some(' ' | '\n'))
-            {
+            if self.i >= self.s.len() {
                 break false;
             }
             visited.push(self.i);
@@ -794,18 +788,9 @@ impl Inl<'_> {
     /// The caller checked that the current position is no stop.
     fn literal_stop(&mut self, stop: Stop) -> Option<usize> {
         let from = self.i + 1;
-        let script = |inl: &mut Self, closer: char| {
-            let end = inl.find(Find::Char(closer), from)?;
-            let space = inl.find(Find::Char(' '), from).unwrap_or(end);
-            let newline = inl.find(Find::Char('\n'), from).unwrap_or(end);
-            (end <= space.min(newline)).then_some(end)
-        };
         match stop {
-            Stop::None => None,
             Stop::DoubleQuote => self.find(Find::Char('"'), from),
             Stop::SingleQuote => self.find(Find::QuoteCloser, from),
-            Stop::Superscript => script(self, '^'),
-            Stop::Subscript => script(self, '~'),
             Stop::Strikeout => self.find(Find::DoubleTilde, from),
             Stop::Mark => self.find(Find::DoubleEquals, from),
         }
@@ -1615,6 +1600,7 @@ impl Inl<'_> {
         // link. Without a copy of each label, nested brackets stay linear.
         if self.in_link
             && !image
+            && self.s.get(close + 1) != Some(&'{')
             && !matches!(self.s.get(open + 1), Some('^' | '['))
             && self
                 .find(Find::Char('@'), open + 1)
@@ -1655,6 +1641,9 @@ impl Inl<'_> {
                 return Some(vec![Inline::Str(text)]);
             }
         }
+        if image && self.ext(Extension::Footnotes) && self.s.get(open + 1) == Some(&'^') {
+            return None;
+        }
         let after = self.s.get(close + 1).copied();
         if after == Some('(')
             && let Some(out) = self.inline_link(image, open, close)
@@ -1664,12 +1653,22 @@ impl Inl<'_> {
         if !image
             && after == Some('{')
             && self.ext(Extension::BracketedSpans)
-            && !self.in_link
             && let Some((attr, end)) = self.attrs_at(close + 1)
         {
             let inline = self.bracketed_span(attr, open + 1..close);
             self.i = end;
             return Some(vec![inline]);
+        }
+        if image
+            && after == Some('{')
+            && self.ext(Extension::LinkAttributes)
+            && let Some((_, end)) = self.attrs_at(close + 1)
+        {
+            self.count_label_notes(open);
+            let mut out = vec![Inline::Str("!".into())];
+            out.extend(self.bracket_text(open + 1..close));
+            self.i = end;
+            return Some(merge(out));
         }
         if (self.ext(Extension::WikilinksTitleAfterPipe)
             || self.ext(Extension::WikilinksTitleBeforePipe))
@@ -1700,6 +1699,7 @@ impl Inl<'_> {
             return Some(out);
         }
         if !image
+            && (after != Some('[') || self.s.get(close + 2) == Some(&']'))
             && self.ext(Extension::Citations)
             && self
                 .find(Find::Char('@'), open + 1)
@@ -1754,7 +1754,7 @@ impl Inl<'_> {
         let ix = self.shared_index();
         let mut inner = Inl::new(&mut *self.p, window, ix, false, self.depth);
         inner.window = Window::Content;
-        out.extend(inner.seq(Stop::None));
+        out.extend(inner.seq());
         out.push(Inline::Str("]".into()));
         out
     }
@@ -1786,7 +1786,7 @@ impl Inl<'_> {
         let note_number = self.p.count_only(|p| {
             let mut inner = Inl::new(p, window, ix, false, depth);
             inner.window = Window::Content;
-            let _ = inner.seq(Stop::None);
+            let _ = inner.seq();
             inner.p.note_number
         });
         self.p.note_number = note_number;
@@ -1903,7 +1903,7 @@ impl Inl<'_> {
             return None;
         }
         let mut k = close + 2;
-        while matches!(self.s.get(k), Some(' ' | '\n')) {
+        while self.s.get(k).is_some_and(|c| c.is_whitespace()) {
             k += 1;
         }
         let url_start = k;
@@ -1936,9 +1936,9 @@ impl Inl<'_> {
                         depth -= 1;
                         k += 1;
                     }
-                    Some(' ' | '\n') => {
+                    Some(c) if c.is_whitespace() => {
                         let mut m = k;
-                        while matches!(self.s.get(m), Some(' ' | '\n')) {
+                        while self.s.get(m).is_some_and(|c| c.is_whitespace()) {
                             m += 1;
                         }
                         if matches!(self.s.get(m), Some('"' | '\'' | ')')) {
@@ -1951,7 +1951,7 @@ impl Inl<'_> {
             }
             url = self.text(url_start, k.min(self.s.len()));
         }
-        while matches!(self.s.get(k), Some(' ' | '\n')) {
+        while self.s.get(k).is_some_and(|c| c.is_whitespace()) {
             k += 1;
         }
         let mut title = Text::new();
@@ -1978,7 +1978,13 @@ impl Inl<'_> {
                 j += 1;
             }
             let (end, paren) = found?;
-            title = decode_entities(&unescape(&title_lines(&self.text(k + 1, end))?));
+            let raw = self.text(k + 1, end);
+            if raw.starts_with(char::is_whitespace)
+                || raw.ends_with(|c: char| c != '\n' && c.is_whitespace())
+            {
+                return None;
+            }
+            title = decode_entities(&unescape(&title_lines(&raw.replace('\u{a0}', " "))?));
             k = paren;
         }
         if self.s.get(k) != Some(&')') {
@@ -1988,7 +1994,9 @@ impl Inl<'_> {
         let attr = self
             .trailing_attr(Extension::LinkAttributes)
             .unwrap_or_default();
-        let url = escape_uri(&decode_entities(&unescape(&url.replace('\n', " "))));
+        let url = escape_uri(&decode_entities(&unescape(
+            &url.replace(['\n', '\u{a0}'], " "),
+        )));
         let target = Target::new(self.p.rebase_inline_target(url), title);
         // In Pandoc, the text of an inline link does not advance the note
         // number and does not mark a note as used.
@@ -2192,7 +2200,7 @@ impl Inl<'_> {
     }
 
     fn at_sign(&mut self) -> Option<Vec<Inline>> {
-        if is_alnum(self.prev()) {
+        if is_alnum(self.prev()) || self.prev() == Some('.') {
             return None;
         }
         // The key ends at the first character that cannot be in a key.
@@ -2264,7 +2272,7 @@ impl Inl<'_> {
                 && !inner.starts_with('^')
                 && !matches!(after, Some('(' | '[' | '{'))
             {
-                suffix = self.suffix(inner.trim_matches(SPACE));
+                suffix = self.suffix(&inner);
                 self.i = end + 1;
             }
         }
@@ -2309,12 +2317,13 @@ impl Inl<'_> {
     fn caret(&mut self) -> Option<Vec<Inline>> {
         if self.peek(1) == Some('[') && self.ext(Extension::InlineNotes) {
             let close = self.matching_bracket(self.i + 1)?;
-            if self.ext(Extension::Superscript)
-                && self.ext(Extension::BracketedSpans)
-                && self.s.get(close + 1) == Some(&'{')
-                && let Some(out) = self.delimited(1, Stop::Superscript, Inline::Superscript)
+            let after = self.s.get(close + 1).copied();
+            if matches!(after, Some('(')) && self.paren_close(close + 1).is_some()
+                || matches!(after, Some('{'))
+                    && self.ext(Extension::BracketedSpans)
+                    && self.attrs_at(close + 1).is_some()
             {
-                return Some(out);
+                return self.long_script('^', Inline::Superscript);
             }
             let start = self.i + 2;
             self.i = close + 1;
@@ -2328,7 +2337,7 @@ impl Inl<'_> {
             return Some(vec![Inline::Note(vec![Block::Para(inner)])]);
         }
         if self.ext(Extension::Superscript)
-            && let Some(out) = self.delimited(1, Stop::Superscript, Inline::Superscript)
+            && let Some(out) = self.long_script('^', Inline::Superscript)
         {
             return Some(out);
         }
@@ -2343,8 +2352,6 @@ impl Inl<'_> {
     ) -> Option<Vec<Inline>> {
         let start = self.i;
         let closer = match stop {
-            Stop::Superscript => Find::Char('^'),
-            Stop::Subscript => Find::Char('~'),
             Stop::Strikeout => Find::DoubleTilde,
             _ => Find::DoubleEquals,
         };
@@ -2358,12 +2365,12 @@ impl Inl<'_> {
             self.i = start;
             return None;
         }
-        let script = matches!(stop, Stop::Superscript | Stop::Subscript);
-        self.scripts += usize::from(script);
         let contents = self.seq_closing(stop);
-        self.scripts -= usize::from(script);
-        if let Some(contents) = contents {
+        if let Some(mut contents) = contents {
             self.i += n;
+            if stop == Stop::Strikeout {
+                contents = trim_inlines(contents);
+            }
             return Some(vec![make(merge(contents))]);
         }
         self.i = start;
@@ -2380,11 +2387,63 @@ impl Inl<'_> {
             return Some(out);
         }
         if self.ext(Extension::Subscript)
-            && let Some(out) = self.delimited(1, Stop::Subscript, Inline::Subscript)
+            && let Some(out) = self.long_script('~', Inline::Subscript)
         {
             return Some(out);
         }
         self.short_script(Inline::Subscript)
+    }
+
+    fn long_script(
+        &mut self,
+        delimiter: char,
+        make: fn(Vec<Inline>) -> Inline,
+    ) -> Option<Vec<Inline>> {
+        if delimiter == '^' && !self.ext(Extension::Superscript) {
+            return None;
+        }
+        let mut start = self.i + 1;
+        let mut end = self.find(Find::Unescaped(delimiter), start)?;
+        // Pandoc permits an extra pair of tildes on either side of a subscript.
+        if delimiter == '~'
+            && end == start
+            && self.s.get(start + 1) == Some(&delimiter)
+            && self.s.get(start + 2).is_some_and(|&c| c != delimiter)
+            && let Some(close) = self.find(Find::Unescaped(delimiter), start + 2)
+            && self
+                .find(Find::ScriptSpace, start + 2)
+                .is_none_or(|space| space > close)
+        {
+            start += 2;
+            end = close;
+        }
+        if self
+            .find(Find::ScriptSpace, start)
+            .is_some_and(|space| space < end)
+        {
+            return None;
+        }
+        let window = self.window(start..end);
+        let ix = self.shared_index();
+        let mut inner = Inl::new(&mut *self.p, window, ix, self.in_link, self.depth);
+        inner.window = self.window;
+        inner.scripts = self.scripts + 1;
+        let contents = merge(inner.seq());
+        self.i = end + 1;
+        if (delimiter == '~' || start == end)
+            && self
+                .s
+                .get(self.i..self.i + 2)
+                .is_some_and(|pair| pair == [delimiter, delimiter])
+            && !(start == end
+                && self
+                    .s
+                    .get(self.i + 2)
+                    .is_some_and(|&c| c != delimiter && !c.is_whitespace()))
+        {
+            self.i += 2;
+        }
+        Some(vec![make(contents)])
     }
 
     fn short_script(&mut self, make: fn(Vec<Inline>) -> Inline) -> Option<Vec<Inline>> {
@@ -2413,8 +2472,12 @@ impl Inl<'_> {
     fn angle(&mut self) -> Option<Vec<Inline>> {
         let rest = self.tag_window(self.i);
         if let Some(len) = autolink_len(&rest) {
-            let inner = decode_entities(rest.get(1..len - 1)?);
-            self.i += rest.get(..len)?.chars().count();
+            let raw = rest.get(..len)?;
+            self.i += raw.chars().count();
+            if self.in_link {
+                return Some(vec![Inline::Str(raw.to_owned())]);
+            }
+            let inner = decode_entities(raw.get(1..len - 1)?);
             let (class, url) = if inner.contains(':') && !is_email(&inner) {
                 ("uri", escape_uri(&inner))
             } else {
@@ -2488,7 +2551,7 @@ impl Inl<'_> {
     }
 
     /// Finds the math span that starts with the `$` at `at` in the window:
-    /// `$$…$$` with a body that is not blank, or `$…$` with no space after
+    /// A display span with content, or an inline span with no space after
     /// the opener, no space before the closer (outside a TeX comment), no
     /// digit after it and no blank line in it. The inline parse and the
     /// bracket index use this check, so that they agree. The finds and the
@@ -2497,7 +2560,7 @@ impl Inl<'_> {
         if self.s.get(at + 1) == Some(&'$') {
             let start = at + 2;
             let k = self.find(Find::DoubleDollar, start)?;
-            if self.text(start, k).trim_matches(SPACE).is_empty() {
+            if start == k {
                 return None;
             }
             return Some(MathSpan {
@@ -2507,7 +2570,7 @@ impl Inl<'_> {
                 end: k + 2,
             });
         }
-        if is_space(self.s.get(at + 1).copied()) {
+        if self.s.get(at + 1).is_none_or(|c| c.is_whitespace()) {
             return None;
         }
         let start = at + 1;
@@ -2524,7 +2587,7 @@ impl Inl<'_> {
         let before = k.checked_sub(1).and_then(|j| self.s.get(j)).copied();
         if k == start
             || (!after_comment
-                && is_space(before)
+                && before.is_some_and(char::is_whitespace)
                 && k.checked_sub(2).and_then(|j| self.s.get(j)) != Some(&'\\'))
             || self.s.get(k + 1).is_some_and(char::is_ascii_digit)
         {
@@ -2551,6 +2614,13 @@ impl Inl<'_> {
                     after_comment: at == from && !comments.is_empty(),
                 });
             }
+            if self.s.get(at) == Some(&'{') {
+                let Some(end) = self.math_group_end(at) else {
+                    break None;
+                };
+                from = end + 1;
+                continue;
+            }
             if let Some(&end) = tables.borrow().math_comments.get(&at) {
                 break end;
             }
@@ -2565,6 +2635,42 @@ impl Inl<'_> {
             .math_comments
             .extend(comments.into_iter().map(|at| (at, end)));
         end
+    }
+
+    /// Finds the matching brace without rescanning nested groups.
+    fn math_group_end(&mut self, start: usize) -> Option<usize> {
+        let tables = Rc::clone(&self.ix.tables);
+        if let Some(result) = tables.borrow().math_braces.get(&start) {
+            return *result;
+        }
+        let mut opens = vec![start];
+        let mut from = start + 1;
+        while let Some(at) = self.find_in_buffer(Find::MathBrace, from) {
+            from = at + 1;
+            match self.s.get(at) {
+                Some('{') => opens.push(at),
+                Some('}') => {
+                    if let Some(open) = opens.pop() {
+                        tables.borrow_mut().math_braces.insert(open, Some(at));
+                    }
+                    if opens.is_empty() {
+                        return Some(at);
+                    }
+                }
+                Some('%') => {
+                    let Some(newline) = self.find_in_buffer(Find::Char('\n'), from) else {
+                        break;
+                    };
+                    from = newline + 1;
+                }
+                _ => {}
+            }
+        }
+        tables
+            .borrow_mut()
+            .math_braces
+            .extend(opens.into_iter().map(|open| (open, None)));
+        None
     }
 
     fn entity(&mut self) -> Option<Vec<Inline>> {
@@ -2919,6 +3025,10 @@ fn autolink_len(s: &str) -> Option<usize> {
             .chars()
             .all(|c| c.is_ascii_alphanumeric() || "+.-".contains(c))
         || body.len() == colon + 1
+        || (!matches!(
+            scheme.to_ascii_lowercase().as_str(),
+            "http" | "https" | "ftp" | "mailto" | "file" | "data" | "irc" | "tel" | "doi" | "urn"
+        ) && html_tag_len(s).is_some())
     {
         return None;
     }

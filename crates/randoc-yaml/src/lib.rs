@@ -160,6 +160,11 @@ impl Node {
 pub fn parse_all(text: &str, limits: Limits) -> Result<Vec<Node>, YamlError> {
     let text = clean(text);
     let lines = error::LineIndex::new(&text);
+    if let Some((at, ch)) = text.char_indices().find(|&(_, ch)| {
+        matches!(ch, '\0'..='\u{8}' | '\u{b}' | '\u{c}' | '\u{e}'..='\u{1f}' | '\u{fffe}' | '\u{ffff}')
+    }) {
+        return Err(lines.error(at, format!("invalid character U+{:04X}", u32::from(ch))));
+    }
     parser::parse(&text, &lines, limits)?
         .into_iter()
         .map(|document| compose::compose(document, &lines, limits))
@@ -1073,5 +1078,32 @@ mod tests {
         let node = parse("\u{feff}", Limits::default()).unwrap_or_else(|e| panic!("{e}"));
         assert_eq!(node.value(), Ok(Value::Null));
         assert_eq!(node.mark, Mark { line: 1, column: 1 });
+    }
+}
+
+#[cfg(test)]
+mod scalar_tab_tests {
+    use super::*;
+
+    #[test]
+    fn tabs_in_block_scalar_lines_follow_indentation_rules() {
+        for (input, value) in [
+            ("a: |2\n \t\n", ""),
+            ("a: |\n   x\n#\n  \t\nz: 1\n", "x\n"),
+            ("a: >\n   x\n  \t# c\n", "x\n"),
+        ] {
+            let root = parse(input, Limits::default()).unwrap();
+            assert_eq!(
+                root.get("a").and_then(Node::scalar_text),
+                Some(value),
+                "{input:?}"
+            );
+        }
+        for (input, line, column) in [("a: |\n\t\nb:\n", 2, 1), ("m:\n  a: |-\n \t\nb: c\n", 3, 2)]
+        {
+            let error = parse(input, Limits::default()).unwrap_err();
+            assert_eq!(error.error.mark, Mark { line, column });
+            assert_eq!(error.error.message, "tabs cannot be used for indentation");
+        }
     }
 }

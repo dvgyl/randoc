@@ -1502,7 +1502,9 @@ impl<'a> Parser<'a> {
                     self.raw_element_end("style")
                 };
                 if name == "math"
-                    && let Some(math) = self.math(attributes, end)
+                    && let Some(math) = self
+                        .math(attributes, end)
+                        .or_else(|| self.long_division_fallback(attributes, end))
                 {
                     self.pos = end;
                     out.push(math);
@@ -1535,6 +1537,26 @@ impl<'a> Parser<'a> {
             MathType::InlineMath
         };
         Some(Inline::Math(kind, tex))
+    }
+
+    /// Keeps the text of unsupported MathML stacks and long division.
+    fn long_division_fallback(&self, attributes: &[(Text, Text)], end: usize) -> Option<Inline> {
+        let tokens = self.toks.get(self.pos + 1..end)?;
+        if !tokens.iter().any(|token| {
+            matches!(&token.kind, TokenKind::Open(name, _) if matches!(name.as_str(), "mlongdiv" | "mstack"))
+        }) {
+            return None;
+        }
+        let mut content = Inlines::new();
+        for token in tokens {
+            if let TokenKind::Text(text) = &token.kind {
+                self.text(text, &mut content);
+            }
+        }
+        Some(Inline::Span(
+            Attr::new(String::new(), vec!["math".into()], attributes.to_vec()),
+            content.0,
+        ))
     }
 
     /// The TeX of the first `annotation` with the encoding

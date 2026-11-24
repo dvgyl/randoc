@@ -202,3 +202,21 @@ fn the_options_objects_give_the_fields_of_pandoc() {
     assert!(count >= 20);
     assert!(failures.is_empty(), "{}", failures.join("\n"));
 }
+
+#[test]
+fn lua_constructors_and_helpers_match_the_oracle() {
+    let filter = LuaFilter {
+        path: "options-constructors.lua",
+        source: include_bytes!("replay/options-constructors.lua"),
+    };
+    let mut context = Context::pure();
+    let resource_path = context.state.resource_path.clone();
+    apply_filter(
+        &mut Pandoc::default(),
+        &filter,
+        &FilterEnvironment::new("html"),
+        &mut context,
+    )
+    .unwrap();
+    assert_eq!(context.state.resource_path, resource_path);
+}

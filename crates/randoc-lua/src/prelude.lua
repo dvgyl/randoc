@@ -26,8 +26,6 @@ local function operation(op)
   return function(...) return check(call(op, ...)) end
 end
 
--- The type names of the proxies whose metatable is hidden (`__metatable`).
-local proxy_names = setmetatable({}, { __mode = 'k' })
 local protected_names = {}
 
 local function typed_name(value)
@@ -39,7 +37,7 @@ end
 
 -- The name of the type of a value, as `luaL_typeerror` shows it.
 local function described(value)
-  local name = typename(value) or proxy_names[value] or typed_name(value)
+  local name = typename(value) or typed_name(value)
   if name then return name end
   local mt = getmetatable(value)
   if type(mt) == 'table' and type(rawget(mt, '__name')) == 'string' then
@@ -460,7 +458,7 @@ for kind, names in pairs { Inline = INLINE_KINDS, Block = BLOCK_KINDS } do
 end
 
 local function type_of(value)
-  local name = typename(value) or proxy_names[value] or typed_name(value)
+  local name = typename(value) or typed_name(value)
   if name then return name end
   local mt = getmetatable(value)
   if type(mt) == 'table' then
@@ -579,37 +577,6 @@ function native.install_warn(report)
       active_report(message, on)
     end
   end
-end
--- `PANDOC_READER_OPTIONS` and `PANDOC_WRITER_OPTIONS`: a proxy with the
--- fields `names` in this order. Only a writable object takes a new value,
--- and only for a known field.
-function native.options_object(name, values, names, writable)
-  local known = {}
-  for _, key in ipairs(names) do known[key] = true end
-  local metatable = { __name = name, __metatable = true }
-  function metatable.__index(_, key) return values[key] end
-  function metatable.__newindex(_, key, value)
-    if not writable then error('This ReaderOptions value is read-only.', 0) end
-    if not known[key] then error('Cannot set unknown property.', 0) end
-    values[key] = value
-  end
-  function metatable.__pairs()
-    local index = 0
-    return function()
-      index = index + 1
-      local key = names[index]
-      if key ~= nil then return key, values[key] end
-    end
-  end
-  if not writable then
-    function metatable.__tostring()
-      error('ReaderOptions expected, got ReaderOptions (read-only)\n' ..
-        '\twhile retrieving function argument opts\n\twhile retrieving arguments for function ', 0)
-    end
-  end
-  local proxy = setmetatable({}, metatable)
-  proxy_names[proxy] = name
-  return proxy
 end
 function native.convert_functions(read, write, readers, writers)
   active_read = read
@@ -761,6 +728,22 @@ local function typed(name, spec)
   protected_names[name] = true
 end
 
+local options_keys = pure_op('options', 'keys')
+for _, name in ipairs { 'ReaderOptions', 'ReaderOptions (read-only)', 'WriterOptions' } do
+  typed(name, { module = 'options' })
+  local mt = native.typed[name]
+  function mt.__pairs(self)
+    local names, index = options_keys(self), 0
+    return function()
+      index = index + 1
+      local key = names[index]
+      if key then return key, self[key] end
+    end
+  end
+end
+pandoc.ReaderOptions = pure_op('options', 'ReaderOptions')
+pandoc.WriterOptions = pure_op('options', 'WriterOptions')
+
 local doc_methods = {
   'before_non_blank', 'braces', 'brackets', 'cblock', 'chomp', 'double_quotes',
   'flush', 'hang', 'height', 'inside', 'is_empty', 'lblock', 'min_offset', 'nest',
@@ -777,6 +760,7 @@ typed('Doc', {
   module = 'layout', methods = doc_methods, pairs_order = doc_methods,
   ops = { '__concat', '__add', '__div', '__idiv', '__eq' },
 })
+typed('PandocError', { module = 'log' })
 typed('LogMessage', { module = 'log', host = true, ops = { '__tojson' } })
 typed('zip.Archive', {
   module = 'zip', host = true, methods = { 'bytestring', 'extract' },
@@ -813,13 +797,14 @@ pandoc.log = operations(host_op, 'log', { 'info', 'warn' })
 native.state_log = host_op('log', 'list')
 do
   local hold, release = host_op('log', 'hold'), host_op('log', 'release')
+  local wrap = host_op('log', 'error')
   local pack, unpack, pcall = table.pack, table.unpack, pcall
   function pandoc.log.silence(...)
     if select('#', ...) == 0 then error('attempt to index a nil value', 0) end
     hold()
     local results = pack(pcall(...))
     local messages = release()
-    if not results[1] then error(results[2], 0) end
+    if not results[1] then error(wrap(tostring(results[2])), 0) end
     return messages, unpack(results, 2, results.n)
   end
 end
@@ -858,25 +843,92 @@ local function missing_module(name)
 end
 
 for _, name in ipairs {
-  'read', 'write', 'write_classic', 'with_state', 'ReaderOptions',
-  'WriterOptions',
+  'read', 'write', 'write_classic',
 } do
   pandoc[name] = missing_function('pandoc.' .. name)
 end
 pandoc.utils.documentation = missing_function('pandoc.utils.documentation')
-pandoc.types.Sources = missing_function('pandoc.types.Sources')
+local Sources = new_list_metatable('Sources')
+Sources.__tostring = pure_op('source', 'concat')
+local make_sources = pure_op('source', 'Sources')
+pandoc.types.Sources = function(...)
+  return setmetatable(make_sources(...), Sources)
+end
+typed('Source', { module = 'source', pairs_order = { 'name', 'text' } })
 -- `pandoc.template`: `compile` and `apply` (row I-LUA-27). Compiled
 -- templates are opaque `userdata` (`LuaTemplate`) preserving resolved partials.
 local template_call = operation('template')
 pandoc.template = {
   apply = function(template, context) return template_call('apply', template, context) end,
-  default = missing_function('pandoc.template.default'),
-  get = missing_function('pandoc.template.get'),
-  meta_to_context = missing_function('pandoc.template.meta_to_context'),
+  default = host_op('template', 'default'),
+  get = host_op('template', 'get'),
+  meta_to_context = pure_op('template', 'meta_to_context'),
 }
 
+do
+  local layout = pandoc.layout
+  local function renderers(kind)
+    return setmetatable({}, {
+      __index = {},
+      __call = function(self, value)
+        local name = value.tag
+        local render = self[name]
+        if not render then
+          error(("No render function for %s value '%s';\ndefine a function `Writer.%s.%s` that returns a string or Doc."):format(kind, name, kind, name), 0)
+        end
+        return layout.literal('') .. render(value)
+      end,
+    })
+  end
+  local writer = { Block = renderers('Block'), Inline = renderers('Inline') }
+  local function render_list(render, items, separator)
+    local docs = {}
+    for i, item in ipairs(items) do docs[i] = render(item) end
+    return layout.concat(docs, separator)
+  end
+  function writer.Inlines(items) return render_list(writer.Inline, items) end
+  function writer.Blocks(items) return render_list(writer.Block, items, layout.blankline) end
+  function writer.Pandoc(doc, opts)
+    local body = writer.Blocks(doc.blocks)
+    if not opts.template then return body end
+    local context = pandoc.template.meta_to_context(doc.meta, writer.Blocks, writer.Inlines)
+    for key, value in pairs(opts.variables) do context[key] = value end
+    context.body = body
+    return pandoc.template.apply(opts.template, context)
+  end
+  pandoc.scaffolding = {
+    Writer = setmetatable(writer, {
+      __index = function(_, name)
+        if pandoc.Inline.constructor[name] then
+          return getmetatable(writer.Inline).__call({}, {tag = name})
+        end
+        if pandoc.Block.constructor[name] then
+          return getmetatable(writer.Block).__call({}, {tag = name})
+        end
+      end,
+      __call = function(self, doc, opts)
+        opts = opts or pandoc.WriterOptions {}
+        local width = opts.wrap_text == 'wrap-auto' and opts.columns or nil
+        return layout.render(self.Pandoc(doc, opts), width)
+      end,
+    }),
+  }
+end
+
+do
+  local run = host_op('state', 'with_state')
+  local wrap = host_op('log', 'error')
+  local pack, unpack, pcall = table.pack, table.unpack, pcall
+  native.state_override = host_op('state', 'get')
+  function pandoc.with_state(opts, callback)
+    local result = pack(run(opts, pcall, callback))
+    if not result[1] then error(wrap(tostring(result[2])), 0) end
+    return unpack(result, 2, result.n)
+  end
+end
+
 local missing_modules = {
-  'cli', 'scaffolding', 'readers', 'writers',
+  'readers', 'writers',
 }
 for _, name in ipairs(missing_modules) do
   pandoc[name] = missing_module('pandoc.' .. name)
@@ -907,19 +959,15 @@ if type(package) == 'table' and type(package.loaded) == 'table' then
   loaded['pandoc.List'] = List
   loaded['pandoc.utils'] = pandoc.utils
   loaded['pandoc.types'] = pandoc.types
+  loaded['pandoc.scaffolding'] = pandoc.scaffolding
   loaded['pandoc.path'] = pandoc.path
   loaded['pandoc.text'] = pandoc.text
   loaded['pandoc.json'] = pandoc.json
   loaded['pandoc.structure'] = pandoc.structure
   loaded['pandoc.format'] = pandoc.format
   loaded['pandoc.system'] = pandoc.system
-  for _, name in ipairs { 'mediabag', 'log', 'layout', 'zip', 'image' } do
+  for _, name in ipairs { 'mediabag', 'log', 'layout', 'zip', 'image', 'template' } do
     loaded['pandoc.' .. name] = pandoc[name]
-  end
-  for _, name in ipairs(missing_modules) do
-    if name ~= 'readers' and name ~= 'writers' then
-      loaded['pandoc.' .. name] = pandoc[name]
-    end
   end
   loaded.text = pandoc.text
 end

@@ -1,6 +1,42 @@
 {
   "oracle": "pandoc 3.13",
   "units": {
+    "html-embed-css-import#cmd": {
+      "key": "34c9481119822300",
+      "exit": 0,
+      "stdout": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<title>Styles</title>\n<style type=\"text/css\">p { font-weight: bold; }\n\np { color: navy; }\n</style>\n</head>\n<body>\n<p>A test page.</p>\n</body>\n</html>\n",
+      "stderr": ""
+    },
+    "html-embed-image#cmd": {
+      "key": "8ef7efcc997039d6",
+      "exit": 0,
+      "stdout": "<p>See <img src=\"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyIiBoZWlnaHQ9IjIiPjxyZWN0IHdpZHRoPSIyIiBoZWlnaHQ9IjIiLz48L3N2Zz4=\" alt=\"a square\" />.</p>\n",
+      "stderr": ""
+    },
+    "html-embed-missing-image#cmd": {
+      "key": "2f5231edd2303648",
+      "exit": 0,
+      "stdout": "<p>See <img src=\"missing.svg\" alt=\"an image\" />.</p>\n",
+      "stderr": "[WARNING] Could not fetch resource missing.svg\n"
+    },
+    "html-embed-sandbox#cmd": {
+      "key": "e71f6f09da5b55c6",
+      "exit": 0,
+      "stdout": "<p>See <img src=\"square.svg\" alt=\"a square\" />.</p>\n",
+      "stderr": "[WARNING] Could not fetch resource square.svg\n"
+    },
+    "html-embed-script#cmd": {
+      "key": "ffc4c17beb1f0850",
+      "exit": 0,
+      "stdout": "<p>A test page.</p>\n<script>document.body.dataset.ready = 'yes';\n</script>\n",
+      "stderr": ""
+    },
+    "html-embed-self-contained#cmd": {
+      "key": "28dbdcf5e97aeb2f",
+      "exit": 0,
+      "stdout": "<!DOCTYPE html>\n<html lang=\"en\">\n<head><title>Circle</title></head>\n<body><p>See <img src=\"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPjxjaXJjbGUgY3g9IjIiIGN5PSIyIiByPSIyIi8+PC9zdmc+\" alt=\"a circle\" />.</p></body>\n</html>\n",
+      "stderr": "[WARNING] Deprecated: --self-contained. Use --embed-resources --standalone instead.\n"
+    },
     "json-to-json-crlf#cmd": {
       "key": "b9ea4d5d58882497",
       "exit": 0,

@@ -606,6 +606,16 @@ fn parentheses_are_escaped_at_an_adjacent_inline_boundary() -> Result<()> {
 }
 
 #[test]
+fn empty_bibliography_entry_has_one_blank_line() -> Result<()> {
+    let entry = Block::Div(
+        Attr::new("ref-patent", vec!["csl-entry".into()], Vec::new()),
+        vec![Block::Para(Vec::new())],
+    );
+    assert_eq!(write_blocks(vec![entry])?, "#block[\n\n] <ref-patent>\n");
+    Ok(())
+}
+
+#[test]
 fn period_is_escaped_at_the_start_of_a_text_run() -> Result<()> {
     let link = Inline::Link(
         Attr::default(),

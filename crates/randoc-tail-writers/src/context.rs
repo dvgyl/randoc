@@ -179,7 +179,16 @@ impl Renderer<'_> {
                     return self.section(*level, attr, items, rest);
                 }
                 let body = self.blocks(blocks);
-                blankline() + self.scope(attr, body) + blankline()
+                if attr.id == "refs" {
+                    text("\\startcslreferences")
+                        + cr()
+                        + body
+                        + blankline()
+                        + text("\\stopcslreferences")
+                        + cr()
+                } else {
+                    blankline() + self.scope(attr, body) + blankline()
+                }
             }
             Block::HorizontalRule => text("\\thinrule") + blankline(),
             Block::OrderedList(attrs, items) => self.list(Some(attrs), items),
@@ -312,10 +321,15 @@ impl Renderer<'_> {
             props.push(text(",number=no,incrementnumber=no"));
         }
         props.push(text("]"));
+        let end = if matches!(blocks.last(), Some(Block::Div(attr, _)) if attr.id == "refs") {
+            cr()
+        } else {
+            blankline()
+        };
         hcat(props)
             + blankline()
             + self.blocks(blocks)
-            + blankline()
+            + end
             + text(format!("\\stop{command}"))
             + blankline()
     }
@@ -505,14 +519,29 @@ impl Renderer<'_> {
 
     fn row_group(&mut self, name: &str, rows: &[Row], table: &Table) -> Doc {
         let mut out = vec![text(format!("\\startxtable{name}[{name}]")), cr()];
+        let mut occupancy = vec![0; table.col_specs.len()];
         for (index, row) in rows.iter().enumerate() {
             let last = index + 1 == rows.len();
             if last {
                 out.extend([text("\\startxrowgroup[lastrow]"), cr()]);
             }
             out.extend([text("\\startxrow"), cr()]);
-            for (i, cell) in row.cells.iter().enumerate() {
-                out.extend([self.cell(cell, table.col_specs.get(i)), cr()]);
+            let mut column = 0;
+            for cell in &row.cells {
+                while occupancy.get(column).is_some_and(|&end| end > index) {
+                    column += 1;
+                }
+                let end = column.saturating_add(cell.col_span.max(1) as usize);
+                let clipped = end.min(occupancy.len());
+                let specs = if column < clipped {
+                    occupancy[column..clipped]
+                        .fill(index.saturating_add(cell.row_span.max(1) as usize));
+                    &table.col_specs[column..clipped]
+                } else {
+                    &[]
+                };
+                out.extend([self.cell(cell, specs), cr()]);
+                column = end;
             }
             out.extend([text("\\stopxrow"), cr()]);
             if last {
@@ -523,27 +552,34 @@ impl Renderer<'_> {
         hcat(out)
     }
 
-    fn cell(&mut self, cell: &Cell, spec: Option<&randoc_ast::ColSpec>) -> Doc {
+    fn cell(&mut self, cell: &Cell, specs: &[randoc_ast::ColSpec]) -> Doc {
         let mut props = Vec::new();
         let alignment = if cell.align == Alignment::AlignDefault {
-            spec.map_or(Alignment::AlignDefault, |spec| spec.align)
+            specs
+                .first()
+                .map_or(Alignment::AlignDefault, |spec| spec.align)
         } else {
             cell.align
         };
         if let Some(align) = table_alignment(alignment) {
             props.push(format!("align={align}"));
         }
+        let mut widths = specs
+            .iter()
+            .filter_map(|spec| match spec.width {
+                ColWidth::ColWidth(width) => Some(width),
+                ColWidth::ColWidthDefault => None,
+            })
+            .peekable();
+        if widths.peek().is_some() {
+            let width: f64 = widths.sum();
+            props.push(format!("width={{{width:.2}\\textwidth}}"));
+        }
         if cell.col_span != 1 {
-            props.push(format!("nx={}", cell.col_span));
+            props.push(format!("nc={}", cell.col_span));
         }
         if cell.row_span != 1 {
-            props.push(format!("ny={}", cell.row_span));
-        }
-        if let Some(ColWidth::ColWidth(width)) = spec.map(|spec| spec.width) {
-            props.push(format!(
-                "width={{{}\\textwidth}}",
-                (width * 100.0).round() / 100.0
-            ));
+            props.push(format!("nr={}", cell.row_span));
         }
         let body = self.table_content(&cell.content);
         let suffix = if props.is_empty() {
@@ -810,9 +846,16 @@ fn escape_code(source: &str) -> String {
 }
 
 fn highlighting_commands(theme: &randoc_highlight::Style) -> String {
-    let mut out = String::from(concat!(
-        "\\definecolor [shadecolor] [r=0.97,g=0.97,b=0.97]\n",
-        "\\defineframedtext [shaded]\n  [background=shadecolor,\n",
+    let mut out = String::new();
+    if let Some(color) = theme.background_color {
+        let _ = writeln!(
+            out,
+            "\\definecolor[shadecolor][x={:02x}{:02x}{:02x}]",
+            color.r, color.g, color.b
+        );
+    }
+    out.push_str(concat!(
+        "\\defineframedtext [shaded]\n  [backgroundcolor=shadecolor,\n",
         "   background=color,\n   frame=off,\n   offset=0pt,\n   width=local]\n",
         "\\definetyping [highlighting]\n  [escape=yes,\n   before={\\startshaded},\n   after={\\stopshaded}]\n",
         "\\definetype [highlight]\n  [escape=yes]\n",

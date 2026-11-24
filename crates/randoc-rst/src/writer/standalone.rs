@@ -1,12 +1,12 @@
 use std::cell::RefCell;
 
-use randoc_ast::Pandoc;
+use randoc_ast::{Block, MetaValue, Pandoc};
 use randoc_core::Result;
 use randoc_core::shared::meta_context::meta_to_context;
 use randoc_layout::{Doc, literal};
 use randoc_templates::Val;
 
-use super::Writer;
+use super::{Writer, blocks::code_language};
 
 impl Writer<'_> {
     pub(super) fn standalone(&mut self, doc: &Pandoc) -> Result<String> {
@@ -20,6 +20,17 @@ impl Writer<'_> {
             &mut |blocks| shared.borrow_mut().blocks(blocks, 0),
             &mut |inlines| shared.borrow_mut().inlines(inlines, 0),
         )?;
+        if matches!(doc.meta.get("abstract"), Some(MetaValue::MetaBlocks(blocks))
+            if matches!(blocks.last(), Some(Block::Para(_))))
+            && abstract_needs_blank_line(doc.blocks.first())
+            && options.variables.get("abstract").is_none()
+            && let Some(Val::Simple(abstract_doc)) = fields.get("abstract")
+        {
+            fields.insert(
+                "abstract",
+                Val::Simple(abstract_doc.clone() + literal("\n\n")),
+            );
+        }
         let title = adorn(fields.get("title"), '=');
         let subtitle = adorn(fields.get("subtitle"), '-');
         let titleblock = title.above(subtitle);
@@ -42,6 +53,22 @@ impl Writer<'_> {
             .template
             .as_ref()
             .map_or_else(String::new, |t| t.render(&fields).render(self.width())))
+    }
+}
+
+fn abstract_needs_blank_line(first_block: Option<&Block>) -> bool {
+    match first_block {
+        Some(Block::CodeBlock(attr, _)) => code_language(attr).is_none(),
+        Some(Block::RawBlock(format, _)) => format == "rst",
+        Some(
+            Block::BulletList(_)
+            | Block::OrderedList(..)
+            | Block::DefinitionList(_)
+            | Block::Table(_)
+            | Block::Div(..)
+            | Block::HorizontalRule,
+        ) => false,
+        _ => true,
     }
 }
 

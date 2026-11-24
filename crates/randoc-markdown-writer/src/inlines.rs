@@ -1212,8 +1212,12 @@ impl W<'_> {
     }
 
     pub(crate) fn span(&mut self, attr: &Attr, content: &[Inline]) -> Result<Doc> {
+        let before = match attr.classes.first().map(String::as_str) {
+            Some("csl-block" | "csl-left-margin" | "csl-indent") if attr.classes.len() == 1 => cr(),
+            _ => empty(),
+        };
         if self.plain() {
-            return self.inline_list(content, false);
+            return Ok(before + self.inline_list(content, false)?);
         }
         if attr.classes.len() == 1 && attr.has_class("emoji") {
             if self.has(Extension::Emoji)
@@ -1236,16 +1240,20 @@ impl W<'_> {
         }
         let inner = self.inline_list(content, false)?;
         if self.has(Extension::BracketedSpans) {
-            return Ok(literal("[") + inner + literal("]") + attr_doc(&self.prefixed(attr)));
+            return Ok(before
+                + literal("[")
+                + inner
+                + literal("]")
+                + attr_doc(&self.prefixed(attr)));
         }
         if self.has(Extension::NativeSpans) || self.has(Extension::RawHtml) {
             let mut open = literal("<span");
             for part in html_attr_parts(attr) {
                 open += space() + literal(part);
             }
-            return Ok(open + literal(">") + inner + literal("</span>"));
+            return Ok(before + open + literal(">") + inner + literal("</span>"));
         }
-        Ok(inner)
+        Ok(before + inner)
     }
 }
 

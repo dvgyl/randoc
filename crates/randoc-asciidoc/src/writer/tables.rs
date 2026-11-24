@@ -5,7 +5,12 @@ use randoc_layout::{Doc, empty, literal, vcat};
 use super::Renderer;
 
 impl Renderer<'_> {
-    pub(super) fn table(&mut self, table: &Table, list: usize, level: usize) -> Doc {
+    pub(super) fn table(
+        &mut self,
+        table: &Table,
+        list: super::blocks::ListDepth,
+        level: usize,
+    ) -> Doc {
         if level > 1 {
             return empty();
         }
@@ -133,7 +138,7 @@ impl Renderer<'_> {
         &mut self,
         table: &Table,
         rows: &[&Row],
-        list: usize,
+        list: super::blocks::ListDepth,
         level: usize,
         marker: char,
         section: Section,
@@ -161,7 +166,7 @@ impl Renderer<'_> {
         cells: &[Placement<'_>],
         index: usize,
         occupied: &mut [usize],
-        list: usize,
+        list: super::blocks::ListDepth,
         level: usize,
         marker: char,
     ) -> String {

@@ -71,6 +71,7 @@ impl Parser<'_> {
             };
             if let Some((end, item)) = recognized {
                 if matches!(item, TokenItem::Inline(Inline::LineBreak)) {
+                    flush(&mut plain, &mut output);
                     while matches!(output.last(), Some(Inline::Space)) {
                         output.pop();
                     }
@@ -213,7 +214,7 @@ impl Parser<'_> {
             let target = &text[pos + 2..close];
             if valid_target(target) {
                 return Ok(token(
-                    close + 2,
+                    text.len() - text[close + 2..].trim_start_matches([' ', '\t']).len(),
                     Inline::Span(Attr::new(target, vec![], vec![]), vec![]),
                 ));
             }

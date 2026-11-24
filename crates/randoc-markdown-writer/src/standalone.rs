@@ -478,7 +478,9 @@ fn pandoc_title_block(meta: &TemplateContext) -> Doc {
 /// line.
 fn yaml_map(map: &TemplateContext) -> Doc {
     let mut lines = Vec::new();
-    for (key, value) in &map.0 {
+    let mut entries: Vec<_> = map.0.iter().collect();
+    entries.sort_by_cached_key(|(key, _)| key.to_lowercase());
+    for (key, value) in entries {
         lines.push(match value {
             Val::List(items) if items.is_empty() => continue,
             Val::List(items) => literal(format!("{key}:")) + cr() + yaml_list(items),
@@ -678,6 +680,16 @@ mod template_tests {
             Ok(Output::Text(text)) => text,
             _ => unreachable!("the writer gives text"),
         }
+    }
+
+    #[test]
+    fn yaml_metadata_sorts_keys_without_case() {
+        let json = r#"{"pandoc-api-version":[1,23,1,2],"meta":{"DOI":{"t":"MetaString","c":"d"},"URL":{"t":"MetaString","c":"u"},"abc":{"t":"MetaString","c":"a"},"author":{"t":"MetaString","c":"b"}},"blocks":[]}"#;
+        let result = write("markdown", json, compile("$titleblock$"), &[]);
+        assert_eq!(
+            result.trim_end(),
+            "---\nabc: a\nauthor: b\nDOI: d\nURL: u\n---"
+        );
     }
 
     const TITLED: &str = r#"{"pandoc-api-version":[1,23,1,2],"meta":{"title":{"t":"MetaInlines","c":[{"t":"Str","c":"MT"}]}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"b"}]}]}"#;

@@ -21,7 +21,7 @@ fn between(text: &str, prefix: &str, suffix: &str) -> String {
         .to_string()
 }
 
-fn show_text(text: &str, max_depth: usize) -> String {
+pub(crate) fn show_text(text: &str, max_depth: usize) -> String {
     between(
         &show_inline(&Inline::Str(text.to_string()), max_depth),
         "Str ",

@@ -753,3 +753,153 @@ fn wave8_fixture_replay() {
     println!("RST corpus: {}/2", 2 - failures.len());
     assert!(failures.is_empty(), "{failures:?}");
 }
+
+#[test]
+fn inset_overlined_title() {
+    let doc = read("=======\n  Title\n=======\n\nBody.", &mut Context::pure()).expect("RST");
+    assert!(matches!(
+        doc.blocks.as_slice(),
+        [Block::Header(1, attr, title), Block::Para(_)]
+            if attr.id == "title" && *title == [Inline::Str("Title".into())]
+    ));
+}
+
+#[test]
+fn formatted_alt_uses_the_substitution_name() {
+    let output = write(
+        vec![Block::Para(vec![
+            Inline::Str("See".into()),
+            Inline::Space,
+            Inline::Image(
+                Attr::default(),
+                vec![
+                    Inline::Str("alt".into()),
+                    Inline::Space,
+                    Inline::Emph(vec![Inline::Str("text".into())]),
+                ],
+                Target::new("image.png", ""),
+            ),
+            Inline::Str(".".into()),
+        ])],
+        &WriterOptions::default(),
+    );
+    assert!(output.contains("See |alt text|."));
+    assert!(output.contains(".. |alt text| image:: image.png"));
+}
+
+#[test]
+fn grid_cells_keep_paragraphs_if_any_cell_has_a_list() {
+    let input = "+-------+------+\n| A     | B    |\n+=======+======+\n| - one | Text |\n| - two |      |\n+-------+------+";
+    let doc = read(input, &mut Context::pure()).expect("RST");
+    assert!(matches!(doc.blocks.as_slice(), [Block::Table(table)]
+        if matches!(table.head.rows[0].cells[0].content.as_slice(), [Block::Para(_)])
+        && matches!(table.bodies[0].body[0].cells[0].content.as_slice(), [Block::BulletList(_)])
+        && matches!(table.bodies[0].body[0].cells[1].content.as_slice(), [Block::Para(_)])));
+}
+
+#[test]
+fn sphinx_citation_roles() {
+    use randoc_ast::CitationMode;
+    let doc = read(
+        ":cite:t:`{see}smith{p. 1},jones` and :cite:p:`smith`.\n\n.. bibliography:: sources.bib",
+        &mut Context::pure(),
+    )
+    .expect("RST");
+    let [Block::Para(nodes), Block::Div(attr, bibliography)] = doc.blocks.as_slice() else {
+        panic!("Expected a paragraph and bibliography");
+    };
+    assert_eq!(attr.id, "refs");
+    assert!(bibliography.is_empty());
+    let Inline::Cite(citations, label) = &nodes[0] else {
+        panic!("Expected a citation");
+    };
+    assert_eq!(citations[0].id, "smith");
+    assert_eq!(citations[0].mode, CitationMode::AuthorInText);
+    assert_eq!(citations[0].prefix, [Inline::Str("see".into())]);
+    assert_eq!(
+        citations[0].suffix,
+        [
+            Inline::Str("p.".into()),
+            Inline::Space,
+            Inline::Str("1".into())
+        ]
+    );
+    assert_eq!(citations[1].id, "jones");
+    assert_eq!(citations[1].mode, CitationMode::NormalCitation);
+    assert_eq!(label, &[Inline::Str("{see}smith{p. 1},jones".into())]);
+    assert!(matches!(&nodes[4], Inline::Cite(citations, _)
+        if citations[0].mode == CitationMode::NormalCitation));
+}
+
+#[test]
+#[ignore = "Requires the Pandoc oracle."]
+fn longtail_rst_oracle_parity() {
+    use std::io::Write as _;
+    use std::process::{Command, Stdio};
+
+    let oracle = std::env::var_os("RANDOC_ORACLE_PANDOC").expect("Pandoc path");
+    let convert = |from, to, input: &str| {
+        let mut child = Command::new(&oracle)
+            .args(["-f", from, "-t", to, "--columns=80"])
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("Pandoc");
+        child
+            .stdin
+            .take()
+            .expect("stdin")
+            .write_all(input.as_bytes())
+            .expect("input");
+        let output = child.wait_with_output().expect("output");
+        assert!(output.status.success());
+        String::from_utf8(output.stdout).expect("UTF-8")
+    };
+
+    for source in [
+        "=======\n  Title\n=======\n\nBody.",
+        "+-------+------+\n| A     | B    |\n+=======+======+\n| - one | Text |\n| - two |      |\n+-------+------+",
+        ":cite:t:`{see}smith{p. 1},jones` and :cite:p:`smith`.\n\n.. bibliography:: sources.bib",
+    ] {
+        let expected = convert("rst", "json", source);
+        let actual = read(source, &mut Context::pure()).expect("RST");
+        assert_eq!(
+            randoc_ast::json::from_json(&expected).expect("Pandoc JSON"),
+            actual,
+            "{source}"
+        );
+    }
+
+    let source = "See ![alt *text*](image.png).";
+    let ast = convert("markdown", "json", source);
+    let expected = convert("json", "rst", &ast);
+    let doc = randoc_ast::json::from_json(&ast).expect("Pandoc JSON");
+    let actual = write(doc.blocks, &WriterOptions::default());
+    assert_eq!(expected.trim_end(), actual.trim_end());
+}
+
+#[test]
+fn rst_quote_boundaries_and_citation_styles() {
+    let cite = Inline::Cite(
+        Vec::new(),
+        vec![Inline::Emph(vec![Inline::Str("book".into())])],
+    );
+    let link = Inline::Link(
+        Attr::default(),
+        vec![Inline::Str("title".into())],
+        Target::new("https://x.test", ""),
+    );
+    assert_eq!(
+        write(
+            vec![Block::Para(vec![
+                Inline::Str("“".into()),
+                link,
+                Inline::Str("”".into()),
+                Inline::Space,
+                cite
+            ])],
+            &WriterOptions::default()
+        ),
+        "“\\ `title <https://x.test>`__\\ ” book\n",
+    );
+}

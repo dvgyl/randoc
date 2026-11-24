@@ -198,6 +198,38 @@ mod tests {
     }
 
     #[test]
+    fn math_and_citation_groups_require_a_closer() {
+        for input in ["$x\n", "\\[ x\n", "\\( x\n", "a $x$ $y\n"] {
+            let error = convert(input, "latex").unwrap_err();
+            assert!(
+                error.to_string().contains("unexpected end of input"),
+                "{input:?}: {error}"
+            );
+        }
+        let error = convert("\\cite{a\n", "latex").unwrap_err();
+        assert!(error.to_string().contains("unexpected ()"));
+        let doc = convert("$$x\n", "latex").unwrap();
+        assert_eq!(
+            doc.blocks,
+            vec![Block::Para(vec![
+                Inline::Math(randoc_ast::MathType::InlineMath, String::new()),
+                Inline::Str("x".into()),
+            ])]
+        );
+    }
+
+    #[test]
+    fn optional_linebreak_consumes_the_space_after_its_argument() {
+        for input in ["a\\linebreak[2] b\n", "a\\linebreak*[2] {word}b\n"] {
+            let doc = convert(input, "latex").unwrap();
+            assert_eq!(
+                doc.blocks,
+                vec![Block::Para(vec![Inline::Str("ab".into())])]
+            );
+        }
+    }
+
+    #[test]
     fn a_measurement_range_keeps_both_units_and_their_powers() {
         let doc = convert(
             r"\SI{2}[\$]{\euro} \SIrange{1}{3}{\milli\metre\tothe{4}}",

@@ -89,9 +89,7 @@ impl Parser<'_> {
         let mut start = 1;
         let mut loose = false;
         while let Some(item) = lines.get(position).and_then(|line| marker(line, fancy)) {
-            if !first.same_list(item)
-                || (first.ordering.is_none() && definitions != definition(item.text).is_some())
-            {
+            if !first.same_list(item) || (definitions && definition(item.text).is_none()) {
                 break;
             }
             position += 1;
@@ -163,9 +161,7 @@ impl Parser<'_> {
                 .get(position)
                 .and_then(|line| marker(line, fancy))
                 .is_some_and(|next| {
-                    first.same_list(next)
-                        && (first.ordering.is_some()
-                            || definitions == definition(next.text).is_some())
+                    first.same_list(next) && (!definitions || definition(next.text).is_some())
                 });
             if definitions {
                 let internal_blank = child.iter().skip(1).any(|line| line.is_empty());

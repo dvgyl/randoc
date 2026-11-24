@@ -1919,16 +1919,42 @@ impl<'a, 'b> Parser<'a, 'b> {
         let low = header_line.bytes().take_while(|b| *b == b' ').count();
         let opened = opened_collections(header_line);
         let mut at = self.pos;
+        let mut after_comment = false;
+        let mut first_tab = None;
         for line in self.rest().split('\n') {
             let n = line.bytes().take_while(|b| *b == b' ').count();
+            let tab_error = |pos| self.error(pos, "tabs cannot be used for indentation");
             match line.as_bytes().get(n) {
-                None | Some(b'#') => {}
-                Some(_) if n <= low || (has_text && n >= indent) => return Ok(()),
+                None => {}
+                Some(b'#') => after_comment = true,
                 Some(b'\t') => {
-                    return Err(self.error(at + n, "tabs cannot be used for indentation"));
+                    let content = line[n..].trim_start_matches([' ', '\t']);
+                    if !content.is_empty() && !content.starts_with('#') {
+                        if after_comment
+                            && first_tab.is_none()
+                            && let Some(ch) = content.chars().next()
+                        {
+                            return Err(self.error(
+                                at + line.len() - content.len(),
+                                format!("unexpected {ch:?}"),
+                            ));
+                        }
+                        return Err(tab_error(first_tab.unwrap_or(at + n)));
+                    }
+                    if !after_comment {
+                        first_tab.get_or_insert(at + n);
+                    }
                 }
-                Some(_) if opened.contains(&(n, starts_item(&line[n..]))) => return Ok(()),
                 Some(_) => {
+                    if let Some(pos) = first_tab {
+                        return Err(tab_error(pos));
+                    }
+                    if n <= low
+                        || (has_text && n >= indent)
+                        || opened.contains(&(n, starts_item(&line[n..])))
+                    {
+                        return Ok(());
+                    }
                     return Err(self.error(
                         at + n,
                         "unexpected indentation, the line has less indentation than the block scalar above it",

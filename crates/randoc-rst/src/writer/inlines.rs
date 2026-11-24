@@ -117,13 +117,11 @@ impl Writer<'_> {
             if let Some(before) = previous {
                 let left = markup(inline)
                     && (markup(before)
-                        || ends(before).is_none_or(|c| {
-                            !(c.is_whitespace() || "-:/'\"<([{\u{2018}\u{201c}".contains(c))
-                        }));
+                        || ends(before)
+                            .is_none_or(|c| !(c.is_whitespace() || "-:/<([{".contains(c))));
                 let right = markup(before)
-                    && starts(inline).is_none_or(|c| {
-                        !(c.is_whitespace() || "-:/'\">)]}.,;!?\u{2019}\u{201d}".contains(c))
-                    });
+                    && starts(inline)
+                        .is_none_or(|c| !(c.is_whitespace() || "-:/>)]}.,;!?".contains(c)));
                 let note = markup(before) && matches!(inline, Inline::Note(_));
                 if left || right || note {
                     docs.push(literal("\\ "));
@@ -149,6 +147,16 @@ impl Writer<'_> {
             Inline::SoftBreak if self.options.wrap_text == WrapOption::WrapPreserve => cr(),
             Inline::SoftBreak => space(),
             Inline::LineBreak => cr(),
+            Inline::Emph(ils)
+            | Inline::Strong(ils)
+            | Inline::Underline(ils)
+            | Inline::Strikeout(ils)
+            | Inline::Subscript(ils)
+            | Inline::Superscript(ils)
+                if self.in_citation =>
+            {
+                self.inlines(ils, depth)?
+            }
             Inline::Emph(ils) | Inline::Underline(ils) => self.styled(ils, depth, "*")?,
             Inline::Strong(ils) => self.styled(ils, depth, "**")?,
             Inline::Strikeout(ils) => wrap("[STRIKEOUT:", literal(escape(&stringify(ils))), "]"),
@@ -157,8 +165,12 @@ impl Writer<'_> {
             Inline::Span(attr, ils) if attr.has_class("mark") => {
                 wrap(":mark:`", self.inlines(ils, depth)?, "`")
             }
-            Inline::Span(_, ils) | Inline::SmallCaps(ils) | Inline::Cite(_, ils) => {
-                self.inlines(ils, depth)?
+            Inline::Span(_, ils) | Inline::SmallCaps(ils) => self.inlines(ils, depth)?,
+            Inline::Cite(_, ils) => {
+                let was_in_citation = std::mem::replace(&mut self.in_citation, true);
+                let body = self.inlines(ils, depth);
+                self.in_citation = was_in_citation;
+                body?
             }
             Inline::Quoted(kind, ils) => {
                 let smart = self.options.extensions.contains(Extension::Smart);
@@ -204,12 +216,12 @@ impl Writer<'_> {
             }
             Inline::Link(_, label, target) => {
                 if let [Inline::Image(a, alt, image)] = label.as_slice() {
-                    self.image(a, alt, image, Some(&target.url), depth)?
+                    self.image(a, alt, image, Some(&target.url))
                 } else {
                     self.link(label, target, depth)?
                 }
             }
-            Inline::Image(a, label, target) => self.image(a, label, target, None, depth)?,
+            Inline::Image(a, label, target) => self.image(a, label, target, None),
             Inline::Note(blocks) => {
                 let number = self.notes.len() + 1;
                 self.check_depth(depth)?;
@@ -314,14 +326,7 @@ impl Writer<'_> {
         Ok(wrap("`", text, &format!(" <{url}>`__")))
     }
 
-    fn image(
-        &mut self,
-        a: &Attr,
-        label: &[Inline],
-        target: &Target,
-        link: Option<&str>,
-        depth: usize,
-    ) -> Result<Doc> {
+    fn image(&mut self, a: &Attr, label: &[Inline], target: &Target, link: Option<&str>) -> Doc {
         let image = Image {
             attr: a.clone(),
             url: target.url.clone(),
@@ -340,12 +345,7 @@ impl Writer<'_> {
             self.images.push(definition.above(vcat(options)));
             self.image_ids.insert(name.clone(), image);
         }
-        let label = if generated {
-            literal(name)
-        } else {
-            self.inlines(label, depth)?
-        };
-        Ok(wrap("|", label, "|"))
+        wrap("|", literal(name), "|")
     }
 }
 

@@ -421,20 +421,25 @@ impl Parser<'_> {
                 let tail = &scan.text[cursor..first + line.len()];
                 if let Some(r) = scan.region(cursor, first + line.len()) {
                     cursor = r.end;
-                } else if if jira_head {
-                    tail.starts_with("||")
-                } else {
-                    tail.starts_with('|') || self.wiki == Wiki::Doku && tail.starts_with('^')
-                } {
+                } else if tail.starts_with('|') || self.wiki == Wiki::Doku && tail.starts_with('^')
+                {
                     fields.push((from, cursor));
                     if self.wiki == Wiki::Creole {
                         all_headers &= scan.text[from..cursor].starts_with('=');
                     }
-                    cursor += offset;
+                    let header = self.wiki == Wiki::Jira && tail.starts_with("||");
+                    cursor += if header { 2 } else { 1 };
+                    if self.wiki == Wiki::Jira && cursor < first + line.len() {
+                        all_headers &= header;
+                    }
                     from = cursor;
                 } else {
                     cursor = scan.skip(cursor, first + line.len());
                 }
+            }
+            if self.wiki == Wiki::Creole && from < first + line.len() {
+                all_headers &= scan.text[from..first + line.len()].starts_with('=');
+                fields.push((from, first + line.len()));
             }
             if fields.is_empty() {
                 break;

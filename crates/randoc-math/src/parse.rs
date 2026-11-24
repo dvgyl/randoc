@@ -712,10 +712,18 @@ impl Parser {
 
     fn scripted(&mut self) -> Parsed<Exp> {
         self.enter()?;
-        let base = match self.peek() {
-            Some('^' | '_') => sym(Class::Ord, ""),
-            _ => self.atom()?,
+        let empty = matches!(self.peek(), Some('^' | '_'));
+        let base = if empty {
+            sym(Class::Ord, "")
+        } else {
+            self.atom()?
         };
+        let result = self.scripts_on(base, empty);
+        self.depth -= 1;
+        result
+    }
+
+    fn scripts_on(&mut self, base: Exp, empty: bool) -> Parsed<Exp> {
         let mut limits = None;
         self.skip_space();
         if self.peek() == Some('\\') && (self.at_word("limits") || self.at_word("nolimits")) {
@@ -758,16 +766,26 @@ impl Parser {
             }
             _ => {}
         }
-        self.depth -= 1;
         if sub.is_none() && sup.is_none() {
             return Ok(base);
         }
-        Ok(Exp::Scripts {
+        let pair = sub.is_some() && sup.is_some();
+        let scripted = Exp::Scripts {
             base: boxed(base),
             sub: sub.map(boxed),
             sup: sup.map(boxed),
             limits,
-        })
+        };
+        if empty && pair {
+            self.skip_space();
+            if matches!(self.peek(), Some('^' | '_' | '\'')) {
+                self.enter()?;
+                let result = self.scripts_on(scripted, false);
+                self.depth -= 1;
+                return result;
+            }
+        }
+        Ok(scripted)
     }
 
     /// The prime marks at the cursor, as the superscript that they make.
@@ -1538,6 +1556,16 @@ impl Parser {
 
     /// `\bmod`, `\mod`, `\pmod` and `\pod` with their argument.
     fn modulo(&mut self, name: &str) -> Parsed<Exp> {
+        self.skip_space();
+        if self.peek().is_none() {
+            let expected = EXPECTING_END_START
+                .strip_suffix(" or end of input")
+                .unwrap_or(EXPECTING_END_START)
+                .replacen(r#", "\\ ""#, r#" or "\\ ""#, 1);
+            return self.fail(format!(
+                "unexpected control sequence \\{name}\n  {expected}"
+            ));
+        }
         let arg = self.argument()?;
         let wide = space("0.444em", "\u{2000}");
         let mut items = vec![Exp::Space(if name == "mod" { wide } else { MEDIUM })];

@@ -640,3 +640,59 @@ fn endnote_old_fixture() {
     report("EndNote old fixture", 1, failures);
     assert!(check_read(&input, "endnotexml", "csljson", &suite).is_none());
 }
+
+#[test]
+#[ignore = "Requires the Pandoc oracle."]
+fn braced_accents_in_fields() {
+    let input = r"@book{x,title={{\'e}cole},author={Jos{\'e} Bob},
+        note={caf{\'e} and {\'{e}}},annote={{\'e}},volume={{\'e}}}";
+    for format in ["bibtex", "biblatex"] {
+        assert_eq!(check_read(input, format, "json", &root()), None, "{format}");
+    }
+}
+
+#[test]
+#[ignore = "Requires the Pandoc oracle."]
+fn longtail_bibliography_parity() {
+    let csl = r#"[
+      {"id":"web","type":"webpage","title":"Page","container-title":"Site"},
+      {"id":"legal","type":"legal_case","title":"Case","container-title":"Reports"},
+      {"id":"magazine","type":"article-magazine","title":"Title","container-title":"Magazine"},
+      {"id":"news","type":"article-newspaper","title":"Title","container-title":"Newspaper"},
+      {"id":"nocase","type":"book","title":"The <span class=\"nocase\">iPhone</span> Story"}
+    ]"#;
+    let bib = "@book{a, title={The {iPhone}}, author={Anne Smith and others}, date={1997/}}\n\
+               @inbook{b, title={Chapter}, booktitle={Collection}, chapter={3}, date={1999//}}";
+    let ris = "TY  - CHAP\nID  - one\nTI  - Chapter\nBT  - Collection\nPY  - 1999//\nER  -\n";
+    for (from, to, input) in [
+        ("csljson", "bibtex", csl),
+        ("csljson", "biblatex", csl),
+        ("biblatex", "biblatex", bib),
+        ("bibtex", "bibtex", bib),
+        ("ris", "csljson", ris),
+        ("ris", "biblatex", ris),
+    ] {
+        let reader = if from == "csljson" {
+            randoc_citeproc::csljson::reader
+        } else {
+            randoc_bibtex::reader
+        };
+        let Reader::Text(reader) = reader(from).unwrap() else {
+            unreachable!();
+        };
+        let doc = reader
+            .read(
+                &Sources::from_text(input),
+                &ReaderOptions::default(),
+                &mut Context::pure(),
+            )
+            .unwrap();
+        let expected = oracle(&["-f", from, "-t", to], input, &root());
+        assert!(expected.status.success(), "{from} to {to}");
+        assert_eq!(
+            String::from_utf8(expected.stdout).unwrap(),
+            write(&doc, to).unwrap(),
+            "{from} to {to}",
+        );
+    }
+}

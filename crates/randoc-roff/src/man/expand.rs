@@ -16,7 +16,10 @@ pub(super) fn expand(lines: Vec<Line>, size: usize, ctx: &mut Context) -> Result
         depth: ctx.limits.max_nesting_depth.min(64),
         ctx,
         macros: HashMap::new(),
-        strings: HashMap::new(),
+        strings: [("lq", "“"), ("rq", "”"), ("Tm", "™"), ("R", "®")]
+            .into_iter()
+            .map(|(name, text)| (name.into(), text.into()))
+            .collect(),
         bytes: size
             .saturating_mul(64)
             .clamp(1024, MAX_BYTES)

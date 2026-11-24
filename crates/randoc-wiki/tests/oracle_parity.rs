@@ -420,3 +420,146 @@ fn oracle_parity() {
     assert_eq!(report.values().map(|(_, total)| total).sum::<usize>(), 100);
     assert_eq!(report.values().map(|(passed, _)| passed).sum::<usize>(), 99);
 }
+
+#[test]
+#[ignore = "Requires the Pandoc 3.13 executable."]
+fn wave_10_wiki_regressions() {
+    let oracle = Oracle {
+        path: PathBuf::from(std::env::var_os("RANDOC_ORACLE_PANDOC").expect("source env/env.sh")),
+        fixtures: PathBuf::from(env!("CARGO_MANIFEST_DIR")),
+    };
+    let table = concat!(
+        "<table><thead><tr><th rowspan='2'>Long</th><th>B</th></tr>",
+        "<tr><th>C</th></tr></thead><tbody><tr><td colspan='2'>wide</td></tr></tbody></table>"
+    );
+    let fenced = [
+        "~~~{.foo .numberLines startFrom=3}",
+        "<&>",
+        "~~~",
+        "",
+        "~~~{.python .numberLines startFrom=3}",
+        "<&>",
+        "~~~",
+    ]
+    .join("\n");
+    let cases = [
+        ("markdown", "jira", r"[g](h) [s](dir/page.html) [e]()"),
+        (
+            "markdown",
+            "jira",
+            "\\* star\n\n\\+ plus\n\n\\| pipe | x\n\nsnake_case\n",
+        ),
+        ("native", "jira", r#"[Para [Str "a\\b"]]"#),
+        ("html", "jira", table),
+        ("html", "dokuwiki", table),
+        (
+            "markdown",
+            "dokuwiki",
+            "1. Item:\n\n   | a | b |\n   |---|---|\n   | 1 | 2 |\n\n2. Code:\n\n   ~~~\n   x\n   ~~~\n",
+        ),
+        (
+            "markdown",
+            "dokuwiki",
+            "- ~~~\n  code\n  ~~~\n\nTerm\n: One\n: Two\n",
+        ),
+        (
+            "markdown",
+            "dokuwiki",
+            "[lbl](mailto:a@b.c) <a@b.c> [a@b.c](mailto:a@b.c) [x](mailto:a@b.c?subject=hi) [a&b](mailto:a@b.c) [mail me](mailto:a@b.c) [*x* y](mailto:a@b.c) [a](MAILTO:a@b.c)",
+        ),
+        ("markdown", "mediawiki", fenced.as_str()),
+    ];
+    let images =
+        "![a](a.png){width=50%} ![b](b.png){width=300px height=2in} ![c](c.png){width=10em}";
+    for (from, to, input) in cases.into_iter().chain([
+        ("markdown", "mediawiki", images),
+        ("markdown", "dokuwiki", images),
+        ("markdown", "dokuwiki", "![a](a.png){width=10em}"),
+    ]) {
+        let doc = oracle.ast(from, input);
+        let output = oracle.run(&["-f", from, "-t", to, "--wrap=none"], input);
+        assert!(output.status.success());
+        let expected = String::from_utf8(output.stdout).unwrap();
+        let actual = write(to, &doc, false, WrapOption::WrapNone);
+        assert_eq!(actual, expected, "{to}: {input}");
+    }
+    let input = "||H1||H2||H3||\n||Row|x|y|\n|a|b|c|\n";
+    assert_eq!(read("jira", "", input).unwrap(), oracle.ast("jira", input));
+}
+
+#[test]
+#[ignore = "Requires the Pandoc 3.13 executable."]
+fn medium_wiki_cases() {
+    let oracle = Oracle {
+        path: PathBuf::from(std::env::var_os("RANDOC_ORACLE_PANDOC").expect("Source env/env.sh.")),
+        fixtures: PathBuf::from(env!("CARGO_MANIFEST_DIR")),
+    };
+    for (format, input) in [
+        (
+            "dokuwiki",
+            "a <user@example.com> <bad@x> <not an email> x<a@b.com>y",
+        ),
+        ("creole", "[[https://x.test|{{cat.png|A cat}}]]\n"),
+        ("creole", "|=A|=B\n|x|y\n|z|\nEnd\n"),
+        (
+            "creole",
+            "The <<<plugin foo>>> after.\n\nx<<<skip>>>y\n\n<<<a\nb>>>\n",
+        ),
+        (
+            "twiki",
+            "<pre id=\"sample\">\nabc &amp; xyz\n  two\n</pre> suffix",
+        ),
+        (
+            "twiki",
+            "<blockquote>Some *bold* text.</blockquote>\n\n<blockquote>\nAnother one.\n</blockquote>",
+        ),
+    ] {
+        assert_eq!(
+            read(format, "", input).unwrap(),
+            oracle.ast(format, input),
+            "{format}: {input}"
+        );
+    }
+    for (from, format, input) in [
+        (
+            "html",
+            "xwiki",
+            "<table><tr><td><p>one</p><p>two</p></td><td>x</td></tr></table>",
+        ),
+        (
+            "markdown",
+            "xwiki",
+            "| one\n| two\n\n`x`{.python} `y`{.unknown}",
+        ),
+        (
+            "markdown",
+            "jira",
+            "Before.\n\n$$\\begin{aligned}a&=b\\\\c&=d\\end{aligned}$$\n\nAfter.",
+        ),
+        (
+            "markdown",
+            "jira",
+            "[Small Caps]{.smallcaps} <https://x.test> <a@b.com> [mail](mailto:a@b.com) ![*alt*](i.png){width=2in} ![alt](i.png){.thumbnail}",
+        ),
+        (
+            "markdown",
+            "jira",
+            "> outer\n>\n>> inner\n>>\n>> two paragraphs\n>\n> end\n",
+        ),
+        ("markdown", "jira", "> outer\n>\n>> last quote\n"),
+        (
+            "markdown",
+            "mediawiki",
+            "[]{} [text]{}\n\n::: {#refs .references .csl-bib-body entry-spacing=1 line-spacing=2}\nText.\n:::",
+        ),
+    ] {
+        let doc = oracle.ast(from, input);
+        let output = oracle.run(&["-f", from, "-t", format, "--wrap=none"], input);
+        assert!(output.status.success());
+        assert_eq!(
+            write(format, &doc, false, WrapOption::WrapNone),
+            String::from_utf8(output.stdout).unwrap(),
+            "{format}: {input}"
+        );
+    }
+}

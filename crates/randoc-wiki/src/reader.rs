@@ -1,4 +1,6 @@
-use randoc_ast::{Attr, Block, Caption, Format, Inline, ListAttributes, MathType, Pandoc};
+use randoc_ast::{
+    Attr, Block, Caption, Format, Inline, ListAttributes, MathType, Meta, MetaValue, Pandoc,
+};
 use randoc_core::shared::{IdentifierSet, auto_identifier};
 use randoc_core::{Context, Error, ReaderOptions, Result, Sources};
 use randoc_core::{Extension, Extensions};
@@ -27,6 +29,7 @@ pub(crate) fn read(
         limit: context.limits.max_nesting_depth,
         cells_left: context.limits.max_table_cells,
         external_count: 0,
+        notoc: false,
         categories: Vec::new(),
         ids: IdentifierSet::new(),
         source: "",
@@ -48,10 +51,11 @@ pub(crate) fn read(
         }
         blocks.push(Block::Para(categories));
     }
-    Ok(Pandoc {
-        meta: Default::default(),
-        blocks,
-    })
+    let mut meta = Meta::default();
+    if parser.notoc {
+        meta.insert("notoc", MetaValue::MetaBool(true));
+    }
+    Ok(Pandoc { meta, blocks })
 }
 
 pub(crate) struct Parser<'a> {
@@ -59,6 +63,7 @@ pub(crate) struct Parser<'a> {
     pub(crate) limit: usize,
     pub(crate) cells_left: usize,
     pub(crate) external_count: usize,
+    pub(crate) notoc: bool,
     pub(crate) categories: Vec<Inline>,
     extensions: Extensions,
     ids: IdentifierSet,
@@ -137,6 +142,7 @@ impl Parser<'_> {
             let first = at + line.len() - trim.len();
             let after = line_end_at.saturating_add(1).min(end);
             if trim.is_empty() || self.wiki == Wiki::Media && behavior_switch(trim) == Some(trim) {
+                self.notoc |= self.wiki == Wiki::Media && trim == "__NOTOC__";
                 at = after;
                 continue;
             }
@@ -359,7 +365,7 @@ impl Parser<'_> {
                     || scan
                         .tags
                         .get(&first)
-                        .is_some_and(|tag| matches!(tag.name, "code" | "file" | "HTML"))
+                        .is_some_and(|tag| matches!(tag.name, "code" | "file" | "HTML" | "PHP"))
             }
             Wiki::Jira => {
                 line.starts_with("bq.")
@@ -568,6 +574,9 @@ impl Parser<'_> {
                             attr.classes.push(lang.into());
                         }
                         Block::CodeBlock(attr, body.strip_prefix('\n').unwrap_or(body).into())
+                    }
+                    "php" if tag.name == "PHP" => {
+                        Block::RawBlock(Format("html".into()), crate::inline::php(body))
                     }
                     "html" if tag.name == "HTML" => {
                         Block::RawBlock(Format("html".into()), body.into())

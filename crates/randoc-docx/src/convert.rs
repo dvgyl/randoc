@@ -1177,32 +1177,6 @@ impl<'a, 'b> Converter<'a, 'b> {
                     extra_blocks,
                     caption_blocks,
                 )?;
-            } else if is_mc(child, "AlternateContent")
-                && let Some(chosen) = choose_alternate_content(child)
-            {
-                for sub in chosen.elements() {
-                    if ns.is_w(sub, "drawing") {
-                        self.parse_drawing(
-                            sub,
-                            ns,
-                            part_path,
-                            rels,
-                            &mut atoms,
-                            extra_blocks,
-                            caption_blocks,
-                        )?;
-                    } else if ns.is_w(sub, "pict") {
-                        self.parse_vml_pict(
-                            sub,
-                            ns,
-                            part_path,
-                            rels,
-                            &mut atoms,
-                            extra_blocks,
-                            caption_blocks,
-                        )?;
-                    }
-                }
             }
         }
         flush_atoms(&props, &mut atoms, out);

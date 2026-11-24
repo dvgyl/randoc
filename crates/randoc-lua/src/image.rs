@@ -2,7 +2,6 @@
 
 use mlua::Value;
 use randoc_archive::image::{ImageType, image_size, image_type};
-use randoc_core::WriterOptions;
 
 use crate::construct::Call;
 use crate::peek::{Peek, PeekError, mismatch, retrieving};
@@ -32,10 +31,7 @@ pub(crate) fn call(call: &Call) -> Peek<Value> {
     }
     let options = call
         .optional(1, "opts", |v| {
-            retrieving(
-                "WriterOptions",
-                crate::options::writer_options(cx, v, &WriterOptions::default()),
-            )
+            retrieving("WriterOptions", crate::options::writer_options(cx, v))
         })?
         .unwrap_or_default();
     let mut size = image_size(&bytes.as_bytes(), u32::try_from(options.dpi).unwrap_or(0))

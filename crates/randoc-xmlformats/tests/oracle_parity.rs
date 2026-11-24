@@ -698,3 +698,18 @@ fn docbook_review_cases() -> TestResult {
     report.finish("DocBook review cases", 25);
     Ok(())
 }
+
+#[test]
+#[ignore = "Requires the Pandoc oracle."]
+fn docbook_link_roles_follow_classes() -> TestResult {
+    let oracle = Oracle::new()?;
+    let input = b"<https://a.test> [https://b.test](https://b.test) [label](https://c.test){.uri}";
+    for format in ["docbook4", "docbook5"] {
+        assert_eq!(
+            oracle.write_case("markdown", format, input, &[])?,
+            None,
+            "{format}"
+        );
+    }
+    Ok(())
+}

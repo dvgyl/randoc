@@ -1,7 +1,8 @@
-//! The HTTP conversion service for Randoc.
+//! The HTTP and CGI conversion services for Randoc.
 
 #![forbid(unsafe_code)]
 
+mod cgi;
 mod citations;
 mod cli;
 mod convert;
@@ -10,6 +11,7 @@ mod params;
 mod routes;
 mod server;
 
+pub use cgi::run_cgi;
 pub use cli::{ServerArgError, ServerCliAction, parse_server_args};
 pub use server::{ServerHandle, bind_server, bind_server_with_limits, run_server};
 

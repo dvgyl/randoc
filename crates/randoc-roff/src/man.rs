@@ -430,15 +430,24 @@ fn inline_request(cursor: &mut Cursor<'_>, line: &Line) -> Vec<Inline> {
     for (i, arg) in args(rest).into_iter().enumerate() {
         let font = &fonts[i % fonts.len()..][..1];
         let value = styled(arg.text, Font::Roman);
-        append(
-            &mut out,
-            if fonts.len() == 1 {
-                value
-            } else {
-                Font::from(font).apply(value)
-            },
-            fonts.len() == 1,
-        );
+        if fonts.len() == 1 {
+            append(&mut out, value, true);
+        } else {
+            append(
+                &mut out,
+                Font::from(font).apply(value),
+                arg.quoted && arg.text.starts_with([' ', '\t']),
+            );
+            if arg.quoted
+                && arg.text.ends_with([' ', '\t'])
+                && !matches!(out.last(), None | Some(Inline::Space))
+            {
+                out.push(Inline::Space);
+            }
+        }
+    }
+    if matches!(out.last(), Some(Inline::Space)) {
+        out.pop();
     }
     if fonts.len() == 1 {
         Font::from(fonts).apply(out)

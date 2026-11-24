@@ -4,7 +4,7 @@ mod table;
 mod uri;
 
 use randoc_ast::{
-    Block, Inline, ListAttributes, ListNumberDelim, ListNumberStyle, MetaValue, Pandoc,
+    Attr, Block, Inline, ListAttributes, ListNumberDelim, ListNumberStyle, MetaValue, Pandoc,
 };
 use randoc_core::shared::{stringify, stringify_meta};
 use randoc_core::{Context, Error, Result, WrapOption, WriterOptions};
@@ -43,6 +43,8 @@ pub(crate) fn write(
         notes: Vec::new(),
         table: false,
         highlighting: false,
+        small_caps: false,
+        csl_entry: false,
         syntax: None,
         inline_math: false,
         first_para: true,
@@ -80,6 +82,8 @@ struct Renderer<'a, 'doc> {
     notes: Vec<&'doc [Block]>,
     table: bool,
     highlighting: bool,
+    small_caps: bool,
+    csl_entry: bool,
     syntax: Option<randoc_highlight::Registry>,
     inline_math: bool,
     first_para: bool,
@@ -92,6 +96,7 @@ enum Lead {
     First,
     After,
     Bare,
+    CslEntry,
     Normal,
 }
 
@@ -115,7 +120,10 @@ impl<'a, 'doc> Renderer<'a, 'doc> {
         self.check_depth(level)?;
         let mut lead = lead;
         for block in blocks {
-            lead = self.block(block, out, lead, level)?;
+            let next = self.block(block, out, lead, level)?;
+            if lead != Lead::CslEntry {
+                lead = next;
+            }
         }
         Ok(lead)
     }
@@ -129,6 +137,29 @@ impl<'a, 'doc> Renderer<'a, 'doc> {
     ) -> Result<Lead> {
         match block {
             Block::Para(text) | Block::Plain(text) => {
+                if lead == Lead::CslEntry && matches!(block, Block::Para(_)) {
+                    let text = if let [
+                        Inline::Span(label_attr, label),
+                        Inline::Span(body_attr, _),
+                        ..,
+                    ] = text.as_slice()
+                        && label_attr.has_class("csl-left-margin")
+                        && body_attr.has_class("csl-right-inline")
+                    {
+                        let trailing_space =
+                            matches!(label.last(), Some(Inline::Space | Inline::SoftBreak));
+                        let label =
+                            self.render_inlines(label, inline::Font::ROMAN, level, false)?;
+                        let separator = if trailing_space { " " } else { "" };
+                        line(out, &format!(".IP \"{label}{separator}\" 5"));
+                        self.paragraph(&text[1..], level)?
+                    } else {
+                        line(out, ".CSLP");
+                        self.paragraph(text, level)?
+                    };
+                    line(out, &text);
+                    return Ok(Lead::CslEntry);
+                }
                 if matches!(block, Block::Para(_)) && lead != Lead::Bare {
                     match (self.format, lead) {
                         (Format::Man, Lead::After) => {}
@@ -288,8 +319,20 @@ impl<'a, 'doc> Renderer<'a, 'doc> {
                     );
                 }
             }
-            Block::Div(_, blocks) => {
+            Block::Div(attr, blocks) => {
                 if self.format == Format::Ms {
+                    if attr.has_class("csl-bib-body") {
+                        csl_macros(attr, out);
+                        return self.blocks(blocks, out, lead, level + 1);
+                    }
+                    if attr.has_class("csl-entry") {
+                        line(out, ".CSLENTRY");
+                        let was_entry = std::mem::replace(&mut self.csl_entry, true);
+                        let result = self.blocks(blocks, out, Lead::CslEntry, level + 1);
+                        self.csl_entry = was_entry;
+                        result?;
+                        return Ok(lead);
+                    }
                     self.first_para = true;
                     self.blocks(blocks, out, Lead::First, level + 1)?;
                     self.first_para = true;
@@ -543,4 +586,33 @@ fn protect(text: &str) -> String {
 
 fn render_parts(parts: Vec<Doc>, width: Option<usize>) -> String {
     randoc_layout::hcat(parts).render(width)
+}
+
+fn csl_macros(attr: &Attr, out: &mut String) {
+    line(
+        out,
+        ".nr PI 3n
+.de CSLENTRY",
+    );
+    if attr
+        .get("entry-spacing")
+        .and_then(|n| n.parse::<i64>().ok())
+        .is_some_and(|n| n > 0)
+    {
+        line(out, ".sp");
+    }
+    line(
+        out,
+        "..
+.de CSLP",
+    );
+    line(
+        out,
+        if attr.has_class("hanging-indent") {
+            ".XP"
+        } else {
+            ".LP"
+        },
+    );
+    line(out, "..");
 }

@@ -455,6 +455,7 @@ impl Parser<'_> {
                 self.highlight = (!arg.is_empty()).then(|| arg.into());
                 return Ok(Vec::new());
             }
+            "bibliography" => Block::Div(super::attr("refs", &[]), Vec::new()),
             "raw" => Block::RawBlock(Format::new(arg), joined(body)),
             "image" | "figure" => {
                 let mut caption = if kind == "figure" {

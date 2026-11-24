@@ -487,3 +487,70 @@ fn check_synopsis_subsection(oracle: &Oracle) {
     let diagnostic = std::str::from_utf8(&expected.stderr).unwrap();
     assert_eq!(format!("{error}\n"), diagnostic);
 }
+
+#[test]
+#[ignore = "Requires the Pandoc 3.13 executable."]
+fn predefined_strings_and_spanned_tables() {
+    let oracle = Oracle::new();
+    let source = concat!(
+        ".TH X 1\n.PP\n",
+        r#"Say \*(lqhi\*(rq and \*(Tm and \*[lq]x\*[rq] \*R. [\*S] [\*(HF]"#,
+        "\n",
+        r#".BR \-v ", " \-\-verbose"#,
+        "\n",
+    );
+    let actual = read("man", source, "", &mut Context::pure()).unwrap();
+    assert_eq!(actual, oracle.json("man", source));
+
+    let source = concat!(
+        "<table><thead><tr><th rowspan='2'>A</th><th>B</th></tr>",
+        "<tr><th>C</th></tr></thead><tbody>",
+        "<tr><td colspan='2'><p>one</p><p>two</p></td></tr>",
+        "</tbody></table>"
+    );
+    let doc = oracle.json("html", source);
+    for format in ["man", "ms"] {
+        let output = oracle.run(&["-f", "html", "-t", format], source);
+        assert!(output.status.success());
+        let expected = String::from_utf8(output.stdout).unwrap();
+        assert!(compare_text(format, &write(format, &doc, &[]), &expected));
+    }
+}
+
+#[test]
+#[ignore = "Requires the Pandoc 3.13 executable."]
+fn medium_highlighting_and_ms_bibliography() {
+    let oracle = Oracle::new();
+    for (finding, format, input) in [
+        (
+            "M1 man block",
+            "man",
+            "~~~python\ndef f(x):\n    return x # note\n~~~",
+        ),
+        ("M1 ms inline", "ms", "`x = 1`{.python} and `plain`"),
+        (
+            "M1 ms small caps",
+            "ms",
+            "[Small CAPS *mixed* foo-bar]{.smallcaps}",
+        ),
+        (
+            "W10-W11 ms bibliography",
+            "ms",
+            concat!(
+                "::: {.references .csl-bib-body .hanging-indent entry-spacing=1 line-spacing=2}\n",
+                "::: {#ref-a .csl-entry}\nFirst. Second.\n\nThird. Fourth.\n:::\n",
+                "::: {#ref-b .csl-entry}\n[2 ]{.csl-left-margin}[Fifth. Sixth.]{.csl-right-inline}\n:::\n",
+                ":::\n"
+            ),
+        ),
+    ] {
+        let doc = oracle.json("markdown", input);
+        let expected = oracle.run(&["-t", format], input);
+        assert!(expected.status.success());
+        assert!(compare_text(
+            finding,
+            &write(format, &doc, &[]),
+            std::str::from_utf8(&expected.stdout).unwrap(),
+        ));
+    }
+}

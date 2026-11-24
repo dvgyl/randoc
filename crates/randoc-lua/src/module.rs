@@ -144,6 +144,16 @@ pub(crate) fn install(lua: &Lua, max_depth: usize) -> mlua::Result<()> {
     }
     let pandoc: Table = lua.globals().raw_get("pandoc")?;
     crate::layout::install_constants(lua, &pandoc.raw_get("layout")?)?;
+    let cli: Table = lua
+        .load(include_str!("cli.lua"))
+        .set_name("=[randoc]")
+        .eval()?;
+    pandoc.raw_set("cli", cli.clone())?;
+    if let Value::Table(package) = lua.globals().raw_get::<Value>("package")?
+        && let Value::Table(loaded) = package.raw_get::<Value>("loaded")?
+    {
+        loaded.raw_set("pandoc.cli", cli)?;
+    }
     lua.set_named_registry_value(METAMETHODS, native.get::<Table>("metamethods")?)?;
     lua.set_named_registry_value(CALL_TRACED, native.get::<Function>("call_traced")?)?;
     lua.globals().set(
@@ -366,7 +376,7 @@ fn dispatch(cx: &Cx, arguments: &[Value]) -> Peek<Vec<Value>> {
                 utils::call(&call, &name).and_then(one)
             }
         }
-        "structure" | "layout" | "image" | "simple_table" => {
+        "structure" | "layout" | "image" | "simple_table" | "options" | "source" => {
             let name = name_argument(rest, 0)?;
             let call = Call {
                 cx,
@@ -376,6 +386,8 @@ fn dispatch(cx: &Cx, arguments: &[Value]) -> Peek<Vec<Value>> {
             match operation.as_str() {
                 "structure" => crate::structure::call(&call),
                 "layout" => crate::layout::call(&call),
+                "options" => crate::options::call(&call),
+                "source" => crate::source::call(&call),
                 "image" => crate::image::call(&call),
                 _ => crate::simple_table::call(&call),
             }

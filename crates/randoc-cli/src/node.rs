@@ -180,20 +180,22 @@ impl<'de> serde::de::Visitor<'de> for FirstWinsVisitor {
 }
 
 /// Parses a JSON text into a node: keys stay in source order and the first
-/// of two equal keys wins. The error text is the Aeson text for the end of
-/// the input.
+/// of two equal keys wins. Syntax errors use the Aeson text.
 pub fn parse_json(text: &str) -> Result<Node, String> {
-    let message = |error: serde_json::Error| {
-        if error.is_eof() {
-            "Unexpected end-of-input, expecting JSON value".to_owned()
-        } else {
-            format!("Unexpected {error}")
-        }
-    };
+    let message = |error| json_error(text, error);
     let mut deserializer = serde_json::Deserializer::from_str(text);
     let FirstWins(node) = serde::Deserialize::deserialize(&mut deserializer).map_err(message)?;
     deserializer.end().map_err(message)?;
     Ok(node)
+}
+
+/// Gets the Aeson syntax error when the JSON text is invalid.
+pub(crate) fn json_error(text: &str, error: serde_json::Error) -> String {
+    use randoc::ast::json::{DEFAULT_MAX_DEPTH, parse_value};
+    match parse_value(text, DEFAULT_MAX_DEPTH) {
+        Err(syntax) => syntax.to_string(),
+        Ok(_) => format!("Unexpected {error}"),
+    }
 }
 
 /// Returns the text of a YAML file in the encoding that its first bytes
@@ -282,7 +284,7 @@ mod tests {
         assert_eq!(node.to_json()["a"]["x"], 1);
         assert_eq!(
             parse_json("{").unwrap_err(),
-            "Unexpected end-of-input, expecting JSON value"
+            "Unexpected end-of-input, expecting record key literal or }"
         );
         assert!(parse_json("{} x").is_err());
     }

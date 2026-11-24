@@ -953,6 +953,18 @@ mod tests {
         }
     }
 
+    #[test]
+    fn unsupported_mathml_keeps_text_and_attributes() {
+        let (actual, _) = read_with(
+            "<math xmlns=\"http://www.w3.org/1998/Math/MathML\"><mlongdiv>\n<mn>3</mn>\n<mn>12</mn>\n</mlongdiv></math>",
+            &[Extension::RawHtml],
+        );
+        assert_eq!(
+            actual,
+            r#"[{"t":"Plain","c":[{"t":"Span","c":[["",["math"],[["xmlns","http://www.w3.org/1998/Math/MathML"]]],[{"t":"SoftBreak"},{"t":"Str","c":"3"},{"t":"SoftBreak"},{"t":"Str","c":"12"},{"t":"SoftBreak"}]]}]}]"#
+        );
+    }
+
     /// Returns the parser steps for an input that repeats `unit` `count` times.
     fn steps(unit: &str, count: usize) -> u64 {
         let input = unit.repeat(count);

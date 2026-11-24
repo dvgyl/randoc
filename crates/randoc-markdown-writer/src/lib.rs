@@ -18,6 +18,8 @@ mod standalone;
 mod tables;
 mod uri;
 
+pub use tables::render_grid_table;
+
 use std::sync::Arc;
 
 use randoc_ast::{Block, Inline, Pandoc, Target, Text};
@@ -434,7 +436,9 @@ impl<'a> W<'a> {
             }
         } else {
             let marker = literal(format!("[{}{number}]", self.opts.identifier_prefix));
-            if starts_inline {
+            if starts_inline && self.plain() {
+                marker + literal(" ") + rendered
+            } else if starts_inline {
                 marker.spaced(rendered)
             } else {
                 marker + cr() + rendered

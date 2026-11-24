@@ -1,5 +1,7 @@
 use std::cell::RefCell;
+use std::collections::HashSet;
 use std::fmt::Write as _;
+use std::sync::OnceLock;
 
 use randoc_ast::{Alignment, Attr, Block, Inline, MathType, Pandoc, QuoteType, Row, Table, Target};
 use randoc_core::Extension;
@@ -76,6 +78,12 @@ pub(crate) fn write(
         } else {
             body.truncate(body.trim_end_matches('\n').len());
             body.push('\n');
+            if wiki == Wiki::Doku
+                && (matches!(doc.blocks.last(), Some(Block::Figure(_, caption, _)) if !caption.long.is_empty())
+                    || matches!(doc.blocks.last(), Some(Block::BulletList(_) | Block::OrderedList(..) | Block::DefinitionList(_)) if body.ends_with("</code>\n")))
+            {
+                body.push('\n');
+            }
             if wiki == Wiki::Jira && doc.blocks.last().is_some_and(ends_with_display_math) {
                 body.push('\n');
             }
@@ -355,6 +363,19 @@ impl Writer<'_> {
                 continue;
             }
             let mut rendered = Vec::new();
+            if self.wiki == Wiki::Doku && definitions.iter().any(|body| doku_wrap_item(body)) {
+                let _ = writeln!(out, "  * **{term}** <WRAP>");
+                for block in definitions.iter().flatten() {
+                    if list_items(block).is_some() {
+                        out.push_str(&self.list(block, "  ", depth + 1)?);
+                    } else {
+                        let text = self.block(block, depth)?;
+                        out.push_str(&doku_item_block(block, text));
+                    }
+                }
+                out.push_str("</WRAP>\n");
+                continue;
+            }
             for body in definitions {
                 let text = self.definition_body(body, depth)?;
                 rendered.push(text.trim_end_matches('\n').to_owned());
@@ -397,17 +418,7 @@ impl Writer<'_> {
             }
             return Ok(text);
         }
-        let wrap = self.wiki == Wiki::Doku
-            && blocks.len() > 1
-            && blocks
-                .iter()
-                .skip(1)
-                .any(|block| list_items(block).is_none());
-        let mut text = if wrap {
-            "<WRAP>\n".to_owned()
-        } else {
-            String::new()
-        };
+        let mut text = String::new();
         for block in blocks {
             if list_items(block).is_some() {
                 text.push_str(&self.list(
@@ -417,15 +428,12 @@ impl Writer<'_> {
                 )?);
             } else {
                 let rendered = self.block(block, depth)?;
-                if self.wiki == Wiki::Doku && matches!(block, Block::CodeBlock(_, _)) {
-                    text.push_str(&rendered);
+                if self.wiki == Wiki::Doku {
+                    text.push_str(&doku_item_block(block, rendered));
                 } else {
                     text.push_str(&ensure_newline(rendered.trim_end_matches('\n').into()));
                 }
             }
-        }
-        if wrap {
-            text.push_str("</WRAP>\n");
         }
         Ok(text)
     }
@@ -437,7 +445,7 @@ impl Writer<'_> {
             .find(|name| *name != "numberLines" && *name != "numberSource");
         match self.wiki {
             Wiki::Media => {
-                if let Some(lang) = lang {
+                if let Some(lang) = lang.filter(|lang| is_highlight_language(lang)) {
                     let line = if attr.has_class("numberLines") || attr.has_class("numberSource") {
                         " line"
                     } else {
@@ -451,7 +459,12 @@ impl Writer<'_> {
                         escape_html(lang)
                     )
                 } else {
-                    format!("<pre>{}</pre>\n", escape_html(code))
+                    let class = if attr.classes.is_empty() {
+                        String::new()
+                    } else {
+                        format!(" class=\"{}\"", escape_html(&attr.classes.join(" ")))
+                    };
+                    format!("<pre{class}>{}</pre>\n", escape_html(code))
                 }
             }
             Wiki::Doku => {
@@ -486,6 +499,14 @@ impl Writer<'_> {
             Wiki::Media => format!("<blockquote>{body}\n</blockquote>\n"),
             Wiki::Jira if matches!(blocks, [Block::Para(_) | Block::Plain(_)]) => {
                 format!("bq. {body}\n")
+            }
+            Wiki::Jira
+                if matches!(
+                    blocks.last(),
+                    Some(Block::CodeBlock(..) | Block::BlockQuote(_))
+                ) =>
+            {
+                format!("{{quote}}\n{body}{{quote}}\n")
             }
             Wiki::Jira => format!("{{quote}}\n{body}\n{{quote}}\n"),
             Wiki::Doku => {
@@ -546,21 +567,17 @@ impl Writer<'_> {
             let start = out.len();
             out.push_str(&line_prefix);
             let mut first = true;
-            if self.wiki == Wiki::Doku
-                && item
-                    .iter()
-                    .filter(|child| matches!(child, Block::Plain(_) | Block::Para(_)))
-                    .count()
-                    > 1
-            {
+            if self.wiki == Wiki::Doku && doku_wrap_item(item) {
                 out.push_str("<WRAP>\n");
                 for child in item {
                     if list_items(child).is_some() {
                         out.push_str(&self.list(child, &nested_prefix, depth + 1)?);
                     } else {
-                        out.push_str(&ensure_newline(
-                            self.block(child, depth)?.trim_end_matches('\n').into(),
-                        ));
+                        if matches!(child, Block::HorizontalRule) {
+                            out.push('\n');
+                        }
+                        let text = self.block(child, depth)?;
+                        out.push_str(&doku_item_block(child, text));
                     }
                 }
                 out.push_str("</WRAP>\n");
@@ -579,6 +596,9 @@ impl Writer<'_> {
                     }
                     if self.wiki == Wiki::Doku && !first && matches!(child, Block::CodeBlock(_, _))
                     {
+                        if ordered && !out.ends_with('\n') {
+                            out.push('\n');
+                        }
                         out.push_str(&text);
                     } else if self.wiki == Wiki::Media && !first {
                         let _ = write!(out, "{nested_prefix}: {}", text.trim_end_matches('\n'));
@@ -617,6 +637,9 @@ impl Writer<'_> {
                 randoc_ast::ListNumberStyle::UpperRoman => Some("upper-roman"),
                 randoc_ast::ListNumberStyle::LowerAlpha => Some("lower-alpha"),
                 randoc_ast::ListNumberStyle::UpperAlpha => Some("upper-alpha"),
+                randoc_ast::ListNumberStyle::DefaultStyle if list_has_table_or_code(items) => {
+                    Some("decimal")
+                }
                 _ => None,
             };
             if let Some(style) = style {
@@ -738,12 +761,23 @@ impl Writer<'_> {
             {
                 out.push_str("<nowiki/>");
             }
-            out.push_str(&self.inline(item, adjacent, depth)?);
+            let isolated = out.ends_with(' ')
+                && matches!(
+                    items.get(index + 1),
+                    Some(Inline::Space | Inline::SoftBreak)
+                );
+            out.push_str(&self.inline(item, adjacent, isolated, depth)?);
         }
         Ok(out)
     }
 
-    fn inline(&mut self, item: &Inline, adjacent: bool, depth: usize) -> Result<String> {
+    fn inline(
+        &mut self,
+        item: &Inline,
+        adjacent: bool,
+        isolated: bool,
+        depth: usize,
+    ) -> Result<String> {
         Ok(match item {
             Inline::Str(text) => match self.wiki {
                 Wiki::Media if text.contains("://") => {
@@ -751,7 +785,7 @@ impl Writer<'_> {
                 }
                 Wiki::Media => escape_html(text),
                 Wiki::Doku => escape_doku(text),
-                Wiki::Jira => escape_jira(text),
+                Wiki::Jira => escape_jira(text, isolated),
                 Wiki::Creole => text.clone(),
             },
             Inline::Space => " ".into(),
@@ -771,6 +805,9 @@ impl Writer<'_> {
             }
             Inline::Subscript(items) => {
                 self.mark(items, ["<sub>", "<sub>", "~"], adjacent, depth)?
+            }
+            Inline::SmallCaps(items) if self.wiki == Wiki::Jira => {
+                self.mark(items, ["", "", "*"], adjacent, depth)?
             }
             Inline::SmallCaps(items) | Inline::Cite(_, items) => self.inlines(items, depth + 1)?,
             Inline::Quoted(kind, items) => {
@@ -867,8 +904,14 @@ impl Writer<'_> {
             Inline::Span(attr, items) => {
                 let body = self.inlines(items, depth + 1)?;
                 match self.wiki {
-                    Wiki::Media if !attr.is_empty() => {
-                        format!("<span{}>{body}</span>", html_attr(attr))
+                    Wiki::Media => {
+                        let mut attr = attr.clone();
+                        for (key, _) in &mut attr.attributes {
+                            if key == "key" {
+                                *key = "data-key".into();
+                            }
+                        }
+                        format!("<span{}>{body}</span>", html_attr(&attr))
                     }
                     Wiki::Jira if !attr.id.is_empty() => format!("{{anchor:{}}}{body}", attr.id),
                     Wiki::Jira if let Some(color) = attr.get("color") => {
@@ -953,23 +996,18 @@ impl Writer<'_> {
             }
             Wiki::Media => format!("[[{url}|{body}]]"),
             Wiki::Doku
-                if let Some(email) = url.strip_prefix("mailto:")
-                    && matches!(items, [Inline::Str(text)] if text == email) =>
+                if url.starts_with("mailto:")
+                    && let [Inline::Str(text)] = items =>
             {
-                format!("<{email}>")
+                format!("<{text}>")
             }
             Wiki::Doku if matching => target.url.clone(),
             Wiki::Doku => format!("[[{url}|{body}]]"),
             Wiki::Jira if attr.has_class("attachment") => format!("[^{url}]"),
-            Wiki::Jira if matching => url.to_owned(),
-            Wiki::Jira => {
-                let prefix = if !url_start(url) && !url.starts_with(['/', '#', '~']) {
-                    "/"
-                } else {
-                    ""
-                };
-                format!("[{body}|{prefix}{url}]")
+            Wiki::Jira if matching || url.strip_prefix("mailto:") == Some(body.as_str()) => {
+                format!("[{url}]")
             }
+            Wiki::Jira => format!("[{body}|{url}]"),
             Wiki::Creole => body,
         })
     }
@@ -1002,12 +1040,20 @@ impl Writer<'_> {
     ) -> Result<String> {
         let body = self.inlines(alt, depth)?;
         let url = &target.url;
-        let width = attr.get("width").unwrap_or("").trim_end_matches("px");
-        let height = attr.get("height").unwrap_or("").trim_end_matches("px");
-        let size = if height.is_empty() {
-            width.into()
-        } else {
-            format!("{width}x{height}")
+        let pixels = |key| {
+            attr.get(key)
+                .and_then(|value| image_pixels(value, self.options.dpi))
+        };
+        let width = pixels("width");
+        let height = pixels("height");
+        let size = match height {
+            Some(height) => format!(
+                "{}x{height}",
+                width
+                    .as_deref()
+                    .unwrap_or(if self.wiki == Wiki::Doku { "0" } else { "" })
+            ),
+            None => width.unwrap_or_default(),
         };
         Ok(match self.wiki {
             Wiki::Media if url_start(url) || url.starts_with("data:") => {
@@ -1065,13 +1111,14 @@ impl Writer<'_> {
                 };
                 format!("{{{{{url}{query}{label}}}}}")
             }
+            Wiki::Jira if attr.has_class("thumbnail") => format!("!{url}|thumbnail!"),
             Wiki::Jira => {
-                let mut args = attr.classes.clone();
+                let mut args = Vec::new();
                 if !target.title.is_empty() {
                     args.push(format!("title={}", target.title));
                 }
-                if !body.is_empty() {
-                    args.push(format!("alt={body}"));
+                if !alt.is_empty() {
+                    args.push(format!("alt={}", stringify(alt)));
                 }
                 args.extend(
                     attr.attributes
@@ -1215,9 +1262,17 @@ impl Writer<'_> {
         let width = table.col_specs.len();
         let mut widths = vec![0; width];
         let mut rendered = Vec::new();
+        let mut occupancy = vec![0; width];
         for (index, (row, _)) in rows.iter().enumerate() {
             let mut cells = Vec::new();
             for cell in &row.cells {
+                while occupancy.get(cells.len()).is_some_and(|&end| end > index) {
+                    cells.push((String::new(), 0));
+                }
+                let column = cells.len();
+                if column == width {
+                    break;
+                }
                 let text = self.blocks(&cell.content, depth)?;
                 let body = text.trim_end_matches('\n');
                 let body = if self.wiki == Wiki::Doku {
@@ -1226,10 +1281,9 @@ impl Writer<'_> {
                         .collect::<Vec<_>>()
                         .join("\\\\ ")
                 } else {
-                    body.replace('\n', " ")
+                    body.replace("\n\n", "\n")
                 };
                 let offset = literal(&body).offset();
-                let column = cells.len();
                 if let Some(spec) = table.col_specs.get(column) {
                     let pad = match spec.align {
                         Alignment::AlignCenter => 4,
@@ -1242,11 +1296,16 @@ impl Writer<'_> {
                 let next = column
                     .saturating_add(cell.col_span.max(1) as usize)
                     .min(width);
+                occupancy[column..next].fill(index.saturating_add(cell.row_span.max(1) as usize));
                 cells.resize(next, (String::new(), 0));
             }
-            self.charge(width.saturating_sub(cells.len()))?;
+            let padding = occupancy[cells.len()..]
+                .iter()
+                .filter(|&&end| end <= index)
+                .count();
+            self.charge(padding)?;
             cells.resize(width, (String::new(), 0));
-            rendered.push((index < table.head.rows.len(), cells));
+            rendered.push((index == 0 && !table.head.rows.is_empty(), cells));
         }
         let mut out = String::new();
         if !caption.trim().is_empty() {
@@ -1261,12 +1320,10 @@ impl Writer<'_> {
             out.push_str(mark);
             for (column, (body, offset)) in row.into_iter().enumerate() {
                 if self.wiki == Wiki::Jira {
-                    if !body.is_empty() {
-                        out.push(' ');
-                        out.push_str(&body);
-                        out.push(' ');
-                    }
-                } else if !body.is_empty() {
+                    out.push(' ');
+                    out.push_str(&body);
+                    out.push(' ');
+                } else {
                     let gap = widths[column].saturating_sub(offset);
                     let left = match table.col_specs[column].align {
                         Alignment::AlignRight => gap,
@@ -1294,6 +1351,68 @@ impl Writer<'_> {
     }
 }
 
+/// Checks the language names that the Wiki writers support.
+pub(crate) fn is_highlight_language(name: &str) -> bool {
+    static LANGUAGES: OnceLock<HashSet<&str>> = OnceLock::new();
+    LANGUAGES
+        .get_or_init(|| {
+            include_str!("mediawiki-highlight-languages.txt")
+                .lines()
+                .collect()
+        })
+        .contains(name)
+}
+
+fn image_pixels(value: &str, dpi: i64) -> Option<String> {
+    let end = value
+        .find(|ch: char| !ch.is_ascii_digit() && ch != '.')
+        .unwrap_or(value.len());
+    let (number, unit) = value.split_at(end);
+    let (integer, fraction) = number.split_once('.').unwrap_or((number, "0"));
+    if integer.is_empty()
+        || fraction.is_empty()
+        || !fraction.bytes().all(|byte| byte.is_ascii_digit())
+    {
+        return None;
+    }
+    let factor = match unit.trim_start() {
+        "" | "px" => {
+            let integer = integer.trim_start_matches('0');
+            return Some(if integer.is_empty() { "0" } else { integer }.into());
+        }
+        "in" | "inch" => 1.0,
+        "cm" => 2.54,
+        "mm" => 25.4,
+        "pt" => 72.0,
+        "pc" => 6.0,
+        "em" => 96.0 / 16.5,
+        _ => return None,
+    };
+    let pixels = number.parse::<f64>().ok()? / factor * dpi as f64;
+    pixels.is_finite().then(|| format!("{}", pixels.floor()))
+}
+
+fn doku_wrap_item(blocks: &[Block]) -> bool {
+    match blocks {
+        [] | [Block::Plain(_) | Block::Para(_), Block::CodeBlock(..)] => false,
+        [Block::Plain(_) | Block::Para(_), rest @ ..] => {
+            rest.iter().any(|block| list_items(block).is_none())
+        }
+        _ => true,
+    }
+}
+
+fn doku_item_block(block: &Block, text: String) -> String {
+    if matches!(
+        block,
+        Block::CodeBlock(..) | Block::Table(_) | Block::HorizontalRule
+    ) {
+        ensure_newline(text)
+    } else {
+        ensure_newline(text.trim_end_matches('\n').into())
+    }
+}
+
 fn ends_with_display_math(mut block: &Block) -> bool {
     while let Some((_, items)) = list_items(block) {
         let Some(last) = items.last().and_then(|item| item.last()) else {
@@ -1314,7 +1433,11 @@ fn list_items(block: &Block) -> Option<(bool, &[Vec<Block>])> {
 }
 
 fn needs_html_list(block: &Block) -> bool {
-    if matches!(block, Block::OrderedList(attr, _) if attr.start != 1 || attr.style != randoc_ast::ListNumberStyle::DefaultStyle && attr.style != randoc_ast::ListNumberStyle::Decimal)
+    if matches!(block, Block::OrderedList(attr, items)
+        if attr.start != 1
+            || attr.style != randoc_ast::ListNumberStyle::DefaultStyle
+                && attr.style != randoc_ast::ListNumberStyle::Decimal
+            || list_has_table_or_code(items))
     {
         return true;
     }
@@ -1331,6 +1454,13 @@ fn needs_html_list(block: &Block) -> bool {
                     > 1
         })
     })
+}
+
+fn list_has_table_or_code(items: &[Vec<Block>]) -> bool {
+    items
+        .iter()
+        .flatten()
+        .any(|block| matches!(block, Block::Table(_) | Block::CodeBlock(..)))
 }
 
 fn ensure_newline(mut text: String) -> String {
@@ -1358,7 +1488,12 @@ fn html_attr(attr: &Attr) -> String {
         let _ = write!(out, " class=\"{}\"", escape_html(&attr.classes.join(" ")));
     }
     for (key, value) in &attr.attributes {
-        let key = if key == "source" { "data-source" } else { key };
+        let key = match key.as_str() {
+            "source" => "data-source",
+            "entry-spacing" => "data-entry-spacing",
+            "line-spacing" => "data-line-spacing",
+            _ => key,
+        };
         let _ = write!(out, " {}=\"{}\"", escape_html(key), escape_html(value));
     }
     out
@@ -1418,7 +1553,7 @@ fn escape_jira_math(tex: &str) -> String {
         let previous = tex[..index].chars().next_back();
         let follows_escape =
             previous.is_some_and(|c| c.is_whitespace() || matches!(c, '{' | '}' | '('));
-        if ch == '\\' && follows_escape {
+        if ch == '\\' && (follows_escape || previous == Some('\\') || rest.starts_with("\\\\")) {
             out.push_str("&bsol;");
             continue;
         }
@@ -1445,7 +1580,7 @@ fn escape_jira_math(tex: &str) -> String {
     out
 }
 
-fn escape_jira(text: &str) -> String {
+fn escape_jira(text: &str, isolated: bool) -> String {
     let mut out = String::new();
     if [":P", ":D", ":)", ":(", ";)", "(/)", "(x)"]
         .iter()
@@ -1456,14 +1591,24 @@ fn escape_jira(text: &str) -> String {
     {
         out.push('\\');
     }
-    if text.starts_with('-') {
-        out.push('\\');
-    }
-    for ch in text.chars() {
-        if matches!(ch, '_' | '[' | ']' | '{' | '}' | '!' | '\\') || ch == '*' && text.len() > 1 {
-            out.push('\\');
+    let mut previous = None;
+    let mut chars = text.chars().peekable();
+    while let Some(ch) = chars.next() {
+        let in_word = previous.is_some_and(char::is_alphanumeric)
+            && chars.peek().is_some_and(|ch| ch.is_alphanumeric());
+        let separated = (isolated && text.len() == 1)
+            || previous.is_some_and(char::is_whitespace)
+                && chars.peek().is_some_and(|ch| ch.is_whitespace());
+        if ch == '\\' && !in_word && !separated {
+            out.push_str("&bsol;");
+        } else {
+            let mark = "_+-^*~!&|[]".contains(ch);
+            if matches!(ch, '{' | '}') || mark && !in_word && !separated {
+                out.push('\\');
+            }
+            out.push(ch);
         }
-        out.push(ch);
+        previous = Some(ch);
     }
     out
 }

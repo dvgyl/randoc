@@ -156,3 +156,10 @@ debug = false
 
 [profile.release]
 debug = false
+
+# Release binaries for distribution. `release` stays fast for local benchmarks.
+[profile.dist]
+inherits = "release"
+lto = "fat"
+codegen-units = 1
+strip = "symbols"

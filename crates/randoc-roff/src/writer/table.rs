@@ -29,7 +29,7 @@ impl<'doc> Renderer<'_, 'doc> {
                 _ => None,
             })
             .collect::<Vec<_>>();
-        let fixed = is_ms && widths.iter().any(Option::is_some);
+        let fixed = widths.iter().any(Option::is_some);
         let columns = table
             .col_specs
             .iter()
@@ -76,14 +76,20 @@ impl<'doc> Renderer<'_, 'doc> {
             },
         );
         line(out, &format!("{columns}."));
-        for row in head {
-            self.row(row, &widths, false, out, level)?;
-        }
-        if !head.is_empty() {
-            line(out, "_");
-        }
-        for row in rows {
-            self.row(row, &widths, fixed, out, level)?;
+        let mut occupancy = vec![0; widths.len()];
+        for (index, row) in head.iter().chain(rows).enumerate() {
+            self.row(
+                row,
+                &widths,
+                is_ms && fixed && (index > 0 || head.is_empty()),
+                &mut occupancy,
+                index,
+                out,
+                level,
+            )?;
+            if index == 0 && !head.is_empty() {
+                line(out, "_");
+            }
         }
         line(out, ".TE");
         if is_ms {
@@ -95,11 +101,14 @@ impl<'doc> Renderer<'_, 'doc> {
         Ok(())
     }
 
+    #[allow(clippy::too_many_arguments)]
     fn row(
         &mut self,
         row: &'doc Row,
         widths: &[Option<f64>],
         fixed: bool,
+        occupancy: &mut [usize],
+        row_index: usize,
         out: &mut String,
         level: usize,
     ) -> Result<()> {
@@ -108,23 +117,23 @@ impl<'doc> Renderer<'_, 'doc> {
             &mut self.cells,
         )?;
         let is_ms = self.format == Format::Ms;
+        let mut cells = row.cells.iter();
         for (index, width) in widths.iter().enumerate() {
             if index > 0 {
                 out.push(if is_ms { '\t' } else { '@' });
             }
             out.push_str("T{\n");
-            if let Some(cell) = row.cells.get(index) {
-                if fixed && let Some(width) = width {
-                    line(out, &format!(".nr LL {width:.1}n"));
-                }
-                for block in &cell.content {
-                    self.block(
-                        block,
-                        out,
-                        if is_ms { Lead::Normal } else { Lead::Bare },
-                        level,
-                    )?;
-                }
+            if fixed && let Some(width) = width {
+                line(out, &format!(".nr LL {width:.1}n"));
+            }
+            if occupancy[index] <= row_index
+                && let Some(cell) = cells.next()
+            {
+                let end = index
+                    .saturating_add(cell.col_span.max(1) as usize)
+                    .min(widths.len());
+                occupancy[index..end].fill(row_index.saturating_add(cell.row_span.max(1) as usize));
+                self.blocks(&cell.content, out, Lead::Normal, level)?;
             }
             out.push_str("T}");
         }

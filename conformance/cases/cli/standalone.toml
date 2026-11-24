@@ -221,6 +221,66 @@ input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"
 files = { "t.txt" = "T\n", "i.txt" = "x\n", "e.xml" = "<x/>\n", "c.png" = "x", "r.docx" = "x", "c.css" = "x", "ab.txt" = "Mr.\n" }
 
 [[case]]
+id = "html-embed-image"
+cmd = ["-f", "markdown", "-t", "html5", "--embed-resources"]
+input = "See ![a square](square.svg).\n"
+files = { "square.svg" = '<svg xmlns="http://www.w3.org/2000/svg" width="2" height="2"><rect width="2" height="2"/></svg>' }
+
+[[case]]
+id = "html-embed-css-import"
+cmd = ["-f", "markdown", "-t", "html5", "--standalone", "--embed-resources", "--template=page.html", "--css=styles/main.css"]
+input = "A test page.\n"
+[case.files]
+"page.html" = '''<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Styles</title>
+$for(css)$<link rel="stylesheet" href="$css$" />$endfor$
+</head>
+<body>
+$body$
+</body>
+</html>
+'''
+"styles/main.css" = '''@import url("parts/type.css");
+p { color: navy; }
+'''
+"styles/parts/type.css" = "p { font-weight: bold; }\n"
+
+[[case]]
+id = "html-embed-script"
+cmd = ["-f", "markdown", "-t", "html5", "--embed-resources"]
+input = '''A test page.
+
+<script src="check.js"></script>
+'''
+files = { "check.js" = "document.body.dataset.ready = 'yes';\n" }
+
+[[case]]
+id = "html-embed-self-contained"
+cmd = ["-f", "markdown", "-t", "html5", "--self-contained", "--template=page.html"]
+input = "See ![a circle](circle.svg).\n"
+[case.files]
+"page.html" = '''<!DOCTYPE html>
+<html lang="en">
+<head><title>Circle</title></head>
+<body>$body$</body>
+</html>
+'''
+"circle.svg" = '<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4"><circle cx="2" cy="2" r="2"/></svg>'
+
+[[case]]
+id = "html-embed-sandbox"
+cmd = ["-f", "markdown", "-t", "html5", "--sandbox", "--embed-resources"]
+input = "See ![a square](square.svg).\n"
+files = { "square.svg" = '<svg xmlns="http://www.w3.org/2000/svg" width="2" height="2"><rect width="2" height="2"/></svg>' }
+
+[[case]]
+id = "html-embed-missing-image"
+cmd = ["-f", "markdown", "-t", "html5", "--embed-resources"]
+input = "See ![an image](missing.svg).\n"
+
+[[case]]
 id = "option-epub-metadata-json"
 cmd = ["-f", "json", "-t", "json", "--epub-metadata=e.xml"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[]}"

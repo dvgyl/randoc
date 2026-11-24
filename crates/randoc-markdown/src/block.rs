@@ -303,6 +303,7 @@ pub(crate) struct Parser {
     /// that `markdown_attribute` gave: an element without the attribute
     /// has Markdown content too.
     markdown_inside: bool,
+    in_fenced_div: bool,
     /// The number of emphasis openers that found no closer.
     pub emphasis_failures: usize,
     /// The number of bracket texts that ended at a block tag.
@@ -757,7 +758,7 @@ fn html_tag_name(s: &str) -> Option<(Text, bool)> {
     };
     let name: Text = t
         .chars()
-        .take_while(|c| c.is_alphanumeric() || *c == '-' || *c == ':')
+        .take_while(|c| c.is_alphanumeric() || *c == '-' || *c == ':' || *c == '_')
         .collect();
     if name.is_empty() || !name.starts_with(char::is_alphabetic) || name.ends_with(':') {
         return None;
@@ -901,18 +902,35 @@ pub(crate) fn html_tag_len(s: &str) -> Option<usize> {
         return Some(len);
     }
     html_tag_name(s)?;
-    let mut quote: Option<char> = None;
-    for (i, c) in s.char_indices().skip(1) {
-        match quote {
-            Some(q) if c == q => quote = None,
-            Some(_) => {}
-            None if c == '"' || c == '\'' => quote = Some(c),
-            None if c == '>' => return Some(i + 1),
-            None if c == '<' => return None,
-            None => {}
+    let mut rest = s.trim_start_matches('<').trim_start_matches('/');
+    rest = rest.trim_start_matches(|c: char| c.is_alphanumeric() || matches!(c, '-' | ':' | '_'));
+    loop {
+        rest = rest.trim_start_matches(char::is_whitespace);
+        if rest.starts_with("/>") || rest.starts_with('>') {
+            return Some(s.len() - rest.len() + if rest.starts_with('/') { 2 } else { 1 });
+        }
+        if !rest.starts_with(|c: char| c.is_alphabetic() || c == '_') {
+            return None;
+        }
+        rest = rest.trim_start_matches(|c: char| {
+            c.is_alphanumeric() || matches!(c, '-' | ':' | '_' | '.')
+        });
+        let after = rest.trim_start_matches(char::is_whitespace);
+        if let Some(value) = after.strip_prefix('=') {
+            rest = value.trim_start_matches(char::is_whitespace);
+            if let Some(quote @ ('"' | '\'')) = rest.chars().next() {
+                rest = rest.get(1..)?;
+                rest = rest.get(rest.find(quote)? + 1..)?;
+            } else {
+                let tail = rest
+                    .trim_start_matches(|c: char| !c.is_whitespace() && !matches!(c, '<' | '>'));
+                if tail.len() == rest.len() {
+                    return None;
+                }
+                rest = tail;
+            }
         }
     }
-    None
 }
 
 /// Returns the length of the tag at the start of `s`, as `html_tag_len`
@@ -1233,6 +1251,7 @@ fn div_closer_scan(
     let mut tokens = TokenIndex::default();
     let view = View { lines, at: 0 };
     let mut after_text = false;
+    let mut html_divs = 0usize;
     let mut j = 1;
     while let Some(line) = lines.get(j) {
         crate::step(1);
@@ -1249,7 +1268,9 @@ fn div_closer_scan(
             }
         } else if let Some((c, n, _, _)) = fence_open(line.t()) {
             in_fence = Some((c, n));
-        } else if let Some((_, rest)) = div_fence(line.t()) {
+        } else if html_divs == 0
+            && let Some((_, rest)) = div_fence(line.t())
+        {
             if rest.trim_end_matches(':').trim_matches(SPACE).is_empty() {
                 if let Some(open) = stack.pop() {
                     found(open, Some(j));
@@ -1266,6 +1287,23 @@ fn div_closer_scan(
             let covered = tokens.reach(view, j, rules);
             raw_end = (covered > j).then_some(covered);
             let t = line.t().trim_start_matches(' ');
+            if rules.raw_html && t.starts_with("<?") && covered > j {
+                break;
+            }
+            if rules.raw_html
+                && t.starts_with('<')
+                && let Some((name, closing)) = html_tag_name(t)
+                && name == "div"
+                && let Some(len) = html_tag_len(t)
+            {
+                if closing {
+                    html_divs = html_divs.saturating_sub(1);
+                } else if !t[..len].ends_with("/>")
+                    && !t[len..].to_ascii_lowercase().contains("</div")
+                {
+                    html_divs += 1;
+                }
+            }
             text = raw_end.is_none()
                 && !line.is_blank()
                 && !t.starts_with(['#', '>'])
@@ -1361,6 +1399,7 @@ impl Parser {
             strip_comments: options.strip_comments,
             kept_html: false,
             markdown_inside: false,
+            in_fenced_div: false,
             macros: randoc_latex_reader::Macros::default(),
             split_budget: source.len().saturating_mul(4).saturating_add(4096),
             label_budget: 0,
@@ -1781,6 +1820,15 @@ impl Parser {
         if let Some(n) = self.fenced_div(rest, out)? {
             return Ok(n);
         }
+        if let Some((_, content)) = self.atx(s)
+            && self.ext(Extension::RawHtml)
+            && self.ext(Extension::MarkdownInHtmlBlocks)
+            && is_block_tag(&content)
+            && let Some(offset) = s.find('<')
+            && let Some(n) = self.paragraph_before_tag(rest, s, offset, out)?
+        {
+            return Ok(n);
+        }
         if let Some(n) = self.header(lines, i, fences, out) {
             return Ok(n);
         }
@@ -1829,6 +1877,19 @@ impl Parser {
             && s.trim_start_matches(SPACE).starts_with('>')
         {
             return Some(true);
+        }
+        if self.in_fenced_div
+            && div_fence(s)
+                .is_some_and(|(_, rest)| rest.trim_end_matches(':').trim_matches(SPACE).is_empty())
+        {
+            return Some(true);
+        }
+        if !self.in_list
+            && !self.ext(Extension::BlankBeforeHeader)
+            && s.starts_with("#.")
+            && self.marker(s, None).is_some()
+        {
+            return Some(false);
         }
         if !self.ext(Extension::BlankBeforeHeader) && self.atx(s).is_some() {
             return Some(true);
@@ -2383,7 +2444,7 @@ impl Parser {
                 Some(_) => 2,
                 None => return None,
             };
-            if first.indent() >= 4 || first.t().trim_start_matches(SPACE).starts_with('>') {
+            if first.indent() >= 4 {
                 return None;
             }
             (
@@ -2530,6 +2591,7 @@ impl Parser {
             match quote_start(line.t()) {
                 Some(text) => inner.push(line.tail(text, line.n)),
                 None if self.ends_lazy_quote(line.t()) => break,
+                None if saved && self.def_marker(line.t()).is_some() => break,
                 // In a list item, a list marker ends the quote as it ends a
                 // paragraph of the item.
                 None if saved
@@ -2552,6 +2614,13 @@ impl Parser {
                 {
                     break;
                 }
+                None if !self.ext(Extension::BlankBeforeHeader)
+                    && line.indent() <= 3
+                    && self.atx(line.t().trim_start_matches(SPACE)).is_some() =>
+                {
+                    inner.push(line.dedent(line.indent()));
+                }
+                None if j == 1 && blank(text) => inner.push(line.dedent(line.indent())),
                 None => inner.push(line.clone()),
             }
             j += 1;
@@ -2673,7 +2742,7 @@ impl Parser {
         let base = ind + width;
         let text_from = s.len() - rest_text.len();
         let (content, rest_from) = if rest_text.is_empty() {
-            (base + 1, s.len())
+            (base + spaces.max(1), s.len())
         } else if spaces >= 5 {
             (base + 1, text_from - (spaces - 1))
         } else {
@@ -3313,9 +3382,12 @@ impl Parser {
         let attr = if info.starts_with('{') {
             match self.parse_attr(info) {
                 Some(attr) => attr,
+                None if !info.contains(char::is_whitespace) => {
+                    Attr::new("", vec![info.to_string()], vec![])
+                }
                 None => return Ok(None),
             }
-        } else if !info.contains(' ') {
+        } else if !info.contains(char::is_whitespace) {
             Attr::new("", vec![info.to_string()], vec![])
         } else {
             return Ok(None);
@@ -3329,7 +3401,9 @@ impl Parser {
         // An unclosed div ends where the lines end (oracle: `- ::: d`, `x`,
         // `- y` gives a `Plain`).
         let end_blank = closed || self.end_blank;
+        let saved_div = std::mem::replace(&mut self.in_fenced_div, true);
         let blocks = self.blocks_open(inner, end_blank);
+        self.in_fenced_div = saved_div;
         self.in_list = saved;
         if !closed {
             let open = self.pos(first.n);
@@ -4255,6 +4329,7 @@ impl Parser {
     fn table(&mut self, lines: &[Ln], out: &mut Vec<Block>) -> Option<usize> {
         let options = TableOptions {
             simple: self.ext(Extension::SimpleTables),
+            raw_html: self.ext(Extension::RawHtml),
             multiline: self.ext(Extension::MultilineTables),
             grid: self.ext(Extension::GridTables),
             pipe: self.ext(Extension::PipeTables),
@@ -4452,7 +4527,7 @@ impl Parser {
             }
         }
         let mut t = text.trim_matches(SPACE);
-        if t.starts_with('[') {
+        if t.starts_with('[') || t.starts_with('\u{a0}') || t.ends_with('\u{a0}') {
             return None;
         }
         // MultiMarkdown `key=value` pairs after the destination and the
@@ -4466,10 +4541,13 @@ impl Parser {
             used += more;
             t = t.get(..start)?.trim_end_matches(SPACE);
         }
-        let (url, after) = if title_of(t).is_some_and(|(_, rest)| blank(rest)) {
+        let has_attributes = self.ext(Extension::LinkAttributes);
+        let attr_only = has_attributes && t.starts_with('{') && self.parse_attr(t).is_some();
+        let (url, after) = if attr_only || title_of(t).is_some_and(|(_, rest)| blank(rest)) {
             (Text::new(), t)
-        } else if let Some(inner) = t.strip_prefix('<') {
-            let close = inner.find('>')?;
+        } else if let Some(inner) = t.strip_prefix('<')
+            && let Some(close) = inner.find('>')
+        {
             (inner.get(..close)?.to_string(), inner.get(close + 1..)?)
         } else {
             // The destination can contain spaces. It ends where a title or
@@ -4504,7 +4582,8 @@ impl Parser {
                     title_of(tail).is_some_and(|(_, r)| {
                         let r = r.trim_matches(SPACE);
                         r.is_empty() || r.starts_with('{')
-                    }) || (tail.starts_with('{')
+                    }) || (has_attributes
+                        && tail.starts_with('{')
                         && self.parse_attr(tail.trim_matches(SPACE)).is_some())
                 })
                 .unwrap_or(t.len());
@@ -5342,6 +5421,9 @@ fn same_list(a: ListKind, b: ListKind) -> bool {
                 )
             ))
         || (a == decimal && b == hash)
+        || matches!((a, b),
+            (ListKind::Ordered(ListNumberStyle::DefaultStyle, a_delim),
+             ListKind::Ordered(_, b_delim)) if a_delim == b_delim)
 }
 
 /// Returns the length of the MultiMarkdown attribute key at the start of

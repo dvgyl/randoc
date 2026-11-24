@@ -285,3 +285,15 @@ fn pod_old_fixture() {
 fn pod_commands() {
     commands("pod", 2);
 }
+
+#[test]
+#[ignore = "Requires the Pandoc oracle."]
+fn chevron_entities() {
+    let input = "=pod\n\nE<lchevron>wordE<rchevron>\n\n=cut\n";
+    let expected = oracle(&["-f", "pod", "-t", "json"], input, Path::new("."));
+    assert!(expected.status.success());
+    assert_eq!(
+        check(input, "pod", 0, &expected.stdout, &expected.stderr),
+        None
+    );
+}

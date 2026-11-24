@@ -39,8 +39,23 @@ pub const CLI_MAX_NESTING_DEPTH: usize = 16_384;
 /// The first argument is the program name.
 pub fn main_with_args(args: Vec<String>) -> i32 {
     #[cfg(feature = "server")]
-    if let Some(arguments) = server_arguments(&args) {
-        return run_server(&program_name(&args), arguments);
+    {
+        let program = program_name(&args);
+        match server_dispatch(&program, args.get(1..).unwrap_or_default()) {
+            Some(ServerDispatch::Cgi(arguments)) => {
+                let result = if version_requested(arguments) {
+                    write_stdout(
+                        info::version_text(server_program(&program), &default_user_data_dir())
+                            .as_bytes(),
+                    )
+                } else {
+                    randoc_server::run_cgi().map_err(|error| Error::App(error.to_string()))
+                };
+                return server_result(result);
+            }
+            Some(ServerDispatch::Http(arguments)) => return run_server(&program, arguments),
+            None => {}
+        }
     }
     let worker = std::thread::Builder::new()
         .stack_size(CONVERSION_STACK_BYTES)
@@ -53,16 +68,30 @@ pub fn main_with_args(args: Vec<String>) -> i32 {
 }
 
 #[cfg(feature = "server")]
-fn server_arguments(args: &[String]) -> Option<&[String]> {
-    let arguments = args.get(1..).unwrap_or_default();
-    if matches!(
-        program_name(args).as_str(),
-        "randoc-server" | "pandoc-server"
-    ) {
-        Some(arguments)
+#[derive(Debug, PartialEq, Eq)]
+enum ServerDispatch<'a> {
+    Cgi(&'a [String]),
+    Http(&'a [String]),
+}
+
+#[cfg(feature = "server")]
+fn server_dispatch<'a>(program: &str, arguments: &'a [String]) -> Option<ServerDispatch<'a>> {
+    match program {
+        "randoc-server.cgi" | "pandoc-server.cgi" => Some(ServerDispatch::Cgi(arguments)),
+        "randoc-server" | "pandoc-server" => Some(ServerDispatch::Http(arguments)),
+        _ => {
+            let (command, rest) = arguments.split_first()?;
+            (command == "server").then_some(ServerDispatch::Http(rest))
+        }
+    }
+}
+
+#[cfg(feature = "server")]
+fn server_program(program: &str) -> &str {
+    if matches!(program, "pandoc" | "pandoc-server" | "pandoc-server.cgi") {
+        "pandoc"
     } else {
-        let (command, rest) = arguments.split_first()?;
-        (command == "server").then_some(rest)
+        "randoc"
     }
 }
 
@@ -74,19 +103,19 @@ fn run_server(program: &str, arguments: &[String]) -> i32 {
         Ok(ServerCliAction::Run(config)) => randoc_server::run_server(&config),
         Ok(ServerCliAction::Help(text)) => write_stdout(text.as_bytes()),
         // Pandoc prints the text of `pandoc --version`.
-        Ok(ServerCliAction::Version(_)) => {
-            let head = if matches!(program, "pandoc" | "pandoc-server") {
-                "pandoc"
-            } else {
-                "randoc"
-            };
-            write_stdout(info::version_text(head, &default_user_data_dir()).as_bytes())
-        }
+        Ok(ServerCliAction::Version(_)) => write_stdout(
+            info::version_text(server_program(program), &default_user_data_dir()).as_bytes(),
+        ),
         Err(error) => {
             let _ = write!(std::io::stderr(), "{error}");
             return error.exit_code();
         }
     };
+    server_result(result)
+}
+
+#[cfg(feature = "server")]
+fn server_result(result: Result<()>) -> i32 {
     match result {
         Ok(()) => 0,
         Err(error) => {
@@ -230,11 +259,7 @@ fn run_checked(args: &[String]) -> Result<()> {
     if let Some(("lua", arguments)) = rest.split_first().map(|(a, r)| (a.as_str(), r)) {
         return lua_interpreter("pandoc lua", arguments);
     }
-    let before_end = rest.iter().take_while(|arg| *arg != "--");
-    if before_end
-        .into_iter()
-        .any(|arg| arg == "-v" || arg == "--version")
-    {
+    if version_requested(rest) {
         return write_stdout(info::version_text(program, &default_user_data_dir()).as_bytes());
     }
     let mut env = NativeEnvironment {
@@ -249,6 +274,13 @@ fn run_checked(args: &[String]) -> Result<()> {
         return write_stdout(&info::run(&command, program, &data_dir)?);
     }
     convert::run_on_this_thread(settings, positional)
+}
+
+fn version_requested(arguments: &[String]) -> bool {
+    arguments
+        .iter()
+        .take_while(|arg| *arg != "--")
+        .any(|arg| arg == "-v" || arg == "--version")
 }
 
 /// Runs the Lua interpreter with the arguments after `pandoc lua`. The
@@ -298,24 +330,27 @@ mod tests {
     fn server_dispatch_uses_the_executable_name_first() {
         for program in ["/bin/randoc-server", "/bin/pandoc-server"] {
             let named = args(&[program, "server", "--help"]);
-            assert_eq!(server_arguments(&named), Some(&named[1..]));
+            assert_eq!(
+                server_dispatch(&program_name(&named), &named[1..]),
+                Some(ServerDispatch::Http(&named[1..]))
+            );
         }
-        let subcommand = args(&["randoc", "server", "--port=0"]);
-        assert_eq!(server_arguments(&subcommand), Some(&subcommand[2..]));
-        for ordinary in [
-            &["randoc", "--server"][..],
-            &["randoc", "--", "server"],
-            &[],
-        ] {
-            assert_eq!(server_arguments(&args(ordinary)), None);
+        for program in ["/bin/randoc-server.cgi", "C:\\bin\\Pandoc-Server.CGI.EXE"] {
+            let named = args(&[program, "server", "--help"]);
+            assert_eq!(
+                server_dispatch(&program_name(&named), &named[1..]),
+                Some(ServerDispatch::Cgi(&named[1..]))
+            );
         }
-        for program in ["C:\\bin\\Pandoc-Server.EXE", "randoc-server.exe"] {
-            let named = args(&[program, "--help"]);
-            assert_eq!(server_arguments(&named), Some(&named[1..]));
+        let subcommand = args(&["server", "--port=0"]);
+        for program in ["randoc", "", ".."] {
+            assert_eq!(
+                server_dispatch(program, &subcommand),
+                Some(ServerDispatch::Http(&subcommand[1..]))
+            );
         }
-        for program in ["", "..", "/bin/.."] {
-            let subcommand = args(&[program, "server", "--help"]);
-            assert_eq!(server_arguments(&subcommand), Some(&subcommand[2..]));
+        for ordinary in [&["--server"][..], &["--", "server"], &[]] {
+            assert_eq!(server_dispatch("randoc", &args(ordinary)), None);
         }
     }
 

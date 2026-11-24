@@ -706,10 +706,7 @@ KNOWN = (
        for name in ["asciidoc", "asciidoctor", "asciidoc_legacy", "dzslides", "s5",
                     "slideous", "slidy", "context", "haddock", "muse", "t2t",
                     "textile", "vimdoc"]]
-    + [("I-TAIL-02", "convert-write-ansi", "write ansi {number_sections = true}"),
-       ("I-TAIL-02", "convert-write-vimdoc", "write vimdoc {identifier_prefix = 'p-'}")]
-    + [("I-DJOT-01", "convert-read-djot", label)
-       for label in ["read djot+sourcepos", "read djot+sourcepos block quote"]]
+    + [("I-DJOT-01", "convert-read-djot", "read djot+sourcepos")]
     + [("I-LUA-30", "convert-arguments", label)
        for label in ["write default format", "write spec table markdown list"]]
     + [("I-LUA-31", f"convert-read-{name}", f"read {name} {options}")
@@ -725,13 +722,7 @@ KNOWN = (
     + [("I-LUA-31", "convert-write-markua", label)
        for label, _ in [("write markua", None)] + write_option_probes("markua")]
     + [("I-ORG-01", "convert-final-newline", "end of org"),
-       ("I-WIKI-03", "convert-write-dokuwiki", "write dokuwiki"),
-       ("I-WIKI-05", "convert-write-mediawiki", "write mediawiki"),
        ("I-WIKI-05", "convert-final-newline", "end of mediawiki")]
-    + [("I-XML-01", f"convert-write-{name}", f"write {name} {{identifier_prefix = 'p-'}}")
-       for name in XML_WRITERS if name != "fb2"]
-    + [("I-XML-02", f"convert-write-{name}", f"write {name} {{number_sections = true}}")
-       for name in XML_WRITERS if name.startswith("jats")]
     + [("I-LUA-32", "convert-arguments", "read spec table bad list"),
        ("I-LUA-32", "convert-arguments", "read list heading")]
 )

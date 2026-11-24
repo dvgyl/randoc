@@ -820,3 +820,59 @@ fn pandoc_3_13_parity() {
     review_cases(&oracle, &mut counts);
     counts.finish();
 }
+
+#[test]
+#[ignore = "Requires the Pandoc 3.13 executable."]
+fn wave_10_tail_writer_regressions() {
+    let oracle = Oracle::new();
+    let cases = [
+        ("markdown", "ansi", "-N", "# A\n\n## B\n\n# C {-}\n"),
+        (
+            "markdown",
+            "texinfo",
+            "--wrap=none",
+            "| line one\n|   line two\n\n[image link ![i](i.png)](https://x.org)",
+        ),
+        (
+            "html",
+            "context",
+            "--wrap=none",
+            concat!(
+                "<table><colgroup><col style='width:30%'><col style='width:70%'></colgroup>",
+                "<thead><tr><th rowspan='2'>A</th><th>B</th></tr><tr><th>C</th></tr></thead>",
+                "<tbody><tr><td colspan='2'>wide</td></tr></tbody></table>"
+            ),
+        ),
+        ("markdown", "context", "-s", "~~~python\nprint(3)\n~~~"),
+    ];
+    for (from, to, flag, input) in cases {
+        let ast = oracle.run(&["-f", from, "-t", "json"], input.as_bytes());
+        assert!(ast.status.success());
+        let doc = randoc_ast::json::from_json(std::str::from_utf8(&ast.stdout).unwrap()).unwrap();
+        let mut options = WriterOptions::default();
+        options.number_sections = flag == "-N";
+        if flag == "-s" {
+            options.template = Some(load_template(to));
+        }
+        if flag == "--wrap=none" {
+            options.wrap_text = randoc_core::WrapOption::WrapNone;
+        }
+        let actual = write_format(&oracle, to, &doc, &options).unwrap();
+        let expected = oracle.run(&["-f", from, "-t", to, flag], input.as_bytes());
+        assert!(expected.status.success());
+        let difference = first_difference(&actual, &expected.stdout);
+        assert!(difference.is_none(), "{to}: {difference:?}");
+    }
+}
+
+#[test]
+#[ignore = "Requires the Pandoc 3.13 executable."]
+fn context_csl_references() {
+    let oracle = Oracle::new();
+    let input = b"# Head\n\nStart.\n\n::: {#refs .references .csl-bib-body}\n::: {#ref-one .csl-entry}\nFirst reference.\n:::\n:::\n";
+    let doc = oracle.ast("markdown", input, false);
+    let actual = write_format(&oracle, "context", &doc, &WriterOptions::default()).unwrap();
+    let expected = oracle.run(&["-t", "context"], input);
+    assert!(expected.status.success());
+    assert_eq!(actual, expected.stdout);
+}

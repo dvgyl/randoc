@@ -1851,10 +1851,14 @@ impl<'c> Parser<'c> {
     /// The text of a required argument after macro expansion, as Pandoc
     /// reads keys, labels, paths and names.
     fn argument_text(&mut self) -> R<Text> {
-        self.argument_text_with(|_| true)
+        self.argument_text_with(false, |_| true)
     }
 
-    fn argument_text_with(&mut self, mut keep: impl FnMut(&Tok) -> bool) -> R<Text> {
+    fn argument_text_with(
+        &mut self,
+        required_end: bool,
+        mut keep: impl FnMut(&Tok) -> bool,
+    ) -> R<Text> {
         self.skip_spaces();
         if !self.peek_raw().is_some_and(|tok| tok.kind == Kind::Open) {
             return Ok(self.argument_source_text());
@@ -1869,7 +1873,7 @@ impl<'c> Parser<'c> {
                 Kind::Open => nesting += 1,
                 Kind::Close if nesting == 0 => {
                     self.bump();
-                    break;
+                    return Ok(text);
                 }
                 Kind::Close => nesting -= 1,
                 _ => {}
@@ -1877,6 +1881,9 @@ impl<'c> Parser<'c> {
             if let Some(tok) = self.bump().filter(&mut keep) {
                 text.push_str(&tok.text);
             }
+        }
+        if required_end {
+            self.ends_inside("unexpected ()")?;
         }
         Ok(text)
     }
@@ -2662,7 +2669,7 @@ impl<'c> Parser<'c> {
     }
 
     fn include_file(&mut self, depth: u32, subfile: bool) -> R<()> {
-        let argument = self.argument_text_with(|tok| tok.kind != Kind::Comment)?;
+        let argument = self.argument_text_with(false, |tok| tok.kind != Kind::Comment)?;
         if self.field.is_some() {
             return Ok(());
         }
@@ -4004,7 +4011,7 @@ impl<'c> Parser<'c> {
                     }
                 } else if tok.text.starts_with("\\begingroup") {
                     self.star();
-                    self.raw_inline_suffix()?;
+                    self.raw_inline_suffix(false)?;
                 }
             }
             Kind::Dollar => self.dollar_math(out)?,
@@ -4187,13 +4194,20 @@ impl<'c> Parser<'c> {
 
     fn dollar_math(&mut self, out: &mut Inlines) -> R<()> {
         if self.peek_raw().is_some_and(|tok| tok.kind == Kind::Dollar) {
+            if self.field.is_none()
+                && self.macros.is_empty()
+                && !self.scan().skip(1).any(|tok| tok.kind == Kind::Dollar)
+            {
+                self.bump();
+                out.push(Inline::Math(MathType::InlineMath, Text::new()));
+                return Ok(());
+            }
             self.bump();
             let text = self.math_until(|kind| *kind == Kind::Dollar)?;
-            if self.peek_raw().is_some_and(|tok| tok.kind == Kind::Dollar) {
-                self.bump();
-            } else if self.field.is_some() {
+            if !self.peek_raw().is_some_and(|tok| tok.kind == Kind::Dollar) {
                 return Err(self.unexpected());
             }
+            self.bump();
             out.push(Inline::Math(MathType::DisplayMath, text));
         } else {
             let text = self.math_until(|kind| *kind == Kind::Dollar)?;
@@ -4223,6 +4237,7 @@ impl<'c> Parser<'c> {
                 if self.field.is_some() {
                     return Err(self.unexpected());
                 }
+                self.ends_inside("unexpected end of input")?;
                 break;
             };
             if groups == 0 && closes(&tok.kind) {
@@ -4891,7 +4906,7 @@ impl<'c> Parser<'c> {
                         .map(|tok| tok.text.as_str())
                         .collect::<Text>()
                 });
-                let mut path = self.argument_text_with(without_comments())?;
+                let mut path = self.argument_text_with(false, without_comments())?;
                 if !path.is_empty()
                     && std::path::Path::new(&path).extension().is_none()
                     && !self.context.host().file_exists(&path)
@@ -5703,7 +5718,11 @@ impl<'c> Parser<'c> {
             self.skip_word_spaces();
         }
         self.star();
-        let result = self.raw_inline_suffix();
+        let spaces_after_option = matches!(
+            source,
+            "\\linebreak" | "\\nolinebreak" | "\\pagebreak" | "\\nopagebreak"
+        );
+        let result = self.raw_inline_suffix(spaces_after_option);
         let rest = self.stop_record();
         result?;
         if self.raw_tex() {
@@ -5720,7 +5739,7 @@ impl<'c> Parser<'c> {
         Ok(())
     }
 
-    fn raw_inline_suffix(&mut self) -> R<()> {
+    fn raw_inline_suffix(&mut self, spaces_after_option: bool) -> R<()> {
         let mut rounds = Rounds::default();
         let initial_gap = if self.raw_tex() {
             self.bracket_gap().map_or(0, |(gap, _)| gap)
@@ -5739,7 +5758,9 @@ impl<'c> Parser<'c> {
                     if self.raw_tex() && !self.closed_raw_option(0) {
                         break;
                     }
-                    self.bracket_tokens();
+                    if self.bracket_tokens().is_some() && spaces_after_option {
+                        self.skip_spaces();
+                    }
                 }
                 Some(Kind::Open) => {
                     self.bump();
@@ -5864,7 +5885,7 @@ impl<'c> Parser<'c> {
             Ok(Some(_)) => self.bracket_inlines(),
             _ => Ok(None),
         };
-        let keys = self.argument_text_with(|tok| tok.kind != Kind::Comment)?;
+        let keys = self.argument_text_with(true, |tok| tok.kind != Kind::Comment)?;
         let raw = format!("{source}{}", self.stop_record());
         let citations = key_group(mode, (first?, second?), &keys);
         out.push(Inline::Cite(

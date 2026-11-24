@@ -12,6 +12,7 @@ use std::fmt;
 use randoc_ast::{Block, Inline, Meta, MetaValue};
 use randoc_layout::{Doc, literal};
 
+mod categories;
 mod parsec;
 mod parser;
 mod render;

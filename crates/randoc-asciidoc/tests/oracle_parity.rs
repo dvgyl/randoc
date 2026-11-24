@@ -621,3 +621,33 @@ fn review_cases() -> TestResult {
     assert_eq!(passed, count);
     Ok(())
 }
+
+#[test]
+#[ignore = "Requires the Pandoc oracle."]
+fn longtail_writer_parity() -> TestResult {
+    let root = Path::new(env!("CARGO_MANIFEST_DIR"));
+    for dialect in DIALECTS {
+        for source in [
+            "1. one\n   - bullet\n     1. deep",
+            "| line one\n|\n|   line two\n\n[under]{.underline}",
+            "Inline ![alt](i.png){height=2in width=2.54cm} end.",
+            "A ``one`two`` and $$x$$ end.",
+            "[1]{.csl-left-margin}[Entry]{.csl-right-inline} and a[X]{.mark}b.",
+        ] {
+            let args = ["-f", "markdown", "-t", dialect, "--wrap=none"];
+            assert_eq!(
+                convert(
+                    root,
+                    &args,
+                    Source {
+                        name: String::new(),
+                        text: source.into()
+                    }
+                )?,
+                run(root, &args, source)?,
+                "{dialect}: {source}",
+            );
+        }
+    }
+    Ok(())
+}

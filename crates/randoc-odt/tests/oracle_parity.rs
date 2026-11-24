@@ -74,16 +74,6 @@ impl Drop for Scratch {
     }
 }
 
-/// Pandoc writes `Pandoc/3.13` as the generator; Randoc writes its own name
-/// until the owner decides on parity (roadmap 6.4, item 3).
-fn same_generator(bytes: &[u8]) -> Vec<u8> {
-    let Ok(text) = std::str::from_utf8(bytes) else {
-        return bytes.to_vec();
-    };
-    let generator = format!("Randoc/{}", env!("CARGO_PKG_VERSION"));
-    text.replace(&generator, "Pandoc/3.13").into_bytes()
-}
-
 fn show_difference(label: &str, name: &str, left: &[u8], right: &[u8]) -> String {
     let at = left.iter().zip(right).take_while(|(x, y)| x == y).count();
     let show = |bytes: &[u8]| {
@@ -116,7 +106,7 @@ fn entry_differences(label: &str, actual: &[u8], expected: &[u8]) -> Vec<String>
         if (name.starts_with("Formula-") && name.ends_with("/content.xml")) || !a.contains(&name) {
             continue;
         }
-        let left = same_generator(&a.read(&name).unwrap().unwrap());
+        let left = a.read(&name).unwrap().unwrap();
         let right = b.read(&name).unwrap().unwrap();
         if left != right {
             differences.push(show_difference(label, &name, &left, &right));
@@ -142,7 +132,7 @@ fn fodt_differences(label: &str, actual: &[u8], expected: &[u8]) -> Vec<String> 
         out.into_bytes()
     };
     // The command line ends text output with a line break.
-    let mut left = without_annotations(&same_generator(actual));
+    let mut left = without_annotations(actual);
     if !left.ends_with(b"\n") {
         left.push(b'\n');
     }

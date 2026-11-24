@@ -25,10 +25,7 @@
 # known I-LUA-30 convert-final-newline end of t2t
 # known I-LUA-30 convert-final-newline end of textile
 # known I-LUA-30 convert-final-newline end of vimdoc
-# known I-TAIL-02 convert-write-ansi write ansi {number_sections = true}
-# known I-TAIL-02 convert-write-vimdoc write vimdoc {identifier_prefix = 'p-'}
 # known I-DJOT-01 convert-read-djot read djot+sourcepos
-# known I-DJOT-01 convert-read-djot read djot+sourcepos block quote
 # known I-LUA-30 convert-arguments write default format
 # known I-LUA-30 convert-arguments write spec table markdown list
 # known I-LUA-31 convert-read-markdown read markdown {tab_stop = 2}
@@ -75,21 +72,7 @@
 # known I-LUA-31 convert-write-markua write markua {dpi = 300}
 # known I-LUA-31 convert-write-markua write markua PANDOC_WRITER_OPTIONS
 # known I-ORG-01 convert-final-newline end of org
-# known I-WIKI-03 convert-write-dokuwiki write dokuwiki
-# known I-WIKI-05 convert-write-mediawiki write mediawiki
 # known I-WIKI-05 convert-final-newline end of mediawiki
-# known I-XML-01 convert-write-docbook write docbook {identifier_prefix = 'p-'}
-# known I-XML-01 convert-write-docbook4 write docbook4 {identifier_prefix = 'p-'}
-# known I-XML-01 convert-write-docbook5 write docbook5 {identifier_prefix = 'p-'}
-# known I-XML-01 convert-write-jats write jats {identifier_prefix = 'p-'}
-# known I-XML-01 convert-write-jats_archiving write jats_archiving {identifier_prefix = 'p-'}
-# known I-XML-01 convert-write-jats_articleauthoring write jats_articleauthoring {identifier_prefix = 'p-'}
-# known I-XML-01 convert-write-jats_publishing write jats_publishing {identifier_prefix = 'p-'}
-# known I-XML-01 convert-write-tei write tei {identifier_prefix = 'p-'}
-# known I-XML-02 convert-write-jats write jats {number_sections = true}
-# known I-XML-02 convert-write-jats_archiving write jats_archiving {number_sections = true}
-# known I-XML-02 convert-write-jats_articleauthoring write jats_articleauthoring {number_sections = true}
-# known I-XML-02 convert-write-jats_publishing write jats_publishing {number_sections = true}
 # known I-LUA-32 convert-arguments read spec table bad list
 # known I-LUA-32 convert-arguments read list heading
 @@@ doc empty

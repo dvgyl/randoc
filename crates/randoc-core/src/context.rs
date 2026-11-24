@@ -562,14 +562,39 @@ fn os_text(text: &std::ffi::OsStr) -> Text {
 
 /// A host that uses the real file system, clock and environment.
 ///
-/// Network access, random bytes and the processor time are not available in
-/// this host yet. Environment changes are a table of the program that
+/// Network access and the processor time are not available in this host yet.
+/// Environment changes are a table of the program that
 /// [`Host::environment_variable`], [`Host::environment`] and
 /// [`Host::run_process`] apply; the process environment stays unchanged.
 #[derive(Debug, Default)]
 pub struct NativeHost;
 
 impl Host for NativeHost {
+    fn random_bytes(&mut self, count: usize) -> Vec<u8> {
+        use std::hash::{BuildHasher, RandomState};
+
+        let mut bytes = vec![0; count];
+        if bytes.is_empty() {
+            return bytes;
+        }
+        #[cfg(unix)]
+        {
+            use std::io::Read;
+            if std::fs::File::open("/dev/urandom")
+                .and_then(|mut source| source.read_exact(&mut bytes))
+                .is_ok()
+            {
+                return bytes;
+            }
+        }
+        // Use the standard library's randomized hash seed if the device is unavailable.
+        let seed = RandomState::new();
+        for (index, chunk) in bytes.chunks_mut(8).enumerate() {
+            chunk.copy_from_slice(&seed.hash_one(index).to_ne_bytes()[..chunk.len()]);
+        }
+        bytes
+    }
+
     fn read_file(&mut self, path: &str) -> io::Result<Vec<u8>> {
         std::fs::read(path)
     }
@@ -1476,6 +1501,18 @@ impl Context {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn native_host_generates_random_bytes() {
+        use super::{Host, NativeHost};
+
+        assert!(NativeHost.random_bytes(0).is_empty());
+        let first = NativeHost.random_bytes(33);
+        let second = NativeHost.random_bytes(33);
+        assert_eq!(first.len(), 33);
+        assert_eq!(second.len(), 33);
+        assert_ne!(first, second);
+    }
+
     #[test]
     fn nested_holds_keep_messages_in_report_order() {
         use super::{Context, LogMessage};

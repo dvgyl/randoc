@@ -254,7 +254,16 @@ impl Renderer<'_> {
     fn math(&mut self, kind: MathType, tex: &str, styles: u8, depth: usize) -> Result<Doc> {
         let max_depth = self.context.limits.max_nesting_depth;
         if self.format != Format::Fragment {
-            match randoc_math::to_mathml(kind, tex, max_depth) {
+            // A lone percent sign in Markdown math delimiters is literal text.
+            if kind == MathType::DisplayMath && tex == "%" {
+                return Ok(literal_math(kind, tex));
+            }
+            match randoc_math::to_mathml_flavor(
+                kind,
+                tex,
+                max_depth,
+                randoc_math::MathMlFlavor::Odt,
+            ) {
                 Ok(math) => return self.formula(kind, math),
                 Err(error) => self.context.report(LogMessage::CouldNotConvertTexMath(
                     tex.into(),

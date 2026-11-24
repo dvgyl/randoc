@@ -394,3 +394,33 @@ fn t2t_path_macros_use_context() {
         )
     ));
 }
+
+#[test]
+fn t2t_date_macros_use_the_host_clock() -> randoc_core::Result<()> {
+    let host = randoc_core::PureHost {
+        environment: [("SOURCE_DATE_EPOCH".into(), "86400".into())].into(),
+        ..Default::default()
+    };
+    let doc = read(
+        "t2t",
+        "%%date\n\nx %%date(%Y) y\n\n%%mtime\n\n%%mtime(%H)\n",
+        &mut Context::new(Box::new(host)),
+    )?;
+    let date = Inline::Str("1970-01-02".into());
+    assert_eq!(
+        doc.blocks,
+        [
+            Block::Para(vec![date.clone()]),
+            Block::Para(vec![
+                Inline::Str("x".into()),
+                Inline::Space,
+                date,
+                Inline::Space,
+                Inline::Str("y".into())
+            ]),
+            Block::Para(vec![Inline::Str(String::new())]),
+            Block::Para(vec![Inline::Str(String::new())]),
+        ]
+    );
+    Ok(())
+}

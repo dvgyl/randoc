@@ -120,6 +120,9 @@ impl Html<'_> {
             Val::Bool(self.slides.is_none() && context.get("css").is_none()),
         ));
         fields.push(("quotes", Val::Bool(self.wrote_q_tags)));
+        if self.wrote_bibliography {
+            fields.push(("csl-css", Val::Bool(true)));
+        }
         if let Some(math) = self.math_variable() {
             fields.push(("math", Val::Simple(math)));
         }

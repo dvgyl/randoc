@@ -26,6 +26,7 @@ struct Position {
     offset: usize,
     line: usize,
     column: usize,
+    quoted: bool,
 }
 
 pub(crate) struct Positions<'a> {
@@ -34,14 +35,18 @@ pub(crate) struct Positions<'a> {
 }
 
 impl<'a> Positions<'a> {
-    pub(crate) fn new(source: &'a str, lines: impl IntoIterator<Item = (usize, usize)>) -> Self {
+    pub(crate) fn new(
+        source: &'a str,
+        lines: impl IntoIterator<Item = (usize, usize, bool)>,
+    ) -> Self {
         let mut checkpoints = Vec::new();
         let mut offset = 0;
-        for (text, (line, column)) in source.split('\n').zip(lines) {
+        for (text, (line, column, quoted)) in source.split('\n').zip(lines) {
             checkpoints.push(Position {
                 offset,
                 line,
                 column,
+                quoted,
             });
             let mut next = POSITION_STEP;
             for (index, (byte, _)) in text.char_indices().enumerate() {
@@ -50,6 +55,7 @@ impl<'a> Positions<'a> {
                         offset: offset + byte,
                         line,
                         column: column + index,
+                        quoted,
                     });
                     next = byte + POSITION_STEP;
                 }
@@ -74,7 +80,15 @@ impl<'a> Positions<'a> {
             .checkpoints
             .partition_point(|point| point.offset <= offset);
         if end && byte == b'\n' {
-            return Some((self.checkpoints.get(next)?.line, 0));
+            let point = self.checkpoints.get(next)?;
+            return Some((
+                point.line,
+                if point.quoted {
+                    point.column.saturating_sub(1)
+                } else {
+                    0
+                },
+            ));
         }
         let point = self.checkpoints.get(next.checked_sub(1)?)?;
         // Count UTF-8 leading bytes to include the character at the end offset.
@@ -769,7 +783,7 @@ mod tests {
     #[test]
     fn source_positions_use_sparse_checkpoints() {
         let source = format!("{}\n{}", "é".repeat(4096), "a".repeat(2048));
-        let positions = Positions::new(&source, [(1, 1), (2, 3)]);
+        let positions = Positions::new(&source, [(1, 1, false), (2, 3, false)]);
         assert!(positions.checkpoints.len() <= 41);
         assert_eq!(
             positions.range(8188, 8192).as_deref(),

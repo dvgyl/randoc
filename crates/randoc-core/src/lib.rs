@@ -40,3 +40,6 @@ pub use options::{
 pub use randoc_ast::Text;
 /// Template parser, compiler and renderer.
 pub use randoc_templates as templates;
+
+/// The Pandoc version that Randoc is compatible with.
+pub const PANDOC_VERSION: &str = "3.13";

@@ -81,7 +81,12 @@ pub(crate) fn parse(mut text: &str) -> Option<(Attr, &str)> {
             return Some((attr, rest));
         }
         if let Some(comment) = text.strip_prefix('%') {
-            text = comment.split_once('%')?.1;
+            let end = comment.find(['%', '}'])?;
+            text = if comment.as_bytes()[end] == b'%' {
+                &comment[end + 1..]
+            } else {
+                &comment[end..]
+            };
             continue;
         }
         let first = text.as_bytes().first().copied()?;
@@ -132,7 +137,7 @@ pub(crate) fn parse(mut text: &str) -> Option<(Attr, &str)> {
             value = result;
         } else {
             let end = body
-                .find(|c: char| c.is_whitespace() || matches!(c, '}' | '{' | '"'))
+                .find(|c: char| !(c.is_ascii_alphanumeric() || matches!(c, '_' | '-' | ':')))
                 .unwrap_or(body.len());
             if end == 0 {
                 return None;

@@ -306,17 +306,19 @@ impl Renderer<'_> {
                     format!("#block({})[\n", params.join(", "))
                 };
                 let tail = block_label(attr);
-                let separator = if matches!(
-                    blocks.last(),
-                    Some(
-                        Block::Para(_)
-                            | Block::BulletList(_)
-                            | Block::OrderedList(..)
-                            | Block::DefinitionList(_)
-                            | Block::Table(_)
-                            | Block::CodeBlock(..)
-                    )
-                ) {
+                let body = self.blocks(blocks, depth)?;
+                let separator = if !body.is_empty()
+                    && matches!(
+                        blocks.last(),
+                        Some(
+                            Block::Para(_)
+                                | Block::BulletList(_)
+                                | Block::OrderedList(..)
+                                | Block::DefinitionList(_)
+                                | Block::Table(_)
+                                | Block::CodeBlock(..)
+                        )
+                    ) {
                     "\n\n"
                 } else {
                     "\n"
@@ -330,7 +332,7 @@ impl Renderer<'_> {
                             format!("{settings}\n")
                         }
                     ),
-                    self.blocks(blocks, depth)?,
+                    body,
                     if tail.is_empty() {
                         format!("{separator}]")
                     } else {

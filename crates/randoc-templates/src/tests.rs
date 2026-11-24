@@ -763,6 +763,28 @@ fn loop_cost_matrix_is_linear() {
 }
 
 #[test]
+fn variable_and_partial_names_use_unicode_letters_and_numbers() {
+    let mut context = Context::new();
+    context.insert("é²", Val::text("value"));
+    assert_eq!(
+        compile("$é²$").unwrap().render(&context).render(None),
+        "value"
+    );
+    for source in [
+        "$\u{0345}x$",
+        "$x\u{0345}$",
+        "$x\u{0345}()$",
+        "$x/upper\u{0345}$",
+        "$\u{1c89}$",
+    ] {
+        assert!(
+            matches!(compile(source), Err(CompileError::Syntax(_))),
+            "{source}"
+        );
+    }
+}
+
+#[test]
 fn each_partial_invocation_loads_the_file() {
     let mut calls = 0;
     let mut load = |path: &str| -> Result<String, String> {

@@ -3,6 +3,7 @@ use std::collections::{BTreeMap, HashSet};
 use std::fmt::Write;
 use std::path::Path;
 
+use randoc_archive::image::{ImageType, image_size, image_type};
 use randoc_archive::media::{
     base64_encode, decode_data_uri, decode_percent_bytes, extension_for_mime, image_size_and_mime,
     is_safe_media_path, mime_from_extension,
@@ -770,8 +771,8 @@ fn iso_time(unix_seconds: i64) -> String {
 /// Returns the child elements of `office:meta`.
 fn metadata(meta: &Meta, timestamp: i64) -> Vec<String> {
     let mut out = vec![format!(
-        "<meta:generator>Randoc/{}</meta:generator>",
-        env!("CARGO_PKG_VERSION")
+        "<meta:generator>Pandoc/{}</meta:generator>",
+        randoc_core::PANDOC_VERSION
     )];
     for (field, tag) in [
         ("title", "dc:title"),
@@ -923,28 +924,58 @@ impl Renderer<'_> {
             match fetch(self.context, &target.url) {
                 Some((bytes, mime)) => {
                     let (size, detected) = image_size_and_mime(&bytes, Some(&target.url));
+                    let svg = image_type(&bytes) == Some(ImageType::Svg);
+                    let size = if svg {
+                        odt_svg_size(&bytes, &XmlLimits::from_limits(&self.context.limits))
+                    } else {
+                        size.or_else(|| {
+                            image_size(&bytes, 96)
+                                .ok()
+                                .map(|size| (size.width, size.height))
+                        })
+                    };
+                    let size = size.filter(|&(w, h)| w > 0 && h > 0);
                     let mime = detected
                         .map(str::to_owned)
                         .or(mime)
                         .unwrap_or_else(|| "application/octet-stream".into());
-                    if let Some((w, h)) = size.filter(|&(w, h)| w > 0 && h > 0) {
+                    if let Some((w, h)) = size {
                         let ratio = f64::from(w) / f64::from(h);
-                        let (x_dpi, y_dpi) = image_density(&bytes).unwrap_or((72.0, 72.0));
+                        let (x_dpi, y_dpi) = if svg {
+                            (96.0, 96.0)
+                        } else {
+                            image_density(&bytes).unwrap_or((72.0, 72.0))
+                        };
                         match (&width, &height) {
                             (None, None) => {
                                 width = Some(format!(
-                                    "{:.1}pt",
-                                    (f64::from(w) * 72.0 / x_dpi).max(1.0)
+                                    "{}pt",
+                                    image_points((f64::from(w) * 72.0 / x_dpi).max(1.0), svg)
                                 ));
                                 height = Some(format!(
-                                    "{:.1}pt",
-                                    (f64::from(h) * 72.0 / y_dpi).max(1.0)
+                                    "{}pt",
+                                    image_points((f64::from(h) * 72.0 / y_dpi).max(1.0), svg)
                                 ));
                             }
                             (Some(w), None) => height = scaled(w, 1.0 / ratio),
                             (None, Some(h)) => width = scaled(h, ratio),
                             _ => {}
                         }
+                    } else {
+                        let reason = if svg {
+                            "could not determine SVG size".to_owned()
+                        } else {
+                            image_size(&bytes, 96).err().map_or_else(
+                                || "could not determine image size".into(),
+                                |error| error.to_string(),
+                            )
+                        };
+                        self.context.report(LogMessage::CouldNotDetermineImageSize(
+                            target.url.clone(),
+                            reason,
+                        ));
+                        width.get_or_insert_with(|| "100.0pt".into());
+                        height.get_or_insert_with(|| "100.0pt".into());
                     }
                     if !self.options.link_images && self.format == Format::Fodt {
                         let encoded_size = bytes.len().saturating_add(2) / 3 * 4;
@@ -994,6 +1025,46 @@ impl Renderer<'_> {
         }
         Ok(text(format!("<draw:frame {attrs}>{image}</draw:frame>")))
     }
+}
+
+fn image_points(points: f64, svg: bool) -> String {
+    if svg && points.fract() != 0.0 {
+        points.to_string()
+    } else {
+        format!("{points:.1}")
+    }
+}
+
+fn odt_svg_size(bytes: &[u8], limits: &XmlLimits) -> Option<(u32, u32)> {
+    let xml = xml::parse(
+        std::str::from_utf8(bytes).ok()?,
+        limits,
+        XmlOptions::default(),
+    )
+    .ok()?;
+    let root = xml.root;
+    let has_size = ["width", "height"]
+        .iter()
+        .all(|name| root.attr_local(name).is_some_and(valid_svg_number));
+    if !has_size {
+        let view_box = root.attr_local("viewBox")?;
+        if !view_box
+            .split(|c: char| c.is_ascii_whitespace() || c == ',')
+            .filter(|part| !part.is_empty())
+            .all(valid_svg_number)
+        {
+            return None;
+        }
+    }
+    let size = image_size(bytes, 96).ok()?;
+    Some((size.width, size.height))
+}
+
+fn valid_svg_number(value: &str) -> bool {
+    let text = value.trim_start();
+    text.strip_prefix('-')
+        .unwrap_or(text)
+        .starts_with(|c: char| c.is_ascii_digit())
 }
 
 fn valid_uri_reference(url: &str) -> bool {
@@ -1183,6 +1254,72 @@ mod tests {
     use randoc_archive::media::base64_decode;
     use randoc_ast::Block;
     use randoc_core::{MediaItem, PureHost, ReaderOptions, Sources};
+
+    #[test]
+    fn keeps_lone_percent_literal_in_flat_documents() -> Result<()> {
+        let doc = Pandoc {
+            blocks: vec![Block::Para(vec![Inline::Math(
+                MathType::DisplayMath,
+                "%".into(),
+            )])],
+            ..Pandoc::default()
+        };
+        let mut context = Context::pure();
+        let xml = write_fodt(&doc, &WriterOptions::default(), &mut context)?;
+        assert!(xml.contains(">$$%$$</text:p>"));
+        assert!(!xml.contains("<annotation"));
+        assert!(context.log().is_empty());
+        Ok(())
+    }
+
+    #[test]
+    fn reports_svg_image_size_failures() -> Result<()> {
+        let mut context = Context::pure();
+        let mut blocks = Vec::new();
+        for (name, contents) in [
+            ("viewbox.svg", r#"<svg viewBox="-0.5 0 40 20"/>"#),
+            ("minimal.svg", r#"<svg viewBox="-.5 0 40 20"/>"#),
+            ("corrupt.svg", "This file has no SVG element."),
+        ] {
+            context.media.insert(
+                name,
+                MediaItem {
+                    contents: contents.as_bytes().to_vec(),
+                    mime_type: "image/svg+xml".into(),
+                },
+            );
+            blocks.push(Block::Para(vec![Inline::Image(
+                Attr::default(),
+                Vec::new(),
+                Target::new(name, ""),
+            )]));
+        }
+        let doc = Pandoc {
+            blocks,
+            ..Pandoc::default()
+        };
+        let xml = write_fodt(&doc, &WriterOptions::default(), &mut context)?;
+        assert!(xml.contains(r#"svg:width="30.0pt" svg:height="15.0pt""#));
+        assert_eq!(
+            xml.matches(r#"svg:width="100.0pt" svg:height="100.0pt""#)
+                .count(),
+            2
+        );
+        assert_eq!(
+            context.log(),
+            &[
+                LogMessage::CouldNotDetermineImageSize(
+                    "minimal.svg".into(),
+                    "could not determine SVG size".into()
+                ),
+                LogMessage::CouldNotDetermineImageSize(
+                    "corrupt.svg".into(),
+                    "could not determine image type".into()
+                ),
+            ]
+        );
+        Ok(())
+    }
 
     #[test]
     fn packaged_formula_and_image_round_trip() -> Result<()> {

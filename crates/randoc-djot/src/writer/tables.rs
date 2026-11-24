@@ -1,4 +1,4 @@
-use randoc_ast::{Alignment, Block, Row, Table};
+use randoc_ast::{Alignment, Block, Cell, Inline, Row, Table};
 use randoc_core::Result;
 use randoc_layout::{self as layout, Doc};
 
@@ -30,6 +30,15 @@ impl<'a> Render<'a> {
             .table_cells
             .checked_sub(rows.len().max(1).saturating_mul(columns))
             .ok_or_else(size_error)?;
+        let rows = rectangular_rows(&rows, columns);
+        if rows
+            .iter()
+            .flatten()
+            .flatten()
+            .any(|cell| complex_cell(cell))
+        {
+            return self.list_table(&rows, head, depth + 1);
+        }
         let aligns = (0..columns)
             .map(|index| {
                 table
@@ -105,22 +114,93 @@ impl<'a> Render<'a> {
         )))
     }
 
-    fn row(&mut self, row: &'a Row, widths: &mut [usize], depth: usize) -> Result<Vec<String>> {
-        let mut rendered = Vec::with_capacity(row.cells.len());
-        for (cell, width) in row.cells.iter().zip(widths) {
-            let mut parts = Vec::new();
-            for block in &cell.content {
-                let doc = match block {
-                    Block::Plain(nodes) | Block::Para(nodes) => self.inlines(nodes, depth)?,
-                    _ => self.block(block, depth, '-')?,
-                };
-                parts.push(doc);
-            }
-            let doc = layout::hsep(parts);
+    fn list_table(
+        &mut self,
+        rows: &[Vec<Option<&'a Cell>>],
+        head: usize,
+        depth: usize,
+    ) -> Result<Doc> {
+        let mut rendered = Vec::new();
+        if head == 0 {
+            rendered.push(layout::literal("- "));
+        }
+        for (index, row) in rows.iter().enumerate() {
+            let bullet = if index == 0 && head > 0 { '-' } else { '+' };
+            let marker = if bullet == '-' { "- " } else { "+ " };
+            let cells = row
+                .iter()
+                .map(|cell| {
+                    let blocks = cell.map_or(&[][..], |cell| cell.content.as_slice());
+                    let content = if let [first @ Block::BulletList(_), rest @ ..] = blocks {
+                        self.block(first, depth, bullet)?
+                            .above_blank(self.blocks(rest, depth)?)
+                    } else {
+                        self.blocks(blocks, depth)?
+                    };
+                    Ok(if content.is_empty() {
+                        layout::literal(marker.trim_end())
+                    } else {
+                        layout::hang(2, layout::literal(marker), content)
+                    })
+                })
+                .collect::<Result<Vec<_>>>()?;
+            rendered.push(layout::hang(2, layout::literal("- "), layout::vsep(cells)));
+        }
+        Ok(layout::literal("{.table}").above(layout::vsep(rendered)))
+    }
+
+    fn row(
+        &mut self,
+        row: Vec<Option<&'a Cell>>,
+        widths: &mut [usize],
+        depth: usize,
+    ) -> Result<Vec<String>> {
+        let mut rendered = Vec::with_capacity(row.len());
+        for (cell, width) in row.into_iter().zip(widths) {
+            let doc = match cell.map(|cell| cell.content.as_slice()) {
+                Some([Block::Plain(nodes) | Block::Para(nodes)]) => self.inlines(nodes, depth)?,
+                _ => Doc::default(),
+            };
             *width = (*width).max(doc.offset());
             let text = doc.render_limited(self.budget).ok_or_else(size_error)?;
             rendered.push(text.replace('\n', " "));
         }
         Ok(rendered)
     }
+}
+
+fn complex_cell(cell: &Cell) -> bool {
+    match cell.content.as_slice() {
+        [] => false,
+        [Block::Plain(nodes) | Block::Para(nodes)] => {
+            nodes.iter().any(|node| matches!(node, Inline::LineBreak))
+        }
+        _ => true,
+    }
+}
+
+fn rectangular_rows<'a>(rows: &[&'a Row], columns: usize) -> Vec<Vec<Option<&'a Cell>>> {
+    let mut occupied_until = vec![0; columns];
+    rows.iter()
+        .enumerate()
+        .map(|(index, row)| {
+            let mut cells = vec![None; columns];
+            let mut column = 0;
+            for cell in &row.cells {
+                while column < columns && occupied_until[column] > index {
+                    column += 1;
+                }
+                if column == columns {
+                    break;
+                }
+                let width = usize::try_from(cell.col_span.max(1)).unwrap_or(usize::MAX);
+                let next = column.saturating_add(width).min(columns);
+                let height = usize::try_from(cell.row_span.max(1)).unwrap_or(usize::MAX);
+                cells[column] = Some(cell);
+                occupied_until[column..next].fill(index.saturating_add(height));
+                column = next;
+            }
+            cells
+        })
+        .collect()
 }

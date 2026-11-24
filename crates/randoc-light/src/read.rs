@@ -5,7 +5,7 @@ use randoc_ast::{
 use randoc_core::shared::{IdentifierSet, auto_identifier, default_abbreviations};
 use randoc_core::{Extension, Limits, ReaderOptions, Result};
 
-use crate::inline::{Parser, attributes};
+use crate::inline::{Parser, T2tMacros, attributes, muse_literal_open, t2t_macro};
 use crate::{Format, check_depth, expansion_budget};
 
 pub(crate) fn read(
@@ -13,7 +13,7 @@ pub(crate) fn read(
     input: &str,
     options: &ReaderOptions,
     limits: &Limits,
-    t2t_paths: Option<(&str, &str)>,
+    t2t_macros: Option<&T2tMacros>,
 ) -> Result<Pandoc> {
     let mut state = State {
         inline: Parser {
@@ -25,7 +25,7 @@ pub(crate) fn read(
             active: Default::default(),
             budget: expansion_budget(input.len(), limits.max_input_size),
             decode_entities: true,
-            t2t_paths,
+            t2t_macros,
         },
         ids: IdentifierSet::new(),
         padding: limits.max_table_cells,
@@ -111,7 +111,7 @@ impl State<'_> {
                 {
                     self.meta
                         .insert(name.trim(), MetaValue::MetaString(value.trim().into()));
-                } else if !line.trim().is_empty() && !line.starts_with('%') {
+                } else if !line.trim().is_empty() && !t2t_comment(line) {
                     break;
                 }
                 start += 1;
@@ -143,6 +143,9 @@ impl State<'_> {
         let mut out = Vec::new();
         let mut regions = Vec::new();
         let mut last_pre_close = None;
+        let last_example_close = (format == Format::Muse)
+            .then(|| lines.iter().rposition(|line| line.contains("}}}")))
+            .flatten();
         let mut i = 0;
         while let Some(&line) = lines.get(i) {
             let trim = line.trim();
@@ -151,7 +154,7 @@ impl State<'_> {
                 i += 1;
                 continue;
             }
-            if format == Format::T2t && line.starts_with('%') {
+            if format == Format::T2t && t2t_comment(line) {
                 i += 1;
                 if trim == "%%%" {
                     while i < lines.len() && lines[i].trim_end() != "%%%" {
@@ -173,9 +176,9 @@ impl State<'_> {
                     continue;
                 }
                 if regions.last().is_some_and(|(close, _)| *close == trim)
-                    && let Some((_, mut outer)) = regions.pop()
+                    && let Some((close, mut outer)) = regions.pop()
                 {
-                    outer.push(Block::BlockQuote(out));
+                    close_muse_region(&mut outer, out, close);
                     out = outer;
                     i += 1;
                     continue;
@@ -294,7 +297,7 @@ impl State<'_> {
                 {
                     out.push(Block::RawBlock(RawFormat::new("html"), line[..=end].into()));
                     if !line[end + 1..].trim().is_empty() {
-                        out.push(Block::Para(self.inline.parse(&line[end + 1..], depth)?));
+                        split_textile_html(self.inline.parse(&line[end + 1..], depth)?, &mut out);
                     }
                     i += 1;
                     continue;
@@ -312,7 +315,10 @@ impl State<'_> {
                     "example" => Block::CodeBlock(Attr::default(), strip_shared_margin(text)),
                     "verse" => Block::LineBlock(
                         text.lines()
-                            .map(|line| self.inline.parse(line, depth + 1))
+                            .map(|line| {
+                                let text = verse_line(line);
+                                self.inline.parse(&text, depth + 1)
+                            })
                             .collect::<Result<_>>()?,
                     ),
                     _ => Block::Para(self.inline.parse(text, depth)?),
@@ -322,15 +328,30 @@ impl State<'_> {
                 continue;
             }
             if format == Format::Muse
-                && let Some((tag, rest)) = trim
-                    .strip_prefix("<literal")
-                    .and_then(|text| text.split_once('>'))
-                && rest.is_empty()
+                && let Some(first) = trim.strip_prefix("{{{")
+                && last_example_close
+                    .is_some_and(|last| last > i || last == i && first.contains("}}}"))
             {
-                let raw_format = tag
-                    .split_once("style=\"")
-                    .and_then(|(_, value)| value.split_once('"'))
-                    .map_or("html", |(value, _)| value);
+                let (text, end) = collect_delimited(lines, i, first, "}}}");
+                if let Some(end) = end {
+                    out.push(Block::CodeBlock(
+                        Attr::default(),
+                        strip_shared_margin(text.trim_matches('\n')),
+                    ));
+                    i = end;
+                    if let Some((_, tail)) = lines[end - 1].split_once("}}}")
+                        && !tail.trim().is_empty()
+                    {
+                        i = paragraph_end(format, lines, i);
+                        let text = joined(tail.trim(), &lines[end..i]);
+                        out.push(Block::Para(self.inline.parse(&text, depth)?));
+                    }
+                    continue;
+                }
+            }
+            if format == Format::Muse
+                && let Some((raw_format, "")) = muse_literal_open(trim)
+            {
                 let (text, end) = collect_delimited(lines, i, "", "</literal>");
                 out.push(Block::RawBlock(
                     RawFormat::new(raw_format),
@@ -342,8 +363,7 @@ impl State<'_> {
             if format == Format::Muse && line.starts_with("> ") {
                 let mut verse = Vec::new();
                 while let Some(text) = lines.get(i).and_then(|line| line.strip_prefix("> ")) {
-                    let spaces = text.len() - text.trim_start_matches(' ').len();
-                    let text = format!("{}{}", "\u{a0}".repeat(spaces), &text[spaces..]);
+                    let text = verse_line(text);
                     verse.push(self.inline.parse(&text, depth)?);
                     i += 1;
                 }
@@ -473,7 +493,7 @@ impl State<'_> {
             i = paragraph_end(format, lines, i + 1);
             let text = lines[start..i]
                 .iter()
-                .filter(|line| format != Format::T2t || !line.starts_with('%'))
+                .filter(|line| format != Format::T2t || !t2t_comment(line))
                 .map(|line| line.trim())
                 .collect::<Vec<_>>()
                 .join("\n");
@@ -501,8 +521,8 @@ impl State<'_> {
                 }
             }
         }
-        while let Some((_, mut outer)) = regions.pop() {
-            outer.push(Block::BlockQuote(out));
+        while let Some((close, mut outer)) = regions.pop() {
+            close_muse_region(&mut outer, out, close);
             out = outer;
         }
         Ok(out)
@@ -586,8 +606,13 @@ impl State<'_> {
             let xs = self.inline.parse(term.trim(), depth + 1)?;
             i += 1;
             let begin = i;
+            let margin = if format == Format::T2t {
+                lines[i - 1].len() - lines[i - 1].trim_start_matches(' ').len() + 2
+            } else {
+                1
+            };
             while i < lines.len()
-                && (lines[i].starts_with(' ')
+                && (lines[i].len() - lines[i].trim_start_matches(' ').len() >= margin
                     && !lines[i].trim().is_empty()
                     && crate::read::definition(format, lines[i]).is_none()
                     || format == Format::Textile
@@ -600,7 +625,15 @@ impl State<'_> {
                     break;
                 }
             }
-            let mut text = joined(definition.trim(), &lines[begin..i]);
+            let mut text = if format == Format::T2t {
+                lines[begin..i]
+                    .iter()
+                    .filter_map(|line| line.get(margin..))
+                    .collect::<Vec<_>>()
+                    .join("\n")
+            } else {
+                joined(definition.trim(), &lines[begin..i])
+            };
             if definition.trim().is_empty() && format == Format::Textile && text.ends_with("=:") {
                 text.truncate(text.len() - 2);
             }
@@ -671,7 +704,10 @@ impl State<'_> {
                             break;
                         }
                     }
-                    if frame.indent == marker.indent && frame.ordered == marker.ordered {
+                    if frame.indent == marker.indent
+                        && frame.ordered == marker.ordered
+                        && frame.style == marker.style
+                    {
                         break;
                     }
                     self.close_list(&mut frames, &mut out, depth)?;
@@ -697,6 +733,7 @@ impl State<'_> {
                         indent: marker.indent,
                         ordered: marker.ordered,
                         start: marker.start,
+                        style: marker.style,
                         items: Vec::new(),
                         current: Vec::new(),
                         text: Vec::new(),
@@ -770,8 +807,7 @@ impl State<'_> {
                 }
                 i = end;
                 continue;
-            } else if paragraph_ends(format, line) || format == Format::T2t && line.starts_with('%')
-            {
+            } else if paragraph_ends(format, line) || format == Format::T2t && t2t_comment(line) {
                 break;
             } else {
                 if format == Format::T2t {
@@ -866,7 +902,7 @@ impl State<'_> {
                     ..Default::default()
                 };
                 if self.inline.format == Format::Muse {
-                    attr.style = ListNumberStyle::Decimal;
+                    attr.style = frame.style;
                     attr.delim = ListNumberDelim::Period;
                 }
                 Block::OrderedList(attr, frame.items)
@@ -959,10 +995,12 @@ impl State<'_> {
                     if let Some(spec) = cols.get_mut(col) {
                         if format == Format::T2t && spec.align != align {
                             spec.align = Alignment::AlignDefault;
+                        } else if format == Format::Textile && (align as u8) < (spec.align as u8) {
+                            spec.align = align;
                         }
                     } else {
                         cols.push(ColSpec {
-                            align: if first || format == Format::T2t {
+                            align: if first || matches!(format, Format::T2t | Format::Textile) {
                                 align
                             } else {
                                 Alignment::AlignDefault
@@ -991,7 +1029,7 @@ impl State<'_> {
             width = width.max(row.cells.len());
             rows.push(row);
             if format == Format::T2t {
-                while lines.get(i).is_some_and(|s| s.starts_with('%')) {
+                while lines.get(i).is_some_and(|s| t2t_comment(s)) {
                     i += 1;
                 }
             }
@@ -1105,6 +1143,10 @@ fn expand_tabs(text: &str, tab_stop: i64) -> String {
     out
 }
 
+fn t2t_comment(line: &str) -> bool {
+    line.starts_with('%') && t2t_macro(line).is_none()
+}
+
 fn strip_t2t_comments(lines: &mut Vec<&str>) {
     let mut comment = false;
     let mut fence = None;
@@ -1137,7 +1179,18 @@ fn note_definition(format: Format, line: &str) -> Option<(&str, &str)> {
             let (id, body) = line.strip_prefix("fn")?.split_once('.')?;
             (id.trim_end_matches('^'), body)
         }
-        Format::Muse => line.strip_prefix('[')?.split_once(']')?,
+        Format::Muse => {
+            let (open, close) = if line.starts_with('[') {
+                ('[', ']')
+            } else {
+                ('{', '}')
+            };
+            let (id, body) = line.strip_prefix(open)?.split_once(close)?;
+            return (!id.is_empty()
+                && id.bytes().all(|c| c.is_ascii_digit())
+                && body.starts_with(char::is_whitespace))
+            .then_some((&line[..id.len() + 2], body.trim_start()));
+        }
         _ => return None,
     };
     (!id.is_empty()
@@ -1319,6 +1372,8 @@ fn paragraph_ends(format: Format, line: &str) -> bool {
                 || table_start(format, line)
                 || list_marker(format, line).is_some()
                 || line.starts_with("<example>")
+                || line.trim_start().starts_with("{{{")
+                || muse_literal_open(line.trim()).is_some_and(|(_, rest)| rest.is_empty())
                 || muse_region(line.trim()).is_some()
                 || matches!(line.trim(), "</quote>" | "</center>" | "</right>")
                 || line.starts_with("> ")
@@ -1331,12 +1386,14 @@ struct ListMarker<'a> {
     indent: usize,
     ordered: bool,
     start: i64,
+    style: ListNumberStyle,
     body: &'a str,
 }
 struct ListFrame<'a> {
     indent: usize,
     ordered: bool,
     start: i64,
+    style: ListNumberStyle,
     items: Vec<Vec<Block>>,
     current: Vec<Block>,
     text: Vec<&'a str>,
@@ -1363,6 +1420,7 @@ fn list_marker(format: Format, line: &str) -> Option<ListMarker<'_>> {
             indent,
             ordered: marker == b'#',
             start,
+            style: ListNumberStyle::DefaultStyle,
             body: tail.trim_start(),
         });
     }
@@ -1381,6 +1439,7 @@ fn list_marker(format: Format, line: &str) -> Option<ListMarker<'_>> {
             indent,
             ordered: false,
             start: 1,
+            style: ListNumberStyle::DefaultStyle,
             body: body.trim_start(),
         });
     }
@@ -1391,13 +1450,54 @@ fn list_marker(format: Format, line: &str) -> Option<ListMarker<'_>> {
     } else {
         trim.split_once(". ")?
     };
-    let start = number.parse().ok()?;
+    let (start, style) = if format == Format::Muse {
+        muse_list_number(number)?
+    } else {
+        (number.parse().ok()?, ListNumberStyle::DefaultStyle)
+    };
     Some(ListMarker {
         indent,
         ordered: true,
         start,
+        style,
         body: body.trim_start(),
     })
+}
+
+fn muse_list_number(text: &str) -> Option<(i64, ListNumberStyle)> {
+    use ListNumberStyle::{Decimal, LowerAlpha, LowerRoman, UpperAlpha, UpperRoman};
+
+    if let Ok(value) = text.parse::<i64>() {
+        return Some((value, Decimal));
+    }
+    let upper = text.starts_with(|ch: char| ch.is_ascii_uppercase());
+    let lower = text.bytes().all(|byte| byte.is_ascii_lowercase());
+    if !lower && !text.bytes().all(|byte| byte.is_ascii_uppercase()) {
+        return None;
+    }
+    let roman = [
+        "m", "cm", "d", "cd", "c", "xc", "l", "xl", "x", "ix", "v", "iv", "i",
+    ];
+    let values = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1];
+    let lower_text = text.to_ascii_lowercase();
+    let mut rest = lower_text.as_str();
+    let mut value = 0i64;
+    for (mark, amount) in roman.into_iter().zip(values) {
+        while let Some(tail) = rest.strip_prefix(mark) {
+            value = value.checked_add(amount)?;
+            rest = tail;
+        }
+    }
+    if value > 0 && rest.is_empty() {
+        return Some((value, if upper { UpperRoman } else { LowerRoman }));
+    }
+    let [letter] = lower_text.as_bytes() else {
+        return None;
+    };
+    Some((
+        i64::from(letter - b'a' + 1),
+        if upper { UpperAlpha } else { LowerAlpha },
+    ))
 }
 
 fn definition(format: Format, line: &str) -> Option<(&str, &str)> {
@@ -1546,6 +1646,19 @@ fn classed_code(classes: &[&str], text: &str) -> Inline {
 
 pub(crate) fn is_abbreviation(word: &str, options: &ReaderOptions) -> bool {
     options.abbreviations.contains(word) || default_abbreviations().contains(&word)
+}
+
+fn verse_line(line: &str) -> String {
+    let body = line.trim_start_matches(' ');
+    format!("{}{}", "\u{a0}".repeat(line.len() - body.len()), body)
+}
+
+fn close_muse_region(outer: &mut Vec<Block>, inner: Vec<Block>, close: &str) {
+    if close == "</quote>" {
+        outer.push(Block::BlockQuote(inner));
+    } else {
+        outer.extend(inner);
+    }
 }
 
 fn muse_region(line: &str) -> Option<&'static str> {

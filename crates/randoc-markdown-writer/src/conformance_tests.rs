@@ -981,3 +981,28 @@ fn markua_scripts_use_their_delimiters() {
         "x^1 2^ y~1 2~ ^*e* f^ ~c~d~ ^p^ ^^n^^ ^3 4^ a~/~/b"
     );
 }
+
+#[test]
+fn citation_display_spans_start_on_separate_lines() {
+    let span = |class: &str, value: &str| {
+        Inline::Span(Attr::new("", vec![class.into()], vec![]), vec![text(value)])
+    };
+    let blocks = vec![Block::Para(vec![
+        span("csl-block", "Author"),
+        span("csl-left-margin", "Year"),
+        span("csl-right-inline", "Title"),
+    ])];
+    assert_eq!(
+        write("markdown-citations", blocks),
+        "[Author]{.csl-block}\n[Year]{.csl-left-margin}[Title]{.csl-right-inline}"
+    );
+}
+
+#[test]
+fn plain_empty_note_paragraph_keeps_separator() {
+    let blocks = vec![Block::Para(vec![
+        text("a"),
+        Inline::Note(vec![Block::Para(vec![])]),
+    ])];
+    assert_eq!(write("plain", blocks), "a[1]\n\n[1] ");
+}

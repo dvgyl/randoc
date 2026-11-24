@@ -72,6 +72,7 @@ struct Matches {
     underscores: (Vec<usize>, usize),
     math_closers: [(Vec<usize>, usize); 2],
     raw_closers: BTreeMap<char, (Vec<usize>, usize)>,
+    muse_literal_closers: (Vec<usize>, usize),
 }
 
 impl Matches {
@@ -86,6 +87,9 @@ impl Matches {
             }
             if "<({[\n)}]>!@;'`\"#=\u{7e}".contains(ch) {
                 matches.positions.entry(ch).or_default().0.push(offset);
+            }
+            if format == Format::Muse && ch == '<' && input[offset..].starts_with("</literal>") {
+                matches.muse_literal_closers.0.push(offset);
             }
             if format == Format::Haddock && ch == '\\' {
                 match input.as_bytes().get(offset + 1) {
@@ -150,7 +154,46 @@ pub(crate) struct Parser<'a> {
     pub(crate) active: BTreeSet<&'a str>,
     pub(crate) budget: usize,
     pub(crate) decode_entities: bool,
-    pub(crate) t2t_paths: Option<(&'a str, &'a str)>,
+    pub(crate) t2t_macros: Option<&'a T2tMacros>,
+}
+
+/// Values for the txt2tags macros.
+pub(crate) struct T2tMacros {
+    pub(crate) input: String,
+    pub(crate) output: String,
+    pub(crate) date: String,
+    pub(crate) mtime: String,
+}
+
+/// Returns the spelling and length of a txt2tags macro.
+pub(crate) fn t2t_macro(text: &str) -> Option<(&str, usize)> {
+    let body = text.strip_prefix("%%")?;
+    for name in ["infile", "outfile", "date", "mtime"] {
+        if let Some(spelling) = body.get(..name.len())
+            && spelling.eq_ignore_ascii_case(name)
+        {
+            let tail = &body[name.len()..];
+            let rest = if let Some(format) = tail.strip_prefix('(') {
+                let end = format.find(['(', ')', '\n'])?;
+                if end == 0 || !format[end..].starts_with(')') {
+                    return None;
+                }
+                &format[end + 1..]
+            } else {
+                tail
+            };
+            let path = matches!(name, "infile" | "outfile");
+            if rest.is_empty()
+                || rest.starts_with(markup_space)
+                || rest.starts_with("%%")
+                || path
+                    && !rest.starts_with(|ch: char| ch.is_alphanumeric() || matches!(ch, '_' | '('))
+            {
+                return Some((spelling, text.len() - rest.len()));
+            }
+        }
+    }
+    None
 }
 
 pub(crate) fn words(text: &str) -> Vec<Inline> {
@@ -273,6 +316,36 @@ impl Parser<'_> {
         autolinks: bool,
     ) -> Result<Vec<Inline>> {
         check_depth(depth, self.limit)?;
+        let textile = self.format == Format::Textile;
+        let t2t = self.format == Format::T2t;
+        // These characters cannot start inline markup in these formats.
+        if (textile || t2t)
+            && text.bytes().all(|byte| {
+                byte.is_ascii_lowercase()
+                    || byte.is_ascii_digit()
+                    || matches!(byte, b' ' | b'\r' | b'\n')
+                    || textile && matches!(byte, b'|' | b'\t')
+                    || t2t && (byte.is_ascii_uppercase() || matches!(byte, b'(' | b')'))
+            })
+        {
+            let mut out = Vec::new();
+            let mut end = 0;
+            for word in text.split_ascii_whitespace() {
+                let start = word.as_ptr() as usize - text.as_ptr() as usize;
+                if end > 0 {
+                    out.push(if !text[end..start].contains('\n') {
+                        Inline::Space
+                    } else if textile {
+                        Inline::LineBreak
+                    } else {
+                        Inline::SoftBreak
+                    });
+                }
+                out.push(Inline::Str(word.into()));
+                end = start + word.len();
+            }
+            return Ok(out);
+        }
         let mut look = Matches::new(text, self.format);
         let mut tokens = Vec::new();
         let mut stack: Vec<Opener> = Vec::new();
@@ -282,6 +355,13 @@ impl Parser<'_> {
         let mut prev = None;
         while let Some(ch) = text[pos..].chars().next() {
             let rest = &text[pos..];
+            if self.format == Format::T2t
+                && let Some((name, len)) = t2t_macro(rest)
+                && name.bytes().any(|byte| byte.is_ascii_uppercase())
+            {
+                pos += len;
+                continue;
+            }
             let width = ch.len_utf8();
             let boundary = if self.format == Format::T2t
                 && ch == '['
@@ -336,7 +416,11 @@ impl Parser<'_> {
                             || !inner.starts_with('<')
                                 && prev.is_some_and(|c: char| !c.is_whitespace()))
                             && (self.format != Format::Textile
-                                || !next.is_some_and(char::is_alphanumeric));
+                                || if matches!(mark, Mark::Span) {
+                                    bracket_close || next.is_none_or(char::is_whitespace)
+                                } else {
+                                    !next.is_some_and(char::is_alphanumeric)
+                                });
                         let bracket_kind = kind + KIND_COUNT / 2;
                         let close_kind = if bracket_close && bottom[bracket_kind].is_some() {
                             bracket_kind
@@ -549,7 +633,11 @@ impl Parser<'_> {
             };
             if let Some((id, body)) = note {
                 if !self.active.insert(id) {
-                    *x = Inline::Str(format!("[{id}]"));
+                    *x = Inline::Str(if self.format == Format::Muse {
+                        id.into()
+                    } else {
+                        format!("[{id}]")
+                    });
                     continue;
                 }
                 let next = depth + 1;
@@ -634,7 +722,6 @@ impl Parser<'_> {
                 ("*", Emph),
                 ("<strong>", Strong),
                 ("<em>", Emph),
-                ("<u>", Underline),
                 ("<del>", Strike),
                 ("<sup>", Sup),
                 ("<sub>", Sub),
@@ -717,8 +804,16 @@ impl Parser<'_> {
         {
             return Ok(Some((pos + 1, Inline::Str("’".into()))));
         }
+        if muse && rest.starts_with("~~") {
+            return Ok(Some((pos + 2, Inline::Str("\u{a0}".into()))));
+        }
         if muse && rest.starts_with("<br>") {
-            return Ok(Some((pos + 4, Inline::LineBreak)));
+            let end = pos + 4;
+            let after = text[end..].trim_start_matches([' ', '\t', '\r']);
+            let end = after
+                .strip_prefix('\n')
+                .map_or(end, |tail| text.len() - tail.len());
+            return Ok(Some((end, Inline::LineBreak)));
         }
         if haddock && ch == '\\' {
             let math = match rest.as_bytes().get(1) {
@@ -909,19 +1004,20 @@ impl Parser<'_> {
                 return Ok(Some((pos + end, mark.wrap(Attr::default(), xs))));
             }
         }
-        if let Some((input, output)) = self.t2t_paths
-            && rest.starts_with("%%")
+        if let Some(values) = self.t2t_macros
+            && let Some((name, len)) = t2t_macro(rest)
         {
-            for (name, value) in [("%%infile", input), ("%%outfile", output)] {
-                if let Some(tail) = rest.strip_prefix(name)
-                    && !tail.starts_with(|c: char| c.is_alphanumeric() || c == '_' || c == '(')
-                {
-                    self.budget = self.budget.checked_sub(value.len()).ok_or_else(|| {
-                        randoc_core::Error::App("The input expands to too much text.".into())
-                    })?;
-                    return Ok(Some((pos + name.len(), Inline::Str(value.into()))));
-                }
-            }
+            let value = match name {
+                "infile" => &values.input,
+                "outfile" => &values.output,
+                "date" => &values.date,
+                "mtime" => &values.mtime,
+                _ => return Ok(None),
+            };
+            self.budget = self.budget.checked_sub(value.len()).ok_or_else(|| {
+                randoc_core::Error::App("The input expands to too much text.".into())
+            })?;
+            return Ok(Some((pos + len, Inline::Str(value.clone()))));
         }
         if t2t
             && prev.is_none_or(markup_space)
@@ -939,15 +1035,18 @@ impl Parser<'_> {
             };
             return Ok(Some((end + 2, node)));
         }
-        if (textile || muse)
-            && ch == '['
-            && let Some(end) = look.next(']', pos + 1)
+        if (ch == '[' && (textile || muse) || ch == '{' && muse)
+            && let Some(end) = look.next(if ch == '[' { ']' } else { '}' }, pos + 1)
         {
             let name = &text[pos + 1..end];
-            if name.bytes().all(|c| c.is_ascii_digit()) && self.notes.contains_key(name) {
+            let key = if muse { &text[pos..=end] } else { name };
+            if !name.is_empty()
+                && name.bytes().all(|c| c.is_ascii_digit())
+                && self.notes.contains_key(key)
+            {
                 return Ok(Some((
                     end + 1,
-                    Inline::Note(vec![Block::RawBlock(RawFormat::new(""), name.into())]),
+                    Inline::Note(vec![Block::RawBlock(RawFormat::new(""), key.into())]),
                 )));
             }
         }
@@ -1182,18 +1281,12 @@ impl Parser<'_> {
             && rest.starts_with("<literal")
             && let Some(end) = look.next('>', pos + 8)
             && look.next('<', pos + 8).is_none_or(|next| next > end)
+            && let Some((format, _)) = muse_literal_open(&text[pos..=end])
         {
-            let attr = &text[pos + 8..end];
-            let format = attr
-                .split_once("style=")
-                .and_then(|(_, value)| value.trim().strip_prefix('"'))
-                .and_then(|value| value.split_once('"').map(|(value, _)| value))
-                .unwrap_or("html");
-            if let Some(close) = look.next('<', end + 1)
-                && text[close..].starts_with("</literal>")
-            {
+            let (positions, cursor) = &mut look.muse_literal_closers;
+            if let Some(close) = advance(positions, cursor, end + 1) {
                 return Ok(Some((
-                    close + 10,
+                    close + "</literal>".len(),
                     Inline::RawInline(RawFormat::new(format), text[end + 1..close].into()),
                 )));
             }
@@ -1297,4 +1390,15 @@ fn inline_attributes<'a>(text: &'a str, start: usize, look: &mut Matches) -> (At
     }
     let (attr, remaining) = attributes(&text[start..end]);
     (attr, &text[end - remaining.len()..])
+}
+
+/// Reads a Muse literal tag and returns its format and remaining text.
+pub(crate) fn muse_literal_open(text: &str) -> Option<(&str, &str)> {
+    let (attributes, rest) = text.strip_prefix("<literal")?.split_once('>')?;
+    if attributes.is_empty() {
+        return Some(("html", rest));
+    }
+    let style = attributes.strip_prefix(char::is_whitespace)?.trim_start();
+    let style = style.strip_prefix("style=\"")?.strip_suffix('"')?;
+    Some((style, rest))
 }

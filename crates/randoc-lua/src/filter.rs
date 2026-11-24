@@ -240,12 +240,7 @@ pub(crate) fn in_scope<T>(
             let result = match context.try_borrow_mut() {
                 Ok(mut context) => {
                     convert::without_system_access(environment.mode, &mut context, |context| {
-                        convert::read(
-                            &call,
-                            environment.readers,
-                            &environment.reader_options,
-                            context,
-                        )
+                        convert::read(&call, environment.readers, context)
                     })
                 }
                 Err(_) => Err(PeekError::Thrown(BUSY.into())),
@@ -262,12 +257,7 @@ pub(crate) fn in_scope<T>(
             let result = match context.try_borrow_mut() {
                 Ok(mut context) => {
                     convert::without_system_access(environment.mode, &mut context, |context| {
-                        convert::write(
-                            &call,
-                            environment.writers,
-                            &environment.writer_options,
-                            context,
-                        )
+                        convert::write(&call, environment.writers, context)
                     })
                 }
                 Err(_) => Err(PeekError::Thrown(BUSY.into())),
@@ -404,8 +394,6 @@ pub(crate) fn caller_position(lua: &Lua) -> Option<SourcePos> {
 /// [`Error::Filter`] with the text of Pandoc and the exit code 83; the
 /// filters after it do not run.
 ///
-/// `PANDOC_READER_OPTIONS` and `PANDOC_WRITER_OPTIONS` are not implemented
-/// yet (row I-LUA-05).
 pub fn apply_filter_files(
     doc: &mut Pandoc,
     paths: &[&str],
@@ -464,10 +452,8 @@ fn set_globals(
     let globals = lua.globals();
     globals.set("FORMAT", kind.format)?;
     if kind.options {
-        let native: Table = lua.named_registry_value(module::NATIVE)?;
         crate::options::set_globals(
             lua,
-            &native,
             &environment.reader_options,
             &environment.writer_options,
             max_depth,
@@ -509,6 +495,7 @@ fn set_globals(
         state,
         lua.create_sequence_from(STATE_KEYS)?,
         getters,
+        native.get::<Function>("state_override")?,
     ))?;
     metatable.set("__index", index)?;
     let proxy = lua.create_table()?;
@@ -532,7 +519,7 @@ const STATE_KEYS: [&str; 9] = [
 /// The `__index` function of `PANDOC_STATE`. It gets the table of values
 /// the list of field names, and the getter functions.
 const STATE_INDEX: &str = r#"
-local state, names, getters = ...
+local state, names, getters, override = ...
 local known = {}
 for _, name in ipairs(names) do known[name] = true end
 local error, pairs, type, setmetatable, getmetatable = error, pairs, type, setmetatable, getmetatable
@@ -549,7 +536,9 @@ return function(_, key)
   if not known[key] then error('Unknown key', 0) end
   local getter = getters[key]
   if getter then return getter() end
-  return copy(state[key])
+  local value = override(key)
+  if value == nil then value = state[key] end
+  return copy(value)
 end
 "#;
 

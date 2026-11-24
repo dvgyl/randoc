@@ -244,6 +244,272 @@ fn cell_width(doc: &Doc, width: Option<usize>) -> usize {
         .max(1)
 }
 
+/// Renders a grid table with cell text supplied by the calling writer.
+///
+/// Set `header_rule` to mark the header with an equals sign. Muse uses a
+/// regular row separator. Table feet use equals signs in both formats.
+///
+/// # Errors
+///
+/// Returns an error if the table exceeds a limit or the cell writer fails.
+pub fn render_grid_table<'t>(
+    table: &'t Table,
+    columns: usize,
+    header_rule: bool,
+    max_table_cells: usize,
+    output_limit: usize,
+    mut render_cell: impl FnMut(&'t Cell) -> Result<Doc>,
+) -> Result<Text> {
+    let column_count = table.col_specs.len();
+    if column_count == 0 {
+        return Ok(Text::new());
+    }
+    let rows = table.head.rows.len()
+        + table
+            .bodies
+            .iter()
+            .map(|body| body.head.len() + body.body.len())
+            .sum::<usize>()
+        + table.foot.rows.len();
+    if rows.saturating_mul(column_count) > max_table_cells {
+        return Err(crate::table_size_error());
+    }
+    let placed = layout(table, column_count);
+    let docs = placed
+        .cells
+        .iter()
+        .map(|cell| render_cell(cell.cell))
+        .collect::<Result<Vec<_>>>()?;
+    grid_span_lines(
+        &grid(table),
+        &placed,
+        &docs,
+        columns.min(crate::MAX_RUN),
+        header_rule,
+        output_limit,
+    )
+    .map(|lines| lines.join("\n"))
+}
+
+fn grid_span_lines(
+    g: &Grid<'_>,
+    l: &Layout<'_>,
+    docs: &[Doc],
+    line_columns: usize,
+    header_rule: bool,
+    output_limit: usize,
+) -> Result<Vec<Text>> {
+    let columns = g.aligns.len();
+    let relative = !g.widths.iter().all(|w| *w == 0.0);
+    // The characters of a part of the line, less the border of a cell.
+    let room = |part: f64| {
+        let chars = (line_columns as f64 * part).floor();
+        let chars = if chars.is_finite() && chars > 0.0 {
+            (chars as usize).min(crate::MAX_RUN)
+        } else {
+            0
+        };
+        chars.saturating_sub(3)
+    };
+    let mut widths = vec![1usize; columns];
+    if relative {
+        for (slot, w) in widths.iter_mut().zip(&g.widths) {
+            *slot = room(*w).max(1);
+        }
+    }
+    for (placed, doc) in l.cells.iter().zip(docs) {
+        if placed.cols == 1 {
+            let width = cell_width(doc, relative.then_some(1));
+            widths[placed.col] = widths[placed.col].max(width);
+        }
+    }
+    for (placed, doc) in l.cells.iter().zip(docs) {
+        if placed.cols > 1 {
+            let span = placed.col..placed.col + placed.cols;
+            let width = if relative {
+                room(g.widths[span.clone()].iter().sum())
+            } else {
+                cell_width(doc, None)
+            };
+            // Pandoc gives each spanned column the quotient plus the remainder.
+            let share = width / placed.cols + width % placed.cols;
+            for slot in &mut widths[span] {
+                *slot = (*slot).max(share);
+            }
+        }
+    }
+    if !relative {
+        widths = fit_grid_widths(&widths, line_columns);
+        for (placed, doc) in l.cells.iter().zip(docs) {
+            let width = cell_width(doc, Some(1));
+            let share = width / placed.cols + width % placed.cols;
+            for slot in &mut widths[placed.col..placed.col + placed.cols] {
+                *slot = (*slot).max(share);
+            }
+        }
+    }
+    if widths
+        .iter()
+        .copied()
+        .fold(1usize, |total, width| total.saturating_add(width + 3))
+        > output_limit
+    {
+        return Err(crate::table_size_error());
+    }
+    let span_width =
+        |p: &Placed<'_>| widths[p.col..p.col + p.cols].iter().sum::<usize>() + 3 * (p.cols - 1);
+    let texts: Vec<Vec<Text>> = l
+        .cells
+        .iter()
+        .zip(docs)
+        .map(|(p, doc)| doc_lines(doc, Some(span_width(p))))
+        .collect();
+    let rows = l.owner.len();
+    // The text of a cell that spans rows stays in its first row.
+    let mut heights = vec![1usize; rows];
+    for (p, text) in l.cells.iter().zip(&texts) {
+        heights[p.row] = heights[p.row].max(text.len());
+    }
+    // The top line of a table without a head has a `+` where some row
+    // has a cell edge. Part `k` between two `+` takes the alignment of
+    // column `k`.
+    let top_edge: Vec<bool> = (0..columns)
+        .map(|c| c > 0 && (0..rows).any(|r| !l.same(r, c - 1, c)))
+        .collect();
+    // The number of edges in `top_edge[..=c]`, the part of column `c`.
+    let parts: Vec<usize> = top_edge
+        .iter()
+        .scan(0, |count, edge| {
+            *count += usize::from(*edge);
+            Some(*count)
+        })
+        .collect();
+    let mut tops = Vec::with_capacity(rows);
+    let mut y = 0;
+    for height in &heights {
+        tops.push(y);
+        y += height + 1;
+    }
+    // One line of the table at height `y`: the columns where `text` holds
+    // show the text of a cell, the others a border of `fill`.
+    let line =
+        |y: usize, above: Option<usize>, below: Option<usize>, fill: char, aligns: bool| -> Text {
+            let owner = |c: usize| {
+                let row = above.or(below)?;
+                let index = l.owner[row][c]?;
+                let shown = match (above, below) {
+                    (Some(a), Some(b)) => l.owner[a][c] == l.owner[b][c],
+                    _ => above == below,
+                };
+                shown.then_some(index)
+            };
+            let vertical = |row: Option<usize>, c: usize| row.is_some_and(|r| !l.same(r, c - 1, c));
+            let mut out = Text::new();
+            let mut c = 0;
+            while c < columns {
+                let shown = owner(c);
+                let junction = |filled: bool| {
+                    if c == 0 {
+                        if filled { '+' } else { '|' }
+                    } else {
+                        let before = owner(c - 1);
+                        let edge = match (aligns, above) {
+                            (true, _) if fill == '=' => true,
+                            (true, None) => top_edge[c],
+                            _ => vertical(above, c) || vertical(below, c),
+                        };
+                        match (before, shown) {
+                            (Some(_), Some(_)) => '|',
+                            (None, None) if !edge => fill,
+                            _ => '+',
+                        }
+                    }
+                };
+                match shown {
+                    Some(index) => {
+                        let p = &l.cells[index];
+                        out.push(junction(false));
+                        let text = texts[index].get(y - tops[p.row]).map_or("", String::as_str);
+                        out.push(' ');
+                        out.push_str(&pad_text(Alignment::AlignLeft, span_width(p), text));
+                        out.push(' ');
+                        c = p.col + p.cols;
+                    }
+                    None => {
+                        out.push(if fill == ' ' { '|' } else { junction(true) });
+                        let (column, starts, ends) = if aligns && above.is_none() {
+                            let part = parts[c];
+                            let ends = top_edge.get(c + 1).is_none_or(|e| *e);
+                            (part, c == 0 || top_edge[c], ends)
+                        } else {
+                            (c, true, true)
+                        };
+                        let align = g
+                            .aligns
+                            .get(column)
+                            .copied()
+                            .unwrap_or(Alignment::AlignDefault);
+                        let (left, right) = match (aligns, align) {
+                            (true, Alignment::AlignLeft) => (':', fill),
+                            (true, Alignment::AlignRight) => (fill, ':'),
+                            (true, Alignment::AlignCenter) => (':', ':'),
+                            _ => (fill, fill),
+                        };
+                        out.push(if starts { left } else { fill });
+                        out.extend(std::iter::repeat_n(fill, widths[c]));
+                        out.push(if ends { right } else { fill });
+                        c += 1;
+                    }
+                }
+            }
+            out.push(if fill == ' ' || owner(columns - 1).is_some() {
+                '|'
+            } else {
+                '+'
+            });
+            out
+        };
+    let fill_after = |r: usize| {
+        let foot_edge = l.foot_start.is_some_and(|f| r + 1 == f || r + 1 == rows);
+        if header_rule && r + 1 == l.head_rows || foot_edge {
+            '='
+        } else {
+            '-'
+        }
+    };
+    let mut lines = Vec::new();
+    let mut remaining = output_limit;
+    let mut push_line = |text: Text| -> Result<()> {
+        remaining = remaining
+            .checked_sub(text.len() + usize::from(!lines.is_empty()))
+            .ok_or_else(crate::table_size_error)?;
+        lines.push(text);
+        Ok(())
+    };
+    push_line(line(
+        0,
+        None,
+        (rows > 0).then_some(0),
+        '-',
+        !header_rule || l.head_rows == 0,
+    ))?;
+    for r in 0..rows {
+        for k in 0..heights[r] {
+            push_line(line(tops[r] + k, Some(r), Some(r), ' ', false))?;
+        }
+        let below = (r + 1 < rows).then_some(r + 1);
+        let aligns = header_rule && r + 1 == l.head_rows;
+        push_line(line(
+            tops[r] + heights[r],
+            Some(r),
+            below,
+            fill_after(r),
+            aligns,
+        ))?;
+    }
+    Ok(lines)
+}
+
 /// The plain-text table forms.
 #[derive(Clone, Copy)]
 enum Kind {
@@ -673,206 +939,18 @@ impl W<'_> {
 
     /// Lays out a grid table whose cells can span rows and columns.
     fn span_grid_lines(&mut self, g: &Grid<'_>, l: &Layout<'_>) -> Result<Vec<Text>> {
-        let columns = g.aligns.len();
         let mut docs = Vec::with_capacity(l.cells.len());
         for placed in &l.cells {
             docs.push(self.cell_doc(placed.cell)?);
         }
-        let relative = !g.widths.iter().all(|w| *w == 0.0);
-        // The characters of a part of the line, less the border of a cell.
-        let room = |part: f64| {
-            let chars = (self.opts.columns.max(0) as f64 * part).floor();
-            let chars = if chars.is_finite() && chars > 0.0 {
-                (chars as usize).min(crate::MAX_RUN)
-            } else {
-                0
-            };
-            chars.saturating_sub(3)
-        };
-        let mut widths = vec![1usize; columns];
-        if relative {
-            for (slot, w) in widths.iter_mut().zip(&g.widths) {
-                *slot = room(*w).max(1);
-            }
-        }
-        for (placed, doc) in l.cells.iter().zip(&docs) {
-            if placed.cols == 1 {
-                let width = cell_width(doc, relative.then_some(1));
-                widths[placed.col] = widths[placed.col].max(width);
-            }
-        }
-        for (placed, doc) in l.cells.iter().zip(&docs) {
-            if placed.cols > 1 {
-                let span = placed.col..placed.col + placed.cols;
-                let width = if relative {
-                    room(g.widths[span.clone()].iter().sum())
-                } else {
-                    cell_width(doc, None)
-                };
-                // Pandoc gives each spanned column the quotient plus the remainder.
-                let share = width / placed.cols + width % placed.cols;
-                for slot in &mut widths[span] {
-                    *slot = (*slot).max(share);
-                }
-            }
-        }
-        if !relative {
-            widths = fit_grid_widths(&widths, crate::run_length(self.opts.columns));
-            for (placed, doc) in l.cells.iter().zip(&docs) {
-                let width = cell_width(doc, Some(1));
-                let share = width / placed.cols + width % placed.cols;
-                for slot in &mut widths[placed.col..placed.col + placed.cols] {
-                    *slot = (*slot).max(share);
-                }
-            }
-        }
-        let span_width =
-            |p: &Placed<'_>| widths[p.col..p.col + p.cols].iter().sum::<usize>() + 3 * (p.cols - 1);
-        let texts: Vec<Vec<Text>> = l
-            .cells
-            .iter()
-            .zip(&docs)
-            .map(|(p, doc)| doc_lines(doc, Some(span_width(p))))
-            .collect();
-        let rows = l.owner.len();
-        // The text of a cell that spans rows stays in its first row.
-        let mut heights = vec![1usize; rows];
-        for (p, text) in l.cells.iter().zip(&texts) {
-            heights[p.row] = heights[p.row].max(text.len());
-        }
-        // The top line of a table without a head has a `+` where some row
-        // has a cell edge. Part `k` between two `+` takes the alignment of
-        // column `k`.
-        let top_edge: Vec<bool> = (0..columns)
-            .map(|c| c > 0 && (0..rows).any(|r| !l.same(r, c - 1, c)))
-            .collect();
-        // The number of edges in `top_edge[..=c]`, the part of column `c`.
-        let parts: Vec<usize> = top_edge
-            .iter()
-            .scan(0, |count, edge| {
-                *count += usize::from(*edge);
-                Some(*count)
-            })
-            .collect();
-        let mut tops = Vec::with_capacity(rows);
-        let mut y = 0;
-        for height in &heights {
-            tops.push(y);
-            y += height + 1;
-        }
-        // One line of the table at height `y`: the columns where `text` holds
-        // show the text of a cell, the others a border of `fill`.
-        let line = |y: usize,
-                    above: Option<usize>,
-                    below: Option<usize>,
-                    fill: char,
-                    aligns: bool|
-         -> Text {
-            let owner = |c: usize| {
-                let row = above.or(below)?;
-                let index = l.owner[row][c]?;
-                let shown = match (above, below) {
-                    (Some(a), Some(b)) => l.owner[a][c] == l.owner[b][c],
-                    _ => above == below,
-                };
-                shown.then_some(index)
-            };
-            let vertical = |row: Option<usize>, c: usize| row.is_some_and(|r| !l.same(r, c - 1, c));
-            let mut out = Text::new();
-            let mut c = 0;
-            while c < columns {
-                let shown = owner(c);
-                let junction = |filled: bool| {
-                    if c == 0 {
-                        if filled { '+' } else { '|' }
-                    } else {
-                        let before = owner(c - 1);
-                        let edge = match (aligns, above) {
-                            (true, _) if fill == '=' => true,
-                            (true, None) => top_edge[c],
-                            _ => vertical(above, c) || vertical(below, c),
-                        };
-                        match (before, shown) {
-                            (Some(_), Some(_)) => '|',
-                            (None, None) if !edge => fill,
-                            _ => '+',
-                        }
-                    }
-                };
-                match shown {
-                    Some(index) => {
-                        let p = &l.cells[index];
-                        out.push(junction(false));
-                        let text = texts[index].get(y - tops[p.row]).map_or("", String::as_str);
-                        out.push(' ');
-                        out.push_str(&pad_text(Alignment::AlignLeft, span_width(p), text));
-                        out.push(' ');
-                        c = p.col + p.cols;
-                    }
-                    None => {
-                        out.push(if fill == ' ' { '|' } else { junction(true) });
-                        let (column, starts, ends) = if aligns && above.is_none() {
-                            let part = parts[c];
-                            let ends = top_edge.get(c + 1).is_none_or(|e| *e);
-                            (part, c == 0 || top_edge[c], ends)
-                        } else {
-                            (c, true, true)
-                        };
-                        let align = g
-                            .aligns
-                            .get(column)
-                            .copied()
-                            .unwrap_or(Alignment::AlignDefault);
-                        let (left, right) = match (aligns, align) {
-                            (true, Alignment::AlignLeft) => (':', fill),
-                            (true, Alignment::AlignRight) => (fill, ':'),
-                            (true, Alignment::AlignCenter) => (':', ':'),
-                            _ => (fill, fill),
-                        };
-                        out.push(if starts { left } else { fill });
-                        out.extend(std::iter::repeat_n(fill, widths[c]));
-                        out.push(if ends { right } else { fill });
-                        c += 1;
-                    }
-                }
-            }
-            out.push(if fill == ' ' || owner(columns - 1).is_some() {
-                '|'
-            } else {
-                '+'
-            });
-            out
-        };
-        let fill_after = |r: usize| {
-            let foot_edge = l.foot_start.is_some_and(|f| r + 1 == f || r + 1 == rows);
-            if r + 1 == l.head_rows || foot_edge {
-                '='
-            } else {
-                '-'
-            }
-        };
-        let mut lines = vec![line(
-            0,
-            None,
-            (rows > 0).then_some(0),
-            '-',
-            l.head_rows == 0,
-        )];
-        for r in 0..rows {
-            for k in 0..heights[r] {
-                lines.push(line(tops[r] + k, Some(r), Some(r), ' ', false));
-            }
-            let below = (r + 1 < rows).then_some(r + 1);
-            let aligns = r + 1 == l.head_rows;
-            lines.push(line(
-                tops[r] + heights[r],
-                Some(r),
-                below,
-                fill_after(r),
-                aligns,
-            ));
-        }
-        Ok(lines)
+        grid_span_lines(
+            g,
+            l,
+            &docs,
+            crate::run_length(self.opts.columns),
+            true,
+            usize::MAX,
+        )
     }
 
     fn grid_lines(&mut self, g: &Grid<'_>) -> Result<Vec<Text>> {

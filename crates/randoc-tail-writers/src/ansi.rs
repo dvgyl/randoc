@@ -3,10 +3,10 @@ use std::cell::RefCell;
 use std::fmt::Write;
 
 use randoc_ast::{
-    Block, ColWidth, Inline, ListAttributes, ListNumberDelim, ListNumberStyle, MathType, Pandoc,
-    QuoteType, Table,
+    Alignment, Block, ColWidth, Inline, ListAttributes, ListNumberDelim, ListNumberStyle, MathType,
+    Pandoc, QuoteType, Table,
 };
-use randoc_core::shared::{meta_context::meta_to_context, stringify};
+use randoc_core::shared::meta_context::meta_to_context;
 use randoc_core::{Context, Error, LogMessage, Result, WrapOption, WriterOptions};
 use randoc_layout::{
     Color, Doc, bg, blankline, bold, cblock, chomp, cr, fg, hang, hcat, hsep, italic, lblock, link,
@@ -43,7 +43,15 @@ pub(super) fn write(
         Default::default()
     };
     let mut render = renderer.borrow_mut();
-    let mut body = chomp(render.blocks(&doc.blocks));
+    let sections;
+    let blocks = if options.number_sections {
+        sections =
+            randoc_core::shared::sections::make_sections(doc.blocks.clone(), true, None, depth)?;
+        &sections
+    } else {
+        &doc.blocks
+    };
+    let mut body = chomp(render.blocks(blocks));
     let has_notes = !render.notes.is_empty();
     if has_notes {
         body += blankline() + render.separator() + blankline();
@@ -212,14 +220,21 @@ impl Renderer<'_> {
                     lines.iter().map(|line| self.inlines(line) + literal("\n")),
                 )) + blankline()
             }
-            Block::Header(level, _, items) => {
+            Block::Header(level, attr, items) => {
                 let title = self.inlines(items);
-                let title = match level {
-                    1 => bold(title.map_text(&str::to_uppercase)),
-                    2 => bold(title),
-                    _ => italic(title),
+                let style = if *level <= 2 { bold } else { italic };
+                let title = if *level == 1 {
+                    title.map_text(&str::to_uppercase)
+                } else {
+                    title
                 };
-                title + blankline()
+                let number = if self.options.number_sections && !attr.has_class("unnumbered") {
+                    attr.get("number")
+                        .map_or_else(Doc::default, |number| style(text(number)) + space())
+                } else {
+                    Doc::default()
+                };
+                number + style(title) + blankline()
             }
             Block::CodeBlock(attr, code) => self.code_block(attr, code),
             Block::BlockQuote(blocks) => prefixed("│ ", chomp(self.blocks(blocks))) + blankline(),
@@ -405,7 +420,11 @@ impl Renderer<'_> {
                     if !body.is_empty() {
                         last_text = rendered.len() + 1;
                     }
-                    rendered.push(lblock(cell_width, body));
+                    rendered.push(match cell.align {
+                        Alignment::AlignRight => rblock(cell_width, body),
+                        Alignment::AlignCenter => cblock(cell_width, body),
+                        _ => lblock(cell_width, body),
+                    });
                     column = end;
                 } else {
                     rendered.push(lblock(width, Doc::default()));
@@ -448,8 +467,17 @@ impl Renderer<'_> {
             Inline::Emph(items) => italic(self.inlines(items)),
             Inline::Underline(items) => underlined(self.inlines(items)),
             Inline::Strikeout(items) => strikeout(self.inlines(items)),
-            Inline::Subscript(items) => text(script(&stringify(items), false)),
-            Inline::Superscript(items) => text(script(&stringify(items), true)),
+            Inline::Subscript(items) | Inline::Superscript(items) => {
+                let superscript = matches!(item, Inline::Superscript(_));
+                let translated: Option<String> = items
+                    .iter()
+                    .map(|item| match item {
+                        Inline::Str(value) => script(value, superscript),
+                        _ => None,
+                    })
+                    .collect();
+                translated.map_or_else(|| text("(") + self.inlines(items) + text(")"), text)
+            }
             Inline::SmallCaps(items) | Inline::Span(_, items) | Inline::Cite(_, items) => {
                 self.inlines(items)
             }
@@ -483,7 +511,12 @@ impl Renderer<'_> {
                             tex.clone(),
                             error.detail(tex),
                         ));
-                        text(format!("${tex}$"))
+                        let delimiter = if *kind == MathType::DisplayMath {
+                            "$$"
+                        } else {
+                            "$"
+                        };
+                        return text(format!("{delimiter}{tex}{delimiter}"));
                     }
                 };
                 if *kind == MathType::DisplayMath {
@@ -499,7 +532,8 @@ impl Renderer<'_> {
                 if let Some(slot) = self.notes.get_mut(index) {
                     *slot = note;
                 }
-                text(script(&(index + 1).to_string(), true))
+                let label = (index + 1).to_string();
+                text(script(&label, true).unwrap_or(label))
             }
             Inline::RawInline(format, raw) if format == "ansi" => literal(raw),
             Inline::RawInline(..) => Doc::default(),
@@ -507,12 +541,12 @@ impl Renderer<'_> {
     }
 }
 
-fn script(value: &str, superscript: bool) -> String {
-    const SOURCE: &str = "0123456789+-=()aehijklmnoprstuvx";
+fn script(value: &str, superscript: bool) -> Option<String> {
+    const SOURCE: &str = "0123456789+-=()−";
     let translated = if superscript {
-        "⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ᵃᵉʰⁱʲᵏˡᵐⁿᵒᵖʳˢᵗᵘᵛˣ"
+        "⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾⁻"
     } else {
-        "₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎ₐₑₕᵢⱼₖₗₘₙₒₚᵣₛₜᵤᵥₓ"
+        "₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎₋"
     };
     value
         .chars()
@@ -521,7 +555,6 @@ fn script(value: &str, superscript: bool) -> String {
                 .chars()
                 .position(|s| s == c)
                 .and_then(|index| translated.chars().nth(index))
-                .unwrap_or(c)
         })
         .collect()
 }

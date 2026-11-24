@@ -55,9 +55,10 @@ impl Writer<'_> {
                         | Block::OrderedList(..)
                         | Block::RawBlock(..)
                         | Block::DefinitionList(_)
-                        | Block::CodeBlock(..)
                         | Block::Table(_)
-                ) {
+                )
+                && !matches!(block, Block::CodeBlock(attr, _) if code_language(attr).is_some())
+            {
                 out.above(doc)
             } else {
                 out.above_blank(doc)
@@ -171,12 +172,7 @@ impl Writer<'_> {
         {
             return prefixed("> ", literal(body));
         }
-        let header = if let Some(lang) = attr.classes.iter().find(|class| {
-            !matches!(
-                class.as_str(),
-                "numberLines" | "number-lines" | "number" | "literate"
-            )
-        }) {
+        let header = if let Some(lang) = code_language(attr) {
             let header = literal(format!(".. code:: {lang}"));
             if attr.has_class("numberLines") {
                 let option = attr.get("startFrom").map_or_else(
@@ -285,6 +281,16 @@ impl Writer<'_> {
         let caption = self.blocks(&caption.long, depth)?;
         Ok(literal(".. container:: float").above_blank(nest(3, body.above_blank(caption))))
     }
+}
+
+/// Returns the language of an RST code directive.
+pub(super) fn code_language(attr: &Attr) -> Option<&str> {
+    attr.classes.iter().map(String::as_str).find(|class| {
+        !matches!(
+            *class,
+            "numberLines" | "number-lines" | "number" | "literate"
+        )
+    })
 }
 
 fn takes_indent(block: &Block) -> bool {

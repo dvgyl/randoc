@@ -1018,3 +1018,51 @@ fn writer_baseline_harness_units_match_oracle() {
     assert_eq!(total, 8);
     assert!(differences.is_empty(), "{}", differences.join("\n"));
 }
+
+#[test]
+#[ignore = "Requires Pandoc 3.13."]
+fn bibliography_inline_runs_match_oracle() {
+    let scratch = Scratch::new("bibliography-inlines");
+    let source = r##"
+[ Div ("refs",[],[])
+  [ Div ("ref-one",["csl-entry"],[])
+    [ Para
+      [ Span ("",["csl-left-margin"],[]) [Str "1.", Space]
+      , Span ("",["csl-right-inline"],[])
+        [Strong [Emph [Emph [Str "Title"]]], Space, Str "pages", Space, Str "101～129."]
+      , Space, Link ("",[],[]) [] ("https://example.org","")
+      , Space, Link ("",[],[]) [Str ""] ("#ref-one","")
+      ]
+    ]
+  ]
+]
+"##;
+    let input = oracle(
+        &scratch.0,
+        &["-f", "native", "-t", "json"],
+        source.as_bytes(),
+    );
+    let expected = oracle(&scratch.0, &["-f", "json", "-t", "docx"], &input);
+    let actual = writer(
+        &ast(&input),
+        &WriterOptions::default(),
+        &mut Context::pure(),
+    );
+    let body = |bytes: &[u8]| {
+        let mut archive = Archive::open(bytes, ArchiveLimits::default()).unwrap();
+        let xml = archive.read("word/document.xml").unwrap().unwrap();
+        let xml = std::str::from_utf8(&xml).unwrap();
+        xml.split_once("<w:body>")
+            .unwrap()
+            .1
+            .split_once("<w:sectPr>")
+            .unwrap()
+            .0
+            .to_owned()
+    };
+    assert_eq!(body(&actual), body(&expected));
+    let differences = compare_entries("bibliography", &actual, &expected, |name| {
+        name != "word/_rels/document.xml.rels"
+    });
+    assert!(differences.is_empty(), "{}", differences.join("\n"));
+}

@@ -461,6 +461,9 @@ fn check(case: &Json) -> Option<String> {
     };
     let block_text = format!("---\n{text}");
     let ours = parse(if file { text } else { &block_text }, LIMITS);
+    let starts_second_document = !file
+        && text.lines().any(|line| line.starts_with("---"))
+        && randoc_yaml::parse_all(&block_text, LIMITS).is_ok_and(|docs| docs.len() > 1);
     if !file && text.split('\n').next().is_some_and(|l| l.trim().is_empty()) {
         // The caller rule: a metadata block cannot start with a blank line.
         let blocks = case["ok"]["blocks"].as_u64().unwrap_or(0);
@@ -482,14 +485,14 @@ fn check(case: &Json) -> Option<String> {
     let blocks = ok["blocks"].as_u64().unwrap_or(0);
     let meta = &ok["meta"];
     let empty = meta.as_object().is_some_and(serde_json::Map::is_empty);
-    if !file && text.split('\n').any(is_document_marker) {
-        // The caller rule: such a line can end the metadata block.
-        return None;
-    }
     if !file && text.split('\n').next().is_some_and(|l| l.trim().is_empty()) {
         // The caller rule: a metadata block cannot start with a blank line.
         return (!empty || blocks == 0)
             .then(|| format!("expected {ok}, a text that is not a block"));
+    }
+    if starts_second_document {
+        // The Markdown reader treats a YAML block with two documents as text.
+        return (!empty || blocks == 0).then(|| format!("expected {ok}, got two YAML documents"));
     }
     if matches!(node.value(), Ok(Value::Null)) {
         return (!empty || blocks > 0).then(|| format!("expected {ok}\ngot null"));
@@ -570,13 +573,6 @@ fn same_digits(oracle: &str, ours: &str) -> bool {
         Some(v) => decimal(ours) == Some(v),
         None => oracle == ours,
     }
-}
-
-/// `true` when the line is a YAML document marker: `---` or `...` with a
-/// space, a tab or nothing after it. A key such as `---:` is not one.
-fn is_document_marker(line: &str) -> bool {
-    (line.starts_with("---") || line.starts_with("..."))
-        && matches!(line.as_bytes().get(3), None | Some(b' ' | b'\t' | b'\r'))
 }
 
 /// The sign, the significant digits and the exponent of a decimal number

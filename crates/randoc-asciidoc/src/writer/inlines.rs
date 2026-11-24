@@ -1,17 +1,35 @@
 use randoc_ast::{Attr, Block, Inline, MathType, QuoteType, Target};
 use randoc_core::WrapOption;
-use randoc_layout::{Doc, cr, empty, hcat, literal, space, text};
+use randoc_layout::{Doc, chomp, cr, empty, hcat, literal, space, text};
 
 use super::{Dialect, Renderer};
 
 impl Renderer<'_> {
     pub(super) fn inlines(&self, inlines: &[Inline], in_link: bool, in_table: bool) -> Doc {
         hcat(inlines.iter().enumerate().map(|(index, inline)| {
-            let adjacent = [index.checked_sub(1), Some(index + 1)]
-                .into_iter().flatten().filter_map(|i| inlines.get(i))
-                .any(|inline| matches!(inline, Inline::Note(_)) || matches!(inline, Inline::Str(text) if text.chars().next().is_some_and(char::is_alphanumeric)));
+            let before = index.checked_sub(1).and_then(|i| inlines.get(i));
+            let after = inlines.get(index + 1);
+            let adjacent = before.is_some_and(|item| joins_markup(item, true))
+                || after.is_some_and(|item| joins_markup(item, false));
             self.inline(inline, in_link, in_table, adjacent)
         }))
+    }
+
+    /// Places display math on separate lines within a paragraph.
+    pub(super) fn paragraph(&self, mut inlines: &[Inline], in_table: bool) -> Doc {
+        let mut out = empty();
+        while let Some(index) = inlines
+            .iter()
+            .position(|node| matches!(node, Inline::Math(MathType::DisplayMath, _)))
+        {
+            out = out.above(chomp(self.inlines(&inlines[..index], false, in_table)));
+            out = out.above_blank(self.inlines(&inlines[index..=index], false, in_table));
+            inlines = &inlines[index + 1..];
+            while matches!(inlines.first(), Some(Inline::Space | Inline::SoftBreak)) {
+                inlines = &inlines[1..];
+            }
+        }
+        out.above(self.inlines(inlines, false, in_table))
     }
 
     fn inline(&self, inline: &Inline, in_link: bool, in_table: bool, adjacent: bool) -> Doc {
@@ -46,7 +64,7 @@ impl Renderer<'_> {
                 wrap(mark, body, mark)
             }
             Inline::Strikeout(body) => wrap("[line-through]#", body, "#"),
-            Inline::Underline(body) => wrap("[underline]#", body, "#"),
+            Inline::Underline(body) => wrap("[.underline]#", body, "#"),
             Inline::Superscript(body) | Inline::Subscript(body) => {
                 let mark = if matches!(inline, Inline::Superscript(_)) {
                     "^"
@@ -71,13 +89,12 @@ impl Renderer<'_> {
                 wrap(open, body, close)
             }
             Inline::Code(_, code) => {
-                let mark = if adjacent { "``" } else { "`" };
                 let value = if self.dialect == Dialect::Legacy {
-                    code.clone()
+                    code.replace('`', "\\'")
                 } else {
                     escape(code, false, in_table)
                 };
-                literal(format!("{mark}{value}{mark}"))
+                literal(format!("`{value}`"))
             }
             Inline::Math(MathType::InlineMath, value) if self.dialect == Dialect::Legacy => {
                 literal(format!("latexmath:[${value}$]"))
@@ -117,7 +134,11 @@ impl Renderer<'_> {
                 }
                 styles.extend(attr.classes.iter().map(|class| format!(".{class}")));
                 let mark = if adjacent { "##" } else { "#" };
-                wrap(&format!("[{}]{mark}", styles.join(" ")), body, mark)
+                if attr.id.is_empty() && attr.classes == ["mark"] {
+                    wrap(mark, body, mark)
+                } else {
+                    wrap(&format!("[{}]{mark}", styles.join(" ")), body, mark)
+                }
             }
         }
     }
@@ -167,17 +188,12 @@ impl Renderer<'_> {
         if !target.title.is_empty() {
             options.push(format!("title=\"{}\"", target.title.replace('"', "&quot;")));
         }
-        for (key, value) in &attr.attributes {
-            if matches!(key.as_str(), "width" | "height") {
-                if let Some(value) = value.strip_suffix("px") {
-                    options.push(format!("{key}={value}"));
-                } else if let Some(value) = value.strip_suffix('%') {
-                    if let Ok(value) = value.parse::<f64>() {
-                        options.push(format!("scaled{key}={value:.1}%"));
-                    }
-                } else if value.bytes().all(|ch| ch.is_ascii_digit()) {
-                    options.push(format!("{key}={value}"));
-                }
+        for key in ["width", "height"] {
+            if let Some(value) = attr
+                .get(key)
+                .and_then(|value| dimension(key, value, self.options.dpi))
+            {
+                options.push(value);
             }
         }
         let alt = self.inlines(body, in_link, in_table);
@@ -187,6 +203,52 @@ impl Renderer<'_> {
             format!(",{}", options.join(","))
         };
         literal(format!("{prefix}{}[", target.url)) + alt + literal(format!("{options}]"))
+    }
+}
+
+fn dimension(key: &str, value: &str, dpi: i64) -> Option<String> {
+    if !value.as_bytes().first().is_some_and(u8::is_ascii_digit) {
+        return None;
+    }
+    let boundary = value
+        .find(|ch: char| !ch.is_ascii_digit() && ch != '.')
+        .unwrap_or(value.len());
+    let (number, unit) = value.split_at(boundary);
+    let number = number
+        .parse::<f64>()
+        .ok()
+        .filter(|value| value.is_finite())?;
+    let pixels = match unit.trim_start_matches(' ') {
+        "%" => return Some(format!("scaled{key}={number:.1}%")),
+        "" | "px" => number,
+        "in" | "inch" => number * dpi as f64,
+        "cm" => number * 0.393_700_787 * dpi as f64,
+        "mm" => number * 0.039_370_078_7 * dpi as f64,
+        "pt" => number * (dpi as f64 / 72.0),
+        "pc" => number * (dpi as f64 / 6.0),
+        "em" => number * (16.5 / 96.0) * dpi as f64,
+        _ => return None,
+    };
+    Some(format!("{key}={}", pixels as i64))
+}
+
+fn joins_markup(inline: &Inline, before: bool) -> bool {
+    match inline {
+        Inline::Str(text) => {
+            let mut chars = text.chars();
+            let edge = if before {
+                chars.next_back()
+            } else {
+                chars.next()
+            };
+            edge.is_some_and(char::is_alphanumeric)
+        }
+        Inline::Link(_, body, target) if before => {
+            matches!(body.as_slice(), [Inline::Str(label)]
+                if label == target.url.strip_prefix("mailto:").unwrap_or(&target.url))
+        }
+        Inline::Space | Inline::SoftBreak | Inline::LineBreak => false,
+        _ => true,
     }
 }
 

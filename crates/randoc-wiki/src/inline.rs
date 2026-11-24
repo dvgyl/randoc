@@ -112,19 +112,12 @@ impl Parser<'_> {
             };
             if let Some((next, item)) = parsed {
                 if let Some(Inline::Str(text)) = item.as_ref()
-                    && tail.starts_with("<nowiki>")
+                    && scan
+                        .tags
+                        .get(&at)
+                        .is_some_and(|tag| tag.name.eq_ignore_ascii_case("nowiki"))
                 {
-                    for piece in text.split_inclusive([' ', '\n', '\r', '\t']) {
-                        let word = piece.trim_end_matches([' ', '\n', '\r', '\t']);
-                        result.word.push_str(word);
-                        if word.len() != piece.len() {
-                            result.space(if piece.ends_with('\n') {
-                                Inline::SoftBreak
-                            } else {
-                                Inline::Space
-                            });
-                        }
-                    }
+                    result.literal_words(text);
                 } else if matches!(item, Some(Inline::Space)) {
                     result.space(Inline::Space);
                 } else if let Some(item) = item {
@@ -135,6 +128,13 @@ impl Parser<'_> {
                 }
                 at = next;
                 if matches!(result.items.last(), Some(Inline::LineBreak)) {
+                    if self.wiki == Wiki::Jira
+                        && scan.text[at..end]
+                            .trim_start_matches([' ', '\t', '\r'])
+                            .starts_with('\n')
+                    {
+                        result.push(Inline::LineBreak);
+                    }
                     at += scan.text[at..end]
                         .bytes()
                         .take_while(u8::is_ascii_whitespace)
@@ -150,9 +150,13 @@ impl Parser<'_> {
                     close + mark.len()
                 };
                 let item = if mark == "%%" {
-                    result.word.push_str(&scan.text[body..close]);
+                    result.literal_words(&scan.text[body..close]);
                     at = close_end;
                     continue;
+                } else if mark == "??" {
+                    result.push(Inline::Str("—".into()));
+                    result.space(Inline::Space);
+                    Inline::Emph(self.inline_range(scan, body, close, depth + 1, delimiters)?)
                 } else if mark.starts_with('$') {
                     Inline::Math(
                         if mark == "$$" {
@@ -287,7 +291,9 @@ impl Parser<'_> {
             if self.wiki == Wiki::Media && tag.name.eq_ignore_ascii_case("ref") {
                 return self.reference(scan, region, depth);
             }
-            if let Some(name) = container_tag(tag.name) {
+            if let Some(name) = container_tag(tag.name)
+                && !(self.wiki == Wiki::Media && matches!(name, "s" | "u"))
+            {
                 return self.tag_container(scan, region, name, depth);
             }
         }
@@ -356,6 +362,7 @@ impl Parser<'_> {
         let region = scan.region(at, end);
         if tail.starts_with("\\\\")
             && self.wiki != Wiki::Media
+            && (self.wiki != Wiki::Jira || !tail[2..].trim().is_empty())
             && (self.wiki != Wiki::Doku
                 || tail[2..].starts_with(char::is_whitespace)
                 || tail.len() == 2)
@@ -366,7 +373,27 @@ impl Parser<'_> {
             && tail.starts_with("__")
             && let Some(mark) = behavior_switch(tail)
         {
+            self.notoc |= mark == "__NOTOC__";
             return Ok(Some((at + mark.len(), None)));
+        }
+        if self.wiki == Wiki::Doku
+            && let Some(address) = angle_email(tail)
+        {
+            return Ok(Some((
+                at + address.len() + 2,
+                Some(link(
+                    Attr::default(),
+                    vec![Inline::Str(address.into())],
+                    &format!("mailto:{address}"),
+                    "",
+                )),
+            )));
+        }
+        if self.wiki == Wiki::Creole
+            && tail.starts_with("<<<")
+            && let Some(r) = region
+        {
+            return Ok(Some((r.end, None)));
         }
         if matches!(self.wiki, Wiki::Media | Wiki::Doku) {
             if tail.starts_with("<!--")
@@ -394,14 +421,7 @@ impl Parser<'_> {
                     }
                     Wiki::Doku => return Ok(None),
                     Wiki::Creole if r.body == at + 3 => Inline::Code(Attr::default(), inner.into()),
-                    Wiki::Creole => {
-                        let (path, label) = inner.split_once('|').unwrap_or((inner, ""));
-                        Inline::Image(
-                            Attr::default(),
-                            vec![Inline::Str(label.into())],
-                            Target::new(path, ""),
-                        )
-                    }
+                    Wiki::Creole => creole_image(inner),
                     Wiki::Jira => Inline::Code(Attr::default(), decode_entities(inner)),
                 };
                 return Ok(Some((r.end, Some(node))));
@@ -522,7 +542,7 @@ impl Parser<'_> {
         if self.wiki == Wiki::Media && tag.close && name == "ref" {
             return Err(self.ref_error(scan.text, tag.end));
         }
-        if !tag.close {
+        if !(self.wiki == Wiki::Media && matches!(name.as_str(), "s" | "u")) && !tag.close {
             match name.as_str() {
                 "br" => return Ok(Some((tag.end, Some(Inline::LineBreak)))),
                 "nowiki" if tag.single => return Ok(Some((tag.end, None))),
@@ -541,6 +561,9 @@ impl Parser<'_> {
                             body.into()
                         };
                         Inline::Str(content)
+                    }
+                    "php" if self.wiki == Wiki::Doku => {
+                        Inline::RawInline(Format("html".into()), php(body))
                     }
                     "html" if self.wiki == Wiki::Doku => {
                         Inline::RawInline(Format("html".into()), body.into())
@@ -577,6 +600,8 @@ impl Parser<'_> {
             && matches!(
                 name.as_str(),
                 "b" | "i"
+                    | "s"
+                    | "u"
                     | "em"
                     | "strong"
                     | "span"
@@ -776,6 +801,7 @@ impl Parser<'_> {
                 return Ok(None);
             }
             let label = if label == target {
+                let label = label.strip_prefix("mailto:").unwrap_or(label);
                 vec![Inline::Str(label.trim_start_matches('^').into())]
             } else {
                 self.inlines(scan, r.body, r.body + label.len(), depth)?
@@ -829,7 +855,8 @@ impl Parser<'_> {
             attr.attributes.push(("query".into(), format!("?{query}")));
         }
         let caption = if label.is_empty() {
-            vec![]
+            let name = path.rsplit([':', '/']).next().unwrap_or(path);
+            vec![Inline::Str(name.into())]
         } else {
             self.inlines(scan, r.close - label.len(), r.close, depth)?
         };
@@ -844,15 +871,47 @@ impl Parser<'_> {
 fn creole_link(scan: &Scan<'_>, r: Region) -> Parsed {
     let inner = &scan.text[r.body..r.close];
     let (target, label) = inner.split_once('|').unwrap_or((inner, inner));
-    Some((
-        r.end,
-        Some(link(
-            Attr::default(),
-            vec![Inline::Str(label.into())],
-            target,
-            "",
-        )),
-    ))
+    let label_start = r.close - label.len();
+    let item = if label.starts_with("{{")
+        && !label.starts_with("{{{")
+        && let Some(image) = scan
+            .region(label_start, r.close)
+            .filter(|image| image.end == r.close)
+    {
+        creole_image(&scan.text[image.body..image.close])
+    } else {
+        Inline::Str(label.into())
+    };
+    Some((r.end, Some(link(Attr::default(), vec![item], target, ""))))
+}
+
+fn creole_image(text: &str) -> Inline {
+    let (path, label) = text.split_once('|').unwrap_or((text, ""));
+    Inline::Image(
+        Attr::default(),
+        vec![Inline::Str(label.into())],
+        Target::new(path, ""),
+    )
+}
+
+fn angle_email(text: &str) -> Option<&str> {
+    let text = text.strip_prefix('<')?;
+    let end = text.find(|c: char| c.is_whitespace() || matches!(c, '<' | '>' | '|' | ':'))?;
+    if text.as_bytes()[end] != b'>' {
+        return None;
+    }
+    let address = &text[..end];
+    let (local, domain) = address.split_once('@')?;
+    (local.split('.').all(|part| {
+        !part.is_empty()
+            && part
+                .chars()
+                .all(|c| c.is_alphanumeric() || "!#$%&'*+-/=?^_`{}~".contains(c))
+    }) && domain.split('.').all(|part| {
+        part.ends_with(char::is_alphanumeric)
+            && part.chars().all(|c| c.is_alphanumeric() || c == '-')
+    }))
+    .then_some(address)
 }
 
 fn container_tag(name: &str) -> Option<&'static str> {
@@ -937,6 +996,11 @@ pub(crate) fn code_runs(items: Vec<Inline>, attr: &Attr) -> Vec<Inline> {
         result.push(Inline::Code(attr.clone(), run));
     }
     result
+}
+
+/// Wraps DokuWiki PHP content for HTML output.
+pub(super) fn php(body: &str) -> String {
+    format!("<?php {body} ?>")
 }
 
 fn doku_target(path: &str) -> String {
@@ -1134,6 +1198,20 @@ impl InlineBuffer {
         }
     }
 
+    fn literal_words(&mut self, text: &str) {
+        for piece in text.split_inclusive([' ', '\n', '\r', '\t']) {
+            let word = piece.trim_end_matches([' ', '\n', '\r', '\t']);
+            self.word.push_str(word);
+            if word.len() != piece.len() {
+                self.space(if piece.ends_with('\n') {
+                    Inline::SoftBreak
+                } else {
+                    Inline::Space
+                });
+            }
+        }
+    }
+
     fn push(&mut self, item: Inline) {
         if let Inline::Str(text) = item {
             self.word.push_str(&text);
@@ -1198,12 +1276,15 @@ impl Delimiters {
                 at += url_end(tail);
                 continue;
             }
+            if wiki == Wiki::Doku && tail.starts_with('\n') {
+                open.remove("%%");
+            }
             let marks: &[&str] = match wiki {
                 Wiki::Media => &[],
                 Wiki::Doku => &["**", "//", "__", "''", "%%"],
                 Wiki::Creole => &["**", "//"],
                 Wiki::Jira => &[
-                    "{*}", "{_}", "{-}", "{+}", "{^}", "{~}", "*", "_", "-", "+", "^", "~",
+                    "{*}", "{_}", "{-}", "{+}", "{^}", "{~}", "??", "*", "_", "-", "+", "^", "~",
                 ],
             };
             let mark = marks
@@ -1221,12 +1302,13 @@ impl Delimiters {
             if let Some(mark) = mark {
                 let after = &tail[mark.len()..];
                 let before = &scan.text[start..at];
-                let plain_jira = wiki == Wiki::Jira && mark.len() == 1;
-                let can_open = !plain_jira
-                    || !before.ends_with(char::is_alphanumeric)
+                let word_bounds = wiki == Wiki::Jira && (mark.len() == 1 || mark == "??")
+                    || wiki == Wiki::Doku && mark == "%%";
+                let can_open = !word_bounds
+                    || (wiki == Wiki::Doku || !before.ends_with(char::is_alphanumeric))
                         && !after.starts_with(char::is_whitespace);
-                let can_close = !plain_jira
-                    || !after.starts_with(char::is_alphanumeric)
+                let can_close = !word_bounds
+                    || (wiki == Wiki::Doku || !after.starts_with(char::is_alphanumeric))
                         && !before.ends_with(char::is_whitespace);
                 if can_close && let Some(first) = open.remove(mark) {
                     if first + mark.len() < at {

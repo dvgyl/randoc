@@ -218,3 +218,31 @@ fn four_space_rule_continues_wide_ordered_list_at_four_spaces() {
     assert_eq!(doc2.blocks.len(), 2);
     assert!(matches!(doc2.blocks[1], Block::CodeBlock(_, _)));
 }
+
+#[test]
+fn wave10_reader_probes_match_the_oracle() {
+    for line in include_str!("../tests/wave10_cases.jsonl").lines() {
+        let case: serde_json::Value = serde_json::from_str(line).unwrap();
+        let (json, messages) = read(&case);
+        assert_eq!(json, case["json"].as_str().unwrap(), "{}", case["id"]);
+        if let Some(expected) = case.get("messages") {
+            assert_eq!(serde_json::json!(messages), *expected, "{}", case["id"]);
+        }
+    }
+}
+
+#[test]
+fn yaml_metadata_reports_a_control_character() {
+    let spec = FormatSpec::parse("markdown");
+    let mut options = ReaderOptions::default();
+    options.extensions = spec.extensions().unwrap();
+    let error = crate::read_markdown(
+        "---\ntitle: \u{b} t \u{b}\n---\n",
+        "",
+        &options,
+        &mut Context::pure(),
+    )
+    .unwrap_err();
+    assert!(error.to_string().contains(":2:8: invalid character U+000B"));
+    assert!(error.to_string().contains("2 | title: ␋ t ␋"));
+}

@@ -922,3 +922,184 @@ fn docbook_gives_the_title_only_to_inline_images() {
             .contains("<objectinfo>")
     );
 }
+
+#[test]
+fn prefixes_ids_and_numbers_jats_sections() {
+    let header = |level, id: &str, classes| {
+        Block::Header(
+            level,
+            Attr::new(id, classes, Vec::new()),
+            vec![Inline::Str(id.into())],
+        )
+    };
+    let doc = Pandoc {
+        blocks: vec![
+            header(1, "a", vec![]),
+            header(2, "b", vec![]),
+            Block::Para(vec![Inline::Link(
+                Attr::default(),
+                vec![Inline::Str("Link".into())],
+                Target::new("#a", ""),
+            )]),
+            header(1, "c", vec!["unnumbered".into()]),
+            header(1, "d", vec![]),
+            header(3, "e", vec![]),
+        ],
+        ..Pandoc::default()
+    };
+    let mut options = WriterOptions::default();
+    options.identifier_prefix = "p-".into();
+    options.number_sections = true;
+    for dialect in [
+        "jats",
+        "jats_archiving",
+        "jats_publishing",
+        "jats_articleauthoring",
+    ] {
+        let output = write_with(dialect, &doc, &options);
+        for (id, number) in [("a", "1"), ("b", "1.1"), ("d", "2"), ("e", "2.0.1")] {
+            assert!(
+                output
+                    .split_once(&format!("id=\"p-{id}\">"))
+                    .unwrap()
+                    .1
+                    .trim_start()
+                    .starts_with(&format!("<label>{number}</label>")),
+                "{dialect}\n{output}",
+            );
+        }
+        assert!(output.contains("<sec id=\"p-c\">\n  <title>c"));
+        assert!(output.contains("rid=\"p-a\""));
+    }
+    for (dialect, target) in [
+        ("docbook4", "linkend=\"p-a\""),
+        ("docbook5", "linkend=\"p-a\""),
+        ("tei", "target=\"#p-a\""),
+    ] {
+        let output = write_with(dialect, &doc, &options);
+        assert!(output.contains("id=\"p-a\""));
+        assert!(output.contains(target));
+    }
+}
+
+#[test]
+fn jats_places_bibliography_title_and_reference_fields_in_back() {
+    let text = |value: &str| MetaValue::MetaString(value.into());
+    let map = |fields: &[(&str, &str)]| {
+        MetaValue::MetaMap(
+            fields
+                .iter()
+                .map(|(key, value)| ((*key).into(), text(value)))
+                .collect(),
+        )
+    };
+    let MetaValue::MetaMap(mut reference) = map(&[
+        ("id", "b"),
+        ("type", "book"),
+        ("title", "Book"),
+        ("issued", "2016-2"),
+        ("accessed", "2026-11-24"),
+        ("pmid", "42"),
+    ]) else {
+        unreachable!()
+    };
+    reference.insert(
+        "author".into(),
+        MetaValue::MetaList(vec![
+            map(&[
+                ("family", "Bray"),
+                ("given", "Jan"),
+                ("non-dropping-particle", "de"),
+            ]),
+            map(&[
+                ("family", "Beethoven"),
+                ("given", "Ludwig"),
+                ("dropping-particle", "van"),
+            ]),
+            text("宮水 三葉"),
+            map(&[("literal", "others")]),
+        ]),
+    );
+    let mut meta = Meta::default();
+    meta.insert(
+        "references",
+        MetaValue::MetaList(vec![MetaValue::MetaMap(reference)]),
+    );
+    let doc = Pandoc {
+        meta,
+        blocks: vec![
+            Block::Para(vec![Inline::Cite(
+                vec![Citation {
+                    id: "b".into(),
+                    prefix: vec![],
+                    suffix: vec![],
+                    mode: CitationMode::NormalCitation,
+                    note_num: 0,
+                    hash: 0,
+                }],
+                vec![Inline::Str("Citation".into())],
+            )]),
+            Block::Header(
+                1,
+                Attr::new("bibliography", vec![], vec![]),
+                vec![Inline::Str("Works".into())],
+            ),
+            Block::Div(Attr::new("refs", vec![], vec![]), vec![]),
+        ],
+    };
+    let mut options = WriterOptions::default();
+    options.template = Some(
+        randoc_templates::Template::compile::<String>("t", "$body$\n$back$", 8, &mut |path| {
+            Err(path.to_owned())
+        })
+        .unwrap(),
+    );
+    options
+        .extensions
+        .enable(randoc_core::Extension::ElementCitations);
+    let output = write_with("jats", &doc, &options);
+    assert!(!output.contains("<sec"));
+    for expected in [
+        "<ref-list>\n  <title>Works</title>",
+        "<name><surname>de Bray</surname><given-names>Jan</given-names></name>",
+        "<name><surname>Beethoven</surname><given-names>Ludwig van</given-names></name>",
+        "<string-name>宮水 三葉</string-name>",
+        "<etal/>",
+        "<source>Book</source>",
+        "<year iso-8601-date=\"2016-02\">2016</year><month>02</month>",
+        "<date-in-citation content-type=\"access-date\"><year iso-8601-date=\"2026-11-24\">2026</year><month>11</month><day>24</day></date-in-citation>",
+        "<pub-id pub-id-type=\"pmid\">42</pub-id>",
+    ] {
+        assert!(output.contains(expected), "{expected}\n{output}");
+    }
+}
+
+#[test]
+fn jats_keeps_nested_references_in_their_section() {
+    let doc = Pandoc {
+        blocks: vec![
+            Block::Header(
+                1,
+                Attr::new("research", vec![], vec![]),
+                vec![Inline::Str("Research".into())],
+            ),
+            Block::Header(
+                2,
+                Attr::new("sources", vec![], vec![]),
+                vec![Inline::Str("Sources".into())],
+            ),
+            Block::Div(
+                Attr::new("refs", vec![], vec![]),
+                vec![Block::Div(
+                    Attr::new("ref-a", vec![], vec![]),
+                    vec![para("Entry.")],
+                )],
+            ),
+        ],
+        ..Pandoc::default()
+    };
+    let output = write_with("jats", &doc, &WriterOptions::default());
+    assert!(output.contains("<title>Research</title>"));
+    assert!(output.contains("<title>Sources</title>\n    <ref-list>"));
+    assert!(output.contains("<mixed-citation>Entry.</mixed-citation>"));
+}

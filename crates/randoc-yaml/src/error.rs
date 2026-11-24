@@ -131,7 +131,15 @@ fn render(out: &mut String, located: &Located, name: &str, offset: usize) {
         (caret_at - WINDOW / 2).min(chars.len() - WINDOW)
     };
     let end = (start + WINDOW).min(chars.len());
-    let mut shown: String = chars.get(start..end).unwrap_or(&[]).iter().collect();
+    let mut shown: String = chars
+        .get(start..end)
+        .unwrap_or(&[])
+        .iter()
+        .map(|&c| match c {
+            '\0'..='\u{1f}' if c != '\t' => char::from_u32(0x2400 + u32::from(c)).unwrap_or(c),
+            _ => c,
+        })
+        .collect();
     let mut caret: String = chars
         .get(start..caret_at.min(end))
         .unwrap_or(&[])

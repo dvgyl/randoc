@@ -37,6 +37,9 @@ pub fn missing(subsystem: Subsystem) -> Error {
 /// error of Pandoc.
 pub fn default_data_file(name: &str) -> Result<Vec<u8>> {
     let normal = crate::defaults::normalize(name);
+    if normal == randoc_citeproc::DEFAULT_STYLE_FILE {
+        return Ok(randoc_data::csl::DEFAULT_STYLE.as_bytes().to_vec());
+    }
     if let Some(contents) = randoc_data::data_file(&normal) {
         return Ok(contents.to_vec());
     }
@@ -50,6 +53,14 @@ pub fn default_data_file(name: &str) -> Result<Vec<u8>> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn the_default_csl_file_contains_the_builtin_style() {
+        assert_eq!(
+            default_data_file("default.csl").unwrap(),
+            randoc_data::csl::DEFAULT_STYLE.as_bytes()
+        );
+    }
 
     #[test]
     fn unknown_data_files_give_the_pandoc_error() {

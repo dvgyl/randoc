@@ -4,19 +4,21 @@ use randoc_ast::Attr;
 use randoc_core::{HighlightMethod, LogMessage};
 use randoc_highlight::{Color, Registry, Style, TokenType};
 
-use super::{Format, Renderer, line};
+use super::{Format, Renderer, line, protect};
 
 impl Renderer<'_, '_> {
     pub(super) fn code_block(&mut self, attr: &Attr, code: &str, out: &mut String) {
         line(out, ".IP");
         if self.format == Format::Man {
             line(out, ".EX");
-            line(out, &self.plain_code(code));
+            let code = self
+                .highlighted(attr, code)
+                .unwrap_or_else(|| self.plain_code(code));
+            line(out, &code);
             line(out, ".EE");
         } else {
             line(out, ".nf\n\\f[C]");
             if let Some(code) = self.highlighted(attr, code) {
-                self.highlighting = true;
                 line(out, &code);
             } else {
                 line(out, &self.plain_code(code));
@@ -25,7 +27,7 @@ impl Renderer<'_, '_> {
         }
     }
 
-    fn highlighted(&mut self, attr: &Attr, code: &str) -> Option<String> {
+    pub(super) fn highlighted(&mut self, attr: &Attr, code: &str) -> Option<String> {
         if self.options.highlight_method == HighlightMethod::None
             || self.options.highlight_style.is_none()
         {
@@ -37,12 +39,24 @@ impl Renderer<'_, '_> {
         match result {
             Ok(result) => {
                 let mut out = String::new();
-                for tokens in result.lines {
-                    for (kind, text) in tokens {
-                        let _ = write!(out, "\\*[{}Tok \"{}\"]", kind.name(), self.escape(&text));
+                for (index, tokens) in result.lines.into_iter().enumerate() {
+                    if index > 0 {
+                        out.push('\n');
                     }
-                    out.push('\n');
+                    let mut line = String::new();
+                    for (kind, text) in tokens {
+                        let text = self.escape(&text);
+                        if self.format == Format::Ms {
+                            let _ = write!(line, "\\*[{}Tok \"{}\"]", kind.name(), text);
+                        } else if let Some(font) = man_token_font(kind) {
+                            let _ = write!(line, "\\f[{font}]{text}\\f[R]");
+                        } else {
+                            line.push_str(&text);
+                        }
+                    }
+                    out.push_str(&protect(&line));
                 }
+                self.highlighting = self.format == Format::Ms;
                 Some(out)
             }
             Err(err) => {
@@ -134,4 +148,17 @@ impl Renderer<'_, '_> {
 
 fn hex(color: Color) -> String {
     format!("{:02x}{:02x}{:02x}", color.r, color.g, color.b)
+}
+
+fn man_token_font(token: TokenType) -> Option<&'static str> {
+    match token {
+        TokenType::Keyword
+        | TokenType::ControlFlow
+        | TokenType::Import
+        | TokenType::Alert
+        | TokenType::Error => Some("B"),
+        TokenType::Comment | TokenType::Documentation | TokenType::CommentVar => Some("I"),
+        TokenType::Annotation | TokenType::Information | TokenType::Warning => Some("BI"),
+        _ => None,
+    }
 }

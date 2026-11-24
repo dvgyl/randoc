@@ -42,7 +42,7 @@ impl Deadline {
 pub(crate) struct Request {
     pub method: String,
     pub target: String,
-    headers: Vec<(String, String)>,
+    pub(crate) headers: Vec<(String, String)>,
     pub body: Vec<u8>,
 }
 
@@ -75,6 +75,23 @@ pub(crate) struct Response {
 }
 
 impl Response {
+    pub(crate) fn reason(&self) -> &'static str {
+        match self.status {
+            200 => "OK",
+            400 => "Bad Request",
+            404 => "Not Found",
+            405 => "Method Not Allowed",
+            406 => "Not Acceptable",
+            413 => "Content Too Large",
+            415 => "Unsupported Media Type",
+            417 => "Expectation Failed",
+            431 => "Request Header Fields Too Large",
+            500 => "Internal Server Error",
+            503 => "Service Unavailable",
+            _ => "Unknown",
+        }
+    }
+
     pub fn empty(status: u16) -> Self {
         Self {
             status,
@@ -529,23 +546,10 @@ pub(crate) fn write_response(
     deadline: Deadline,
 ) -> io::Result<()> {
     let mut output = Socket { stream, deadline };
-    let reason = match response.status {
-        200 => "OK",
-        400 => "Bad Request",
-        404 => "Not Found",
-        405 => "Method Not Allowed",
-        406 => "Not Acceptable",
-        413 => "Content Too Large",
-        415 => "Unsupported Media Type",
-        417 => "Expectation Failed",
-        431 => "Request Header Fields Too Large",
-        500 => "Internal Server Error",
-        503 => "Service Unavailable",
-        _ => "Unknown",
-    };
     let mut headers = format!(
-        "HTTP/1.1 {} {reason}\r\nContent-Length: {}\r\nConnection: close\r\n",
+        "HTTP/1.1 {} {}\r\nContent-Length: {}\r\nConnection: close\r\n",
         response.status,
+        response.reason(),
         response.body.len(),
     );
     for (name, value) in response.headers {

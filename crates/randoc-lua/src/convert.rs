@@ -238,20 +238,15 @@ pub(crate) fn writers_table(lua: &Lua, lookup: WriterLookup) -> mlua::Result<Tab
 }
 
 /// `pandoc.read (markup[, format[, reader_options[, read_env]]])`.
-pub(crate) fn read(
-    call: &Call,
-    lookup: ReaderLookup,
-    defaults: &randoc_core::ReaderOptions,
-    context: &mut Context,
-) -> Peek<Value> {
+pub(crate) fn read(call: &Call, lookup: ReaderLookup, context: &mut Context) -> Peek<Value> {
     let cx = call.cx;
-    let markup = markup(call)?;
+    let markup = markup(call, context.limits.max_input_size)?;
     let format = call
         .optional(1, "formatspec", |value| flavored(cx, value))?
         .map_or_else(|| from_spec(DEFAULT_FORMAT), Ok)?;
     let mut options = call
         .optional(2, "reader_options", |value| {
-            retrieving("ReaderOptions", reader_options(cx, value, defaults))
+            retrieving("ReaderOptions", reader_options(cx, value))
         })?
         .unwrap_or_default();
     options.extensions = format.extensions;
@@ -263,11 +258,19 @@ pub(crate) fn read(
     };
     let doc = match reader {
         Reader::Text(reader) => {
-            let source = Source {
-                name: Text::new(),
-                text: utf8(markup.concat())?,
+            let sources = if let Value::Table(table) = call.argument(0)
+                && crate::peek::metatable_name(&table).as_deref() == Some("Sources")
+            {
+                cx.list(&Value::Table(table), |value| {
+                    crate::source::read(value)?.ok_or_else(|| mismatch("Source", value))
+                })?
+            } else {
+                vec![Source {
+                    name: Text::new(),
+                    text: utf8(markup.concat())?,
+                }]
             };
-            reader.read(&Sources(vec![source]), &options, context)
+            reader.read(&Sources(sources), &options, context)
         }
         Reader::Binary(reader) => reader.read(&markup.concat(), &options, context),
     }
@@ -276,12 +279,7 @@ pub(crate) fn read(
 }
 
 /// `pandoc.write (doc[, format[, writer_options]])`.
-pub(crate) fn write(
-    call: &Call,
-    lookup: WriterLookup,
-    defaults: &randoc_core::WriterOptions,
-    context: &mut Context,
-) -> Peek<Value> {
+pub(crate) fn write(call: &Call, lookup: WriterLookup, context: &mut Context) -> Peek<Value> {
     let cx = call.cx;
     let doc = call.required(0, "doc", |value| cx.pandoc(value))?;
     let format = call
@@ -289,7 +287,7 @@ pub(crate) fn write(
         .map_or_else(|| from_spec(DEFAULT_FORMAT), Ok)?;
     let mut options = call
         .optional(2, "writer_options", |value| {
-            retrieving("WriterOptions", writer_options(cx, value, defaults))
+            retrieving("WriterOptions", writer_options(cx, value))
         })?
         .unwrap_or_default();
     options.extensions = format.extensions;
@@ -312,21 +310,36 @@ fn thrown(error: &Error) -> PeekError {
 
 /// The markup: a string, a number, or a list of them. Pandoc reads the
 /// items of a list as one text (probed: `{'*a', 'b*'}` gives emphasis).
-fn markup(call: &Call) -> Peek<Vec<Vec<u8>>> {
+fn markup(call: &Call, max_bytes: u64) -> Peek<Vec<Vec<u8>>> {
     let cx = call.cx;
-    let item = |value: &Value| match value {
-        Value::String(text) => Ok(text.as_bytes().to_vec()),
-        Value::Integer(_) | Value::Number(_) => Ok(cx.text(value)?.into_bytes()),
-        Value::Table(_) => Err(PeekError::failure("all choices failed")),
-        other => Err(PeekError::Thrown(format!(
-            "table expected, got {}",
-            described_type(other)
-        ))),
+    let item = |value: &Value| {
+        if let Some(source) = crate::source::read(value)? {
+            return Ok(source.text.into_bytes());
+        }
+        match value {
+            Value::String(text) => Ok(text.as_bytes().to_vec()),
+            Value::Integer(_) | Value::Number(_) => Ok(cx.text(value)?.into_bytes()),
+            Value::Table(_) => Err(PeekError::failure("all choices failed")),
+            other => Err(PeekError::Thrown(format!(
+                "table expected, got {}",
+                described_type(other)
+            ))),
+        }
+    };
+    let remaining = std::cell::Cell::new(max_bytes);
+    let bounded_item = |value: &Value| {
+        let bytes = item(value)?;
+        let left = remaining
+            .get()
+            .checked_sub(bytes.len() as u64)
+            .ok_or_else(|| PeekError::Thrown("input exceeds the size limit".into()))?;
+        remaining.set(left);
+        Ok(bytes)
     };
     match call.argument(0) {
-        Value::Table(_) => call.required(0, "content", |value| cx.list(value, item)),
+        Value::Table(_) => call.required(0, "content", |value| cx.list(value, bounded_item)),
         value @ (Value::String(_) | Value::Integer(_) | Value::Number(_)) => {
-            Ok(vec![item(&value)?])
+            Ok(vec![bounded_item(&value)?])
         }
         value => Err(PeekError::Thrown(format!(
             "table expected, got {}",

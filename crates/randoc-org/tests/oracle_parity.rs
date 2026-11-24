@@ -398,3 +398,35 @@ fn review_writer_parity() -> TestResult {
 
     Ok(())
 }
+
+#[test]
+#[ignore = "Requires the Pandoc oracle."]
+fn longtail_reader_parity() -> TestResult {
+    for (name, input) in [
+        ("hard break", "one two \\\\\nthree"),
+        ("anchor spacing", "before <<target>> \tword\nnext"),
+        ("anchor before a line break", "<<target>>\nword"),
+        (
+            "definition marker in a bullet list",
+            "- [-] partial\n- Term ::\n  Description on next line.",
+        ),
+        ("standalone definition", "- Term ::\n  Description"),
+        (
+            "table attributes",
+            "#+ATTR_LATEX: :align lr\n#+CAPTION: Table\n| a | b |\n\n#+ATTR_LATEX: :foo x\n\nText",
+        ),
+    ] {
+        assert!(check_reader(name, input)?.0, "{name}");
+    }
+    let input = "<table><thead><tr><th>First</th></tr><tr><th>Second</th></tr></thead>\
+                 <tbody><tr><td>Body</td></tr></tbody></table>";
+    let input = oracle(&["-f", "html", "-t", "json"], input)?;
+    let expected = oracle(&["-f", "json", "-t", "org"], &input)?;
+    assert!(check_writer(
+        "two header rows",
+        &expected,
+        &json::from_json(&input)?,
+        false
+    )?);
+    Ok(())
+}

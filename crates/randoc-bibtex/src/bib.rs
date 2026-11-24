@@ -48,16 +48,20 @@ impl<'a> Record<'a> {
         keys.iter().find_map(|key| self.get(key))
     }
 
-    fn field(&self, text: &str, preserve: bool) -> Result<Vec<Inline>> {
-        Ok(self.parsed_field(text, preserve)?.unwrap_or_default())
+    fn field(&self, text: &str, keep_nocase: bool) -> Result<Vec<Inline>> {
+        let mut parts = self.parsed_field(text)?.unwrap_or_default();
+        if !keep_nocase {
+            clear_nocase(&mut parts);
+        }
+        Ok(parts)
     }
 
-    fn parsed_field(&self, text: &str, preserve: bool) -> Result<Option<Vec<Inline>>> {
+    fn parsed_field(&self, text: &str) -> Result<Option<Vec<Inline>>> {
         let text = field_tex(&names::normalized(text));
         let Some(mut parts) = parse_field(
             &text,
             FieldOptions {
-                keep_brace_spans: preserve,
+                keep_brace_spans: true,
             },
             self.limits,
         )?
@@ -84,7 +88,7 @@ impl<'a> Record<'a> {
         let mut paragraph = String::new();
         for line in text.lines() {
             if line.trim().is_empty() {
-                let Some(next) = self.parsed_field(&paragraph, true)? else {
+                let Some(next) = self.parsed_field(&paragraph)? else {
                     return Ok(Vec::new());
                 };
                 parts.extend(next);
@@ -94,7 +98,7 @@ impl<'a> Record<'a> {
                 paragraph.push(' ');
             }
         }
-        let Some(next) = self.parsed_field(&paragraph, true)? else {
+        let Some(next) = self.parsed_field(&paragraph)? else {
             return Ok(Vec::new());
         };
         parts.extend(next);
@@ -106,7 +110,7 @@ impl<'a> Record<'a> {
     }
 
     fn parsed_title(&self, text: &str, sentence_case: bool) -> Result<Option<Vec<Inline>>> {
-        let Some(mut parts) = self.parsed_field(text, true)? else {
+        let Some(mut parts) = self.parsed_field(text)? else {
             return Ok(None);
         };
         if sentence_case && !self.english {
@@ -164,7 +168,7 @@ impl<'a> Record<'a> {
             let next = if text != value {
                 vec![Inline::Str(text.into())]
             } else {
-                let Some(parts) = self.parsed_field(text, true)? else {
+                let Some(parts) = self.parsed_field(text)? else {
                     return Ok(Vec::new());
                 };
                 parts

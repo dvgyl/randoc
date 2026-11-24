@@ -105,19 +105,7 @@ local cd=S.split_into_chunks(doc,{chunk_level=2,number_sections=true,path_templa
             "{P.Div({P.Para'x'},P.Attr('',{'section'}))}"]),
         ("cached TOC writes", "cd.toc[1][0].title=P.Inlines'new'; return S.table_of_contents(cd,{toc_depth=1})"),
     ]),
-}, known=[
-    # The Wave 8B contract fixes nonpositive slide levels at one and ignores strings.
-    ("sections", "S.make_sections(blocks,{slide_level='2'})"),
-    ("sections", "S.make_sections(blocks,{slide_level=0})"),
-    ("sections", "S.make_sections(blocks,{slide_level=-1})"),
-    # The Wave 8B contract uses the same intro chunk with or without title metadata.
-    ("split", "intro title metadata"),
-    # Each link read creates a new view. The string displays the userdata address.
-    ("userdata", "link identity"),
-    ("userdata", "chunk record string"),
-    # Row I-LUA-03: the constructor pandoc.WriterOptions is not available yet.
-    ("toc", "S.table_of_contents(doc,P.WriterOptions{toc_depth=1,number_sections=true})"),
-])
+})
 
 
 docs, filters = run_path(str(TOOLS / "record-replay.py"))["read_cases"](REPLAY / "structure.txt")

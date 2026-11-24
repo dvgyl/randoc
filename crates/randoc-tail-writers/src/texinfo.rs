@@ -18,6 +18,7 @@ pub(super) fn write(
         options,
         names: HashMap::new(),
         strikeout: false,
+        link_label: false,
     };
 
     let mut nodes = Vec::new();
@@ -230,6 +231,7 @@ struct Renderer<'a> {
     options: &'a WriterOptions,
     names: HashMap<String, String>,
     strikeout: bool,
+    link_label: bool,
 }
 
 impl Renderer<'_> {
@@ -254,7 +256,14 @@ impl Renderer<'_> {
             }
             Block::Para(items) => self.inlines(items) + blankline(),
             Block::LineBlock(lines) => {
-                vcat(lines.iter().map(|line| self.inlines(line))) + blankline()
+                vcat(lines.iter().enumerate().map(|(index, line)| {
+                    let line = self.inlines(line);
+                    if index + 1 == lines.len() {
+                        line
+                    } else {
+                        line + text("@*")
+                    }
+                })) + cr()
             }
             Block::Header(_, _, items) => self.inlines(items) + cr(),
             Block::CodeBlock(_, code) => {
@@ -419,7 +428,14 @@ impl Renderer<'_> {
 
     fn inline(&mut self, inline: &Inline) -> Doc {
         match inline {
-            Inline::Str(value) => text(escape(value)),
+            Inline::Str(value) => {
+                let value = escape(value);
+                text(if self.link_label {
+                    argument(&value)
+                } else {
+                    value
+                })
+            }
             Inline::Space => space(),
             Inline::SoftBreak if self.options.wrap_text == WrapOption::WrapPreserve => cr(),
             Inline::SoftBreak => space(),
@@ -466,7 +482,9 @@ impl Renderer<'_> {
             Inline::RawInline(..) => Doc::default(),
             Inline::Note(blocks) => command("footnote", chomp(self.blocks(blocks))),
             Inline::Link(_, items, target) => {
-                let label = self.inlines(items).map_text(&argument);
+                let previous = std::mem::replace(&mut self.link_label, true);
+                let label = self.inlines(items);
+                self.link_label = previous;
                 let url = escape(&target.url);
                 if let Some(id) = target.url.strip_prefix('#') {
                     let name = self.names.get(id).map_or(url.as_str(), String::as_str);
@@ -474,7 +492,7 @@ impl Renderer<'_> {
                 } else if label.render(None) == url {
                     command("url", text(url))
                 } else {
-                    command("uref", text(format!("{},", argument(&url))) + label)
+                    command("uref", text(format!("{url},")) + label)
                 }
             }
             Inline::Image(attr, items, target) => {

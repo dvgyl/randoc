@@ -1143,6 +1143,9 @@ fn discarded_cells_and_columns_do_not_change_the_kept_cells() {
 fn first_alternate_content_without_fallback_keeps_the_run() {
     let body = r#"<w:p><w:r><w:t>P</w:t><mc:AlternateContent><mc:Choice Requires="w16se"><w:t>C</w:t></mc:Choice></mc:AlternateContent><mc:AlternateContent><mc:Choice Requires="w16se"><w:t>D</w:t></mc:Choice><mc:Fallback><w:t>Q</w:t></mc:Fallback></mc:AlternateContent><w:t>R</w:t></w:r></w:p>"#;
     assert_eq!(read(body, &Parts::default()), [para("PR")]);
+
+    let body = r#"<w:p><w:r><w:t>P</w:t><mc:AlternateContent><mc:Choice Requires="v"><w:t>C</w:t></mc:Choice></mc:AlternateContent><mc:AlternateContent><mc:Fallback><w:pict><v:shape><v:textbox><w:txbxContent><w:p><w:r><w:t>Box</w:t></w:r></w:p></w:txbxContent></v:textbox></v:shape></w:pict></mc:Fallback></mc:AlternateContent><w:t>R</w:t></w:r></w:p>"#;
+    assert_eq!(read(body, &Parts::default()), [para("PR")]);
 }
 
 #[test]

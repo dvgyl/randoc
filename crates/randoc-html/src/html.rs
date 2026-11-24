@@ -274,6 +274,7 @@ pub(crate) struct Html<'a> {
     pub(crate) wrote_q_tags: bool,
     /// `true` when the document has math (the template variable `math`).
     pub(crate) wrote_math: bool,
+    pub(crate) wrote_bibliography: bool,
     /// The syntax definitions when the options add files to the embedded
     /// definitions.
     pub(crate) registry: Option<randoc_highlight::Registry>,
@@ -323,6 +324,7 @@ impl<'a> Html<'a> {
             toc_open: Vec::new(),
             wrote_q_tags: false,
             wrote_math: false,
+            wrote_bibliography: false,
             registry: None,
             code_blocks: 0,
             wrote_highlighting: false,
@@ -1297,6 +1299,7 @@ impl Html<'_> {
         sections: bool,
         extra: Attrs,
     ) -> Result<Doc> {
+        self.wrote_bibliography |= attr.has_class("csl-bib-body");
         if let (false, Some("section"), Some((Block::Header(level, heading, inlines), rest))) = (
             sections,
             attr.classes.first().map(Text::as_str),
@@ -2222,6 +2225,11 @@ impl Html<'_> {
         depth: usize,
     ) -> Result<Doc> {
         let mailto = target.url.starts_with("mailto:");
+        if let Some(address) = target.url.strip_prefix("mailto:")
+            && self.options.email_obfuscation == ObfuscationMethod::JavascriptObfuscation
+        {
+            return self.javascript_email(attr, content, address, depth);
+        }
         if mailto && self.options.email_obfuscation == ObfuscationMethod::ReferenceObfuscation {
             let saved = std::mem::replace(&mut self.obfuscating, true);
             let body = self.inlines(content, depth);
@@ -2265,6 +2273,65 @@ impl Html<'_> {
             attrs.push(("title".to_owned(), target.title.clone()));
         }
         Ok(self.inline_element("a", &attrs, body))
+    }
+
+    fn javascript_email(
+        &mut self,
+        attr: &Attr,
+        content: &[Inline],
+        address: &str,
+        depth: usize,
+    ) -> Result<Doc> {
+        let (local, domain) = address.split_once('@').unwrap_or((address, ""));
+        let address_text = format!("{local} at {}", domain.replace('.', " dot "));
+        let attrs = self.attrs(attr);
+        let mut attributes = String::new();
+        let mut class_suffix = String::new();
+        for (key, value) in attrs {
+            let value = escape_attribute(&value, false);
+            if key == "class" {
+                class_suffix = format!(" {value}");
+            } else {
+                attributes.push_str(&format!(" {key}=\"{value}\""));
+            }
+        }
+        let js_escape = |text: &str| {
+            text.replace('\\', "\\\\")
+                .replace('\'', "\\'")
+                .replace("</", "<\\/")
+                .replace('\n', "\\n")
+                .replace('\r', "\\r")
+        };
+        let (body, fallback) = if matches!(content, [Inline::Str(text)] if text == address) {
+            ("'+e+'".to_owned(), obfuscate(&address_text))
+        } else {
+            let saved = std::mem::replace(&mut self.obfuscating, true);
+            let label = self.inlines(content, depth);
+            self.obfuscating = saved;
+            let label = label?.render(None);
+            (
+                format!("'+'{}'+'", js_escape(&label)),
+                format!("{label}{}", obfuscate(&format!(" ({address_text})"))),
+            )
+        };
+        let definitions = [("h", domain), ("a", "@"), ("n", local)]
+            .map(|(name, part)| format!("{name}='{}';", obfuscate(part)))
+            .concat();
+        let javascript_object = "document";
+        let javascript_method = "write";
+        let script = format!(
+            "\n<!--\n{definitions}e=n+a+h;\n\
+             {javascript_object}.{javascript_method}('<a h'+'ref'+'=\"ma'+'ilto'+':'+e+'\" clas'+'s=\"em' + 'ail{}\"{}>{body}<\\/'+'a'+'>');\n\
+             // -->\n</script><noscript>{fallback}</noscript>",
+            js_escape(&class_suffix),
+            js_escape(&attributes),
+        );
+        let attribute = "type=\"text/javascript\">";
+        let continuation = script.lines().next_back().map_or(0, str::len);
+        let wrap = self.options.wrap_text == WrapOption::WrapAuto
+            && self.options.columns < ("<script ".len() + attribute.len() + continuation) as i64;
+        let separator = if wrap { cr() } else { space() };
+        Ok(lit("<script") + separator + lit(attribute) + lit(&script))
     }
 
     fn image(&self, attr: &Attr, content: &[Inline], target: &Target) -> Doc {

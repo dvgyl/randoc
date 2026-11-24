@@ -126,7 +126,7 @@ pub(crate) fn variant_char(pairs: &[(char, char)], c: char) -> char {
 
 /// Writes the full `<math>` element.
 pub(crate) fn mathml(items: &[Exp], display: bool, tex: &str, flavor: MathMlFlavor) -> String {
-    let prefix = if flavor == MathMlFlavor::Html {
+    let prefix = if matches!(flavor, MathMlFlavor::Html | MathMlFlavor::Odt) {
         ""
     } else {
         "mml:"
@@ -145,7 +145,7 @@ pub(crate) fn mathml(items: &[Exp], display: bool, tex: &str, flavor: MathMlFlav
     const NS: &str = "http://www.w3.org/1998/Math/MathML";
     let display_attr = ("display", if display { "block" } else { "inline" });
     match flavor {
-        MathMlFlavor::Html => {
+        MathMlFlavor::Html | MathMlFlavor::Odt => {
             writer.open_with_attrs("math", &[display_attr, ("xmlns", NS)]);
             writer.open("semantics");
         }
@@ -153,13 +153,24 @@ pub(crate) fn mathml(items: &[Exp], display: bool, tex: &str, flavor: MathMlFlav
         MathMlFlavor::Jats => writer.open_with_attrs("math", &[display_attr, ("xmlns:mml", NS)]),
     }
     writer.list(items);
-    if flavor == MathMlFlavor::Html {
-        writer.token(
-            "annotation",
-            &[("encoding", "application/x-tex")],
-            None,
-            tex,
-        );
+    if matches!(flavor, MathMlFlavor::Html | MathMlFlavor::Odt) {
+        if flavor == MathMlFlavor::Odt
+            && let Ok(star) = crate::starmath::render(items, display)
+        {
+            writer.token(
+                "annotation",
+                &[("encoding", "StarMath 5.0")],
+                None,
+                &format!("{star}\n%% TeX: {tex}"),
+            );
+        } else {
+            writer.token(
+                "annotation",
+                &[("encoding", "application/x-tex")],
+                None,
+                tex,
+            );
+        }
         writer.close("semantics");
     }
     writer.close("math");

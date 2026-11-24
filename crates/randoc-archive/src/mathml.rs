@@ -94,6 +94,12 @@ impl MmlCtx {
             }
             "annotation" | "annotation-xml" | "none" | "maligngroup" | "malignmark" => {}
             "mrow" | "mstyle" | "mpadded" | "math" => {
+                if el.name.local == "mrow"
+                    && let Some(table) = self.fenced_matrix(el, depth + 1)
+                {
+                    out.push(Tok::Raw(table));
+                    return;
+                }
                 let inner = self.parse_children(el, depth + 1);
                 if matches!(el.name.local.as_str(), "mrow" | "mstyle") && inner.len() > 1 {
                     out.push(Tok::Raw(format!("{{{}}}", render_tokens(&inner))));
@@ -116,7 +122,15 @@ impl MmlCtx {
                 if text == "\u{a0}" {
                     out.push(Tok::Space("\\ ".to_owned()));
                 } else if !text.is_empty() {
-                    out.push(Tok::Raw(format!("\\text{{{}}}", escape_tex_text(text))));
+                    let command = match el.attr_local("mathvariant") {
+                        Some("bold" | "bold-italic") => "textbf",
+                        Some("italic") => "textit",
+                        _ => "text",
+                    };
+                    out.push(Tok::Raw(format!(
+                        "\\{command}{{{}}}",
+                        escape_tex_text(text)
+                    )));
                 }
             }
             "ms" => {
@@ -133,8 +147,13 @@ impl MmlCtx {
                 if elems.len() >= 2 {
                     let base = self.parse_single_as_toks(elems[0], depth + 1);
                     let sup = self.render_argument(elems[1], depth + 1);
-                    let base_str = wrap_script_base(&base);
-                    out.push(Tok::Raw(format!("{base_str}^{{{sup}}}")));
+                    let base_str = wrap_script_base(&base, elems[0]);
+                    let suffix = if sup == "'" {
+                        sup
+                    } else {
+                        format!("^{{{sup}}}")
+                    };
+                    out.push(Tok::Raw(format!("{base_str}{suffix}")));
                 }
             }
             "msub" => {
@@ -142,7 +161,7 @@ impl MmlCtx {
                 if elems.len() >= 2 {
                     let base = self.parse_single_as_toks(elems[0], depth + 1);
                     let sub = self.render_argument(elems[1], depth + 1);
-                    let base_str = wrap_script_base(&base);
+                    let base_str = wrap_script_base(&base, elems[0]);
                     out.push(Tok::Raw(format!("{base_str}_{{{sub}}}")));
                 }
             }
@@ -152,7 +171,7 @@ impl MmlCtx {
                     let base = self.parse_single_as_toks(elems[0], depth + 1);
                     let sub = self.render_argument(elems[1], depth + 1);
                     let sup = self.render_argument(elems[2], depth + 1);
-                    let base_str = wrap_script_base(&base);
+                    let base_str = wrap_script_base(&base, elems[0]);
                     out.push(Tok::Raw(format!("{base_str}_{{{sub}}}^{{{sup}}}")));
                 }
             }
@@ -161,11 +180,7 @@ impl MmlCtx {
                 if elems.len() >= 2 {
                     let num = self.render_argument(elems[0], depth + 1);
                     let den = self.render_argument(elems[1], depth + 1);
-                    if el.attr_local("linethickness") == Some("0") {
-                        out.push(Tok::Raw(format!("\\binom{{{num}}}{{{den}}}")));
-                    } else {
-                        out.push(Tok::Raw(format!("\\frac{{{num}}}{{{den}}}")));
-                    }
+                    out.push(Tok::Raw(format!("\\frac{{{num}}}{{{den}}}")));
                 }
             }
             "msqrt" => {
@@ -205,8 +220,14 @@ impl MmlCtx {
                 if elems.len() >= 2 {
                     let base_toks = self.parse_single_as_toks(elems[0], depth + 1);
                     let base = strip_outer_braces(render_tokens(&base_toks));
-                    if elems[1].name.local == "mo" && elems[1].all_text().trim() == "⏟" {
-                        out.push(Tok::Raw(format!("\\underbrace{{{base}}}")));
+                    let under_text = elems[1].all_text();
+                    if elems[1].name.local == "mo" && matches!(under_text.trim(), "⏟" | "_") {
+                        let command = if under_text.trim() == "_" {
+                            "underline"
+                        } else {
+                            "underbrace"
+                        };
+                        out.push(Tok::Raw(format!("\\{command}{{{base}}}")));
                     } else {
                         let under = self.render_argument(elems[1], depth + 1);
                         let tex = if matches!(base_toks.as_slice(), [Tok::Op(_) | Tok::Func(_)]) {
@@ -256,7 +277,7 @@ impl MmlCtx {
                 out.push(Tok::Raw(tex));
             }
             "mtable" => {
-                out.push(Tok::Raw(self.render_table(el, depth)));
+                out.push(Tok::Raw(self.render_table(el, depth, "matrix")));
             }
             "mphantom" => {
                 let body = strip_outer_braces(render_tokens(&self.parse_children(el, depth + 1)));
@@ -279,7 +300,33 @@ impl MmlCtx {
         }
     }
 
-    fn render_table(&mut self, table: &XmlElement, depth: usize) -> String {
+    fn fenced_matrix(&mut self, el: &XmlElement, depth: usize) -> Option<String> {
+        let mut elements = el.elements();
+        let open = elements.next()?;
+        if open.name.local != "mo" || open.attr_local("stretchy") != Some("true") {
+            return None;
+        }
+        let table = elements.next()?;
+        if table.name.local != "mtable" {
+            return None;
+        }
+        let close = elements.next().map(XmlElement::all_text);
+        if elements.next().is_some() {
+            return None;
+        }
+        let environment = match (open.all_text().as_str(), close.as_deref()) {
+            ("(", Some(")")) => "pmatrix",
+            ("[", Some("]")) => "bmatrix",
+            ("{", Some("}")) => "Bmatrix",
+            ("{", None) => "cases",
+            ("∣" | "|", Some("∣" | "|")) => "vmatrix",
+            ("∥", Some("∥")) => "Vmatrix",
+            _ => return None,
+        };
+        Some(self.render_table(table, depth, environment))
+    }
+
+    fn render_table(&mut self, table: &XmlElement, depth: usize, environment: &str) -> String {
         let rows: Vec<Vec<String>> = table
             .elements()
             .filter(|row| row.name.local == "mtr")
@@ -301,7 +348,7 @@ impl MmlCtx {
         let columns = rows.iter().map(Vec::len).max().unwrap_or_default();
         // Limit the number of cells that padding can add to a sparse table.
         let pad = rows.len().saturating_mul(columns) <= Limits::default().max_table_cells;
-        let mut tex = String::from("\\begin{matrix}\n");
+        let mut tex = format!("\\begin{{{environment}}}\n");
         for (row_index, row) in rows.iter().enumerate() {
             if row_index != 0 {
                 tex.push_str(" \\\\\n");
@@ -321,7 +368,7 @@ impl MmlCtx {
         if !rows.is_empty() {
             tex.push('\n');
         }
-        tex.push_str("\\end{matrix}");
+        tex.push_str(&format!("\\end{{{environment}}}"));
         tex
     }
 
@@ -360,11 +407,17 @@ impl MmlCtx {
         }
         let variant = el.attr_local("mathvariant");
         if is_known_func(trimmed) {
-            out.push(Tok::Func(format!("\\{trimmed}")));
+            let function = format!("\\{trimmed}");
+            out.push(Tok::Func(if variant == Some("normal") {
+                format!("{{{function}}}")
+            } else {
+                function
+            }));
             return;
         }
         if let Some(cmd) = mathvariant_cmd(variant) {
-            out.push(Tok::Ident(format!("{cmd}{{{}}}", map_ident_str(trimmed))));
+            let plain: String = trimmed.chars().map(plain_math_letter).collect();
+            out.push(Tok::Ident(format!("{cmd}{{{}}}", map_ident_str(&plain))));
             return;
         }
         if let Some(styled) = styled_unicode_ident(trimmed) {
@@ -402,7 +455,10 @@ impl MmlCtx {
             "∩" => out.push(Tok::Bin("\\cap".to_owned())),
             "∪" => out.push(Tok::Bin("\\cup".to_owned())),
             "∧" => out.push(Tok::Bin("\\land".to_owned())),
-            "∨" => out.push(Tok::Bin("\\lor".to_owned())),
+            "∨" => out.push(Tok::Bin("\\vee".to_owned())),
+            "⋆" => out.push(Tok::Bin("\\star".to_owned())),
+            "⊙" => out.push(Tok::Bin("\\odot".to_owned())),
+            "∣" => out.push(Tok::Rel("\\mid".to_owned())),
             "/" => out.push(Tok::Bin("/".to_owned())),
             "=" | "<" | ">" => out.push(Tok::Rel(trimmed.to_owned())),
             "≤" => out.push(Tok::Rel("\\leq".to_owned())),
@@ -420,7 +476,12 @@ impl MmlCtx {
             "⊃" => out.push(Tok::Rel("\\supset".to_owned())),
             "⊆" => out.push(Tok::Rel("\\subseteq".to_owned())),
             "⊇" => out.push(Tok::Rel("\\supseteq".to_owned())),
-            "→" => out.push(Tok::Rel("\\rightarrow".to_owned())),
+            "→" => out.push(Tok::Ident("\\rightarrow".to_owned())),
+            "⟂" => out.push(Tok::Rel("\\perp".to_owned())),
+            "≪" => out.push(Tok::Rel("\\ll".to_owned())),
+            "≫" => out.push(Tok::Rel("\\gg".to_owned())),
+            "≺" => out.push(Tok::Rel("\\prec".to_owned())),
+            "≻" => out.push(Tok::Rel("\\succ".to_owned())),
             "⟶" => out.push(Tok::Rel("\\longrightarrow".to_owned())),
             "↑" => out.push(Tok::Ident("\\uparrow".to_owned())),
             "←" => out.push(Tok::Rel("\\leftarrow".to_owned())),
@@ -451,9 +512,13 @@ impl MmlCtx {
                 }
             }
             "|" => out.push(Tok::Raw("|".to_owned())),
-            "‖" | "∥" => out.push(Tok::Raw("\\|".to_owned())),
+            "‖" | "∥" => out.push(Tok::Ident("\\parallel".to_owned())),
+            "⌊" | "⌋" | "⌈" | "⌉" => out.push(Tok::Ident(tex_delim(trimmed).to_owned())),
             "!" => out.push(Tok::Raw("!".to_owned())),
             "'" | "′" => out.push(Tok::Raw("'".to_owned())),
+            "″" => out.push(Tok::Raw("''".to_owned())),
+            "‴" => out.push(Tok::Raw("'''".to_owned())),
+            "⁗" => out.push(Tok::Raw("''''".to_owned())),
             "\u{2061}" | "\u{2062}" | "\u{2063}" | "\u{2064}" => {
                 // Invisible FunctionApplication / InvisibleTimes / InvisibleSeparator / InvisiblePlus.
             }
@@ -566,12 +631,12 @@ fn numeric_math_space(width: &str) -> f64 {
     number.parse::<f64>().unwrap_or_default() * mu_per_unit
 }
 
-fn wrap_script_base(tokens: &[Tok]) -> String {
-    let rendered = strip_outer_braces(render_tokens(tokens));
-    if tokens.len() == 1 {
+fn wrap_script_base(tokens: &[Tok], element: &XmlElement) -> String {
+    let rendered = render_tokens(tokens);
+    if tokens.len() == 1 && !matches!(element.name.local.as_str(), "msup" | "msub" | "msubsup") {
         rendered
     } else {
-        format!("{{{rendered}}}")
+        format!("{{{}}}", strip_outer_braces(rendered))
     }
 }
 
@@ -585,6 +650,8 @@ fn render_tokens(tokens: &[Tok]) -> String {
                 (Tok::Bin(_) | Tok::Rel(_), _) => true,
                 (_, Tok::Bin(_) | Tok::Rel(_)) => true,
                 (Tok::Space(_), _) => !out.is_empty() && text.starts_with(char::is_alphanumeric),
+                (_, _) if matches!(p.text(), "\\{" | "\\_" | "\\parallel") => true,
+                (_, _) if text == "\\parallel" => true,
                 _ => command_needs_space(p.text(), text),
             };
             if need_space && !out.ends_with(' ') {
@@ -636,7 +703,8 @@ fn command_needs_space(previous: &str, next: &str) -> bool {
 fn mathvariant_cmd(variant: Option<&str>) -> Option<&'static str> {
     match variant? {
         "bold" => Some("\\mathbf"),
-        "bold-italic" => Some("\\mathbfit"),
+        "bold-italic" => Some("\\mathbf"),
+        "italic" => Some("\\mathit"),
         "double-struck" => Some("\\mathbb"),
         "fraktur" => Some("\\mathfrak"),
         "script" => Some("\\mathcal"),
@@ -651,14 +719,15 @@ fn over_accent_cmd(s: &str) -> Option<&'static str> {
     match s {
         "^" | "\u{0302}" | "\u{02C6}" => Some("\\hat"),
         "~" | "\u{0303}" | "\u{02DC}" => Some("\\tilde"),
-        "\u{0304}" | "\u{00AF}" | "\u{203E}" => Some("\\overline"),
+        "\u{0304}" | "\u{203E}" => Some("\\bar"),
+        "\u{00AF}" => Some("\\overline"),
         "\u{0307}" | "\u{02D9}" => Some("\\dot"),
         "\u{0308}" | "\u{00A8}" => Some("\\ddot"),
         "\u{030C}" | "\u{02C7}" => Some("\\check"),
         "\u{0301}" | "\u{00B4}" => Some("\\acute"),
         "\u{0300}" | "`" => Some("\\grave"),
         "\u{0306}" | "\u{02D8}" => Some("\\breve"),
-        "\u{20D7}" | "\u{2192}" => Some("\\vec"),
+        "\u{20D7}" => Some("\\vec"),
         "⏞" => Some("\\overbrace"),
         _ => None,
     }
@@ -739,6 +808,44 @@ fn map_ident_str(s: &str) -> String {
     out
 }
 
+fn plain_math_letter(ch: char) -> char {
+    // The mathematical alphabets assign consecutive code points to Latin letters.
+    const UPPER: &str = "𝐀𝐴𝑨𝒜𝓐𝔄𝔸𝕬𝖠𝗔𝘈𝘼𝙰";
+    const LOWER: &str = "𝐚𝑎𝒂𝒶𝓪𝔞𝕒𝖆𝖺𝗮𝘢𝙖𝚊";
+    const DIGITS: &str = "𝟎𝟘𝟢𝟬𝟶";
+    for (starts, base, length) in [(UPPER, 'A', 26), (LOWER, 'a', 26), (DIGITS, '0', 10)] {
+        for start in starts.chars() {
+            if let Some(offset) = u32::from(ch)
+                .checked_sub(u32::from(start))
+                .filter(|offset| *offset < length)
+                && let Some(letter) = char::from_u32(u32::from(base) + offset)
+            {
+                return letter;
+            }
+        }
+    }
+    match ch {
+        'ℬ' => 'B',
+        'ℂ' | 'ℭ' => 'C',
+        'ℰ' => 'E',
+        'ℱ' => 'F',
+        'ℋ' | 'ℌ' | 'ℍ' => 'H',
+        'ℐ' | 'ℑ' => 'I',
+        'ℒ' => 'L',
+        'ℳ' => 'M',
+        'ℕ' => 'N',
+        'ℙ' => 'P',
+        'ℚ' => 'Q',
+        'ℛ' | 'ℜ' | 'ℝ' => 'R',
+        'ℤ' | 'ℨ' => 'Z',
+        'ℯ' => 'e',
+        'ℊ' => 'g',
+        'ℎ' => 'h',
+        'ℴ' => 'o',
+        _ => ch,
+    }
+}
+
 fn styled_unicode_ident(s: &str) -> Option<String> {
     let mut chars = s.chars();
     let ch = chars.next()?;
@@ -784,6 +891,24 @@ fn escape_tex_text(s: &str) -> String {
 
 fn unicode_to_tex_symbol(ch: char) -> Option<&'static str> {
     match ch {
+        '−' => Some("-"),
+        '±' => Some("\\pm"),
+        '∓' => Some("\\mp"),
+        '∣' => Some("\\mid"),
+        '∘' => Some("\\circ"),
+        '⋆' => Some("\\star"),
+        '†' => Some("\\dagger"),
+        '∠' => Some("\\angle"),
+        '⟂' => Some("\\perp"),
+        '∖' | '\\' => Some("\\backslash"),
+        '⊕' => Some("\\oplus"),
+        '⊗' => Some("\\otimes"),
+        '⊙' => Some("\\odot"),
+        '#' => Some("\\#"),
+        '$' => Some("\\$"),
+        '_' => Some("\\_"),
+        '%' => Some("\\%"),
+        '&' => Some("\\&"),
         'α' => Some("\\alpha"),
         'β' => Some("\\beta"),
         'γ' => Some("\\gamma"),
@@ -829,12 +954,12 @@ fn unicode_to_tex_symbol(ch: char) -> Option<&'static str> {
         '∇' => Some("\\nabla"),
         '∀' => Some("\\forall"),
         '∃' => Some("\\exists"),
-        '∅' => Some("\\emptyset"),
+        '∅' => Some("\\varnothing"),
         '¬' => Some("\\neg"),
         '⊥' => Some("\\bot"),
         '⊤' => Some("\\top"),
         'ℵ' => Some("\\aleph"),
-        'ℏ' => Some("\\hbar"),
+        'ℏ' => Some("\\hslash"),
         'ℓ' => Some("\\ell"),
         'ℜ' => Some("\\Re"),
         'ℑ' => Some("\\Im"),
@@ -843,6 +968,289 @@ fn unicode_to_tex_symbol(ch: char) -> Option<&'static str> {
         '⋯' => Some("\\cdots"),
         '⋮' => Some("\\vdots"),
         '⋱' => Some("\\ddots"),
+        // These commands come from the Pandoc 3.13 DocBook reader.
+        '£' => Some("\\pounds"),
+        '·' => Some("\\cdot"),
+        '×' => Some("\\times"),
+        'ð' => Some("\\eth"),
+        '÷' => Some("\\div"),
+        'ı' => Some("\\imath"),
+        'ȷ' => Some("\\jmath"),
+        '϶' => Some("\\backepsilon"),
+        '‡' => Some("\\ddagger"),
+        '•' => Some("\\bullet"),
+        '‵' => Some("\\backprime"),
+        'Ⅎ' => Some("\\Finv"),
+        'ℶ' => Some("\\beth"),
+        'ℷ' => Some("\\gimel"),
+        'ℸ' => Some("\\daleth"),
+        '⅁' => Some("\\Game"),
+        '←' => Some("\\leftarrow"),
+        '↑' => Some("\\uparrow"),
+        '→' => Some("\\rightarrow"),
+        '↓' => Some("\\downarrow"),
+        '↔' => Some("\\leftrightarrow"),
+        '↕' => Some("\\updownarrow"),
+        '↖' => Some("\\nwarrow"),
+        '↗' => Some("\\nearrow"),
+        '↘' => Some("\\searrow"),
+        '↙' => Some("\\swarrow"),
+        '↚' => Some("\\nleftarrow"),
+        '↛' => Some("\\nrightarrow"),
+        '↞' => Some("\\twoheadleftarrow"),
+        '↠' => Some("\\twoheadrightarrow"),
+        '↢' => Some("\\leftarrowtail"),
+        '↣' => Some("\\rightarrowtail"),
+        '↦' => Some("\\mapsto"),
+        '↩' => Some("\\hookleftarrow"),
+        '↪' => Some("\\hookrightarrow"),
+        '↫' => Some("\\looparrowleft"),
+        '↬' => Some("\\looparrowright"),
+        '↭' => Some("\\leftrightsquigarrow"),
+        '↮' => Some("\\nleftrightarrow"),
+        '↰' => Some("\\Lsh"),
+        '↱' => Some("\\Rsh"),
+        '↶' => Some("\\curvearrowleft"),
+        '↷' => Some("\\curvearrowright"),
+        '↺' => Some("\\circlearrowleft"),
+        '↻' => Some("\\circlearrowright"),
+        '↼' => Some("\\leftharpoonup"),
+        '↽' => Some("\\leftharpoondown"),
+        '↾' => Some("\\upharpoonright"),
+        '↿' => Some("\\upharpoonleft"),
+        '⇀' => Some("\\rightharpoonup"),
+        '⇁' => Some("\\rightharpoondown"),
+        '⇂' => Some("\\downharpoonright"),
+        '⇃' => Some("\\downharpoonleft"),
+        '⇄' => Some("\\rightleftarrows"),
+        '⇆' => Some("\\leftrightarrows"),
+        '⇇' => Some("\\leftleftarrows"),
+        '⇈' => Some("\\upuparrows"),
+        '⇉' => Some("\\rightrightarrows"),
+        '⇊' => Some("\\downdownarrows"),
+        '⇋' => Some("\\leftrightharpoons"),
+        '⇌' => Some("\\rightleftharpoons"),
+        '⇍' => Some("\\nLeftarrow"),
+        '⇎' => Some("\\nLeftrightarrow"),
+        '⇏' => Some("\\nRightarrow"),
+        '⇐' => Some("\\Leftarrow"),
+        '⇑' => Some("\\Uparrow"),
+        '⇒' => Some("\\Rightarrow"),
+        '⇓' => Some("\\Downarrow"),
+        '⇔' => Some("\\Leftrightarrow"),
+        '⇕' => Some("\\Updownarrow"),
+        '⇚' => Some("\\Lleftarrow"),
+        '⇛' => Some("\\Rrightarrow"),
+        '⇝' => Some("\\rightsquigarrow"),
+        '∁' => Some("\\complement"),
+        '∄' => Some("\\nexists"),
+        '∈' => Some("\\in"),
+        '∉' => Some("\\notin"),
+        '∋' => Some("\\ni"),
+        '∏' => Some("\\prod"),
+        '∐' => Some("\\coprod"),
+        '∑' => Some("\\sum"),
+        '∔' => Some("\\dotplus"),
+        '∝' => Some("\\propto"),
+        '∡' => Some("\\measuredangle"),
+        '∢' => Some("\\sphericalangle"),
+        '∤' => Some("\\nmid"),
+        '∥' => Some("\\parallel"),
+        '∦' => Some("\\nparallel"),
+        '∧' => Some("\\land"),
+        '∨' => Some("\\vee"),
+        '∩' => Some("\\cap"),
+        '∪' => Some("\\cup"),
+        '∫' => Some("\\int"),
+        '∬' => Some("\\iint"),
+        '∭' => Some("\\iiint"),
+        '∮' => Some("\\oint"),
+        '∴' => Some("\\therefore"),
+        '∵' => Some("\\because"),
+        '∼' => Some("\\sim"),
+        '∽' => Some("\\backsim"),
+        '≀' => Some("\\wr"),
+        '≁' => Some("\\nsim"),
+        '≂' => Some("\\eqsim"),
+        '≃' => Some("\\simeq"),
+        '≅' => Some("\\cong"),
+        '≇' => Some("\\ncong"),
+        '≈' => Some("\\approx"),
+        '≊' => Some("\\approxeq"),
+        '≍' => Some("\\asymp"),
+        '≎' => Some("\\Bumpeq"),
+        '≏' => Some("\\bumpeq"),
+        '≐' => Some("\\doteq"),
+        '≑' => Some("\\Doteq"),
+        '≒' => Some("\\fallingdotseq"),
+        '≓' => Some("\\risingdotseq"),
+        '≖' => Some("\\eqcirc"),
+        '≗' => Some("\\circeq"),
+        '≜' => Some("\\triangleq"),
+        '≠' => Some("\\neq"),
+        '≡' => Some("\\equiv"),
+        '≤' => Some("\\leq"),
+        '≥' => Some("\\geq"),
+        '≦' => Some("\\leqq"),
+        '≧' => Some("\\geqq"),
+        '≨' => Some("\\lneqq"),
+        '≩' => Some("\\gneqq"),
+        '≪' => Some("\\ll"),
+        '≫' => Some("\\gg"),
+        '≬' => Some("\\between"),
+        '≮' => Some("\\nless"),
+        '≯' => Some("\\ngtr"),
+        '≰' => Some("\\nleq"),
+        '≱' => Some("\\ngeq"),
+        '≲' => Some("\\lesssim"),
+        '≳' => Some("\\gtrsim"),
+        '≶' => Some("\\lessgtr"),
+        '≷' => Some("\\gtrless"),
+        '≺' => Some("\\prec"),
+        '≻' => Some("\\succ"),
+        '≼' => Some("\\preccurlyeq"),
+        '≽' => Some("\\succcurlyeq"),
+        '≾' => Some("\\precsim"),
+        '≿' => Some("\\succsim"),
+        '⊀' => Some("\\nprec"),
+        '⊁' => Some("\\nsucc"),
+        '⊂' => Some("\\subset"),
+        '⊃' => Some("\\supset"),
+        '⊆' => Some("\\subseteq"),
+        '⊇' => Some("\\supseteq"),
+        '⊈' => Some("\\nsubseteq"),
+        '⊉' => Some("\\nsupseteq"),
+        '⊊' => Some("\\subsetneq"),
+        '⊋' => Some("\\supsetneq"),
+        '⊎' => Some("\\uplus"),
+        '⊑' => Some("\\sqsubseteq"),
+        '⊒' => Some("\\sqsupseteq"),
+        '⊓' => Some("\\sqcap"),
+        '⊔' => Some("\\sqcup"),
+        '⊖' => Some("\\ominus"),
+        '⊘' => Some("\\oslash"),
+        '⊚' => Some("\\circledcirc"),
+        '⊛' => Some("\\circledast"),
+        '⊝' => Some("\\circleddash"),
+        '⊞' => Some("\\boxplus"),
+        '⊟' => Some("\\boxminus"),
+        '⊠' => Some("\\boxtimes"),
+        '⊡' => Some("\\boxdot"),
+        '⊢' => Some("\\vdash"),
+        '⊣' => Some("\\dashv"),
+        '⊨' => Some("\\vDash"),
+        '⊩' => Some("\\Vdash"),
+        '⊪' => Some("\\Vvdash"),
+        '⊬' => Some("\\nvdash"),
+        '⊭' => Some("\\nvDash"),
+        '⊮' => Some("\\nVdash"),
+        '⊯' => Some("\\nVDash"),
+        '⊲' => Some("\\vartriangleleft"),
+        '⊳' => Some("\\vartriangleright"),
+        '⊴' => Some("\\trianglelefteq"),
+        '⊵' => Some("\\trianglerighteq"),
+        '⊸' => Some("\\multimap"),
+        '⊺' => Some("\\intercal"),
+        '⊻' => Some("\\veebar"),
+        '⋀' => Some("\\bigwedge"),
+        '⋁' => Some("\\bigvee"),
+        '⋂' => Some("\\bigcap"),
+        '⋃' => Some("\\bigcup"),
+        '⋄' => Some("\\diamond"),
+        '⋅' => Some("\\cdot"),
+        '⋇' => Some("\\divideontimes"),
+        '⋈' => Some("\\bowtie"),
+        '⋉' => Some("\\ltimes"),
+        '⋊' => Some("\\rtimes"),
+        '⋋' => Some("\\leftthreetimes"),
+        '⋌' => Some("\\rightthreetimes"),
+        '⋍' => Some("\\backsimeq"),
+        '⋎' => Some("\\curlyvee"),
+        '⋏' => Some("\\curlywedge"),
+        '⋐' => Some("\\Subset"),
+        '⋑' => Some("\\Supset"),
+        '⋒' => Some("\\Cap"),
+        '⋓' => Some("\\Cup"),
+        '⋔' => Some("\\pitchfork"),
+        '⋖' => Some("\\lessdot"),
+        '⋗' => Some("\\gtrdot"),
+        '⋘' => Some("\\lll"),
+        '⋙' => Some("\\ggg"),
+        '⋚' => Some("\\lesseqgtr"),
+        '⋛' => Some("\\gtreqless"),
+        '⋞' => Some("\\curlyeqprec"),
+        '⋟' => Some("\\curlyeqsucc"),
+        '⋠' => Some("\\npreceq"),
+        '⋡' => Some("\\nsucceq"),
+        '⋦' => Some("\\lnsim"),
+        '⋧' => Some("\\gnsim"),
+        '⋨' => Some("\\precnsim"),
+        '⋩' => Some("\\succnsim"),
+        '⋪' => Some("\\ntriangleleft"),
+        '⋫' => Some("\\ntriangleright"),
+        '⋬' => Some("\\ntrianglelefteq"),
+        '⋭' => Some("\\ntrianglerighteq"),
+        '⌀' => Some("\\varnothing"),
+        '⌅' => Some("\\barwedge"),
+        '⌆' => Some("\\doublebarwedge"),
+        '⌈' => Some("\\lceil"),
+        '⌉' => Some("\\rceil"),
+        '⌊' => Some("\\lfloor"),
+        '⌋' => Some("\\rfloor"),
+        '⌢' => Some("\\frown"),
+        '⌣' => Some("\\smile"),
+        '□' => Some("\\square"),
+        '△' => Some("\\bigtriangleup"),
+        '▵' => Some("\\vartriangle"),
+        '▽' => Some("\\bigtriangledown"),
+        '▿' => Some("\\triangledown"),
+        '◇' => Some("\\Diamond"),
+        '◊' => Some("\\lozenge"),
+        '◼' => Some("\\blacksquare"),
+        '★' => Some("\\bigstar"),
+        '♠' => Some("\\spadesuit"),
+        '♡' => Some("\\heartsuit"),
+        '♢' => Some("\\diamondsuit"),
+        '♣' => Some("\\clubsuit"),
+        '♭' => Some("\\flat"),
+        '♮' => Some("\\natural"),
+        '♯' => Some("\\sharp"),
+        '⟨' => Some("\\langle"),
+        '⟩' => Some("\\rangle"),
+        '⟮' => Some("\\lgroup"),
+        '⟯' => Some("\\rgroup"),
+        '⟸' => Some("\\Longleftarrow"),
+        '⟹' => Some("\\Longrightarrow"),
+        '⨀' => Some("\\bigodot"),
+        '⨁' => Some("\\bigoplus"),
+        '⨂' => Some("\\bigotimes"),
+        '⨄' => Some("\\biguplus"),
+        '⨆' => Some("\\bigsqcup"),
+        '⨌' => Some("\\iiiint"),
+        '⪅' => Some("\\lessapprox"),
+        '⪆' => Some("\\gtrapprox"),
+        '⪇' => Some("\\lneq"),
+        '⪈' => Some("\\gneq"),
+        '⪉' => Some("\\lnapprox"),
+        '⪊' => Some("\\gnapprox"),
+        '⪋' => Some("\\lesseqqgtr"),
+        '⪌' => Some("\\gtreqqless"),
+        '⪕' => Some("\\eqslantless"),
+        '⪖' => Some("\\eqslantgtr"),
+        '⪷' => Some("\\precapprox"),
+        '⪸' => Some("\\succapprox"),
+        '⪹' => Some("\\precnapprox"),
+        '⪺' => Some("\\succnapprox"),
+        '⫅' => Some("\\subseteqq"),
+        '⫆' => Some("\\supseteqq"),
+        '⫋' => Some("\\subsetneqq"),
+        '⫌' => Some("\\supsetneqq"),
+        '⬝' => Some("\\centerdot"),
+        '⬧' => Some("\\blacklozenge"),
+        '𝕜' => Some("\\Bbbk"),
+        '𝜍' => Some("\\varsigma"),
+        '𝜘' => Some("\\varkappa"),
+        '𝜚' => Some("\\varrho"),
         _ => None,
     }
 }
@@ -1061,6 +1469,34 @@ mod features_tests {
                 r"\end{matrix} \right.",
             ),
         );
+    }
+
+    #[test]
+    fn reads_styled_letters_and_function_arguments() {
+        assert_tex(
+            r#"<mi mathvariant="bold-italic">𝒙</mi><mi mathvariant="script">ℒ</mi>
+               <mi mathvariant="double-struck">ℝ</mi><mtext mathvariant="italic">𝑥</mtext>"#,
+            r"\mathbf{x}\mathcal{L}\mathbb{R}\textit{𝑥}",
+        );
+        assert_tex(
+            r#"<msub><mi mathvariant="normal">lim</mi><mrow><mi>x</mi><mo>→</mo><mn>0</mn></mrow></msub><mi>f</mi>"#,
+            r"{\lim}_{x\rightarrow 0}f",
+        );
+    }
+
+    #[test]
+    fn reads_matrix_fences_and_nested_scripts() {
+        assert_tex(
+            r#"<mrow><mo stretchy="true">[</mo><mtable><mtr><mtd><mi>a</mi></mtd></mtr>
+               <mtr><mtd><mi>b</mi></mtd></mtr></mtable><mo stretchy="true">]</mo></mrow>"#,
+            "\\begin{bmatrix}\na \\\\\nb\n\\end{bmatrix}",
+        );
+        assert_tex(
+            "<msup><msup><mi>x</mi><mi>y</mi></msup><mi>z</mi></msup>",
+            "{x^{y}}^{z}",
+        );
+        assert_tex("<msup><mi>x</mi><mo>′</mo></msup>", "x'");
+        assert_tex("<msup><mi>x</mi><mo>″</mo></msup>", "x^{''}");
     }
 
     #[test]

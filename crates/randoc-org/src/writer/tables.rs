@@ -85,7 +85,7 @@ impl Render<'_> {
                 }
                 output.push('\n');
             }
-            if i + 1 == table.head.rows.len() {
+            if i == 0 && !table.head.rows.is_empty() {
                 output.push('|');
                 for (column, width) in widths.iter().enumerate() {
                     if column > 0 {

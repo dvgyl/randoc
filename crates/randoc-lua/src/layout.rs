@@ -99,20 +99,7 @@ pub(crate) fn install_constants(lua: &Lua, table: &Table) -> mlua::Result<()> {
     Ok(())
 }
 
-pub(crate) fn doc_text(value: &Value) -> Peek<Option<String>> {
-    if let Value::UserData(value) = value
-        && let Ok(doc) = value.borrow::<LuaDoc>()
-    {
-        return doc
-            .doc
-            .render_limited(LIMIT)
-            .map(Some)
-            .ok_or_else(size_error);
-    }
-    Ok(None)
-}
-
-fn read(cx: &Cx, value: &Value) -> Peek<Doc> {
+pub(crate) fn read(cx: &Cx, value: &Value) -> Peek<Doc> {
     if let Value::UserData(value) = value
         && let Ok(doc) = value.borrow::<LuaDoc>()
     {
@@ -322,10 +309,16 @@ pub(crate) fn call(call: &Call) -> Peek<Value> {
                     )?);
                 }
                 "update_column" => {
+                    let column = call.required(1, "i", |v| cx.integral(v))?;
+                    if column < 0
+                        && let Some(text) = doc.render_limited(LIMIT)
+                        && !text.contains('\n')
+                        && doc == layout::literal(text)
+                    {
+                        return Ok(Value::Integer(column.saturating_add(doc.offset() as i64)));
+                    }
                     return Ok(Value::Integer(
-                        doc.update_column(bounded_number(
-                            call.required(1, "i", |v| cx.integral(v))?,
-                        )) as i64,
+                        doc.update_column(bounded_number(column)) as i64
                     ));
                 }
                 _ => {

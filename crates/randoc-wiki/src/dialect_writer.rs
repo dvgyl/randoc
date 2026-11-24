@@ -28,6 +28,7 @@ pub(super) fn write(
         options,
         limit,
         cells: context.limits.max_table_cells,
+        table_depth: 0,
         output_limit: (context.limits.max_input_size.min(64 << 20)) as usize,
     };
     let mut fields = if options.template.is_some() {
@@ -79,6 +80,7 @@ struct Renderer<'a> {
     options: &'a WriterOptions,
     limit: usize,
     cells: usize,
+    table_depth: usize,
     output_limit: usize,
 }
 
@@ -129,8 +131,10 @@ enum Task<'a> {
     Image(&'a Attr, &'a str, &'a str),
     Figure(&'a Attr),
     Table(&'a Table, Vec<(&'a Row, usize)>),
+    EnterCell,
+    ExitCell,
     List(&'a [Vec<Block>], usize, bool, String),
-    Item(String, bool, bool),
+    Item(String, bool, bool, bool),
     Definition(usize, bool),
     Definitions(usize, bool),
 }
@@ -140,6 +144,7 @@ enum Join {
     Inline,
     Block,
     Tight,
+    XWikiLines,
 }
 
 impl Renderer<'_> {
@@ -237,7 +242,12 @@ impl Renderer<'_> {
                     values.pop();
                     let label = stringify(items);
                     let target = target.strip_prefix('/').unwrap_or(target);
-                    self.push(&mut values, Piece::text(format!("[[{target}|{label}]]")))?;
+                    let link = if self.table_depth > 0 {
+                        format!("[[{target}]]")
+                    } else {
+                        format!("[[{target}|{label}]]")
+                    };
+                    self.push(&mut values, Piece::text(link))?;
                 }
                 Task::Image(attr, target, title) => {
                     let label: Piece = values.pop().unwrap_or_default();
@@ -250,6 +260,8 @@ impl Renderer<'_> {
                     let result = self.figure(attr, caption, body);
                     self.push(&mut values, result)?;
                 }
+                Task::EnterCell => self.table_depth += 1,
+                Task::ExitCell => self.table_depth -= 1,
                 Task::Table(table, rows) => {
                     let count = rows.iter().map(|(row, _)| row.cells.len()).sum::<usize>();
                     let mut rendered = values.split_off(values.len().saturating_sub(count + 1));
@@ -260,7 +272,7 @@ impl Renderer<'_> {
                 Task::List(items, depth, ordered, prefix) => {
                     self.list(items, depth, ordered, &prefix, &mut tasks)?;
                 }
-                Task::Item(marker, first_para, nested_first) => {
+                Task::Item(marker, first_para, nested_first, complex_end) => {
                     let mut body: Piece = values.pop().unwrap_or_default();
                     self.output_size(
                         body.text
@@ -272,7 +284,12 @@ impl Renderer<'_> {
                     }
                     body.text.insert_str(0, &marker);
                     body.before = 0;
-                    body.after = usize::from(first_para && self.dialect == Dialect::XWiki);
+                    body.after = if complex_end {
+                        body.final_break = 2;
+                        2
+                    } else {
+                        usize::from(first_para && self.dialect == Dialect::XWiki)
+                    };
                     values.push(body);
                 }
                 Task::Definition(count, loose) => {
@@ -288,7 +305,7 @@ impl Renderer<'_> {
                     if self.dialect == Dialect::XWiki {
                         result.after += 1;
                     } else {
-                        result.after = if loose { 2 } else { 1 };
+                        result.after = result.after.max(if loose { 2 } else { 1 });
                     }
                     values.push(result);
                 }
@@ -301,7 +318,11 @@ impl Renderer<'_> {
         let mut result = Piece::default();
         let mut seen = false;
         for mut piece in pieces {
-            if mode != Join::Inline {
+            if mode == Join::XWikiLines && seen {
+                self.output_size(result.text.len().saturating_add(2))?;
+                result.text.push_str("\\\\");
+            }
+            if mode != Join::Inline && mode != Join::XWikiLines {
                 let gap = if !seen {
                     piece.before
                 } else if mode == Join::Tight {
@@ -313,8 +334,8 @@ impl Renderer<'_> {
                 result.text.push_str(&"\n".repeat(gap));
                 result.after = piece.after;
                 result.final_break = piece.final_break;
-                seen = true;
             }
+            seen = true;
             if result.text.is_empty() {
                 result.text = std::mem::take(&mut piece.text);
             } else {
@@ -349,7 +370,10 @@ impl Renderer<'_> {
             }
             Block::LineBlock(lines) => {
                 tasks.push(Task::Decorate(String::new(), String::new(), 2));
-                tasks.push(Task::Join(lines.len(), Join::Block));
+                tasks.push(Task::Join(
+                    lines.len(),
+                    if x { Join::XWikiLines } else { Join::Block },
+                ));
                 tasks.extend(lines.iter().rev().map(|items| Task::Inlines(items, depth)));
                 return Ok(());
             }
@@ -384,6 +408,7 @@ impl Renderer<'_> {
                         lang.map_or_else(String::new, |lang| format!(" language=\"{lang}\""));
                     Piece::section(format!("{{{{code{language}}}}}\n{code}\n{{{{/code}}}}"), 2)
                 } else if let Some(lang) = lang {
+                    let lang = if lang == "bash" { "sh" } else { lang };
                     Piece::block(
                         format!("{{{{{{code: lang=\"{lang}\" linenumbers=\"True\"\n{code}\n}}}}}}"),
                         2,
@@ -455,12 +480,15 @@ impl Renderer<'_> {
                 let start = tasks.len();
                 tasks.push(Task::Blocks(&table.caption.long, next));
                 for (row, _) in rows.iter().rev() {
-                    tasks.extend(
-                        row.cells
-                            .iter()
-                            .rev()
-                            .map(|cell| Task::Blocks(&cell.content, next)),
-                    );
+                    for cell in row.cells.iter().rev() {
+                        if !x {
+                            tasks.push(Task::ExitCell);
+                        }
+                        tasks.push(Task::Blocks(&cell.content, next));
+                        if !x {
+                            tasks.push(Task::EnterCell);
+                        }
+                    }
                 }
                 tasks.insert(start, Task::Table(table, rows));
                 return Ok(());
@@ -537,6 +565,8 @@ impl Renderer<'_> {
                             format!("<{label}>")
                         } else if label == url {
                             label.clone()
+                        } else if self.table_depth > 0 {
+                            format!("[[{}]]", url.strip_prefix('/').unwrap_or(url))
                         } else {
                             format!("[[{}|{label}]]", url.strip_prefix('/').unwrap_or(url))
                         };
@@ -581,9 +611,15 @@ impl Renderer<'_> {
                             "\n".into()
                         }
                     }
-                    Inline::Code(_, text) => {
+                    Inline::Code(attr, text) => {
                         if x {
-                            format!("{{{{code}}}}{text}{{{{/code}}}}")
+                            let lang = attr
+                                .classes
+                                .iter()
+                                .find(|class| crate::writer::is_highlight_language(class));
+                            let language = lang
+                                .map_or_else(String::new, |lang| format!(" language=\"{lang}\""));
+                            format!("{{{{code{language}}}}}{text}{{{{/code}}}}")
                         } else {
                             format!("''{text}''")
                         }
@@ -648,7 +684,14 @@ impl Renderer<'_> {
                 blocks.first(),
                 Some(Block::BulletList(_) | Block::OrderedList(..))
             );
-            tasks.push(Task::Item(marker, para && blocks.len() == 1, nested_first));
+            let complex_end =
+                !x && matches!(blocks.last(), Some(Block::CodeBlock(..) | Block::Table(_)));
+            tasks.push(Task::Item(
+                marker,
+                para && blocks.len() == 1,
+                nested_first,
+                complex_end,
+            ));
             tasks.push(Task::Join(
                 blocks.len(),
                 if x { Join::Block } else { Join::Tight },
@@ -823,10 +866,8 @@ impl Renderer<'_> {
             out,
             if x {
                 after
-            } else if loose {
-                2
             } else {
-                1
+                after.max(if loose { 2 } else { 1 })
             },
         ))
     }
@@ -869,8 +910,18 @@ impl Renderer<'_> {
                     .count();
                 occupied_until[column..column + span]
                     .fill(r + span_length(cell.row_span, group_end - r));
-                let text = piece.text.trim().replace('\n', " ");
-                let length = literal(&text).offset();
+                let text = if x && (cell.content.len() > 1 || piece.text.contains('\n')) {
+                    format!("((({}\n)))", piece.text.trim())
+                } else if !x && cell.content.len() > 1 {
+                    let mut text = piece.text;
+                    if piece.after > 1 {
+                        text.push('\n');
+                    }
+                    text
+                } else {
+                    piece.text.trim().replace('\n', " ")
+                };
+                let length = literal(text.replace('\n', " ")).offset();
                 let padding = if r >= table.head.rows.len() {
                     match table.col_specs[column].align {
                         Alignment::AlignLeft | Alignment::AlignRight => 2,
@@ -900,13 +951,12 @@ impl Renderer<'_> {
             rows[0] = rows[1].clone();
         }
         let mut out = caption;
-        let heads = table.head.rows.len().max(1);
         for (r, row) in rows.into_iter().enumerate() {
             if r > 0 || !out.is_empty() {
                 out.push('\n');
             }
             if x {
-                let marker = if r < heads { "|=" } else { "|" };
+                let marker = if r == 0 { "|=" } else { "|" };
                 for (column, (cell, _)) in row.into_iter().enumerate() {
                     self.output_size(
                         out.len()
@@ -935,7 +985,7 @@ impl Renderer<'_> {
                     out.push_str(&" ".repeat(gap - left));
                     out.push('|');
                 }
-                if r + 1 == heads {
+                if r == 0 {
                     out.push_str("\n|");
                     for (column, &width) in widths.iter().enumerate() {
                         let align = table.col_specs[column].align;

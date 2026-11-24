@@ -19,6 +19,7 @@ struct Writer<'a> {
     image_number: usize,
     image_ids: HashMap<String, Image>,
     raw_tex: bool,
+    in_citation: bool,
 }
 
 #[derive(PartialEq)]
@@ -73,6 +74,7 @@ pub(super) fn write(doc: &Pandoc, options: &WriterOptions, context: &mut Context
         image_number: 0,
         image_ids: HashMap::new(),
         raw_tex: false,
+        in_citation: false,
     };
     if options.template.is_some() {
         writer.standalone(doc)

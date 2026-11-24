@@ -1,6 +1,9 @@
 //! The application of the command-line options to the settings.
 
-use randoc::ast::MetaValue;
+use randoc::ast::{
+    MetaValue,
+    json::{DEFAULT_MAX_DEPTH, parse_value},
+};
 use randoc::{
     CaptionPosition, CiteMethod, Error, HtmlMathMethod, ObfuscationMethod, ReferenceLocation,
     Result, TopLevelDivision, TrackChanges, Verbosity, WrapOption,
@@ -222,13 +225,7 @@ pub fn math_method(text: &str) -> Result<HtmlMathMethod> {
 
 /// Parses a JSON text and gives the message of Pandoc for an error.
 pub fn parse_json(text: &str) -> std::result::Result<serde_json::Value, String> {
-    serde_json::from_str(text).map_err(|error| {
-        if error.is_eof() {
-            "Unexpected end-of-input, expecting JSON value".to_owned()
-        } else {
-            format!("Unexpected {error}")
-        }
-    })
+    serde_json::from_str(text).map_err(|error| crate::node::json_error(text, error))
 }
 
 /// Applies one option to the settings.
@@ -265,20 +262,12 @@ pub fn apply(settings: &mut Settings, action: &Action, env: &mut dyn Environment
         Opt::VariableJson => {
             let (key, value) = match split_key_value(arg) {
                 (key, Some(text)) => {
-                    // Each number becomes the text of Pandoc before `serde_json`
-                    // rounds it. Only a number beyond `f64` makes the text as
-                    // given fail where Pandoc accepts it.
-                    let exact = || parse_json(&crate::template::exact_numbers(text));
-                    let json = match parse_json(text) {
-                        Ok(_) => exact(),
-                        Err(message) if message.contains("number out of range") => {
-                            exact().map_err(|_| message)
-                        }
-                        Err(message) => Err(message),
-                    }
-                    .map_err(|message| {
+                    let error = |message| {
                         option_error(format!("Could not parse '{text}' as JSON:\n{message}"))
-                    })?;
+                    };
+                    parse_value(text, DEFAULT_MAX_DEPTH).map_err(|e| error(e.to_string()))?;
+                    // Keep the exact number text before serde_json can round it.
+                    let json = parse_json(&crate::template::exact_numbers(text)).map_err(error)?;
                     (key, VarValue::Json(json))
                 }
                 (key, None) => (key, VarValue::Json(serde_json::Value::Bool(true))),
@@ -985,10 +974,27 @@ mod tests {
             error(Opt::PdfEngine, "x")
                 .starts_with("Argument of --pdf-engine must be one of\n\tweasyprint\n")
         );
-        assert_eq!(
-            error(Opt::VariableJson, "a:[1,"),
-            "Could not parse '[1,' as JSON:\nUnexpected end-of-input, expecting JSON value"
-        );
+        for (value, message) in [
+            (
+                "{bad",
+                r#"Unexpected "bad", expecting record key literal or }"#,
+            ),
+            (r#"{"a":}"#, r#"Unexpected "}", expecting JSON value"#),
+            ("tru", r#"Unexpected "tru", expecting JSON value"#),
+            (
+                "\"x",
+                "Unexpected end-of-input while parsing string literal",
+            ),
+            ("[1 2]", r#"Unexpected "2]", expecting , or ]"#),
+            (r#"{"a" 1}"#, r#"Unexpected "1}", expecting :"#),
+            ("01", "Number literal with leading zero"),
+            ("[1,", "Unexpected end-of-input, expecting JSON value"),
+        ] {
+            assert_eq!(
+                error(Opt::VariableJson, &format!("a:{value}")),
+                format!("Could not parse '{value}' as JSON:\n{message}")
+            );
+        }
         assert_eq!(
             error(Opt::Standalone, "x"),
             "Argument of --standalone/-s must be either true or false"

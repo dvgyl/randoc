@@ -24,6 +24,7 @@ struct Line<'a> {
     number: usize,
     column: usize,
     newline: bool,
+    quote_end: Option<(usize, usize)>,
 }
 
 impl<'a> Line<'a> {
@@ -75,6 +76,7 @@ pub(crate) fn read(
                 number: index + 1,
                 column: 1,
                 newline: text.ends_with('\n'),
+                quote_end: None,
             }
         })
         .collect::<Vec<_>>();
@@ -481,16 +483,25 @@ impl<'s> State<'_, 's> {
         } else if horizontal(line.text) {
             Block::HorizontalRule
         } else if let Some(offset) = quote(line.text) {
-            let mut quotes = vec![line.tail(offset)];
+            let mut quotes = vec![quote_line(line, offset)];
             let mut lazy = !quotes[0].text.trim().is_empty() && !block_start(quotes[0].text.trim());
             while let Some(next) = lines.get(cursor).copied() {
                 let next = next.trim();
                 if let Some(offset) = quote(next.text) {
-                    let inside = next.tail(offset);
+                    if let Some(previous) = quotes.last_mut() {
+                        previous.quote_end = Some((next.number, next.column));
+                    }
+                    let inside = quote_line(next, offset);
                     lazy = !inside.text.trim().is_empty() && !block_start(inside.text.trim());
                     quotes.push(inside);
                 } else if lazy && !next.text.is_empty() && !block_start(next.text) {
-                    quotes.push(next);
+                    if let Some(previous) = quotes.last_mut() {
+                        previous.quote_end = Some((next.number, 0));
+                    }
+                    quotes.push(Line {
+                        quote_end: Some(end(next)),
+                        ..next
+                    });
                 } else {
                     break;
                 }
@@ -503,10 +514,14 @@ impl<'s> State<'_, 's> {
                 let first = quotes[0].trim();
                 let last = quotes[quotes.len() - 1];
                 chain.push(self.position(first, last));
-                for line in &mut quotes {
-                    let trimmed = line.trim();
+                for index in 0..quotes.len() {
+                    let trimmed = quotes[index].trim();
                     if let Some(offset) = quote(trimmed.text) {
-                        *line = trimmed.tail(offset);
+                        let mut inside = quote_line(trimmed, offset);
+                        if let Some(next) = quotes.get(index + 1) {
+                            inside.quote_end = Some((next.number, next.trim().column));
+                        }
+                        quotes[index] = inside;
                     }
                 }
             }
@@ -527,7 +542,7 @@ impl<'s> State<'_, 's> {
             let mut parts = vec![line];
             while let Some(next) = lines.get(cursor).copied() {
                 let next = next.trim();
-                if next.text.is_empty() || block_start(next.text) {
+                if next.text.is_empty() || (block_start(next.text) && !horizontal(next.text)) {
                     break;
                 }
                 parts.push(next);
@@ -590,7 +605,12 @@ impl<'s> State<'_, 's> {
             .collect::<Vec<_>>()
             .join("\n");
         let positions = self.sourcepos.then(|| {
-            inlines::Positions::new(&source, lines.iter().map(|line| (line.number, line.column)))
+            inlines::Positions::new(
+                &source,
+                lines
+                    .iter()
+                    .map(|line| (line.number, line.column, line.quote_end.is_some())),
+            )
         });
         let mut nodes = inlines::parse(
             &source,
@@ -1049,8 +1069,17 @@ fn end(line: Line<'_>) -> (usize, usize) {
     )
 }
 
+fn quote_line(line: Line<'_>, offset: usize) -> Line<'_> {
+    Line {
+        quote_end: Some(end(line)),
+        ..line.tail(offset)
+    }
+}
+
 fn line_boundary(line: Line<'_>) -> (usize, usize) {
-    if line.newline {
+    if let Some(end) = line.quote_end {
+        end
+    } else if line.newline {
         (line.number + 1, 0)
     } else {
         end(line)

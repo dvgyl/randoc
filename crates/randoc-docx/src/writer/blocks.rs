@@ -21,6 +21,8 @@ pub(super) struct Flow<'a> {
     pub(super) note: bool,
     /// Inside a table cell, Pandoc gives each `Plain` block the `Compact` style.
     pub(super) compact: bool,
+    /// The bibliography attributes in effect for this paragraph.
+    pub(super) bibliography: Option<&'a Attr>,
 }
 
 impl Renderer<'_> {
@@ -156,13 +158,29 @@ impl Renderer<'_> {
             .get("custom-style")
             .map(|name| self.styles.custom(Kind::Paragraph, name, &self.budget))
             .transpose()?;
-        let bookmark = self.block_bookmark(out, &attr.id);
+        let bibliography = if attr.id == "refs" {
+            Some(attr)
+        } else {
+            flow.bibliography
+        };
+        let mut body = out.fragment();
+        // Bibliography divs get their bookmark IDs after their contents.
+        let bookmark = if bibliography.is_some() {
+            None
+        } else {
+            self.block_bookmark(out, &attr.id)
+        };
         let first = self.first;
         self.first = true;
         self.blocks(
-            out,
+            if bibliography.is_some() {
+                &mut body
+            } else {
+                out
+            },
             blocks,
             Flow {
+                bibliography,
                 custom: style.as_deref().or(flow.custom),
                 bidi: attr.get("dir").map_or(flow.bidi, |dir| dir == "rtl"),
                 run: flow.run.with_attr(attr),
@@ -171,6 +189,13 @@ impl Renderer<'_> {
             depth + 1,
         )?;
         self.first = first;
+        let bookmark = if bibliography.is_some() {
+            let bookmark = self.block_bookmark(out, &attr.id);
+            out.append(body);
+            bookmark
+        } else {
+            bookmark
+        };
         block_bookmark_end(out, bookmark);
         Ok(())
     }
@@ -276,7 +301,9 @@ impl Renderer<'_> {
         flow: &mut Flow<'_>,
         explicit: Option<&str>,
     ) {
-        let ordinary = if self.first {
+        let ordinary = if flow.bibliography.is_some() {
+            "Bibliography"
+        } else if self.first {
             "FirstParagraph"
         } else {
             "BodyText"
@@ -300,7 +327,15 @@ impl Renderer<'_> {
         if flow.bidi {
             out.raw("<w:bidi />");
         }
-        if flow.level > 0 && list.is_none() {
+        if let Some(attr) = flow.bibliography {
+            bibliography_spacing(out, attr);
+        }
+        if flow
+            .bibliography
+            .is_some_and(|attr| attr.has_class("hanging-indent"))
+        {
+            out.raw(r#"<w:ind w:left="720" w:hanging="720" />"#);
+        } else if flow.level > 0 && list.is_none() {
             let indent = 720 * flow.level;
             let _ = write!(out, "<w:ind w:left=\"{indent}\" w:firstLine=\"0\" />");
         }
@@ -388,6 +423,27 @@ impl Renderer<'_> {
         }
         self.first = true;
         Ok(())
+    }
+}
+
+fn bibliography_spacing(out: &mut Xml, attr: &Attr) {
+    let spacing = |key, minimum| {
+        attr.get(key)
+            .and_then(|value| value.parse::<f64>().ok())
+            .filter(|value| value.is_finite() && *value > minimum)
+            .map(|value| (value * 240.0).round_ties_even() as i64)
+    };
+    let line = spacing("line-spacing", 1.0);
+    let after = spacing("entry-spacing", 0.0);
+    if line.is_some() || after.is_some() {
+        out.raw("<w:spacing");
+        if let Some(line) = line {
+            let _ = write!(out, " w:line=\"{line}\" w:lineRule=\"auto\"");
+        }
+        if let Some(after) = after {
+            let _ = write!(out, " w:after=\"{after}\"");
+        }
+        out.raw(" />");
     }
 }
 

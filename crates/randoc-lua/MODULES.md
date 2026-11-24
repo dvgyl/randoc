@@ -8,18 +8,18 @@ differs, and absent when Randoc does not have it or raises
 "is not implemented in Randoc". The matrices of `tests/replay`
 compare the behaviour.
 
-Names of Pandoc: 468. Equal 451, different 2, absent 15.
-Names only in Randoc: 48.
+Names of Pandoc: 468. Equal 465, different 0, absent 3.
+Names only in Randoc: 0.
 
 | name | state |
 | --- | --- |
 | `FORMAT` | equal |
 | `PANDOC_API_VERSION` | equal |
-| `PANDOC_READER_OPTIONS` | different |
+| `PANDOC_READER_OPTIONS` | equal |
 | `PANDOC_SCRIPT_FILE` | equal |
 | `PANDOC_STATE` | equal |
 | `PANDOC_VERSION` | equal |
-| `PANDOC_WRITER_OPTIONS` | different |
+| `PANDOC_WRITER_OPTIONS` | equal |
 | `_G` | equal |
 | `_VERSION` | equal |
 | `assert` | equal |
@@ -142,7 +142,7 @@ Names only in Randoc: 48.
 | `pandoc.Quoted` | equal |
 | `pandoc.RawBlock` | equal |
 | `pandoc.RawInline` | equal |
-| `pandoc.ReaderOptions` | absent |
+| `pandoc.ReaderOptions` | equal |
 | `pandoc.Row` | equal |
 | `pandoc.SimpleTable` | equal |
 | `pandoc.SingleQuote` | equal |
@@ -164,10 +164,10 @@ Names only in Randoc: 48.
 | `pandoc.Underline` | equal |
 | `pandoc.UpperAlpha` | equal |
 | `pandoc.UpperRoman` | equal |
-| `pandoc.WriterOptions` | absent |
-| `pandoc.cli` | absent |
-| `pandoc.cli.default_options` | absent |
-| `pandoc.cli.parse_options` | absent |
+| `pandoc.WriterOptions` | equal |
+| `pandoc.cli` | equal |
+| `pandoc.cli.default_options` | equal |
+| `pandoc.cli.parse_options` | equal |
 | `pandoc.cli.repl` | absent |
 | `pandoc.format` | equal |
 | `pandoc.format.all_extensions` | equal |
@@ -306,8 +306,8 @@ Names only in Randoc: 48.
 | `pandoc.readers.vimwiki` | equal |
 | `pandoc.readers.xlsx` | equal |
 | `pandoc.readers.xml` | equal |
-| `pandoc.scaffolding` | absent |
-| `pandoc.scaffolding.Writer` | absent |
+| `pandoc.scaffolding` | equal |
+| `pandoc.scaffolding.Writer` | equal |
 | `pandoc.sha1` | equal |
 | `pandoc.structure` | equal |
 | `pandoc.structure.make_sections` | equal |
@@ -338,9 +338,9 @@ Names only in Randoc: 48.
 | `pandoc.template` | equal |
 | `pandoc.template.apply` | equal |
 | `pandoc.template.compile` | equal |
-| `pandoc.template.default` | absent |
-| `pandoc.template.get` | absent |
-| `pandoc.template.meta_to_context` | absent |
+| `pandoc.template.default` | equal |
+| `pandoc.template.get` | equal |
+| `pandoc.template.meta_to_context` | equal |
 | `pandoc.text` | equal |
 | `pandoc.text.fromencoding` | equal |
 | `pandoc.text.len` | equal |
@@ -352,7 +352,7 @@ Names only in Randoc: 48.
 | `pandoc.text.toencoding` | equal |
 | `pandoc.text.upper` | equal |
 | `pandoc.types` | equal |
-| `pandoc.types.Sources` | absent |
+| `pandoc.types.Sources` | equal |
 | `pandoc.types.Version` | equal |
 | `pandoc.utils` | equal |
 | `pandoc.utils.Version` | equal |
@@ -373,7 +373,7 @@ Names only in Randoc: 48.
 | `pandoc.utils.type` | equal |
 | `pandoc.walk_block` | equal |
 | `pandoc.walk_inline` | equal |
-| `pandoc.with_state` | absent |
+| `pandoc.with_state` | equal |
 | `pandoc.write` | equal |
 | `pandoc.write_classic` | absent |
 | `pandoc.writers` | equal |
@@ -481,54 +481,3 @@ Names only in Randoc: 48.
 | `utf8` | equal |
 | `warn` | equal |
 | `xpcall` | equal |
-
-Names only in Randoc:
-
-- `PANDOC_READER_OPTIONS.abbreviations`
-- `PANDOC_READER_OPTIONS.columns`
-- `PANDOC_READER_OPTIONS.default_image_extension`
-- `PANDOC_READER_OPTIONS.extensions`
-- `PANDOC_READER_OPTIONS.indented_code_classes`
-- `PANDOC_READER_OPTIONS.standalone`
-- `PANDOC_READER_OPTIONS.strip_comments`
-- `PANDOC_READER_OPTIONS.tab_stop`
-- `PANDOC_READER_OPTIONS.track_changes`
-- `PANDOC_WRITER_OPTIONS.chunk_template`
-- `PANDOC_WRITER_OPTIONS.cite_method`
-- `PANDOC_WRITER_OPTIONS.columns`
-- `PANDOC_WRITER_OPTIONS.dpi`
-- `PANDOC_WRITER_OPTIONS.email_obfuscation`
-- `PANDOC_WRITER_OPTIONS.epub_chapter_level`
-- `PANDOC_WRITER_OPTIONS.epub_fonts`
-- `PANDOC_WRITER_OPTIONS.epub_metadata`
-- `PANDOC_WRITER_OPTIONS.epub_subdirectory`
-- `PANDOC_WRITER_OPTIONS.epub_title_page`
-- `PANDOC_WRITER_OPTIONS.extensions`
-- `PANDOC_WRITER_OPTIONS.figure_caption_position`
-- `PANDOC_WRITER_OPTIONS.highlight_method`
-- `PANDOC_WRITER_OPTIONS.html_math_method`
-- `PANDOC_WRITER_OPTIONS.html_q_tags`
-- `PANDOC_WRITER_OPTIONS.identifier_prefix`
-- `PANDOC_WRITER_OPTIONS.incremental`
-- `PANDOC_WRITER_OPTIONS.link_images`
-- `PANDOC_WRITER_OPTIONS.list_of_figures`
-- `PANDOC_WRITER_OPTIONS.list_of_tables`
-- `PANDOC_WRITER_OPTIONS.list_tables`
-- `PANDOC_WRITER_OPTIONS.number_offset`
-- `PANDOC_WRITER_OPTIONS.number_sections`
-- `PANDOC_WRITER_OPTIONS.prefer_ascii`
-- `PANDOC_WRITER_OPTIONS.reference_doc`
-- `PANDOC_WRITER_OPTIONS.reference_links`
-- `PANDOC_WRITER_OPTIONS.reference_location`
-- `PANDOC_WRITER_OPTIONS.section_divs`
-- `PANDOC_WRITER_OPTIONS.setext_headers`
-- `PANDOC_WRITER_OPTIONS.slide_level`
-- `PANDOC_WRITER_OPTIONS.split_level`
-- `PANDOC_WRITER_OPTIONS.tab_stop`
-- `PANDOC_WRITER_OPTIONS.table_caption_position`
-- `PANDOC_WRITER_OPTIONS.table_of_contents`
-- `PANDOC_WRITER_OPTIONS.template`
-- `PANDOC_WRITER_OPTIONS.toc_depth`
-- `PANDOC_WRITER_OPTIONS.top_level_division`
-- `PANDOC_WRITER_OPTIONS.variables`
-- `PANDOC_WRITER_OPTIONS.wrap_text`

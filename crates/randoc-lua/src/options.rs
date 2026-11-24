@@ -2,14 +2,16 @@
 //! conversion that a filter can read, made from the options of `randoc-core`
 //! (oracle matrix `tests/replay/options-expected.txt`).
 
-use mlua::{Function, Lua, Table, Value};
+use mlua::{Lua, Table, UserData, UserDataFields, Value};
 use randoc_core::{
     CaptionPosition, CiteMethod, Extensions, HtmlMathMethod, ObfuscationMethod, ReaderOptions,
     ReferenceLocation, Text, TopLevelDivision, TrackChanges, WrapOption, WriterOptions,
 };
 use randoc_templates::{Context as TemplateContext, Template, Val};
 
-use crate::peek::{Cx, LuaText, Peek, PeekError, mismatch};
+use crate::construct::Call;
+use crate::object::{ensure_cache, typed_fields};
+use crate::peek::{Cx, LuaText, Peek, PeekError, mismatch, retrieving};
 use crate::push;
 
 /// The reader options of the command line of Pandoc for the input format
@@ -184,10 +186,7 @@ fn writer_fields(options: &WriterOptions) -> Vec<(&'static str, Field<'_>)> {
     ]
 }
 
-/// A template value in Lua. Pandoc gives `Doc` objects of `pandoc.layout`
-/// for text (row I-LUA-27); Randoc gives their text. `level` counts the
-/// lists and maps around the value, which stop at `max_depth` (review
-/// lua-R4-01).
+/// Converts a template value to Lua. The depth limit applies to lists and maps.
 fn push_template_value(
     lua: &Lua,
     value: &Val,
@@ -195,7 +194,8 @@ fn push_template_value(
     max_depth: usize,
 ) -> mlua::Result<Value> {
     Ok(match value {
-        Val::Simple(doc) => push::text(lua, &doc.render(None))?,
+        Val::Simple(doc) => crate::layout::userdata(lua, doc.clone())
+            .map_err(|error| mlua::Error::runtime(error.text()))?,
         Val::List(items) => {
             let level = inner_level(level, max_depth)?;
             let values = items
@@ -228,7 +228,7 @@ fn push_context(
     level: usize,
     max_depth: usize,
 ) -> mlua::Result<Table> {
-    let table = lua.create_table()?;
+    let table = crate::template::context_table(lua)?;
     for (name, value) in &context.0 {
         table.set(
             name.as_str(),
@@ -264,106 +264,71 @@ fn push_field(lua: &Lua, field: &Field, max_depth: usize) -> mlua::Result<Value>
             table.set("url", *url)?;
             Value::Table(table)
         }
-        Field::Variables(context) => {
-            let table = push_context(lua, context, 1, max_depth)?;
-            let metatable = lua.create_table()?;
-            metatable.set("__name", "pandoc Context")?;
-            table.set_metatable(Some(metatable))?;
-            Value::Table(table)
-        }
+        Field::Variables(context) => Value::Table(push_context(lua, context, 1, max_depth)?),
         Field::Template(template) => crate::template::userdata(lua, (*template).clone())?,
     })
 }
 
-/// Makes one options object with `native.options_object` of the prelude.
-fn object(
-    lua: &Lua,
-    make: &Function,
-    name: &str,
-    fields: &[(&'static str, Field)],
-    writable: bool,
-    max_depth: usize,
-) -> mlua::Result<Value> {
-    let values = lua.create_table()?;
-    let names = lua.create_table()?;
-    for (index, (field, value)) in fields.iter().enumerate() {
-        values.set(*field, push_field(lua, value, max_depth)?)?;
-        names.set(index + 1, *field)?;
+struct LuaReaderOptions(ReaderOptions, Option<Vec<Text>>);
+struct ReadOnlyReaderOptions(ReaderOptions);
+struct LuaWriterOptions(WriterOptions, Option<Vec<Text>>);
+
+impl UserData for LuaReaderOptions {
+    fn add_fields<F: UserDataFields<Self>>(fields: &mut F) {
+        typed_fields(fields, "ReaderOptions", &[]);
     }
-    make.call((name, values, names, writable))
 }
 
-/// The options object that a custom reader gets. Its type name has no
-/// `(read-only)`, unlike the global (probed). `extensions` replaces the
-/// names of `opts.extensions`: a script can have extensions that Pandoc
-/// does not know.
+impl UserData for ReadOnlyReaderOptions {
+    fn add_fields<F: UserDataFields<Self>>(fields: &mut F) {
+        typed_fields(fields, "ReaderOptions (read-only)", &[]);
+    }
+}
+
+impl UserData for LuaWriterOptions {
+    fn add_fields<F: UserDataFields<Self>>(fields: &mut F) {
+        typed_fields(fields, "WriterOptions", &[]);
+    }
+}
+
 pub(crate) fn reader_object(
     cx: &Cx,
     options: &ReaderOptions,
     extensions: Option<&[Text]>,
 ) -> mlua::Result<Value> {
-    let native: Table = cx.lua.named_registry_value(crate::module::NATIVE)?;
-    let make: Function = native.get("options_object")?;
-    let mut fields = reader_fields(options);
-    replace_extensions(&mut fields, extensions);
-    object(cx.lua, &make, "ReaderOptions", &fields, false, cx.max_depth)
+    Ok(Value::UserData(cx.lua.create_userdata(
+        LuaReaderOptions(options.clone(), extensions.map(<[Text]>::to_vec)),
+    )?))
 }
 
-/// The options object that a custom writer gets. `extensions` is as for
-/// [`reader_object`].
 pub(crate) fn writer_object(
     cx: &Cx,
     options: &WriterOptions,
     extensions: Option<&[Text]>,
 ) -> mlua::Result<Value> {
-    let native: Table = cx.lua.named_registry_value(crate::module::NATIVE)?;
-    let make: Function = native.get("options_object")?;
-    let mut fields = writer_fields(options);
-    replace_extensions(&mut fields, extensions);
-    object(cx.lua, &make, "WriterOptions", &fields, true, cx.max_depth)
+    let variables = push_field(cx.lua, &Field::Variables(&options.variables), cx.max_depth)?;
+    let object = cx.lua.create_userdata(LuaWriterOptions(
+        options.clone(),
+        extensions.map(<[Text]>::to_vec),
+    ))?;
+    ensure_cache(cx.lua, &object)?.raw_set("variables", variables)?;
+    Ok(Value::UserData(object))
 }
 
-fn replace_extensions<'a>(fields: &mut [(&'static str, Field<'a>)], names: Option<&'a [Text]>) {
-    if let Some(names) = names {
-        for (name, field) in fields.iter_mut() {
-            if *name == "extensions" {
-                *field = Field::Texts(names);
-            }
-        }
-    }
-}
-
-/// Sets the globals `PANDOC_READER_OPTIONS` and `PANDOC_WRITER_OPTIONS`.
 pub(crate) fn set_globals(
     lua: &Lua,
-    native: &Table,
     reader: &ReaderOptions,
     writer: &WriterOptions,
     max_depth: usize,
 ) -> mlua::Result<()> {
-    let make: Function = native.get("options_object")?;
     let globals = lua.globals();
     globals.set(
         "PANDOC_READER_OPTIONS",
-        object(
-            lua,
-            &make,
-            "ReaderOptions (read-only)",
-            &reader_fields(reader),
-            false,
-            max_depth,
-        )?,
+        lua.create_userdata(ReadOnlyReaderOptions(reader.clone()))?,
     )?;
     globals.set(
         "PANDOC_WRITER_OPTIONS",
-        object(
-            lua,
-            &make,
-            "WriterOptions",
-            &writer_fields(writer),
-            true,
-            max_depth,
-        )?,
+        writer_object(&Cx { lua, max_depth }, writer, None)?,
     )
 }
 
@@ -409,44 +374,6 @@ fn name_of<T: PartialEq>(names: &[(T, &'static str)], value: &T) -> &'static str
         .iter()
         .find(|(item, _)| item == value)
         .map_or("", |(_, name)| name)
-}
-
-/// The fields that a table cannot set in Randoc yet (row I-LUA-28). The
-/// options object of the conversion keeps their values.
-const COMPLEX_READER_FIELDS: [&str; 1] = ["extensions"];
-const COMPLEX_WRITER_FIELDS: [&str; 5] = [
-    "extensions",
-    "highlight_method",
-    "html_math_method",
-    "template",
-    "variables",
-];
-
-/// The options object of the conversion, or `None` for a plain table.
-fn is_options_object(table: &Table) -> bool {
-    matches!(
-        crate::peek::metatable_name(table).as_deref(),
-        Some("ReaderOptions (read-only)" | "ReaderOptions" | "WriterOptions")
-    )
-}
-
-/// The fields of a table, or of the options object through its index
-/// function.
-fn option_pairs(
-    lua: &Lua,
-    table: &Table,
-    names: &[&'static str],
-    complex: &[&str],
-) -> mlua::Result<(bool, Vec<(Value, Value)>)> {
-    if is_options_object(table) {
-        let mut pairs = Vec::new();
-        for name in names.iter().filter(|name| !complex.contains(name)) {
-            pairs.push((Value::String(lua.create_string(name)?), table.get(*name)?));
-        }
-        return Ok((true, pairs));
-    }
-    let pairs = table.pairs::<Value, Value>().collect::<mlua::Result<_>>()?;
-    Ok((false, pairs))
 }
 
 fn unknown_property() -> PeekError {
@@ -511,138 +438,379 @@ fn named<T: Copy>(names: &[(T, &'static str)], label: &str, value: &Value) -> Pe
     )))
 }
 
-fn not_implemented(field: &str) -> PeekError {
-    PeekError::Thrown(format!("the option {field} is not implemented in Randoc"))
-}
-
-/// Reads the reader options of `pandoc.read`: the options object of the
-/// conversion gives `conversion`, a table changes the defaults of Pandoc.
-pub(crate) fn reader_options(
-    cx: &Cx,
-    value: &Value,
-    conversion: &ReaderOptions,
-) -> Peek<ReaderOptions> {
+/// Reads a reader options userdata or a table of option values.
+pub(crate) fn reader_options(cx: &Cx, value: &Value) -> Peek<ReaderOptions> {
+    if let Value::UserData(data) = value {
+        if let Ok(options) = data.borrow::<LuaReaderOptions>() {
+            return Ok(options.0.clone());
+        }
+        if let Ok(options) = data.borrow::<ReadOnlyReaderOptions>() {
+            return Ok(options.0.clone());
+        }
+    }
     let Value::Table(table) = value else {
         return Err(mismatch("ReaderOptions userdata or table", value));
     };
-    let names: Vec<&'static str> = reader_fields(conversion).iter().map(|(n, _)| *n).collect();
-    let (object, pairs) = option_pairs(cx.lua, table, &names, &COMPLEX_READER_FIELDS)?;
-    let mut options = if object {
-        conversion.clone()
-    } else {
-        ReaderOptions::default()
-    };
-    for (key, value) in pairs {
-        let key = cx.text(&key).map_err(|_| unknown_property())?;
-        match key.as_str() {
-            "abbreviations" => {
-                let Value::Table(set) = &value else {
-                    return Err(PeekError::Thrown(format!(
-                        "{}\n\twhile retrieving Set",
-                        mismatch("table", &value).text()
-                    )));
-                };
-                let mut items = std::collections::BTreeSet::new();
-                for pair in set.pairs::<Value, Value>() {
-                    let (item, member) = pair?;
-                    if truthy(&member) {
-                        items.insert(cx.text(&item).map_err(PeekError::thrown)?);
-                    }
-                }
-                options.abbreviations = items;
-            }
-            "columns" => options.columns = integral(cx, &value)?,
-            "default_image_extension" => {
-                options.default_image_extension = cx.text(&value).map_err(PeekError::thrown)?;
-            }
-            "extensions" => {}
-            "indented_code_classes" => options.indented_code_classes = text_list(cx, &value)?,
-            "standalone" => options.standalone = truthy(&value),
-            "strip_comments" => options.strip_comments = truthy(&value),
-            "tab_stop" => options.tab_stop = integral(cx, &value)?,
-            "track_changes" => {
-                options.track_changes = named(&TRACK_CHANGES, "track changes", &value)
-                    .map_err(|_| PeekError::Thrown("all choices failed".into()))?;
-            }
-            _ => return Err(unknown_property()),
-        }
+    let mut options = ReaderOptions::default();
+    for pair in table.pairs::<Value, Value>() {
+        let (key, value) = pair?;
+        set_reader(
+            cx,
+            &mut options,
+            &cx.text(&key).map_err(|_| unknown_property())?,
+            &value,
+        )?;
     }
     Ok(options)
 }
 
-/// Reads the writer options of `pandoc.write`, as [`reader_options`] does.
-pub(crate) fn writer_options(
-    cx: &Cx,
-    value: &Value,
-    conversion: &WriterOptions,
-) -> Peek<WriterOptions> {
+fn set_reader(cx: &Cx, options: &mut ReaderOptions, key: &str, value: &Value) -> Peek<()> {
+    match key {
+        "abbreviations" => {
+            let Value::Table(set) = value else {
+                return Err(PeekError::Thrown(format!(
+                    "{}\n\twhile retrieving Set",
+                    mismatch("table", value).text()
+                )));
+            };
+            let mut items = std::collections::BTreeSet::new();
+            for pair in set.pairs::<Value, Value>() {
+                let (item, member) = pair?;
+                if truthy(&member) {
+                    items.insert(cx.text(&item).map_err(PeekError::thrown)?);
+                }
+            }
+            options.abbreviations = items;
+        }
+        "columns" => options.columns = integral(cx, value)?,
+        "default_image_extension" => {
+            options.default_image_extension = cx.text(value).map_err(PeekError::thrown)?;
+        }
+        "extensions" => options.extensions = extensions(cx, value)?.0,
+        "indented_code_classes" => options.indented_code_classes = text_list(cx, value)?,
+        "standalone" => options.standalone = truthy(value),
+        "strip_comments" => options.strip_comments = truthy(value),
+        "tab_stop" => options.tab_stop = integral(cx, value)?,
+        "track_changes" => {
+            options.track_changes = named(&TRACK_CHANGES, "track changes", value)
+                .map_err(|_| PeekError::Thrown("all choices failed".into()))?;
+        }
+        _ => return Err(unknown_property()),
+    }
+    Ok(())
+}
+
+/// Reads a writer options userdata or a table of option values.
+pub(crate) fn writer_options(cx: &Cx, value: &Value) -> Peek<WriterOptions> {
+    if let Value::UserData(data) = value
+        && let Ok(options) = data.borrow::<LuaWriterOptions>()
+    {
+        return Ok(options.0.clone());
+    }
     let Value::Table(table) = value else {
         return Err(mismatch("WriterOptions userdata or table", value));
     };
-    let names: Vec<&'static str> = writer_fields(conversion).iter().map(|(n, _)| *n).collect();
-    let (object, pairs) = option_pairs(cx.lua, table, &names, &COMPLEX_WRITER_FIELDS)?;
-    let mut options = if object {
-        conversion.clone()
-    } else {
-        WriterOptions::default()
-    };
-    for (key, value) in pairs {
-        let key = cx.text(&key).map_err(|_| unknown_property())?;
-        let o = &mut options;
-        match key.as_str() {
-            "chunk_template" => o.chunk_template = json_text(&value)?,
-            "cite_method" => o.cite_method = named(&CITE_METHODS, "citation method:", &value)?,
-            "columns" => o.columns = integral(cx, &value)?,
-            "dpi" => o.dpi = integral(cx, &value)?,
-            "email_obfuscation" => {
-                o.email_obfuscation = named(&OBFUSCATION_METHODS, "obfuscation method", &value)?;
-            }
-            "epub_chapter_level" | "split_level" => o.split_level = integral(cx, &value)?,
-            "epub_fonts" => o.epub_fonts = text_list(cx, &value)?,
-            "epub_metadata" => o.epub_metadata = cx.text(&value).ok(),
-            "epub_subdirectory" => o.epub_subdirectory = json_text(&value)?,
-            "epub_title_page" => o.epub_title_page = truthy(&value),
-            "extensions" => {}
-            "figure_caption_position" => {
-                o.figure_caption_position = named(&CAPTION_POSITIONS, "caption position", &value)?;
-            }
-            "html_q_tags" => o.html_q_tags = truthy(&value),
-            "identifier_prefix" => {
-                o.identifier_prefix = cx.text(&value).map_err(PeekError::thrown)?;
-            }
-            "incremental" => o.incremental = truthy(&value),
-            "link_images" => o.link_images = truthy(&value),
-            "list_of_figures" => o.list_of_figures = truthy(&value),
-            "list_of_tables" => o.list_of_tables = truthy(&value),
-            "list_tables" => o.list_tables = truthy(&value),
-            "number_offset" => {
-                o.number_offset = cx
-                    .list(&value, |item| cx.integral(item))
-                    .map_err(PeekError::thrown)?;
-            }
-            "number_sections" => o.number_sections = truthy(&value),
-            "prefer_ascii" => o.prefer_ascii = truthy(&value),
-            "reference_doc" => o.reference_doc = cx.text(&value).ok(),
-            "reference_links" => o.reference_links = truthy(&value),
-            "reference_location" => {
-                o.reference_location = named(&REFERENCE_LOCATIONS, "reference location", &value)?;
-            }
-            "section_divs" => o.section_divs = truthy(&value),
-            "setext_headers" => o.setext_headers = truthy(&value),
-            "slide_level" => o.slide_level = cx.integral(&value).ok(),
-            "tab_stop" => o.tab_stop = integral(cx, &value)?,
-            "table_caption_position" => {
-                o.table_caption_position = named(&CAPTION_POSITIONS, "caption position", &value)?;
-            }
-            "table_of_contents" => o.table_of_contents = truthy(&value),
-            "toc_depth" => o.toc_depth = integral(cx, &value)?,
-            "top_level_division" => {
-                o.top_level_division = named(&TOP_LEVEL_DIVISIONS, "top level division", &value)?;
-            }
-            "wrap_text" => o.wrap_text = named(&WRAP_OPTIONS, "wrap method", &value)?,
-            name if COMPLEX_WRITER_FIELDS.contains(&name) => return Err(not_implemented(name)),
-            _ => return Err(unknown_property()),
-        }
+    let mut options = WriterOptions::default();
+    for pair in table.pairs::<Value, Value>() {
+        let (key, value) = pair?;
+        set_writer(
+            cx,
+            &mut options,
+            &cx.text(&key).map_err(|_| unknown_property())?,
+            &value,
+        )?;
     }
     Ok(options)
+}
+
+fn set_writer(cx: &Cx, o: &mut WriterOptions, key: &str, value: &Value) -> Peek<()> {
+    match key {
+        "chunk_template" => o.chunk_template = json_text(value)?,
+        "cite_method" => o.cite_method = named(&CITE_METHODS, "citation method:", value)?,
+        "columns" => o.columns = integral(cx, value)?,
+        "dpi" => o.dpi = integral(cx, value)?,
+        "email_obfuscation" => {
+            o.email_obfuscation = named(&OBFUSCATION_METHODS, "obfuscation method", value)?;
+        }
+        "epub_chapter_level" | "split_level" => o.split_level = integral(cx, value)?,
+        "epub_fonts" => o.epub_fonts = text_list(cx, value)?,
+        "epub_metadata" => o.epub_metadata = cx.text(value).ok(),
+        "epub_subdirectory" => o.epub_subdirectory = json_text(value)?,
+        "epub_title_page" => o.epub_title_page = truthy(value),
+        "extensions" => o.extensions = extensions(cx, value)?.0,
+        "figure_caption_position" => {
+            o.figure_caption_position = named(&CAPTION_POSITIONS, "caption position", value)?;
+        }
+        "html_q_tags" => o.html_q_tags = truthy(value),
+        "identifier_prefix" => {
+            o.identifier_prefix = cx.text(value).map_err(PeekError::thrown)?;
+        }
+        "incremental" => o.incremental = truthy(value),
+        "link_images" => o.link_images = truthy(value),
+        "list_of_figures" => o.list_of_figures = truthy(value),
+        "list_of_tables" => o.list_of_tables = truthy(value),
+        "list_tables" => o.list_tables = truthy(value),
+        "number_offset" => {
+            o.number_offset = cx
+                .list(value, |item| cx.integral(item))
+                .map_err(PeekError::thrown)?;
+        }
+        "number_sections" => o.number_sections = truthy(value),
+        "prefer_ascii" => o.prefer_ascii = truthy(value),
+        "reference_doc" => o.reference_doc = cx.text(value).ok(),
+        "reference_links" => o.reference_links = truthy(value),
+        "reference_location" => {
+            o.reference_location = named(&REFERENCE_LOCATIONS, "reference location", value)?;
+        }
+        "section_divs" => o.section_divs = truthy(value),
+        "setext_headers" => o.setext_headers = truthy(value),
+        "slide_level" => o.slide_level = cx.integral(value).ok(),
+        "tab_stop" => o.tab_stop = integral(cx, value)?,
+        "table_caption_position" => {
+            o.table_caption_position = named(&CAPTION_POSITIONS, "caption position", value)?;
+        }
+        "table_of_contents" => o.table_of_contents = truthy(value),
+        "toc_depth" => o.toc_depth = integral(cx, value)?,
+        "top_level_division" => {
+            o.top_level_division = named(&TOP_LEVEL_DIVISIONS, "top level division", value)?;
+        }
+        "wrap_text" => o.wrap_text = named(&WRAP_OPTIONS, "wrap method", value)?,
+        "variables" => o.variables = crate::template::context(cx, value)?,
+        "template" => {
+            o.template = if matches!(value, Value::Nil) {
+                None
+            } else {
+                Some(crate::template::extract_template(cx, value)?)
+            };
+        }
+        "html_math_method" => o.html_math_method = math_method(value)?,
+        "highlight_method" => match value {
+            Value::String(name) if name.as_bytes() == b"default" => {
+                o.listings = false;
+                o.highlight_style = Some("pygments".into());
+            }
+            Value::String(name) if name.as_bytes() == b"none" => {
+                o.listings = false;
+                o.highlight_style = None;
+            }
+            Value::String(name) if name.as_bytes() == b"idiomatic" => o.listings = true,
+            value => {
+                return Err(PeekError::Thrown(format!(
+                    "failed to decode: Unknown highlighting method {}",
+                    cx.text(value)
+                        .unwrap_or_else(|_| json_kind(value).to_owned())
+                )));
+            }
+        },
+        _ => return Err(unknown_property()),
+    }
+    Ok(())
+}
+
+fn extensions(cx: &Cx, value: &Value) -> Peek<(Extensions, Vec<Text>)> {
+    let mut standard = Extensions::empty();
+    let mut custom = std::collections::BTreeSet::new();
+    for name in text_list(cx, value)? {
+        if let Some(extension) = randoc_core::Extension::from_name(&name) {
+            standard.enable(extension);
+        } else {
+            custom.insert(name);
+        }
+    }
+    let names = crate::formats::extension_names(standard)
+        .into_iter()
+        .map(str::to_owned)
+        .chain(custom)
+        .collect();
+    Ok((standard, names))
+}
+
+fn math_method(value: &Value) -> Peek<HtmlMathMethod> {
+    let (name, url) = match value {
+        Value::Table(table) => (
+            table.raw_get::<String>("method")?,
+            table.raw_get::<Option<String>>("url")?.unwrap_or_default(),
+        ),
+        _ => (json_text(value)?, String::new()),
+    };
+    match name.as_str() {
+        "plain" => Ok(HtmlMathMethod::PlainMath),
+        "mathml" => Ok(HtmlMathMethod::MathMl),
+        "gladtex" => Ok(HtmlMathMethod::GladTex),
+        "webtex" => Ok(HtmlMathMethod::WebTex(url)),
+        "mathjax" => Ok(HtmlMathMethod::MathJax(url)),
+        "katex" => Ok(HtmlMathMethod::KaTex(url)),
+        _ => Err(PeekError::Thrown(format!(
+            "failed to decode: Unknown HTML math method {name}"
+        ))),
+    }
+}
+
+fn constructor_extensions(cx: &Cx, value: &Value) -> Peek<Option<Vec<Text>>> {
+    match value {
+        Value::Table(table) => {
+            let value = table.raw_get::<Value>("extensions")?;
+            if matches!(value, Value::Nil) {
+                Ok(None)
+            } else {
+                extensions(cx, &value).map(|(_, names)| Some(names))
+            }
+        }
+        Value::UserData(data) => {
+            if let Ok(reader) = data.borrow::<LuaReaderOptions>() {
+                Ok(reader.1.clone())
+            } else if let Ok(writer) = data.borrow::<LuaWriterOptions>() {
+                Ok(writer.1.clone())
+            } else {
+                Ok(None)
+            }
+        }
+        _ => Ok(None),
+    }
+}
+
+pub(crate) fn call(call: &Call) -> Peek<Value> {
+    let cx = call.cx;
+    match call.name {
+        "ReaderOptions" => {
+            let options = call.required(0, "opts", |value| {
+                retrieving("ReaderOptions", reader_options(cx, value))
+            })?;
+            let names = constructor_extensions(cx, &call.argument(0))?;
+            return Ok(reader_object(cx, &options, names.as_deref())?);
+        }
+        "WriterOptions" => {
+            let options = call.required(0, "opts", |value| {
+                retrieving("WriterOptions", writer_options(cx, value))
+            })?;
+            let names = constructor_extensions(cx, &call.argument(0))?;
+            return Ok(writer_object(cx, &options, names.as_deref())?);
+        }
+        _ => {}
+    }
+    let object = call.argument(0);
+    let Value::UserData(data) = object else {
+        return Err(mismatch("ReaderOptions or WriterOptions", &object));
+    };
+    let key = call.argument(1);
+    let key = if let Value::String(key) = key {
+        key.text()
+    } else {
+        String::new()
+    };
+    if call.name == "set" {
+        let value = call.argument(2);
+        let extensions = if key == "extensions" {
+            Some(extensions(cx, &value)?)
+        } else {
+            None
+        };
+        if let Ok(mut reader) = data.borrow_mut::<LuaReaderOptions>() {
+            if let Some((set, names)) = extensions {
+                reader.0.extensions = set;
+                reader.1 = Some(names);
+            } else {
+                set_reader(cx, &mut reader.0, &key, &value)?;
+            }
+        } else if let Ok(mut writer) = data.borrow_mut::<LuaWriterOptions>() {
+            if let Some((set, names)) = extensions {
+                writer.0.extensions = set;
+                writer.1 = Some(names);
+            } else {
+                set_writer(cx, &mut writer.0, &key, &value)?;
+            }
+        } else {
+            return Err(PeekError::Thrown(
+                "This ReaderOptions value is read-only.".into(),
+            ));
+        }
+        let cache = ensure_cache(cx.lua, &data)?;
+        if matches!(key.as_str(), "epub_chapter_level" | "split_level") {
+            cache.raw_set("epub_chapter_level", Value::Nil)?;
+            cache.raw_set("split_level", Value::Nil)?;
+        }
+        cache.raw_set(key, value)?;
+        return Ok(Value::Nil);
+    }
+    let reader = data.borrow::<LuaReaderOptions>().ok();
+    let read_only = data.borrow::<ReadOnlyReaderOptions>().ok();
+    let writer = data.borrow::<LuaWriterOptions>().ok();
+    let (fields, custom_extensions) = if let Some(reader) = reader.as_ref() {
+        (reader_fields(&reader.0), reader.1.as_deref())
+    } else if let Some(reader) = read_only.as_ref() {
+        (reader_fields(&reader.0), None)
+    } else if let Some(writer) = writer.as_ref() {
+        (writer_fields(&writer.0), writer.1.as_deref())
+    } else {
+        return Err(unknown_property());
+    };
+    match call.name {
+        "keys" => Ok(Value::Table(cx.lua.create_sequence_from(fields.iter().map(|(name, _)| *name))?)),
+        "get" => {
+            let cache = ensure_cache(cx.lua, &data)?;
+            let cached: Value = cache.raw_get(key.as_str())?;
+            if !matches!(cached, Value::Nil) {
+                return Ok(cached);
+            }
+            let Some((_, field)) = fields.iter().find(|(name, _)| *name == key) else {
+                return Ok(Value::Nil);
+            };
+            let value = if key == "extensions" && let Some(names) = custom_extensions {
+                push_field(cx.lua, &Field::Texts(names), cx.max_depth)?
+            } else {
+                push_field(cx.lua, field, cx.max_depth)?
+            };
+            cache.raw_set(key, value.clone())?;
+            Ok(value)
+        }
+        "tostring" if read_only.is_some() => Err(PeekError::Thrown(
+            "ReaderOptions expected, got ReaderOptions (read-only)\n\twhile retrieving function argument opts\n\twhile retrieving arguments for function ".into(),
+        )),
+        "tostring" => {
+            if let Some(reader) = reader.as_ref() {
+                return Ok(push::text(cx.lua, &show_reader(&reader.0, custom_extensions, cx.max_depth))?);
+            }
+            Ok(push::text(cx.lua, &format!("WriterOptions: {:p}", data.to_pointer()))?)
+        }
+        _ => Err(unknown_property()),
+    }
+}
+
+fn show_reader(
+    options: &ReaderOptions,
+    custom_extensions: Option<&[Text]>,
+    depth: usize,
+) -> String {
+    let quote = |text: &str| crate::show::show_text(text, depth);
+    let extensions = crate::formats::extension_names(options.extensions)
+        .into_iter()
+        .map(|name| format!("Ext_{name}"))
+        .chain(
+            custom_extensions
+                .into_iter()
+                .flatten()
+                .filter(|name| randoc_core::Extension::from_name(name).is_none())
+                .map(|name| format!("CustomExtension {}", quote(name))),
+        )
+        .collect::<Vec<_>>()
+        .join(",");
+    let list = |values: Vec<&str>| values.into_iter().map(quote).collect::<Vec<_>>().join(",");
+    let abbreviations = list(options.abbreviations.iter().map(String::as_str).collect());
+    let classes = list(
+        options
+            .indented_code_classes
+            .iter()
+            .map(String::as_str)
+            .collect(),
+    );
+    let flag = |value| if value { "True" } else { "False" };
+    format!(
+        "ReaderOptions {{readerExtensions = Extensions (fromList [{extensions}]), readerStandalone = {}, readerColumns = {}, readerTabStop = {}, readerIndentedCodeClasses = [{classes}], readerAbbreviations = fromList [{abbreviations}], readerDefaultImageExtension = {}, readerTrackChanges = {:?}, readerStripComments = {}, readerTypstInputs = []}}",
+        flag(options.standalone),
+        options.columns,
+        options.tab_stop,
+        quote(&options.default_image_extension),
+        options.track_changes,
+        flag(options.strip_comments)
+    )
 }

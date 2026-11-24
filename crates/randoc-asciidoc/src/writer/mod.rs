@@ -35,7 +35,7 @@ pub(super) fn write(
         messages: Vec::new(),
         ids: Default::default(),
     };
-    let body = renderer.blocks(&doc.blocks, 0, 0);
+    let body = renderer.blocks(&doc.blocks, blocks::ListDepth::default(), 0);
     let body = renderer.render(body);
     let output = if let Some(template) = &options.template {
         let meta_renderer = std::cell::RefCell::new(Renderer {
@@ -46,7 +46,11 @@ pub(super) fn write(
         });
         let mut variables = TemplateContext::from_meta(
             &doc.meta,
-            &mut |blocks| meta_renderer.borrow_mut().blocks(blocks, 0, 0),
+            &mut |blocks| {
+                meta_renderer
+                    .borrow_mut()
+                    .blocks(blocks, blocks::ListDepth::default(), 0)
+            },
             &mut |inlines| meta_renderer.borrow().inlines(inlines, false, false),
         );
         renderer

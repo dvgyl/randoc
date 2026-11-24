@@ -3,16 +3,17 @@
 use std::rc::Rc;
 
 use mlua::{Lua, ObjectLike, Table, UserData, UserDataFields, Value};
-use randoc_ast::Meta;
-use randoc_core::WriterOptions;
+use randoc_ast::{Inline, Meta, MetaValue};
 use randoc_core::shared::chunks::{ChunkOptions, ChunkedDoc, split_into_chunked_doc};
 use randoc_core::shared::sections::{make_sections, prepare_slides};
 use randoc_core::shared::toc::{TocEntry, TocOptions, toc_entries, toc_list};
+use randoc_core::{Extensions, WriterOptions};
 
 use crate::construct::Call;
 use crate::object::{cache_of, ensure_cache, typed_fields};
 use crate::peek::{Peek, PeekError, is_none, mismatch, retrieving, within};
 use crate::push;
+use crate::show::{show_blocks, show_inlines, show_text};
 use crate::utils::{document_blocks, is_truthy};
 use crate::walk::{check_blocks, check_document};
 
@@ -81,10 +82,9 @@ fn sections(call: &Call) -> Peek<Value> {
     let number = is_truthy(&field("number_sections")?);
     let base = cx.integral(&field("base_level")?).ok();
     let slide = field("slide_level")?;
-    if matches!(slide, Value::Integer(_) | Value::Number(_))
-        && let Ok(level) = cx.integral(&slide)
-    {
-        blocks = prepare_slides(blocks, level.max(1), cx.max_depth).map_err(core_error)?;
+    if let Ok(level) = cx.integral(&slide) {
+        let level = if level < 1 { 6 } else { level };
+        blocks = prepare_slides(blocks, level, cx.max_depth).map_err(core_error)?;
     }
     let sections = make_sections(blocks, number, base, cx.max_depth).map_err(core_error)?;
     check_blocks(cx, &sections)?;
@@ -139,7 +139,42 @@ fn split(call: &Call) -> Peek<Value> {
             base_heading_level: base,
         };
     }
-    let chunked = split_into_chunked_doc(&doc, &options, cx.max_depth).map_err(core_error)?;
+    let mut chunked = split_into_chunked_doc(&doc, &options, cx.max_depth).map_err(core_error)?;
+    if let Some(intro) = chunked.chunks.first_mut().filter(|chunk| chunk.level == 0)
+        && let Some(title) = doc.meta.0.get("title")
+    {
+        let title = match title {
+            MetaValue::MetaString(text) => vec![Inline::Str(text.clone())],
+            MetaValue::MetaInlines(inlines) => inlines.clone(),
+            MetaValue::MetaBlocks(blocks) => {
+                crate::utils::blocks_to_inlines(blocks, &[Inline::Space])
+            }
+            _ => Vec::new(),
+        };
+        if !title.is_empty() {
+            let id = randoc_core::shared::auto_identifier(&title, Extensions::empty());
+            intro.chunk.id = format!("{id}-1");
+            let heading = randoc_core::shared::stringify(&title);
+            let mut parts = options.path_template.split('%');
+            let mut path = parts.next().unwrap_or_default().to_owned();
+            for part in parts {
+                match part.as_bytes().first() {
+                    Some(b'n') => path.push_str("001"),
+                    Some(b's') => path.push('0'),
+                    Some(b'i') => path.push_str(&intro.chunk.id),
+                    Some(b'h') => path.push_str(&heading),
+                    _ => {
+                        path.push('%');
+                        path.push_str(part);
+                        continue;
+                    }
+                }
+                path.push_str(&part[1..]);
+            }
+            intro.chunk.path = path;
+            intro.chunk.title = title;
+        }
+    }
     Ok(Value::UserData(cx.lua.create_userdata(LuaChunkedDoc {
         doc: Rc::new(chunked),
         meta: doc.meta,
@@ -168,7 +203,7 @@ fn table_of_contents(call: &Call) -> Peek<Value> {
     let defaults = WriterOptions::default();
     let options = call
         .optional(1, "opts", |v| {
-            let result = crate::options::writer_options(cx, v, &defaults);
+            let result = crate::options::writer_options(cx, v);
             if matches!(v, Value::Table(_)) {
                 result.map_err(PeekError::thrown)
             } else {
@@ -255,10 +290,12 @@ fn property(call: &Call) -> Peek<Value> {
         return Err(mismatch("ChunkedDoc or Chunk", &value));
     };
     if call.name == "tostring" {
-        return Ok(push::text(
-            lua,
-            &format!("{type_name}: {:p}", data.to_pointer()),
-        )?);
+        let text = if let Ok(chunk) = data.borrow::<LuaChunk>() {
+            chunk_string(&chunk.doc, chunk.index, chunk.view, call.cx.max_depth).unwrap_or_default()
+        } else {
+            format!("{type_name}: {:p}", data.to_pointer())
+        };
+        return Ok(push::text(lua, &text)?);
     }
     let key = call.argument(1);
     let name = match &key {
@@ -299,7 +336,7 @@ fn property(call: &Call) -> Peek<Value> {
         let view = data.borrow::<LuaChunk>()?;
         chunk_field(lua, &view, name)?
     };
-    if !matches!(name, "up" | "prev" | "next") && !matches!(value, Value::Nil) {
+    if !matches!(value, Value::Nil) {
         ensure_cache(lua, data)?.raw_set(key, value.clone())?;
     }
     Ok(value)
@@ -347,4 +384,39 @@ fn chunk_field(lua: &Lua, value: &LuaChunk, name: &str) -> mlua::Result<Value> {
         }
         _ => Ok(Value::Nil),
     }
+}
+
+fn chunk_string(doc: &ChunkedDoc, index: usize, view: View, depth: usize) -> Option<String> {
+    let entry = doc.chunks.get(index)?;
+    let quote = |value: &str| show_text(value, depth);
+    let link = |index: Option<usize>, view| {
+        index
+            .and_then(|index| chunk_string(doc, index, view, depth.checked_sub(1)?))
+            .map_or_else(|| "Nothing".to_owned(), |value| format!("Just ({value})"))
+    };
+    let up = link(entry.up, View::UpOnly);
+    let prev = link(
+        index
+            .checked_sub(1)
+            .filter(|_| !matches!(view, View::UpOnly)),
+        View::UpOnly,
+    );
+    let next = link(
+        index.checked_add(1).filter(|_| matches!(view, View::Full)),
+        View::UpPrev,
+    );
+    let section = entry.number.as_deref().map_or_else(
+        || "Nothing".to_owned(),
+        |value| format!("Just {}", quote(value)),
+    );
+    Some(format!(
+        "Chunk {{chunkHeading = {}, chunkId = {}, chunkLevel = {}, chunkNumber = {}, chunkSectionNumber = {section}, chunkPath = {}, chunkUp = {up}, chunkPrev = {prev}, chunkNext = {next}, chunkUnlisted = {}, chunkContents = {}}}",
+        show_inlines(&entry.title, depth),
+        quote(&entry.id),
+        entry.level,
+        index + 1,
+        quote(&entry.path),
+        if entry.unlisted { "True" } else { "False" },
+        show_blocks(&entry.blocks, depth),
+    ))
 }

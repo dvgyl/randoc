@@ -58,14 +58,13 @@ fn heading<'a>(input: &[Line<'a>], i: usize) -> Option<((char, bool), Line<'a>, 
     let line = *input.get(i)?;
     let second = *input.get(i + 1)?;
     if let Some((c, len)) = adornment(line.text) {
-        let title = second.text.trim_end();
-        let width = randoc_layout::real_length(title);
-        if !title.is_empty()
-            && second.indent() == 0
+        let title = second.cut(second.indent()).with(second.text.trim());
+        let width = randoc_layout::real_length(title.text);
+        if !title.text.is_empty()
             && len >= width
             && input.get(i + 2).and_then(|l| adornment(l.text)) == Some((c, len))
         {
-            return Some(((c, true), second, i + 3));
+            return Some(((c, true), title, i + 3));
         }
         return None;
     }
@@ -373,7 +372,10 @@ impl Parser<'_> {
                 }
             } else if definition_start(input, i) {
                 let mut items = Vec::new();
-                while definition_start(input, i) {
+                let is_option_list = option_list(text).is_some();
+                while definition_start(input, i)
+                    && option_list(input[i].text).is_some() == is_option_list
+                {
                     let line = input[i];
                     let (body, end) = indented(input, i + 1, 1);
                     let (term, body) = if let Some((name, description)) = option_list(line.text) {

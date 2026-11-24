@@ -271,13 +271,14 @@ impl EntryWriter<'_> {
             }
             self.render("title", &content)?;
         }
-        let container = if bib_kind == "article" {
-            "journal"
-        } else {
-            "booktitle"
-        };
+        match bib_kind {
+            "article" | "review" => self.normal("container-title", "journal")?,
+            "inbook" | "incollection" | "inreference" | "inproceedings" => {
+                self.normal("container-title", "booktitle")?;
+            }
+            _ => {}
+        }
         for (key, target) in [
-            ("container-title", container),
             ("collection-title", "series"),
             ("edition", "edition"),
             ("volume", "volume"),
@@ -292,7 +293,6 @@ impl EntryWriter<'_> {
             }
         }
         self.normal("page", "pages")?;
-        self.normal("chapter-number", "chapter")?;
         if self.latex {
             self.normal("version", "version")?;
         }
@@ -331,6 +331,14 @@ impl EntryWriter<'_> {
         }
         self.normal("abstract", "abstract")?;
         self.normal("annote", "annote")?;
+        if self.latex {
+            let subtype = match kind.as_str() {
+                "article-magazine" => "magazine",
+                "article-newspaper" => "newspaper",
+                _ => "",
+            };
+            self.field("entrysubtype", literal(subtype));
+        }
         Ok(bib_kind)
     }
 
@@ -398,7 +406,11 @@ impl EntryWriter<'_> {
                         .iter()
                         .map(|parts| match parts.0.as_slice() {
                             [year, rest @ ..] => {
-                                let mut text = year.to_string();
+                                let mut text = if *year == 0 {
+                                    "00".into()
+                                } else {
+                                    year.to_string()
+                                };
                                 for part in rest.iter().take(2) {
                                     text.push_str(&format!("-{part:02}"));
                                 }
@@ -418,7 +430,9 @@ impl EntryWriter<'_> {
                     }
                 }
             }
-        } else if let Some(date) = self.map.get("issued").and_then(date) {
+        } else if let Some(date) = self.map.get("issued").and_then(date)
+            && date.parts.len() <= 2
+        {
             let years = date
                 .parts
                 .iter()
@@ -472,20 +486,15 @@ fn inlines(value: &MetaValue) -> Vec<Inline> {
 fn protect_title(parts: &mut [Inline], first: &mut bool) {
     for item in parts {
         match item {
-            Inline::Str(text) => {
-                if let Some(c) = text.chars().find(|c| c.is_alphabetic()) {
-                    if !*first && c.is_uppercase() {
-                        let inner = Inline::Str(std::mem::take(text));
-                        *item = Inline::Span(protected_attr(), vec![inner]);
-                    }
-                    *first = false;
+            Inline::Str(text) if !text.is_empty() => {
+                if !*first && text.chars().any(char::is_uppercase) {
+                    let inner = Inline::Str(std::mem::take(text));
+                    *item = Inline::Span(protected_attr(), vec![inner]);
                 }
+                *first = false;
             }
-            Inline::Span(attr, items)
-                if attr.id.is_empty() && attr.classes.is_empty() && attr.attributes.is_empty() =>
-            {
-                let inner = Inline::Span(Attr::default(), std::mem::take(items));
-                *item = Inline::Span(protected_attr(), vec![inner]);
+            Inline::Span(attr, items) if attr.is_empty() || attr.has_class("nocase") => {
+                protect_title(items, &mut false);
                 *first = false;
             }
             Inline::Span(_, _) | Inline::SmallCaps(_) | Inline::Math(_, _) => *first = false,
@@ -550,9 +559,7 @@ fn render_names(value: &MetaValue) -> Vec<Inline> {
 }
 
 fn literal_name(text: &str) -> Vec<Inline> {
-    if text == "others" {
-        words(text)
-    } else if text.is_empty() {
+    if text.is_empty() {
         Vec::new()
     } else {
         vec![Inline::Span(Attr::default(), words(text))]

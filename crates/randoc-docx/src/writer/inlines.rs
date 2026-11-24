@@ -13,15 +13,15 @@ pub(super) struct Run<'a> {
     lang: Option<&'a str>,
     rtl: bool,
     marks: u8,
+    bold: usize,
+    italic: usize,
     vertical: Option<&'static str>,
 }
 
-const BOLD: u8 = 1;
-const ITALIC: u8 = 2;
-const UNDERLINE: u8 = 4;
-const STRIKE: u8 = 8;
-const SMALL_CAPS: u8 = 16;
-const MARK: u8 = 32;
+const UNDERLINE: u8 = 1;
+const STRIKE: u8 = 2;
+const SMALL_CAPS: u8 = 4;
+const MARK: u8 = 8;
 
 impl<'a> Run<'a> {
     pub(super) fn styled<'b>(self, name: &'b str) -> Run<'b>
@@ -53,6 +53,8 @@ impl<'a> Run<'a> {
             && !self.rtl
             && !east_asia
             && self.marks == 0
+            && self.bold == 0
+            && self.italic == 0
             && self.vertical.is_none()
         {
             return;
@@ -66,11 +68,17 @@ impl<'a> Run<'a> {
         if east_asia {
             out.raw(r#"<w:rFonts w:hint="eastAsia" />"#);
         }
-        if self.marks & BOLD != 0 {
-            out.raw("<w:b /><w:bCs />");
+        for _ in 0..self.bold {
+            out.raw("<w:b />");
         }
-        if self.marks & ITALIC != 0 {
-            out.raw("<w:i /><w:iCs />");
+        for _ in 0..self.bold {
+            out.raw("<w:bCs />");
+        }
+        for _ in 0..self.italic {
+            out.raw("<w:i />");
+        }
+        for _ in 0..self.italic {
+            out.raw("<w:iCs />");
         }
         if self.marks & SMALL_CAPS != 0 {
             out.raw("<w:smallCaps />");
@@ -184,11 +192,19 @@ impl Renderer<'_> {
                     }
                     value.push_str(text);
                 }
-                run.text(out, &value);
+                if !value.is_empty() {
+                    run.text(out, &value);
+                }
                 rest = &rest[count..];
             } else {
                 if let Piece::Inline(inline) = piece {
                     self.inline(out, inline, run, depth + 1)?;
+                    if matches!(inline, Inline::Span(attr, _) if attr.classes == ["csl-left-margin"])
+                        && matches!(tail.first(), Some(Piece::Inline(Inline::Span(attr, _)))
+                            if attr.classes == ["csl-right-inline"])
+                    {
+                        run.text(out, "\t");
+                    }
                 }
                 rest = tail;
             }
@@ -214,11 +230,11 @@ impl Renderer<'_> {
                 }
             }
             Inline::Emph(children) => {
-                run.marks |= ITALIC;
+                run.italic += 1;
                 return self.inlines(out, children, run, depth);
             }
             Inline::Strong(children) => {
-                run.marks |= BOLD;
+                run.bold += 1;
                 return self.inlines(out, children, run, depth);
             }
             Inline::Underline(children) => {
@@ -330,9 +346,10 @@ impl Renderer<'_> {
             out.raw("\"");
         }
         out.raw(">");
+        let content_start = out.len();
         let style = self.styles.id(Kind::Character, "Hyperlink").to_owned();
         self.inlines(out, children, run.styled(&style).with_attr(attr), depth)?;
-        out.raw("</w:hyperlink>");
+        out.close_element("w:hyperlink", content_start)?;
         bookmark_end(out, bookmark);
         Ok(())
     }
@@ -447,5 +464,12 @@ fn is_space(ch: char) -> bool {
 }
 
 fn is_east_asian(ch: char) -> bool {
-    matches!(ch, '\u{2E80}'..='\u{A4CF}' | '\u{AC00}'..='\u{D7AF}' | '\u{F900}'..='\u{FAFF}' | '\u{20000}'..='\u{323AF}')
+    matches!(
+        ch,
+        '\u{2E80}'..='\u{A4CF}'
+            | '\u{AC00}'..='\u{D7AF}'
+            | '\u{F900}'..='\u{FAFF}'
+            | '\u{FF00}'..='\u{FFEE}'
+            | '\u{20000}'..='\u{323AF}'
+    )
 }

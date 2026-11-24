@@ -1890,7 +1890,7 @@ local ok, value = pcall(log.silence, function()
   warn('discarded')
   error(marker, 0)
 end)
-assert(not ok and value == marker)
+assert(not ok and value ~= marker and pandoc.utils.type(value) == 'PandocError')
 warn('after')
 local after = PANDOC_STATE.log
 assert(#after == 2 and after[1].message:match(': before$') and after[2].message:match(': after$'))

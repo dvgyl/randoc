@@ -133,7 +133,15 @@ impl<'a> Render<'a> {
             Block::LineBlock(lines) => layout::vcat(
                 lines
                     .iter()
-                    .map(|line| self.inlines(line, next))
+                    .enumerate()
+                    .map(|(index, line)| {
+                        let doc = self.inlines(line, next)?;
+                        Ok(if index + 1 < lines.len() {
+                            doc + layout::literal("\\")
+                        } else {
+                            doc
+                        })
+                    })
                     .collect::<Result<Vec<_>>>()?,
             ),
             Block::CodeBlock(attr, content) => block_attr(attr).above(code_block(content, "")),
@@ -381,11 +389,7 @@ impl<'a> Render<'a> {
         depth: usize,
     ) -> Result<Doc> {
         let mut attr = attr.clone();
-        let url = target
-            .url
-            .replace('\\', "\\\\")
-            .replace('(', "\\(")
-            .replace(')', "\\)");
+        let url = target.url.replace('\\', "\\\\");
         if !image && attr.has_class("uri") && stringify(nodes) == target.url {
             attr.classes.retain(|class| class != "uri");
             return Ok(layout::literal(format!("<{}>", target.url))

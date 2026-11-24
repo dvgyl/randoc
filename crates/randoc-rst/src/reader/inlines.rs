@@ -1,4 +1,4 @@
-use randoc_ast::{Attr, Format, Inline, MathType, QuoteType, Target};
+use randoc_ast::{Attr, Citation, CitationMode, Format, Inline, MathType, QuoteType, Target};
 use randoc_core::{Extension, SourcePos};
 
 use super::directives::field;
@@ -641,6 +641,7 @@ impl Parser<'_> {
                     Target::new(url, name),
                 )
             }
+            role if role.starts_with("cite") => citation(role, value),
             "" => Inline::Span(Attr::new("", classes, Vec::new()), text()),
             _ => Inline::Code(
                 Attr::new(
@@ -652,6 +653,38 @@ impl Parser<'_> {
             ),
         }
     }
+}
+
+fn citation(role: &str, value: &str) -> Inline {
+    let mode = match role {
+        "cite:t" | "cite:ct" => CitationMode::AuthorInText,
+        "cite:year" | "cite:yearpar" => CitationMode::SuppressAuthor,
+        _ => CitationMode::NormalCitation,
+    };
+    let citations = value
+        .split(',')
+        .enumerate()
+        .map(|(index, text)| {
+            let (prefix, text) = text
+                .strip_prefix('{')
+                .and_then(|text| text.split_once('}'))
+                .unwrap_or(("", text));
+            let (id, suffix) = text.split_once('{').unwrap_or((text, ""));
+            Citation {
+                id: id.into(),
+                prefix: words(prefix, false),
+                suffix: words(&suffix.replace('}', ""), false),
+                mode: if index == 0 {
+                    mode
+                } else {
+                    CitationMode::NormalCitation
+                },
+                note_num: 0,
+                hash: 0,
+            }
+        })
+        .collect();
+    Inline::Cite(citations, vec![str_inline(value)])
 }
 
 #[cfg(test)]

@@ -1649,8 +1649,59 @@ fn run_citeproc(
         &options,
         settings.sandbox,
         context,
-        |context, hooks| randoc_citeproc::filter::process_citations(context, doc, hooks),
+        |context, hooks| {
+            if context.state.verbosity != Verbosity::Info {
+                return randoc_citeproc::filter::process_citations(context, doc, hooks);
+            }
+
+            context.report(LogMessage::RunningFilter("citeproc".into()));
+            let started = context.host().current_time();
+            report_citeproc_style(doc, settings, context);
+            randoc_citeproc::filter::process_citations(context, doc, hooks)?;
+            let elapsed = context.host().current_time();
+            let nanoseconds = (i128::from(elapsed.unix_seconds) - i128::from(started.unix_seconds))
+                * 1_000_000_000
+                + i128::from(elapsed.nanoseconds)
+                - i128::from(started.nanoseconds);
+            let milliseconds = u64::try_from(nanoseconds.max(0) / 1_000_000).unwrap_or(u64::MAX);
+            context.report(LogMessage::FilterCompleted("citeproc".into(), milliseconds));
+            Ok(())
+        },
     )
+}
+
+fn report_citeproc_style(doc: &Pandoc, settings: &Settings, context: &mut Context) {
+    let Some(mut name) = doc
+        .meta
+        .get("csl")
+        .or_else(|| doc.meta.get("citation-style"))
+        .map(randoc::shared::stringify_meta)
+    else {
+        return;
+    };
+    if name.contains("://") || name.starts_with("file:") {
+        return;
+    }
+    if !name
+        .rsplit('/')
+        .next()
+        .is_some_and(|file| file.contains('.'))
+    {
+        name.push_str(".csl");
+    }
+    let found = find_resource(&name, settings, context).or_else(|| {
+        let dir = context.state.user_data_dir.as_ref()?;
+        let path = format!("{dir}/csl/{name}");
+        context.host().file_exists(&path).then_some(path)
+    });
+    if let Some(found) = found {
+        let found = if name.strip_prefix("./") == Some(found.as_str()) {
+            name.clone()
+        } else {
+            found
+        };
+        context.report(LogMessage::LoadedResource(name, found));
+    }
 }
 
 #[cfg(feature = "lua")]

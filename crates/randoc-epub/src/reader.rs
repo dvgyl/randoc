@@ -106,7 +106,7 @@ fn read(bytes: &[u8], options: &ReaderOptions, context: &mut Context) -> Result<
         .collect();
     let basenames: HashSet<_> = spine
         .iter()
-        .map(|(item, _)| path::basename(item.href))
+        .map(|(item, _)| path::basename(item.href).replace(' ', "%20"))
         .collect();
     let mut media = Media {
         archive: &mut archive,
@@ -149,6 +149,9 @@ fn read(bytes: &[u8], options: &ReaderOptions, context: &mut Context) -> Result<
             Vec::new(),
         )]));
         let href = path::decode(item.href);
+        // Keep the manifest spelling on the chapter marker. The fragment
+        // prefix uses the decoded name with spaces escaped.
+        let chapter_id = path::decode(name).replace(' ', "%20");
         let archive_path =
             path::resolve(dir, &href).ok_or_else(|| missing(&path::join(dir, &href)))?;
         // Each occurrence consumes the cumulative archive budget because it
@@ -181,14 +184,17 @@ fn read(bytes: &[u8], options: &ReaderOptions, context: &mut Context) -> Result<
         }
         let rename = |attr: &mut Attr| {
             if !attr.id.is_empty() {
-                attr.id = format!("{name}_{}", attr.id);
+                attr.id = format!("{chapter_id}_{}", attr.id);
             }
         };
         walk_blocks_mut(&mut chapter, |block| {
-            let keep_epub_type = matches!(block, Block::Table(..));
+            let table = matches!(block, Block::Table(..));
+            let prefix_id = !matches!(block, Block::Table(..) | Block::Figure(..));
             tree::block_attrs(block, |attr| {
-                rename(attr);
-                if !keep_epub_type {
+                if prefix_id {
+                    rename(attr);
+                }
+                if !table {
                     attr.attributes.retain(|(key, _)| key != "epub:type");
                 }
             });
@@ -206,7 +212,9 @@ fn read(bytes: &[u8], options: &ReaderOptions, context: &mut Context) -> Result<
                 return;
             }
             match inline {
-                Inline::Link(_, _, target) => rewrite_link(&mut target.url, name, &basenames),
+                Inline::Link(_, _, target) => {
+                    rewrite_link(&mut target.url, &chapter_id, &basenames)
+                }
                 Inline::Image(_, _, target)
                     if !path::external(&target.url) && !target.url.starts_with('/') =>
                 {
@@ -295,7 +303,7 @@ fn cover<'a>(items: &'a [Item<'a>], metadata: Option<&XmlElement>) -> Option<&'a
         })
 }
 
-fn rewrite_link(url: &mut String, chapter: &str, basenames: &HashSet<&str>) {
+fn rewrite_link(url: &mut String, chapter: &str, basenames: &HashSet<String>) {
     if path::external(url) {
         return;
     }

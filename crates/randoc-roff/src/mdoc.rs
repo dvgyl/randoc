@@ -39,6 +39,55 @@ struct Parser<'a> {
     author_split: bool,
 }
 
+fn standard_name(key: &str) -> &'static str {
+    match key {
+        "-ansiC" | "-ansiC-89" => "ANSI X3.159-1989 (“ANSI C89”)",
+        "-isoC" | "-isoC-90" => "ISO/IEC 9899:1990 (“ISO C90”)",
+        "-isoC-amd1" => "ISO/IEC 9899/AMD1:1995 (“ISO C90, Amendment 1”)",
+        "-isoC-tcor1" => "ISO/IEC 9899/TCOR1:1994 (“ISO C90, Technical Corrigendum 1”)",
+        "-isoC-tcor2" => "ISO/IEC 9899/TCOR2:1995 (“ISO C90, Technical Corrigendum 2”)",
+        "-isoC-2023" => "ISO/IEC 9899:2024 (“ISO C23”)",
+        "-ieee1275-94" => "IEEE Std 1275-1994 (“Open Firmware”)",
+        "-isoC-99" => "ISO/IEC 9899:1999 (“ISO C99”)",
+        "-isoC-2011" => "ISO/IEC 9899:2011 (“ISO C11”)",
+        "-iso9945-1-90" => "ISO/IEC 9945-1:1990 (“POSIX.1”)",
+        "-iso9945-1-96" | "-p1003.1-96" => "ISO/IEC 9945-1:1996 (“POSIX.1”)",
+        "-iso9945-2-93" => "ISO/IEC 9945-2:1993 (“POSIX.2”)",
+        "-ieee754" => "IEEE Std 754-1985",
+        "-iso8802-3" => "ISO 8802-3: 1989",
+        "-iso8601" => "ISO 8601",
+        "-svid4" => "System V Interface Definition, Fourth Edition (“SVID4”)",
+        "-xbd5" => "X/Open Base Definitions Issue 5 (“XBD5”)",
+        "-xcu5" => "X/Open Commands and Utilities Issue 5 (“XCU5”)",
+        "-xsh5" => "X/Open System Interfaces and Headers Issue 5 (“XSH5”)",
+        "-xns5" => "X/Open Networking Services Issue 5 (“XNS5”)",
+        "-xns5.2" => "X/Open Networking Services Issue 5.2 (“XNS5.2”)",
+        "-xpg3" => "X/Open Portability Guide Issue 3 (“XPG3”)",
+        "-xpg4" => "X/Open Portability Guide Issue 4 (“XPG4”)",
+        "-xpg4.2" => "X/Open Portability Guide Issue 4, Version 2 (“XPG4.2”)",
+        "-p1003.1" => "IEEE Std 1003.1 (“POSIX.1”)",
+        "-p1003.1-88" => "IEEE Std 1003.1-1988 (“POSIX.1”)",
+        "-p1003.1-90" => "IEEE Std 1003.1-1990 (“POSIX.1”)",
+        "-p1003.1-2001" => "IEEE Std 1003.1-2001 (“POSIX.1”)",
+        "-p1003.1-2004" => "IEEE Std 1003.1-2004 (“POSIX.1”)",
+        "-p1003.1-2008" => "IEEE Std 1003.1-2008 (“POSIX.1”)",
+        "-p1003.1-2024" => "IEEE Std 1003.1-2024 (“POSIX.1”)",
+        "-p1003.1b" => "IEEE Std 1003.1b (“POSIX.1b”)",
+        "-p1003.1b-93" => "IEEE Std 1003.1b-1993 (“POSIX.1b”)",
+        "-p1003.1c-95" => "IEEE Std 1003.1c-1995 (“POSIX.1c”)",
+        "-p1003.1g-2000" => "IEEE Std 1003.1g-2000 (“POSIX.1g”)",
+        "-p1003.1i-95" => "IEEE Std 1003.1i-1995 (“POSIX.1i”)",
+        "-p1003.2" => "IEEE Std 1003.2 (“POSIX.2”)",
+        "-p1003.2-92" => "IEEE Std 1003.2-1992 (“POSIX.2”)",
+        "-p1003.2a-92" => "IEEE Std 1003.2a-1992 (“POSIX.2”)",
+        "-susv1" => "Version 1 of the Single UNIX Specification (“SUSv1”)",
+        "-susv2" => "Version 2 of the Single UNIX Specification (“SUSv2”)",
+        "-susv3" => "Version 3 of the Single UNIX Specification (“SUSv3”)",
+        "-susv4" => "Version 4 of the Single UNIX Specification (“SUSv4”)",
+        _ => "",
+    }
+}
+
 fn diagnostic(line: &Line, byte: usize, description: &str, expected: &str) -> Error {
     let column = line.text[..byte].chars().count() + 1;
     let location = format!("(line {}, column {column})", line.number);
@@ -65,6 +114,9 @@ fn param_offset(line: &Line, text: &str) -> usize {
 fn attach(out: &mut Vec<Inline>, incoming: Vec<Inline>, space: bool) {
     if incoming.is_empty() {
         return;
+    }
+    if matches!(out.as_slice(), [Inline::Str(text)] if text.is_empty()) {
+        out.clear();
     }
     if space && !out.is_empty() && !matches!(out.last(), Some(Inline::LineBreak | Inline::Space)) {
         out.push(Inline::Space);
@@ -355,7 +407,11 @@ impl<'a> Parser<'a> {
                         inline.push(Inline::Str(String::new()));
                     }
                     let split = matches!(inline.first(), Some(Inline::LineBreak));
-                    attach(&mut para, inline, self.spacing && !joint && !glue && !split);
+                    if mac == "St" && inline.is_empty() && para.is_empty() {
+                        para.push(Inline::Str(String::new()));
+                    } else {
+                        attach(&mut para, inline, self.spacing && !joint && !glue && !split);
+                    }
                     glue = mac == "Ns"
                         || mac == "Ap"
                         || tokens.last().is_some_and(|t| !t.quoted && t.text == "Ns");
@@ -520,7 +576,7 @@ impl<'a> Parser<'a> {
         loop {
             let start = *index;
             while let Some(arg) = tokens.get(*index) {
-                if !arg.quoted && (is_macro(arg) || delimiter(arg.text)) {
+                if !arg.quoted && (is_macro(arg) || name != "St" && delimiter(arg.text)) {
                     break;
                 }
                 *index += 1;
@@ -596,6 +652,13 @@ impl<'a> Parser<'a> {
                 }
                 push_str(&mut out, ")");
                 out
+            }
+            "St" => {
+                let mut standard = words(standard_name(arg));
+                for value in values.iter().skip(1) {
+                    attach(&mut standard, words(value), self.spacing);
+                }
+                standard
             }
             "Em" => vec![Inline::Emph(words(&text))],
             "Sy" => vec![Inline::Strong(words(&text))],
@@ -953,6 +1016,10 @@ fn spaced(iter: impl IntoIterator<Item = Inline>) -> Vec<Inline> {
 
 fn flush(out: &mut Vec<Block>, para: &mut Vec<Inline>) {
     if !para.is_empty() {
-        out.push(Block::Para(std::mem::take(para)));
+        let mut contents = std::mem::take(para);
+        if matches!(contents.as_slice(), [Inline::Str(text)] if text.is_empty()) {
+            contents.clear();
+        }
+        out.push(Block::Para(contents));
     }
 }

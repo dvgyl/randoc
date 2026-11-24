@@ -55,7 +55,7 @@ impl<'doc> Renderer<'_, 'doc> {
                 'ü' if self.options.prefer_ascii => "\\(:u",
                 'ß' if self.options.prefer_ascii => "\\(ss",
                 'α' if self.options.prefer_ascii => "\\(*a",
-                '@' if self.format == Format::Ms => "\\(at",
+                '@' => "\\(at",
                 _ => {
                     out.push(ch);
                     continue;
@@ -111,7 +111,12 @@ impl<'doc> Renderer<'_, 'doc> {
                     if text.starts_with('.') && !(self.format == Format::Ms && suffix) {
                         out.push(after_break("\\&"));
                     }
-                    out.push(literal(self.escape(text)));
+                    let escaped = if self.small_caps {
+                        self.small_caps_text(text)
+                    } else {
+                        self.escape(text)
+                    };
+                    out.push(literal(escaped));
                     terminal = Some(text);
                     continue;
                 }
@@ -129,9 +134,13 @@ impl<'doc> Renderer<'_, 'doc> {
                     } else if self.format == Format::Ms
                         && self.options.wrap_text == WrapOption::WrapPreserve
                         && matches!(inline, Inline::SoftBreak)
-                        || wrap && terminal.is_some_and(sentence)
+                        || wrap && !self.csl_entry && terminal.is_some_and(sentence)
                     {
                         out.push(cr());
+                    } else if self.format == Format::Man
+                        && matches!(iter.peek(), Some(Inline::RawInline(format, _)) if format != "man")
+                    {
+                        out.push(literal(" "));
                     } else {
                         out.push(space());
                     }
@@ -145,12 +154,18 @@ impl<'doc> Renderer<'_, 'doc> {
                 Inline::Strong(value) => {
                     self.with_font(value, font, Font::BOLD, level, wrap, out)?
                 }
-                Inline::Code(_, value) => {
-                    out.extend([
-                        font.with(Font::CODE).switch(),
-                        literal(self.escape(value)),
-                        font.switch(),
-                    ]);
+                Inline::Code(attr, value) => {
+                    let code = (self.format == Format::Ms)
+                        .then(|| self.highlighted(attr, value))
+                        .flatten()
+                        .unwrap_or_else(|| self.escape(value));
+                    out.extend([font.with(Font::CODE).switch(), literal(code), font.switch()]);
+                }
+                Inline::SmallCaps(value) if self.format == Format::Ms => {
+                    let was_small_caps = std::mem::replace(&mut self.small_caps, true);
+                    let result = self.inlines(value, font, level + 1, wrap, out);
+                    self.small_caps = was_small_caps;
+                    result?;
                 }
                 Inline::SmallCaps(value) | Inline::Span(_, value) | Inline::Cite(_, value) => {
                     self.inlines(value, font, level + 1, wrap, out)?;
@@ -354,6 +369,27 @@ impl<'doc> Renderer<'_, 'doc> {
         Ok(())
     }
 
+    fn small_caps_text(&self, text: &str) -> String {
+        let mut out = String::new();
+        let mut rest = text;
+        while !rest.is_empty() {
+            let lower = rest.starts_with(char::is_lowercase);
+            let end = rest
+                .find(|ch: char| ch.is_lowercase() != lower)
+                .unwrap_or(rest.len());
+            let (run, tail) = rest.split_at(end);
+            if lower {
+                out.push_str("\\s-2");
+                out.push_str(&self.escape(&run.to_uppercase()));
+                out.push_str("\\s0");
+            } else {
+                out.push_str(&self.escape(run));
+            }
+            rest = tail;
+        }
+        out
+    }
+
     pub(super) fn plain_code(&self, input: &str) -> String {
         input
             .split('\n')
@@ -365,7 +401,7 @@ impl<'doc> Renderer<'_, 'doc> {
 
 fn sentence(text: &str) -> bool {
     let text = text.trim_end_matches(['"', '\'', '”', '’', ')', ']']);
-    text.ends_with(['.', '?', '!'])
+    text.ends_with(['.', '?', '!', '…'])
         && !(text.len() == 2 && text.as_bytes()[0].is_ascii_uppercase())
         && !matches!(
             text,

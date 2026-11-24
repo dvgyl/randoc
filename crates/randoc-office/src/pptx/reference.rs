@@ -146,14 +146,22 @@ impl LayoutPart {
         let Some(tree) = slide.child(P, "spTree") else {
             return part;
         };
-        // Serialize the group and keep the whitespace of the layout.
-        for node in &tree.children {
-            if matches!(node, XmlNode::Text(_))
-                || matches!(node, XmlNode::Element(el) if is_presentation(el, "nvGrpSpPr") || is_presentation(el, "grpSpPr"))
-            {
-                write_node(node, &mut part.group);
+        if let (Some(non_visual), Some(properties)) =
+            (tree.child(P, "nvGrpSpPr"), tree.child(P, "grpSpPr"))
+            && can_copy(non_visual, false)
+            && can_copy(properties, false)
+        {
+            // Keep the whitespace from the layout.
+            for node in &tree.children {
+                if matches!(node, XmlNode::Text(_))
+                    || matches!(node, XmlNode::Element(el) if is_presentation(el, "nvGrpSpPr") || is_presentation(el, "grpSpPr"))
+                {
+                    write_node(node, &mut part.group);
+                }
             }
         }
+        let mut seen_slots = HashSet::new();
+        let mut has_title = false;
         for shape in tree.children_ns(P, "sp") {
             let Some(props) = shape.child(P, "nvSpPr") else {
                 continue;
@@ -174,6 +182,16 @@ impl LayoutPart {
                         0
                     }
                 });
+            let is_title =
+                slot == 0 && matches!(ph.attr_unqualified("type"), Some("title" | "ctrTitle"));
+            if !seen_slots.insert(slot) {
+                if !is_title || has_title {
+                    continue;
+                }
+                part.slots.remove(&slot);
+                part.placeholders.remove(&slot);
+            }
+            has_title |= is_title;
             if let Some(bounds) = Bounds::read(shape) {
                 part.slots.insert(slot, bounds);
             }
@@ -181,6 +199,7 @@ impl LayoutPart {
                 .child(P, "cNvPr")
                 .and_then(|el| el.attr_unqualified("id"))
                 .and_then(|id| id.parse::<u32>().ok())
+                && can_copy(shape, true)
             {
                 part.placeholders
                     .insert(slot, Placeholder::read(shape, id as usize));
@@ -262,7 +281,7 @@ impl Placeholder {
     pub fn draw(&self, text: &str, bounds: Option<Bounds>, inherit_bounds: bool) -> String {
         let properties = match bounds {
             Some(bounds) => format!("<p:spPr>{}</p:spPr>", bounds.transform("a")),
-            None if inherit_bounds => "<p:spPr />".to_owned(),
+            None if inherit_bounds || self.properties.is_empty() => "<p:spPr />".to_owned(),
             None => self.properties.clone(),
         };
         format!(
@@ -274,6 +293,35 @@ impl Placeholder {
 
 fn is_presentation(element: &XmlElement, local: &str) -> bool {
     element.name.ns.as_deref() == Some(P) && element.name.local == local
+}
+
+fn can_copy(element: &XmlElement, replace_body: bool) -> bool {
+    // The slide does not inherit the layout's default namespace or relationships.
+    let mut pending = vec![(element, None, replace_body)];
+    while let Some((element, default_ns, replace_body)) = pending.pop() {
+        let default_ns = element
+            .ns_decls
+            .iter()
+            .find(|(prefix, _)| prefix.is_none())
+            .map_or(default_ns, |(_, uri)| {
+                (!uri.is_empty()).then_some(uri.as_ref())
+            });
+        if (element.name.prefix.is_none() && element.name.ns.as_deref() != default_ns)
+            || element
+                .attrs
+                .iter()
+                .any(|(name, _)| name.ns.as_deref() == Some(R))
+        {
+            return false;
+        }
+        pending.extend(
+            element
+                .elements()
+                .filter(|child| !replace_body || !is_presentation(child, "txBody"))
+                .map(|child| (child, default_ns, false)),
+        );
+    }
+    true
 }
 
 fn write_node(node: &XmlNode, out: &mut String) {
@@ -304,7 +352,11 @@ fn collect_namespace_prefixes<'a>(mut xml: &'a str, prefixes: &mut HashSet<&'a s
             continue;
         }
 
-        // Read the element and attribute names between quoted values.
+        let choice = tag
+            .split(|c: char| c.is_ascii_whitespace() || matches!(c, '/' | '>'))
+            .next()
+            .is_some_and(|name| name.ends_with(":Choice"));
+        // Read names and the values that list markup compatibility prefixes.
         loop {
             let Some(offset) = tag.find(['>', '"', '\'']) else {
                 return;
@@ -324,9 +376,17 @@ fn collect_namespace_prefixes<'a>(mut xml: &'a str, prefixes: &mut HashSet<&'a s
             let Some(quote) = rest.chars().next() else {
                 return;
             };
-            let Some((_, rest)) = rest[quote.len_utf8()..].split_once(quote) else {
+            let Some((value, rest)) = rest[quote.len_utf8()..].split_once(quote) else {
                 return;
             };
+            if let Some(name) = names
+                .trim_end()
+                .strip_suffix('=')
+                .and_then(|names| names.split_ascii_whitespace().next_back())
+                && (name.ends_with(":Ignorable") || (choice && name == "Requires"))
+            {
+                prefixes.extend(value.split_ascii_whitespace());
+            }
             tag = rest;
         }
     }
@@ -346,6 +406,46 @@ fn collects_only_prefixes_in_xml_names() {
         &mut prefixes,
     );
     assert_eq!(prefixes, HashSet::from(["shape", "attr", "nested"]));
+}
+
+#[test]
+fn collects_prefixes_in_markup_compatibility_values() {
+    let mut prefixes = HashSet::new();
+    collect_namespace_prefixes(
+        r#"<mc:AlternateContent mc:Ignorable="custom other">
+             <mc:Choice Requires="p14 a14" title="text:only" />
+           </mc:AlternateContent>"#,
+        &mut prefixes,
+    );
+    assert_eq!(
+        prefixes,
+        HashSet::from(["mc", "custom", "other", "p14", "a14"])
+    );
+}
+
+#[test]
+#[allow(clippy::unwrap_used)]
+fn reads_the_title_slot_and_supplies_missing_shape_properties() {
+    let source = format!(
+        r#"<p:sldLayout xmlns="{P}" xmlns:p="{P}" xmlns:a="{A}" xmlns:r="{R}">
+             <p:cSld><p:spTree>
+               <p:sp><p:nvSpPr><p:cNvPr id="3"/><p:nvPr><p:ph type="body"/></p:nvPr></p:nvSpPr></p:sp>
+               <p:sp><p:nvSpPr><p:cNvPr id="2"/><p:nvPr><p:ph type="title"/></p:nvPr></p:nvSpPr></p:sp>
+               <p:sp><p:nvSpPr><p:cNvPr id="4"><a:hlinkClick r:id="rId9"/></p:cNvPr><p:nvPr><p:ph idx="1"/></p:nvPr></p:nvSpPr></p:sp>
+               <sp><nvSpPr><cNvPr id="5"/><nvPr><ph idx="2"/></nvPr></nvSpPr></sp>
+               <sp xmlns="{P}"><nvSpPr><cNvPr id="6"/><nvPr><ph idx="3"/></nvPr></nvSpPr></sp>
+             </p:spTree></p:cSld>
+           </p:sldLayout>"#
+    );
+    let parsed =
+        PartXml::from_bytes(source.as_bytes(), &xml_limits(&Context::pure().limits)).unwrap();
+    let slide = parsed.root.child(P, "cSld").unwrap();
+    let layout = LayoutPart::read("layout.xml".into(), &parsed.root, slide);
+    let title = layout.placeholders.get(&0).unwrap();
+    assert_eq!(title.id, 2);
+    assert!(title.draw("", None, false).contains("<p:spPr />"));
+    assert!(layout.group.is_empty());
+    assert_eq!(layout.shape_ids, HashSet::from([2, 6]));
 }
 
 pub(super) struct Reference {

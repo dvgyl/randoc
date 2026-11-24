@@ -18,6 +18,8 @@ mod macros;
 mod omml;
 mod parse;
 mod render;
+mod starmath;
+mod starmath_symbols;
 mod symbols;
 mod tree;
 mod typst;
@@ -124,6 +126,8 @@ pub fn to_mathml(kind: MathType, tex: &str, max_depth: usize) -> Result<String, 
 pub enum MathMlFlavor {
     /// HTML MathML with a TeX annotation.
     Html,
+    /// OpenDocument MathML with a StarMath annotation.
+    Odt,
     /// DocBook MathML with prefixed elements and attributes.
     DocBook,
     /// JATS MathML with prefixed elements and a namespace declaration.
@@ -137,6 +141,11 @@ pub fn to_mathml_flavor(
     max_depth: usize,
     flavor: MathMlFlavor,
 ) -> Result<String, MathError> {
+    let max_depth = if flavor == MathMlFlavor::Odt {
+        max_depth.min(WRITER_DEPTH_LIMIT)
+    } else {
+        max_depth
+    };
     let items = parse(tex, max_depth)?;
     let display = kind == MathType::DisplayMath;
     Ok(render::mathml(&items, display, tex, flavor))
@@ -188,6 +197,14 @@ pub fn to_omml(kind: MathType, tex: &str, max_depth: usize) -> Result<String, Ma
 pub fn to_eqn(kind: MathType, tex: &str, max_depth: usize) -> Result<String, MathError> {
     let items = parse(tex, max_depth.min(WRITER_DEPTH_LIMIT))?;
     eqn::render(&items, kind == MathType::DisplayMath)
+        .map_err(|render::Unsupported| MathError::Unsupported)
+}
+
+/// Converts TeX to a StarMath body. The parser uses the smaller of
+/// `max_depth` and 256.
+pub fn to_starmath(kind: MathType, tex: &str, max_depth: usize) -> Result<String, MathError> {
+    let items = parse(tex, max_depth.min(WRITER_DEPTH_LIMIT))?;
+    starmath::render(&items, kind == MathType::DisplayMath)
         .map_err(|render::Unsupported| MathError::Unsupported)
 }
 

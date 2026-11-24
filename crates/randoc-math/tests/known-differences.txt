@@ -213,15 +213,10 @@ inline	D	\\operatorname{a_b}\na\nb\n
 inline	D	\\operatorname{a_b}\na\t
 inline	D	\\operatorname{a_b}\nx = 1\ny = 2\n
 inline	D	\\sum '^a ' '
-inline	D	\\sum '^a_2''
 inline	D	\\sum '^{c}'' '
-inline	D	\\sum '^{c}_2'
-inline	D	\\sum '^{c}_b''
 inline	D	\\sum'' '''''
 inline	D	\\sum''^a ' '
-inline	D	\\sum''^a_2''
 inline	D	\\sum''^{c} ' '
-inline	D	\\sum''^{c}_2''
 inline	D	\\sum_i\\nolimits + b
 inline	D	\\sum_{\\left(,\\quad y}f(x)
 inline	D	\\sum_{\\left(;\\,x}f(x)
@@ -552,9 +547,6 @@ inline	I	\\left(\\operatorname{\\mathrm{\\infty x (}}\\right)
 inline	I	\\left(\\operatorname{\\text{x )}}\\right)
 inline	I	\\left(x\\right) ' '''''
 inline	I	\\left(x\\right) '^{c} ' '
-inline	I	\\left(x\\right) '^{c}_2''
-inline	I	\\left(x\\right)'^a_b '
-inline	I	\\left(x\\right)'^{c}_b '
 inline	I	\\left(x\\right)
 inline	I	\\left(᠎x\\right)
 inline	I	\\left(​1{,}5\\right)
@@ -810,22 +802,12 @@ inline	I	\\renewcommand\\f[2][x]{#1+#2}\\f [{]}]{z}
 inline	I	\\renewcommand\\f[2][x]{#1+#2}\\f \n [{]}]{z}
 inline	I	\\renewcommand\\f[2][x]{#1+#2}\\f\n[{]}]{z}
 inline	I	\\sum '^a'' '
-inline	I	\\sum '^a_2'
-inline	I	\\sum '^a_b''
 inline	I	\\sum '^{c}' '
-inline	I	\\sum '^{c}_2 '
-inline	I	\\sum '^{c}_b'
 inline	I	\\sum' '''''
 inline	I	\\sum''^a'' '
-inline	I	\\sum''^a_2'
-inline	I	\\sum''^a_b''
 inline	I	\\sum''^{c}'' '
-inline	I	\\sum''^{c}_2'
-inline	I	\\sum''^{c}_b''
 inline	I	\\sum'^a ' '
-inline	I	\\sum'^a_2''
 inline	I	\\sum'^{c} ' '
-inline	I	\\sum'^{c}_2''
 inline	I	\\sum_i\\nolimits + b
 inline	I	\\sum_{\\left(,\\quad y}f(x)
 inline	I	\\sum_{\\left(;\\,x}f(x)
@@ -1116,9 +1098,6 @@ inline	I	a󠇰b
 inline	I	a󯿿b
 inline	I	a􏿽b
 inline	I	x '^a' '
-inline	I	x '^a_2 '
-inline	I	x '^a_b'
-inline	I	x '^{c}_b '
 inline	I	x = 1\ny = 2\n\\mathop{\\sqrt{x}}
 inline	I	x = 1\ny = 2\n\\mathop{\\sqrt{x}}\nz
 inline	I	x = 1\ny = 2\n\\operatorname{a_b}
@@ -1126,17 +1105,9 @@ inline	I	x = 1\ny = 2\n\\operatorname{a_b}\nz
 inline	I	x = \\num{5}
 inline	I	x \\tag*{1} y
 inline	I	x''^a' '
-inline	I	x''^a_2 '
-inline	I	x''^a_b'
 inline	I	x''^{c}' '
-inline	I	x''^{c}_2 '
-inline	I	x''^{c}_b'
 inline	I	x'^a'' '
-inline	I	x'^a_2'
-inline	I	x'^a_b''
 inline	I	x'^{c}'' '
-inline	I	x'^{c}_2'
-inline	I	x'^{c}_b''
 inline	I	x^2​+​y
 inline	I	x^{ ​}
 inline	I	x^{[a]}
@@ -2042,7 +2013,6 @@ inline-warning	I	\\binom{\\sqrt{\\text{) 2 \\leq}}}{\\sqrt{= \\leq (}}
 inline-warning	I	\\binom{\\text{\\left(a x a\\right)}}{\\mathrm{\\sin \\alpha_{+ +}}}
 inline-warning	I	\\binom{\\text{\\leq}}{\\overline{a \\infty^{+ 2 -}}}
 inline-warning	I	\\binom{\\text{\\operatorname{+ x}}}{-^{+}_{2 \\infty^{2}}}
-inline-warning	I	\\bmod
 inline-warning	I	\\char
 inline-warning	I	\\char{a}{b}
 inline-warning	I	\\color
@@ -2272,7 +2242,6 @@ inline-warning	I	\\mbox{a\\quadb}
 inline-warning	I	\\mbox{a\\textbackslashb}
 inline-warning	I	\\mbox{a\\~ }
 inline-warning	I	\\mbox{a\\~}
-inline-warning	I	\\mod
 inline-warning	I	\\newcommand\\f[1][x]{#1}\\f%c[y]
 inline-warning	I	\\newcommand\\f[1][x]{#1}\\f%c[y]z
 inline-warning	I	\\newcommand\\f[1][x]{#1}\\frac{\\f%c[y]}{2}
@@ -2389,8 +2358,6 @@ inline-warning	I	\\overset{\\substack{\\displaystyle 713\\\\p&q\\\\z}}{z}
 inline-warning	I	\\overset{\\substack{\\frac{1}{2}\\\\p&q\\\\z}}{z}
 inline-warning	I	\\overset{\\substack{\\text{a b}\\\\p&q\\\\z}}{z}
 inline-warning	I	\\overset{\\substack{jk\\\\p&q\\\\z}}{z}
-inline-warning	I	\\pmod
-inline-warning	I	\\pod
 inline-warning	I	\\providecommand{\\f}[2][a]{#1/#2}\\f\n[x_1]^2{z}
 inline-warning	I	\\providecommand{\\f}[2][a]{#1/#2}\\f\n\n[x_1]^2{z}
 inline-warning	I	\\providecommand{\\f}[2][a]{#1/#2}\\f\t[y]
@@ -2584,7 +2551,6 @@ inline-warning	I	a \\biggr b
 inline-warning	I	a \\bigl b
 inline-warning	I	a \\bigr b
 inline-warning	I	a \\binom b
-inline-warning	I	a \\bmod
 inline-warning	I	a \\char b
 inline-warning	I	a \\color b
 inline-warning	I	a \\dfrac b
@@ -2970,28 +2936,14 @@ mathml	D	\\substack{\\operatorname{\\text{a b}}\\\\y}
 mathml	D	\\substack{\\operatorname{a\\hat{x}}\\\\y}
 mathml	D	\\substack{\\operatorname{a_b}\\\\y}
 mathml	D	\\sum '^a ' '
-mathml	D	\\sum '^a_2''
-mathml	D	\\sum '^a_b^{c}
 mathml	D	\\sum '^{c} '^a
 mathml	D	\\sum '^{c}'' '
 mathml	D	\\sum '^{c}''^a
-mathml	D	\\sum '^{c}_2'
-mathml	D	\\sum '^{c}_b''
 mathml	D	\\sum'' '''''
 mathml	D	\\sum''^a ' '
-mathml	D	\\sum''^a_2''
-mathml	D	\\sum''^a_b^{c}
 mathml	D	\\sum''^{c} ' '
-mathml	D	\\sum''^{c}_2''
-mathml	D	\\sum''^{c}_b^{c}
 mathml	D	\\sum'^a'^{c}
-mathml	D	\\sum'^a_2^{c}
-mathml	D	\\sum'^a_b^a
-mathml	D	\\sum'^a_b_2
 mathml	D	\\sum'^{c}'^{c}
-mathml	D	\\sum'^{c}_2^{c}
-mathml	D	\\sum'^{c}_b^a
-mathml	D	\\sum'^{c}_b_2
 mathml	D	\\sum_i\\nolimits + b
 mathml	D	\\sum_{\\left(,\\quad y}f(x)
 mathml	D	\\sum_{\\left(;\\,x}f(x)
@@ -3399,30 +3351,11 @@ mathml	I	\\left(\\operatorname{\\text{x )}}\\right)
 mathml	I	\\left(\\sqrt[3]{x}\\right)
 mathml	I	\\left(x\\right) ' '''''
 mathml	I	\\left(x\\right) '^a'^{c}
-mathml	I	\\left(x\\right) '^a_2^{c}
-mathml	I	\\left(x\\right) '^a_b^a
-mathml	I	\\left(x\\right) '^a_b_2
 mathml	I	\\left(x\\right) '^{c} ' '
-mathml	I	\\left(x\\right) '^{c}_2''
-mathml	I	\\left(x\\right) '^{c}_b^{c}
 mathml	I	\\left(x\\right)''^a'^{c}
-mathml	I	\\left(x\\right)''^a_2^{c}
-mathml	I	\\left(x\\right)''^a_b^a
-mathml	I	\\left(x\\right)''^a_b_2
 mathml	I	\\left(x\\right)''^{c}'^{c}
-mathml	I	\\left(x\\right)''^{c}_2^{c}
-mathml	I	\\left(x\\right)''^{c}_b^a
-mathml	I	\\left(x\\right)''^{c}_b_2
 mathml	I	\\left(x\\right)'^a''^{c}
-mathml	I	\\left(x\\right)'^a_2^a
-mathml	I	\\left(x\\right)'^a_2_2
-mathml	I	\\left(x\\right)'^a_b '
-mathml	I	\\left(x\\right)'^a_b_b
 mathml	I	\\left(x\\right)'^{c}''^{c}
-mathml	I	\\left(x\\right)'^{c}_2^a
-mathml	I	\\left(x\\right)'^{c}_2_2
-mathml	I	\\left(x\\right)'^{c}_b '
-mathml	I	\\left(x\\right)'^{c}_b_b
 mathml	I	\\left(x\\right)
 mathml	I	\\left(᠎x\\right)
 mathml	I	\\left(​1{,}5\\right)
@@ -3738,31 +3671,18 @@ mathml	I	\\substack{\\operatorname{a_b}\\\\y}
 mathml	I	\\sum '^a '^a
 mathml	I	\\sum '^a'' '
 mathml	I	\\sum '^a''^a
-mathml	I	\\sum '^a_2'
-mathml	I	\\sum '^a_b''
 mathml	I	\\sum '^{c} '^{c}
 mathml	I	\\sum '^{c}' '
 mathml	I	\\sum '^{c}'^a
-mathml	I	\\sum '^{c}_2 '
-mathml	I	\\sum '^{c}_2_b
-mathml	I	\\sum '^{c}_b'
 mathml	I	\\sum' '''''
 mathml	I	\\sum''^a '^a
 mathml	I	\\sum''^a'' '
 mathml	I	\\sum''^a''^a
-mathml	I	\\sum''^a_2'
-mathml	I	\\sum''^a_b''
 mathml	I	\\sum''^{c} '^a
 mathml	I	\\sum''^{c}'' '
 mathml	I	\\sum''^{c}''^a
-mathml	I	\\sum''^{c}_2'
-mathml	I	\\sum''^{c}_b''
 mathml	I	\\sum'^a ' '
-mathml	I	\\sum'^a_2''
-mathml	I	\\sum'^a_b^{c}
 mathml	I	\\sum'^{c} ' '
-mathml	I	\\sum'^{c}_2''
-mathml	I	\\sum'^{c}_b^{c}
 mathml	I	\\sum_i\\nolimits + b
 mathml	I	\\sum_{\\left(,\\quad y}f(x)
 mathml	I	\\sum_{\\left(;\\,x}f(x)
@@ -4065,14 +3985,7 @@ mathml	I	a􏿽b
 mathml	I	x '^a '^{c}
 mathml	I	x '^a' '
 mathml	I	x '^a'^a
-mathml	I	x '^a_2 '
-mathml	I	x '^a_2_b
-mathml	I	x '^a_b'
 mathml	I	x '^{c}''^{c}
-mathml	I	x '^{c}_2^a
-mathml	I	x '^{c}_2_2
-mathml	I	x '^{c}_b '
-mathml	I	x '^{c}_b_b
 mathml	I	x = 1\ny = 2\n\\mathop{\\sqrt{x}}
 mathml	I	x = 1\ny = 2\n\\mathop{\\sqrt{x}}\nz
 mathml	I	x = 1\ny = 2\n\\operatorname{a_b}
@@ -4082,25 +3995,15 @@ mathml	I	x \\tag*{1} y
 mathml	I	x''^a '^{c}
 mathml	I	x''^a' '
 mathml	I	x''^a'^a
-mathml	I	x''^a_2 '
-mathml	I	x''^a_2_b
-mathml	I	x''^a_b'
 mathml	I	x''^{c} '^{c}
 mathml	I	x''^{c}' '
 mathml	I	x''^{c}'^a
-mathml	I	x''^{c}_2 '
-mathml	I	x''^{c}_2_b
-mathml	I	x''^{c}_b'
 mathml	I	x'^a '^a
 mathml	I	x'^a'' '
 mathml	I	x'^a''^a
-mathml	I	x'^a_2'
-mathml	I	x'^a_b''
 mathml	I	x'^{c} '^a
 mathml	I	x'^{c}'' '
 mathml	I	x'^{c}''^a
-mathml	I	x'^{c}_2'
-mathml	I	x'^{c}_b''
 mathml	I	x^2​+​y
 mathml	I	x^{ ​}
 mathml	I	x^{[a]}
@@ -4910,7 +4813,6 @@ mathml-warning	I	\\binom{\\sqrt{\\text{) 2 \\leq}}}{\\sqrt{= \\leq (}}
 mathml-warning	I	\\binom{\\text{\\left(a x a\\right)}}{\\mathrm{\\sin \\alpha_{+ +}}}
 mathml-warning	I	\\binom{\\text{\\leq}}{\\overline{a \\infty^{+ 2 -}}}
 mathml-warning	I	\\binom{\\text{\\operatorname{+ x}}}{-^{+}_{2 \\infty^{2}}}
-mathml-warning	I	\\bmod
 mathml-warning	I	\\char
 mathml-warning	I	\\char{a}{b}
 mathml-warning	I	\\color
@@ -5092,7 +4994,6 @@ mathml-warning	I	\\mbox{a\\quadb}
 mathml-warning	I	\\mbox{a\\textbackslashb}
 mathml-warning	I	\\mbox{a\\~ }
 mathml-warning	I	\\mbox{a\\~}
-mathml-warning	I	\\mod
 mathml-warning	I	\\newcommand\\f[1][x]{#1}\\f%c[y]
 mathml-warning	I	\\newcommand\\f[1][x]{#1}\\f%c[y]z
 mathml-warning	I	\\newcommand\\f[1][x]{#1}\\frac{\\f%c[y]}{2}
@@ -5181,8 +5082,6 @@ mathml-warning	I	\\overset{\\substack{\\displaystyle 713\\\\p&q\\\\z}}{z}
 mathml-warning	I	\\overset{\\substack{\\frac{1}{2}\\\\p&q\\\\z}}{z}
 mathml-warning	I	\\overset{\\substack{\\text{a b}\\\\p&q\\\\z}}{z}
 mathml-warning	I	\\overset{\\substack{jk\\\\p&q\\\\z}}{z}
-mathml-warning	I	\\pmod
-mathml-warning	I	\\pod
 mathml-warning	I	\\providecommand{\\f}[2][a]{#1/#2}\\f\n[x_1]^2{z}
 mathml-warning	I	\\providecommand{\\f}[2][a]{#1/#2}\\f\n\n[x_1]^2{z}
 mathml-warning	I	\\providecommand{\\f}[2][a]{#1/#2}\\f\t[y]
@@ -5351,7 +5250,6 @@ mathml-warning	I	a \\biggr b
 mathml-warning	I	a \\bigl b
 mathml-warning	I	a \\bigr b
 mathml-warning	I	a \\binom b
-mathml-warning	I	a \\bmod
 mathml-warning	I	a \\char b
 mathml-warning	I	a \\color b
 mathml-warning	I	a \\dfrac b

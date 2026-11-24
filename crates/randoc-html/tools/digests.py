@@ -18,10 +18,6 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 DATA = os.path.join(HERE, "..", "src", "digests.json")
 P = os.environ["RANDOC_ORACLE_PANDOC"]
 
-# The writer does not write the e-mail script (docs/ISSUES.md, I-HTML-03).
-KNOWN = {"email": "I-HTML-03"}
-
-
 def doc(blocks, meta=None):
     return json.dumps({"pandoc-api-version": [1, 23, 1, 2], "meta": meta or {}, "blocks": blocks})
 
@@ -40,9 +36,28 @@ MATH = [{"t": "Para", "c": [s("Then"), {"t": "Space"}, {"t": "Math", "c": [{"t":
 PROBE = "[$math$]"
 
 
+def email_link(label, address, classes=None, identifier=""):
+    return {"t": "Link", "c": [[identifier, classes or [], []], label, ["mailto:" + address, ""]]}
+
+
+EMAIL_CASES = {
+    "autolink": [{"t": "Para", "c": [email_link([s("foo@bar.com")], "foo@bar.com", ["email"])]}],
+    "mixed case": [{"t": "Para", "c": [email_link([s("A.B+9@x-y.ORG")], "A.B+9@x-y.ORG", ["email"])]}],
+    "label": [{"t": "Para", "c": [email_link([s("mail"), {"t": "Space"}, s("me")], "a@b.c")]}],
+    "markup and subject": [{"t": "Para", "c": [email_link(
+        [{"t": "Emph", "c": [s("mail")]}, {"t": "Space"}, s("me")], "a@b.c?subject=hi", ["red"], "m"
+    )]}],
+    "heading": [{"t": "Header", "c": [1, ["foobar.com", [], []], [
+        email_link([s("foo@bar.com")], "foo@bar.com", ["email"])
+    ]]}],
+}
+
+
 def cases():
     for fmt in ["html", "html4"]:
         yield f"email {fmt}", fmt, {"email": "javascript"}, doc(MAIL), None
+        for name, blocks in EMAIL_CASES.items():
+            yield f"email {name} {fmt}", fmt, {"email": "javascript"}, doc(blocks), None
         for url in ["https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/", "https://files.test/k/"]:
             opts = {"katex": url, "variables": {"pagetitle": "Fixed"}}
             yield f"katex {url} {fmt}", fmt, opts, doc(MATH), PROBE
@@ -63,9 +78,6 @@ def record():
         out = result["out"].encode()
         record = {"id": name, "format": fmt, "opts": opts, "doc": d, "template": template,
                   "sha256": hashlib.sha256(out).hexdigest(), "length": len(out)}
-        kind = next(iter(opts))
-        if kind in KNOWN:
-            record["known"] = KNOWN[kind]
         records.append(record)
     with open(DATA, "w") as f:
         json.dump({"oracle": "pandoc 3.13", "cases": records}, f, indent=1)

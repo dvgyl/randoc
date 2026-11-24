@@ -56,7 +56,7 @@ pub(super) fn draw_slide<'d>(
     };
     if matches!(layout, Layout::Title) {
         if !metadata[0].is_empty() {
-            let para = builder.plain_paragraph(&metadata[0], "ctr", 3200)?;
+            let para = builder.plain_paragraph(&metadata[0], "ctr", 3200, false)?;
             shapes.push_str(&builder.placeholder_shape(Some("ctrTitle"), 0, None, &para, &[]));
         }
         let mut subtitles = String::new();
@@ -64,18 +64,18 @@ pub(super) fn draw_slide<'d>(
             .chain(metadata[2].split('\n'))
             .filter(|line| !line.is_empty())
         {
-            subtitles.push_str(&builder.plain_paragraph(line, "ctr", 2000)?);
+            subtitles.push_str(&builder.plain_paragraph(line, "ctr", 2000, false)?);
         }
         if !subtitles.is_empty() {
             shapes.push_str(&builder.placeholder_shape(Some("subTitle"), 1, None, &subtitles, &[]));
         }
         if !metadata[3].is_empty() {
-            let para = builder.plain_paragraph(&metadata[3], "ctr", 1600)?;
+            let para = builder.plain_paragraph(&metadata[3], "ctr", 1600, false)?;
             shapes.push_str(&builder.placeholder_shape(Some("dt"), 10, None, &para, &[]));
         }
     } else if !slide.title.is_empty() || slide.toc {
         let title = if slide.toc {
-            builder.plain_paragraph("Table of Contents", "", 3200)?
+            builder.plain_paragraph("Table of Contents", "", 3200, false)?
         } else {
             builder.paragraph(Paragraph::new(slide.title, 1), "", 3200)?
         };
@@ -169,7 +169,7 @@ pub(super) fn draw_endnotes(
     let index = state.endnote_slide;
     let mut builder = Builder::new(state, reference, index, layout);
     builder.suppress_notes = true;
-    let title = builder.plain_paragraph("Notes", "", 3200)?;
+    let title = builder.plain_paragraph("Notes", "", 3200, false)?;
     let mut shapes = builder.placeholder_shape(Some("title"), 0, None, &title, &[]);
     let mut paras = String::new();
     let depth = builder.state.context.limits.max_nesting_depth;
@@ -182,12 +182,12 @@ pub(super) fn draw_endnotes(
         });
         let prefix = format!("{}. ", index + 1);
         if let Some(first) = paragraphs.next() {
-            paras.push_str(&builder.paragraph_with_prefix(first, "", 2000, &prefix)?);
+            paras.push_str(&builder.paragraph_with_prefix(first, "", 2000, &prefix, false)?);
             for para in paragraphs {
                 paras.push_str(&builder.paragraph(para, "", 2000)?);
             }
         } else {
-            paras.push_str(&builder.plain_paragraph(prefix.trim_end(), "", 2000)?);
+            paras.push_str(&builder.plain_paragraph(prefix.trim_end(), "", 2000, false)?);
         }
     }
     let bounds = builder
@@ -570,7 +570,7 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
                     }
                     shapes.push_str(&self.picture(attr, target, &caption, bounds)?);
                     if !caption.is_empty() {
-                        let para = self.plain_paragraph(&caption, "ctr", 1400)?;
+                        let para = self.plain_paragraph(&caption, "ctr", 1400, false)?;
                         bounds.y += bounds.h;
                         bounds.h = (bounds.h / 4).max(1);
                         shapes.push_str(&self.text_shape(None, 0, Some(bounds), &para, &[]));
@@ -656,7 +656,7 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
     }
 
     fn paragraph(&mut self, para: Paragraph<'c>, alignment: &str, size: u32) -> Result<String> {
-        self.paragraph_with_prefix(para, alignment, size, "")
+        self.paragraph_with_prefix(para, alignment, size, "", false)
     }
 
     fn paragraph_with_prefix(
@@ -665,8 +665,9 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
         alignment: &str,
         size: u32,
         prefix: &str,
+        notes: bool,
     ) -> Result<String> {
-        let imported = self.reference.imported && size != 1200;
+        let imported = self.reference.imported && !notes;
         let style = Style {
             size: if imported {
                 if para.quote { 2000 } else { 0 }
@@ -730,7 +731,14 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
         Ok(format!("<a:p>{properties}{body}</a:p>"))
     }
 
-    fn plain_paragraph(&mut self, text: &str, alignment: &str, size: u32) -> Result<String> {
+    fn plain_paragraph(
+        &mut self,
+        text: &str,
+        alignment: &str,
+        size: u32,
+        notes: bool,
+    ) -> Result<String> {
+        let imported = self.reference.imported && !notes;
         let alignment = if alignment.is_empty() {
             String::new()
         } else {
@@ -739,12 +747,8 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
         let run = make_run(
             text,
             Style {
-                size: if self.reference.imported && size != 1200 {
-                    0
-                } else {
-                    size
-                },
-                compact: self.reference.imported && size != 1200,
+                size: if imported { 0 } else { size },
+                compact: imported,
                 ..Style::default()
             },
         );
@@ -1002,7 +1006,7 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
                     r#"<p:sp><p:nvSpPr><p:cNvPr id="1" name="TextBox 3" /><p:cNvSpPr txBox="1" /><p:nvPr><p:ph idx="{slot}" /></p:nvPr></p:nvSpPr><p:spPr>{position}<a:prstGeom prst="rect"><a:avLst /></a:prstGeom><a:noFill /></p:spPr><p:txBody><a:bodyPr /><a:lstStyle /><a:p><a:pPr lvl="0" indent="0" marL="0" algn="ctr"><a:buNone /></a:pPr>{run}</a:p></p:txBody></p:sp>"#
                 );
             } else {
-                let para = self.plain_paragraph(&caption, "ctr", 1400)?;
+                let para = self.plain_paragraph(&caption, "ctr", 1400, false)?;
                 xml.push_str(&self.text_shape(None, 0, Some(bounds), &para, &[]));
             }
         }
@@ -1072,14 +1076,14 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
             let items = flatten_from(blocks.iter(), depth, false, max_depth, &mut children)?;
             for item in items {
                 if let Item::Paragraph(para) = item {
-                    paragraphs.push_str(&self.paragraph(para, "", 1200)?);
+                    paragraphs.push_str(&self.paragraph_with_prefix(para, "", 1200, "", true)?);
                 }
             }
             pending.extend(children.into_iter().rev());
         }
         self.relationships.truncate(relationship_count);
         let body = self.text_shape(Some("body"), 1, None, &paragraphs, &[]);
-        let number = self.plain_paragraph(&(self.slide + 1).to_string(), "", 1200)?;
+        let number = self.plain_paragraph(&(self.slide + 1).to_string(), "", 1200, true)?;
         let number = self.text_shape(Some("sldNum"), 2, None, &number, &[]);
         Ok(Some(format!(
             r#"<p:notes {NAMESPACES}><p:cSld><p:spTree>{TREE}{body}{number}</p:spTree></p:cSld>{COLOR_OVERRIDE}</p:notes>"#

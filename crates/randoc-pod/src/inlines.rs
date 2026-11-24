@@ -148,6 +148,8 @@ struct Frame {
     label: Option<Parts>,
     section: Option<Parts>,
     uri: Option<bool>,
+    target_start: Option<usize>,
+    target_space: Option<usize>,
 }
 
 impl Frame {
@@ -159,6 +161,8 @@ impl Frame {
             label: None,
             section: None,
             uri: None,
+            target_start: None,
+            target_space: None,
         }
     }
 
@@ -192,6 +196,7 @@ impl Frame {
 
 pub(super) enum InlineError {
     Unclosed,
+    UrlSpace(usize),
     Parse(Error),
 }
 
@@ -234,6 +239,11 @@ pub(super) fn parse(
             let Some(parent) = frames.last_mut() else {
                 return Ok(frame.parts.0);
             };
+            if let (Some(start), Some(space)) = (frame.target_start, frame.target_space)
+                && has_url_prefix(&text[start..space])
+            {
+                return Err(InlineError::UrlSpace(space));
+            }
             pos = frame.span.end;
             let output = build(frame, extensions).map_err(InlineError::Parse)?;
             parent.output().append(output);
@@ -268,7 +278,11 @@ pub(super) fn parse(
                     span.close = span.body + start.trim_end_matches([' ', '\t']).len();
                 }
             }
-            frames.push(Frame::new(code, span));
+            let mut child = Frame::new(code, span);
+            if code == b'L' && span.body == pos + 2 {
+                child.target_start = Some(span.body);
+            }
+            frames.push(child);
             pos = span.body;
             continue;
         }
@@ -277,10 +291,17 @@ pub(super) fn parse(
         };
         let byte = text.as_bytes()[pos];
         if matches!(byte, b'|' | b'/') && frame.link_separator(byte) {
+            if byte == b'|' && frame.target_start.is_some() {
+                frame.target_start = Some(pos + 1);
+                frame.target_space = None;
+            }
             pos += 1;
             continue;
         }
         if matches!(ch, ' ' | '\t' | '\n') {
+            if frame.target_start.is_some() {
+                frame.target_space.get_or_insert(pos);
+            }
             frame.output().push(Inline::Space);
         } else {
             frame.output().text(&text[pos..pos + ch.len_utf8()]);
@@ -316,6 +337,8 @@ fn entity(text: &str) -> Option<String> {
     match text {
         "sol" => return Some("/".into()),
         "verbar" => return Some("|".into()),
+        "lchevron" => return Some("«".into()),
+        "rchevron" => return Some("»".into()),
         _ => {}
     }
     let (digits, radix) = if let Some(hex) = text.strip_prefix("0x") {
@@ -348,6 +371,12 @@ fn uri_scheme(parts: &[Inline]) -> bool {
             && scheme
                 .bytes()
                 .all(|ch| ch.is_ascii_alphanumeric() || matches!(ch, b'+' | b'.' | b'-'))
+    })
+}
+
+fn has_url_prefix(text: &str) -> bool {
+    text.split_once(':').is_some_and(|(scheme, rest)| {
+        !scheme.is_empty() && scheme.chars().all(char::is_alphanumeric) && !rest.starts_with(':')
     })
 }
 

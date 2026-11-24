@@ -154,7 +154,7 @@ fn reference(
     }
     for (tags, key) in [
         (&["TI", "T1"][..], "title"),
-        (&["T2", "JO", "JF"], "container-title"),
+        (&["BT", "T2", "JO", "JF"], "container-title"),
         (&["VL"], "volume"),
         (&["IS"], "issue"),
         (&["PB"], "publisher"),

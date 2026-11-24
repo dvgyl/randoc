@@ -22,8 +22,5 @@ pub use randoc_bibtex::references as bibliography_references;
 pub use randoc_citeproc as citeproc;
 pub use randoc_core::*;
 
-/// The Pandoc version that Randoc is compatible with.
-pub const PANDOC_VERSION: &str = "3.13";
-
 /// The version of Randoc.
 pub const RANDOC_VERSION: &str = env!("CARGO_PKG_VERSION");

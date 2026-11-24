@@ -133,6 +133,40 @@ mod tests {
     use super::*;
 
     #[test]
+    fn standalone_context_sets_citation_css_for_a_bibliography() {
+        use randoc_ast::{Attr, Block, Pandoc};
+        use randoc_core::{Context, WriterOptions};
+
+        let template = randoc_templates::Template::compile(
+            "html",
+            "$if(csl-css)$citation CSS$else$body only$endif$",
+            64,
+            &mut |_| Err("no partials"),
+        )
+        .unwrap();
+        let mut options = WriterOptions::default();
+        options.template = Some(template);
+        for (classes, expected) in [
+            (vec!["csl-bib-body".into()], "citation CSS"),
+            (vec!["other".into()], "body only"),
+        ] {
+            let doc = Pandoc {
+                blocks: vec![Block::BlockQuote(vec![Block::Div(
+                    Attr::new("", classes, vec![]),
+                    vec![],
+                )])],
+                ..Default::default()
+            };
+            for version in [Version::Html5, Version::Html4] {
+                assert_eq!(
+                    html::write(&doc, &options, &mut Context::pure(), version).unwrap(),
+                    expected
+                );
+            }
+        }
+    }
+
+    #[test]
     fn render_blocks_gives_the_fragment_of_the_html_writer() {
         use randoc_ast::{Block, Inline};
         let blocks = [Block::Div(

@@ -828,3 +828,84 @@ fn oracle_parity() -> TestResult {
         format!("{} oracle cases differ.", report.failures.len()),
     )
 }
+
+#[test]
+#[ignore = "Requires the Pandoc 3.13 executable."]
+fn wave_10_light_regressions() -> TestResult {
+    let cwd = Path::new(env!("CARGO_MANIFEST_DIR"));
+    for (to, input) in [
+        ("muse", "\\> not quote\n\nWord*with*stars *a*\\*\n\n$mc$\n"),
+        ("textile", "Term\n:   Def.\n\n    ~~~\n    code\n    ~~~\n"),
+    ] {
+        let source = success(oracle(&["-f", "markdown", "-t", "json"], input, cwd)?)?;
+        let doc = randoc_ast::json::from_json(&source)?;
+        let expected = success(oracle(
+            &["-f", "markdown", "-t", to, "--wrap=none"],
+            input,
+            cwd,
+        )?)?;
+        assert_eq!(write(to, &doc, &["--wrap=none"])?, expected);
+    }
+    let source = success(oracle(
+        &["-f", "markdown", "-t", "json"],
+        "# A {#a}\n",
+        cwd,
+    )?)?;
+    let doc = randoc_ast::json::from_json(&source)?;
+    let expected = success(oracle(
+        &["-f", "markdown", "-t", "vimdoc", "--id-prefix=p-"],
+        "# A {#a}\n",
+        cwd,
+    )?)?;
+    let mut opts = options("vimdoc", &[])?;
+    opts.identifier_prefix = "p-".into();
+    let actual = randoc_light::writer("vimdoc")
+        .ok_or_else(|| io::Error::other("Missing vimdoc writer."))?
+        .write(&doc, &opts, &mut Context::pure())?;
+    assert_eq!(
+        format!(
+            "{}\n",
+            String::from_utf8(actual.into_bytes())?.trim_end_matches('\n')
+        ),
+        expected,
+    );
+    read_parity(
+        "opml",
+        concat!(
+            "<opml><body><outline text='if a &lt; b then &lt;b&gt;x&lt;/b&gt;'/>",
+            "<outline text='a &lt;b&gt;bold&lt;/b&gt; &lt;tag&gt; c'/></body></opml>"
+        ),
+        &[],
+        cwd,
+    )?;
+    Ok(())
+}
+
+#[test]
+#[ignore = "Requires the Pandoc 3.13 executable."]
+fn medium_muse_and_haddock() -> TestResult {
+    let cwd = Path::new(env!("CARGO_MANIFEST_DIR"));
+    let grid = concat!(
+        "<table><colgroup><col style='width:30%'><col style='width:70%'></colgroup>",
+        "<thead><tr><th rowspan='2'>A</th><th>B</th></tr><tr><th>C</th></tr></thead>",
+        "<tbody><tr><td colspan='2'>Across</td></tr>",
+        "<tr><td>a</td><td><p>one</p><p>two</p></td></tr></tbody>",
+        "<tfoot><tr><td>f1</td><td>f2</td></tr></tfoot></table>"
+    );
+    let ast = success(oracle(&["-f", "html", "-t", "json"], grid, cwd)?)?;
+    let doc = randoc_ast::json::from_json(&ast)?;
+    for format in ["muse", "haddock"] {
+        let expected = success(oracle(&["-f", "html", "-t", format], grid, cwd)?)?;
+        assert_eq!(write(format, &doc, &[])?, expected, "M2 {format}");
+    }
+    for input in [
+        " 1. First\n 2. Second\n    a. Alpha\n    b. Beta\n",
+        "{{{\n    example\n      next\n}}} suffix\n",
+        "a~~b ~~~x~~~",
+        "a{1} b[1]\n\n[1] first\n\n{1} secondary {2}\n\n{2} next",
+        "Text <literal style=\"html\"><b>raw</b></literal>.\n\n<literal style=\"latex\">\n\\alpha\n</literal>",
+    ] {
+        read_parity("muse", input, &[], cwd)?;
+    }
+    Ok(())
+}

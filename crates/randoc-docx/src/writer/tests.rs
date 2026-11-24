@@ -221,6 +221,36 @@ fn write_blocks(blocks: Vec<randoc_ast::Block>) -> String {
 }
 
 #[test]
+fn bibliography_paragraphs_have_spacing_and_hanging_indent() {
+    use randoc_ast::{Attr, Block, Inline};
+
+    let bibliography = Attr::new(
+        "refs",
+        vec!["hanging-indent".into()],
+        vec![
+            ("entry-spacing".into(), "1".into()),
+            ("line-spacing".into(), "2".into()),
+        ],
+    );
+    let entry = Attr::new("entry", vec!["csl-entry".into()], Vec::new());
+    let xml = write_blocks(vec![Block::Div(
+        bibliography,
+        vec![Block::Div(
+            entry,
+            vec![Block::Para(vec![Inline::Str("Entry".into())])],
+        )],
+    )]);
+    assert!(xml.contains(concat!(
+        r#"<w:pStyle w:val="Bibliography" />"#,
+        r#"<w:spacing w:line="480" w:lineRule="auto" w:after="240" />"#,
+        r#"<w:ind w:left="720" w:hanging="720" />"#,
+    )));
+    let outer = xml.find(r#"<w:bookmarkStart w:id="10" w:name="_refs" />"#);
+    let inner = xml.find(r#"<w:bookmarkStart w:id="9" w:name="_entry" />"#);
+    assert!(matches!((outer, inner), (Some(outer), Some(inner)) if outer < inner));
+}
+
+#[test]
 fn nested_tables_fit_on_a_two_mib_stack() {
     use randoc_ast::{Alignment, Block, Cell, ColSpec, ColWidth, Inline, Row, Table, TableBody};
 

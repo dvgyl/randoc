@@ -1,4 +1,4 @@
-use randoc_archive::xml::{self, XmlElement, XmlLimits, XmlNode, XmlOptions};
+use randoc_archive::xml::{self, QName, XmlElement, XmlLimits, XmlNode, XmlOptions};
 use randoc_ast::{Attr, Block, Inline, Meta, MetaValue, Pandoc, Target};
 use randoc_core::shared::{meta_context, stringify_meta};
 use randoc_core::{Context, Error, Reader, ReaderOptions, Result, Sources, WriterOptions};
@@ -125,7 +125,22 @@ fn read_label(text: &str, limits: &XmlLimits, smart: bool) -> Result<Vec<Inline>
         Err(xml::XmlError::Depth(_)) => {
             return Err(Error::App("The outline label is nested too deeply.".into()));
         }
-        Err(_) => plain_label(text, limits, smart)?,
+        Err(xml::XmlError::Syntax { .. } | xml::XmlError::UnknownEntity { .. }) => {
+            let trimmed = text.trim();
+            if let Some((tag, closing, token)) = label_tag(trimmed)
+                && token == trimmed
+                && !matches!(tag, "html" | "head" | "body")
+                && (closing || !matches!(tag, "div" | "p"))
+            {
+                vec![Inline::RawInline(
+                    randoc_ast::Format::new("html"),
+                    token.into(),
+                )]
+            } else {
+                label_nodes(&recover_label(text, limits)?, 0, limits.max_depth, smart)?
+            }
+        }
+        Err(error) => return Err(Error::App(error.format_pandoc())),
     };
     while matches!(xs.last(), Some(Inline::Space | Inline::LineBreak)) {
         xs.pop();
@@ -177,70 +192,176 @@ fn close_void_tags(text: &str) -> String {
     out
 }
 
-fn plain_label(text: &str, limits: &XmlLimits, smart: bool) -> Result<Vec<Inline>> {
-    let mut out = String::new();
-    let mut rest = text;
-    while let Some(start) = rest.find('<') {
-        out.push_str(&rest[..start]);
-        rest = &rest[start..];
-        let body = &rest[1..];
-        if body.starts_with(|c: char| c.is_ascii_alphabetic() || "/!?".contains(c))
-            && let Some(end) = body.find(['>', '<'])
-            && body.as_bytes()[end] == b'>'
-        {
-            rest = &body[end + 1..];
+fn recover_label(mut text: &str, limits: &XmlLimits) -> Result<Vec<XmlNode>> {
+    let options = XmlOptions {
+        html_entities: true,
+        ..Default::default()
+    };
+    let mut root = Vec::new();
+    let mut open: Vec<XmlElement> = Vec::new();
+    let mut nodes_left = limits.max_nodes;
+    while !text.is_empty() {
+        nodes_left = nodes_left
+            .checked_sub(1)
+            .ok_or_else(|| Error::App("The outline label has too many nodes.".into()))?;
+        if let Some((tag, closing, token)) = label_tag(text) {
+            text = &text[token.len()..];
+            let tag = tag.to_ascii_lowercase();
+            if closing
+                && let Some(index) = open
+                    .iter()
+                    .rposition(|node| node.name.local.eq_ignore_ascii_case(&tag))
+            {
+                while open.len() > index {
+                    finish_label_tag(&mut open, &mut root);
+                }
+                continue;
+            }
+            let content = open
+                .last_mut()
+                .map_or(&mut root, |element| &mut element.children);
+            let known = matches!(
+                tag.as_str(),
+                "b" | "strong"
+                    | "em"
+                    | "i"
+                    | "u"
+                    | "s"
+                    | "del"
+                    | "strike"
+                    | "sup"
+                    | "sub"
+                    | "code"
+                    | "br"
+                    | "a"
+                    | "img"
+                    | "span"
+                    | "p"
+                    | "div"
+                    | "body"
+                    | "blockquote"
+                    | "ul"
+                    | "ol"
+                    | "li"
+                    | "h1"
+                    | "h2"
+                    | "h3"
+                    | "h4"
+                    | "h5"
+                    | "h6"
+                    | "hr"
+                    | "html"
+                    | "head"
+            );
+            if !closing && known {
+                let element = XmlElement {
+                    name: QName {
+                        ns: None,
+                        prefix: None,
+                        local: tag.clone(),
+                    },
+                    attrs: Vec::new(),
+                    ns_decls: Vec::new(),
+                    children: Vec::new(),
+                };
+                let start = token.trim_end_matches('>').trim_end_matches('/');
+                let element = xml::parse_fragment(&format!("{start}/>"), limits, options)
+                    .ok()
+                    .and_then(|fragment| fragment.nodes.into_iter().next())
+                    .and_then(|node| match node {
+                        XmlNode::Element(node) => Some(node),
+                        XmlNode::Text(_) => None,
+                    })
+                    .unwrap_or(element);
+                if token.ends_with("/>") || matches!(tag.as_str(), "br" | "img" | "hr") {
+                    content.push(XmlNode::Element(element));
+                } else {
+                    check_depth(open.len() + 1, limits.max_depth)?;
+                    open.push(element);
+                }
+            } else if !matches!(tag.as_str(), "html" | "head" | "body" | "div" | "p") {
+                content.push(XmlNode::Element(XmlElement {
+                    name: QName {
+                        ns: None,
+                        prefix: None,
+                        local: String::new(),
+                    },
+                    attrs: Vec::new(),
+                    ns_decls: Vec::new(),
+                    children: vec![XmlNode::Text(token.into())],
+                }));
+            }
+        } else if let Some(comment) = text.strip_prefix("<!--") {
+            text = comment.split_once("-->").map_or("", |(_, rest)| rest);
         } else {
-            out.push('<');
-            rest = body;
+            let end = text
+                .char_indices()
+                .skip(1)
+                .find_map(|(index, ch)| (ch == '<').then_some(index))
+                .unwrap_or(text.len());
+            let (plain, rest) = text.split_at(end);
+            text = rest;
+            let content = open
+                .last_mut()
+                .map_or(&mut root, |element| &mut element.children);
+            let escaped = plain.replace('<', "&lt;");
+            let decoded = xml::parse_fragment(&escaped, limits, options).map_or_else(
+                |_| plain.to_owned(),
+                |fragment| {
+                    fragment
+                        .nodes
+                        .into_iter()
+                        .filter_map(|node| match node {
+                            XmlNode::Text(text) => Some(text),
+                            XmlNode::Element(_) => None,
+                        })
+                        .collect()
+                },
+            );
+            if let Some(XmlNode::Text(previous)) = content.last_mut() {
+                previous.push_str(&decoded);
+            } else {
+                content.push(XmlNode::Text(decoded));
+            }
         }
     }
-    out.push_str(rest);
-    let trim = text.trim();
-    let closing = trim
-        .strip_prefix("</")
-        .and_then(|tag| tag.strip_suffix('>'))
-        .is_some_and(|tag| {
-            !tag.is_empty()
-                && !matches!(tag, "head" | "html" | "body")
-                && tag
-                    .bytes()
-                    .all(|byte| byte.is_ascii_alphanumeric() || byte == b'-')
-        });
-    let opening = trim
-        .strip_prefix('<')
-        .and_then(|tag| tag.strip_suffix('>'))
-        .is_some_and(|tag| {
-            let name = tag.split_whitespace().next().unwrap_or("");
-            name.starts_with(|c: char| c.is_ascii_alphabetic())
-                && !matches!(
-                    name.to_ascii_lowercase().as_str(),
-                    "head" | "html" | "body" | "div" | "p"
-                )
-                && !tag.contains(['<', '>'])
-        });
-    if closing || opening {
-        return Ok(vec![Inline::RawInline(
-            randoc_ast::Format::new("html"),
-            trim.into(),
-        )]);
+    while !open.is_empty() {
+        finish_label_tag(&mut open, &mut root);
     }
-    let mut opts = ReaderOptions::default();
-    if smart {
-        opts.extensions.enable(randoc_core::Extension::Smart);
-        out = smart_label(&out);
+    Ok(root)
+}
+
+fn label_tag(text: &str) -> Option<(&str, bool, &str)> {
+    let body = text.strip_prefix('<')?;
+    let (body, closing) = body
+        .strip_prefix('/')
+        .map_or((body, false), |body| (body, true));
+    if !body.starts_with(|ch: char| ch.is_ascii_alphabetic()) {
+        return None;
     }
-    inline::Parser {
-        format: crate::Format::Opml,
-        options: &opts,
-        limit: limits.max_depth,
-        notes: Default::default(),
-        links: Default::default(),
-        active: Default::default(),
-        budget: 0,
-        decode_entities: true,
-        t2t_paths: None,
+    let name_end = body.find(|ch: char| !ch.is_ascii_alphanumeric() && !matches!(ch, '-' | ':'))?;
+    let mut quote = None;
+    for (index, ch) in body[name_end..].char_indices() {
+        match ch {
+            ch if quote == Some(ch) => quote = None,
+            '\'' | '"' if quote.is_none() => quote = Some(ch),
+            '<' if quote.is_none() => return None,
+            '>' if quote.is_none() => {
+                let length = 2 + usize::from(closing) + name_end + index;
+                return Some((&body[..name_end], closing, &text[..length]));
+            }
+            _ => {}
+        }
     }
-    .parse(&out, 0)
+    None
+}
+
+fn finish_label_tag(open: &mut Vec<XmlElement>, root: &mut Vec<XmlNode>) {
+    if let Some(node) = open.pop() {
+        open.last_mut()
+            .map_or(root, |parent| &mut parent.children)
+            .push(XmlNode::Element(node));
+    }
 }
 
 fn smart_label(text: &str) -> String {
@@ -265,7 +386,7 @@ fn label_text(text: &str, smart: bool, limit: usize) -> Result<Vec<Inline>> {
         active: Default::default(),
         budget: 0,
         decode_entities: false,
-        t2t_paths: None,
+        t2t_macros: None,
     }
     .parse(&adjusted, 0)?;
     if text.starts_with(inline::markup_space) {
@@ -307,6 +428,13 @@ fn label_nodes(nodes: &[XmlNode], depth: usize, limit: usize, smart: bool) -> Re
             }
             XmlNode::Element(element) => {
                 let tag = element.name.local.to_ascii_lowercase();
+                if tag.is_empty() {
+                    out.push(Inline::RawInline(
+                        randoc_ast::Format::new("html"),
+                        element.all_text(),
+                    ));
+                    continue;
+                }
                 let mut xs = if matches!(tag.as_str(), "ul" | "ol") {
                     let mut xs = Vec::new();
                     for node in &element.children {
@@ -531,7 +659,7 @@ fn open_outline(
         if !note.trim().is_empty() {
             output.push_str(" _note=\"");
             let mut escaped = String::new();
-            xml::escape_xml_attr(note.trim(), &mut escaped);
+            xml::escape_xml_attr(note.trim_matches('\n'), &mut escaped);
             output.push_str(&escaped.replace('\n', "&#10;"));
             output.push('"');
         }

@@ -19,36 +19,46 @@ const CORS_HEADERS: &str = "Content-Type, Accept, Accept-Language, Content-Langu
 const MAX_BATCH: usize = 256;
 
 pub(crate) fn route(request: Request, limits: ServerLimits, deadline: Deadline) -> Response {
+    let (path, query) = request
+        .target
+        .split_once('?')
+        .unwrap_or((&request.target, ""));
+    route_path(&request, path, query, limits, deadline)
+}
+
+pub(crate) fn route_path(
+    request: &Request,
+    path: &str,
+    query: &str,
+    limits: ServerLimits,
+    deadline: Deadline,
+) -> Response {
     let limit = limits.max_response_bytes;
     if request.method == "OPTIONS"
         && request.header("origin").is_some()
         && let Some(method) = request.header("access-control-request-method")
     {
-        return cap_response(preflight(&request, method), limit);
+        return cap_response(preflight(request, method), limit);
     }
 
-    let (path, query) = request
-        .target
-        .split_once('?')
-        .unwrap_or((&request.target, ""));
     let path = path
         .strip_suffix('/')
         .filter(|path| !path.is_empty())
         .unwrap_or(path);
     let response = match (request.method.as_str(), path) {
-        ("GET" | "HEAD", "/version") => match negotiate(&request, &[Media::Plain, Media::Json]) {
+        ("GET" | "HEAD", "/version") => match negotiate(request, &[Media::Plain, Media::Json]) {
             Some(Media::Json) => json(&randoc::PANDOC_VERSION, limit),
             Some(Media::Plain) => Response::with_body(200, PLAIN, randoc::PANDOC_VERSION),
             _ => Response::empty(406),
         },
         ("GET" | "HEAD", "/babelmark") => {
-            if negotiate(&request, &[Media::Json]).is_some() {
+            if negotiate(request, &[Media::Json]).is_some() {
                 babelmark(query, limits, deadline)
             } else {
                 Response::empty(406)
             }
         }
-        ("POST", "/" | "/batch") => post(&request, path == "/batch", limits, deadline),
+        ("POST", "/" | "/batch") => post(request, path == "/batch", limits, deadline),
         (_, "/" | "/batch" | "/version" | "/babelmark") => Response::empty(405),
         _ => Response::empty(404),
     };
@@ -488,12 +498,16 @@ fn babelmark(query: &str, limits: ServerLimits, deadline: Deadline) -> Response 
 }
 
 fn form_decode(value: &str) -> String {
+    percent_decode(value, true)
+}
+
+pub(crate) fn percent_decode(value: &str, plus_as_space: bool) -> String {
     let mut decoded = Vec::with_capacity(value.len());
     let mut bytes = value.as_bytes();
     while let Some((&byte, tail)) = bytes.split_first() {
         bytes = tail;
         match byte {
-            b'+' => decoded.push(b' '),
+            b'+' if plus_as_space => decoded.push(b' '),
             b'%' if tail.len() >= 2 => {
                 let high = (tail[0] as char).to_digit(16);
                 let low = (tail[1] as char).to_digit(16);

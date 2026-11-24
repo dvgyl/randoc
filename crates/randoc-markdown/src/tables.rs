@@ -22,6 +22,8 @@ pub(crate) trait CellParser {
 pub(crate) struct TableOptions {
     /// The `simple_tables` extension.
     pub simple: bool,
+    /// The `raw_html` extension.
+    pub raw_html: bool,
     /// The `multiline_tables` extension.
     pub multiline: bool,
     /// The `grid_tables` extension.
@@ -505,6 +507,14 @@ fn multiline_table<L: AsRef<str>>(
         while let Some(line) = lines.get(pos) {
             let line = line.as_ref();
             if is_blank(line) {
+                let after = pos + count_blank(rest(lines, pos));
+                if lines
+                    .get(after)
+                    .is_some_and(|next| is_dashed(next.as_ref()))
+                {
+                    pos = after;
+                    break;
+                }
                 return None;
             }
             if is_dashed(line) {
@@ -617,7 +627,7 @@ fn multiline_widths(
 
 /// Splits a pipe table row at the pipes that are not escaped and not in a code span.
 /// Returns None when the line has no such pipe.
-fn split_pipes(line: &str) -> Option<Vec<String>> {
+fn split_pipes(line: &str, raw_html: bool) -> Option<Vec<String>> {
     let chars: Vec<char> = line.chars().collect();
     let mut cells = vec![String::new()];
     let mut pipes = 0;
@@ -632,6 +642,13 @@ fn split_pipes(line: &str) -> Option<Vec<String>> {
             if let Some(close) = closing_backticks(&chars, index + run, run) {
                 take = close + run - index;
             }
+        } else if c == '<'
+            && raw_html
+            && chars.get(index + 1) == Some(&'?')
+            && chars.get(index + 2).is_some_and(char::is_ascii_alphabetic)
+            && let Some(end) = chars[index + 3..].iter().position(|&ch| ch == '>')
+        {
+            take = 4 + end;
         } else if c == '|' {
             pipes += 1;
             cells.push(String::new());
@@ -728,21 +745,50 @@ fn pipe_table<L: AsRef<str>>(
     if indent(header_line) > 3 {
         return None;
     }
-    let header = split_pipes(header_line)?;
+    let header = split_pipes(header_line, options.raw_html)?;
     let separator_line = lines.get(1)?.as_ref();
     let separator = pipe_separator(separator_line)?;
     let mut rows: Vec<Vec<String>> = Vec::new();
     let mut pos = 2;
+    let mut scanned_pi_end = false;
     while let Some(line) = lines.get(pos) {
         let line = line.as_ref();
         if is_blank(line) {
             break;
         }
-        let Some(cells) = split_pipes(line) else {
+        let mut end = pos;
+        let mut joined = String::new();
+        if options.raw_html
+            && !scanned_pi_end
+            && let Some((_, tail)) = line.rsplit_once("<?")
+            && tail.starts_with(|ch: char| ch.is_ascii_alphabetic())
+            && !tail.contains('>')
+        {
+            for (offset, next) in lines.iter().enumerate().skip(pos + 1) {
+                let next = next.as_ref();
+                crate::step(next.len() + 1);
+                if is_blank(next) {
+                    break;
+                }
+                if next.contains('>') {
+                    end = offset;
+                    for part in &lines[pos..=end] {
+                        if !joined.is_empty() {
+                            joined.push('\n');
+                        }
+                        joined.push_str(part.as_ref());
+                    }
+                    break;
+                }
+            }
+            scanned_pi_end = end == pos;
+        }
+        let row = if joined.is_empty() { line } else { &joined };
+        let Some(cells) = split_pipes(row, options.raw_html) else {
             break;
         };
         rows.push(cells);
-        pos += 1;
+        pos = end + 1;
     }
     let used = lines.get(..pos).unwrap_or(&[]);
     let wide = used
@@ -1367,6 +1413,7 @@ mod tests {
     fn options() -> TableOptions {
         TableOptions {
             simple: true,
+            raw_html: true,
             multiline: true,
             grid: true,
             pipe: true,

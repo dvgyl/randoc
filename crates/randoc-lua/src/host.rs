@@ -72,6 +72,10 @@ pub(crate) fn call(host: &Host, module: &str, call: &Call) -> Peek<Vec<Value>> {
         "log" => crate::log::call(host, call),
         "zip" => crate::zip::call(host, call),
         "filters" => crate::run_filter::call(host, call),
+        "state" => crate::state::call(host, call),
+        "template" => host
+            .system(|context| crate::template::file(call, context))
+            .map(|value| vec![value]),
         "references" => crate::references::call(host, call),
         other => Err(PeekError::Thrown(format!(
             "internal error: unknown host module {other}"

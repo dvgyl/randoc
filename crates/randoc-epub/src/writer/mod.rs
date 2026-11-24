@@ -166,11 +166,19 @@ fn write(
         version,
         cover_source.as_deref(),
     )?;
-    let nav_title = metadata
-        .document_title
+    let page_title = options.variables.get("pagetitle").and_then(value_text);
+    let source = match options.variables.get("sourcefile") {
+        Some(Val::List(files)) => files.first().and_then(value_text),
+        Some(value) => value_text(value),
+        None => context.state.input_files.first().cloned(),
+    };
+    let filename = path::basename(source.as_deref().unwrap_or("-"));
+    let fallback = filename.rsplit_once('.').map_or(filename, |(stem, _)| stem);
+    let nav_title = page_title
         .as_deref()
+        .or(metadata.document_title.as_deref())
         .filter(|title| !title.is_empty())
-        .unwrap_or("-");
+        .unwrap_or(fallback);
     let mut nav_fields = pages.context(nav_title, Some("frontmatter"), "");
     for key in ["include-before", "include-after"] {
         nav_fields.0.remove(key);

@@ -7,7 +7,7 @@ use std::path::Path;
 use std::process::{Command, Stdio};
 
 use randoc_archive::xml::{self, XmlElement, XmlLimits, XmlNode, XmlOptions};
-use randoc_archive::zip::{Archive, ArchiveLimits};
+use randoc_archive::zip::{Archive, ArchiveLimits, ArchiveWriter};
 use randoc_ast::{Attr, Block, Inline, MathType, MetaValue, Pandoc, Target};
 use randoc_core::{Context, FormatSpec, PureHost, Reader, ReaderOptions, WriterOptions};
 
@@ -97,6 +97,36 @@ fn compare(label: &str, actual: &Pandoc, expected: &Pandoc) -> bool {
 fn read_oracle(bytes: &[u8]) -> Pandoc {
     let json = oracle(&["-f", "epub", "-t", "json"], bytes);
     randoc_ast::json::from_json_with_limit(std::str::from_utf8(&json).unwrap(), 1024).unwrap()
+}
+
+#[test]
+#[ignore = "requires Pandoc 3.13"]
+fn chapter_links_and_ids_match_the_oracle() {
+    let container = r#"<container xmlns="urn:oasis:names:tc:opendocument:xmlns:container"><rootfiles><rootfile full-path="content.opf"/></rootfiles></container>"#;
+    let package = r#"<package xmlns="http://www.idpf.org/2007/opf"><metadata/><manifest><item id="first" href="first.xhtml" media-type="application/xhtml+xml"/><item id="second" href="text/chapter one.xhtml" media-type="application/xhtml+xml"/></manifest><spine><itemref idref="first"/><itemref idref="second"/></spine></package>"#;
+    let first = r##"<p><a href="text/chapter one.xhtml#sec">Section</a> <a href="chapter%20one.xhtml">Chapter</a> <a href="text/chapter%20one.xhtml#sec">Encoded</a></p>"##;
+    let second = r##"<h1 id="sec">Section</h1><p><a href="#sec">Local</a></p><table id="tbl"><thead id="head"><tr id="row"><th id="cell">Data</th></tr></thead></table><figure id="fig1"><img src="data:image/png;base64,AQ=="/><figcaption>Figure</figcaption></figure>"##;
+    for href in ["chapter one.xhtml", "chapter%20one.xhtml"] {
+        let package = package.replace("chapter one.xhtml", href);
+        let mut zip = ArchiveWriter::new();
+        for (path, text) in [
+            ("META-INF/container.xml", container),
+            ("content.opf", package.as_str()),
+            ("first.xhtml", first),
+            ("text/chapter one.xhtml", second),
+        ] {
+            zip.write_stored(path, text.as_bytes()).unwrap();
+        }
+        let bytes = zip.finish().unwrap();
+        assert!(compare(href, &read_epub(&bytes), &read_oracle(&bytes)));
+    }
+    let input = br#"<h1>First</h1><table id="tbl"><tr><td>Data</td></tr></table><figure id="fig1"><img src="data:image/png;base64,AQ=="/><figcaption>Figure</figcaption></figure>"#;
+    let bytes = oracle(&["-f", "html", "-t", "epub3"], input);
+    assert!(compare(
+        "Pandoc EPUB",
+        &read_epub(&bytes),
+        &read_oracle(&bytes)
+    ));
 }
 
 fn check_files(directory: &Path, names: &[&str]) {
@@ -605,6 +635,32 @@ fn oracle_in(dir: &Path, args: &[&str]) -> std::process::Output {
         .stdin(Stdio::null())
         .output()
         .unwrap()
+}
+
+#[test]
+#[ignore = "requires Pandoc 3.13"]
+fn nav_title_uses_the_first_source_name() {
+    let dir = std::env::temp_dir().join(format!("randoc-epub-nav-{}", std::process::id()));
+    std::fs::create_dir_all(dir.join("chapters")).unwrap();
+    let first = "chapters/Field notes.v2.md";
+    std::fs::write(dir.join(first), "# First\n").unwrap();
+    std::fs::write(dir.join("second.md"), "# Second\n").unwrap();
+    for format in ["epub2", "epub3"] {
+        let expected = oracle_in(&dir, &[first, "second.md", "-t", format]);
+        assert!(expected.status.success());
+        let mut context = Context::pure();
+        context.state.input_files = vec![first.into(), "second.md".into()];
+        let actual = write_epub(
+            format,
+            &Pandoc::default(),
+            &WriterOptions::default(),
+            &mut context,
+        );
+        for epub in [&actual, &expected.stdout] {
+            assert!(member_text(epub, "EPUB/nav.xhtml").contains("<title>Field notes.v2</title>"));
+        }
+    }
+    std::fs::remove_dir_all(dir).unwrap();
 }
 
 #[test]

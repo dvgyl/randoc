@@ -1,6 +1,6 @@
 //! Log operations and the Lua representation of a log message.
 
-use mlua::{Lua, UserData, UserDataFields, Value};
+use mlua::{Lua, MetaMethod, UserData, UserDataFields, UserDataMethods, Value};
 use randoc_core::LogMessage;
 
 use crate::construct::Call;
@@ -18,9 +18,27 @@ impl UserData for LuaLogMessage {
     }
 }
 
+struct LuaError(mlua::LuaString);
+
+impl UserData for LuaError {
+    fn add_fields<F: UserDataFields<Self>>(fields: &mut F) {
+        fields.add_meta_field("__name", "PandocError");
+    }
+
+    fn add_methods<M: UserDataMethods<Self>>(methods: &mut M) {
+        methods.add_meta_method(MetaMethod::ToString, |_, this, ()| Ok(this.0.clone()));
+    }
+}
+
 pub(crate) fn call(host: &Host, call: &Call) -> Peek<Vec<Value>> {
     let lua = host.cx.lua;
     match call.name {
+        "error" => {
+            let text = call.required(0, "message", |value| call.cx.text(value))?;
+            Ok(vec![Value::UserData(
+                lua.create_userdata(LuaError(lua.create_string(text)?))?,
+            )])
+        }
         "info" | "warn" => {
             let text = call.required(0, "message", |v| call.cx.text(v))?;
             let position = caller_position(lua);

@@ -12,10 +12,10 @@ use randoc_core::{
 };
 use randoc_pdf::{PDF_ENGINES, PdfHost, PdfOptions, make_pdf, resolve_pdf_plan};
 
-const CWD: &str = "/Volumes/Extreme Pro/Randoc";
-const TMP: &str = "/Volumes/Extreme Pro/Randoc/env/tmp/test run";
-const TEX_ROOT: &str = "/Volumes/Extreme Pro/Randoc/env/tmp/test run/media-test";
-const LOCAL_ROOT: &str = "/Volumes/Extreme Pro/Randoc/media-test";
+const CWD: &str = "/work/dir with spaces";
+const TMP: &str = "/work/test run";
+const TEX_ROOT: &str = "/work/test run/media-test";
+const LOCAL_ROOT: &str = "/work/dir with spaces/media-test";
 const SOURCE: &str = "Intermediate document.";
 const PDF: &[u8] = b"%PDF-1.7";
 const ARG: &str = "argument with spaces";
@@ -390,7 +390,7 @@ fn all_engine_process_contracts() -> Result<()> {
 
 #[test]
 fn missing_program_reports_the_original_path_and_exit_47() {
-    let engine = "/Volumes/Extreme Pro/bin/xelatex.exe";
+    let engine = "/work/tool bin/xelatex.exe";
     let mut host = Mock {
         spawn_error: Some(io::ErrorKind::NotFound),
         ..Mock::default()

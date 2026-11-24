@@ -99,6 +99,23 @@ impl Xml {
         self.content.is_empty()
     }
 
+    /// Returns the number of bytes in the buffer.
+    pub(super) fn len(&self) -> usize {
+        self.content.len()
+    }
+
+    /// Closes an element. If the element has no content, closes its start tag.
+    pub(super) fn close_element(&mut self, name: &str, content_start: usize) -> Result<()> {
+        self.budget.check()?;
+        if self.len() == content_start && self.content.ends_with('>') {
+            self.budget.charge(2)?;
+            self.content.insert_str(content_start - 1, " /");
+        } else {
+            write!(self, "</{name}>").map_err(|_| size_error())?;
+        }
+        Ok(())
+    }
+
     pub(super) fn into_string(self) -> Result<String> {
         self.budget.check()?;
         Ok(self.content)

@@ -180,8 +180,9 @@ impl<'a> Parser<'a> {
                 let block = self.verbatim();
                 self.block(block);
             } else {
+                let start = self.pos;
                 let text = self.paragraph();
-                let mut parts = self.inline(text.trim_end_matches(POD_SPACE), false)?;
+                let mut parts = self.inline(text.trim_end_matches(POD_SPACE), false, start, 0)?;
                 if matches!(parts.last(), Some(Inline::Space)) {
                     parts.pop();
                 }
@@ -270,28 +271,26 @@ impl<'a> Parser<'a> {
             "head1" | "head2" | "head3" | "head4" | "head5" | "head6" => {
                 let level = i64::from(command.as_bytes()[4] - b'0');
                 let tail = tail.trim_start_matches(HORIZONTAL_SPACE);
-                let text = if tail.is_empty() {
+                let (text, row, offset, leading_space) = if tail.is_empty() {
                     self.pos += 1;
                     let blank_line = self.lines.get(self.pos).is_some_and(|line| blank(line));
                     if blank_line {
                         self.pos += 1;
                     }
-                    let paragraph = self.paragraph();
-                    if blank_line {
-                        format!(" {paragraph}")
-                    } else {
-                        paragraph
-                    }
+                    let row = self.pos;
+                    (self.paragraph(), row, 0, blank_line)
                 } else {
+                    let row = self.pos;
+                    let offset = line.len() - tail.len();
                     let paragraph = self.paragraph();
-                    paragraph[line.len() - tail.len()..].into()
+                    (paragraph[offset..].into(), row, offset, false)
                 };
-                let parts = self.inline(text.trim_end_matches('\n'), false)?;
-                let parts = if text.is_empty() {
-                    vec![Inline::Space]
-                } else {
-                    parts
-                };
+                let mut parts = self.inline(text.trim_end_matches('\n'), false, row, offset)?;
+                if (leading_space || text.is_empty())
+                    && !matches!(parts.first(), Some(Inline::Space))
+                {
+                    parts.insert(0, Inline::Space);
+                }
                 self.block(Block::Header(level, Attr::default(), parts));
             }
             "over" => {
@@ -349,7 +348,10 @@ impl<'a> Parser<'a> {
             return Err(self.unexpected(start, 1, None));
         }
         let paragraph = self.paragraph();
-        let raw = paragraph[command_length(line, tail)..].trim_matches(POD_SPACE);
+        let rest = &paragraph[command_length(line, tail)..];
+        let raw = rest.trim_start_matches(POD_SPACE);
+        let offset = paragraph.len() - raw.len();
+        let raw = raw.trim_end_matches(POD_SPACE);
         let digits = raw.strip_suffix('.').unwrap_or(raw);
         let marker = match raw {
             "" => Marker::Empty,
@@ -360,7 +362,7 @@ impl<'a> Parser<'a> {
             }
             _ => Marker::Term,
         };
-        let term = self.inline(raw, true)?;
+        let term = self.inline(raw, true, start, offset)?;
         if let Some(frame) = self.frames.last_mut() {
             frame.items.push(Item {
                 term,
@@ -405,14 +407,16 @@ impl<'a> Parser<'a> {
         let paragraph = self.paragraph();
         let raw = &paragraph[column..];
         if let Some(name) = format.strip_prefix(':') {
-            let text = raw.trim_matches(POD_SPACE);
+            let text = raw.trim_start_matches(POD_SPACE);
+            let offset = paragraph.len() - text.len();
+            let text = text.trim_end_matches(POD_SPACE);
             if text.is_empty() {
                 return Err(self.unexpected(start, column, None));
             }
             if self.frames.len() > self.limit {
                 return Err(depth_error());
             }
-            let parts = self.inline(text, true)?;
+            let parts = self.inline(text, true, start, offset)?;
             self.block(Block::Div(class(name), vec![Block::Para(parts)]));
         } else {
             self.block(Block::RawBlock(Format::new(format), format!("{raw}\n")));
@@ -444,13 +448,36 @@ impl<'a> Parser<'a> {
         Err(self.unexpected(self.pos, line.len() - tail.len() + common, None))
     }
 
-    fn inline(&self, text: &str, extra_depth: bool) -> Result<Vec<Inline>> {
+    fn inline(
+        &self,
+        text: &str,
+        extra_depth: bool,
+        row: usize,
+        offset: usize,
+    ) -> Result<Vec<Inline>> {
         let limit = self
             .limit
             .saturating_sub(self.frames.len() - 1 + usize::from(extra_depth));
         inlines::parse(text, limit, self.extensions).map_err(|error| match error {
             inlines::InlineError::Unclosed => {
                 self.diagnostic(self.pos + 1, 0, "'\\n'", Some("Pod paragraph"))
+            }
+            inlines::InlineError::UrlSpace(pos) => {
+                let before = &text[..pos];
+                let (line, column) =
+                    before
+                        .rsplit_once('\n')
+                        .map_or((row, offset + pos), |(pre, tail)| {
+                            (
+                                row + pre.bytes().filter(|&byte| byte == b'\n').count() + 1,
+                                tail.len(),
+                            )
+                        });
+                self.unexpected(
+                    line,
+                    column,
+                    (offset == 0 || line != row).then_some("Pod paragraph"),
+                )
             }
             inlines::InlineError::Parse(error) => error,
         })
@@ -711,6 +738,22 @@ mod tests {
         let error = pod(input, 128).unwrap_err();
         assert_eq!(error.exit_code(), 64);
         assert_eq!(error.to_string(), expected);
+    }
+
+    #[test]
+    fn rejects_spaces_in_url_targets() {
+        for (link, column) in [
+            ("L<https://example.org/a b>", 24),
+            ("L<text|https://example.org/a b>", 29),
+        ] {
+            assert_parse_error(
+                &format!("=pod\n\n{link}\n\n=cut\n"),
+                &format!(
+                    "Error at (line 3, column {column}):\nunexpected ' '\nexpecting Pod paragraph\n{link}\n{:>column$}",
+                    "^",
+                ),
+            );
+        }
     }
 
     #[test]

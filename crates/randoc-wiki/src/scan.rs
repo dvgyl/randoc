@@ -88,6 +88,7 @@ impl<'a> Scan<'a> {
         let mut macros = HashMap::<&str, Vec<(usize, usize)>>::new();
         let last_comment_end = text.rfind("-->");
         let last_creole_code_end = text.rfind("}}}");
+        let last_creole_plugin_end = (wiki == Wiki::Creole).then(|| text.rfind(">>>")).flatten();
         let last_literal_end = if matches!(wiki, Wiki::Media | Wiki::Doku) {
             last_literal_ends(text)
         } else {
@@ -114,6 +115,13 @@ impl<'a> Scan<'a> {
                 }
             } else if wiki == Wiki::Creole && tail.starts_with('~') && tail.len() > 1 {
                 1 + char_len(&tail[1..])
+            } else if wiki == Wiki::Creole
+                && let Some(body) = tail.strip_prefix("<<<")
+                && last_creole_plugin_end.is_some_and(|close| close >= at + 3)
+                && let Some(close) = body.find(">>>")
+            {
+                self.pair(at, at + 3, at + 3 + close, at + 6 + close);
+                close + 6
             } else if wiki == Wiki::Jira
                 && tail.starts_with('\\')
                 && tail[1..].starts_with(['[', ']'])
@@ -450,7 +458,7 @@ fn is_literal_tag(name: &str, wiki: Wiki) -> bool {
     matches!(
         name,
         "nowiki" | "source" | "syntaxhighlight" | "pre" | "haskell" | "file" | "html" | "latex"
-    ) || wiki == Wiki::Doku && name == "code"
+    ) || wiki == Wiki::Doku && matches!(name, "code" | "php")
 }
 
 fn last_literal_ends(text: &str) -> HashMap<String, usize> {

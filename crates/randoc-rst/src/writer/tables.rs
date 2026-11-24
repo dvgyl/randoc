@@ -190,6 +190,25 @@ impl Writer<'_> {
                 *w = preferred.max(min_widths[i]);
             }
         }
+        if explicit {
+            for cell in cells.iter().filter(|cell| cell.end - cell.start > 1) {
+                let span = cell.start..cell.end;
+                let fraction: f64 = table.col_specs[span.clone()]
+                    .iter()
+                    .filter_map(|spec| match spec.width {
+                        ColWidth::ColWidth(value) => Some(value),
+                        ColWidth::ColWidthDefault => None,
+                    })
+                    .sum();
+                let room = ((fraction * columns as f64).floor() as usize)
+                    .min(100_000)
+                    .saturating_sub(3);
+                let share = room / span.len() + room % span.len();
+                for width in &mut widths[span] {
+                    *width = (*width).max(share);
+                }
+            }
+        }
         Ok(Layout {
             cells,
             slots,
