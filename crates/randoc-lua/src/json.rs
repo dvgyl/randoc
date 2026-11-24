@@ -136,7 +136,11 @@ fn to_json(cx: &Cx, value: &Value, depth: usize) -> Result<Json, Fail> {
         Value::Integer(number) => Json::Number(*number as f64),
         Value::Number(number) => Json::Number(*number),
         Value::String(text) => Json::String(text.text()),
-        Value::UserData(_) => {
+        Value::UserData(data) => {
+            if let Ok(Value::Function(tojson)) = data.metatable().and_then(|mt| mt.get("__tojson"))
+            {
+                return custom_json(value, &tojson);
+            }
             let thrown = |error: PeekError| Fail::Error(error.thrown());
             let type_name = with_node(value, Node::type_name).unwrap_or("");
             let text = match cx.object(type_name, value).map_err(thrown)? {
@@ -159,6 +163,22 @@ fn to_json(cx: &Cx, value: &Value, depth: usize) -> Result<Json, Fail> {
         Value::Table(table) => table_json(cx, table, depth)?,
         _ => return Err(Fail::NoToJson),
     })
+}
+
+fn custom_json(value: &Value, tojson: &mlua::Function) -> Result<Json, Fail> {
+    let result: Value = tojson.call(value).map_err(|error| {
+        // Pandoc gives the message of the error without a traceback.
+        let message = runtime::message(&error);
+        let message = match message.split_once("\nstack traceback:") {
+            Some((head, _)) => head.to_string(),
+            None => message,
+        };
+        Fail::Error(PeekError::Thrown(message))
+    })?;
+    Ok(Json::Raw(match result {
+        Value::String(text) => text.text(),
+        other => other.to_string()?,
+    }))
 }
 
 fn table_json(cx: &Cx, table: &Table, depth: usize) -> Result<Json, Fail> {
@@ -185,19 +205,7 @@ fn table_json(cx: &Cx, table: &Table, depth: usize) -> Result<Json, Fail> {
             _ => {}
         }
         if let Value::Function(tojson) = metatable.raw_get::<Value>("__tojson")? {
-            let result: Value = tojson.call(value).map_err(|error| {
-                // Pandoc gives the message of the error without a traceback.
-                let message = runtime::message(&error);
-                let message = match message.split_once("\nstack traceback:") {
-                    Some((head, _)) => head.to_string(),
-                    None => message,
-                };
-                Fail::Error(PeekError::Thrown(message))
-            })?;
-            return Ok(Json::Raw(match result {
-                Value::String(text) => text.text(),
-                other => other.to_string()?,
-            }));
+            return custom_json(&value, &tojson);
         }
     }
     let length = table.raw_len();

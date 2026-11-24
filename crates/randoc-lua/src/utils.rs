@@ -4,7 +4,7 @@
 //! merge of two inline lists is a port of the `Semigroup` instance of
 //! `Inlines` in `Text.Pandoc.Builder` of `pandoc-types` 1.23.1 (BSD-3-Clause).
 
-use mlua::{ObjectLike, Value};
+use mlua::Value;
 use randoc_ast::{Block, Inline};
 use randoc_core::shared::{
     auto_identifier,
@@ -54,37 +54,6 @@ pub(crate) fn call(call: &Call, name: &str) -> Peek<Value> {
         "to_roman_numeral" => {
             let number = call.required(0, "n", |v| cx.integral(v))?;
             Ok(push::text(lua, &roman_numeral(number))?)
-        }
-        "structure_make_sections" => {
-            let blocks = call.required(0, "blocks", |v| document_blocks(cx, v))?;
-            let options = call.argument(1);
-            let field = |name: &str| -> Peek<Value> {
-                match &options {
-                    Value::Table(table) => Ok(table.get::<Value>(name)?),
-                    Value::UserData(userdata) => Ok(userdata.get::<Value>(name)?),
-                    // A string has the fields of the module `string`.
-                    value if is_none(value) || matches!(value, Value::Nil | Value::String(_)) => {
-                        Ok(Value::Nil)
-                    }
-                    other => Err(PeekError::Thrown(format!(
-                        "attempt to index a {} value",
-                        crate::peek::lua_type_name(other)
-                    ))),
-                }
-            };
-            let number = is_truthy(&field("number_sections")?);
-            // Pandoc ignores a base level that is not an integer.
-            let base = cx.integral(&field("base_level")?).ok();
-            if !matches!(field("slide_level")?, Value::Nil) {
-                return Err(PeekError::Thrown(
-                    "pandoc.structure.make_sections with slide_level is not implemented in Randoc"
-                        .into(),
-                ));
-            }
-            let sections = make_sections(blocks, number, base, cx.max_depth)
-                .map_err(|error| PeekError::Thrown(error.to_string()))?;
-            check_blocks(cx, &sections)?;
-            Ok(push::blocks(lua, &sections)?)
         }
         "slide_level" => {
             let blocks = call.required(0, "blocks", |v| document_blocks(cx, v))?;
@@ -153,7 +122,7 @@ fn bytes(cx: &Cx, value: &Value) -> Peek<Vec<u8>> {
 
 /// The truth value of a Lua value: `nil`, `false` and a missing argument
 /// are false.
-fn is_truthy(value: &Value) -> bool {
+pub(crate) fn is_truthy(value: &Value) -> bool {
     !(is_none(value) || matches!(value, Value::Nil | Value::Boolean(false)))
 }
 
@@ -562,7 +531,7 @@ pub(crate) fn sha1_hex(input: &[u8]) -> String {
 }
 
 /// The blocks of a `Pandoc` object, or a value that can stand for blocks.
-fn document_blocks(cx: &Cx, value: &Value) -> Peek<Vec<Block>> {
+pub(crate) fn document_blocks(cx: &Cx, value: &Value) -> Peek<Vec<Block>> {
     if crate::object::with_node(value, crate::object::Node::type_name) == Some("Pandoc") {
         return Ok(cx.pandoc(value).map_err(PeekError::thrown)?.blocks);
     }

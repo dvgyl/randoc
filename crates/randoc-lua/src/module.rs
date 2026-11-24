@@ -142,6 +142,8 @@ pub(crate) fn install(lua: &Lua, max_depth: usize) -> mlua::Result<()> {
         let (name, metatable) = pair?;
         lua.set_named_registry_value(&format!("randoc.typed.{name}"), metatable)?;
     }
+    let pandoc: Table = lua.globals().raw_get("pandoc")?;
+    crate::layout::install_constants(lua, &pandoc.raw_get("layout")?)?;
     lua.set_named_registry_value(METAMETHODS, native.get::<Table>("metamethods")?)?;
     lua.set_named_registry_value(CALL_TRACED, native.get::<Function>("call_traced")?)?;
     lua.globals().set(

@@ -14,6 +14,7 @@ use crate::options::{default_reader_options, default_writer_options};
 use crate::os::Os;
 use crate::peek::{Cx, LuaText, Peek, PeekError, mismatch, retrieving};
 use crate::runtime::{self, LuaRuntime, Mode, RuntimeLimits};
+use crate::simple_table::TableCellLimit;
 use crate::system;
 use crate::walk::{CALL_TRACED, Filter, apply_fully, check_document};
 
@@ -206,10 +207,11 @@ pub(crate) fn in_scope<T>(
     let max_depth = context.limits.max_nesting_depth;
     let lua = runtime.lua();
     let cx = Cx { lua, max_depth };
+    let previous_limit = lua.set_app_data(TableCellLimit(context.limits.max_table_cells));
     // `warn`, `pandoc.read` and `pandoc.write` share the context. None of
     // them runs Lua code while it holds the context.
     let context = RefCell::new(context);
-    lua.scope(|scope| {
+    let result = lua.scope(|scope| {
         let native: Table = lua.named_registry_value(module::NATIVE)?;
         let report = scope.create_function(|lua, (message, show): (mlua::LuaString, bool)| {
             if show {
@@ -355,7 +357,13 @@ pub(crate) fn in_scope<T>(
             add.call::<()>(system)?;
         }
         Ok(body(&cx))
-    })?
+    });
+    if let Some(limit) = previous_limit {
+        lua.set_app_data(limit);
+    } else {
+        lua.remove_app_data::<TableCellLimit>();
+    }
+    result?
 }
 
 /// The error of `pandoc.read` or `pandoc.write` inside a reader or writer
@@ -570,9 +578,12 @@ pub(crate) fn load_chunk(cx: &Cx, path: &str, source: &[u8], mode: Mode) -> Peek
 /// that the file returns, the one table that it returns, or the global
 /// functions when it returns nothing.
 fn load_filters(cx: &Cx, filter: &LuaFilter, mode: Mode) -> Peek<Vec<Filter>> {
-    let lua = cx.lua;
     let chunk = load_chunk(cx, filter.path, filter.source, mode)?;
-    let call_traced: Function = lua.named_registry_value(CALL_TRACED)?;
+    run_chunk(cx, chunk, cx.lua.globals())
+}
+
+pub(crate) fn run_chunk(cx: &Cx, chunk: Function, env: Table) -> Peek<Vec<Filter>> {
+    let call_traced: Function = cx.lua.named_registry_value(CALL_TRACED)?;
     let mut results = call_traced.call::<MultiValue>(chunk)?.into_iter();
     if results.next() != Some(Value::Boolean(true)) {
         return Err(PeekError::Thrown(match results.next() {
@@ -582,7 +593,7 @@ fn load_filters(cx: &Cx, filter: &LuaFilter, mode: Mode) -> Peek<Vec<Filter>> {
     }
     // A file that returns no value defines global functions.
     let Some(last) = results.last() else {
-        return Ok(vec![Filter::peek(&Value::Table(lua.globals()))?]);
+        return Ok(vec![Filter::peek(&Value::Table(env))?]);
     };
     // Pandoc reads the last value as a list of filters when its raw
     // length is not 0, and as one filter in each other case. The raw

@@ -111,7 +111,7 @@ fn each_probe_of_the_structure_matrix_gives_the_result_of_the_oracle() {
     replay(
         include_str!("replay/structure.txt"),
         include_str!("replay/structure-expected.txt"),
-        0,
+        4,
         |_| {},
     );
 }
@@ -121,8 +121,8 @@ fn each_probe_of_the_mediabag_matrix_gives_the_result_of_the_oracle() {
     replay(
         include_str!("replay/mediabag.txt"),
         include_str!("replay/mediabag-expected.txt"),
-        0,
-        |_| {},
+        4,
+        |environment| environment.sandbox = true,
     );
 }
 
@@ -131,7 +131,7 @@ fn each_probe_of_the_log_matrix_gives_the_result_of_the_oracle() {
     replay(
         include_str!("replay/log.txt"),
         include_str!("replay/log-expected.txt"),
-        0,
+        2,
         |_| {},
     );
 }
@@ -141,7 +141,7 @@ fn each_probe_of_the_layout_matrix_gives_the_result_of_the_oracle() {
     replay(
         include_str!("replay/layout.txt"),
         include_str!("replay/layout-expected.txt"),
-        0,
+        4,
         |_| {},
     );
 }
@@ -151,8 +151,8 @@ fn each_probe_of_the_zip_matrix_gives_the_result_of_the_oracle() {
     replay(
         include_str!("replay/zip.txt"),
         include_str!("replay/zip-expected.txt"),
-        0,
-        |_| {},
+        3,
+        |environment| environment.sandbox = true,
     );
 }
 
@@ -161,7 +161,7 @@ fn each_probe_of_the_image_matrix_gives_the_result_of_the_oracle() {
     replay(
         include_str!("replay/image.txt"),
         include_str!("replay/image-expected.txt"),
-        0,
+        2,
         |_| {},
     );
 }
@@ -171,7 +171,7 @@ fn each_probe_of_the_simple_table_matrix_gives_the_result_of_the_oracle() {
     replay(
         include_str!("replay/simple-table.txt"),
         include_str!("replay/simple-table-expected.txt"),
-        0,
+        2,
         |_| {},
     );
 }
@@ -181,9 +181,134 @@ fn each_probe_of_the_run_filter_matrix_gives_the_result_of_the_oracle() {
     replay(
         include_str!("replay/run-filter.txt"),
         include_str!("replay/run-filter-expected.txt"),
-        0,
-        |_| {},
+        3,
+        configure_nested_filters,
     );
+}
+
+// Use the host hooks directly so that the replay covers Lua argument conversion.
+fn configure_nested_filters(environment: &mut FilterEnvironment) {
+    environment.sandbox = true;
+    environment.json_filter = Some(replay_json_filter);
+    environment.references = Some(replay_references);
+}
+
+fn replay_json_filter(
+    _: &mut Context,
+    document: &Pandoc,
+    program: &str,
+    args: &[String],
+    _: &FilterEnvironment,
+) -> randoc_core::Result<Pandoc> {
+    use randoc_core::Host;
+    let error = |message: String| Error::Filter {
+        filter: program.into(),
+        message,
+    };
+    let input = json::to_json(document);
+    let output = randoc_core::NativeHost
+        .run_process(program, args, input.as_bytes())
+        .map_err(|err| error(err.to_string()))?;
+    if output.exit_code != 0 {
+        return Err(error(format!(
+            "Filter returned error status {}",
+            output.exit_code
+        )));
+    }
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    json::from_json(&stdout)
+        .map_err(|_| error(format!("Unexpected {stdout:?}, expecting JSON value")))
+}
+
+fn replay_references(
+    context: &mut Context,
+    document: &Pandoc,
+    environment: &FilterEnvironment,
+) -> randoc_core::Result<
+    Vec<randoc_citeproc::reference::Reference<Vec<randoc_citeproc::markup::Markup>>>,
+> {
+    use randoc_citeproc::filter::{Hooks, collect_references};
+    let mut hooks = Hooks {
+        find_resource: &mut |context, path| {
+            environment.resource_path.iter().find_map(|dir| {
+                let candidate = std::path::Path::new(dir)
+                    .join(path)
+                    .to_string_lossy()
+                    .into_owned();
+                context.host().file_exists(&candidate).then_some(candidate)
+            })
+        },
+        yaml_references: &mut |_, _, _| Err(Error::Parse("Unexpected YAML fixture".into())),
+        bib_references: None,
+    };
+    collect_references(context, document, &mut hooks)
+}
+
+#[test]
+fn remaining_host_modules_observe_restricted_mode() {
+    let mut document = Pandoc::default();
+    let source = br#"
+local P = pandoc
+local function fails(f, expected, ...)
+  local ok, err = pcall(f, ...)
+  assert(not ok and tostring(err):find(expected, 1, true), tostring(err))
+end
+function Pandoc(doc)
+  local Z, M, U = P.zip, P.mediabag, P.utils
+  local archive = Z.Archive{Z.Entry('path', 'data', 0)}
+  assert(Z.Archive(archive:bytestring()).entries[1]:contents() == 'data')
+  fails(Z.read_entry, 'pandoc.zip.read_entry needs the system functions of full mode', 'path')
+  fails(Z.zip, 'pandoc.zip.zip needs the system functions of full mode', {'path'})
+  fails(archive.extract, 'needs the system functions of full mode', archive)
+  fails(U.run_lua_filter, 'pandoc.utils.run_lua_filter needs the system functions of full mode', doc, 'path')
+  fails(U.run_json_filter, 'pandoc.utils.run_json_filter needs the system functions of full mode', doc, 'path')
+  fails(M.fetch, "File 'missing.png' not found in resource path", 'missing.png')
+  local mime, bytes = M.fetch('data:text/plain,abc')
+  assert(mime == 'text/plain' and bytes == 'abc')
+  M.insert('resource.txt', nil, bytes)
+  fails(M.write, 'needs the system functions of full mode', '.', 'resource.txt')
+  local filled = M.fill(P.Pandoc{P.Para{
+    P.Image('found', 'data:text/plain,xyz'), P.Image('lost', 'missing.png')}})
+  local key = P.utils.sha1('xyz') .. '.txt'
+  local _, found = M.lookup(key)
+  assert(found == 'xyz', key)
+  assert(filled.blocks[1].content[2].t == 'Span', filled.blocks[1].content[2].t)
+  local logs = P.log.silence(function() P.log.warn('held') end)
+  assert(#logs == 1 and logs[1].message:find('held'))
+  assert(#U.references(doc) == 0)
+end
+"#;
+    let mut environment = FilterEnvironment::new("json");
+    configure_nested_filters(&mut environment);
+    environment.mode = Mode::Restricted;
+    let filter = LuaFilter {
+        path: "restricted-modules.lua",
+        source,
+    };
+    apply_filter(&mut document, &filter, &environment, &mut Context::pure()).unwrap();
+}
+
+#[test]
+fn archive_extract_checks_all_paths_before_writing() {
+    let mut document = Pandoc::default();
+    let source = br#"
+function Pandoc(doc)
+  local Z = pandoc.zip
+  local archive = Z.Archive{Z.Entry('allowed', 'data', 0), Z.Entry('../outside', 'bad', 0)}
+  pandoc.system.with_temporary_directory('lua-zip-paths', function(dir)
+    local ok, err = pcall(archive.extract, archive, {destination=dir})
+    assert(not ok and tostring(err):find('UnsafePath "../outside"', 1, true), tostring(err))
+    assert(io.open(dir..'/allowed', 'rb') == nil, 'extract wrote a file before it checked every path')
+  end)
+  return doc
+end
+"#;
+    let filter = LuaFilter {
+        path: "zip-unsafe-paths.lua",
+        source,
+    };
+    let environment = FilterEnvironment::new("json");
+    apply_filter(&mut document, &filter, &environment, &mut Context::native()).unwrap();
 }
 
 #[test]

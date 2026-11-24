@@ -247,6 +247,7 @@ local function new_element_list_metatable(name)
 end
 
 native.metatables.List = List
+native.metatables['ZipEntry list'] = new_list_metatable('ZipEntry list')
 native.metatables.Inlines = new_element_list_metatable('Inlines')
 native.metatables.Blocks = new_element_list_metatable('Blocks')
 native.metatables.Meta = { __name = 'Meta' }
@@ -813,10 +814,10 @@ native.state_log = host_op('log', 'list')
 do
   local hold, release = host_op('log', 'hold'), host_op('log', 'release')
   local pack, unpack, pcall = table.pack, table.unpack, pcall
-  function pandoc.log.silence(fn, ...)
-    if fn == nil then error('attempt to index a nil value', 0) end
+  function pandoc.log.silence(...)
+    if select('#', ...) == 0 then error('attempt to index a nil value', 0) end
     hold()
-    local results = pack(pcall(fn, ...))
+    local results = pack(pcall(...))
     local messages = release()
     if not results[1] then error(results[2], 0) end
     return messages, unpack(results, 2, results.n)
@@ -828,13 +829,6 @@ for _, name in ipairs {
   'fg', 'bg', 'concat', 'real_length',
 } do
   pandoc.layout[name] = pure_op('layout', name)
-end
-do
-  local constants = operations(pure_op, 'layout', { 'empty', 'space', 'cr', 'blankline' })
-  setmetatable(pandoc.layout, { __index = function(_, key)
-    local constant = constants[key]
-    if constant then return constant() end
-  end })
 end
 pandoc.zip = operations(host_op, 'zip', { 'Archive', 'Entry', 'read_entry', 'zip' })
 pandoc.image = operations(pure_op, 'image', { 'format', 'size' })
@@ -874,14 +868,8 @@ pandoc.types.Sources = missing_function('pandoc.types.Sources')
 -- `pandoc.template`: `compile` and `apply` (row I-LUA-27). Compiled
 -- templates are opaque `userdata` (`LuaTemplate`) preserving resolved partials.
 local template_call = operation('template')
-local doc_metatable = { __name = 'Doc' }
-doc_metatable.__index = { render = function(doc) return rawget(doc, 'text') end }
-doc_metatable.__tostring = function(doc) return rawget(doc, 'text') end
-doc_metatable.__concat = function(a, b) return tostring(a) .. tostring(b) end
 pandoc.template = {
-  apply = function(template, context)
-    return setmetatable({ text = template_call('apply', template, context) }, doc_metatable)
-  end,
+  apply = function(template, context) return template_call('apply', template, context) end,
   default = missing_function('pandoc.template.default'),
   get = missing_function('pandoc.template.get'),
   meta_to_context = missing_function('pandoc.template.meta_to_context'),

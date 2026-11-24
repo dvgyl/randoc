@@ -1,13 +1,14 @@
-//! Connects Lua log reads and holds to the conversion context.
+//! Log operations and the Lua representation of a log message.
 
-use mlua::{UserData, UserDataFields, Value};
+use mlua::{Lua, UserData, UserDataFields, Value};
 use randoc_core::LogMessage;
 
 use crate::construct::Call;
-use crate::host::{self, Host};
+use crate::filter::caller_position;
+use crate::host::Host;
 use crate::object::typed_fields;
-use crate::peek::{Peek, mismatch};
-use crate::push;
+use crate::peek::{Peek, PeekError, mismatch};
+use crate::{json, push};
 
 struct LuaLogMessage(LogMessage);
 
@@ -19,37 +20,117 @@ impl UserData for LuaLogMessage {
 
 pub(crate) fn call(host: &Host, call: &Call) -> Peek<Vec<Value>> {
     let lua = host.cx.lua;
-    let messages = match call.name {
-        "hold" => {
-            return host.context(|context| {
-                context.hold_messages();
-                Ok(Vec::new())
-            });
-        }
-        "release" => {
-            let mut messages = host.context(|context| Ok(context.release_messages()))?;
-            messages.reverse();
-            messages
-        }
-        "list" => host.context(|context| Ok(context.log().to_vec()))?,
-        "get" => {
-            let Some(Value::UserData(value)) = call.arguments.first() else {
-                return Err(mismatch("LogMessage", &call.argument(0)));
+    match call.name {
+        "info" | "warn" => {
+            let text = call.required(0, "message", |v| call.cx.text(v))?;
+            let position = caller_position(lua);
+            let message = if call.name == "info" {
+                LogMessage::ScriptingInfo(text, position)
+            } else {
+                LogMessage::ScriptingWarning(text, position)
             };
-            let message = value.borrow::<LuaLogMessage>()?;
-            return Ok(vec![push::text(lua, &message.0.text())?]);
+            host.context(|context| {
+                context.report(message);
+                Ok(vec![])
+            })
         }
-        "set" => {
-            return Err(crate::peek::PeekError::Thrown(
-                "Cannot set unknown property.".into(),
-            ));
+        "hold" => host.context(|context| {
+            context.hold_messages();
+            Ok(vec![])
+        }),
+        "release" | "list" => {
+            let messages = host.context(|context| {
+                Ok(if call.name == "release" {
+                    context.release_messages().into_iter().rev().collect()
+                } else {
+                    context.log().to_vec()
+                })
+            })?;
+            let values = messages
+                .into_iter()
+                .map(|message| {
+                    lua.create_userdata(LuaLogMessage(message))
+                        .map(Value::UserData)
+                })
+                .collect::<mlua::Result<Vec<_>>>()?;
+            Ok(vec![push::list_of(lua, "List", values)?])
         }
-        name => return Err(host::missing("pandoc.log", name)),
-    };
-    let list = push::list(lua, &messages, |lua, message| {
-        Ok(Value::UserData(
-            lua.create_userdata(LuaLogMessage(message.clone()))?,
-        ))
-    })?;
-    Ok(vec![list])
+        "set" => Err(PeekError::Thrown("Cannot set unknown property.".into())),
+        operation => {
+            let value = call.argument(0);
+            let Value::UserData(data) = &value else {
+                return Err(mismatch("LogMessage", &value));
+            };
+            let message = data.borrow::<LuaLogMessage>()?;
+            match operation {
+                "get" => Ok(vec![push::text(lua, &message.0.text())?]),
+                "tostring" => Ok(vec![push::text(
+                    lua,
+                    &format!("LogMessage: {:p}", data.to_pointer()),
+                )?]),
+                "__tojson" => {
+                    let args = [Value::Table(fields(lua, &message.0)?)];
+                    json::call(
+                        &Call {
+                            arguments: &args,
+                            ..*call
+                        },
+                        "encode",
+                    )
+                }
+                other => Err(crate::host::missing("pandoc.log", other)),
+            }
+        }
+    }
+}
+
+fn fields(lua: &Lua, message: &LogMessage) -> mlua::Result<mlua::Table> {
+    use LogMessage::*;
+    let fields = lua.create_table()?;
+    let debug = format!("{message:?}");
+    let kind = debug
+        .split_once('(')
+        .map_or(debug.as_str(), |(name, _)| name);
+    fields.raw_set(
+        "type",
+        if kind == "NotUtf8Encoded" {
+            "NotUTF8Encoded"
+        } else {
+            kind
+        },
+    )?;
+    fields.raw_set("verbosity", message.level().label())?;
+    fields.raw_set("pretty", message.text())?;
+    match message {
+        ScriptingInfo(text, position) | ScriptingWarning(text, position) => {
+            fields.raw_set("message", text.as_str())?;
+            if let Some(position) = position {
+                fields.raw_set("source", position.source.as_str())?;
+                fields.raw_set("line", position.line)?;
+                fields.raw_set("column", position.column)?;
+            }
+        }
+        CouldNotFetchResource(path, message) => {
+            fields.raw_set("path", path.as_str())?;
+            fields.raw_set("message", message.as_str())?;
+        }
+        Extracting(path) => fields.raw_set("path", path.as_str())?,
+        Fetching(url) => fields.raw_set("path", url.as_str())?,
+        RunningFilter(filter) => fields.raw_set("path", filter.as_str())?,
+        FilterCompleted(filter, time) => {
+            fields.raw_set("path", filter.as_str())?;
+            fields.raw_set("milliseconds", time.to_string())?;
+        }
+        LoadedResource(original, found) => {
+            fields.raw_set("for", original.as_str())?;
+            fields.raw_set("from", found.as_str())?;
+        }
+        NotUtf8Encoded(source) => fields.raw_set("source", source.as_str())?,
+        CouldNotDeduceFormat(extensions, format) => {
+            fields.raw_set("extensions", crate::module::string_list(lua, extensions)?)?;
+            fields.raw_set("format", format.as_str())?;
+        }
+        _ => {}
+    }
+    Ok(fields)
 }

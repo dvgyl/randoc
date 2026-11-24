@@ -6,13 +6,13 @@
 use std::cell::Cell;
 use std::rc::Rc;
 
-use mlua::{Lua, MetaMethod, Table, UserData, UserDataMethods, Value};
+use mlua::{Lua, MetaMethod, UserData, UserDataMethods, Value};
 use randoc_core::{Context, Error};
 use randoc_templates::{Context as TemplateContext, Template, Val};
 
 use crate::construct::Call;
+use crate::layout::{doc_text, userdata as doc_userdata};
 use crate::peek::{Cx, LuaText, Peek, PeekError, depth_message, mismatch};
-use crate::push;
 
 /// Maximum total nodes visited when converting a Lua table to a
 /// [`TemplateContext`] (prevents exponential DAG-to-tree blowup such as
@@ -119,7 +119,7 @@ impl ContextBudget {
 /// Runs the function `name` of `pandoc.template` with the arguments of
 /// `call`: `compile` returns a compiled [`LuaTemplate`] userdata, `apply`
 /// renders a compiled [`LuaTemplate`] userdata (or raw template text) with
-/// a bounded context table and returns the rendered text.
+/// a bounded context table and returns the rendered document.
 pub(crate) fn call(call: &Call, name: &str) -> Peek<Value> {
     let cx = call.cx;
     match name {
@@ -129,7 +129,7 @@ pub(crate) fn call(call: &Call, name: &str) -> Peek<Value> {
             let text = template
                 .render_limited(&context, MAX_RENDER_WORK_BYTES, MAX_OUTPUT_BYTES)
                 .ok_or_else(|| PeekError::Thrown("template render exceeded size limit".into()))?;
-            Ok(push::text(cx.lua, &text)?)
+            doc_userdata(cx.lua, randoc_layout::literal(text))
         }
         other => Err(PeekError::Thrown(format!(
             "internal error: unknown function pandoc.template.{other}"
@@ -260,10 +260,6 @@ fn template_value(cx: &Cx, value: &Value, level: usize, budget: &mut ContextBudg
             Val::text(text)
         }
         Value::Table(table) => {
-            if let Some(text) = doc_text(table)? {
-                budget.charge(0, text.len())?;
-                return Ok(Val::text(text));
-            }
             let length = table.raw_len();
             if length > 0 {
                 let mut items = Vec::with_capacity(length.min(budget.remaining_nodes()));
@@ -285,19 +281,13 @@ fn template_value(cx: &Cx, value: &Value, level: usize, budget: &mut ContextBudg
                 Val::Map(map)
             }
         }
-        other => return Err(mismatch("string, boolean or table", other)),
+        other => {
+            let text =
+                doc_text(other)?.ok_or_else(|| mismatch("string, boolean or table", other))?;
+            budget.charge(0, text.len())?;
+            Val::text(text)
+        }
     })
-}
-
-/// The text of a `Doc` value of `pandoc.template.apply`.
-fn doc_text(table: &Table) -> Peek<Option<String>> {
-    let Some(metatable) = table.metatable() else {
-        return Ok(None);
-    };
-    if metatable.raw_get::<Option<String>>("__name")?.as_deref() != Some("Doc") {
-        return Ok(None);
-    }
-    Ok(table.raw_get::<Option<String>>("text")?)
 }
 
 #[cfg(test)]
