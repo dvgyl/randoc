@@ -87,19 +87,28 @@ the repository; the behaviour was found with the oracle.
 | Syntax highlighting engine | `skylighting-core` 0.15, `skylighting-format-blaze-html` 0.1.2.2, `skylighting-format-latex` 0.1 | BSD-3-Clause | Port | `crates/randoc-highlight/src/` | ADR 20 |
 | 63 KDE syntax definitions with a permissive licence | `skylighting-core` 0.15 `xml/` (from KDE syntax-highlighting) | MIT, BSD-3-Clause, NCSA, WTFPL (per file) | Data | `crates/randoc-highlight/data/syntax-definitions.txt` | ADR 20 |
 | Skip offset for regular expression rules | KSyntaxHighlighting 6.8.0 (`src/lib/abstracthighlighter.cpp`, `src/lib/rule.cpp`) | MIT (SPDX header of both files) | Studied, not used | none | ADR 20 |
+| Document labels and LaTeX language aliases | Linguistic knowledge, standard captions, and Babel and Polyglossia documentation | MIT OR Apache-2.0 | Randoc-written data | [`terms.tsv`](../crates/randoc-data/data/terms.tsv), [`babel_aliases.tsv`](../crates/randoc-data/data/babel_aliases.tsv) | ADR 24 |
+| Clean-room syntax definitions | Public language references and black-box Pandoc output | MIT OR Apache-2.0 | Rules in a Rust definition language | [`crates/randoc-highlight/src/clean/`](../crates/randoc-highlight/src/clean/) | ADR 25 |
+| HTTP/1.1 transport and framing | `std::net` and black-box Pandoc output | MIT OR Apache-2.0 | Randoc-written HTTP layer with no external HTTP library | [`randoc-server`](../crates/randoc-server/) | ADR 26 |
+| Built-in CSL locale tables and Randoc Author–Date style | CSL 1.0.2 specification, linguistic knowledge, bibliographic conventions, and black-box Pandoc output | MIT OR Apache-2.0 | Randoc-written data | [`crates/randoc-data/data/csl/`](../crates/randoc-data/data/csl/) | ADR 27 |
+| Unicode Common Locale Data Repository (CLDR) | Unicode CLDR | Unicode-3.0 | Eligible CSL reference. The current tables use linguistic and observed values. | [Unicode licence](../third_party/licences/Unicode.txt) | ADR 27 |
+| MediaWiki syntax-highlight language names | Black-box Pandoc 3.13 output; candidate names from `pandoc --list-highlight-languages`, a fixed seed list, and optionally Pygments lexer aliases (names only, BSD-2-Clause) | MIT OR Apache-2.0 | Observed language list (542 names) | [`mediawiki-highlight-languages.txt`](../crates/randoc-wiki/src/mediawiki-highlight-languages.txt), [`probe_mediawiki_languages.py`](../crates/randoc-wiki/tools/probe_mediawiki_languages.py) | none (no reuse) |
+| mdoc `.St` standard-name expansions | Black-box Pandoc 3.13 output | MIT OR Apache-2.0 | Observed (45 standard titles) | [`crates/randoc-roff/src/mdoc.rs`](../crates/randoc-roff/src/mdoc.rs) | none (no reuse) |
 
-Rust dependencies on `main`, pinned by `Cargo.lock`:
+The versions below come from [`Cargo.lock`](../Cargo.lock).
 
-| Crate | Version | Licence | Used by |
-| --- | --- | --- | --- |
-| `serde`, `serde_json` | 1.0.229, 1.0.154 | MIT OR Apache-2.0 | The harness (a test tool), and tests of `randoc-core`, `randoc-native`, `randoc-templates` |
-| `toml` | 1.2.1 | MIT OR Apache-2.0 | The harness, tests of `randoc-native` |
-| `zip` | 9.5.0 | MIT | The harness |
-| `nix` | 0.31.3 | MIT | Time tests of `randoc-native` and `randoc-citeproc` on Unix |
-
-The library and the program on `main` have no external dependency at run
-time. That was a result of the first sessions, not a goal. The rule above
-replaces it.
+| Crate | Version | Licence | Use | Used by |
+| --- | --- | --- | --- | --- |
+| `mlua`, `mlua-sys` | 0.12.2, 0.13.0 | MIT | Run time on native targets | `randoc-lua` (ADR 11) |
+| `quick-xml` | 0.42.0 | MIT | Run time | `randoc-archive`, `randoc-citeproc` (ADR 10) |
+| `zip` | 9.5.0 | MIT | Run time and test tool | `randoc-archive`, `randoc-harness` (ADR 9) |
+| `flate2` | 1.1.11 | MIT OR Apache-2.0 | Run time | `randoc-embed` for gzip decoding, and through `zip` (ADR 9) |
+| `zlib-rs` | 0.6.8 | Zlib | Run time | Through `flate2` (ADR 9) |
+| `nix` | 0.31.3 | MIT | Run time and tests on Unix | `randoc-core` (feature `fs`). Tests in `randoc-native`, `randoc-citeproc`, and `randoc-org`. |
+| `serde` | 1.0.229 | MIT OR Apache-2.0 | Run time and test tool | `randoc-cli`, `randoc-highlight`, `randoc-ipynb`, `randoc-server`, and `randoc-harness` |
+| `serde_json` | 1.0.154 | MIT OR Apache-2.0 | Run time, test tool, and tests | `randoc-cli`, `randoc-docx`, `randoc-highlight`, `randoc-ipynb`, `randoc-server`, `randoc-harness`, and tests in 26 crates |
+| `toml` | 1.2.1+spec-1.1.0 | MIT OR Apache-2.0 | Test tool and tests | `randoc-harness`. Tests in `randoc-commonmark`, `randoc-html-reader`, `randoc-latex`, `randoc-markdown`, `randoc-markdown-writer`, and `randoc-native`. |
+| `cc` | 1.11.1 | MIT OR Apache-2.0 | Build | `randoc-lua` builds Lua 5.4.8 and LPeg 1.1.0. |
 
 ## Material in use (merged from earlier workstreams)
 
@@ -146,9 +155,7 @@ requirement selects:
 
 | Need | Candidate and checked release | Licence (licence file) | Compatible | Note |
 | --- | --- | --- | --- | --- |
-| ZIP containers | `zip` 9.5.0 (released 2026-11-09; in use in the harness) | MIT (https://docs.rs/crate/zip/9.5.0/source/LICENSE) | Yes | Chosen in ADR 9. Dependencies: all compatible. |
 | ZIP containers (rejected) | `rc-zip` 5.4.1; `async_zip` 0.0.19 | MIT OR Apache-2.0 (https://github.com/bearcove/rc-zip/blob/rc-zip-v5.4.1/LICENSE-MIT; the crate has no licence file); MIT (https://docs.rs/crate/async_zip/0.0.19/source/LICENSE) | Yes | Rejected in ADR 9. |
-| Compression | `flate2` 1.1.11, `miniz_oxide` 0.9.1, `zlib-rs` 0.6.8 (the back end of `flate2` that ADR 9 selects) | MIT OR Apache-2.0 (https://docs.rs/crate/flate2/1.1.11/source/LICENSE-MIT); MIT OR Zlib OR Apache-2.0 (https://docs.rs/crate/miniz_oxide/0.9.1/source/LICENSE); Zlib (https://docs.rs/crate/zlib-rs/0.6.8/source/LICENSE) | Yes | Compressed bytes can differ from the oracle; binary formats are compared after unpacking. |
 | XML reading (`docx`, `odt`, `epub`, `jats`, `docbook`, `opml`, `fb2`, `endnotexml`) | `quick-xml` 0.42.0 | MIT (https://docs.rs/crate/quick-xml/0.42.0/source/LICENSE-MIT.md) | Yes | Chosen in ADR 10. Dependencies: all compatible (`encoding_rs` is optional and has `(Apache-2.0 OR MIT) AND BSD-3-Clause`). |
 | XML reading (rejected) | `roxmltree` 0.21.2; `xmlparser` 0.13.6 (released 2023-09-30); `xml-rs` 1.0.0, which only forwards to `xml` 1.0.0 (released 2025-08-25) | MIT OR Apache-2.0 (https://docs.rs/crate/roxmltree/0.21.2/source/LICENSE-MIT; https://docs.rs/crate/xmlparser/0.13.6/source/LICENSE-MIT); MIT (https://github.com/kornelski/xml-rs/blob/1.0.0/LICENSE, the crate `xml-rs` has no licence file; https://docs.rs/crate/xml/1.0.0/source/LICENSE) | Yes | Rejected in ADR 10. `xml` 1.0.0 has its own entity and size limits and stays a candidate. |
 | Lua 5.4 for filters and custom readers and writers | `mlua` 0.12.2 without `vendored`, with `mlua-sys` 0.13.0 (feature `external`) and Lua 5.4.8 (`lua-5.4.8.tar.gz` of lua.org) | MIT (`LICENSE` in https://static.crates.io/crates/mlua/mlua-0.12.2.crate; `mlua-sys` 0.13.0 has no licence file and gives `license = "MIT"` in https://static.crates.io/crates/mlua-sys/mlua-sys-0.13.0.crate; Lua: the notice at the end of `src/lua.h` in https://www.lua.org/ftp/lua-5.4.8.tar.gz) | Yes | Chosen in ADR 11. A Randoc build script compiles Lua 5.4.8 without `LUA_COMPAT_5_3`. The feature `vendored` is not used, because `lua-src` always defines `LUA_COMPAT_5_3`. The copy of the Lua sources is an approved exception to rule 5 (ADR 11). |

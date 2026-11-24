@@ -6,44 +6,83 @@ Randoc converts a document in three steps, as Pandoc does:
 2. Filters and transformations change the tree.
 3. A **writer** renders the tree in the output format.
 
-## Crates
+## Workspace crates (45)
 
-### Workspace crates (21)
+The workspace members are in [`Cargo.toml`](../Cargo.toml). Each crate link opens its manifest and dependency list.
 
-| Crate | Purpose | Depends on |
-| --- | --- | --- |
-| `randoc-ast` | The document tree, its Pandoc-compatible JSON form, and tree traversal | none |
-| `randoc-layout` | The `Doc` type: text with breakable spaces, indentation and wrapping | none |
-| `randoc-templates` | The Pandoc template language: parser, renderer, pipes and partials | `randoc-ast`, `randoc-layout` |
-| `randoc-data` | The data files that the Randoc licence permits: 62 default templates/partials and `dzslides` | none |
-| `randoc-core` | The shared contracts (see below) and shared utilities (`randoc_core::shared`) | `randoc-ast`, `randoc-layout`, `randoc-templates` |
-| `randoc-yaml` | YAML metadata reader | `randoc-ast`, `randoc-core` |
-| `randoc-math` | TeX math to MathML and Pandoc inline conversion | `randoc-ast`, `randoc-core` |
-| `randoc-highlight` | Syntax highlighting engine (`skylighting` 0.15 port) + 63 permissive KDE syntax definitions | `serde`, `serde_json` |
-| `randoc-citeproc` | CSL style/locale parser, `csljson` reader/writer, citation evaluator | `randoc-ast`, `randoc-core`, `quick-xml` |
-| `randoc-lua` | Embedded Lua 5.4.8 + LPeg 1.1.0 runtime, Lua filters, custom reader/writer hooks | `randoc-ast`, `randoc-core`, `mlua` |
-| `randoc-native` | `native` reader and writer | `randoc-ast`, `randoc-core`, `randoc-layout` |
-| `randoc-commonmark` | `commonmark`, `gfm`, and `commonmark_x` reader | `randoc-ast`, `randoc-core`, `randoc-yaml` |
-| `randoc-markdown` | Pandoc `markdown` and variant readers | `randoc-ast`, `randoc-core`, `randoc-yaml` |
-| `randoc-markdown-writer` | `markdown`, `gfm`, `commonmark`, `commonmark_x`, `plain`, and variant writers | `randoc-ast`, `randoc-core`, `randoc-layout`, `randoc-html` |
-| `randoc-html-reader` | `html` reader | `randoc-ast`, `randoc-core` |
-| `randoc-html` | `html` and `html4` writers (with standalone templates and math) | `randoc-ast`, `randoc-core`, `randoc-layout`, `randoc-math` |
-| `randoc-latex-reader` | `latex` reader | `randoc-ast`, `randoc-core` |
-| `randoc-latex` | `latex` and `beamer` writers | `randoc-ast`, `randoc-core`, `randoc-layout` |
-| `randoc` | The library facade and the registry of formats | all format crates |
-| `randoc-cli` | The `randoc` program: options, defaults files, filters, input and output | `randoc`, `randoc-lua`, `randoc-data` |
-| `randoc-harness` | The conformance harness. It runs programs and does not link Randoc. | no Randoc crate |
+### Core and library
 
-### Planned crate families (remaining Pandoc formats)
+| Crate | Role |
+| --- | --- |
+| [`randoc-ast`](../crates/randoc-ast/Cargo.toml) | Document tree, JSON codec, and tree traversal. |
+| [`randoc-core`](../crates/randoc-core/Cargo.toml) | Reader and writer interfaces, conversion context, host access, and limits. |
+| [`randoc-data`](../crates/randoc-data/Cargo.toml) | Embedded templates, document labels, language aliases, and citation data. |
+| [`randoc-layout`](../crates/randoc-layout/Cargo.toml) | Text layout, indentation, and line wrapping. |
+| [`randoc`](../crates/randoc/Cargo.toml) | Public library and registry of document formats. |
+| [`randoc-templates`](../crates/randoc-templates/Cargo.toml) | Template parser and renderer, with pipes and partials. |
 
-To keep build times fast and avoid unnecessary crate proliferation (especially
-on exFAT where each file has 1 MB allocation overhead), remaining formats group
-by family:
+### Format readers and writers
 
-- Shared helpers: `randoc-xml` (`quick-xml` tree/limits), `randoc-container` (bounded ZIP), `randoc-media` (MIME/image/media-bag helpers).
-- Containers & office formats: `randoc-docx`, `randoc-odt` (`odt`, `opendocument`, `fodt`), `randoc-epub` (`epub*`, `chunkedhtml`), `randoc-pptx` (`pptx`, `xlsx`).
-- Markup & structured formats: `randoc-typst`, `randoc-rst`, `randoc-org`, `randoc-xmlformats` (`docbook*`, `jats*`, `bits`, `tei`, `opml`, `fb2`, `icml`, `xml`), `randoc-wiki` (`mediawiki`, `dokuwiki`, `creole`, `tikiwiki`, `twiki`, `vimwiki`, `jira`, `xwiki`, `zimwiki`), `randoc-roff` (`man`, `mdoc`, `ms`), `randoc-markup` (`asciidoc*`, `djot`, `textile`, `muse`, `t2t`, `haddock`, `pod`, `vimdoc`, `ansi`, `bbcode*`, `rtf`, `context`, `texinfo`), `randoc-dataformats` (`csv`, `tsv`, `ipynb`).
-- Bibliography formats (`bibtex`, `biblatex`, `ris`, `endnotexml`) belong in `randoc-citeproc`; slide formats (`revealjs`, `s5`, `slidy`, `slideous`, `dzslides`) belong in `randoc-html`.
+| Crate | Role |
+| --- | --- |
+| [`randoc-asciidoc`](../crates/randoc-asciidoc/Cargo.toml) | AsciiDoc formats. |
+| [`randoc-bibtex`](../crates/randoc-bibtex/Cargo.toml) | BibTeX, BibLaTeX, RIS, and EndNote XML bibliography formats. |
+| [`randoc-commonmark`](../crates/randoc-commonmark/Cargo.toml) | Readers for CommonMark, GitHub Flavored Markdown (GFM), and CommonMark with extensions. |
+| [`randoc-djot`](../crates/randoc-djot/Cargo.toml) | Djot documents. |
+| [`randoc-docx`](../crates/randoc-docx/Cargo.toml) | Microsoft Word documents. |
+| [`randoc-epub`](../crates/randoc-epub/Cargo.toml) | EPUB publications. |
+| [`randoc-html`](../crates/randoc-html/Cargo.toml) | HTML and HTML slide writers. |
+| [`randoc-html-reader`](../crates/randoc-html-reader/Cargo.toml) | HTML reader. |
+| [`randoc-ipynb`](../crates/randoc-ipynb/Cargo.toml) | Jupyter notebooks. |
+| [`randoc-latex`](../crates/randoc-latex/Cargo.toml) | LaTeX and Beamer writers. |
+| [`randoc-latex-reader`](../crates/randoc-latex-reader/Cargo.toml) | LaTeX reader. |
+| [`randoc-light`](../crates/randoc-light/Cargo.toml) | Lightweight text and outline formats, including Textile, Muse, and OPML. |
+| [`randoc-markdown`](../crates/randoc-markdown/Cargo.toml) | Pandoc Markdown readers. |
+| [`randoc-markdown-writer`](../crates/randoc-markdown-writer/Cargo.toml) | Markdown, CommonMark, GFM, plain text, and Markua writers. |
+| [`randoc-native`](../crates/randoc-native/Cargo.toml) | Reader and writer for the Haskell text form of the document tree. |
+| [`randoc-odt`](../crates/randoc-odt/Cargo.toml) | OpenDocument text formats. |
+| [`randoc-office`](../crates/randoc-office/Cargo.toml) | Excel spreadsheet reader and PowerPoint presentation reader and writer. |
+| [`randoc-org`](../crates/randoc-org/Cargo.toml) | Emacs Org documents. |
+| [`randoc-pod`](../crates/randoc-pod/Cargo.toml) | Perl Plain Old Documentation (POD). |
+| [`randoc-roff`](../crates/randoc-roff/Cargo.toml) | Roff formats, including man pages. |
+| [`randoc-rst`](../crates/randoc-rst/Cargo.toml) | reStructuredText documents. |
+| [`randoc-rtf`](../crates/randoc-rtf/Cargo.toml) | Rich Text Format documents. |
+| [`randoc-tabular`](../crates/randoc-tabular/Cargo.toml) | Comma-separated and tab-separated tables. |
+| [`randoc-tail-writers`](../crates/randoc-tail-writers/Cargo.toml) | Additional writers, including ConTeXt, Texinfo, and chunked HTML. |
+| [`randoc-typst`](../crates/randoc-typst/Cargo.toml) | Typst documents. |
+| [`randoc-wiki`](../crates/randoc-wiki/Cargo.toml) | Wiki formats, including MediaWiki, DokuWiki, and Jira. |
+| [`randoc-xmlformats`](../crates/randoc-xmlformats/Cargo.toml) | XML formats, including DocBook, JATS, BITS, FictionBook, and TEI. |
+
+### Conversion and service components
+
+| Crate | Role |
+| --- | --- |
+| [`randoc-archive`](../crates/randoc-archive/Cargo.toml) | Bounded ZIP, XML, media, and office package helpers. |
+| [`randoc-citeproc`](../crates/randoc-citeproc/Cargo.toml) | Citation Style Language (CSL) processing and CSL JSON reader and writer. |
+| [`randoc-embed`](../crates/randoc-embed/Cargo.toml) | HTML resource embedding. |
+| [`randoc-highlight`](../crates/randoc-highlight/Cargo.toml) | Syntax highlighting engine with clean-room Rust definitions and permissively licensed KDE definitions. |
+| [`randoc-lua`](../crates/randoc-lua/Cargo.toml) | Lua 5.4 and LPeg, Lua filters, and custom readers and writers. |
+| [`randoc-math`](../crates/randoc-math/Cargo.toml) | Math conversion, including TeX math to MathML and document inlines. |
+| [`randoc-pdf`](../crates/randoc-pdf/Cargo.toml) | PDF conversion through external engines. |
+| [`randoc-server`](../crates/randoc-server/Cargo.toml) | HTTP/1.1 document conversion service. |
+| [`randoc-tagsoup`](../crates/randoc-tagsoup/Cargo.toml) | HTML tag tokenizer and renderer. |
+| [`randoc-yaml`](../crates/randoc-yaml/Cargo.toml) | YAML parser for metadata and settings. |
+
+### Program and test harness
+
+| Crate | Role |
+| --- | --- |
+| [`randoc-cli`](../crates/randoc-cli/Cargo.toml) | The `randoc` command-line program. |
+| [`randoc-harness`](../crates/randoc-harness/Cargo.toml) | Test tool that runs Randoc and Pandoc and compares their output. |
+
+## Server mode
+
+Use `randoc server` to start the HTTP/1.1 conversion service. `randoc-server`
+uses `std::net` for TCP and has separate worker pools for connections and
+conversions. `ServerLimits` sets the maximum request and response body
+sizes. The server uses deadlines and a restricted conversion context.
+See [ADR 26](ADR.md#adr-26-http11-transport-with-no-http-dependency) and
+the [security policy](../SECURITY.md).
 
 ## Shared contracts
 
@@ -87,7 +126,8 @@ the change one time for all workstreams.
   does not write (a span attribute or a short row can ask for them).
 - **Haskell `show`.** Use `randoc_core::shared::show_string` and `show_char`
   (also `randoc_ast::json`) for the text that Pandoc writes with `show`.
-- **No `unsafe`.** Each crate forbids `unsafe` code through the workspace lints.
+- **No `unsafe`.** The workspace forbids `unsafe` code. `randoc-lua` uses
+  `deny` to permit the audited Lua C interface in ADRs 11 and 19.
 - **Strings.** Use `randoc_ast::Text` for strings in the tree.
 - **General logic.** Implement the rule of the format. Do not add a special
   case for one test.

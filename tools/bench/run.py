@@ -3,13 +3,13 @@
 
     python3 tools/bench/run.py --program PATH [--compare PATH] [--filter TEXT]
                                [--runs N] [--max-runs M] [--alpha A]
-                               [--timeout S] [--benchmarks FILE] --out FILE
+                               [--timeout S] [--benchmarks FILE] [--expect-equal] --out FILE
 
 `--program` is the program under test. `--compare` is the reference, for
 example a release build of `main`. The exit code is 1 when a benchmark is
 `slower` or `lost-support`, 2 when a run failed, 3 when a comparison is
-`inconclusive`, and else 0 (see `exit_code`). docs/BENCHMARKS.md describes the
-method.
+`inconclusive`, and else 0 (see `exit_code`). With `--expect-equal`, different
+output also gives exit code 1. docs/BENCHMARKS.md describes the method.
 """
 
 import argparse
@@ -31,6 +31,7 @@ import tempfile
 import threading
 import time
 import tomllib
+import zipfile
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 DEFAULT_BENCHMARKS = ROOT / "benchmarks" / "benchmarks.toml"
@@ -103,6 +104,11 @@ def parse_benchmarks(text, base):
         raise ConfigError(f"unknown tables: {', '.join(sorted(unknown))}")
     names = set()
     benchmarks = []
+
+    def arguments(table, where):
+        return tuple(arg.replace("{manifest_dir}", os.path.relpath(base))
+                     for arg in _string_list(table, "args", where))
+
     for index, table in enumerate(data.get("benchmark", [])):
         where = f"benchmark {index + 1}"
         extra = set(table) - {"name", "args", "input", "stdin"}
@@ -117,7 +123,7 @@ def parse_benchmarks(text, base):
         benchmarks.append(
             Benchmark(
                 name=name,
-                args=_string_list(table, "args", where),
+                args=arguments(table, where),
                 input=base / table["input"] if "input" in table else None,
                 stdin=stdin,
             )
@@ -139,7 +145,7 @@ def parse_benchmarks(text, base):
         startup_stdin = table.get("startup_stdin")
         if not isinstance(startup_stdin, str):
             raise ConfigError(f"{where}: `startup_stdin` must be a string")
-        args = _string_list(table, "args", where)
+        args = arguments(table, where)
         startup = _name({"name": f"{series}-startup"}, where, names)
         benchmarks.append(Benchmark(name=startup, args=args, stdin=startup_stdin))
         for scale in scales:
@@ -249,6 +255,31 @@ def timed_out(killed, status):
     return killed and os.WIFSIGNALED(status) and os.WTERMSIG(status) == signal.SIGKILL
 
 
+def file_sha256(path):
+    """Return the SHA-256 of a file without loading it into memory."""
+    with open(path, "rb") as file:
+        return hashlib.file_digest(file, "sha256").hexdigest()
+
+
+def writes_docx(args):
+    """Return whether the command selects the DOCX writer."""
+    output_format = ""
+    for index, arg in enumerate(args):
+        if arg in ("-t", "-w", "--to", "--write") and index + 1 < len(args):
+            output_format = args[index + 1]
+        elif arg.startswith(("--to=", "--write=")):
+            output_format = arg.split("=", 1)[1]
+        elif arg.startswith(("-t", "-w")) and len(arg) > 2:
+            output_format = arg[2:].removeprefix("=")
+    return output_format.lower().split("+", 1)[0].split("-", 1)[0] == "docx"
+
+
+def document_sha256(path):
+    """Hash the DOCX document XML without the styles or ZIP metadata."""
+    with zipfile.ZipFile(path) as archive, archive.open("word/document.xml") as document:
+        return hashlib.file_digest(document, "sha256").hexdigest()
+
+
 def probe(argv, stdin_path, scratch, timeout=None):
     """Runs a command one time with its output kept, and classifies the result."""
     out = scratch / "probe.out"
@@ -257,21 +288,32 @@ def probe(argv, stdin_path, scratch, timeout=None):
         code, _ = run_once(argv, stdin_path, out, err, timeout=timeout)
     except subprocess.TimeoutExpired:
         return {"status": "error", "exit_code": None, "stderr": f"time limit of {timeout} s"}
-    stdout = out.read_bytes()
-    stderr = err.read_bytes().decode("utf-8", "replace")
+    with err.open("rb") as file:
+        stderr = file.read(2000).decode("utf-8", "replace")
     if code == 0:
         status = "ok"
     elif code in NOT_SUPPORTED_EXIT_CODES:
         status = "not-supported"
     else:
         status = "error"
-    return {
+    result = {
         "status": status,
         "exit_code": code,
-        "stderr": public_text(stderr[:2000]),
-        "stdout_bytes": len(stdout),
-        "stdout_sha256": hashlib.sha256(stdout).hexdigest(),
+        "stderr": public_text(stderr),
+        "stdout_bytes": out.stat().st_size,
+        "stdout_sha256": file_sha256(out),
     }
+    if status == "ok" and writes_docx(argv[1:]):
+        try:
+            result["document_sha256"] = document_sha256(out)
+        except (KeyError, RuntimeError, zipfile.BadZipFile) as error:
+            result.update(status="error", stderr=f"Invalid DOCX document: {error}")
+    return result
+
+
+def output_sha256(result):
+    """Return the digest of the output bytes used for equality checks."""
+    return result.get("document_sha256", result["stdout_sha256"])
 
 
 def summarize(samples):
@@ -389,7 +431,10 @@ def derive(benchmarks, results):
 
 def _command_output(argv):
     try:
-        done = subprocess.run(argv, capture_output=True, text=True, timeout=10, check=False)
+        done = subprocess.run(
+            argv, stdin=subprocess.DEVNULL, capture_output=True, encoding="utf-8",
+            errors="replace", timeout=10, check=False,
+        )
     except (OSError, subprocess.TimeoutExpired):
         return None
     return done.stdout.strip() if done.returncode == 0 else None
@@ -430,6 +475,7 @@ def program_info(path):
     version = _command_output([real, "--version"])
     info = {
         "name": os.path.basename(real),
+        "sha256": file_sha256(real),
         "version": public_version(version) if version else None,
         "modified": _utc(os.path.getmtime(real)),
         "worktree_commit": None,
@@ -466,8 +512,12 @@ def environment():
         "cpu_model": None,
         "memory_bytes": None,
         "load_average": list(os.getloadavg()),
+        "ghcrts": os.environ.get("GHCRTS"),
     }
     if sys.platform == "darwin":
+        env["model"] = _command_output(["sysctl", "-n", "hw.model"])
+        power = _command_output(["pmset", "-g", "batt"])
+        env["power_source"] = power.splitlines()[0] if power else None
         env["cpu_model"] = _command_output(["sysctl", "-n", "machdep.cpu.brand_string"])
         memory = _command_output(["sysctl", "-n", "hw.memsize"])
         env["memory_bytes"] = int(memory) if memory else None
@@ -503,9 +553,10 @@ def resolve_program(path):
 class Measurement:
     """The probe results and the timed runs of each program on each benchmark."""
 
-    def __init__(self, programs, benchmarks, scratch, timeout=None):
+    def __init__(self, programs, benchmarks, scratch, timeout=None, expect_equal=False):
         self.programs = programs
         self.timeout = timeout
+        self.timed_stdout = scratch / "timed.out" if expect_equal else os.devnull
         self.stdin_paths = {}
         for index, bench in enumerate(benchmarks):
             if bench.input is not None:
@@ -543,7 +594,7 @@ class Measurement:
 
     def _timed_run(self, result, argv, stdin_path):
         try:
-            code, sample = run_once(argv, stdin_path, timeout=self.timeout)
+            code, sample = run_once(argv, stdin_path, self.timed_stdout, timeout=self.timeout)
         except subprocess.TimeoutExpired:
             code, sample = None, None
         if code != 0:
@@ -555,7 +606,16 @@ class Measurement:
                 else f"exit code {code} in a timed run"
             )
             return
-        result["samples"].append(dataclasses.asdict(sample))
+        record = dataclasses.asdict(sample)
+        if self.timed_stdout != os.devnull:
+            try:
+                digest = (document_sha256 if writes_docx(argv[1:]) else file_sha256)(self.timed_stdout)
+            except (KeyError, RuntimeError, zipfile.BadZipFile) as error:
+                result.update(status="error", stderr=f"Invalid DOCX document: {error}")
+                return
+            record["output_sha256"] = digest
+            result["output_changed"] = result.get("output_changed", False) or digest != output_sha256(result)
+        result["samples"].append(record)
 
     def finish(self):
         """Adds the summary of each successful result and returns the results."""
@@ -618,7 +678,10 @@ def compare(benchmarks, results, alpha=ALPHA):
             row["runs"] = len(tested["samples"])
             row["reference_min"] = min(s["cpu"] for s in reference["samples"])
             row["program_min"] = min(s["cpu"] for s in tested["samples"])
-            row["same_output"] = tested["stdout_sha256"] == reference["stdout_sha256"]
+            row["same_output"] = (
+                output_sha256(tested) == output_sha256(reference)
+                and not tested.get("output_changed") and not reference.get("output_changed")
+            )
         elif "error" in statuses:
             row["verdict"] = "error"
         elif reference["status"] == "ok":
@@ -652,7 +715,7 @@ def format_table(benchmarks, results, rows=None):
             )
         return "\n".join(lines)
     lines.append(
-        f"{'benchmark':28} {'ref min ms':>10} {'prog min ms':>11} {'ratio':>6} {'99% bounds':>15}  verdict"
+        f"{'benchmark':28} {'ref min ms':>10} {'prog min ms':>11} {'ratio':>6} {'ratio bounds':>15}  verdict"
     )
     for row in rows:
         if "ratio" not in row:
@@ -693,6 +756,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--program", required=True, help="the program under test")
     parser.add_argument("--compare", help="the reference program, for example a build of main")
+    parser.add_argument("--expect-equal", action="store_true", help="fail if either program produces different output")
     parser.add_argument("--filter", default="", help="run only benchmarks whose name contains TEXT")
     parser.add_argument("--runs", type=int, default=30, help="timed runs for each benchmark (8 or more, 30 or more to decide)")
     parser.add_argument(
@@ -708,6 +772,8 @@ def main(argv=None):
     parser.add_argument("--benchmarks", default=str(DEFAULT_BENCHMARKS), help="the benchmarks file")
     parser.add_argument("--out", required=True, help="the JSON file for the raw data")
     args = parser.parse_args(argv)
+    if args.expect_equal and not args.compare:
+        parser.error("--expect-equal requires --compare")
     if args.runs < 8:
         parser.error("--runs must be 8 or more. Fewer pairs give no sign-test bound at small alpha values")
     if not 0 < args.alpha < 1:
@@ -744,6 +810,7 @@ def main(argv=None):
             "benchmarks_file": public_path(args.benchmarks),
             "threshold": THRESHOLD,
             "alpha": args.alpha,
+            "expect_equal": args.expect_equal,
         },
         "environment": environment(),
         "programs": {role: program_info(path) for role, path in programs.items()},
@@ -752,6 +819,8 @@ def main(argv=None):
                 "name": b.name,
                 "args": list(b.args),
                 "stdin": b.stdin_label(pathlib.Path(args.benchmarks).parent),
+                "input_bytes": b.input.stat().st_size if b.input else len((b.stdin or "").encode("utf-8")),
+                "input_sha256": file_sha256(b.input) if b.input else hashlib.sha256((b.stdin or "").encode("utf-8")).hexdigest(),
                 "series": b.series,
                 "scale": b.scale,
                 "startup": b.startup,
@@ -764,7 +833,7 @@ def main(argv=None):
 
     rows = None
     with tempfile.TemporaryDirectory(prefix="randoc-bench-") as scratch:
-        measurement = Measurement(programs, benchmarks, pathlib.Path(scratch), args.timeout)
+        measurement = Measurement(programs, benchmarks, pathlib.Path(scratch), args.timeout, args.expect_equal)
         if "reference" in programs:
             rows, alpha = measure_and_compare(
                 measurement, benchmarks, args.runs, max_runs, args.alpha, progress
@@ -781,6 +850,8 @@ def main(argv=None):
     record["comparison"] = rows
     pathlib.Path(args.out).write_text(json.dumps(record, indent=1) + "\n", encoding="utf-8")
     print(format_table(benchmarks, results, rows))
+    if args.expect_equal and any(row.get("same_output") is False for row in rows):
+        return 1
     return exit_code(results, rows)
 
 

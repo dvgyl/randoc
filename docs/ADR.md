@@ -431,6 +431,8 @@ They were written afterwards from the merge records in `MERGE_LOG.md`.
 
 ## ADR 13: The HTML reader ports the `tagsoup` tokenizer (2026-11-10)
 
+The tokenizer and tag renderer now live in [`randoc-tagsoup`](../crates/randoc-tagsoup/).
+
 - **Context.** Pandoc reads HTML in two layers: the library `tagsoup`
   splits the input into tags, text and comments, and the reader of Pandoc
   builds the tree from that token list. The tree depends on the exact
@@ -526,16 +528,20 @@ They were written afterwards from the merge records in `MERGE_LOG.md`.
 
 ## ADR 17: The CSL processor is a port of `citeproc` 0.14.1.1 (2026-11-11)
 
+[ADR 27](#adr-27-clean-room-csl-data) updates the data requirements in this record.
+
 - **Context.** `--citeproc` must give the bytes of Pandoc 3.13, which uses
   the Haskell library `citeproc` 0.14.1.1. The CSL test suite has no
-  licence grant. The 61 CSL locales and `default.csl` are CC BY-SA 3.0.
+  licence grant. The 60 upstream CSL locale files and `default.csl`
+  are CC BY-SA 3.0.
 - **Decision.** The crate `randoc-citeproc` is a port of `citeproc`
   0.14.1.1 (BSD-2-Clause), module by module. The BCP 47 tag type is a port
   of `Text/Collate/Lang.hs` of `unicode-collation` 0.1.3.7 (BSD-2-Clause).
   XML comes from `quick-xml` 0.42.0 under the rules of ADR 10; the crate
   builds its own element tree with the nesting limit and maps each XML
-  error to the text of `xml-conduit`, from an oracle matrix. Styles and
-  locales are read at run time through `Context` from the data directory:
+  error to the text of `xml-conduit`, from an oracle matrix. The original
+  implementation read styles and locales at run time through `Context`
+  from the data directory:
   `DATADIR/csl/locales/locales-TAG.xml` and `DATADIR/default.csl`. No
   locale and no style is in the repository (decisions D1 and D2).
 - **Why.** The output of `citeproc` depends on many small rules (term
@@ -546,10 +552,10 @@ They were written afterwards from the merge records in `MERGE_LOG.md`.
   `third_party/licences/unicode-collation.txt`, and
   `crates/randoc-citeproc/NOTICE.md`. The data files `tailorings` and
   `cjk` of `unicode-collation` are not used.
-- **Consequences.** Without the data package, Randoc has no en-US locale
-  and returns an error where the oracle gives output (`docs/ISSUES.md`).
-  The tests of the gate use small styles and locales written for Randoc.
-  Tests with the real locales read the folder of `RANDOC_CSL_DATA`.
+- **Consequences.** The original implementation needed the data package
+  to supply the `en-US` locale. The gate uses small styles and locales
+  written for Randoc. Tests with upstream locales read the directory
+  specified by `RANDOC_CSL_DATA`.
 
 ## ADR 18: Limits for table cells and input size, and Host methods for system access (2026-11-11)
 
@@ -690,3 +696,85 @@ The Typst reader uses 2,457 mappings from `typst/codex` v0.1.1. The table
 maps Typst names to Unicode characters. Codex uses the Apache-2.0 licence.
 See the [upstream licence](https://github.com/typst/codex/blob/v0.1.1/LICENSE)
 and the [local licence](../third_party/licences/typst-codex.txt).
+
+## ADR 24: Clean-room document labels and LaTeX language aliases
+
+- **Context.** Writers need localized document labels. Readers need to
+  map LaTeX language names to language tags.
+- **Decision.** Embed [`terms.tsv`](../crates/randoc-data/data/terms.tsv)
+  and [`babel_aliases.tsv`](../crates/randoc-data/data/babel_aliases.tsv)
+  in `randoc-data`. Use linguistic knowledge and standard caption
+  conventions for the labels. Use the names in the Babel and Polyglossia
+  documentation for the aliases.
+- **Why.** An independent table supplies default labels and permits user
+  overrides. A comparison of an earlier table found 540 equal labels
+  among 855 comparable pairs (63.2%). This measurement covers the earlier
+  table and its sample.
+- **Licence.** `MIT OR Apache-2.0`. See the
+  [label provenance](../crates/randoc-data/NOTICE.md#document-labels-and-language-aliases).
+- **Consequences.** For labels, the command-line program first checks
+  `translations/TAG.yaml` in the data directory, then the embedded
+  tables. In each source it tries the full tag, the language and script
+  when the tag includes a region, then the language alone. Alias lookups
+  are case-insensitive.
+
+## ADR 25: Clean-room highlighting definitions in Rust
+
+- **Context.** The highlighter needs syntax rules that Randoc can
+  distribute under its own licence.
+- **Decision.** Write definitions in the Rust
+  [syntax builder](../crates/randoc-highlight/src/clean/mod.rs) from
+  public language references and black-box Pandoc output. Exclude KDE
+  and Skylighting definition files from the source material.
+- **Why.** The builder produces the same syntax model that the existing
+  tokenizer accepts. This lets Randoc use the same tokenizer for these
+  rules and for the permissively licensed definitions in the crate.
+- **Licence.** `MIT OR Apache-2.0` for the clean-room definitions.
+- **Consequences.** Check token output against the oracle. The local
+  licence scan found zero reportable matches in the clean-room files
+  against the six available index parts. A separate check against KDE
+  copyleft definitions requires an index of those files.
+
+## ADR 26: HTTP/1.1 transport with no HTTP dependency
+
+- **Context.** Randoc needs a conversion service with Pandoc-compatible
+  requests and responses.
+- **Decision.** Implement HTTP/1.1 framing and transport in
+  [`randoc-server`](../crates/randoc-server/) with `std::net`. Use
+  `serde` and `serde_json` for JSON. Use Randoc's library for document
+  conversion.
+- **Why.** The standard library supplies the TCP transport. Randoc
+  controls request framing, time limits, and the number of concurrent
+  requests.
+- **Licence.** `MIT OR Apache-2.0` for the server. The dependency licences
+  are in the [third-party notices](../THIRD_PARTY_NOTICES.md).
+- **Consequences.** Separate worker pools handle connections and
+  conversions. `ServerLimits` defaults to 16 MiB for the request body
+  and 32 MiB for the response body. The conversion context has a
+  deadline and uses an in-memory `PureHost` for request files. Consider
+  network input untrusted. Treat generated HTML as active content. See
+  the [security policy](../SECURITY.md).
+
+## ADR 27: Clean-room CSL data
+
+- **Context.** `--citeproc` needs a default style and locale data when
+  the user has no files in the data directory.
+- **Decision.** Embed the
+  [Randoc Author–Date style and locale tables](../crates/randoc-data/data/csl/)
+  in `randoc-data`. The tables cover 60 tags, with full citation data
+  for seven locales and page labels for all 60. Use the CSL 1.0.2
+  specification for term names and syntax. Use linguistic knowledge and
+  bibliographic conventions for locale data. Record observed values and
+  style behaviour from synthetic Pandoc runs in the
+  [probe log](csl/probe-log.tsv) and
+  [author-date behaviour specification](csl/author-date-behaviour.md).
+- **Why.** Embedded data lets the default citation processor work
+  immediately. The data directory lets users supply their own style
+  and locale files.
+- **Licence.** `MIT OR Apache-2.0` for the embedded data. Unicode Common
+  Locale Data Repository (CLDR) data is an eligible reference under
+  Unicode-3.0. The current tables record linguistic and observed sources.
+  Keep upstream CC BY-SA styles and locales outside the repository.
+- **Consequences.** Keep the source field on each locale table row and
+  record the probes for observed values. Maintain the precedence and
+  installation steps in the [citation guide](CITATIONS.md).

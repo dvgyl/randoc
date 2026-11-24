@@ -1,0 +1,139 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: aarch64-apple-darwin
+            runner: macos-15
+          - target: x86_64-apple-darwin
+            runner: macos-15-intel
+          - target: x86_64-unknown-linux-gnu
+            runner: ubuntu-22.04
+          - target: aarch64-unknown-linux-gnu
+            runner: ubuntu-22.04-arm
+          - target: x86_64-pc-windows-msvc
+            runner: windows-latest
+    env:
+      TARGET: ${{ matrix.target }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Install the Rust toolchain and target
+        run: |
+          rustup show
+          rustup target add "$TARGET"
+      - name: Build the stripped binary
+        shell: bash
+        run: |
+          cargo --config 'profile.dist.inherits="release"' \
+            --config 'profile.dist.lto="fat"' \
+            --config 'profile.dist.codegen-units=1' \
+            --config 'profile.dist.strip="symbols"' \
+            build --locked --profile dist --target "$TARGET" -p randoc-cli --bin randoc
+      - name: Generate dependency notices
+        shell: bash
+        run: |
+          cargo install cargo-about --version 0.8.4 --locked
+          cat > target/release-about.toml <<CONFIG
+          accepted = ["MIT", "Apache-2.0", "Zlib", "Unlicense", "CC0-1.0", "MIT-0", "Unicode-3.0"]
+          targets = ["$TARGET"]
+          ignore-build-dependencies = true
+          ignore-dev-dependencies = true
+          CONFIG
+          cat > target/release-about.hbs <<'TEMPLATE'
+          <!doctype html>
+          <html lang="en">
+          <meta charset="utf-8">
+          <title>Randoc dependency licences</title>
+          <h1>Randoc dependency licences</h1>
+          {{#each licenses}}
+          <h2>{{name}}</h2>
+          <ul>
+          {{#each used_by}}
+          <li>{{crate.name}} {{crate.version}}</li>
+          {{/each}}
+          </ul>
+          <pre>{{text}}</pre>
+          {{/each}}
+          </html>
+          TEMPLATE
+          cargo about generate --locked --fail --manifest-path crates/randoc-cli/Cargo.toml \
+            --config target/release-about.toml --output-file target/THIRD_PARTY_LICENSES.html \
+            target/release-about.hbs
+      - name: Package the binary and licences
+        shell: bash
+        run: |
+          name="randoc-${GITHUB_REF_NAME}-$TARGET"
+          mkdir -p "$name/third_party/licences" artifacts
+          binary="randoc"
+          if [[ "$RUNNER_OS" == Windows ]]; then
+            binary="randoc.exe"
+          fi
+          "target/$TARGET/dist/$binary" --version
+          cp "target/$TARGET/dist/$binary" "$name/"
+          cp LICENSE-MIT LICENSE-APACHE README.md THIRD_PARTY_NOTICES.md \
+            target/THIRD_PARTY_LICENSES.html "$name/"
+          cp -R third_party/licences/* "$name/third_party/licences/"
+          if [[ "$RUNNER_OS" == Windows ]]; then
+            archive="$name.zip"
+            PACKAGE="$name" ARCHIVE="artifacts/$archive" pwsh -NoProfile -Command \
+              'Compress-Archive -LiteralPath $env:PACKAGE -DestinationPath $env:ARCHIVE'
+          else
+            archive="$name.tar.gz"
+            COPYFILE_DISABLE=1 tar --no-xattrs --exclude='._*' -czf "artifacts/$archive" "$name"
+          fi
+          cd artifacts
+          if command -v sha256sum >/dev/null; then
+            sha256sum "$archive" > "$archive.sha256"
+          else
+            shasum -a 256 "$archive" > "$archive.sha256"
+          fi
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: randoc-${{ matrix.target }}
+          path: artifacts/*
+          if-no-files-found: error
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          path: artifacts
+          merge-multiple: true
+      - name: Publish the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" artifacts/* --clobber
+          else
+            flags=()
+            if [[ "$GITHUB_REF_NAME" == *-* ]]; then
+              flags+=(--prerelease)
+            fi
+            gh release create "$GITHUB_REF_NAME" artifacts/* --verify-tag \
+              --title "$GITHUB_REF_NAME" --notes-from-tag "${flags[@]}" \
+              || gh release create "$GITHUB_REF_NAME" artifacts/* --verify-tag \
+                --title "$GITHUB_REF_NAME" --generate-notes "${flags[@]}"
+          fi

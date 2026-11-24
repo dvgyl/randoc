@@ -1,0 +1,72 @@
+# Generate inputs with tools/bench/make_inputs.py.
+# For a release measurement, copy this manifest to a local SSD or RAM disk
+# and pass the inputs directory next to that copy to make_inputs.py --out-dir.
+
+[[benchmark]]
+name = "startup-version"
+args = ["--version"]
+
+[[benchmark]]
+name = "startup-empty-html"
+args = ["-f", "markdown", "-t", "html"]
+
+[[benchmark]]
+name = "adversarial-nested-quotes"
+args = ["-f", "json", "-t", "native"]
+input = "inputs/nested-quotes.json"
+
+[[series]]
+name = "md-to-html"
+args = ["-f", "markdown", "-t", "html"]
+input = "inputs/doc-x{scale}.md"
+scales = [10, 100, 1000, 10000]
+startup_stdin = ""
+
+[[series]]
+name = "md-to-html-standalone"
+args = ["-f", "markdown", "-t", "html", "-s", "--toc"]
+input = "inputs/doc-x{scale}.md"
+scales = [10, 100, 1000]
+startup_stdin = ""
+
+[[series]]
+name = "md-to-latex"
+args = ["-f", "markdown", "-t", "latex"]
+input = "inputs/doc-x{scale}.md"
+scales = [10, 100, 1000, 10000]
+startup_stdin = ""
+
+[[series]]
+name = "md-to-docx"
+args = ["-f", "markdown", "-t", "docx"]
+input = "inputs/doc-x{scale}.md"
+scales = [10, 100, 1000]
+startup_stdin = ""
+
+[[series]]
+name = "md-to-json"
+args = ["-f", "markdown", "-t", "json"]
+input = "inputs/doc-x{scale}.md"
+scales = [10, 100, 1000, 10000]
+startup_stdin = ""
+
+[[series]]
+name = "json-to-html"
+args = ["-f", "json", "-t", "html"]
+input = "inputs/doc-x{scale}.json"
+scales = [10, 100, 1000]
+startup_stdin = '{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[]}'
+
+[[series]]
+name = "md-to-html-lua-identity"
+args = ["-f", "markdown", "-t", "html", "-L", "{manifest_dir}/inputs/identity.lua"]
+input = "inputs/doc-x{scale}.md"
+scales = [10, 100, 1000]
+startup_stdin = ""
+
+[[series]]
+name = "md-to-html-highlight"
+args = ["-f", "markdown", "-t", "html", "--highlight-style=pygments"]
+input = "inputs/highlight-x{scale}.md"
+scales = [10, 100]
+startup_stdin = ""
