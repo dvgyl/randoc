@@ -158,7 +158,7 @@ pub fn compile(
 /// search on, also when the folder of the resource path is absolute
 /// (cli-R10-02).
 pub fn unreadable_absolute_path(name: &str, path: &str, error: &std::io::Error) -> Result<()> {
-    if std::path::Path::new(name).is_absolute() && error.kind() != std::io::ErrorKind::NotFound {
+    if std::path::Path::new(name).has_root() && error.kind() != std::io::ErrorKind::NotFound {
         return Err(randoc::error::io_error(path, "withBinaryFile", error));
     }
     Ok(())

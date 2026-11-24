@@ -141,6 +141,107 @@ fn babelmark_query_order_and_decoding() {
 }
 
 #[test]
+fn fragment_bytes_and_alias_messages() {
+    let server = server();
+    for (params, expected) in [
+        (
+            json!({"text":"", "to":"native", "standalone":true}),
+            "Pandoc Meta { unMeta = fromList [] } []\n",
+        ),
+        (
+            json!({"text":"[Plain [Str \"a\tb\"]]", "from":"native","to":"native"}),
+            "[ Plain [ Str \"a\\tb\" ] ]",
+        ),
+        (json!({"text":"é", "ascii":true}), "<p>&#xE9;</p>"),
+        (
+            json!({"text":"# x","to":"markdown","setext-headers":true}),
+            "x\n=\n",
+        ),
+        (
+            json!({"text":"[x](u)","to":"markdown","reference-links":true}),
+            "[x]\n\n  [x]: u",
+        ),
+        (json!({"text":"x","to":"plain"}), "x\n"),
+        (
+            json!({"text":"[x](u)","to":"plain","reference-links":true}),
+            "x\n\n  [x]: u",
+        ),
+        (json!({"text":"x","to":"asciidoc_legacy"}), "x\n"),
+        (json!({"text":"x","to":"asciidoctor"}), "x\n"),
+        (json!({"text":"x","to":"markdown_github"}), "x\n"),
+        (
+            json!({"text":"x^[y]","to":"ms"}),
+            ".LP\nx\\**\n.FS\ny\n.FE\n",
+        ),
+        (
+            json!({"text":"a![b](c.png)","to":"ms"}),
+            ".LP\na\n[IMAGE: b] \\\" \"c.png\"\n",
+        ),
+        (
+            json!({"text":"1. > q","to":"ansi"}),
+            "1. \n   │ q\n\u{1b}[0m\u{1b}]8;;\u{1b}\\",
+        ),
+        (
+            json!({"text":"- x","to":"texinfo"}),
+            "@node Top\n@top Top\n\n@itemize\n@item\nx\n@end itemize\n",
+        ),
+        (
+            json!({"text":"    x","to":"texinfo"}),
+            "@node Top\n@top Top\n\n@verbatim\nx\n@end verbatim\n",
+        ),
+        (
+            json!({"text":"[z \x60a,b\x60](https://a/b,c)","to":"texinfo"}),
+            "@node Top\n@top Top\n\n@uref{https://a/b,c,z @code{a@comma{}b}}",
+        ),
+    ] {
+        let reply = post(&server, "/", "application/json", params.clone());
+        assert_eq!(reply.status, 200, "{params}: {}", reply.body());
+        let result = reply.json();
+        assert_eq!(result["output"], expected, "{params}");
+        assert_eq!(result["messages"], json!([]), "{params}");
+    }
+}
+
+#[test]
+fn request_json_errors_preserve_the_input() {
+    let server = server();
+    for (format, prefix) in [("json", "JSON parse error: "), ("csljson", "")] {
+        let reply = post(
+            &server,
+            "/",
+            "text/plain",
+            json!({"text":"bad","from":format}),
+        );
+        assert_eq!(reply.status, 500);
+        assert_eq!(
+            reply.body(),
+            format!("{prefix}Unexpected \"bad\", expecting JSON value")
+        );
+    }
+}
+
+#[test]
+fn reference_documents_use_the_request_files_and_resource_path() {
+    let server = server();
+    let params = json!({"text":"x","to":"odt","reference-doc":"x.odt","resource-path":["refs"]});
+    let reply = post(&server, "/", "text/plain", params.clone());
+    assert_eq!(reply.status, 500);
+    assert_eq!(reply.body(), "File 'x.odt' not found in resource path");
+    let reference = post(
+        &server,
+        "/",
+        "application/json",
+        json!({"text":"", "to":"odt"}),
+    )
+    .json();
+    let mut params = params;
+    params["files"] = json!({"refs/x.odt":reference["output"]});
+    let reply = post(&server, "/", "application/json", params);
+    assert_eq!(reply.status, 200, "{}", reply.body());
+    assert_eq!(reply.json()["base64"], true);
+}
+
+#[test]
 fn route_and_method_errors() {
     let server = server();
     for (method, path, status) in [
@@ -149,6 +250,9 @@ fn route_and_method_errors() {
         ("POST", "/version", 405),
         ("OPTIONS", "/", 405),
         ("GET", "/convert", 404),
+        ("GET", "/%76ersion", 200),
+        ("GET", "/version%2F", 404),
+        ("GET", "/%2576ersion", 404),
     ] {
         let reply = request(
             &server,

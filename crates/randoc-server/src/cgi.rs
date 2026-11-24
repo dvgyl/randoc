@@ -59,8 +59,7 @@ fn handle(method: String, deadline: Deadline) -> Response {
         return Response::empty(400);
     }
     let path = env::var("PATH_INFO").unwrap_or_default();
-    let path = routes::percent_decode(path.strip_prefix('/').unwrap_or(&path), false);
-    let path = format!("/{path}");
+    let path = format!("/{}", path.strip_prefix('/').unwrap_or(&path));
     let query = env::var("QUERY_STRING").unwrap_or_default();
     let headers = [
         ("accept", "HTTP_ACCEPT"),

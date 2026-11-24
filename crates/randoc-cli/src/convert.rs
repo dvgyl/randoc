@@ -35,16 +35,7 @@ fn load_highlight_theme(
     if !style.ends_with(".theme") {
         return Err(Error::Option(format!("Unknown highlight-style {style}")));
     }
-    let bytes = read(style).map_err(|error| io_error(style, "openBinaryFile", &error))?;
-    let valid = std::str::from_utf8(&bytes)
-        .ok()
-        .and_then(|text| randoc_highlight::Style::from_json(text).ok())
-        .is_some();
-    if !valid {
-        return Err(Error::Option(format!(
-            "Could not read highlighting theme {style}"
-        )));
-    }
+    let (bytes, _) = read_theme(style, read)?;
     Ok(Some(randoc::LoadedFile {
         path: style.to_owned(),
         bytes: bytes.into(),
@@ -64,19 +55,22 @@ pub fn check_highlight_style(
 fn read_theme(
     style: &str,
     read: impl FnOnce(&str) -> std::io::Result<Vec<u8>>,
-) -> Result<randoc_highlight::Style> {
+) -> Result<(Vec<u8>, randoc_highlight::Style)> {
     let bytes = read(style).map_err(|error| io_error(style, "openBinaryFile", &error))?;
-    std::str::from_utf8(&bytes)
+    let theme = std::str::from_utf8(&bytes)
         .ok()
         .and_then(|text| randoc_highlight::Style::from_json(text).ok())
-        .ok_or_else(|| Error::Option(format!("Could not read highlighting theme {style}")))
+        .ok_or_else(|| Error::Option(format!("Could not read highlighting theme {style}")))?;
+    Ok((bytes, theme))
 }
 
 /// Returns the error of Pandoc for a failed write of a file. The system
 /// refuses to open a folder for a write, so GHC gives the system text
 /// `Is a directory`; for a read, GHC gives its own text `is a directory`.
 fn write_error(path: &str, operation: &str, error: &std::io::Error) -> Error {
-    if error.kind() == std::io::ErrorKind::IsADirectory {
+    if error.kind() == std::io::ErrorKind::IsADirectory
+        || (cfg!(windows) && Path::new(path).is_dir())
+    {
         Error::Io(format!(
             "{path}: {operation}: inappropriate type (Is a directory)"
         ))
@@ -861,6 +855,15 @@ fn read_syntax_definitions(
                         "syntax definitions exceed {} bytes",
                         randoc_highlight::MAX_TOTAL_DEFINITION_BYTES
                     ))
+                } else if cfg!(windows)
+                    && context.host().path_kind(path, true).ok()
+                        == Some(randoc::PathKind::Directory)
+                {
+                    io_error(
+                        path,
+                        "openBinaryFile",
+                        &std::io::ErrorKind::IsADirectory.into(),
+                    )
                 } else {
                     io_error(path, "openBinaryFile", &error)
                 }
@@ -894,7 +897,8 @@ pub fn print_highlight_style(
     if !style.ends_with(".theme") {
         return Err(Error::Option(format!("Unknown highlight-style {style}")));
     }
-    Ok(read_theme(style, read)?.to_json().into_bytes())
+    let (_, theme) = read_theme(style, read)?;
+    Ok(theme.to_json().into_bytes())
 }
 
 /// Returns the abbreviations for the reader: one on each line of the
@@ -990,11 +994,12 @@ fn writer_options(settings: &Settings, extensions: randoc::Extensions) -> Writer
 
 /// Removes the byte order mark and each carriage return of a template, as
 /// Pandoc does for a template and for each partial.
-pub fn clean_template(bytes: Vec<u8>) -> Vec<u8> {
-    let bytes = bytes
-        .strip_prefix(b"\xef\xbb\xbf")
-        .map_or(bytes.clone(), <[u8]>::to_vec);
-    bytes.into_iter().filter(|&b| b != b'\r').collect()
+pub fn clean_template(mut bytes: Vec<u8>) -> Vec<u8> {
+    if bytes.starts_with(b"\xef\xbb\xbf") {
+        bytes.drain(..3);
+    }
+    bytes.retain(|&byte| byte != b'\r');
+    bytes
 }
 
 /// Finds and compiles a template as Pandoc does: the first of the template
@@ -1006,34 +1011,27 @@ fn find_template(
     format: &str,
     files: &TemplateFiles,
     context: &mut Context,
-) -> Result<(TemplateText, randoc_templates::Template)> {
+) -> Result<randoc_templates::Template> {
     let candidates = template_candidates(name, format, files.data_dir, files.resource_path);
-    // The first file of a name that can be read is the one attempt for that
-    // name: when the attempt fails, the search goes on with the next name,
-    // not with the next file of the same name (cli-R10-05).
-    let mut failed_name: Option<&str> = None;
-    for candidate in &candidates {
-        if failed_name == Some(candidate.name.as_str()) {
-            continue;
-        }
-        let attempt = match files.read(&candidate.path, context) {
-            Ok(bytes) => compile_template_file(candidate, bytes, files, context),
-            Err(_) if candidate.in_data_dir => continue,
-            Err(error) => match crate::template::unreadable_absolute_path(
-                &candidate.name,
-                &candidate.path,
-                &error,
-            ) {
-                Ok(()) => continue,
-                Err(error) => Err(error),
-            },
-        };
-        match attempt {
-            Ok(found) => return Ok(found),
-            Err(_) if candidate.name == name && !has_extension(name) => {
-                failed_name = Some(&candidate.name);
+    for group in candidates.chunk_by(|left, right| left.name == right.name) {
+        for candidate in group {
+            let attempt = match files.read(&candidate.path, context) {
+                Ok(bytes) => compile_template_file(candidate, bytes, files, context),
+                Err(_) if candidate.in_data_dir => continue,
+                Err(error) => match crate::template::unreadable_absolute_path(
+                    &candidate.name,
+                    &candidate.path,
+                    &error,
+                ) {
+                    Ok(()) => continue,
+                    Err(error) => Err(error),
+                },
+            };
+            match attempt {
+                Ok(found) => return Ok(found),
+                Err(_) if candidate.name == name && !has_extension(name) => break,
+                Err(error) => return Err(error),
             }
-            Err(error) => return Err(error),
         }
     }
     let last = candidates.last().map_or(name, |c| c.name.as_str());
@@ -1051,7 +1049,7 @@ fn compile_template_file(
     bytes: Vec<u8>,
     files: &TemplateFiles,
     context: &mut Context,
-) -> Result<(TemplateText, randoc_templates::Template)> {
+) -> Result<randoc_templates::Template> {
     if !candidate.in_data_dir {
         context.report(LogMessage::LoadedResource(
             candidate.name.clone(),
@@ -1064,8 +1062,7 @@ fn compile_template_file(
         text: String::from_utf8_lossy(&clean_template(bytes)).into_owned(),
         is_file: true,
     };
-    let template = crate::template::compile(&text, files, context)?;
-    Ok((text, template))
+    crate::template::compile(&text, files, context)
 }
 
 /// Returns the part of a path after the last `/`.
@@ -1186,8 +1183,14 @@ impl SandboxHost {
         }
     }
 
-    fn is_named(&self, path: &str) -> bool {
-        self.permitted.contains(path)
+    fn check_read(&self, path: &str) -> std::io::Result<()> {
+        if !self.permitted.contains(path) {
+            return Err(std::io::ErrorKind::NotFound.into());
+        }
+        if cfg!(windows) && Path::new(path).is_dir() {
+            return Err(std::io::ErrorKind::IsADirectory.into());
+        }
+        Ok(())
     }
 }
 
@@ -1198,24 +1201,18 @@ impl randoc::Host for SandboxHost {
 
     /// Reads a named file of each kind, also `/dev/stdin` or a pipe, as Pandoc does.
     fn read_file(&mut self, path: &str) -> std::io::Result<Vec<u8>> {
-        if self.is_named(path) {
-            std::fs::read(path)
-        } else {
-            Err(std::io::Error::from(std::io::ErrorKind::NotFound))
-        }
+        self.check_read(path)?;
+        std::fs::read(path)
     }
 
     fn read_file_limited(&mut self, path: &str, max_bytes: usize) -> std::io::Result<Vec<u8>> {
-        if self.is_named(path) {
-            randoc::read_real_file_limited(path, max_bytes)
-        } else {
-            Err(std::io::Error::from(std::io::ErrorKind::NotFound))
-        }
+        self.check_read(path)?;
+        randoc::read_real_file_limited(path, max_bytes)
     }
 
     /// Only a named regular file exists, so a check never blocks on a device.
     fn file_exists(&mut self, path: &str) -> bool {
-        self.is_named(path) && std::path::Path::new(path).is_file()
+        self.permitted.contains(path) && Path::new(path).is_file()
     }
 
     /// Confined write path for `--extract-media` under `--sandbox`: writes only
@@ -1547,7 +1544,7 @@ fn join_resource(dir: &str, name: &str) -> String {
 /// folder of the resource path. An absolute NAME is only itself. The resource
 /// path always ends with the working folder (`Settings::add_resource_path`).
 pub fn resource_candidates(name: &str, resource_path: &VecDeque<String>) -> Vec<String> {
-    if std::path::Path::new(name).is_absolute() {
+    if Path::new(name).has_root() {
         return vec![name.to_owned()];
     }
     resource_path
@@ -1567,7 +1564,7 @@ fn find_resource(name: &str, settings: &Settings, context: &mut Context) -> Opti
 /// relative name at the first of its resource candidates that is a regular
 /// file. Each read is reported as a loaded resource.
 fn read_include(path: &str, settings: &Settings, context: &mut Context) -> Result<Vec<u8>> {
-    let found = if std::path::Path::new(path).is_absolute() {
+    let found = if Path::new(path).has_root() {
         path.to_owned()
     } else {
         find_resource(path, settings, context)
@@ -1973,14 +1970,17 @@ fn write_output(output: Option<&str>, bytes: &[u8]) -> Result<()> {
     }
 }
 
-/// The reader of a conversion: a built-in reader, or a custom reader
-/// script with its kind and the extension names that it sees.
 enum InputReader {
-    Builtin(Reader),
-    Script(crate::lua::CustomScript, ScriptKind, Vec<String>),
+    Text(ReaderSource<dyn randoc::TextReader>),
+    Binary(ReaderSource<dyn randoc::BinaryReader>),
 }
 
-impl InputReader {
+enum ReaderSource<R: ?Sized> {
+    Builtin(std::sync::Arc<R>),
+    Script(crate::lua::CustomScript, Vec<String>),
+}
+
+impl ReaderSource<dyn randoc::TextReader> {
     fn read_text(
         &mut self,
         sources: &Sources,
@@ -1988,30 +1988,8 @@ impl InputReader {
         context: &mut Context,
     ) -> Result<Pandoc> {
         match self {
-            InputReader::Builtin(Reader::Text(reader)) => reader.read(sources, options, context),
-            InputReader::Script(script, _, names) => {
-                script.read_text(sources, options, names, context)
-            }
-            InputReader::Builtin(Reader::Binary(_)) => {
-                Err(Error::ShouldNeverHappen("a binary reader got text".into()))
-            }
-        }
-    }
-
-    fn read_binary(
-        &mut self,
-        bytes: &[u8],
-        options: &ReaderOptions,
-        context: &mut Context,
-    ) -> Result<Pandoc> {
-        match self {
-            InputReader::Builtin(Reader::Binary(reader)) => reader.read(bytes, options, context),
-            InputReader::Script(script, _, names) => {
-                script.read_binary(bytes, options, names, context)
-            }
-            InputReader::Builtin(Reader::Text(_)) => {
-                Err(Error::ShouldNeverHappen("a text reader got bytes".into()))
-            }
+            Self::Builtin(reader) => reader.read(sources, options, context),
+            Self::Script(script, names) => script.read_text(sources, options, names, context),
         }
     }
 }
@@ -2079,11 +2057,19 @@ fn convert(
             crate::lua::load_custom(&from_spec.name, settings, data_dir, script_options, context)?;
         let kind = script.reader_kind()?;
         let (names, known) = script.extensions(&from_spec)?;
-        (InputReader::Script(script, kind, names), known)
+        let reader = match kind {
+            ScriptKind::Text => InputReader::Text(ReaderSource::Script(script, names)),
+            ScriptKind::Binary => InputReader::Binary(ReaderSource::Script(script, names)),
+        };
+        (reader, known)
     } else {
         let reader =
             formats::reader(&from_spec.name).ok_or(Error::UnknownReader(from_spec.name.clone()))?;
-        (InputReader::Builtin(reader), from_spec.extensions()?)
+        let reader = match reader {
+            Reader::Text(reader) => InputReader::Text(ReaderSource::Builtin(reader)),
+            Reader::Binary(reader) => InputReader::Binary(ReaderSource::Builtin(reader)),
+        };
+        (reader, from_spec.extensions()?)
     };
     let mut reader_options = reader_options(settings, reader_extensions, standalone);
     // The program applies `east_asian_line_breaks` after the reader; the
@@ -2121,6 +2107,14 @@ fn convert(
     } else {
         let writer =
             formats::writer(&to_spec.name).ok_or(Error::UnknownWriter(to_spec.name.clone()))?;
+        let replacement = match to_spec.name.as_str() {
+            "asciidoctor" => Some("use asciidoc instead"),
+            "markdown_github" => Some("Use gfm instead."),
+            _ => None,
+        };
+        if let Some(message) = replacement {
+            context.report(LogMessage::Deprecated(to_spec.name.clone(), message.into()));
+        }
         (OutputWriter::Builtin(writer), to_spec.extensions()?)
     };
     let mut writer_extensions = writer_extensions;
@@ -2144,7 +2138,7 @@ fn convert(
     let files = TemplateFiles::new(settings, data_dir);
     let mut writer = writer;
     let template = match (&settings.template, &writer) {
-        (Some(name), _) => Some(find_template(name, &to_spec.name, &files, context)?.1),
+        (Some(name), _) => Some(find_template(name, &to_spec.name, &files, context)?),
         // A custom writer gives its template in the global `Template`.
         (None, OutputWriter::Script(..)) if standalone => {
             let Some(text) = script_template else {
@@ -2208,37 +2202,34 @@ fn convert(
     }
     let raw = read_inputs(inputs, context)?;
     read_sandbox_named_files(settings, context)?;
-    let text_input = matches!(
-        reader,
-        InputReader::Builtin(Reader::Text(_)) | InputReader::Script(_, ScriptKind::Text, _)
-    );
     load_translations(
         reader_language(settings).as_deref(),
         Phase::Reader,
         data_dir,
         context,
     );
-    let mut doc = if text_input {
-        let tab_stop = if settings.preserve_tabs || keeps_tabs(&from_spec.name) {
-            0
-        } else {
-            usize::try_from(settings.tab_stop).unwrap_or(0)
-        };
-        let max_len = usize::try_from(context.limits.max_resource_size).unwrap_or(usize::MAX);
-        let script_reader = crate::lua::is_script(&from_spec.name);
-        let mut sources = Vec::new();
-        for (name, bytes) in &raw {
-            let mut text = decode(name, bytes, context);
-            // A custom reader gets each text with a final line end and
-            // one more line end (oracle probes: `a` and `a\n` give
-            // `a\n\n`, an empty file gives `\n`).
-            if script_reader {
-                if !text.is_empty() && !text.ends_with('\n') {
+    let mut doc = match &mut reader {
+        InputReader::Text(reader) => {
+            let tab_stop = if settings.preserve_tabs || keeps_tabs(&from_spec.name) {
+                0
+            } else {
+                usize::try_from(settings.tab_stop).unwrap_or(0)
+            };
+            let max_len = usize::try_from(context.limits.max_resource_size).unwrap_or(usize::MAX);
+            let script_reader = matches!(reader, ReaderSource::Script(..));
+            let mut sources = Vec::new();
+            for (name, bytes) in &raw {
+                let mut text = decode(name, bytes, context);
+                // A custom reader gets each text with a final line end and
+                // one more line end (oracle probes: `a` and `a\n` give
+                // `a\n\n`, an empty file gives `\n`).
+                if script_reader {
+                    if !text.is_empty() && !text.ends_with('\n') {
+                        text.push('\n');
+                    }
                     text.push('\n');
                 }
-                text.push('\n');
-            }
-            sources.push(Source {
+                sources.push(Source {
                     name: name.clone(),
                     text: expand_tabs(&text, tab_stop, max_len).ok_or_else(|| {
                         Error::App(format!(
@@ -2248,46 +2239,53 @@ fn convert(
                         ))
                     })?,
                 });
+            }
+            if settings.file_scope && sources.len() > 1 {
+                let paths: BTreeMap<_, _> = sources
+                    .iter()
+                    .map(|source| (source.name.clone(), file_scope_prefix(&source.name)))
+                    .collect();
+                let mut combined = Pandoc::default();
+                for source in sources {
+                    let prefix = &paths[&source.name];
+                    let mut part =
+                        reader.read_text(&Sources(vec![source]), &reader_options, context)?;
+                    if !matches!(from_spec.name.as_str(), "json" | "native") {
+                        walk_mut(
+                            &mut part,
+                            &mut FileScope {
+                                prefix,
+                                paths: &paths,
+                            },
+                        );
+                    }
+                    for (key, value) in part.meta.0 {
+                        combined.meta.0.entry(key).or_insert(value);
+                    }
+                    combined.blocks.extend(part.blocks);
+                }
+                combined
+            } else {
+                reader.read_text(&Sources(sources), &reader_options, context)?
+            }
         }
-        if settings.file_scope && sources.len() > 1 {
-            let paths: BTreeMap<_, _> = sources
-                .iter()
-                .map(|source| (source.name.clone(), file_scope_prefix(&source.name)))
-                .collect();
+        InputReader::Binary(reader) => {
+            // A binary reader reads each input on its own. The metadata of
+            // a later input wins, also without `--file-scope` (oracle: a
+            // `ByteStringReader` with `a.txt` and `b.txt`).
             let mut combined = Pandoc::default();
-            for source in sources {
-                let prefix = &paths[&source.name];
-                let mut part =
-                    reader.read_text(&Sources(vec![source]), &reader_options, context)?;
-                if !matches!(from_spec.name.as_str(), "json" | "native") {
-                    walk_mut(
-                        &mut part,
-                        &mut FileScope {
-                            prefix,
-                            paths: &paths,
-                        },
-                    );
-                }
-                for (key, value) in part.meta.0 {
-                    combined.meta.0.entry(key).or_insert(value);
-                }
+            for (_, bytes) in &raw {
+                let part = match reader {
+                    ReaderSource::Builtin(reader) => reader.read(bytes, &reader_options, context),
+                    ReaderSource::Script(script, names) => {
+                        script.read_binary(bytes, &reader_options, names, context)
+                    }
+                }?;
+                combined.meta.0.extend(part.meta.0);
                 combined.blocks.extend(part.blocks);
             }
             combined
-        } else {
-            reader.read_text(&Sources(sources), &reader_options, context)?
         }
-    } else {
-        // A binary reader reads each input on its own. The metadata of
-        // a later input wins, also without `--file-scope` (oracle: a
-        // `ByteStringReader` with `a.txt` and `b.txt`).
-        let mut combined = Pandoc::default();
-        for (_, bytes) in &raw {
-            let part = reader.read_binary(bytes, &reader_options, context)?;
-            combined.meta.0.extend(part.meta.0);
-            combined.blocks.extend(part.blocks);
-        }
-        combined
     };
 
     // Pandoc keeps the line breaks for a writer that has the extension
@@ -2335,12 +2333,18 @@ fn convert(
         &curdir,
         context.limits.max_nesting_depth,
     )?;
-    if let Some(plan) = &pdf_plan
+    let pdf_engine = pdf_plan.as_ref().map(|plan| plan.program()).or_else(|| {
+        settings
+            .pdf_engine
+            .as_deref()
+            .filter(|_| to_spec.name == "ms")
+    });
+    if let Some(engine) = pdf_engine
         && writer_options.variables.get("pdf-engine").is_none()
     {
         writer_options
             .variables
-            .insert("pdf-engine", randoc_templates::Val::text(plan.program()));
+            .insert("pdf-engine", randoc_templates::Val::text(engine));
     }
     // The writer options as a Lua filter sees them: the option defaults of
     // Pandoc for a format without default extensions, and no number offset
@@ -2455,6 +2459,47 @@ mod tests {
     use randoc::PureHost;
 
     use super::*;
+
+    #[test]
+    fn cli_reports_each_deprecated_writer_name_once() {
+        for alias in ["asciidoctor", "markdown_github"] {
+            let (result, ctx) = convert_files(&[("in.md", "x")], &["in.md"], |s| {
+                s.from = Some("markdown".into());
+                s.to = Some(alias.into());
+            });
+            assert_eq!(result.unwrap(), "x\n");
+            assert_eq!(
+                ctx.log()
+                    .iter()
+                    .filter(|m| matches!(m, LogMessage::Deprecated(name, _) if name == alias))
+                    .count(),
+                1
+            );
+        }
+    }
+
+    #[test]
+    fn direct_ms_recognizes_an_empty_pdf_engine_variable() {
+        let (result, _) = convert_files(&[("in.md", "[x](u)")], &["in.md"], |s| {
+            s.from = Some("markdown".into());
+            s.to = Some("ms".into());
+            s.variables.push((
+                "pdf-engine".into(),
+                crate::settings::VarValue::Text(String::new()),
+            ));
+        });
+        assert!(result.unwrap().contains(".pdfhref W"));
+    }
+
+    #[test]
+    fn direct_ms_uses_the_selected_pdf_engine() {
+        let (result, _) = convert_files(&[("in.md", "[x](u)")], &["in.md"], |s| {
+            s.to = Some("ms".into());
+            s.from = Some("markdown".into());
+            s.pdf_engine = Some("pdfroff".into());
+        });
+        assert!(result.unwrap().contains(".pdfhref W"));
+    }
 
     #[test]
     fn embeds_html_before_setting_the_line_endings() {
@@ -3122,8 +3167,8 @@ mod tests {
         assert_eq!(
             find_template("t.json", "json", &files, &mut context)
                 .unwrap()
-                .0
-                .text,
+                .render(&Default::default())
+                .render(None),
             "t"
         );
         assert!(matches!(
@@ -3133,17 +3178,13 @@ mod tests {
         assert_eq!(
             find_template("d.json", "json", &files, &mut context)
                 .unwrap()
-                .0
-                .text,
+                .render(&Default::default())
+                .render(None),
             "d"
         );
         assert_eq!(context.log().len(), 1);
     }
 
-    /// GPT 6.2 Sol r-b98611b-16bf516 finding 4: with `--sandbox`, the
-    /// citation filter reads `--csl`, `--bibliography`, the locale and the
-    /// default style of `--data-dir`, as Pandoc does. The sandbox host
-    /// comes back after the filter.
     #[test]
     fn the_citation_filter_reads_its_files_under_the_sandbox() {
         let dir = out_path("citeproc-sandbox");
@@ -3351,9 +3392,11 @@ mod tests {
             error(|s| s.metadata_files = vec!["m".to_owned()]),
             "Could not find metadata file 'm'"
         );
+        let missing = std::fs::File::open("f.lua").unwrap_err().to_string();
+        let reason = missing.split(" (os error").next().unwrap_or(&missing);
         assert_eq!(
             error(|s| s.filters = vec![Filter::Lua("f.lua".to_owned())]),
-            "Error running filter 'f.lua':\ncannot open f.lua: No such file or directory"
+            format!("Error running filter 'f.lua':\ncannot open f.lua: {reason}")
         );
         assert_eq!(
             error(|s| s.filters = vec![Filter::Json("nosuch-filter".to_owned())]),
@@ -3712,14 +3755,20 @@ mod tests {
         let error = io_error(
             "p",
             "withBinaryFile",
-            // EACCES and EROFS have these numbers on macOS and Linux.
-            &std::io::Error::from_raw_os_error(13),
+            &std::io::Error::new(std::io::ErrorKind::PermissionDenied, "Permission denied"),
         );
         assert_eq!(
             error.to_string(),
             "p: withBinaryFile: permission denied (Permission denied)"
         );
-        let error = io_error("r", "withFile", &std::io::Error::from_raw_os_error(30));
+        let error = io_error(
+            "r",
+            "withFile",
+            &std::io::Error::new(
+                std::io::ErrorKind::ReadOnlyFilesystem,
+                "Read-only file system",
+            ),
+        );
         assert_eq!(
             error.to_string(),
             "r: withFile: permission denied (Read-only file system)"

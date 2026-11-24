@@ -8,19 +8,14 @@
     reason = "a broken fixture of the replay stops the test"
 )]
 
+mod fixtures;
+
 use serde_json::Value;
 
 const DOC: &str = r#"{"pandoc-api-version":[1,23,1,2],"meta":{},"blocks":[]}"#;
 
 fn text(record: &Value, key: &str) -> Option<String> {
     record.get(key).and_then(Value::as_str).map(str::to_owned)
-}
-
-fn hex(text: &str) -> Vec<u8> {
-    (0..text.len())
-        .step_by(2)
-        .map(|i| u8::from_str_radix(&text[i..i + 2], 16).expect("hexadecimal file bytes"))
-        .collect()
 }
 
 /// Removes the parts of a Pandoc error that are recorded as I-CLI-06: the
@@ -142,7 +137,7 @@ fn make_files(root: &std::path::Path, files: &Value) {
         if full.file_name().is_some_and(|name| name == "keep") {
             continue;
         }
-        std::fs::write(&full, hex(bytes.as_str().expect("hex"))).expect("a file");
+        fixtures::write_hex_file(&full, bytes.as_str().expect("hex"));
     }
 }
 

@@ -7,15 +7,10 @@
     reason = "a broken fixture of the replay stops the test"
 )]
 
+mod fixtures;
+
 use serde_json::Value;
 use std::collections::BTreeMap;
-
-fn hex(text: &str) -> Vec<u8> {
-    (0..text.len())
-        .step_by(2)
-        .map(|i| u8::from_str_radix(&text[i..i + 2], 16).expect("hexadecimal file bytes"))
-        .collect()
-}
 
 /// The level of each message type of a log. Pandoc and Randoc spell some
 /// types with other capitals (`CouldNotConvertTeXMath`).
@@ -35,7 +30,7 @@ fn each_emitted_message_has_the_level_of_pandoc() {
         let root = base.join(index.to_string());
         std::fs::create_dir_all(&root).expect("the probe folder is made");
         for (name, bytes) in record["files"].as_object().expect("files") {
-            std::fs::write(root.join(name), hex(bytes.as_str().expect("hex"))).expect("a file");
+            fixtures::write_hex_file(&root.join(name), bytes.as_str().expect("hex"));
         }
         let args: Vec<&str> = record["args"]
             .as_array()

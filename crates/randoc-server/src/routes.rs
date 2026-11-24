@@ -45,7 +45,8 @@ pub(crate) fn route_path(
         .strip_suffix('/')
         .filter(|path| !path.is_empty())
         .unwrap_or(path);
-    let response = match (request.method.as_str(), path) {
+    let path = percent_decode(path, false);
+    let response = match (request.method.as_str(), path.as_str()) {
         ("GET" | "HEAD", "/version") => match negotiate(request, &[Media::Plain, Media::Json]) {
             Some(Media::Json) => json(&randoc::PANDOC_VERSION, limit),
             Some(Media::Plain) => Response::with_body(200, PLAIN, randoc::PANDOC_VERSION),

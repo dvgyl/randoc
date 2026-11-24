@@ -35,6 +35,44 @@ fn cgi_program_names_serve_one_request() -> io::Result<()> {
 }
 
 #[test]
+fn cgi_invalid_content_length_reads_an_empty_body() -> io::Result<()> {
+    for length in ["-1", "abc"] {
+        let mut child = Command::new(env!("CARGO_BIN_EXE_randoc"))
+            .arg0("pandoc-server.cgi")
+            .env_clear()
+            .env("REQUEST_METHOD", "POST")
+            .env("PATH_INFO", "/")
+            .env("CONTENT_TYPE", "application/json")
+            .env("CONTENT_LENGTH", length)
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .spawn()?;
+        if let Some(mut input) = child.stdin.take() {
+            input.write_all(br#"{"text":"hi"}"#)?;
+        }
+        let output = child.wait_with_output()?;
+        assert!(output.status.success());
+        assert_eq!(output.stdout, b"Status: 400 Bad Request\nContent-Type: text/html; charset=utf-8\n\nUnexpected end-of-input, expecting JSON value");
+    }
+    Ok(())
+}
+
+#[test]
+fn cgi_version_argument_prints_the_version_banner() -> io::Result<()> {
+    let output = Command::new(env!("CARGO_BIN_EXE_randoc"))
+        .arg0("pandoc-server.cgi")
+        .arg("--version")
+        .env_clear()
+        .env("REQUEST_METHOD", "GET")
+        .env("PATH_INFO", "/")
+        .env("QUERY_STRING", "--version")
+        .output()?;
+    assert!(output.status.success());
+    assert!(output.stdout.starts_with(b"pandoc 3.13\n"));
+    Ok(())
+}
+
+#[test]
 fn cgi_head_response_bytes() -> io::Result<()> {
     for (timeout, path, expected) in [
         (

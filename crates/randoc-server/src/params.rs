@@ -2,8 +2,8 @@ use std::collections::BTreeMap;
 
 use randoc_ast::MetaValue;
 use randoc_core::{
-    CiteMethod, HighlightMethod, ObfuscationMethod, ReaderOptions, ReferenceLocation,
-    TopLevelDivision, TrackChanges, WrapOption, WriterOptions,
+    CaptionPosition, CiteMethod, HighlightMethod, HtmlMathMethod, ObfuscationMethod, ReaderOptions,
+    ReferenceLocation, TopLevelDivision, TrackChanges, WrapOption, WriterOptions,
 };
 use serde::Deserialize;
 use serde_json::{Map, Value};
@@ -305,6 +305,51 @@ impl<'a> Fields<'a, '_> {
         Ok(options)
     }
 
+    fn caption(&self, key: &str, default: CaptionPosition) -> Result<CaptionPosition, String> {
+        let Some(value) = self.value(key) else {
+            return Ok(default);
+        };
+        match value.as_str() {
+            Some("above") => Ok(CaptionPosition::CaptionAbove),
+            Some("below") => Ok(CaptionPosition::CaptionBelow),
+            _ => Err(format!(
+                "Error in {}: Unknown caption position {value}",
+                self.path(key)
+            )),
+        }
+    }
+
+    fn math_method(&self) -> HtmlMathMethod {
+        let Some(value) = self.value("html-math-method") else {
+            return HtmlMathMethod::default();
+        };
+        if value
+            .get("url")
+            .is_some_and(|url| !url.is_string() && !url.is_null())
+        {
+            return HtmlMathMethod::default();
+        }
+        let method = value.as_str().or_else(|| value.get("method")?.as_str());
+        let url = value.get("url").and_then(Value::as_str);
+        match method {
+            Some("plain") => HtmlMathMethod::PlainMath,
+            Some("gladtex") => HtmlMathMethod::GladTex,
+            Some("mathjax") => HtmlMathMethod::MathJax(
+                url.unwrap_or("https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js")
+                    .into(),
+            ),
+            Some("webtex") => HtmlMathMethod::WebTex(
+                url.unwrap_or("https://latex.codecogs.com/png.latex?")
+                    .into(),
+            ),
+            Some("katex") => HtmlMathMethod::KaTex(
+                url.unwrap_or("https://cdn.jsdelivr.net/npm/katex@latest/dist/")
+                    .into(),
+            ),
+            _ => HtmlMathMethod::default(),
+        }
+    }
+
     fn writer(&self) -> Result<WriterOptions, String> {
         let mut options = WriterOptions::default();
         options.table_of_contents = self.flag("table-of-contents")?;
@@ -313,6 +358,17 @@ impl<'a> Fields<'a, '_> {
         options.incremental = self.flag("incremental")?;
         options.html_q_tags = self.flag("html-q-tags")?;
         options.reference_links = self.flag("reference-links")?;
+        options.prefer_ascii = self.flag("ascii")?;
+        options.setext_headers = self
+            .get("setext-headers", "Bool")?
+            .unwrap_or(options.setext_headers);
+        options.reference_doc = self.get("reference-doc", "String")?;
+        options.dpi = self.integer("dpi")?.unwrap_or(options.dpi);
+        options.figure_caption_position =
+            self.caption("figure-caption-position", options.figure_caption_position)?;
+        options.table_caption_position =
+            self.caption("table-caption-position", options.table_caption_position)?;
+        options.html_math_method = self.math_method();
         options.list_tables = self.flag("list-tables")?;
         options.link_images = self.flag("link-images")?;
         options.columns = self.integer("columns")?.unwrap_or(options.columns);
@@ -370,6 +426,7 @@ impl<'a> Fields<'a, '_> {
             ],
         )?;
         if let Some(style) = self.text("syntax-highlighting")? {
+            options.listings = style == "idiomatic";
             (options.highlight_method, options.highlight_style) = match style {
                 "default" => (HighlightMethod::Default, Some("pygments".into())),
                 "none" => (HighlightMethod::None, None),
@@ -437,5 +494,34 @@ fn path_key(path: &str, key: &str) -> String {
     } else {
         let escaped = key.replace('\\', "\\\\").replace('\'', "\\'");
         format!("{path}['{escaped}']")
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+
+    #[test]
+    fn request_options_reach_the_writer() -> Result<(), String> {
+        let request = json!({
+            "text":"", "dpi":144, "setext-headers":true, "ascii":true,
+            "table-caption-position":"below", "figure-caption-position":"above",
+            "syntax-highlighting":"idiomatic",
+            "html-math-method":{"method":"webtex", "url":"images/"}
+        });
+        let writer = Params::parse(&request, "$")?.writer;
+        assert_eq!(writer.dpi, 144);
+        assert!(writer.setext_headers && writer.prefer_ascii && writer.listings);
+        assert_eq!(writer.table_caption_position, CaptionPosition::CaptionBelow);
+        assert_eq!(
+            writer.figure_caption_position,
+            CaptionPosition::CaptionAbove
+        );
+        assert_eq!(
+            writer.html_math_method,
+            HtmlMathMethod::WebTex("images/".into())
+        );
+        Ok(())
     }
 }

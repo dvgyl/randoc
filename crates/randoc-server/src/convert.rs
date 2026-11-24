@@ -111,6 +111,9 @@ pub(crate) fn convert(
     if params.reader.standalone && (params.template.is_some() || writer.renders_template()) {
         params.writer.template = compile_template(params.template, &to.name, &mut context)?;
     }
+    if params.reader.standalone && to.name == "native" && params.writer.template.is_none() {
+        params.writer.template = Some(Template::default());
+    }
     if let Some(variables) = params.variables {
         for (key, value) in variables {
             params.writer.variables.insert(key, template_value(value));
@@ -124,6 +127,17 @@ pub(crate) fn convert(
         return Err(Error::App("The input exceeds the conversion limit.".into()));
     }
     let mut doc = match reader {
+        Reader::Text(_) if from.name == "csljson" => {
+            randoc::citeproc::csljson::read_document_unpadded(
+                params.text,
+                context.limits.max_nesting_depth,
+            )?
+        }
+        Reader::Text(_) if from.name == "json" => randoc_ast::json::from_json_with_limit(
+            params.text,
+            context.limits.max_nesting_depth.saturating_mul(2),
+        )
+        .map_err(|error| Error::Parse(format!("JSON parse error: {error}")))?,
         Reader::Text(reader) => {
             let mut text = prepare_text(
                 params.text,
@@ -358,24 +372,22 @@ fn markdown_reader(format: &str) -> bool {
 }
 
 fn fragment_has_final_line(format: &str) -> bool {
-    markdown_reader(format)
-        || matches!(
-            format,
-            "plain"
-                | "commonmark"
-                | "commonmark_x"
-                | "gfm"
-                | "markua"
-                | "org"
-                | "asciidoc"
-                | "asciidoctor"
-                | "textile"
-                | "context"
-                | "muse"
-                | "t2t"
-                | "vimdoc"
-                | "haddock"
-        )
+    matches!(
+        format,
+        "commonmark"
+            | "commonmark_x"
+            | "gfm"
+            | "org"
+            | "asciidoc"
+            | "asciidoctor"
+            | "asciidoc_legacy"
+            | "textile"
+            | "context"
+            | "muse"
+            | "t2t"
+            | "vimdoc"
+            | "haddock"
+    )
 }
 
 fn image_extension(doc: &mut Pandoc, extension: &str) {
@@ -413,7 +425,7 @@ fn prepare_text(
         .replace('\r', "\n");
     if preserve_tabs
         || markdown_reader(from)
-        || matches!(from, "t2t" | "man" | "tsv" | "mdoc")
+        || matches!(from, "t2t" | "man" | "tsv" | "mdoc" | "native")
         || !text.contains('\t')
     {
         return Ok(text);
