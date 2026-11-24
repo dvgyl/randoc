@@ -8,7 +8,8 @@ Historical handoffs from sessions 1–6 are archived in
 
 ## Current state of `main`
 
-- **42 Rust crates** in the workspace. Wave 1 adds Org, Rich Text Format
+- **45 Rust crates** in the workspace (Wave 8B adds `randoc-tagsoup`,
+  `randoc-embed`, and `randoc-server`). Wave 1 adds Org, Rich Text Format
   (RTF), and four wiki readers. The command line and Lua share the format registry.
 - **Core conformance workstreams A–C** improve HTML highlighting layout,
   Markdown parsing and writing, CommonMark source positions, citation
@@ -38,9 +39,23 @@ Historical handoffs from sessions 1–6 are archived in
   office archives. The harness adds binary fixtures and checks ZIP content.
   Template compilation limits nested partial loads. Citation sorting uses the
   Spanish order for `ñ`. The HTML reader handles iframe data and host fetches.
-- **Clean-room highlighting, Batch 1** adds a Rust syntax builder and built-in
-  definitions for JavaScript, Haskell, Literate Haskell, and Python. External
-  keyword lists support Sass and Zsh.
+- **Clean-room highlighting, Batches 1–2** add a Rust syntax builder and 21
+  built-in clean-room definitions (`JavaScript`, `Haskell`, `Literate Haskell`,
+  `Python`, `Elixir`, `CSS`, `HTML`, `Bash`, `YAML`, `R Script`, `Java`, `TOML`,
+  `Markdown`, `LaTeX`, `reStructuredText`, `XML`, `Ruby`, `INI Files`, `JSON`,
+  `C`, `C++`), plus external keyword lists for Sass and Zsh and Pandoc-compatible
+  malformed custom XML diagnostics (`I-HL-08`). All 200/200 `highlight/*`
+  harness units and all 230/230 corpus HTML documents now pass.
+- **Wave 8B & Wave 9** complete `--embed-resources` / `--self-contained` across
+  the 8 HTML/slide writers and HTML-to-PDF backends, add the zero-dependency
+  HTTP/1.1 server (`randoc-server`, wired as `randoc server` / `pandoc-server`
+  with `+server` in default features), implement all 8 remaining `pandoc.*` Lua
+  modules (`structure`, `mediabag`, `log`, `layout`, `zip`, `image`,
+  `SimpleTable`, `run_filter`, `references`), add clean-room 107-locale
+  `terms.tsv` + 88 Babel/Polyglossia aliases, close 151 Pandoc 3.13 upstream
+  command gaps and all 32 DOCX/PPTX reference-doc harness gaps, and harden
+  bounded template rendering, cooperative conversion deadlines, worker panic
+  recovery, and Org/ZIP/CSL/TagSoup resource limits.
 - **Consolidated verification & measurement suites** from the `gpt/build` and
   `M1-*` workstreams under `tools/measure/` and `tools/{casegen,pivot,readers,errors,ast,custom-writers,server,extension-caps}/`, with Codex-specific `ops`/`guard`/`plan` tooling removed.
 - **Upgraded `randoc-harness`** with work-folder file diffing, symlink hashing,
@@ -85,11 +100,13 @@ Historical handoffs from sessions 1–6 are archived in
 
 ### Latest recorded baseline metrics
 
-- **Conformance harness (`spec/baseline.json`).** 65,747 of
-  66,351 units pass. The update adds 2,311 passes to the previous
-  baseline of 63,436, with zero regressions. The harness reports
-  184 failures outside the baseline and 420 skipped units.
-  65,680 results match byte for byte. All passing results
+- **Conformance harness (`spec/baseline.json`).** 65,848 of
+  66,351 units pass. The update adds 101 passes to the previous
+  baseline of 65,747, with zero regressions. The harness reports
+  83 failures outside the baseline (all 83 gated: 32 ODT/FODT generator
+  label, 21 GPL default templates/stylesheets, 15 `I-CLI-06` GHC backtraces,
+  6 `I-JSON-01`, 4 `I-ROFF-01`, 5 `I-CITE-01`) and 420 skipped units.
+  65,749 results match byte for byte. All passing results
   match in content.
 - **Capability matrix (`spec/capabilities.json`).** The harness ran
   65,931 units. Every applicable capability has a
@@ -98,16 +115,25 @@ Historical handoffs from sessions 1–6 are archived in
 | Capability | Total | Passing | Partial | Failing | Not started | Not applicable |
 |---|---:|---:|---:|---:|---:|---:|
 | Input formats | 52 | 49 | 3 | 0 | 0 | 0 |
-| Output formats | 77 | 69 | 3 | 4 | 0 | 1 |
+| Output formats | 77 | 73 | 1 | 2 | 0 | 1 |
 | Extensions | 90 | 90 | 0 | 0 | 0 | 0 |
 | Options | 109 | 94 | 14 | 0 | 0 | 1 |
 
-- **Pandoc 3.13 command suite.** A Wave 8A run increased the pass count from
-  1,312 to 1,557 of 1,884 command cases. Later targeted runs improved the
-  Markdown and LaTeX set from 24 to 69 of 71 syntax-tree checks and from
-  103 to 149 of 169 end-to-end checks.
-- **Real-document corpus.** Randoc matched Pandoc 3.13 JSON output for all
-  230 Wave 8A corpus cases (100%).
+- **Pandoc 3.13 command suite (`command/`).** 1,774 of 1,884 command cases pass
+  (+151 new passes over Wave 8A's 1,623, 0 lost passes) — 100% of all 1,774
+  non-CSL, non-gated commands. The remaining 110 failures are 106 `I-CITE-01`
+  (CC-BY-SA default CSL style/locales), 1 `9275#2` (CSL locale page terms),
+  and 3 `completion.md` (GPL shell completion scripts).
+- **Real-document corpus (`spec/corpus.json`).** 690 of 690 units pass (100.0%)
+  across all 230 real-world documents: JSON 230/230, HTML 230/230, and
+  Markdown 230/230 (0 failures).
+- **HTTP server (`randoc server` / `pandoc-server`).** 120 of 120 Pandoc 3.13
+  server contract oracle cases pass (0 failures) with zero new third-party
+  dependencies.
+- **Lua interface (`crates/randoc-lua/MODULES.md`).** 451 of 468 Pandoc 3.13
+  API names match (up from 279). All 8 remaining `pandoc.*` modules are
+  implemented and pass 534 of 546 new oracle probes (+12 documented known
+  differences) alongside 260 existing conversion replay runs.
 - **Lua conversion replay** covers 52 readers and 76 writers in 130 filters
   with 2,669 probes. It runs 260 filter and document pairs in each Lua mode.
   The command-line standalone replay covers 76 writers in 608 cases.

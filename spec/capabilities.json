@@ -800,7 +800,7 @@
     },
     "json": {
       "end_to_end": {
-        "passing": 13578,
+        "passing": 13612,
         "total": 13615
       },
       "read": {
@@ -885,7 +885,7 @@
     },
     "native": {
       "end_to_end": {
-        "passing": 1323,
+        "passing": 1339,
         "total": 1355
       },
       "read": {
@@ -1558,7 +1558,7 @@
     "reference-doc": {
       "status": "partial",
       "units": {
-        "passing": 41,
+        "passing": 73,
         "total": 106
       }
     },
@@ -1649,14 +1649,14 @@
     "syntax-definition": {
       "status": "partial",
       "units": {
-        "passing": 1,
+        "passing": 2,
         "total": 3
       }
     },
     "syntax-highlighting": {
       "status": "partial",
       "units": {
-        "passing": 62,
+        "passing": 78,
         "total": 110
       }
     },
@@ -2026,12 +2026,12 @@
     },
     "docx": {
       "end_to_end": {
-        "passing": 0,
+        "passing": 8,
         "total": 8
       },
-      "status": "failing",
+      "status": "passing",
       "write": {
-        "passing": 0,
+        "passing": 8,
         "total": 8
       }
     },
@@ -2136,12 +2136,12 @@
     },
     "html": {
       "end_to_end": {
-        "passing": 953,
+        "passing": 970,
         "total": 970
       },
-      "status": "partial",
+      "status": "passing",
       "write": {
-        "passing": 953,
+        "passing": 970,
         "total": 970
       }
     },
@@ -2257,12 +2257,12 @@
     },
     "latex": {
       "end_to_end": {
-        "passing": 1141,
+        "passing": 1158,
         "total": 1158
       },
-      "status": "partial",
+      "status": "passing",
       "write": {
-        "passing": 1141,
+        "passing": 1158,
         "total": 1158
       }
     },
@@ -2448,12 +2448,12 @@
     },
     "pptx": {
       "end_to_end": {
-        "passing": 0,
+        "passing": 8,
         "total": 8
       },
-      "status": "failing",
+      "status": "passing",
       "write": {
-        "passing": 0,
+        "passing": 8,
         "total": 8
       }
     },
@@ -2644,13 +2644,13 @@
       "passing": 94
     },
     "output_formats": {
-      "failing": 4,
+      "failing": 2,
       "not_applicable": 1,
-      "partial": 3,
-      "passing": 69
+      "partial": 1,
+      "passing": 73
     },
     "units": {
-      "passing": 65747,
+      "passing": 65848,
       "total": 65931
     }
   }
