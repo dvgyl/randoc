@@ -14,30 +14,10 @@ const REPLAY: &str = include_str!("../data/replay.txt");
 /// language, sample differences, mutation differences, plain results. Each
 /// difference has a row in `docs/ISSUES.md`. Change the table when a fix
 /// removes differences.
-const KNOWN_DIFFERENCES: &str = concat!(
-    "cobol 1 3 4\n",
-    "coffee 0 1 0\n",
-    "dockerfile 0 2 0\n",
-    "elixireex 0 2 0\n",
-    "elixirheex 0 8 0\n",
-    "javascriptreact 0 1 0\n",
-    "orgmode 5 36 28\n",
-    "raku 1 14 15\n",
-    "rdoc 0 3 0\n",
-    "sas 2 15 17\n",
-    "total 94\n",
-);
+const KNOWN_DIFFERENCES: &str = "total 0\n";
 
 /// The same table for the default test, which replays each eighth mutation.
-const KNOWN_DIFFERENCES_SAMPLED: &str = concat!(
-    "cobol 1 0 1\n",
-    "coffee 0 1 0\n",
-    "elixireex 0 1 0\n",
-    "orgmode 5 5 7\n",
-    "raku 1 0 1\n",
-    "sas 2 4 6\n",
-    "total 20\n",
-);
+const KNOWN_DIFFERENCES_SAMPLED: &str = "total 0\n";
 
 fn samples() -> Vec<(String, String)> {
     SAMPLES
@@ -145,7 +125,36 @@ fn replay(stride: usize) -> String {
     replay_with(Registry::embedded(), stride)
 }
 
+/// True when `RANDOC_REPLAY_DIFFS=all`: the replay then prints each
+/// difference, also plain results, as one `DIFF` line with the input.
+fn print_all_diffs() -> bool {
+    std::env::var("RANDOC_REPLAY_DIFFS").is_ok_and(|v| v == "all")
+}
+
+/// Emits a record for each format with different output for one input.
+fn diff_lines<'a>(
+    lang: &'a str,
+    entry: &'a str,
+    code: &'a str,
+    plain: bool,
+    formats: [(&'static str, &'a str, bool); 2],
+) -> impl Iterator<Item = String> + 'a {
+    formats
+        .into_iter()
+        .filter(|(_, _, differs)| *differs)
+        .map(move |(format, output, _)| {
+            let json = |s: &str| serde_json::to_string(s).unwrap_or_default();
+            format!(
+                "DIFF\t{lang}\t{entry}\t{plain}\t{format}\t{}\t{}",
+                json(code),
+                json(output)
+            )
+        })
+}
+
 fn replay_with(registry: &Registry, stride: usize) -> String {
+    let all_diffs = print_all_diffs();
+    let mut diagnostics = Vec::new();
     let samples = samples();
     let mut table: BTreeMap<String, Count> = BTreeMap::new();
     let mut first_diffs = Vec::new();
@@ -166,7 +175,20 @@ fn replay_with(registry: &Registry, stride: usize) -> String {
                 count.samples += 1;
                 if got_html != html || got_latex != latex {
                     count.sample_diffs += 1;
-                    if got_html.starts_with("<pre") {
+                    let plain = got_html.starts_with("<pre");
+                    if all_diffs {
+                        diagnostics.extend(diff_lines(
+                            lang,
+                            &format!("s{index}"),
+                            code,
+                            plain,
+                            [
+                                ("html", &got_html, got_html != html),
+                                ("latex", &got_latex, got_latex != latex),
+                            ],
+                        ));
+                    }
+                    if plain {
                         count.plain_samples += 1;
                     } else if count.sample_diffs - count.plain_samples == 1 {
                         let which = if got_html != html { "html" } else { "latex" };
@@ -194,13 +216,34 @@ fn replay_with(registry: &Registry, stride: usize) -> String {
                 let (got_html, got_latex) = render(registry, lang, &code);
                 let count = table.entry((*lang).to_string()).or_default();
                 count.mutations += 1;
-                if fnv64(&got_html) != *html_hash || fnv64(&got_latex) != *latex_hash {
+                let html_differs = fnv64(&got_html) != *html_hash;
+                let latex_differs = fnv64(&got_latex) != *latex_hash;
+                if html_differs || latex_differs {
                     count.mutation_diffs += 1;
-                    if got_html.starts_with("<pre") {
+                    let plain = got_html.starts_with("<pre");
+                    if all_diffs {
+                        let entry = format!("m{base}:{ops}");
+                        diagnostics.extend(diff_lines(
+                            lang,
+                            &entry,
+                            &code,
+                            plain,
+                            [
+                                ("html", &got_html, html_differs),
+                                ("latex", &got_latex, latex_differs),
+                            ],
+                        ));
+                    }
+                    if plain {
                         count.plain_mutations += 1;
                     } else if count.mutation_diffs - count.plain_mutations == 1 {
+                        let (which, got) = if html_differs {
+                            ("html", &got_html)
+                        } else {
+                            ("latex", &got_latex)
+                        };
                         first_diffs.push(format!(
-                            "{lang} mutation of {base} ({ops}):\n{code}\ngot  {got_html}"
+                            "{lang} mutation of {base} ({ops}, {which}):\n{code}\ngot  {got}"
                         ));
                     }
                 }
@@ -225,6 +268,9 @@ fn replay_with(registry: &Registry, stride: usize) -> String {
     for d in &first_diffs {
         println!("{d}\n");
     }
+    for d in &diagnostics {
+        println!("{d}");
+    }
     assert_eq!(table.len(), 63);
     let mut known = String::new();
     for (lang, c) in &table {
@@ -242,12 +288,29 @@ fn replay_with(registry: &Registry, stride: usize) -> String {
 }
 
 #[test]
+fn latex_only_difference_reports_latex_output() {
+    let got: Vec<_> = diff_lines(
+        "lua",
+        "s1",
+        "x\ty",
+        false,
+        [
+            ("html", "<code>x y</code>", false),
+            ("latex", "\\texttt{x}\n", true),
+        ],
+    )
+    .collect();
+    assert_eq!(got, [r#"DIFF	lua	s1	false	latex	"x\ty"	"\\texttt{x}\n""#]);
+}
+
+#[test]
 fn replay_samples_and_some_mutations() {
     assert_eq!(replay(8), KNOWN_DIFFERENCES_SAMPLED);
 }
 
 /// The full replay takes minutes in a debug build. Run it with
 /// `cargo test -p randoc-highlight --test replay -- --ignored --nocapture`.
+/// Add `RANDOC_REPLAY_DIFFS=all` to print each difference with its input.
 #[test]
 #[ignore]
 fn replay_everything() {

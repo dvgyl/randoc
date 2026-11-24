@@ -5,7 +5,7 @@
 //! need. The word lists hold the words that the oracle highlights with each
 //! attribute.
 
-use super::{Lang, M, Switch::*};
+use super::{Lang, M, Switch::*, opts};
 use crate::syntax::Syntax;
 use crate::token::TokenType::*;
 
@@ -337,8 +337,11 @@ pub(crate) fn syntax() -> Syntax {
                 .rule(M::Re(MEMBER), DataType, Stay)
                 .include("Normal")
         })
+        // The `:` ends the expression, and the includer then handles it:
+        // JavaScript React starts an element after `: `.
         .context("ConditionalExpression", Normal, |c| {
-            c.rule(M::Char(':'), Operator, Pop(1)).include("Normal")
+            c.rule_with(M::Char(':'), Operator, Pop(1), opts().lookahead())
+                .include("Normal")
         })
         .build()
 }
@@ -353,8 +356,8 @@ fn object_dot(c: super::Ctx, member: &'static str) -> super::Ctx {
 /// An identifier: ASCII letters, `_`, `$` and each character above ASCII.
 const IDENT: &str = r"[a-zA-Z_$\x{80}-\x{10FFFF}][\w$\x{80}-\x{10FFFF}]*";
 
-/// An identifier before a call.
-const CALL: &str = r"[a-zA-Z_$\x{80}-\x{10FFFF}][\w$\x{80}-\x{10FFFF}]*(?=\s*\()";
+/// An identifier before a call or a tagged template.
+const CALL: &str = r"[a-zA-Z_$\x{80}-\x{10FFFF}][\w$\x{80}-\x{10FFFF}]*(?=\s*[(`])";
 
 /// An identifier before `:` in an object literal or a block.
 const MEMBER: &str = r"[a-zA-Z_$\x{80}-\x{10FFFF}][\w$\x{80}-\x{10FFFF}]*(?=\s*:)";

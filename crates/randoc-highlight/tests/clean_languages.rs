@@ -5302,6 +5302,3450 @@ op	)
         r#"op	{}
 "#,
     ),
+    (
+        r#"go/w10-probe"#,
+        r#"go"#,
+        false,
+        r#"// Package main is a doc comment. TODO: fix
+/* block
+   comment */
+package main
+
+import (
+	"fmt"
+	str "strings"
+)
+
+type Point struct {
+	X, Y int `json:"x"`
+}
+
+type Shape interface{ Area() float64 }
+
+const Pi = 3.14
+var big = 1_000_000 + 0x1F + 0o17 + 017 + 0b101 + 1.5e-3 + 2i + 'a' + '\n' + '\x41'
+
+func (p *Point) Move(dx int) (int, error) {
+	if p == nil { return 0, nil }
+	for i := range 10 { defer fmt.Println(i) }
+	switch x := dx; { case x > 0: fallthrough; default: break }
+	go func() { select {} }()
+	ch := make(chan<- string, 3)
+	s := `raw
+string` + "esc\t\"q\" %d %v"
+	_ = append([]byte(s), str.ToUpper("x")...)
+	var b bool = true && !false || iota == 0
+	goto end
+end:
+	panic(len(s) + cap(ch) + copy(nil, nil))
+	return int(uint8(rune(dx))), fmt.Errorf("e")
+}"#,
+        r#"co	// Package main is a doc comment. 
+al	TODO
+co	: fix
+
+co	/* block
+
+co	   comment */
+
+kw	package
+--	 main
+
+
+kw	import
+--	 
+op	(
+
+--	\t
+st	"fmt"
+
+--	\tstr 
+st	"strings"
+
+op	)
+
+
+kw	type
+--	 Point 
+kw	struct
+--	 
+op	{
+
+--	\tX
+op	,
+--	 Y 
+dt	int
+--	 
+st	`json:"x"`
+
+op	}
+
+
+kw	type
+--	 Shape 
+kw	interface
+op	{
+--	 Area
+op	()
+--	 
+dt	float64
+--	 
+op	}
+
+
+kw	const
+--	 Pi 
+op	=
+--	 
+fl	3.14
+
+kw	var
+--	 big 
+op	=
+--	 
+dv	1_000_000
+--	 
+op	+
+--	 
+bn	0x1F
+--	 
+op	+
+--	 
+bn	0o17
+--	 
+op	+
+--	 
+bn	017
+--	 
+op	+
+--	 
+bn	0b101
+--	 
+op	+
+--	 
+fl	1.5e-3
+--	 
+op	+
+--	 
+dv	2
+bu	i
+--	 
+op	+
+--	 
+ch	'a'
+--	 
+op	+
+--	 
+ch	'\\n'
+--	 
+op	+
+--	 
+ch	'\\x41'
+
+
+kw	func
+--	 
+op	(
+--	p 
+op	*
+--	Point
+op	)
+--	 Move
+op	(
+--	dx 
+dt	int
+op	)
+--	 
+op	(
+dt	int
+op	,
+--	 
+dt	error
+op	)
+--	 
+op	{
+
+--	\t
+cf	if
+--	 p 
+op	==
+--	 
+ot	nil
+--	 
+op	{
+--	 
+cf	return
+--	 
+dv	0
+op	,
+--	 
+ot	nil
+--	 
+op	}
+
+--	\t
+cf	for
+--	 i 
+op	:=
+--	 
+kw	range
+--	 
+dv	10
+--	 
+op	{
+--	 
+cf	defer
+--	 fmt
+op	.
+--	Println
+op	(
+--	i
+op	)
+--	 
+op	}
+
+--	\t
+cf	switch
+--	 x 
+op	:=
+--	 dx
+op	;
+--	 
+op	{
+--	 
+cf	case
+--	 x 
+op	>
+--	 
+dv	0
+op	:
+--	 
+cf	fallthrough
+op	;
+--	 
+cf	default
+op	:
+--	 
+cf	break
+--	 
+op	}
+
+--	\t
+cf	go
+--	 
+kw	func
+op	()
+--	 
+op	{
+--	 
+cf	select
+--	 
+op	{}
+--	 
+op	}()
+
+--	\tch 
+op	:=
+--	 
+bu	make
+op	(
+kw	chan
+op	<-
+--	 
+dt	string
+op	,
+--	 
+dv	3
+op	)
+
+--	\ts 
+op	:=
+--	 
+st	`raw
+
+st	string`
+--	 
+op	+
+--	 
+st	"esc
+ch	\\t\\"
+st	q
+ch	\\"
+st	 %d %v"
+
+--	\t_ 
+op	=
+--	 
+bu	append
+op	([]
+dt	byte
+op	(
+--	s
+op	),
+--	 str
+op	.
+--	ToUpper
+op	(
+st	"x"
+op	)...)
+
+--	\t
+kw	var
+--	 b 
+dt	bool
+--	 
+op	=
+--	 
+ot	true
+--	 
+op	&&
+--	 
+op	!
+ot	false
+--	 
+op	||
+--	 
+ot	iota
+--	 
+op	==
+--	 
+dv	0
+
+--	\t
+cf	goto
+--	 end
+
+--	end
+op	:
+
+--	\t
+bu	panic
+op	(
+bu	len
+op	(
+--	s
+op	)
+--	 
+op	+
+--	 
+bu	cap
+op	(
+--	ch
+op	)
+--	 
+op	+
+--	 
+bu	copy
+op	(
+ot	nil
+op	,
+--	 
+ot	nil
+op	))
+
+--	\t
+cf	return
+--	 
+dt	int
+op	(
+dt	uint8
+op	(
+dt	rune
+op	(
+--	dx
+op	))),
+--	 fmt
+op	.
+--	Errorf
+op	(
+st	"e"
+op	)
+
+op	}
+
+"#,
+    ),
+    (
+        r#"lua/w10-probe"#,
+        r#"lua"#,
+        false,
+        r#"-- line comment TODO
+--[[ block
+comment ]]
+--[==[ level comment ]==]
+local M = {}
+local function add(a, b) return a + b end
+function M.new(...)
+  local self = setmetatable({}, { __index = M })
+  local s = "esc \n \"q\" \x41 \65" .. 'single' .. [[long
+string]] .. [==[lvl]==]
+  local n = 0x1F + 1.5e3 + 0xA.8p1 + 10 // 3 + 2 ^ 2 % 1
+  if n ~= nil and not false or true then
+    for i = 1, #s do print(i) end
+  elseif type(n) == "number" then
+    while true do break end
+  else
+    repeat goto done until n >= 1
+  end
+  ::done::
+  return self, string.format("%d", n), table.insert, io.write, math.floor(1), os.time()
+end
+local t <const> = { x = 1, ["k"] = 2; 3 }
+return M"#,
+        r#"co	-- line comment 
+al	TODO
+
+co	--[[ block
+
+co	comment ]]
+
+co	--[==[ level comment ]==]
+
+kw	local
+--	 
+cn	M
+--	 
+op	=
+--	 
+op	{}
+
+kw	local
+--	 
+kw	function
+--	 add
+op	(
+va	a
+op	,
+--	 
+va	b
+op	)
+--	 
+cf	return
+--	 
+va	a
+--	 
+op	+
+--	 
+va	b
+--	 
+kw	end
+
+kw	function
+--	 
+cn	M
+op	.
+--	new
+op	(...)
+
+--	  
+kw	local
+--	 
+va	self
+--	 
+op	=
+--	 
+fu	setmetatable
+op	({},
+--	 
+op	{
+--	 
+bu	__index
+--	 
+op	=
+--	 
+cn	M
+--	 
+op	})
+
+--	  
+kw	local
+--	 
+va	s
+--	 
+op	=
+--	 
+st	"esc 
+sc	\\n
+st	 
+sc	\\"
+st	q
+sc	\\"
+st	 
+sc	\\x41
+st	 
+sc	\\65
+st	"
+--	 
+op	..
+--	 
+st	'single'
+--	 
+op	..
+--	 
+vs	[[long
+
+vs	string]]
+--	 
+op	..
+--	 
+vs	[==[lvl]==]
+
+--	  
+kw	local
+--	 
+va	n
+--	 
+op	=
+--	 
+dv	0x1F
+--	 
+op	+
+--	 
+dv	1.5e3
+--	 
+op	+
+--	 
+dv	0xA.8p1
+--	 
+op	+
+--	 
+dv	10
+--	 
+op	//
+--	 
+dv	3
+--	 
+op	+
+--	 
+dv	2
+--	 
+op	^
+--	 
+dv	2
+--	 
+op	%
+--	 
+dv	1
+
+--	  
+cf	if
+--	 
+va	n
+--	 
+op	~=
+--	 
+kw	nil
+--	 
+kw	and
+--	 
+kw	not
+--	 
+kw	false
+--	 
+kw	or
+--	 
+kw	true
+--	 
+cf	then
+
+--	    
+cf	for
+--	 
+va	i
+--	 
+op	=
+--	 
+dv	1
+op	,
+--	 
+op	#
+va	s
+--	 
+cf	do
+--	 
+fu	print
+op	(
+va	i
+op	)
+--	 
+cf	end
+
+--	  
+cf	elseif
+--	 
+fu	type
+op	(
+va	n
+op	)
+--	 
+op	==
+--	 
+st	"number"
+--	 
+cf	then
+
+--	    
+cf	while
+--	 
+kw	true
+--	 
+cf	do
+--	 
+cf	break
+--	 
+cf	end
+
+--	  
+cf	else
+
+--	    
+cf	repeat
+--	 
+cf	goto
+--	 
+va	done
+--	 
+cf	until
+--	 
+va	n
+--	 
+op	>=
+--	 
+dv	1
+
+--	  
+cf	end
+
+--	  
+op	::
+va	done
+op	::
+
+--	  
+cf	return
+--	 
+va	self
+op	,
+--	 
+fu	string.format
+op	(
+st	"%d"
+op	,
+--	 
+va	n
+op	),
+--	 
+fu	table.insert
+op	,
+--	 
+fu	io.write
+op	,
+--	 
+fu	math.floor
+op	(
+dv	1
+op	),
+--	 
+fu	os.time
+op	()
+
+kw	end
+
+kw	local
+--	 
+va	t
+--	 
+at	<const>
+--	 
+op	=
+--	 
+op	{
+--	 
+va	x
+--	 
+op	=
+--	 
+dv	1
+op	,
+--	 
+op	[
+st	"k"
+op	]
+--	 
+op	=
+--	 
+dv	2
+op	;
+--	 
+dv	3
+--	 
+op	}
+
+cf	return
+--	 
+cn	M
+
+"#,
+    ),
+    (
+        r#"perl/w10-probe"#,
+        r#"perl"#,
+        false,
+        r#"#!/usr/bin/perl
+# line comment TODO
+use strict;
+use warnings;
+use List::Util qw(sum max);
+package Foo::Bar;
+our $VERSION = '1.0';
+my ($x, @arr, %h) = (1, (1, 2), (a => 1));
+my $s = "interp $x @arr $h{a} ${x} \n\t";
+my $t = 'single \' q';
+my $n = 0x1F + 0b101 + 017 + 1_000 + 1.5e3;
+if ($s =~ m/^a(b+)c$/i && $t !~ /x/) { print "match $1\n"; }
+$s =~ s/foo/bar/g;
+$s =~ tr/a-z/A-Z/;
+my @w = qw(a b c);
+my $q = qq{braced $x}; my $r = q(paren);
+my $re = qr/\d+\s*/x;
+sub greet { my ($name) = @_; return "Hi $name"; }
+foreach my $i (0..$#arr) { next if $i; last; }
+unless (defined $x) { die "no"; } else { warn 'w'; }
+open(my $fh, '<', $file) or die "cannot: $!";
+print STDERR <<"EOT";
+heredoc $x
+EOT
+print <<'RAW';
+raw $x
+RAW
+local $_ = shift; $x->{key}[0]->method(@ARGV);
+__END__
+trailing pod"#,
+        r#"kw	#!/usr/bin/perl
+
+co	# line comment 
+al	TODO
+
+fu	use
+--	 
+kw	strict
+--	;
+
+fu	use
+--	 
+kw	warnings
+--	;
+
+fu	use
+--	 
+fu	List::Util
+--	 
+fu	qw
+--	(sum max);
+
+kw	package
+--	 
+fu	Foo::Bar
+--	;
+
+kw	our
+--	 
+dt	$VERSION
+--	 = 
+ot	'
+ss	1.0
+ot	'
+--	;
+
+kw	my
+--	 (
+dt	$x
+--	, 
+dt	@arr
+--	, 
+dt	%h
+--	) = (
+dv	1
+--	, (
+dv	1
+--	, 
+dv	2
+--	), (a => 
+dv	1
+--	));
+
+kw	my
+--	 
+dt	$s
+--	 = 
+ot	"
+st	interp 
+dt	$x
+st	 
+dt	@arr
+st	 
+dt	$h
+st	{a} 
+dt	${x}
+st	 
+ch	\\n\\t
+ot	"
+--	;
+
+kw	my
+--	 
+dt	$t
+--	 = 
+ot	'
+ss	single 
+ch	\\'
+ss	 q
+ot	'
+--	;
+
+kw	my
+--	 
+dt	$n
+--	 = 
+bn	0x1F
+--	 + 
+bn	0b101
+--	 + 
+bn	017
+--	 + 
+dv	1_000
+--	 + 
+fl	1.5e3
+--	;
+
+cf	if
+--	 (
+dt	$s
+--	 =~ 
+ot	m/
+ch	^
+ot	a
+ch	(
+ot	b
+ch	+)
+ot	c
+ch	$
+ot	/i
+--	 && 
+dt	$t
+--	 !~ 
+ot	/x/
+--	) { 
+fu	print
+--	 
+ot	"
+st	match 
+wa	$1
+ch	\\n
+ot	"
+--	; }
+
+dt	$s
+--	 =~ 
+ot	s/foo/
+st	bar
+ot	/g
+--	;
+
+dt	$s
+--	 =~ 
+ot	tr/a-z/A-Z/
+--	;
+
+kw	my
+--	 
+dt	@w
+--	 = 
+ot	qw(
+--	a b c
+ot	)
+--	;
+
+kw	my
+--	 
+dt	$q
+--	 = 
+ot	qq{
+st	braced 
+dt	$x
+ot	}
+--	; 
+kw	my
+--	 
+dt	$r
+--	 = 
+ot	q(
+ss	paren
+ot	)
+--	;
+
+kw	my
+--	 
+dt	$re
+--	 = 
+ot	qr/
+bn	\\d
+ch	+
+bn	\\s
+ch	*
+ot	/x
+--	;
+
+kw	sub 
+fu	greet
+--	 { 
+kw	my
+--	 (
+dt	$name
+--	) = 
+dt	@_
+--	; 
+cf	return
+--	 
+ot	"
+st	Hi 
+dt	$name
+ot	"
+--	; }
+
+cf	foreach
+--	 
+kw	my
+--	 
+dt	$i
+--	 (
+fl	0.
+--	.
+dt	$#arr
+--	) { 
+cf	next
+--	 
+cf	if
+--	 
+dt	$i
+--	; 
+cf	last
+--	; }
+
+cf	unless
+--	 (
+fu	defined
+--	 
+dt	$x
+--	) { 
+fu	die
+--	 
+ot	"
+st	no
+ot	"
+--	; } 
+cf	else
+--	 { 
+fu	warn
+--	 
+ot	'
+ss	w
+ot	'
+--	; }
+
+fu	open
+--	(
+kw	my
+--	 
+dt	$fh
+--	, 
+ot	'
+ss	<
+ot	'
+--	, 
+dt	$file
+--	) 
+ot	or
+--	 
+fu	die
+--	 
+ot	"
+st	cannot: 
+wa	$!
+ot	"
+--	;
+
+fu	print
+--	 STDERR 
+ot	<<
+kw	"EOT";
+
+st	heredoc 
+dt	$x
+
+kw	EOT
+
+fu	print
+--	 
+ot	<<
+kw	'RAW';
+
+--	raw $x
+
+kw	RAW
+
+kw	local
+--	 
+wa	$_
+--	 = 
+fu	shift
+--	; 
+dt	$x
+--	->{key}[
+dv	0
+--	]->method(
+wa	@ARGV
+--	);
+
+kw	__END__
+
+--	trailing pod
+
+"#,
+    ),
+    (
+        r#"cs/w10-probe"#,
+        r#"cs"#,
+        false,
+        r#"// line comment TODO
+/* block */
+/// <summary>Doc comment</summary>
+#region Setup
+#if DEBUG
+using System;
+using System.Collections.Generic;
+#endif
+namespace App.Core;
+[Serializable, Obsolete("x")]
+public sealed class Foo<T> : Base, IDisposable where T : class
+{
+    private readonly int _n = 0x1F + 0b1010 + 1_000 + 10L + 2.5f + 3.0m + 1e3d;
+    public string Name { get; init; } = @"verbatim ""q"" \n";
+    public event EventHandler? Changed;
+    public async Task<int> RunAsync(object o, ref int r, out bool b)
+    {
+        var s = $"interp {Name} {_n:X} \t";
+        var raw = """
+            raw "string"
+            """;
+        char c = 'c'; char e = '\n';
+        if (o is null) throw new ArgumentNullException(nameof(o));
+        foreach (var x in new List<int> { 1, 2 }) { yield return x; }
+        switch (r) { case 1: break; default: goto end; }
+        b = true && !false;
+        lock (this) { checked { r++; } }
+        using var d = new MemoryStream();
+        end: return await Task.FromResult(sizeof(int) + typeof(T).Name.Length);
+    }
+    record Person(string First, int Age);
+    dynamic dyn = null; decimal m; ulong u; nint ni;
+}
+#endregion"#,
+        r#"co	// line comment 
+al	TODO
+
+co	/* block */
+
+co	/// 
+kw	<summary>
+co	Doc comment
+kw	</summary>
+
+dv	#region Setup
+
+kw	#if
+--	 DEBUG
+
+kw	using
+--	 System
+op	;
+
+kw	using
+--	 System
+op	.
+fu	Collections
+op	.
+fu	Generic
+op	;
+
+kw	#endif
+
+kw	namespace
+--	 App
+op	.
+fu	Core
+op	;
+
+op	[
+--	Serializable
+op	,
+--	 
+fu	Obsolete
+op	(
+st	"x"
+op	)]
+
+kw	public
+--	 
+kw	sealed
+--	 
+kw	class
+--	 Foo
+op	<
+--	T
+op	>
+--	 
+op	:
+--	 Base
+op	,
+--	 IDisposable where T 
+op	:
+--	 
+kw	class
+
+op	{
+
+--	    
+kw	private
+--	 
+kw	readonly
+--	 
+dt	int
+--	 _n 
+op	=
+--	 
+bn	0x1F
+--	 
+op	+
+--	 
+dv	0
+--	b1010 
+op	+
+--	 
+dv	1
+--	_000 
+op	+
+--	 
+dv	10L
+--	 
+op	+
+--	 
+fl	2.5f
+--	 
+op	+
+--	 
+fl	3.0m
+--	 
+op	+
+--	 
+dv	1
+--	e3d
+op	;
+
+--	    
+kw	public
+--	 
+dt	string
+--	 Name 
+op	{
+--	 
+kw	get
+op	;
+--	 init
+op	;
+--	 
+op	}
+--	 
+op	=
+--	 @
+st	"verbatim ""q"" 
+sc	\\n
+st	"
+op	;
+
+--	    
+kw	public
+--	 
+kw	event
+--	 EventHandler
+op	?
+--	 Changed
+op	;
+
+--	    
+kw	public
+--	 async Task
+op	<
+dt	int
+op	>
+--	 
+fu	RunAsync
+op	(
+dt	object
+--	 o
+op	,
+--	 
+kw	ref
+--	 
+dt	int
+--	 r
+op	,
+--	 
+kw	out
+--	 
+dt	bool
+--	 b
+op	)
+
+--	    
+op	{
+
+--	        
+dt	var
+--	 s 
+op	=
+--	 $
+st	"interp {Name} {_n:X} 
+sc	\\t
+st	"
+op	;
+
+--	        
+dt	var
+--	 raw 
+op	=
+--	 
+st	"""
+
+--	            raw 
+st	"string"
+
+--	            
+st	""";
+
+--	        
+dt	char
+--	 c 
+op	=
+--	 
+ch	'c'
+op	;
+--	 
+dt	char
+--	 e 
+op	=
+--	 
+ch	'\\n'
+op	;
+
+--	        
+kw	if
+--	 
+op	(
+--	o 
+kw	is
+--	 
+kw	null
+op	)
+--	 
+kw	throw
+--	 
+kw	new
+--	 
+fu	ArgumentNullException
+op	(
+fu	nameof
+op	(
+--	o
+op	));
+
+--	        
+kw	foreach
+--	 
+op	(
+dt	var
+--	 x 
+kw	in
+--	 
+kw	new
+--	 List
+op	<
+dt	int
+op	>
+--	 
+op	{
+--	 
+dv	1
+op	,
+--	 
+dv	2
+--	 
+op	})
+--	 
+op	{
+--	 
+kw	yield
+--	 
+kw	return
+--	 x
+op	;
+--	 
+op	}
+
+--	        
+kw	switch
+--	 
+op	(
+--	r
+op	)
+--	 
+op	{
+--	 
+kw	case
+--	 
+dv	1
+op	:
+--	 
+kw	break
+op	;
+--	 
+kw	default
+op	:
+--	 
+kw	goto
+--	 end
+op	;
+--	 
+op	}
+
+--	        b 
+op	=
+--	 
+kw	true
+--	 
+op	&&
+--	 
+op	!
+kw	false
+op	;
+
+--	        
+kw	lock
+--	 
+op	(
+kw	this
+op	)
+--	 
+op	{
+--	 
+kw	checked
+--	 
+op	{
+--	 r
+op	++;
+--	 
+op	}
+--	 
+op	}
+
+--	        
+kw	using
+--	 
+dt	var
+--	 d 
+op	=
+--	 
+kw	new
+--	 
+fu	MemoryStream
+op	();
+
+--	        end
+op	:
+--	 
+kw	return
+--	 await Task
+op	.
+fu	FromResult
+op	(
+kw	sizeof
+op	(
+dt	int
+op	)
+--	 
+op	+
+--	 
+kw	typeof
+op	(
+--	T
+op	).
+fu	Name
+op	.
+fu	Length
+op	);
+
+--	    
+op	}
+
+--	    record 
+fu	Person
+op	(
+dt	string
+--	 First
+op	,
+--	 
+dt	int
+--	 Age
+op	);
+
+--	    dynamic dyn 
+op	=
+--	 
+kw	null
+op	;
+--	 
+dt	decimal
+--	 m
+op	;
+--	 
+dt	ulong
+--	 u
+op	;
+--	 nint ni
+op	;
+
+op	}
+
+dv	#endregion
+
+"#,
+    ),
+    (
+        r#"php/w10-probe"#,
+        r#"php"#,
+        false,
+        r#"<!DOCTYPE html>
+<p class="x">Hello <?= $name ?></p>
+<?php
+// line comment TODO
+# hash comment
+/* block */
+/** @param int $x Doc */
+declare(strict_types=1);
+namespace App\Models;
+use Foo\Bar as Baz;
+#[Attribute]
+final class User extends Model implements JsonSerializable {
+    public const MAX = 0x1F + 0b11 + 017 + 1_000 + 1.5e3;
+    private ?string $name = null;
+    public function __construct(private readonly int $id = 0) {}
+    public static function find(array $ids, callable $cb): static|false {
+        $s = "interp $name {$this->id} ${x} \n";
+        $t = 'single \' q';
+        $h = <<<EOT
+heredoc $name
+EOT;
+        $n = <<<'NOW'
+nowdoc
+NOW;
+        if (isset($ids[0]) && !empty($ids)) { return new static(); }
+        foreach ($ids as $k => $v) { echo $v; continue; }
+        match(true) { default => throw new \Exception("e") };
+        $fn = fn($x) => $x * 2;
+        return array_map($cb, $ids) ?? TRUE;
+    }
+}
+?>
+<div>after</div>"#,
+        r#"op	<!
+cn	DOCTYPE
+--	 html
+op	>
+
+op	<
+--	p 
+kw	class
+op	=
+st	"x"
+op	>
+--	Hello 
+kw	<?
+op	=
+--	 
+va	$name
+--	 
+kw	?>
+op	</
+--	p
+op	>
+
+kw	<?php
+
+co	// line comment 
+al	TODO
+
+co	# hash comment
+
+co	/* block */
+
+co	/** 
+an	@param
+co	 
+cv	int
+co	 $x Doc */
+
+kw	declare
+--	(strict_types
+op	=
+dv	1
+--	)
+ot	;
+
+kw	namespace
+--	 App\\Models
+ot	;
+
+kw	use
+--	 Foo\\Bar 
+kw	as
+--	 Baz
+ot	;
+
+at	#[
+--	Attribute
+at	]
+
+kw	final
+--	 
+kw	class
+--	 User 
+kw	extends
+--	 Model 
+kw	implements
+--	 
+bu	JsonSerializable
+--	 {
+
+--	    
+kw	public
+--	 
+kw	const
+--	 
+fu	MAX
+--	 
+op	=
+--	 
+bn	0x1F
+--	 
+op	+
+--	 
+bn	0b11
+--	 
+op	+
+--	 
+bn	017
+--	 
+op	+
+--	 
+dv	1_000
+--	 
+op	+
+--	 
+fl	1.5e3
+ot	;
+
+--	    
+kw	private
+--	 
+ot	?
+dt	string
+--	 
+va	$name
+--	 
+op	=
+--	 
+kw	null
+ot	;
+
+--	    
+kw	public
+--	 
+kw	function
+--	 
+bu	__construct
+--	(
+kw	private
+--	 
+dt	readonly
+--	 
+dt	int
+--	 
+va	$id
+--	 
+op	=
+--	 
+dv	0
+--	) {}
+
+--	    
+kw	public
+--	 
+kw	static
+--	 
+kw	function
+--	 find(
+dt	array
+--	 
+va	$ids
+ot	,
+--	 
+kw	callable
+--	 
+va	$cb
+--	)
+ot	:
+--	 
+kw	static
+op	|
+kw	false
+--	 {
+
+--	        
+va	$s
+--	 
+op	=
+--	 
+st	"interp 
+va	$name
+st	 
+--	{
+va	$this
+--	->id}
+st	 
+va	$
+--	{
+va	x
+--	}
+st	 
+sc	\\n
+st	"
+ot	;
+
+--	        
+va	$t
+--	 
+op	=
+--	 
+st	'single 
+sc	\\'
+st	 q'
+ot	;
+
+--	        
+va	$h
+--	 
+op	=
+--	 
+ss	<<<EOT
+
+st	heredoc 
+va	$name
+
+ss	EOT
+--	;
+
+--	        
+va	$n
+--	 
+op	=
+--	 
+vs	<<<'NOW'
+
+st	nowdoc
+
+vs	NOW
+--	;
+
+--	        
+cf	if
+--	 (
+kw	isset
+--	(
+va	$ids
+--	[
+dv	0
+--	]) 
+op	&&
+--	 
+op	!
+kw	empty
+--	(
+va	$ids
+--	)) { 
+cf	return
+--	 
+kw	new
+--	 
+kw	static
+--	()
+ot	;
+--	 }
+
+--	        
+cf	foreach
+--	 (
+va	$ids
+--	 
+kw	as
+--	 
+va	$k
+--	 => 
+va	$v
+--	) { 
+kw	echo
+--	 
+va	$v
+ot	;
+--	 
+cf	continue
+ot	;
+--	 }
+
+--	        
+cf	match
+--	(
+kw	true
+--	) { 
+cf	default
+--	 => 
+cf	throw
+--	 
+kw	new
+--	 \\
+bu	Exception
+--	(
+st	"e"
+--	) }
+ot	;
+
+--	        
+va	$fn
+--	 
+op	=
+--	 
+kw	fn
+--	(
+va	$x
+--	) => 
+va	$x
+--	 
+op	*
+--	 
+dv	2
+ot	;
+
+--	        
+cf	return
+--	 
+fu	array_map
+--	(
+va	$cb
+ot	,
+--	 
+va	$ids
+--	) 
+op	??
+--	 
+kw	TRUE
+ot	;
+
+--	    }
+
+--	}
+
+kw	?>
+
+op	<
+--	div
+op	>
+--	after
+op	</
+--	div
+op	>
+
+"#,
+    ),
+    (
+        r#"sql/w10-probe"#,
+        r#"sql"#,
+        false,
+        r#"-- line comment TODO
+/* block
+   comment */
+SELECT a.id, COUNT(*) AS n, MAX(b.x), 'it''s', "Quoted Id", `bt`
+FROM users a LEFT OUTER JOIN orders b ON a.id = b.uid
+WHERE a.age >= 18 AND b.total <> 0 OR NOT a.flag IS NULL
+GROUP BY a.id HAVING n > 1 ORDER BY n DESC LIMIT 10;
+INSERT INTO t (c1, c2) VALUES (1, 2.5e3), (0x1F, -3);
+UPDATE t SET c = TRUE WHERE id IN (1, 2) ;
+CREATE TABLE IF NOT EXISTS t (id INTEGER PRIMARY KEY, name VARCHAR(20) NOT NULL, d DATE, ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+select lower(name), coalesce(x, 0), cast(y as numeric) from t where x between 1 and 2;
+BEGIN TRANSACTION; COMMIT; ROLLBACK;
+DROP INDEX idx; # hash comment
+CASE WHEN x = 1 THEN 'a' ELSE 'b' END
+x || y, @var, :param, ?"#,
+        r#"co	-- line comment 
+al	TODO
+
+co	/* block
+
+co	   comment */
+
+kw	SELECT
+--	 a.
+kw	id
+--	, 
+fu	COUNT
+--	(
+op	*
+--	) 
+kw	AS
+--	 n, 
+fu	MAX
+--	(b.x), 
+st	'it
+ch	''
+st	s'
+--	, 
+ot	"Quoted Id"
+--	, `bt`
+
+kw	FROM
+--	 users a 
+kw	LEFT
+--	 
+kw	OUTER
+--	 
+kw	JOIN
+--	 orders b 
+kw	ON
+--	 a.
+kw	id
+--	 
+op	=
+--	 b.
+fu	uid
+
+kw	WHERE
+--	 a.age 
+op	>=
+--	 
+dv	18
+--	 
+kw	AND
+--	 b.total 
+op	<>
+--	 
+dv	0
+--	 
+kw	OR
+--	 
+kw	NOT
+--	 a.flag 
+kw	IS
+--	 
+kw	NULL
+
+kw	GROUP
+--	 
+kw	BY
+--	 a.
+kw	id
+--	 
+kw	HAVING
+--	 n 
+op	>
+--	 
+dv	1
+--	 
+kw	ORDER
+--	 
+kw	BY
+--	 n 
+kw	DESC
+--	 
+kw	LIMIT
+--	 
+dv	10
+--	;
+
+kw	INSERT
+--	 
+kw	INTO
+--	 t (c1, c2) 
+kw	VALUES
+--	 (
+dv	1
+--	, 
+fl	2.5e3
+--	), (
+bn	0x1F
+--	, 
+op	-
+dv	3
+--	);
+
+kw	UPDATE
+--	 t 
+kw	SET
+--	 c 
+op	=
+--	 
+kw	TRUE
+--	 
+kw	WHERE
+--	 
+kw	id
+--	 
+kw	IN
+--	 (
+dv	1
+--	, 
+dv	2
+--	) ;
+
+kw	CREATE
+--	 
+kw	TABLE
+--	 
+cf	IF
+--	 
+kw	NOT
+--	 
+kw	EXISTS
+--	 t (
+kw	id
+--	 
+dt	INTEGER
+--	 
+kw	PRIMARY
+--	 
+kw	KEY
+--	, name 
+dt	VARCHAR
+--	(
+dv	20
+--	) 
+kw	NOT
+--	 
+kw	NULL
+--	, d 
+dt	DATE
+--	, ts 
+dt	TIMESTAMP
+--	 
+kw	DEFAULT
+--	 
+fu	CURRENT_TIMESTAMP
+--	);
+
+kw	select
+--	 
+fu	lower
+--	(name), 
+fu	coalesce
+--	(x, 
+dv	0
+--	), 
+fu	cast
+--	(y 
+kw	as
+--	 
+dt	numeric
+--	) 
+kw	from
+--	 t 
+kw	where
+--	 x 
+kw	between
+--	 
+dv	1
+--	 
+kw	and
+--	 
+dv	2
+--	;
+
+cf	BEGIN
+--	 
+kw	TRANSACTION
+--	; 
+kw	COMMIT
+--	; 
+kw	ROLLBACK
+--	;
+
+kw	DROP
+--	 
+kw	INDEX
+--	 idx; # 
+kw	hash
+--	 
+kw	comment
+
+cf	CASE
+--	 
+cf	WHEN
+--	 x 
+op	=
+--	 
+dv	1
+--	 
+cf	THEN
+--	 
+st	'a'
+--	 
+cf	ELSE
+--	 
+st	'b'
+--	 
+cf	END
+
+--	x 
+op	||
+--	 y, @var, 
+ch	:param
+--	, ?
+
+"#,
+    ),
+    (
+        r#"sqlmysql/w10-probe"#,
+        r#"sqlmysql"#,
+        false,
+        r#"-- c
+# hash comment
+/* b */
+SELECT `col`, "dq", 'sq\'s', @v, @@global.x FROM t WHERE a <=> b AND x REGEXP '^a';
+CREATE TABLE t (id INT UNSIGNED AUTO_INCREMENT, j JSON, e ENUM('a','b')) ENGINE=InnoDB;
+DELIMITER //
+select now(), concat('a', 'b'), 0x1F, b'101', 1.5e3, NULL, TRUE;"#,
+        r#"co	-- c
+
+co	# hash comment
+
+co	/* b */
+
+kw	SELECT
+--	 
+st	`col`
+--	, 
+st	"dq"
+--	, 
+st	'sq
+ch	\\'
+st	s'
+--	, @v, @@global
+ch	.
+--	x 
+kw	FROM
+--	 t 
+kw	WHERE
+--	 a 
+op	<=>
+--	 b 
+kw	AND
+--	 x 
+kw	REGEXP
+--	 
+st	'^a'
+--	;
+
+kw	CREATE
+--	 
+kw	TABLE
+--	 t (id 
+dt	INT
+--	 
+kw	UNSIGNED
+--	 
+kw	AUTO_INCREMENT
+--	, j JSON, e 
+dt	ENUM
+--	(
+st	'a'
+--	,
+st	'b'
+--	)) ENGINE
+op	=
+kw	InnoDB
+--	;
+
+--	DELIMITER 
+op	//
+
+kw	select
+--	 
+fu	now
+--	(), 
+fu	concat
+--	(
+st	'a'
+--	, 
+st	'b'
+--	), 
+bn	0x1F
+--	, b
+st	'101'
+--	, 
+fl	1.5e3
+--	, 
+kw	NULL
+--	, TRUE;
+
+"#,
+    ),
+    (
+        r#"sqlpostgresql/w10-probe"#,
+        r#"sqlpostgresql"#,
+        false,
+        r#"-- c
+/* b */
+SELECT $1, 'str', E'esc\n', $$dollar
+body$$, $tag$x$tag$, x::int, ARRAY[1,2], 'a' || 'b' FROM t WHERE j @> '{}' AND name ILIKE 'a%';
+CREATE OR REPLACE FUNCTION f(a integer) RETURNS SETOF text LANGUAGE plpgsql AS $$ BEGIN RETURN; END $$;
+select now(), coalesce(a, 0), 1.5e3, NULL, true from t;"#,
+        r#"co	-- c
+
+co	/* b */
+
+kw	SELECT
+--	 
+op	$1, 'str', E'esc\\n', $
+vs	$dollar
+
+vs	body$$, $tag$x$tag$, x::int, ARRAY[1,2], 'a' || 'b' FROM t WHERE j @> '{}' AND name ILIKE 'a%';
+
+vs	CREATE OR REPLACE FUNCTION f(a integer) RETURNS SETOF text LANGUAGE plpgsql AS $$ BEGIN RETURN; END $$;
+
+vs	select now(), coalesce(a, 0), 1.5e3, NULL, true from t;
+
+"#,
+    ),
+    (
+        r#"sqlpostgresql/w10-probe-2"#,
+        r#"sqlpostgresql"#,
+        false,
+        r#"SELECT 'str', E'esc\n', x::int, ARRAY[1,2], 'a' || 'b' FROM t WHERE j @> '{}' AND name ILIKE 'a%';
+select now(), coalesce(a, 0), 1.5e3, NULL, true, "QuotedId", $1 from t; -- c
+CREATE FUNCTION f() RETURNS int AS $$ SELECT 1 $$ LANGUAGE sql;
+DO $body$ BEGIN RAISE NOTICE 'x'; END $body$;"#,
+        r#"kw	SELECT
+--	 
+vs	'str
+st	'
+--	, 
+st	E'esc
+ch	\\n
+st	'
+--	, x
+ch	::
+dt	int
+--	, 
+kw	ARRAY
+--	[
+dv	1
+--	,
+dv	2
+--	], 
+vs	'a
+st	'
+--	 
+op	||
+--	 
+vs	'b
+st	'
+--	 
+kw	FROM
+--	 
+kw	t
+--	 
+kw	WHERE
+--	 j 
+op	@>
+--	 
+vs	'{}
+st	'
+--	 
+kw	AND
+--	 
+kw	name
+--	 
+kw	ILIKE
+--	 
+vs	'a%
+st	'
+--	;
+
+kw	select
+--	 
+fu	now
+--	(), 
+fu	coalesce
+--	(
+kw	a
+--	, 
+dv	0
+--	), 
+fl	1.5e3
+--	, 
+kw	NULL
+--	, 
+kw	true
+--	, 
+ot	"QuotedId"
+--	, $1 
+kw	from
+--	 
+kw	t
+--	; 
+co	-- c
+
+kw	CREATE FUNCTION
+--	 f() 
+kw	RETURNS
+--	 
+dt	int
+--	 
+kw	AS
+--	 
+fu	$$
+--	 
+kw	SELECT
+--	 
+dv	1
+--	 
+fu	$$
+--	 
+kw	LANGUAGE
+--	 
+kw	sql
+--	;
+
+kw	DO $body$
+--	 
+cf	BEGIN
+--	 RAISE NOTICE 
+vs	'x
+st	'
+--	; 
+cf	END
+--	 
+fu	$body$
+--	;
+
+"#,
+    ),
+    (
+        r#"cobol/w10-dep116"#,
+        r#"cobol"#,
+        false,
+        r#"           EXEC SQL
+               SELECT NAME INTO :WS-NAME FROM USERS WHERE ID = 42
+           END-EXEC."#,
+        r#"--	           
+re	EXEC SQL
+
+--	               
+kw	SELECT
+--	 NAME 
+kw	INTO
+--	 
+ch	:WS
+op	-
+--	NAME 
+kw	FROM
+--	 USERS 
+kw	WHERE
+--	 
+kw	ID
+--	 
+op	=
+--	 
+dv	42
+
+--	           
+re	END-EXEC
+--	.
+
+"#,
+    ),
+    (
+        r#"sas/w10-dep1087"#,
+        r#"sas"#,
+        false,
+        r#"proc sql;
+  create table big as
+  select name, age from sashelp.class
+  where age > 13 order by age;
+quit;"#,
+        r#"kw	proc sql
+--	;
+
+--	  
+kw	create
+--	 
+kw	table
+--	 big 
+kw	as
+
+--	  
+kw	select
+--	 name, age 
+kw	from
+--	 sashelp.
+kw	class
+
+--	  
+kw	where
+--	 age 
+op	>
+--	 
+dv	13
+--	 
+kw	order
+--	 
+kw	by
+--	 age;
+
+kw	quit;
+
+"#,
+    ),
+    (
+        r#"sas/w10-dep1089"#,
+        r#"sas"#,
+        false,
+        r#"proc lua;
+submit;
+local x = 10
+print("lua " .. x)
+endsubmit;
+run;"#,
+        r#"kw	proc lua
+--	;
+
+kw	submit;
+
+kw	local
+--	 
+va	x
+--	 
+op	=
+--	 
+dv	10
+
+fu	print
+op	(
+st	"lua "
+--	 
+op	..
+--	 
+va	x
+op	)
+
+kw	endsubmit;
+
+kw	run;
+
+"#,
+    ),
+    (
+        r#"raku/w10-dep1032"#,
+        r#"raku"#,
+        false,
+        r#"my token word { \w+ }
+my regex pair { <word> '=' <word> }
+say "a=b" ~~ /<pair>/;
+say m:P5/^\w+$/;"#,
+        r#"kw	my
+--	 
+kw	token
+--	 word {
+ot	 
+bn	\\w
+cf	+
+ot	 
+--	}
+
+kw	my
+--	 
+kw	regex
+--	 pair {
+ot	 
+ch	<
+bn	word
+ch	>
+ot	 
+ch	'
+st	=
+ch	'
+ot	 
+ch	<
+bn	word
+ch	>
+ot	 
+--	}
+
+fu	say
+--	 
+ch	"
+st	a=b
+ch	"
+--	 
+op	~~
+--	 
+vs	/
+ch	<
+bn	pair
+ch	>
+vs	/
+--	;
+
+fu	say
+--	 
+vs	m
+kw	:P5
+ot	/
+ch	^
+bn	\\w
+ch	+$
+ot	/
+--	;
+
+"#,
+    ),
+    (
+        r#"orgmode/w10-dep911"#,
+        r#"orgmode"#,
+        false,
+        r#"#+BEGIN_SRC rust
+fn main() { println!("x"); }
+#+END_SRC
+#+BEGIN_SRC go
+func main() {}
+#+END_SRC"#,
+        r#"in	#+BEGIN_SRC rust
+
+kw	fn
+--	 main() 
+op	{
+--	 
+pp	println!
+--	(
+st	"x"
+--	)
+op	;
+--	 
+op	}
+
+in	#+END_SRC
+
+in	#+BEGIN_SRC go
+
+kw	func
+--	 main
+op	()
+--	 
+op	{}
+
+in	#+END_SRC
+
+"#,
+    ),
+    (
+        r#"orgmode/w10-dep912"#,
+        r#"orgmode"#,
+        false,
+        r#"#+BEGIN_SRC html
+<p class="x">hi</p>
+#+END_SRC
+#+BEGIN_SRC css
+p { color: red; }
+#+END_SRC"#,
+        r#"in	#+BEGIN_SRC h
+--	tml
+
+op	<
+--	p class
+op	=
+st	"x"
+op	>
+--	hi
+op	</
+--	p
+op	>
+
+in	#+END_SRC
+
+in	#+BEGIN_SRC cs
+--	s
+
+--	p 
+op	{
+--	 color
+op	:
+--	 red
+op	;
+--	 
+op	}
+
+in	#+END_SRC
+
+"#,
+    ),
+    (
+        r#"orgmode/w10-dep913"#,
+        r#"orgmode"#,
+        false,
+        r#"#+BEGIN_SRC sql
+SELECT * FROM t WHERE id = 1;
+#+END_SRC
+#+BEGIN_SRC nim
+echo "nim"
+#+END_SRC
+#+BEGIN_SRC odin
+x := 1
+#+END_SRC"#,
+        r#"in	#+BEGIN_SRC sql
+
+kw	SELECT
+--	 
+op	*
+--	 
+kw	FROM
+--	 t 
+kw	WHERE
+--	 id 
+op	=
+--	 
+dv	1
+--	;
+
+in	#+END_SRC
+
+in	#+BEGIN_SRC nim
+
+cf	echo
+--	 
+st	"nim"
+
+in	#+END_SRC
+
+in	#+BEGIN_SRC odin
+
+va	x 
+op	:=
+--	 
+dv	1
+
+in	#+END_SRC
+
+"#,
+    ),
+    (
+        r#"orgmode/w10-dep922"#,
+        r#"orgmode"#,
+        false,
+        r#"#+BEGIN_SRC ruby
+puts "r"
+#+END_SRC
+#+BEGIN_SRC java
+class A {}
+#+END_SRC
+#+BEGIN_SRC php
+<?php echo 1; ?>
+#+END_SRC"#,
+        r#"in	#+BEGIN_SRC ruby
+
+fu	puts
+--	 
+st	"r"
+
+in	#+END_SRC
+
+in	#+BEGIN_SRC java
+
+kw	class
+--	 A 
+op	{}
+
+in	#+END_SRC
+
+in	#+BEGIN_SRC php
+
+op	<
+ot	?
+--	php 
+kw	echo
+--	 
+dv	1
+ot	;
+--	 ?>
+
+--	#+END_SRC
+
+"#,
+    ),
+    (
+        r#"cpp/w10-probe"#,
+        r#"cpp"#,
+        false,
+        r#"// comment
+#include <vector>
+template <typename T> concept C = requires(T t) { t.f(); };
+int main() { auto x = 1'000 + 0x1F + 1.5e3f + 10ull; std::vector<int> v{1}; co_return; constexpr bool b = true; nullptr; R"(raw)"; u8"s"; }"#,
+        r#"co	// comment
+
+pp	#include 
+im	<vector>
+
+kw	template
+--	 
+op	<
+kw	typename
+--	 T
+op	>
+--	 
+kw	concept
+--	 C 
+op	=
+--	 
+kw	requires
+op	(
+--	T t
+op	)
+--	 
+op	{
+--	 t
+op	.
+--	f
+op	();
+--	 
+op	};
+
+dt	int
+--	 main
+op	()
+--	 
+op	{
+--	 
+kw	auto
+--	 x 
+op	=
+--	 
+dv	1'000
+--	 
+op	+
+--	 
+bn	0x1F
+--	 
+op	+
+--	 
+fl	1.5e3
+bu	f
+--	 
+op	+
+--	 
+dv	10
+bu	ull
+op	;
+--	 
+bu	std::
+--	vector
+op	<
+dt	int
+op	>
+--	 v
+op	{
+dv	1
+op	};
+--	 
+cf	co_return
+op	;
+--	 
+kw	constexpr
+--	 
+dt	bool
+--	 b 
+op	=
+--	 
+kw	true
+op	;
+--	 
+kw	nullptr
+op	;
+--	 
+st	R"(
+vs	raw
+st	)"
+op	;
+--	 
+st	u8"s"
+op	;
+--	 
+op	}
+
+"#,
+    ),
+    (
+        r#"isocpp/w10-probe"#,
+        r#"isocpp"#,
+        false,
+        r#"// comment
+#include <vector>
+template <typename T> concept C = requires(T t) { t.f(); };
+int main() { auto x = 1'000 + 0x1F + 1.5e3f + 10ull; std::vector<int> v{1}; co_return; constexpr bool b = true; nullptr; R"(raw)"; u8"s"; }"#,
+        r#"co	// comment
+
+pp	#include 
+im	<vector>
+
+kw	template
+--	 
+op	<
+kw	typename
+--	 T
+op	>
+--	 
+kw	concept
+--	 C 
+op	=
+--	 
+kw	requires
+op	(
+--	T t
+op	)
+--	 
+op	{
+--	 t
+op	.
+--	f
+op	();
+--	 
+op	};
+
+dt	int
+--	 main
+op	()
+--	 
+op	{
+--	 
+kw	auto
+--	 x 
+op	=
+--	 
+dv	1'000
+--	 
+op	+
+--	 
+bn	0x1F
+--	 
+op	+
+--	 
+fl	1.5e3
+bu	f
+--	 
+op	+
+--	 
+dv	10
+bu	ull
+op	;
+--	 
+bu	std::
+--	vector
+op	<
+dt	int
+op	>
+--	 v
+op	{
+dv	1
+op	};
+--	 
+cf	co_return
+op	;
+--	 
+kw	constexpr
+--	 
+dt	bool
+--	 b 
+op	=
+--	 
+kw	true
+op	;
+--	 
+kw	nullptr
+op	;
+--	 
+st	R"(
+vs	raw
+st	)"
+op	;
+--	 
+st	u8"s"
+op	;
+--	 
+op	}
+
+"#,
+    ),
+    (
+        r#"w10-fix/yaml flow keys"#,
+        r#"yaml"#,
+        false,
+        r#"{"a": 1}
+{'a' : 1, "b\"c": ["d": 2]}
+k: {"a": 1, 'b': 2}"#,
+        r#"kw	{
+fu	"a"
+kw	:
+fu	 
+dv	1
+kw	}
+
+kw	{
+fu	'a' 
+kw	:
+fu	 
+dv	1
+kw	,
+at	 
+fu	"b
+sc	\\"
+fu	c"
+kw	:
+fu	 
+kw	[
+fu	"d"
+kw	:
+fu	 
+dv	2
+kw	]}
+
+fu	k
+kw	:
+at	 
+kw	{
+fu	"a"
+kw	:
+fu	 
+dv	1
+kw	,
+at	 
+fu	'b'
+kw	:
+fu	 
+dv	2
+kw	}
+
+"#,
+    ),
+    (
+        r#"w10-fix/orgmode yaml stack"#,
+        r#"orgmode"#,
+        false,
+        r#"#+BEGIN_SRC yaml
+key: value
+list: [1, 2]
+#+END_SRC
+#+BEGIN_SRC json
+{"a": [1, true, null]}
+#+END_SRC"#,
+        r#"in	#+BEGIN_SRC yaml
+
+fu	key
+kw	:
+at	 value
+
+fu	list
+kw	:
+at	 
+kw	[
+dv	1
+kw	,
+at	 
+dv	2
+kw	]
+
+co	#+END_SRC
+
+co	#+BEGIN_SRC json
+
+kw	{
+fu	"a"
+kw	:
+fu	 
+kw	[
+dv	1
+kw	,
+at	 
+ch	true
+kw	,
+at	 
+ch	null
+kw	]}
+
+in	#+END_SRC
+
+"#,
+    ),
+    (
+        r#"w10-fix/javascript tagged template"#,
+        r#"javascript"#,
+        false,
+        r#"tag `x`; tag`y`; a.tag `z`; f (1); a.b`q`"#,
+        r#"fu	tag
+--	 
+vs	`x`
+op	;
+--	 
+fu	tag
+vs	`y`
+op	;
+--	 a
+op	.
+fu	tag
+--	 
+vs	`z`
+op	;
+--	 
+fu	f
+--	 (
+dv	1
+--	)
+op	;
+--	 a
+op	.
+fu	b
+vs	`q`
+
+"#,
+    ),
+    (
+        r#"w10-fix/javascriptreact jsx after colon"#,
+        r#"javascriptreact"#,
+        false,
+        r#"const d = ok ? A : <B x="1" />;
+const e = ok ? A /> : <B x="1" />;"#,
+        r#"kw	const
+--	 d 
+op	=
+--	 ok 
+op	?
+--	 A 
+op	: 
+fu	<B
+--	 
+ot	x
+op	=
+st	"1"
+--	 
+fu	/>
+op	;
+
+kw	const
+--	 e 
+op	=
+--	 ok 
+op	?
+--	 A 
+op	/>
+--	 
+op	: 
+fu	<B
+--	 
+ot	x
+op	=
+st	"1"
+--	 
+fu	/>
+op	;
+
+"#,
+    ),
+    (
+        r#"w10-fix/elixir at runs"#,
+        r#"elixir"#,
+        false,
+        r#"x @1"z" @-x"z" @_a"z" @a?"z" @1-_"z" @1.2"z" @A.a"z""#,
+        r#"--	x @1"z
+st	" @-x"
+--	z
+st	" @_a"
+--	z
+st	" @a?"
+--	z
+st	" @1-_"
+--	z
+st	" @1.2"
+--	z
+st	" @A.a"
+--	z
+st	"
+
+"#,
+    ),
+    (
+        r#"w10-fix/elixireex at runs"#,
+        r#"elixireex"#,
+        false,
+        r#"<%= @@@user %>
+<%= a@user %>
+<%= @user.name %>
+<%= @1%> "z""#,
+        r#"bu	<%=
+--	 @@@user 
+bu	%>
+
+bu	<%=
+--	 a
+fu	@user
+--	 
+bu	%>
+
+bu	<%=
+--	 
+fu	@user
+--	.name 
+bu	%>
+
+bu	<%=
+--	 @1%> 
+st	"z"
+
+"#,
+    ),
+    (
+        r#"w10-fix/elixirheex values"#,
+        r#"elixirheex"#,
+        false,
+        r#"<p>{@} a {@a}</p>
+<p>{@@a} b</p>
+<p classs="é>>Café 日本</p>
+<div class="open
+<div class="open
+  more"#,
+        r#"bu	<
+kw	p
+bu	>
+st	{
+--	@} a {
+ot	@a
+st	}
+er	</
+--	p
+er	>
+
+er	<
+--	p
+er	>
+--	{@@a
+st	}
+--	 b
+er	</
+--	p
+er	>
+
+er	<
+--	p classs
+er	=
+st	"é>>Café 日本</p>
+
+st	<div class="
+--	open
+
+er	<
+--	div class
+er	=
+st	"open
+
+st	  more
+
+"#,
+    ),
+    (
+        r#"w10-fix/html values"#,
+        r#"html"#,
+        false,
+        r#"<div class="a<b" id=c<d>
+<p class='a</b' x=y</z>
+<textarea>a<b &amp; c</textarea>"#,
+        r#"dt	<
+kw	div
+ot	 class
+op	=
+st	"a
+er	<
+st	b"
+ot	 id
+op	=
+st	c
+er	<
+st	d
+dt	>
+
+dt	<
+kw	p
+ot	 class
+op	=
+st	'a
+er	<
+st	/b'
+ot	 x
+op	=
+st	y
+er	<
+st	/z
+dt	>
+
+dt	<
+kw	textarea
+dt	>
+--	a<b 
+dv	&amp;
+--	 c
+dt	</
+kw	textarea
+dt	>
+
+"#,
+    ),
+    (
+        r#"w10-fix/r unmatched"#,
+        r#"r"#,
+        false,
+        r#"print(y))
+{ }}
+x[1]]"#,
+        r#"fu	print
+--	(y)
+er	)
+
+--	{ }
+er	}
+
+--	x[
+dv	1
+--	]]
+
+"#,
+    ),
+    (
+        r#"w10-fix/bash command words"#,
+        r#"bash"#,
+        false,
+        r#""a", b
+"a"x y
+x"a", b
+'a'b c
+echo"a" b
+"a";b c
+for i in1 2 3; do echo; done
+for i do x; done
+int main(void) { return 0; }
+echo a(b c)d e"#,
+        r#"st	"a"
+ex	,
+--	 b
+
+st	"a"
+ex	x
+--	 y
+
+ex	x
+st	"a"
+ex	,
+--	 b
+
+st	'a'
+ex	b
+--	 c
+
+ex	echo
+st	"a"
+--	 b
+
+st	"a"
+kw	;
+ex	b
+--	 c
+
+cf	for
+--	 i 
+ex	in1
+--	 2 3
+kw	;
+--	 
+cf	do
+--	 
+bu	echo
+kw	;
+--	 
+cf	done
+
+cf	for
+--	 i 
+cf	do
+--	 
+ex	x
+kw	;
+--	 
+cf	done
+
+ex	int
+--	 main
+er	(
+ex	void
+kw	)
+--	 
+kw	{
+--	 
+cf	return
+--	 
+dv	0
+kw	;
+--	 
+kw	}
+
+bu	echo
+--	 a
+er	(
+ex	b
+--	 c
+kw	)
+ex	d
+--	 e
+
+"#,
+    ),
+    (
+        r#"w10-fix/dockerfile cmd"#,
+        r#"dockerfile"#,
+        false,
+        r#"CMD "python", "app.py"]
+RUN for i in1 2 3; do \
+      echo "$i"; \
+    done"#,
+        r#"kw	CMD
+--	 
+st	"python"
+ex	,
+--	 
+st	"app.py"
+--	]
+
+kw	RUN
+--	 
+cf	for
+--	 i 
+ex	in1
+--	 2 3
+kw	;
+--	 
+cf	do
+--	 
+dt	\\
+
+--	      
+bu	echo
+--	 
+st	"
+va	$i
+st	"
+kw	;
+--	 
+dt	\\
+
+--	    
+cf	done
+
+"#,
+    ),
+    (
+        r#"w10-fix/c directives"#,
+        r#"c"#,
+        false,
+        r#"#+EN_SRC
+#foo bar
+#1 x
+#
+# x
+#  define X 1
+#IF x
+#Pragma x
+#include_next <a>"#,
+        r#"pp	#
+er	+EN_SRC
+
+pp	#
+er	foo bar
+
+pp	#1 x
+
+er	#
+
+pp	# 
+er	x
+
+pp	#  define X 
+dv	1
+
+pp	#IF x
+
+pp	#
+er	Pragma x
+
+pp	#include_next 
+im	<a>
+
+"#,
+    ),
+    (
+        r#"w10-fix/cpp gcc and qt"#,
+        r#"cpp"#,
+        false,
+        r#"struct __attribute__((aligned(8), unused)) S { __int128 x; };
+if (__builtin_expect(x, 0)) __typeof__(x) y;
+class W : public QObject { Q_OBJECT signals: void f(qint32); };
+qDebug() << QString("a"); emit f(1);"#,
+        r#"kw	struct
+--	 
+ex	__attribute__((aligned(8), unused))
+--	 S 
+op	{
+--	 
+dt	__int128
+--	 x
+op	;
+--	 
+op	};
+
+cf	if
+--	 
+op	(
+fu	__builtin_expect
+op	(
+--	x
+op	,
+--	 
+dv	0
+op	))
+--	 
+ex	__typeof__
+op	(
+--	x
+op	)
+--	 y
+op	;
+
+kw	class
+--	 W 
+op	:
+--	 
+kw	public
+--	 
+ex	QObject
+--	 
+op	{
+--	 
+ex	Q_OBJECT
+--	 
+ex	signals
+op	:
+--	 
+dt	void
+--	 f
+op	(
+ex	qint32
+op	);
+--	 
+op	};
+
+fu	qDebug
+op	()
+--	 
+op	<<
+--	 
+ex	QString
+op	(
+st	"a"
+op	);
+--	 
+ex	emit
+--	 f
+op	(
+dv	1
+op	);
+
+"#,
+    ),
+    (
+        r#"w10-fix/isocpp gcc"#,
+        r#"isocpp"#,
+        false,
+        r#"struct __attribute__((packed)) S { __int128 x; };
+class W : public QObject { Q_OBJECT };"#,
+        r#"kw	struct
+--	 
+ex	__attribute__((packed))
+--	 S 
+op	{
+--	 
+dt	__int128
+--	 x
+op	;
+--	 
+op	};
+
+kw	class
+--	 W 
+op	:
+--	 
+kw	public
+--	 QObject 
+op	{
+--	 Q_OBJECT 
+op	};
+
+"#,
+    ),
+    (
+        r#"w10-fix/gcc"#,
+        r#"gcc"#,
+        false,
+        r#"struct __attribute__((packed)) S { __int128 x; }; int y = __builtin_foo(1) + __GNUC__;"#,
+        r#"--	struct 
+ex	__attribute__((packed))
+--	 S { 
+dt	__int128
+--	 x; }; int y = 
+fu	__builtin_foo
+--	(1) + 
+ot	__GNUC__
+--	;
+
+"#,
+    ),
 ];
 
 /// The token dump of highlighted lines. The writers merge neighbouring
@@ -5361,4 +8805,80 @@ fn clean_languages_give_the_tokens_of_the_oracle() {
         }
     }
     assert!(failed.is_empty(), "{}", failed.join("\n"));
+}
+
+#[test]
+fn oversized_dynamic_delimiters_return_a_highlight_error() {
+    let registry = Registry::embedded();
+    let tag = "x".repeat(128 * 1024);
+    let equals = "=".repeat(128 * 1024);
+    for (language, code) in [
+        ("lua", format!("local s = [{equals}[\nbody\n]{equals}]")),
+        ("sqlpostgresql", format!("SELECT ${tag}$\nbody\n${tag}$;")),
+        ("php", format!("<?php $x = <<<{tag}\nbody\n{tag};")),
+        ("perl", format!("my $x = <<{tag};\nbody\n{tag}")),
+    ] {
+        let start = std::time::Instant::now();
+        let result = registry.highlight_classes(&[language.to_string()], &code, 128);
+        assert!(
+            matches!(result, Some(Err(ref err)) if err.starts_with("Dynamic regular expression exceeds its budget")),
+            "{language} did not reject its oversized delimiter"
+        );
+        eprintln!(
+            "{language} rejected its 128 KiB delimiter in {:?}",
+            start.elapsed()
+        );
+    }
+}
+
+#[test]
+fn perl_transliteration_skips_escapes_and_reaches_later_tokens() -> Result<(), String> {
+    let registry = Registry::embedded();
+    let classes = ["perl".to_string()];
+    for (search, replacement) in [(r"a\/b", r"c\/d"), (r"a\\", "b"), ("a", "b")] {
+        let spans = format!("tr/{search}/{replacement}/");
+        let code = format!("{spans}; print 1;");
+        let output = registry
+            .highlight_classes(&classes, &code, 128)
+            .ok_or("Perl syntax is missing")??;
+        assert_eq!(output.lines[0][0], (TokenType::Other, spans));
+        assert!(output.lines[0].contains(&(TokenType::Function, "print".to_string())));
+    }
+    let search = r"a\/".repeat(16 * 1024);
+    let code = format!("tr/{search}/b/; print 1;");
+    let output = registry
+        .highlight_classes(&classes, &code, 128)
+        .ok_or("Perl syntax is missing")??;
+    assert!(output.lines[0].contains(&(TokenType::Function, "print".to_string())));
+    Ok(())
+}
+
+/// A developer aid for new cases: prints the token dump of each input of
+/// the JSON file in `RANDOC_PROBE_INPUT` (a list of `[classes, code]`).
+/// Run it with `cargo test -p randoc-highlight --test clean_languages --
+/// --ignored --nocapture probe_inputs`.
+#[test]
+#[ignore]
+fn probe_inputs() {
+    let Ok(path) = std::env::var("RANDOC_PROBE_INPUT") else {
+        return;
+    };
+    let text = std::fs::read_to_string(path).unwrap_or_default();
+    let inputs: Vec<(String, String)> = serde_json::from_str(&text).unwrap_or_default();
+    let registry = Registry::embedded();
+    let dumps: Vec<String> = inputs
+        .iter()
+        .map(|(classes, code)| {
+            let classes: Vec<String> = classes.split(',').map(str::to_string).collect();
+            let lines = registry
+                .highlight_classes(&classes, code, 128)
+                .and_then(Result::ok)
+                .map(|c| c.lines);
+            dump(lines, false)
+        })
+        .collect();
+    println!(
+        "PROBE-OUTPUT {}",
+        serde_json::to_string(&dumps).unwrap_or_default()
+    );
 }

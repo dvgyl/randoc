@@ -1,6 +1,7 @@
 //! Clean-room HTML, from the HTML Living Standard and black-box runs of
 //! the oracle. The start context only includes `FindHTML`, which holds the
-//! rules of text; `FindEntityRefs` holds the character references.
+//! rules of text; `FindEntityRefs` holds the character references and the
+//! `<` error of attribute values.
 //! `Elixir/HEEx` includes both. `<style>` holds CSS and `<script>`
 //! JavaScript.
 
@@ -56,12 +57,17 @@ pub(crate) fn syntax() -> Syntax {
                     Push("End Tag"),
                 )
                 .rule(M::Re(concat!("<(?=", name!(), ")")), DataType, Push("Tag"))
-                .rule(M::Char('<'), Error, Stay)
                 .include("FindEntityRefs")
+        })
+        // Character references, and `<` as an error. Text, attribute values
+        // and the double-quoted values of `Elixir/HEEx` include them.
+        .context("FindEntityRefs", Normal, |c| {
+            c.rule(M::Char('<'), Error, Stay)
+                .include("Entity References")
         })
         // A name of 2 or more letters and digits with `;`, or one of the
         // legacy names without `;` (a prefix match: `&amp1`).
-        .context("FindEntityRefs", Normal, |c| {
+        .context("Entity References", Normal, |c| {
             c.rule(
                 M::Re("&(?:#[0-9]+|#[xX][0-9A-Fa-f]+|[A-Za-z][A-Za-z0-9]+);"),
                 DecVal,
@@ -91,8 +97,21 @@ pub(crate) fn syntax() -> Syntax {
             c.rule(M::Spaces, Normal, Stay)
                 .rule(M::Char('"'), String, PopPush(1, "Double Quoted"))
                 .rule(M::Char('\''), String, PopPush(1, "Single Quoted"))
-                .rule(M::Re(r"[^\s>]+"), String, Pop(1))
+                .rule_with(
+                    M::Re(r"[^\s>]"),
+                    String,
+                    PopPush(1, "Unquoted"),
+                    opts().lookahead(),
+                )
                 .fallthrough(Pop(1))
+        })
+        // In a value, `<` is an error.
+        .context("Unquoted", String, |c| {
+            c.rule(M::Char('<'), Error, Stay)
+                .include("Entity References")
+                .rule(M::Re(r"[^\s<>&]+"), String, Stay)
+                .fallthrough(Pop(1))
+                .line_end(Pop(1))
         })
         .context("Double Quoted", String, |c| {
             c.rule(M::Char('"'), String, Pop(1))
@@ -122,7 +141,7 @@ pub(crate) fn syntax() -> Syntax {
                 DataType,
                 PopPush(1, "End Tag"),
             )
-            .include("FindEntityRefs")
+            .include("Entity References")
         })
         .context("Style Tag", Keyword, |c| {
             c.rule(M::Re(name!()), Keyword, PopPush(1, "Style Attributes"))
@@ -199,7 +218,7 @@ pub(crate) fn syntax() -> Syntax {
         .context("Script Template", Normal, |c| {
             script_end(c)
                 .rule(M::Re("<[^>]*>"), Keyword, Stay)
-                .include("FindEntityRefs")
+                .include("Entity References")
         })
         .build()
 }

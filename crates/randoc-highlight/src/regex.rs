@@ -1416,21 +1416,73 @@ pub(crate) fn capturing_groups(re: &Regex) -> HashMap<usize, Regex> {
     groups
 }
 
-/// Replaces each `%N` with the literal text of capture N (Haskell
-/// `subDynamic`). Returns `None` when a capture is missing; the rule then
-/// fails. As in skylighting, the replacement is case sensitive and
-/// `Possessive` and `Lazy` sub-patterns are not visited.
+/// Replaces each `%N` with the literal text of capture N. A missing
+/// capture gives no match. The replacement is case sensitive and leaves
+/// placeholders inside `Possessive` and `Lazy` unchanged.
+///
+/// Checks the node and byte budgets before cloning the tree or expanding
+/// captures. The budgets include the copies made for the group table.
 pub(crate) fn substitute_dynamic<'c>(
     re: &Regex,
     capture: &impl Fn(usize) -> Option<&'c str>,
-) -> Option<Regex> {
+) -> Result<Option<Regex>, String> {
+    let mut nodes = 0;
+    let mut bytes = 0;
+    let mut replacements = Vec::new();
+    // The result tree and group 0 each contain the full pattern.
+    let mut pending = vec![(re, 1, 2, true)];
+    while let Some((node, depth, copies, substitute)) = pending.pop() {
+        let (size, depth) = match node {
+            Regex::MatchDynamic(n) if substitute => {
+                let Some(text) = capture(*n) else {
+                    return Ok(None);
+                };
+                bytes += text.len().saturating_mul(copies).min(MAX_TREE_NODES + 1);
+                if bytes > MAX_TREE_NODES {
+                    return Err(format!("captured text exceeds {MAX_TREE_NODES} bytes"));
+                }
+                replacements.push(text);
+                if text.is_empty() {
+                    (1, depth)
+                } else {
+                    // A concatenation contains the characters and a null node.
+                    (text.chars().count() + 2, depth + 1)
+                }
+            }
+            Regex::MatchAlt(a, b) => {
+                pending.push((b, depth + 1, copies, substitute));
+                pending.push((a, depth + 1, copies, substitute));
+                (1, depth)
+            }
+            _ => {
+                let copies = copies + usize::from(matches!(node, Regex::MatchCapture(..)));
+                let substitute =
+                    substitute && !matches!(node, Regex::Possessive(_) | Regex::Lazy(_));
+                pending.extend(
+                    children(node)
+                        .iter()
+                        .rev()
+                        .map(|child| (child, depth + 1, copies, substitute)),
+                );
+                (1, depth)
+            }
+        };
+        nodes += size * copies;
+        if nodes > MAX_TREE_NODES || depth > MAX_TREE_DEPTH {
+            return Err(too_large());
+        }
+    }
+
     // An explicit stack instead of recursion: the tree can be
     // `MAX_TREE_DEPTH` levels deep.
     let mut out = re.clone();
+    let mut replacements = replacements.into_iter();
     let mut stack = vec![&mut out];
     while let Some(node) = stack.pop() {
-        if let Regex::MatchDynamic(n) = *node {
-            let text = capture(n)?;
+        if matches!(node, Regex::MatchDynamic(_)) {
+            let Some(text) = replacements.next() else {
+                return Ok(None);
+            };
             *node = mconcat(
                 text.chars()
                     .map(|c| Regex::MatchChar(CharPred::is(c)))
@@ -1440,10 +1492,10 @@ pub(crate) fn substitute_dynamic<'c>(
         }
         match node {
             Regex::MatchAlt(a, b) => {
-                stack.push(a);
                 stack.push(b);
+                stack.push(a);
             }
-            Regex::MatchConcat(items) => stack.extend(items.iter_mut()),
+            Regex::MatchConcat(items) => stack.extend(items.iter_mut().rev()),
             Regex::MatchSome(r)
             | Regex::MatchCapture(_, r)
             | Regex::AssertPositive(_, r)
@@ -1451,7 +1503,7 @@ pub(crate) fn substitute_dynamic<'c>(
             _ => {}
         }
     }
-    Some(out)
+    Ok(Some(out))
 }
 
 // ---------------------------------------------------------------------------
@@ -3618,7 +3670,10 @@ mod tests {
             Some(3)
         );
         let capture = |n: usize| (n == 1).then_some("a.b");
-        let sub = re.ok().and_then(|r| substitute_dynamic(&r, &capture));
+        let sub = re
+            .ok()
+            .and_then(|r| substitute_dynamic(&r, &capture).ok())
+            .flatten();
         let lens = sub.map(|s| {
             (
                 match_regex(&s, "a.bx").map(|g| g.len),
@@ -3626,11 +3681,22 @@ mod tests {
             )
         });
         assert_eq!(lens, Some((Some(4), None)));
-        let missing = compile("%2", true, false)
-            .ok()
-            .and_then(|r| substitute_dynamic(&r, &capture));
-        assert_eq!(missing, None);
+        let missing = compile("%2", true, false).and_then(|r| substitute_dynamic(&r, &capture));
+        assert_eq!(missing, Ok(None));
         assert_eq!(m("%a", "%a"), yes("%a"));
+    }
+
+    #[test]
+    fn dynamic_budget_counts_repeated_captures_and_group_copies() -> Result<(), String> {
+        let re = compile("(%1%1)", true, false)?;
+        let tag = "x".repeat(MAX_TREE_NODES / 6);
+        assert!(substitute_dynamic(&re, &|_| Some(&tag)).is_err());
+
+        // A multibyte capture can exceed the byte budget within the node budget.
+        let re = compile("%1", true, false)?;
+        let tag = "界".repeat(MAX_TREE_NODES / 5);
+        assert!(substitute_dynamic(&re, &|_| Some(&tag)).is_err());
+        Ok(())
     }
 
     #[test]
@@ -3638,7 +3704,8 @@ mod tests {
         let capture = |_: usize| Some("z");
         let sub = compile("%1+?", true, false)
             .ok()
-            .and_then(|r| substitute_dynamic(&r, &capture));
+            .and_then(|r| substitute_dynamic(&r, &capture).ok())
+            .flatten();
         let got = sub.and_then(|s| match_regex(&s, "%1%1"));
         assert_eq!(got.map(|g| g.len), Some(2));
     }
@@ -3719,7 +3786,7 @@ mod tests {
                     let copy = re.clone();
                     let text = format!("{copy:?}");
                     let capture = |_: usize| Some("");
-                    let same = substitute_dynamic(&re, &capture) == Some(copy);
+                    let same = substitute_dynamic(&re, &capture) == Ok(Some(copy));
                     if !same || text.is_empty() {
                         return Err(pat);
                     }

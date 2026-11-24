@@ -9,8 +9,10 @@
 mod bash;
 mod c;
 mod cpp;
+mod cs;
 mod css;
 mod elixir;
+mod go;
 mod haskell;
 mod html;
 mod ini;
@@ -19,12 +21,16 @@ mod javascript;
 mod json;
 mod latex;
 mod literate_haskell;
+mod lua;
 mod markdown;
+mod perl;
+mod php;
 mod python;
 mod r;
 mod rest;
 mod ruby;
 mod scss;
+mod sql;
 mod toml;
 mod xml;
 mod yaml;
@@ -49,8 +55,12 @@ pub(crate) fn all() -> Vec<Syntax> {
         bash::syntax(),
         c::syntax(),
         cpp::syntax(),
+        cpp::gcc_extensions(),
+        cpp::iso_cpp(),
+        cs::syntax(),
         css::syntax(),
         elixir::syntax(),
+        go::syntax(),
         haskell::syntax(),
         html::syntax(),
         ini::syntax(),
@@ -59,11 +69,17 @@ pub(crate) fn all() -> Vec<Syntax> {
         json::syntax(),
         latex::syntax(),
         literate_haskell::syntax(),
+        lua::syntax(),
         markdown::syntax(),
+        perl::syntax(),
+        php::syntax(),
         python::syntax(),
         r::syntax(),
         rest::syntax(),
         ruby::syntax(),
+        sql::sql(),
+        sql::mysql(),
+        sql::postgresql(),
         toml::syntax(),
         xml::syntax(),
         yaml::syntax(),
@@ -596,21 +612,7 @@ mod tests {
             .collect();
         assert_eq!(
             syntaxes.into_iter().collect::<Vec<_>>(),
-            [
-                "",
-                "C#",
-                "CMake",
-                "Go",
-                "Hamlet",
-                "Lua",
-                "Matlab",
-                "PHP/PHP",
-                "Perl",
-                "Ruby/Rails/RHTML",
-                "SCSS",
-                "SQL",
-                "SQL (MySQL)",
-            ],
+            ["", "CMake", "Hamlet", "Matlab", "Ruby/Rails/RHTML", "SCSS",],
             "{missing:#?}"
         );
     }
@@ -664,9 +666,76 @@ mod tests {
     /// The units of the adversarial lines. They open the constructs of the
     /// languages: strings, comments, templates, nesting.
     const ADVERSARIAL: &[&str] = &[
-        "a", "1", " ", "\t", "\"", "'", "`", "/", "*", "\\", "(", "{", "[", "<", "$", "#", "-",
-        ".", "=", "_", "@", "%", "!", "|", "a1", "0x", "1e", "\"a", "'a", "/*", "//", "{-", "--",
-        "${", "f\"", "r'", "<a", "\\\"", "a.", "1.", "#{", "/a", "a(", "``", ")", "01", "0_",
+        "a",
+        "1",
+        " ",
+        "\t",
+        "\"",
+        "'",
+        "`",
+        "/",
+        "*",
+        "\\",
+        "(",
+        "{",
+        "[",
+        "<",
+        "$",
+        "#",
+        "-",
+        ".",
+        "=",
+        "_",
+        "@",
+        "%",
+        "!",
+        "|",
+        "a1",
+        "0x",
+        "1e",
+        "\"a",
+        "'a",
+        "/*",
+        "//",
+        "{-",
+        "--",
+        "${",
+        "f\"",
+        "r'",
+        "<a",
+        "\\\"",
+        "a.",
+        "1.",
+        "#{",
+        "/a",
+        "a(",
+        "``",
+        ")",
+        "01",
+        "0_",
+        "[[",
+        "[=[",
+        "--[[",
+        "$$",
+        "$a$",
+        "<<<",
+        "<<'",
+        "<<\"",
+        "q{",
+        "qq{",
+        "m/",
+        "s/",
+        "@\"",
+        "$\"",
+        "\"\"\"",
+        "#[",
+        "@@",
+        "::",
+        "<?php",
+        "?>",
+        "__attribute__((",
+        "AS $$",
+        "DO $a$",
     ];
 
     /// Each clean syntax runs over a line of 16 KiB of each unit and over a

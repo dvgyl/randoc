@@ -22,19 +22,14 @@ pub(crate) fn syntax() -> Syntax {
             c.rule(M::Re(r#"<[^>]*>?|"[^"]*"?"#), Import, Stay)
                 .line_end(Pop(1))
         })
-        .context("Define", Preprocessor, |c| {
-            c.rule(M::LineContinue('\\'), Preprocessor, Stay)
-                .rule(M::Str("/*"), Comment, Push("Block Comment"))
-                .rule(M::Str("//"), Comment, Push("Line Comment"))
-                .rule(M::AnyOf(OPERATORS), Operator, Stay)
-                .line_end(Pop(1))
-        })
+        .context("Define", Preprocessor, define)
         .context("Preprocessor", Preprocessor, |c| {
             c.rule(M::LineContinue('\\'), Preprocessor, Stay)
                 .rule(M::Str("/*"), Comment, Push("Block Comment"))
                 .rule(M::Str("//"), Comment, Push("Line Comment"))
                 .line_end(Pop(1))
         })
+        .context("Unknown Directive", Error, |c| c.line_end(Pop(1)))
         .context("Line Comment", Comment, |c| {
             c.rule(M::Spaces, Comment, Stay)
                 .include("##Comments")
@@ -63,30 +58,61 @@ pub(crate) fn syntax() -> Syntax {
 /// The rules that C and C++ share: preprocessor lines, comments,
 /// literals.
 pub(super) fn code(c: Ctx) -> Ctx {
-    c.rule_with(
-        M::Re(r"#\s*include\b\s*"),
-        Preprocessor,
-        Push("Include"),
-        opts().first_non_space(),
-    )
-    .rule_with(
-        M::Re(r"#\s*define\b"),
-        Preprocessor,
-        Push("Define"),
-        opts().first_non_space(),
-    )
-    .rule_with(
-        M::Char('#'),
-        Preprocessor,
-        Push("Preprocessor"),
-        opts().first_non_space(),
-    )
-    .rule(M::Str("//"), Comment, Push("Line Comment"))
-    .rule(M::Str("/*"), Comment, Push("Block Comment"))
-    .rule(M::Re(r#"(?:u8|[uUL])?""#), String, Push("String"))
-    .rule(M::Re(r"(?:u8|[uUL])?'[^'\\]'"), Char, Stay)
-    .rule(M::Re(r"(?:u8|[uUL])?'"), Char, Push("Char"))
-    .rule(
+    let c = c
+        .rule_with(
+            M::Re(r"#\s*(?i:include)(?:_next)?\b\s*"),
+            Preprocessor,
+            Push("Include"),
+            opts().first_non_space(),
+        )
+        .rule_with(
+            M::Re(r"#\s*define\b"),
+            Preprocessor,
+            Push("Define"),
+            opts().first_non_space(),
+        )
+        .rule_with(
+            M::Re(concat!(
+                r"#\s*(?:(?i:if|ifdef|ifndef|elif|elifdef|elifndef|else|endif)",
+                r"|define|undef|line|error|warning|pragma|embed)\b|#\s*[0-9]"
+            )),
+            Preprocessor,
+            Push("Preprocessor"),
+            opts().first_non_space(),
+        )
+        .rule_with(M::Re(r"#(?=\s*$)"), Error, Stay, opts().first_non_space())
+        .rule_with(
+            M::Re(r"#\s*"),
+            Preprocessor,
+            Push("Unknown Directive"),
+            opts().first_non_space(),
+        )
+        .rule(M::Str("//"), Comment, Push("Line Comment"))
+        .rule(M::Str("/*"), Comment, Push("Block Comment"));
+    numbers(quoted_literals(c))
+}
+
+/// The body of a C or C++ macro definition.
+pub(super) fn define(c: Ctx) -> Ctx {
+    numbers(quoted_literals(
+        c.rule(M::LineContinue('\\'), Operator, Stay)
+            .rule(M::Str("/*"), Comment, Push("Block Comment"))
+            .rule(M::Str("//"), Comment, Push("Line Comment")),
+    ))
+    .rule(M::Re(r"[A-Za-z_]\w*"), Preprocessor, Stay)
+    .rule(M::AnyOf(OPERATORS), Operator, Stay)
+    .line_end(Pop(1))
+}
+
+fn quoted_literals(c: Ctx) -> Ctx {
+    c.rule(M::Re(r#"(?:u8|[uUL])?""#), String, Push("String"))
+        .rule(M::Re(r"(?:u8|[uUL])?'[^'\\]'"), Char, Stay)
+        .rule(M::Re(r"(?:u8|[uUL])?'"), Char, Push("Char"))
+}
+
+/// The number rules of C and C++, also in `#define` lines.
+fn numbers(c: Ctx) -> Ctx {
+    c.rule(
         M::Re(
             r"\.[0-9]+(?:[eE][-+]?[0-9]+)?|[0-9]+(?:\.[0-9]*(?:[eE][-+]?[0-9]+)?|[eE][-+]?[0-9]+)",
         ),
@@ -110,10 +136,12 @@ pub(super) fn suffixes(lang: Lang) -> Lang {
             Pop(1),
         )
         .fallthrough(Pop(1))
+        .line_end(Pop(1))
     })
     .context("Float Suffix", Normal, |c| {
         c.rule(M::Re(r"[fFlL]\b"), BuiltIn, Pop(1))
             .fallthrough(Pop(1))
+            .line_end(Pop(1))
     })
 }
 

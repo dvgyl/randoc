@@ -23,18 +23,21 @@ macro_rules! word_end {
 /// substitution.
 struct Names {
     command: &'static str,
+    word: &'static str,
     arguments: &'static str,
     backtick: bool,
 }
 
 const PLAIN: Names = Names {
     command: "Command",
+    word: "Command Word",
     arguments: "Arguments",
     backtick: false,
 };
 
 const IN_BACKTICKS: Names = Names {
     command: "Backtick Command",
+    word: "Backtick Command Word",
     arguments: "Backtick Arguments",
     backtick: true,
 };
@@ -163,10 +166,27 @@ pub(crate) fn syntax() -> Syntax {
                 .include("Arguments")
                 .line_end(Pop(1))
         })
+        // `for name in words`: a word other than `in` after the name is
+        // in command position.
         .context("For", Normal, |c| {
             c.rule(M::Str("(("), Keyword, PopPush(1, "Arithmetic Command"))
-                .rule(M::Re(concat!("in", word_end!())), Keyword, Stay)
-                .include("Arguments")
+                .rule(M::Spaces, Normal, Stay)
+                .rule(
+                    M::Re(concat!(r"[A-Za-z_]\w*", word_end!())),
+                    Normal,
+                    PopPush(1, "For In"),
+                )
+                .fallthrough(PopPush(1, "Arguments"))
+                .line_end(Pop(1))
+        })
+        .context("For In", Normal, |c| {
+            c.rule(M::Spaces, Normal, Stay)
+                .rule(
+                    M::Re(concat!("in", word_end!())),
+                    Keyword,
+                    PopPush(1, "Arguments"),
+                )
+                .fallthrough(PopPush(1, "Command"))
                 .line_end(Pop(1))
         })
         .context("Case Word", Normal, |c| {
@@ -375,6 +395,15 @@ fn statement(c: Ctx, command: &'static str) -> Ctx {
 fn command(lang: Lang, names: &'static Names) -> Lang {
     let args = names.arguments;
     let to_args = PopPush(1, args);
+    let to_word = PopPush(1, names.word);
+    // A command word with quotes: the quoted parts are strings, the other
+    // parts are an extension (`"a", b` gives `,` the extension).
+    let lang = lang.context(names.word, Normal, move |c| {
+        expansions(quotes(c))
+            .rule(M::Re(r#"(?:[^\s;|&<>()`"'$\\#]|\\.)+"#), Extension, Stay)
+            .fallthrough(to_args)
+            .line_end(Pop(1))
+    });
     lang.context(names.command, Normal, move |c| {
         let c = c
             .rule(M::Spaces, Normal, Stay)
@@ -417,7 +446,8 @@ fn command(lang: Lang, names: &'static Names) -> Lang {
                 ControlFlow,
                 PopPush(1, "Case Word"),
             )
-            .rule(M::Re(concat!("(?:esac|in)", word_end!())), Error, to_args)
+            .rule(M::Re(concat!("esac", word_end!())), Error, to_args)
+            .rule(M::Re(concat!("in", word_end!())), Error, Pop(1))
             .rule(
                 M::Re(concat!("function", word_end!())),
                 Keyword,
@@ -443,6 +473,11 @@ fn command(lang: Lang, names: &'static Names) -> Lang {
                 Push("Assignment"),
             )
             .rule(
+                M::Re(r#"(?:[^\s;|&<>()`"'$\\#]|\\.)+(?=["'])"#),
+                Extension,
+                to_word,
+            )
+            .rule(
                 M::Re(concat!(
                     "(?:local|export|declare|readonly|typeset)",
                     word_end!()
@@ -465,8 +500,9 @@ fn command(lang: Lang, names: &'static Names) -> Lang {
             .rule(M::Kw("builtins"), BuiltIn, to_args)
             .rule(M::Kw("unixcommands"), Function, to_args)
             .rule(M::Kw("control flow"), ControlFlow, to_args)
+            .rule_with(M::Re(r#"["']"#), Normal, to_word, opts().lookahead())
             .rule_with(
-                M::Re(r#"["']|\$[\w{(@?#$!*'"-]"#),
+                M::Re(r#"\$[\w{(@?#$!*'"-]"#),
                 Normal,
                 to_args,
                 opts().lookahead(),
@@ -499,7 +535,8 @@ fn argument_rules(c: Ctx) -> Ctx {
         .rule(M::LineContinue('\\'), DataType, Stay)
         .rule_with(M::Re(";;&?|;&"), ControlFlow, Pop(1), opts().lookahead())
         .rule(M::Re(SEPARATOR), Keyword, Pop(1))
-        .rule(M::Char('#'), Comment, Push("Comment"));
+        .rule(M::Char('#'), Comment, Push("Comment"))
+        .rule(M::Char('('), Error, PopPush(1, "Subshell"));
     words(redirections(c, Stay).rule(M::Re(r"-[\w-]*"), Attribute, Push("Option End")))
         .line_end(Pop(1))
 }

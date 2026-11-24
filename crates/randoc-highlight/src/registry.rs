@@ -558,7 +558,11 @@ mod tests {
         assert_eq!(name("JavaScript-React"), None);
         assert_eq!(name("RS"), None);
         assert_eq!(name("nope"), None);
-        assert_eq!(name("csharp"), None);
+        assert_eq!(name("csharp").as_deref(), Some("C#"));
+        assert_eq!(name("c#").as_deref(), Some("C#"));
+        assert_eq!(name("ddl").as_deref(), Some("SQL"));
+        assert_eq!(name("pm").as_deref(), Some("Perl"));
+        assert_eq!(name("golang"), None);
     }
 
     #[test]

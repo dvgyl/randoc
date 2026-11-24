@@ -26,7 +26,7 @@ pub(crate) fn syntax() -> Syntax {
                     Normal,
                     Push("Doc String"),
                 )
-                .rule(M::Re(r"@\w+"), Normal, Stay)
+                .rule(M::Char('@'), Normal, Push("Attribute"))
                 .rule(M::Str("~H\"\"\""), String, Push("HEEx Heredoc"))
                 .rule(M::Str("~H\""), String, Push("HEEx String"))
                 .include("Sigils")
@@ -63,6 +63,13 @@ pub(crate) fn syntax() -> Syntax {
                 .rule(M::Re("<<|>>"), Normal, Stay)
                 .rule(M::Str("=>"), Operator, Stay)
                 .rule(M::Re(OPERATOR), Error, Stay)
+        })
+        // After `@`, all text up to a name, a space or the line end is
+        // plain: `@1"z` is one plain run, `@-x` ends after `-`.
+        .context("Attribute", Normal, |c| {
+            c.rule(M::Re(r"\b_*[a-z]\w*[?!]?"), Normal, Pop(1))
+                .rule_with(M::Re(r"\s"), Normal, Pop(1), opts().lookahead())
+                .line_end(Pop(1))
         })
         .context("Definition Name", Normal, |c| {
             c.rule(M::Spaces, Normal, Stay)

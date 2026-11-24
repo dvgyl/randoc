@@ -1,5 +1,6 @@
 //! Clean-room R, from the R language definition and black-box runs of the
-//! oracle. `R documentation` includes the context `level0`.
+//! oracle. `R documentation` includes the context `level0`. A `)` or `}`
+//! without its opening bracket is an error.
 
 use super::{Ctx, Lang, M, Switch::*};
 use crate::syntax::Syntax;
@@ -53,6 +54,7 @@ fn code(c: Ctx) -> Ctx {
         .rule(M::Char('`'), String, Push("backquoted"))
         .rule(M::Char('('), Normal, Push("parenthesis"))
         .rule(M::Char('{'), Normal, Push("braces"))
+        .rule(M::AnyOf(")}"), Error, Stay)
         .rule(M::Kw("control flow"), ControlFlow, Stay)
         .rule(M::Kw("constants"), Constant, Stay)
         .rule(

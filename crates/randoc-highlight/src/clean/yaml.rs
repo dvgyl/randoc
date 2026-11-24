@@ -22,11 +22,12 @@ pub(crate) fn syntax() -> Syntax {
                 .include("Collection Rules")
                 .fallthrough(Push("Lvl0Text"))
         })
-        // A block collection lasts to the next document marker or to text
-        // that it does not match; an includer then handles that text.
+        // A block collection lasts to the next document marker, to a flow
+        // collection at column 0 or to text that it does not match; an
+        // includer then handles that text.
         .context("Collection", Attribute, |c| {
             c.rule_with(
-                M::Re(r"^(?:---|\.\.\.)(?:[ \t]|$)"),
+                M::Re(r"^(?:(?:---|\.\.\.)(?:[ \t]|$)|[\[{])"),
                 Attribute,
                 Pop(1),
                 opts().lookahead(),
@@ -107,7 +108,8 @@ pub(crate) fn syntax() -> Syntax {
                 .fallthrough(PopPush(1, "Flow Value"))
         })
         .context("Flow Value", Attribute, |c| {
-            c.rule(M::Char('"'), String, Push("Double Quoted"))
+            quoted_keys(c, "Double Quoted Value Key", "Single Quoted Value Key")
+                .rule(M::Char('"'), String, Push("Double Quoted"))
                 .rule(M::Char('\''), String, Push("Single Quoted"))
                 .rule(M::Char('['), Keyword, Push("Flow Sequence Start"))
                 .rule(M::Char('{'), Keyword, Push("Flow Mapping"))
@@ -118,6 +120,23 @@ pub(crate) fn syntax() -> Syntax {
         .context("Double Quoted", String, |c| {
             c.rule(M::Re(r"\\."), SpecialChar, Stay)
                 .rule(M::Char('"'), String, Pop(1))
+        })
+        .context("Double Quoted Key", Function, |c| {
+            double_quoted_key(c, Pop(1))
+        })
+        .context("Single Quoted Key", Function, |c| {
+            single_quoted_key(c, Pop(1))
+        })
+        .context("Double Quoted Value Key", Function, |c| {
+            double_quoted_key(c, PopPush(2, "Flow Value Colon"))
+        })
+        .context("Single Quoted Value Key", Function, |c| {
+            single_quoted_key(c, PopPush(2, "Flow Value Colon"))
+        })
+        .context("Flow Value Colon", Attribute, |c| {
+            c.rule(M::Char(':'), Keyword, PopPush(1, "Flow Value Start"))
+                .fallthrough(PopPush(1, "Flow Value"))
+                .line_end(PopPush(1, "Flow Value"))
         })
         .context("Single Quoted", String, |c| {
             c.rule(M::Str("''"), SpecialChar, Stay)
@@ -136,12 +155,34 @@ fn plain(c: Ctx) -> Ctx {
 /// The rules of a flow collection: quoted scalars, nested collections and
 /// keys.
 fn flow(c: Ctx) -> Ctx {
-    c.rule(M::Char('"'), String, Push("Double Quoted"))
+    quoted_keys(c, "Double Quoted Key", "Single Quoted Key")
+        .rule(M::Char('"'), String, Push("Double Quoted"))
         .rule(M::Char('\''), String, Push("Single Quoted"))
         .rule(M::Char('['), Keyword, Push("Flow Sequence Start"))
         .rule(M::Char('{'), Keyword, Push("Flow Mapping"))
         .rule(M::Re(FLOW_KEY), Function, Stay)
         .rule(M::Char(':'), Keyword, Push("Flow Value Start"))
+}
+
+/// A quoted scalar before `:` in a flow collection is a key: the quotes,
+/// the text and the spaces after it are a function.
+fn quoted_keys(c: Ctx, double: &'static str, single: &'static str) -> Ctx {
+    c.rule(
+        M::Re(r#""(?=(?:[^"\\]|\\.)*"[ \t]*:)"#),
+        Function,
+        Push(double),
+    )
+    .rule(M::Re(r"'(?=(?:[^']|'')*'[ \t]*:)"), Function, Push(single))
+}
+
+fn double_quoted_key(c: Ctx, close: Switch) -> Ctx {
+    c.rule(M::Re(r"\\."), SpecialChar, Stay)
+        .rule(M::Re(r#""[ \t]*"#), Function, close)
+}
+
+fn single_quoted_key(c: Ctx, close: Switch) -> Ctx {
+    c.rule(M::Str("''"), SpecialChar, Stay)
+        .rule(M::Re(r"'[ \t]*"), Function, close)
 }
 
 /// The scalars with a type: each pattern ends with the look-ahead of the

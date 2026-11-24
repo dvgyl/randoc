@@ -786,7 +786,7 @@ impl<'s, 'l> Tokenizer<'s, 'l> {
             base: 0,
         };
         let (found, steps) = if dynamic {
-            let Some(sub) = self.dynamic_pattern(re, compiled) else {
+            let Some(sub) = self.dynamic_pattern(re, compiled)? else {
                 return Ok(None);
             };
             regex::match_budgeted(
@@ -863,11 +863,13 @@ impl<'s, 'l> Tokenizer<'s, 'l> {
     /// `subDynamic` of `re` with the captures of the top frame. The frame
     /// keeps the result, so the work grows with the delimiter once per
     /// frame, not once per line.
-    fn dynamic_pattern(&mut self, re: &'s Re, compiled: &regex::Regex) -> Option<Rc<Dynamic>> {
-        let top = self.stack.last_mut()?;
+    fn dynamic_pattern(&mut self, re: &'s Re, compiled: &regex::Regex) -> Attempt<Rc<Dynamic>> {
+        let Some(top) = self.stack.last_mut() else {
+            return Ok(None);
+        };
         let key = std::ptr::from_ref(re);
         if let Some(found) = top.dynamic.get(&key) {
-            return found.clone();
+            return Ok(found.clone());
         }
         let captures = &top.captures;
         let work = std::cell::Cell::new(0);
@@ -876,6 +878,7 @@ impl<'s, 'l> Tokenizer<'s, 'l> {
             work.set(work.get() + text.len());
             Some(text)
         })
+        .map_err(|err| format!("Dynamic regular expression exceeds its budget: {err}"))?
         .map(|re| {
             Rc::new(Dynamic {
                 groups: regex::capturing_groups(&re),
@@ -884,7 +887,7 @@ impl<'s, 'l> Tokenizer<'s, 'l> {
         });
         top.dynamic.insert(key, sub.clone());
         self.charge(work.get());
-        sub
+        Ok(sub)
     }
 
     /// `parseInt`, `parseOct`, `parseHex` and `parseFloat`: the previous
