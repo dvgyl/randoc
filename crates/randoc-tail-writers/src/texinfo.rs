@@ -114,7 +114,7 @@ pub(super) fn write(
     super::render_template(
         doc,
         options,
-        context.limits,
+        context,
         body,
         &mut |blocks| {
             let body = chomp(render.borrow_mut().blocks(blocks));

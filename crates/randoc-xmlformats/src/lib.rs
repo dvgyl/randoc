@@ -8,6 +8,9 @@ mod table;
 mod validate;
 mod write;
 
+#[cfg(test)]
+mod wave9_tests;
+
 use std::sync::Arc;
 
 use randoc_archive::xml::XmlError;

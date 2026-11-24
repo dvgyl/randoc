@@ -37,11 +37,11 @@ pub(crate) struct TableOptions {
 }
 
 /// Tries to parse a table at the start of `lines`.
-/// `lines` are the remaining lines of the current block container. Each line has no newline at the end; tabs are already expanded to spaces.
+/// `lines` are the remaining lines of the current block container, which the parse reads in place. Each line has no newline at the end; tabs are already expanded to spaces.
 /// A caption line before the table (`Table: ...` or `: ...`) is part of the table.
 /// Returns the table block and the number of lines that it uses (including the caption and the blank line after a caption or a table when Pandoc uses it), or None when no table starts here.
-pub(crate) fn parse_table(
-    lines: &[&str],
+pub(crate) fn parse_table<L: AsRef<str>>(
+    lines: &[L],
     options: &TableOptions,
     parser: &mut dyn CellParser,
 ) -> Option<(Block, usize)> {
@@ -117,8 +117,8 @@ pub(crate) const GRID_MARK: &str = "\u{0}grid";
 
 /// Tries each table kind in the order that gives the same choice as Pandoc.
 /// The flag tells whether the table is a grid table.
-fn table_parts(
-    lines: &[&str],
+fn table_parts<L: AsRef<str>>(
+    lines: &[L],
     options: &TableOptions,
     parser: &mut dyn CellParser,
 ) -> Option<(Parts, usize, bool)> {
@@ -151,7 +151,7 @@ fn table_parts(
 }
 
 /// Returns the lines from `start`, or no lines when `start` is past the end.
-fn rest<'a, 'b>(lines: &'a [&'b str], start: usize) -> &'a [&'b str] {
+fn rest<L>(lines: &[L], start: usize) -> &[L] {
     lines.get(start..).unwrap_or(&[])
 }
 
@@ -161,8 +161,11 @@ fn is_blank(line: &str) -> bool {
 }
 
 /// Counts the blank lines at the start of `lines`.
-fn count_blank(lines: &[&str]) -> usize {
-    lines.iter().take_while(|line| is_blank(line)).count()
+fn count_blank<L: AsRef<str>>(lines: &[L]) -> usize {
+    lines
+        .iter()
+        .take_while(|line| is_blank(line.as_ref()))
+        .count()
 }
 
 /// Counts the leading spaces of a line.
@@ -171,8 +174,8 @@ fn indent(line: &str) -> usize {
 }
 
 /// Finds a caption paragraph at the start of `lines`. Returns the caption text and the number of lines.
-fn caption_at(lines: &[&str]) -> Option<(String, usize)> {
-    let first = lines.first()?;
+fn caption_at<L: AsRef<str>>(lines: &[L]) -> Option<(String, usize)> {
+    let first = lines.first()?.as_ref();
     if indent(first) > 3 {
         return None;
     }
@@ -188,6 +191,7 @@ fn caption_at(lines: &[&str]) -> Option<(String, usize)> {
     let mut parts = vec![text.trim_start_matches(SPACE)];
     let mut used = 1;
     for line in rest(lines, 1) {
+        let line = line.as_ref();
         if is_blank(line) {
             break;
         }
@@ -428,20 +432,21 @@ fn line_row(lines: &[&str], columns: &[DashColumn], parser: &mut dyn CellParser)
 }
 
 /// Parses a simple table, with a header line or without one.
-fn simple_table(lines: &[&str], parser: &mut dyn CellParser) -> Option<(Parts, usize)> {
-    let first = lines.first()?;
+fn simple_table<L: AsRef<str>>(lines: &[L], parser: &mut dyn CellParser) -> Option<(Parts, usize)> {
+    let first = lines.first()?.as_ref();
     let (header, columns, mut pos) = match dashed_line(first) {
         Some(columns) => (None, columns, 1),
         None => {
             if is_blank(first) || indent(first) > 3 {
                 return None;
             }
-            (Some(*first), dashed_line(lines.get(1)?)?, 2)
+            (Some(first), dashed_line(lines.get(1)?.as_ref())?, 2)
         }
     };
     let rows_start = pos;
     let mut footer = false;
     while let Some(line) = lines.get(pos) {
+        let line = line.as_ref();
         if is_blank(line) {
             break;
         }
@@ -458,7 +463,7 @@ fn simple_table(lines: &[&str], parser: &mut dyn CellParser) -> Option<(Parts, u
     }
     let align_lines: Vec<&str> = match header {
         Some(line) => vec![line],
-        None => rows.iter().take(1).copied().collect(),
+        None => rows.iter().take(1).map(AsRef::as_ref).collect(),
     };
     let col_specs = alignments(&align_lines, &columns)
         .into_iter()
@@ -473,7 +478,7 @@ fn simple_table(lines: &[&str], parser: &mut dyn CellParser) -> Option<(Parts, u
         .collect();
     let body = rows
         .iter()
-        .map(|line| line_row(&[line], &columns, parser))
+        .map(|line| line_row(&[line.as_ref()], &columns, parser))
         .collect();
     let parts = Parts {
         col_specs,
@@ -485,19 +490,20 @@ fn simple_table(lines: &[&str], parser: &mut dyn CellParser) -> Option<(Parts, u
 }
 
 /// Parses a multiline table. With `headless`, the first dashed line gives the columns and there is no header.
-fn multiline_table(
-    lines: &[&str],
+fn multiline_table<L: AsRef<str>>(
+    lines: &[L],
     options: &TableOptions,
     parser: &mut dyn CellParser,
     headless: bool,
 ) -> Option<(Parts, usize)> {
-    let first_columns = dashed_line(lines.first()?)?;
+    let first_columns = dashed_line(lines.first()?.as_ref())?;
     let mut pos = 1;
     let mut header_lines: Vec<&str> = Vec::new();
     let columns = if headless {
         first_columns
     } else {
         while let Some(line) = lines.get(pos) {
+            let line = line.as_ref();
             if is_blank(line) {
                 return None;
             }
@@ -507,17 +513,22 @@ fn multiline_table(
             header_lines.push(line);
             pos += 1;
         }
-        let separator = dashed_line(lines.get(pos)?)?;
+        let separator = dashed_line(lines.get(pos)?.as_ref())?;
         if header_lines.is_empty() {
             return None;
         }
         pos += 1;
+        // Oracle probes: a blank line after the separator makes it the end
+        // of a table with no rows, which is no multiline table.
+        if lines.get(pos).is_some_and(|line| is_blank(line.as_ref())) {
+            return None;
+        }
         separator
     };
     let mut rows: Vec<Vec<&str>> = Vec::new();
     let mut current: Vec<&str> = Vec::new();
     loop {
-        let line = lines.get(pos)?;
+        let line = lines.get(pos)?.as_ref();
         pos += 1;
         if is_dashed(line) {
             break;
@@ -541,7 +552,11 @@ fn multiline_table(
     } else {
         header_lines.clone()
     };
-    let widths = multiline_widths(lines.first().map_or(0, |l| indent(l)), &columns, options);
+    let widths = multiline_widths(
+        lines.first().map_or(0, |l| indent(l.as_ref())),
+        &columns,
+        options,
+    );
     let col_specs = alignments(&align_lines, &columns)
         .into_iter()
         .zip(widths)
@@ -704,21 +719,22 @@ fn pipe_row(cells: &[String], count: usize, parser: &mut dyn CellParser) -> Row 
 }
 
 /// Parses a pipe table.
-fn pipe_table(
-    lines: &[&str],
+fn pipe_table<L: AsRef<str>>(
+    lines: &[L],
     options: &TableOptions,
     parser: &mut dyn CellParser,
 ) -> Option<(Parts, usize)> {
-    let header_line = lines.first()?;
+    let header_line = lines.first()?.as_ref();
     if indent(header_line) > 3 {
         return None;
     }
     let header = split_pipes(header_line)?;
-    let separator_line = lines.get(1)?;
+    let separator_line = lines.get(1)?.as_ref();
     let separator = pipe_separator(separator_line)?;
     let mut rows: Vec<Vec<String>> = Vec::new();
     let mut pos = 2;
     while let Some(line) = lines.get(pos) {
+        let line = line.as_ref();
         if is_blank(line) {
             break;
         }
@@ -731,7 +747,7 @@ fn pipe_table(
     let used = lines.get(..pos).unwrap_or(&[]);
     let wide = used
         .iter()
-        .any(|line| line.chars().count() > options.columns);
+        .any(|line| line.as_ref().chars().count() > options.columns);
     let total: usize = separator.iter().map(|(_, width)| width).sum();
     let col_specs = separator
         .iter()
@@ -774,6 +790,14 @@ struct Grid {
     verticals: Vec<Vec<usize>>,
     /// For each line, the sorted display columns that hold neither `+` nor a horizontal border character.
     breaks: Vec<Vec<usize>>,
+    /// The display column of the right border of the table: the last `+` of
+    /// the widest border line, without trailing spaces.
+    outer: usize,
+    /// The display column where the cells of the last column end. It is
+    /// `outer`, but when a text line ends with `|` after `outer` and has no
+    /// `|` at `outer` (wide characters), it is the last `|` of the widest
+    /// text line, for all lines.
+    edge: usize,
 }
 
 /// A traced cell: its bottom line and right column, and the row and column borders that the trace found.
@@ -791,7 +815,22 @@ struct Trace {
 impl Grid {
     /// Builds the grid and its indexes from the lines of display columns.
     fn new(rows: Vec<Vec<char>>, rules: Vec<bool>) -> Grid {
-        let outer = rows.first().map_or(0, |row| row.len().saturating_sub(1));
+        let outer = rows
+            .iter()
+            .filter(|row| row.first() == Some(&'+'))
+            .map(|row| row.iter().rposition(|c| *c != ' ').unwrap_or(0))
+            .max()
+            .unwrap_or(0);
+        // Oracle probes: one shifted line moves the edge of all lines to the
+        // last `|` of the widest text line.
+        let edge = if rows.iter().any(|row| shifted_last_border(outer, row)) {
+            rows.iter()
+                .filter(|row| row.first() == Some(&'|') && row.last() == Some(&'|'))
+                .map(|row| row.len() - 1)
+                .fold(outer, usize::max)
+        } else {
+            outer
+        };
         let width = rows.iter().map(Vec::len).max().unwrap_or(0);
         let mut grid = Grid {
             rows,
@@ -799,16 +838,15 @@ impl Grid {
             marks: vec![Vec::new(); width],
             verticals: vec![Vec::new(); width],
             breaks: Vec::new(),
+            outer,
+            edge,
         };
         for (y, row) in grid.rows.iter().enumerate() {
             let mut breaks = Vec::new();
             for (x, c) in row.iter().enumerate() {
                 crate::step(1);
                 if *c != '|'
-                    && !(x == outer
-                        && row.len() > outer + 1
-                        && row.last() == Some(&'|')
-                        && row.first() == Some(&'|'))
+                    && !(x == outer && shifted_last_border(outer, row))
                     && let Some(list) = grid.marks.get_mut(x)
                 {
                     list.push(y);
@@ -939,11 +977,8 @@ impl Grid {
         let lines: Vec<String> = (cell.top + 1..cell.bottom)
             .map(|y| {
                 let row = self.rows.get(y).map_or(&[][..], Vec::as_slice);
-                let right = if cell.right + 1 == self.row_len(0)
-                    && row.len() > cell.right + 1
-                    && row.last() == Some(&'|')
-                {
-                    row.len() - 1
+                let right = if cell.right == self.outer {
+                    self.edge
                 } else {
                     cell.right
                 };
@@ -968,6 +1003,15 @@ impl Grid {
             .collect();
         lines.join("\n")
     }
+}
+
+/// Tells whether a text line has its right border after the right border
+/// `outer` of the table and no `|` at `outer`.
+fn shifted_last_border(outer: usize, row: &[char]) -> bool {
+    row.len() > outer + 1
+        && row.get(outer) != Some(&'|')
+        && row.last() == Some(&'|')
+        && row.first() == Some(&'|')
 }
 
 /// The corners of one grid table cell, as line indexes and display columns.
@@ -1008,12 +1052,12 @@ fn is_rule_line(text: &str, fill: char) -> bool {
 }
 
 /// Parses a grid table.
-fn grid_table(
-    lines: &[&str],
+fn grid_table<L: AsRef<str>>(
+    lines: &[L],
     options: &TableOptions,
     parser: &mut dyn CellParser,
 ) -> Option<(Parts, usize)> {
-    let first = lines.first()?;
+    let first = lines.first()?.as_ref();
     let margin = indent(first);
     if margin > 3 {
         return None;
@@ -1029,7 +1073,10 @@ fn grid_table(
     if !is_rule_line(&top_line, '-') {
         return None;
     }
-    let texts: Vec<String> = lines.iter().map_while(|line| strip(line)).collect();
+    let texts: Vec<String> = lines
+        .iter()
+        .map_while(|line| strip(line.as_ref()))
+        .collect();
     let last_border = texts.iter().rposition(|text| is_grid_border(text))?;
     if last_border == 0 {
         return None;
@@ -1079,27 +1126,20 @@ fn grid_table(
     let alignment_line = head_end
         .and_then(|y| grid.rows.get(y))
         .or(grid.rows.first());
-    let mut col_specs = grid_col_specs(&xs, alignment_line.map_or(&[][..], Vec::as_slice), options);
-    if let [.., left, right] = xs.as_slice()
-        && *right + 1 == grid.row_len(0)
-        && let Some(width) = grid
-            .rows
-            .iter()
-            .filter(|row| row.first() == Some(&'|') && row.last() == Some(&'|'))
-            .map(Vec::len)
-            .max()
-            .filter(|width| *width > *right + 1)
+    let alignment_line = alignment_line.map_or(&[][..], Vec::as_slice);
+    let mut col_specs = grid_col_specs(&xs, alignment_line, options);
+    // Oracle probes: a moved edge (wide characters) changes all widths.
+    if let [.., right] = xs.as_slice()
+        && *right == grid.outer
+        && grid.edge > grid.outer
     {
-        let outer = width - 1;
-        let columns = options.columns.max(outer).max(1);
-        for spec in col_specs.iter_mut() {
-            if let ColWidth::ColWidth(width) = &mut spec.width {
-                *width *= options.columns.max(*right).max(1) as f64 / columns as f64;
-            }
+        let mut shifted = xs.clone();
+        if let Some(last) = shifted.last_mut() {
+            *last = grid.edge;
         }
+        col_specs = grid_col_specs(&shifted, alignment_line, options);
         if let Some(last) = col_specs.last_mut() {
             last.align = Alignment::AlignDefault;
-            last.width = ColWidth::ColWidth((outer - left) as f64 / columns as f64);
         }
     }
 
@@ -1208,7 +1248,7 @@ fn grid_cells(grid: &Grid) -> (Vec<GridCell>, Vec<usize>, Vec<usize>) {
     let mut row_borders: BTreeSet<usize> = BTreeSet::from([0]);
     let mut col_borders: BTreeSet<usize> = BTreeSet::from([0]);
     // For each display column, the line above which cells already cover the column.
-    let mut done: Vec<usize> = vec![0; grid.rows.first().map_or(0, Vec::len) + 1];
+    let mut done: Vec<usize> = vec![0; grid.marks.len() + 1];
     let mut cells = Vec::new();
     corners.insert((0, 0));
     while let Some((top, left)) = corners.pop_first() {
@@ -1247,7 +1287,10 @@ fn grid_col_specs(xs: &[usize], alignment_line: &[char], options: &TableOptions)
         .copied()
         .unwrap_or(0)
         .saturating_sub(xs.first().copied().unwrap_or(0));
-    let quotient = options.columns.max(total).max(1) as f64;
+    // Oracle probes: the divisor is the table width plus the number of
+    // columns, less 2 (one column of 90 dashes is 91/90 wide).
+    let n = xs.len().saturating_sub(1);
+    let quotient = options.columns.max((total + n).saturating_sub(2)).max(1) as f64;
     xs.windows(2)
         .map(|pair| {
             let (left, right) = match pair {

@@ -247,12 +247,28 @@ impl Write<'_> {
         let contents = if !db && !fb && !jats {
             self.blocks(&cell.content, level)?
         } else if let [Block::Plain(lines)] = cell.content.as_slice() {
-            let previous = std::mem::replace(&mut self.table_inline, true);
-            let rendered = self.inlines(lines);
-            self.table_inline = previous;
-            rendered?
+            self.inlines_with_breaks(lines, true)?
         } else if fb {
             self.caption(&cell.content)?
+        } else if jats {
+            let mut blocks = Vec::new();
+            for block in &cell.content {
+                let content = if matches!(
+                    block,
+                    Block::Plain(_)
+                        | Block::Para(_)
+                        | Block::BulletList(_)
+                        | Block::OrderedList(..)
+                        | Block::DefinitionList(_)
+                        | Block::CodeBlock(_, _)
+                ) {
+                    self.block(block, level)?
+                } else {
+                    self.wrapper_paragraphs(std::slice::from_ref(block), level)?
+                };
+                blocks.push(content);
+            }
+            vcat(blocks)
         } else {
             self.blocks(&cell.content, level)?
         };

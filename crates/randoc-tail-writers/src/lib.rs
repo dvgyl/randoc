@@ -122,13 +122,13 @@ fn check_layout(doc: &Doc, limit: u64) -> Result<()> {
 fn render_template(
     doc: &Pandoc,
     options: &WriterOptions,
-    limits: randoc_core::Limits,
+    context: &Context,
     body: Doc,
     blocks: &mut dyn FnMut(&[Block]) -> Result<Doc>,
     inlines: &mut dyn FnMut(&[Inline]) -> Result<Doc>,
     fields: impl IntoIterator<Item = (&'static str, Val)>,
 ) -> Result<String> {
-    render_template_with(doc, options, limits, body, blocks, inlines, |scope| {
+    render_template_with(doc, options, context, body, blocks, inlines, |scope| {
         set_template_defaults(scope, fields);
     })
 }
@@ -147,14 +147,14 @@ fn set_template_defaults(
 fn render_template_with(
     doc: &Pandoc,
     options: &WriterOptions,
-    limits: randoc_core::Limits,
+    context: &Context,
     body: Doc,
     blocks: &mut dyn FnMut(&[Block]) -> Result<Doc>,
     inlines: &mut dyn FnMut(&[Inline]) -> Result<Doc>,
     set_fields: impl FnOnce(&mut randoc_templates::Context),
 ) -> Result<String> {
     let width = columns(options);
-    let limit = usize::try_from(limits.max_input_size).unwrap_or(usize::MAX);
+    let limit = usize::try_from(context.limits.max_input_size).unwrap_or(usize::MAX);
     let Some(template) = &options.template else {
         return if width.is_none() {
             body.render_limited(limit).ok_or_else(output_limit_error)
@@ -165,20 +165,13 @@ fn render_template_with(
     let mut scope = meta_to_context(
         &doc.meta,
         &options.variables,
-        limits.max_nesting_depth,
+        context.limits.max_nesting_depth,
         blocks,
         inlines,
     )?;
     set_fields(&mut scope);
     scope.insert("body", Val::Simple(body));
-    if width.is_none() {
-        return template
-            .render_limited(&scope, limit, limit)
-            .ok_or_else(output_limit_error);
-    }
-    let rendered = template.render(&scope);
-    check_layout(&rendered, limits.max_input_size)?;
-    Ok(rendered.render(width))
+    context.render_template(template, &scope, width)
 }
 
 fn default_template(format: &str, depth: usize) -> Result<Template> {

@@ -11,14 +11,19 @@ impl Renderer<'_> {
         self.table_count += 1;
         let number = self.table_count;
         let name = format!("Table{number}");
-        let width = if table
+        let total_width: f64 = table
             .col_specs
             .iter()
-            .any(|col| matches!(col.width, ColWidth::ColWidth(_)))
-        {
-            " style:rel-width=\"100%\""
+            .filter_map(|col| match col.width {
+                ColWidth::ColWidth(width) => Some(width),
+                ColWidth::ColWidthDefault => None,
+            })
+            .sum();
+        let width = if total_width > 0.0 && total_width <= 1.0 {
+            let percent = (total_width * 100.0).round_ties_even();
+            format!(" style:rel-width=\"{percent}%\"")
         } else {
-            ""
+            String::new()
         };
         if self.table_styles.is_empty() {
             for cell in ["TableHeaderRowCell", "TableRowCell"] {
@@ -78,13 +83,13 @@ impl Renderer<'_> {
         if !table.head.rows.is_empty() {
             let mut rows = Vec::new();
             for row in &table.head.rows {
-                rows.push(self.row(row, &mut layout, true, 0, depth)?);
+                rows.push(self.row(row, &mut layout, true, usize::MAX, depth)?);
             }
             content.push(structure("table:table-header-rows", "", vcat(rows)));
         }
         for body in &table.bodies {
             for row in &body.head {
-                content.push(self.row(row, &mut layout, true, 0, depth)?);
+                content.push(self.row(row, &mut layout, false, usize::MAX, depth)?);
             }
             let heads = usize::try_from(body.row_head_columns).unwrap_or_default();
             for row in &body.body {
@@ -131,7 +136,7 @@ impl Renderer<'_> {
         row: &Row,
         layout: &mut RowLayout,
         header: bool,
-        heads: usize,
+        header_columns: usize,
         depth: usize,
     ) -> Result<Doc> {
         self.charge_cells(row.cells.len().max(1))?;
@@ -139,23 +144,23 @@ impl Renderer<'_> {
         let mut content = Vec::new();
         for cell in &row.cells {
             while layout.covered(column) {
-                content.push(text("<table:covered-table-cell />"));
                 column += 1;
             }
-            let is_header = header || column < heads;
-            let cell_style = if is_header {
+            let heading = column < header_columns;
+            let cell_style = if header {
                 "TableHeaderRowCell"
             } else {
                 "TableRowCell"
             };
-            let parent = layout.styles[usize::from(!is_header)]
+            let parent = layout.styles[usize::from(!heading)]
                 .get(column)
-                .map_or_else(|| cell_parent(is_header), String::as_str);
+                .map_or_else(|| cell_parent(heading), String::as_str);
             let style = alignment_properties(cell.align).map_or_else(
                 || parent.to_owned(),
                 |props| self.paragraph_style(parent, props),
             );
             let mut attrs = attribute("table:style-name", cell_style);
+            attrs.push_str(" office:value-type=\"string\"");
             let col_span = usize::try_from(cell.col_span.max(1)).unwrap_or(usize::MAX);
             let row_span = usize::try_from(cell.row_span.max(1)).unwrap_or(usize::MAX);
             self.charge_cells(col_span.saturating_mul(row_span).saturating_sub(1))?;
@@ -171,7 +176,6 @@ impl Renderer<'_> {
                     &row_span.to_string(),
                 ));
             }
-            attrs.push_str(" office:value-type=\"string\"");
             let value = self.blocks(&cell.content, Some(&style), depth, true)?;
             content.push(structure("table:table-cell", &attrs, value));
             let end = column + col_span;
@@ -181,12 +185,7 @@ impl Renderer<'_> {
                 }
                 layout.occupied[column..end].fill(layout.index + row_span);
             }
-            content.extend((1..col_span).map(|_| text("<table:covered-table-cell />")));
             column = end;
-        }
-        while layout.covered(column) {
-            content.push(text("<table:covered-table-cell />"));
-            column += 1;
         }
         layout.index += 1;
         Ok(structure("table:table-row", "", vcat(content)))

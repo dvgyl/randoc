@@ -93,7 +93,7 @@ pub(super) fn write(
     super::render_template(
         doc,
         options,
-        limits,
+        context,
         literal(body),
         &mut |blocks| Ok(literal(randoc_core::shared::stringify_blocks(blocks))),
         &mut |inlines| Ok(literal(randoc_core::shared::stringify(inlines))),
@@ -688,17 +688,23 @@ impl Renderer<'_> {
             Ok(bytes) => {
                 let (size, mime) = image_size_and_mime(&bytes, Some(url));
                 let size = size.map(|(w, h)| (f64::from(w), f64::from(h)));
-                if mime == Some("image/svg+xml") {
+                let size = if mime == Some("image/svg+xml") {
                     svg_size(&bytes, &self.context.limits)
                         .or_else(|| size.map(|(w, h)| (w * 0.75, h * 0.75)))
-                        .unwrap_or((300.0, 200.0))
                 } else {
-                    let (w, h) = size.unwrap_or((300.0, 200.0));
-                    if mime == Some("image/jpeg") {
-                        jpeg_point_size(&bytes, w, h)
-                    } else {
-                        (w, h)
-                    }
+                    size
+                };
+                let (w, h) = size.unwrap_or_else(|| {
+                    self.context.report(LogMessage::CouldNotDetermineImageSize(
+                        url.into(),
+                        "could not determine image type".into(),
+                    ));
+                    (300.0, 200.0)
+                });
+                if mime == Some("image/jpeg") {
+                    jpeg_point_size(&bytes, w, h)
+                } else {
+                    (w, h)
                 }
             }
             Err(error) => {

@@ -39,6 +39,23 @@ pub(crate) fn autolink_label(url: &str) -> Option<&str> {
     Some(if scheme == "mailto" { body } else { url })
 }
 
+/// Percent-encodes the white space and the characters `<>|"{}[]^`` ` ``
+/// of a URL, as the Markdown reader does with the URL of a link.
+pub(crate) fn escape_uri(url: &str) -> String {
+    let mut out = String::with_capacity(url.len());
+    for c in url.chars() {
+        if crate::inlines::is_haskell_space(c) || "<>|\"{}[]^`".contains(c) {
+            let mut buf = [0u8; 4];
+            for byte in c.encode_utf8(&mut buf).bytes() {
+                out.push_str(&format!("%{byte:02X}"));
+            }
+        } else {
+            out.push(c);
+        }
+    }
+    out
+}
+
 fn valid_chars(text: &str, delimiters: &str) -> bool {
     let mut chars = text.chars();
     while let Some(c) = chars.next() {

@@ -188,20 +188,28 @@ impl Renderer<'_> {
                     .filter(|_| numbered || named)
                     .and_then(|id| self.references.get(id).map(|kind| (id, *kind)))
                 {
-                    let format = match (kind, numbered) {
-                        ("bookmark", false) => "text",
-                        ("bookmark", true) => "number",
-                        (_, false) => "caption",
-                        (_, true) => "value",
-                    };
-                    let attrs = attribute("text:reference-format", format)
-                        + &attribute("text:ref-name", id);
-                    let content = if numbered {
-                        Doc::default()
+                    let (number_format, name_format) = if kind == "bookmark" {
+                        ("number", "text")
                     } else {
-                        self.inline_run(inlines, styles, depth + 1)?
+                        ("value", "caption")
                     };
-                    tag(&format!("text:{kind}-ref"), &attrs, content)
+                    let element = format!("text:{kind}-ref");
+                    let reference = |format, content| {
+                        let attrs = attribute("text:reference-format", format)
+                            + &attribute("text:ref-name", id);
+                        tag(&element, &attrs, content)
+                    };
+                    let mut out = Doc::default();
+                    if numbered {
+                        out += reference(number_format, Doc::default());
+                    }
+                    if numbered && named {
+                        out += text("<text:s />");
+                    }
+                    if named {
+                        out += reference(name_format, self.inline_run(inlines, styles, depth + 1)?);
+                    }
+                    out
                 } else {
                     let attrs = format!(
                         " xlink:type=\"simple\"{}{}",

@@ -73,7 +73,7 @@ fn attr_parts(attr: &Attr) -> Vec<Text> {
     if !attr.id.is_empty() {
         parts.push(format!("#{}", attr.id));
     }
-    for class in &attr.classes {
+    for class in attr.classes.iter().filter(|class| !class.is_empty()) {
         parts.push(format!(".{class}"));
     }
     for (key, value) in &attr.attributes {
@@ -135,8 +135,6 @@ fn superscript_char(c: char) -> Option<char> {
         '=' => '⁼',
         '(' => '⁽',
         ')' => '⁾',
-        'i' => 'ⁱ',
-        'n' => 'ⁿ',
         _ => return None,
     })
 }
@@ -161,6 +159,18 @@ fn subscript_char(c: char) -> Option<char> {
         ')' => '₎',
         _ => return None,
     })
+}
+
+/// A text whose line breaks are breaks of the layout.
+fn lines(text: &str) -> Doc {
+    let mut out = empty();
+    for (index, line) in text.split('\n').enumerate() {
+        if index > 0 {
+            out += cr();
+        }
+        out += literal(line);
+    }
+    out
 }
 
 fn is_space(inline: &Inline) -> bool {
@@ -195,6 +205,10 @@ impl W<'_> {
         let mut out = empty();
         let mut at_start = line_start;
         for (index, inline) in inlines.iter().enumerate() {
+            let inline = match inline {
+                Inline::LineBreak | Inline::SoftBreak if self.breaks_as_spaces => &Inline::Space,
+                _ => inline,
+            };
             let next = inlines.get(index + 1);
             self.cut_edges = (
                 cut_first && index == 0,
@@ -217,14 +231,14 @@ impl W<'_> {
                     };
                     literal(escaped)
                 }
+                Inline::SoftBreak
+                    if self.opts.wrap_text == WrapOption::WrapPreserve && !self.in_heading =>
+                {
+                    cr()
+                }
                 Inline::Space | Inline::SoftBreak if self.in_script => literal("\\ "),
-                Inline::Space => self.space_before(next, inlines.get(index + 2)),
-                Inline::SoftBreak => {
-                    if self.opts.wrap_text == WrapOption::WrapPreserve && !self.in_heading {
-                        cr()
-                    } else {
-                        self.space_before(next, inlines.get(index + 2))
-                    }
+                Inline::Space | Inline::SoftBreak => {
+                    self.space_before(next, inlines.get(index + 2))
                 }
                 Inline::LineBreak => self.line_break(),
                 other => self.inline(other, &inlines[index + 1..])?,
@@ -308,8 +322,18 @@ impl W<'_> {
                 }
             }
             Inline::Emph(content) => {
-                let mark = if plain { "" } else { "*" };
+                let mark = match (plain, self.has(Extension::Gutenberg)) {
+                    (false, _) => "*",
+                    (true, true) => "_",
+                    (true, false) => "",
+                };
                 self.delimited(content, mark, mark)?
+            }
+            Inline::Strong(content) if plain && self.has(Extension::Gutenberg) => {
+                let outer = std::mem::replace(&mut self.upper, true);
+                let inner = self.delimited(content, "", "");
+                self.upper = outer;
+                inner?
             }
             Inline::Strong(content) => {
                 let mark = if plain { "" } else { "**" };
@@ -331,12 +355,14 @@ impl W<'_> {
             Inline::Underline(content) => self.styled_span(SpanStyle::Underline, content)?,
             Inline::Quoted(kind, content) => {
                 let inner = self.inline_list(content, false)?;
-                let ascii = self.has(Extension::Smart);
-                let (open, close) = match (kind, ascii) {
-                    (QuoteType::SingleQuote, true) => ("'", "'"),
-                    (QuoteType::DoubleQuote, true) => ("\"", "\""),
-                    (QuoteType::SingleQuote, false) => ("\u{2018}", "\u{2019}"),
-                    (QuoteType::DoubleQuote, false) => ("\u{201C}", "\u{201D}"),
+                let ascii = self.has(Extension::Smart) || self.variant == Variant::Markua;
+                let (open, close) = match (kind, ascii, self.opts.prefer_ascii) {
+                    (QuoteType::SingleQuote, true, _) => ("'", "'"),
+                    (QuoteType::DoubleQuote, true, _) => ("\"", "\""),
+                    (QuoteType::SingleQuote, false, true) => ("&lsquo;", "&rsquo;"),
+                    (QuoteType::DoubleQuote, false, true) => ("&ldquo;", "&rdquo;"),
+                    (QuoteType::SingleQuote, false, false) => ("\u{2018}", "\u{2019}"),
+                    (QuoteType::DoubleQuote, false, false) => ("\u{201C}", "\u{201D}"),
                 };
                 literal(open) + inner + literal(close)
             }
@@ -353,17 +379,32 @@ impl W<'_> {
             }
             Inline::Image(attr, content, target) => self.image(attr, content, target)?,
             Inline::Note(blocks) => {
-                let slot = self.notes.len();
-                self.notes.push(empty());
-                self.note_starts.push(matches!(
-                    blocks.first(),
-                    Some(randoc_ast::Block::Para(_) | randoc_ast::Block::Plain(_))
-                ));
-                let number = self.notes_written + slot + 1;
-                let doc = self.block_list(blocks)?;
-                if let Some(entry) = self.notes.get_mut(slot) {
-                    *entry = doc;
-                }
+                let key = crate::note_key(inline);
+                let body = if self.note_keys.contains(&key) {
+                    crate::NoteBody::Inner(key)
+                } else {
+                    // The copy of a deeper tree could overflow the stack.
+                    let room = self.max_depth.saturating_sub(self.depth);
+                    if crate::deeper_than(blocks, room) {
+                        return Err(crate::depth_error());
+                    }
+                    #[cfg(test)]
+                    {
+                        self.note_copies += 1;
+                    }
+                    crate::NoteBody::Owned(blocks.clone())
+                };
+                self.note_count += 1;
+                let number = self.note_count;
+                self.notes.push(crate::PendingNote {
+                    body,
+                    state: crate::NoteState {
+                        number,
+                        depth: self.depth,
+                        upper: self.upper,
+                        breaks_as_spaces: self.in_heading || self.breaks_as_spaces,
+                    },
+                });
                 if self.has(Extension::Footnotes) && !plain {
                     literal(format!("[^{}{number}]", self.opts.identifier_prefix))
                 } else {
@@ -555,63 +596,95 @@ impl W<'_> {
         if content.is_empty() {
             return Ok(empty());
         }
+        let markua = self.variant == Variant::Markua;
+        let native = !self.plain() && (self.has(extension) || self.has(Extension::RawHtml));
+        let outer = self.in_script;
+        self.in_script = self.variant == Variant::Markdown;
+        let result = if markua {
+            // Markua always has the delimiters, with the spacing of emphasis.
+            let mark = if superscript { "^" } else { "~" };
+            self.delimited(content, mark, mark)
+        } else if native {
+            self.inline_list(content, false).map(|inner| {
+                if self.has(extension) {
+                    let mark = if superscript { "^" } else { "~" };
+                    literal(mark) + inner + literal(mark)
+                } else {
+                    let tag = if superscript { "sup" } else { "sub" };
+                    literal(format!("<{tag}>")) + inner + literal(format!("</{tag}>"))
+                }
+            })
+        } else {
+            self.unicode_script_doc(content, superscript)
+        };
+        self.in_script = outer;
+        result
+    }
+
+    /// A superscript or subscript in Unicode characters, or in the form
+    /// `^(text)` or `_(text)` when a character has no such form.
+    fn unicode_script_doc(&mut self, content: &[Inline], superscript: bool) -> Result<Doc> {
         let map = if superscript {
             superscript_char
         } else {
             subscript_char
         };
-        if self.plain() {
-            let text = self.inline_list(content, false)?.render(None);
-            let only_text = content
-                .iter()
-                .all(|i| matches!(i, Inline::Str(_) | Inline::Space | Inline::SoftBreak));
-            let converted = text
-                .chars()
-                .map(|c| if c == ' ' { Some(' ') } else { map(c) })
-                .collect::<Option<Text>>()
-                .filter(|converted| only_text || converted.trim().is_empty());
-            return Ok(match converted {
-                Some(converted) if converted.is_empty() => {
-                    if content
-                        .iter()
-                        .all(|i| matches!(i, Inline::Space | Inline::SoftBreak))
-                    {
-                        space()
-                    } else {
-                        empty()
-                    }
-                }
-                Some(converted) if converted.trim().is_empty() => space(),
-                Some(converted) => literal(converted),
-                None => {
-                    let mark = if superscript { "^(" } else { "_(" };
-                    literal(format!("{mark}{})", text.trim()))
-                }
-            });
+        if let Some(converted) = self.unicode_script(content, map, self.depth) {
+            return self.inline_list(&converted, false);
         }
-        if !self.has(extension) && !self.has(Extension::RawHtml) {
-            if content.iter().all(|i| matches!(i, Inline::Str(_))) {
-                let plain_text = stringify(content);
-                if let Some(converted) = plain_text.chars().map(map).collect::<Option<Text>>() {
-                    return Ok(literal(converted));
+        let text = self.inline_list(content, false)?.render(None);
+        // Pandoc maps the text of other inlines with the superscript
+        // characters, also in a subscript.
+        let mapped = text
+            .chars()
+            .map(|c| {
+                if is_haskell_space(c) {
+                    Some(c)
+                } else {
+                    superscript_char(c)
                 }
-            }
-            let mark = if superscript { "^(" } else { "_(" };
-            let inner = self.inline_list(content, false)?;
-            return Ok(literal(mark) + inner + literal(")"));
-        }
-        let outer = self.in_script;
-        self.in_script = self.variant == Variant::Markdown;
-        let inner = self.inline_list(content, false);
-        self.in_script = outer;
-        let inner = inner?;
-        Ok(if self.has(extension) {
-            let mark = if superscript { "^" } else { "~" };
-            literal(mark) + inner + literal(mark)
+            })
+            .collect::<Option<Text>>();
+        let mark = if superscript { "^(" } else { "_(" };
+        // In Markdown a space of the text is `\ `, which stays.
+        let text = if self.variant == Variant::Markdown {
+            text.as_str()
         } else {
-            let tag = if superscript { "sup" } else { "sub" };
-            literal(format!("<{tag}>")) + inner + literal(format!("</{tag}>"))
+            text.trim()
+        };
+        Ok(match mapped {
+            Some(mapped) => lines(&mapped),
+            None => lines(&format!("{mark}{text})")),
         })
+    }
+
+    /// The inlines of a superscript or subscript with the Unicode form of
+    /// each character, or `None` when an inline or a character has no such
+    /// form. A span keeps its attributes.
+    fn unicode_script(
+        &self,
+        content: &[Inline],
+        map: fn(char) -> Option<char>,
+        depth: usize,
+    ) -> Option<Vec<Inline>> {
+        if depth > self.max_depth {
+            return None;
+        }
+        content
+            .iter()
+            .map(|inline| match inline {
+                Inline::Str(text) => text
+                    .chars()
+                    .map(|c| if is_haskell_space(c) { Some(c) } else { map(c) })
+                    .collect::<Option<Text>>()
+                    .map(Inline::Str),
+                Inline::Space | Inline::SoftBreak | Inline::LineBreak => Some(inline.clone()),
+                Inline::Span(attr, inner) => self
+                    .unicode_script(inner, map, depth + 1)
+                    .map(|inner| Inline::Span(attr.clone(), inner)),
+                _ => None,
+            })
+            .collect()
     }
 
     /// Renders lines of inlines joined with hard line breaks.
@@ -826,21 +899,62 @@ impl W<'_> {
                     format!("[[{text}|{url}]]")
                 }));
             }
-            if let [Inline::Str(text)] = content {
-                let autolink_label = crate::uri::autolink_label(&target.url);
-                let is_auto = autolink_label == Some(text.as_str());
-                let auto_attr = attr.id.is_empty()
-                    && attr.attributes.is_empty()
-                    && attr.classes.iter().all(|c| c == "uri" || c == "email");
-                if is_auto && auto_attr {
-                    return Ok(literal(format!("<{text}>")));
-                }
+        }
+        if let [Inline::Str(text)] = content
+            && let Some(label) = crate::uri::autolink_label(&target.url)
+            && attr.id.is_empty()
+            && attr.attributes.is_empty()
+            && attr.classes.iter().all(|c| c == "uri" || c == "email")
+        {
+            // The text is compared after the case conversion of its position.
+            let upper;
+            let shown = if self.upper {
+                upper = text.to_uppercase();
+                &upper
+            } else {
+                text
+            };
+            if label == shown || label == crate::uri::escape_uri(shown) {
+                return Ok(match self.variant {
+                    Variant::Plain => literal(label),
+                    // Markua has no autolink form. The link has no reference.
+                    Variant::Markua => {
+                        let inner = self.inline_list(content, false)?;
+                        self.markua_link(attr, inner, target)
+                    }
+                    Variant::Markdown | Variant::Commonmark => literal(format!("<{label}>")),
+                });
             }
         }
         let images = self.images;
         let inner = self.inline_list(content, false)?;
         let has_image = self.images != images;
         Ok(self.link_with_inner(attr, inner, has_image, target, collapsed))
+    }
+
+    /// Writes a Markua link: always the inline form, with the attributes and
+    /// the title in braces after the destination.
+    fn markua_link(&self, attr: &Attr, inner: Doc, target: &Target) -> Doc {
+        let attr = self.prefixed(attr);
+        let mut parts = Vec::new();
+        if !attr.id.is_empty() {
+            parts.push(format!("id: {}", attr.id));
+        }
+        for class in &attr.classes {
+            parts.push(format!("class: {class}"));
+        }
+        if !target.title.is_empty() {
+            parts.push(format!("title: \"{}\"", target.title));
+        }
+        for (key, value) in &attr.attributes {
+            parts.push(format!("{key}: {value}"));
+        }
+        let attrs = if parts.is_empty() {
+            Text::new()
+        } else {
+            format!("{{{}}}", parts.join(", "))
+        };
+        literal("[") + inner + literal(format!("]({}){attrs}", target.url))
     }
 
     /// Writes a link with rendered content: in `plain` the content alone,
@@ -860,6 +974,14 @@ impl W<'_> {
                 self.add_reference(&inner.render(None), has_image, target, attr, "");
             }
             return inner;
+        }
+        if self.variant == Variant::Markua {
+            // Markua writes the inline form also with reference links, but
+            // the references still list the link.
+            if self.opts.reference_links {
+                self.add_reference(&inner.render(None), has_image, target, attr, "");
+            }
+            return self.markua_link(attr, inner, target);
         }
         let original = attr;
         let shown = self.prefixed(attr);
@@ -1015,7 +1137,7 @@ impl W<'_> {
     fn image(&mut self, attr: &Attr, content: &[Inline], target: &Target) -> Result<Doc> {
         self.images += 1;
         if self.plain() {
-            let inner = self.inline_list(content, false)?;
+            let inner = self.image_label(|w| w.inline_list(content, false))?;
             if self.opts.reference_links {
                 self.add_reference(&inner.render(None), false, target, attr, "");
             }
@@ -1042,11 +1164,11 @@ impl W<'_> {
         // Each repeat can double the number of notes in a nested image label.
         const MAX_REPEAT_DEPTH: usize = 3;
         const MAX_LABEL_REPEATS: usize = 64;
-        let before = self.notes.len();
+        let before = self.note_count;
         self.image_label_depth += 1;
         let result = (|| {
             let label = render(self)?;
-            if self.notes.len() != before
+            if self.note_count != before
                 && self.image_label_depth <= MAX_REPEAT_DEPTH
                 && self.image_label_repeats < MAX_LABEL_REPEATS
             {
@@ -1144,7 +1266,7 @@ pub(crate) fn reference_key(label: &str) -> Text {
 }
 
 /// The white space of Haskell's `isSpace`.
-fn is_haskell_space(c: char) -> bool {
+pub(crate) fn is_haskell_space(c: char) -> bool {
     matches!(
         c,
         ' ' | '\t'..='\r' | '\u{a0}' | '\u{1680}' | '\u{2000}'..='\u{200a}' | '\u{202f}'
@@ -1184,7 +1306,7 @@ fn destination(target: &Target) -> Doc {
 
 #[cfg(test)]
 mod tests {
-    use randoc_ast::{Attr, Inline};
+    use randoc_ast::{Attr, Block, Inline};
     use randoc_core::{WriterOptions, default_extensions};
 
     use crate::{Variant, W};
@@ -1311,5 +1433,87 @@ mod tests {
             })
             .map(|thread| thread.join().is_ok())
             .map_or_else(|_| unreachable!("the thread starts"), |ok| assert!(ok));
+    }
+
+    /// `n` notes, each in a paragraph of the note before it.
+    fn note_chain(n: usize) -> Vec<Block> {
+        let mut body = vec![Block::Para(vec![Inline::Str("end".into())])];
+        for _ in 0..n {
+            body = vec![Block::Para(vec![
+                Inline::Str("n".into()),
+                Inline::Note(body),
+            ])];
+        }
+        body
+    }
+
+    #[test]
+    fn nested_notes_are_copied_and_walked_once() {
+        std::thread::Builder::new()
+            .stack_size(1 << 28)
+            .spawn(|| {
+                for n in [1_000, 8_000] {
+                    let blocks = note_chain(n);
+                    let options = options("markdown");
+                    let mut w = W::new(&options, Variant::Markdown, 4 * n + 10);
+                    crate::NOTE_WALK.with(|count| count.set(0));
+                    let text = w.document(&blocks).map(|doc| doc.render(None));
+                    let walked = crate::NOTE_WALK.with(std::cell::Cell::get);
+                    let text = text.unwrap_or_default();
+                    assert!(text.starts_with("n[^1]\n\n[^1]: n[^2]\n"), "{n}");
+                    assert!(text.trim_end().ends_with(&format!("[^{n}]: end")), "{n}");
+                    // The writer copies and checks the first note only. The
+                    // inner notes take their content from it.
+                    assert_eq!(w.note_copies, 1, "{n}");
+                    // The depth check walks the 2n lists of the chain once,
+                    // and each note finds its inner note in its own 2 lists.
+                    // A walk for each inner note would visit about n² lists.
+                    assert!(walked <= 4 * n + 8, "{n}: {walked} lists");
+                    std::mem::forget(blocks);
+                }
+            })
+            .map(|thread| thread.join().is_ok())
+            .map_or_else(|_| unreachable!("the thread starts"), |ok| assert!(ok));
+    }
+
+    #[test]
+    fn nested_notes_keep_the_numbers_of_pandoc() {
+        // `pandoc -f native -t markdown`: the inner notes of the first note
+        // come after the second note.
+        let note = |inlines: Vec<Inline>| Inline::Note(vec![Block::Para(inlines)]);
+        let s = |text: &str| Inline::Str(text.into());
+        let blocks = vec![Block::Para(vec![
+            s("a"),
+            note(vec![s("b"), note(vec![s("c"), note(vec![s("d")])])]),
+            s("e"),
+            note(vec![s("f"), note(vec![s("g")])]),
+        ])];
+        let options = options("markdown");
+        let mut w = W::new(&options, Variant::Markdown, 128);
+        let text = w.document(&blocks).map(|doc| doc.render(None));
+        assert_eq!(
+            text.unwrap_or_default(),
+            "a[^1]e[^2]\n\n[^1]: b[^3]\n\n[^2]: f[^4]\n\n[^3]: c[^5]\n\n[^4]: g\n\n[^5]: d\n"
+        );
+    }
+
+    #[test]
+    fn a_note_counts_the_nesting_depth_of_its_position() {
+        let quotes = |n: usize, inner: Vec<Block>| {
+            (0..n).fold(inner, |inner, _| vec![Block::BlockQuote(inner)])
+        };
+        let body = quotes(100, vec![Block::Para(vec![Inline::Str("x".into())])]);
+        let options = options("markdown");
+        // The note alone is within the limit.
+        let alone = vec![Block::Para(vec![Inline::Note(body.clone())])];
+        assert!(
+            W::new(&options, Variant::Markdown, 128)
+                .document(&alone)
+                .is_ok()
+        );
+        // Behind 60 quotes, the note content goes past the limit.
+        let deep = quotes(60, alone);
+        let result = W::new(&options, Variant::Markdown, 128).document(&deep);
+        assert!(result.is_err_and(|e| e.to_string().contains("nested too deeply")));
     }
 }

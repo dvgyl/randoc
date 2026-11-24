@@ -32,6 +32,19 @@ fn read(bytes: &[u8], context: &mut Context) -> randoc_core::Result<Pandoc> {
 }
 
 #[test]
+fn repeated_spine_chapters_consume_the_archive_budget() {
+    let package = OPF.replace(r#"<itemref idref="two"/>"#, r#"<itemref idref="one"/>"#);
+    let chapter = format!("<p>{}</p>", "Page text. ".repeat(240));
+    let bytes = fixture(&package, &chapter, "");
+    assert!(read(&bytes, &mut Context::pure()).is_ok());
+
+    let mut context = Context::pure();
+    context.limits.max_archive_size = (CONTAINER.len() + package.len() + chapter.len() + 3) as u64;
+    let error = read(&bytes, &mut context).unwrap_err().to_string();
+    assert!(error.contains("decompressed archive size"), "{error}");
+}
+
+#[test]
 fn reads_spine_metadata_links_and_cover() {
     let bytes = fixture(
         OPF,

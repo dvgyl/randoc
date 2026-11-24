@@ -24,6 +24,8 @@ mod attributes;
 mod digests;
 mod highlight;
 mod html;
+#[cfg(test)]
+mod parity_tests;
 pub mod shared;
 mod slides;
 mod standalone;

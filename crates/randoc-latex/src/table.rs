@@ -1,4 +1,4 @@
-//! Tables as `longtable` environments.
+//! Tables as `longtable` or floating `tabular` environments.
 
 use randoc_ast::{Alignment, Block, Cell, ColWidth, Inline, Row, Table};
 use randoc_core::{CaptionPosition, Result};
@@ -31,9 +31,11 @@ impl LatexWriter<'_> {
 
     fn table_body(&mut self, table: &Table, columns: &[Column]) -> Result<Doc> {
         let spec = column_spec(columns);
+        let unnumbered = table.attr.has_class("unnumbered");
+        let floating = table.attr.has_class("float");
         let has_caption = !table.caption.long.is_empty()
             || table.caption.short.is_some()
-            || !table.attr.id.is_empty();
+            || (!table.attr.id.is_empty() && !unnumbered);
         let caption = if has_caption {
             Some(self.caption(&table.caption, &table.attr.id)?)
         } else {
@@ -50,6 +52,32 @@ impl LatexWriter<'_> {
         };
         let caption_above = self.options.table_caption_position == CaptionPosition::CaptionAbove;
         self.usage.tables = true;
+        if floating {
+            let placement = table.attr.get("latex-placement").unwrap_or_default();
+            let mut doc =
+                literal(format!("\\begin{{table}}[{placement}]")).above(literal("\\centering"));
+            let caption = caption.map(|doc| doc + literal("\\tabularnewline"));
+            if caption_above && let Some(caption) = &caption {
+                doc = doc.above(caption.clone());
+            }
+            doc = doc
+                .above(literal(format!("\\begin{{tabular}}{spec}")))
+                .above(head);
+            // Keep the note order the same as the order of the rows.
+            let body = self.table_body_rows(table, columns)?;
+            let foot = self.rows(&table.foot.rows, columns, false)?;
+            doc = doc
+                .above(body)
+                .above(table_end(foot))
+                .above(literal("\\end{tabular}"));
+            if !caption_above && let Some(caption) = caption {
+                doc = doc.above(caption);
+            }
+            return Ok(wrap_uncaptioned(
+                doc.above(literal("\\end{table}")),
+                !has_caption || unnumbered,
+            ));
+        }
         let mut doc = literal(format!("\\begin{{longtable}}[]{spec}"));
         match &caption {
             Some(caption) if caption_above => {
@@ -74,20 +102,12 @@ impl LatexWriter<'_> {
             }
         }
         let foot_rows = self.rows(&table.foot.rows, columns, false)?;
-        let mut body_rows = Vec::with_capacity(table.bodies.len() * 2);
-        for body in &table.bodies {
-            body_rows.push(self.rows(&body.head, columns, false)?);
-            body_rows.push(self.rows(&body.body, columns, false)?);
-        }
-        let mut body_rows = Some(vcat(body_rows));
+        let mut body_rows = Some(self.table_body_rows(table, columns)?);
         // Beamer has no foot that repeats on each page.
         if self.beamer {
             doc = doc.above(body_rows.take().unwrap_or_default());
         }
-        if !foot_rows.is_empty() {
-            doc = doc.above(literal("\\midrule\\noalign{}")).above(foot_rows);
-        }
-        doc = doc.above(literal("\\bottomrule\\noalign{}"));
+        doc = doc.above(table_end(foot_rows));
         if let Some(caption) = caption.as_ref().filter(|_| !caption_above) {
             doc = doc
                 .above(literal("\\tabularnewline"))
@@ -97,7 +117,16 @@ impl LatexWriter<'_> {
             doc = doc.above(literal("\\endlastfoot")).above(body_rows);
         }
         doc = doc.above(literal("\\end{longtable}"));
-        Ok(wrap_uncaptioned(doc, caption.is_none()))
+        Ok(wrap_uncaptioned(doc, !has_caption || unnumbered))
+    }
+
+    fn table_body_rows(&mut self, table: &Table, columns: &[Column]) -> Result<Doc> {
+        let mut rows = Vec::with_capacity(table.bodies.len() * 2);
+        for body in &table.bodies {
+            rows.push(self.rows(&body.head, columns, false)?);
+            rows.push(self.rows(&body.body, columns, false)?);
+        }
+        Ok(vcat(rows))
     }
 
     fn rows(&mut self, rows: &[Row], columns: &[Column], header: bool) -> Result<Doc> {
@@ -216,6 +245,15 @@ impl LatexWriter<'_> {
                 + literal("}");
         }
         Ok(contents)
+    }
+}
+
+fn table_end(foot: Doc) -> Doc {
+    let end = literal("\\bottomrule\\noalign{}");
+    if foot.is_empty() {
+        end
+    } else {
+        literal("\\midrule\\noalign{}").above(foot).above(end)
     }
 }
 

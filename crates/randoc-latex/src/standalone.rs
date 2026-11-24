@@ -26,7 +26,7 @@ use randoc_ast::walk::query_inlines;
 use randoc_ast::{Attr, Block, Caption, Inline, Meta, MetaValue, Pandoc, Row};
 use randoc_core::shared::meta_context::meta_to_context;
 use randoc_core::shared::stringify_meta;
-use randoc_core::{CiteMethod, Context, Error, Result, TopLevelDivision};
+use randoc_core::{CiteMethod, Context, Error, LogMessage, Result, TopLevelDivision};
 use randoc_highlight::Style;
 use randoc_layout::Doc;
 use randoc_templates::{Context as TemplateContext, Val};
@@ -121,6 +121,85 @@ fn val_text(mut value: &Val) -> String {
     }
 }
 
+/// Returns `true` if the value enables a template conditional.
+fn variable_enabled(value: &Val) -> bool {
+    let mut pending = vec![value];
+    while let Some(value) = pending.pop() {
+        match value {
+            Val::Simple(doc) if !doc.is_empty() => return true,
+            Val::Map(_) | Val::Bool(true) => return true,
+            Val::List(items) => pending.extend(items),
+            _ => {}
+        }
+    }
+    false
+}
+
+/// Returns whether a writer variable enables csquotes.
+pub(crate) fn csquotes_enabled(value: &Val) -> bool {
+    !matches!(value, Val::Simple(doc) if doc.render(None) == "false") && variable_enabled(value)
+}
+
+fn pdf_standard(value: &Val, warnings: &mut Vec<LogMessage>) -> Val {
+    let values = match value {
+        Val::Simple(_) => std::slice::from_ref(value),
+        Val::List(values) if values.iter().all(|item| matches!(item, Val::Simple(_))) => values,
+        _ => &[],
+    };
+    let mut explicit_version = None;
+    let mut implied_version = None;
+    let mut standards = Vec::new();
+    let mut tagging = false;
+    for value in values {
+        let text = val_text(value);
+        let standard = text.trim().to_lowercase();
+        let version = match standard.as_str() {
+            "1.4" => Some("1.4"),
+            "1.5" => Some("1.5"),
+            "1.6" => Some("1.6"),
+            "1.7" => Some("1.7"),
+            "2" | "2.0" => Some("2.0"),
+            _ => None,
+        };
+        if let Some(version) = version {
+            explicit_version.get_or_insert(version);
+            continue;
+        }
+        match standard.as_str() {
+            "a-1b" => {
+                implied_version.get_or_insert("1.4");
+            }
+            "a-2a" | "a-3a" => {
+                implied_version.get_or_insert("1.7");
+                tagging = true;
+            }
+            "a-2b" | "a-2u" | "a-3b" | "a-3u" => {
+                implied_version.get_or_insert("1.7");
+            }
+            "ua-1" | "ua-2" => tagging = true,
+            "a-4" | "a-4e" | "a-4f" | "x-4" | "x-4p" | "x-5g" | "x-5n" | "x-5pg" | "x-6"
+            | "x-6p" | "x-6n" => {}
+            _ => {
+                warnings.push(LogMessage::MakePdfWarning(format!(
+                    "PDF standard '{standard}' is not supported by LaTeX and will be ignored."
+                )));
+                continue;
+            }
+        }
+        standards.push(Val::text(standard));
+    }
+    if !variable_enabled(value) {
+        return value.clone();
+    }
+    let mut fields = TemplateContext::new();
+    fields.insert("standards", Val::List(standards));
+    fields.insert("tagging", Val::Bool(tagging));
+    if let Some(version) = explicit_version.or(implied_version) {
+        fields.insert("version", Val::text(version));
+    }
+    Val::Map(fields)
+}
+
 impl LatexWriter<'_> {
     /// Converts the metadata with this writer, before the body, as Pandoc does.
     pub(crate) fn meta_context(&mut self, meta: &Meta) -> Result<TemplateContext> {
@@ -146,6 +225,9 @@ impl LatexWriter<'_> {
     ) -> Result<()> {
         let options = self.options;
         let meta = &doc.meta;
+        if let Some(value) = fields.0.get_mut("pdfstandard") {
+            *value = pdf_standard(value, &mut self.warnings);
+        }
         let body_text = body.render(None);
         let mut new: Vec<(&str, Val)> = Vec::new();
         if let Some(epoch) = context.host().environment_variable("SOURCE_DATE_EPOCH") {

@@ -22,6 +22,8 @@ mod inline;
 mod perf_tests;
 mod tables;
 mod tokens;
+#[cfg(test)]
+mod wave9_tests;
 mod yaml;
 
 use std::sync::Arc;
@@ -132,6 +134,12 @@ pub fn read_markdown(
 }
 
 fn parse(text: &str, mut parser: block::Parser, context: &mut Context) -> Result<Pandoc> {
+    parser.expansion_left = context.limits.max_output_size.min(
+        (text.len() as u64)
+            .saturating_mul(32)
+            .saturating_add(4 << 20),
+    );
+    parser.deadline = context.deadline();
     let result = parser.parse_document(text);
     for message in parser.take_log() {
         context.report(message);
@@ -142,7 +150,22 @@ fn parse(text: &str, mut parser: block::Parser, context: &mut Context) -> Result
 #[cfg(test)]
 mod tests {
     use super::*;
-    use randoc_core::{Extensions, default_extensions};
+    use randoc_core::{Error, Extensions, default_extensions};
+
+    #[test]
+    fn repeated_footnotes_charge_the_read_budget() {
+        let mut options = ReaderOptions::default();
+        options.extensions = default_extensions("markdown");
+        let mut context = Context::pure();
+        context.limits.max_output_size = 20;
+        let input = "One[^n] and two[^n].\n\n[^n]: A short note.";
+        assert!(matches!(
+            read_markdown(input, "", &options, &mut context),
+            Err(Error::App(_))
+        ));
+        context.limits.max_output_size = 128;
+        assert!(read_markdown(input, "", &options, &mut context).is_ok());
+    }
 
     #[allow(dead_code)]
     pub(crate) fn read_with(text: &str, format: &str) -> Pandoc {

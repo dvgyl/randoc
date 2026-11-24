@@ -1,5 +1,6 @@
 //! The block phase and the driver of the reader.
 
+use std::borrow::Cow;
 use std::cell::{Cell, RefCell};
 use std::collections::{BTreeSet, HashMap, HashSet};
 use std::ops::Range;
@@ -33,7 +34,17 @@ pub(crate) struct Ln {
     spaces: Cell<usize>,
     /// The line has only spaces and tabs.
     blank: bool,
+    /// The input text of the line when it has a tab: code blocks keep the
+    /// tabs (`--preserve-tabs`).
+    raw: Option<Rc<str>>,
     pub n: u32,
+}
+
+/// The table parser reads the lines of a container in place.
+impl AsRef<str> for Ln {
+    fn as_ref(&self) -> &str {
+        self.t()
+    }
 }
 
 impl Ln {
@@ -45,8 +56,76 @@ impl Ln {
             blank: blank(&t),
             src: Rc::from(t),
             off: Cell::new(0),
+            raw: None,
             n,
         }
+    }
+
+    /// Makes a line from an input line, with its tabs expanded.
+    fn expanded(line: &str, tab_stop: usize, n: u32) -> Self {
+        let mut ln = Ln::new(expand_tabs(line, tab_stop), n);
+        if line.contains('\t') {
+            ln.raw = Some(Rc::from(line));
+        }
+        ln
+    }
+
+    /// Returns the text of the line without up to `cols` columns of
+    /// indentation, with the tabs of the input. A tab that the indentation
+    /// covers only in part becomes spaces. An indented code line (`indented`)
+    /// loses a whole leading tab (oracle probes with `--preserve-tabs`).
+    fn code_text(&self, cols: usize, tab_stop: usize, indented: bool) -> Cow<'_, str> {
+        let t = self.t();
+        let Some(raw) = self.raw.as_deref() else {
+            return Cow::Borrowed(dedent(t, cols));
+        };
+        crate::step(raw.len());
+        // Find the input position of the start of `t`. A start inside a
+        // tab keeps the expanded text.
+        let target = self.off.get();
+        let (mut at, mut expanded, mut col) = (0, 0, 0);
+        for c in raw.chars() {
+            if expanded >= target {
+                break;
+            }
+            // A tab becomes spaces: one byte for each column.
+            let (width, bytes) = match c {
+                '\t' => (tab_stop - col % tab_stop, tab_stop - col % tab_stop),
+                _ => (1, c.len_utf8()),
+            };
+            expanded += bytes;
+            col += width;
+            at += c.len_utf8();
+        }
+        if expanded != target {
+            return Cow::Borrowed(dedent(t, cols));
+        }
+        let rest = raw.get(at..).unwrap_or("");
+        if indented && let Some(code) = rest.strip_prefix('\t') {
+            return Cow::Borrowed(code);
+        }
+        let (mut left, mut i) = (cols, 0);
+        while left > 0 {
+            match rest.as_bytes().get(i) {
+                Some(b' ') => {
+                    left -= 1;
+                    col += 1;
+                    i += 1;
+                }
+                Some(b'\t') => {
+                    let width = tab_stop - col % tab_stop;
+                    if width > left {
+                        let after = rest.get(i + 1..).unwrap_or("");
+                        return Cow::Owned(format!("{}{after}", " ".repeat(width - left)));
+                    }
+                    left -= width;
+                    col += width;
+                    i += 1;
+                }
+                _ => break,
+            }
+        }
+        Cow::Borrowed(rest.get(i..).unwrap_or(""))
     }
 
     /// Returns the number of leading spaces.
@@ -105,6 +184,7 @@ impl Ln {
             off: Cell::new(self.off.get() + k),
             spaces: Cell::new(self.indent() - k),
             blank: self.blank,
+            raw: self.raw.clone(),
             n: self.n,
         }
     }
@@ -133,6 +213,7 @@ impl Ln {
                 off: Cell::new(self.off.get() + removed),
                 spaces: Cell::new(spaces),
                 blank,
+                raw: self.raw.clone(),
                 n,
             }
         } else {
@@ -159,7 +240,11 @@ pub(crate) struct Parser {
     pub header_refs: HashMap<Text, Target>,
     /// The largest number of characters of a key of `refs` or `header_refs`.
     pub longest_key: usize,
-    pub notes: HashMap<Text, Vec<Block>>,
+    pub notes: HashMap<Text, (Vec<Block>, u64)>,
+    pub expansion_left: u64,
+    pub deadline: Option<std::time::Instant>,
+    read_error: Option<Error>,
+    deadline_steps: usize,
     note_pos: Vec<(Text, SourcePos)>,
     /// The keys of the note references in the order of use. A parse that
     /// Pandoc discards truncates it.
@@ -199,8 +284,19 @@ pub(crate) struct Parser {
     pub in_note: bool,
     /// The bytes that splits of paragraphs at block tags can still read again.
     split_budget: usize,
+    /// The characters that the note count of the labels of failed images
+    /// can still read again.
+    pub label_budget: usize,
+    /// The inline parse runs only for a note count or a syntax check: it
+    /// defines no macro and copies no note.
+    pub counting: bool,
     /// The resolve step is in the cells of a table that is not a grid table.
     inline_cells: bool,
+    /// The reader option `strip_comments`: the resolve step removes each raw
+    /// HTML element that is one comment.
+    strip_comments: bool,
+    /// Some raw element has the format `KEPT_HTML`.
+    kept_html: bool,
     /// The macro definitions of the raw TeX read so far (`latex_macros`).
     macros: randoc_latex_reader::Macros,
     /// The blocks being read are in an HTML element with Markdown content
@@ -215,8 +311,6 @@ pub(crate) struct Parser {
     /// whose closer follows the contents: such a closer takes the closing tag.
     pub crossing_closers: usize,
     in_list: bool,
-    /// The items being read belong to a loose list.
-    loose_list: bool,
     /// The number of spaces that each block of the next block loop can start
     /// with: the indentation of the content of a raw HTML element.
     gobble: usize,
@@ -463,28 +557,42 @@ struct Marker {
     rest_from: usize,
 }
 
+/// Returns the value of a Roman numeral in one case, or `None` when `s` does
+/// not match `M* CM? D? CD? C* XC? L? XL? X* IX? V? IV? I*` (oracle probes:
+/// `IIIII`, `IVI`, `XCXX` and `LXL` are numerals, `ID`, `IC`, `VV` and `IIV`
+/// are not).
 fn roman_value(s: &str) -> Option<i64> {
-    let mut total = 0i64;
-    let mut prev = 0i64;
-    for c in s.chars().rev() {
-        let v = match c.to_ascii_lowercase() {
-            'i' => 1,
-            'v' => 5,
-            'x' => 10,
-            'l' => 50,
-            'c' => 100,
-            'd' => 500,
-            'm' => 1000,
-            _ => return None,
-        };
-        if v < prev {
-            total -= v;
-        } else {
-            total += v;
-            prev = v;
+    const PARTS: [(&[u8], i64, bool); 13] = [
+        (b"M", 1000, true),
+        (b"CM", 900, false),
+        (b"D", 500, false),
+        (b"CD", 400, false),
+        (b"C", 100, true),
+        (b"XC", 90, false),
+        (b"L", 50, false),
+        (b"XL", 40, false),
+        (b"X", 10, true),
+        (b"IX", 9, false),
+        (b"V", 5, false),
+        (b"IV", 4, false),
+        (b"I", 1, true),
+    ];
+    let upper = s.to_ascii_uppercase();
+    if s.is_empty() || (s != upper && s != s.to_ascii_lowercase()) {
+        return None;
+    }
+    let mut rest = upper.as_bytes();
+    let mut total: i64 = 0;
+    for (part, value, repeats) in PARTS {
+        while let Some(after) = rest.strip_prefix(part) {
+            rest = after;
+            total = total.saturating_add(value);
+            if !repeats {
+                break;
+            }
         }
     }
-    (total > 0).then_some(total)
+    rest.is_empty().then_some(total)
 }
 
 fn is_hrule(s: &str) -> bool {
@@ -1230,6 +1338,10 @@ impl Parser {
             header_refs: HashMap::new(),
             longest_key: 0,
             notes: HashMap::new(),
+            expansion_left: u64::MAX,
+            deadline: None,
+            read_error: None,
+            deadline_steps: 0,
             note_pos: Vec::new(),
             used_notes: Vec::new(),
             end_blank: false,
@@ -1246,14 +1358,17 @@ impl Parser {
             note_number: 0,
             in_note: false,
             inline_cells: false,
+            strip_comments: options.strip_comments,
+            kept_html: false,
             markdown_inside: false,
             macros: randoc_latex_reader::Macros::default(),
             split_budget: source.len().saturating_mul(4).saturating_add(4096),
+            label_budget: 0,
+            counting: false,
             emphasis_failures: 0,
             crossing_closers: 0,
             block_tag_cuts: 0,
             in_list: false,
-            loose_list: false,
             gobble: 0,
             end_line: 1,
             meta: Meta::default(),
@@ -1318,24 +1433,56 @@ impl Parser {
         SourcePos::new(self.source.clone(), line, 1)
     }
 
+    pub(crate) fn charge_expansion(&mut self, bytes: u64) -> bool {
+        if let Some(left) = self.expansion_left.checked_sub(bytes) {
+            self.expansion_left = left;
+            return true;
+        }
+        self.read_error = Some(Error::App(
+            "Markdown references exceed the expansion limit.".into(),
+        ));
+        false
+    }
+
+    pub(crate) fn can_read(&mut self) -> bool {
+        if self.deadline.is_some() && self.read_error.is_none() {
+            if self.deadline_steps.is_multiple_of(256) {
+                self.read_error = randoc_core::Context::check_deadline_at(self.deadline).err();
+            }
+            self.deadline_steps = self.deadline_steps.wrapping_add(1);
+        }
+        self.read_error.is_none()
+    }
+
     /// Parses a whole document.
     pub(crate) fn parse_document(&mut self, text: &str) -> Result<Pandoc> {
+        self.label_budget = text.len().saturating_add(4096);
         let tab_stop = self.tab_stop;
         let mut lines: Vec<Ln> = Vec::new();
         let body = text.strip_suffix('\n').unwrap_or(text);
         if !text.is_empty() {
             for (i, line) in body.split('\n').enumerate() {
+                self.can_read();
+                if let Some(error) = self.read_error.take() {
+                    return Err(error);
+                }
                 let n = u32::try_from(i + 1).unwrap_or(u32::MAX);
-                lines.push(Ln::new(expand_tabs(line, tab_stop), n));
+                lines.push(Ln::expanded(line, tab_stop, n));
             }
         }
         let count = u32::try_from(lines.len()).unwrap_or(u32::MAX);
-        // Pandoc reports the end of the input after the last non-blank line.
+        // Pandoc reports the end of the input 3 lines after the last
+        // non-empty line, or 2 lines after the last line when that is later
+        // (oracle probes with an unclosed div and blank lines at the end: a
+        // line of spaces counts as non-empty).
         let content = lines
             .iter()
-            .rposition(|l| !l.is_blank())
+            .rposition(|l| !l.t().is_empty())
             .map_or(0, |k| k + 1);
-        self.end_line = u32::try_from(content).unwrap_or(u32::MAX).saturating_add(3);
+        self.end_line = u32::try_from(content)
+            .unwrap_or(u32::MAX)
+            .saturating_add(3)
+            .max(count.saturating_add(2));
         lines.push(Ln::new("", count.saturating_add(1)));
         lines.push(Ln::new("", count.saturating_add(2)));
         let mut start = 0;
@@ -1347,6 +1494,9 @@ impl Parser {
         }
         let rest = lines.get(start..).unwrap_or(&[]);
         let blocks = self.blocks(rest)?;
+        if let Some(error) = self.read_error.take() {
+            return Err(error);
+        }
         // The metadata text is read after all references are known, but
         // before the text of the body: its headings, notes and citations
         // count first.
@@ -1361,7 +1511,27 @@ impl Parser {
             meta.insert(key, value);
         }
         let blocks = self.resolve_document(blocks);
+        if let Some(error) = self.read_error.take() {
+            return Err(error);
+        }
         let mut doc = Pandoc { meta, blocks };
+        if self.kept_html {
+            let html = || Format::new("html");
+            randoc_ast::walk::walk_inlines_mut(&mut doc, |x| {
+                if let Inline::RawInline(format, _) = x
+                    && format.as_str() == crate::inline::KEPT_HTML
+                {
+                    *format = html();
+                }
+            });
+            randoc_ast::walk::walk_blocks_mut(&mut doc, |x| {
+                if let Block::RawBlock(format, _) = x
+                    && format.as_str() == crate::inline::KEPT_HTML
+                {
+                    *format = html();
+                }
+            });
+        }
         if self.ext(Extension::Smart) {
             let mark = format!("{}.", crate::inline::ESCAPED_PERIOD);
             randoc_ast::walk::walk_inlines_mut(&mut doc, |x| {
@@ -1550,7 +1720,7 @@ impl Parser {
     ) -> Result<Vec<Block>> {
         let mut out = Vec::new();
         let mut i = 0;
-        while i < lines.len() {
+        while i < lines.len() && self.can_read() {
             crate::step(1);
             let Some(line) = lines.get(i) else { break };
             if line.is_blank() {
@@ -1666,14 +1836,14 @@ impl Parser {
         if self.html_interrupts(s) {
             return Some(false);
         }
-        // A list marker ends a paragraph of an item: a paragraph of a
-        // loose list, as all the others in it.
+        // A list marker ends a paragraph of an item. The list makes it a
+        // `Para` when the list is loose.
         if self.in_list
             && indent(s) <= 3
             && !is_hrule(s)
             && (self.marker(s, None).is_some() || self.foreign_marker(s))
         {
-            return Some(self.loose_list);
+            return Some(false);
         }
         // In a list item, a definition marker ends the paragraph, also with
         // `definition_lists` off. With no term before it, the marker line is
@@ -2070,7 +2240,15 @@ impl Parser {
                 return None;
             }
         } else {
-            let word = info.split_whitespace().next().unwrap_or("");
+            // Oracle probes: `foo{.bar}` is the class `foo` and an attribute
+            // block. `foo}` and `f{o` are no fence information.
+            let word = info
+                .split(|c: char| c.is_whitespace() || c == '{')
+                .next()
+                .unwrap_or("");
+            if word.contains('}') {
+                return None;
+            }
             let after = info.get(word.len()..).unwrap_or("").trim_matches(SPACE);
             let mut attr = if after.is_empty() {
                 Attr::default()
@@ -2093,7 +2271,7 @@ impl Parser {
                 j += 1;
                 break;
             }
-            body.push(dedent(t, ind));
+            body.push(line.code_text(ind, self.tab_stop, false));
             j += 1;
         }
         if !closed {
@@ -2103,7 +2281,7 @@ impl Parser {
         }
         let text = body.join("\n");
         match raw_format {
-            Some(format) => out.push(Block::RawBlock(Format::new(format), text)),
+            Some(format) => out.push(Block::RawBlock(self.raw_format(&format, &text), text)),
             None => out.push(Block::CodeBlock(attr, text)),
         }
         Some(j)
@@ -2126,20 +2304,20 @@ impl Parser {
     }
 
     fn indented_code(&mut self, lines: &[Ln], out: &mut Vec<Block>) -> usize {
-        let mut body: Vec<&str> = Vec::new();
+        let mut body: Vec<Cow<'_, str>> = Vec::new();
         let mut j = 0;
         let mut last_text = 0;
         while let Some(line) = lines.get(j) {
             crate::step(1);
             if line.is_blank() {
-                body.push(dedent(line.t(), 4));
+                body.push(line.code_text(4, self.tab_stop, true));
                 j += 1;
                 continue;
             }
             if line.indent() < 4 {
                 break;
             }
-            body.push(dedent(line.t(), 4));
+            body.push(line.code_text(4, self.tab_stop, true));
             j += 1;
             last_text = j;
         }
@@ -2265,17 +2443,35 @@ impl Parser {
             content
         };
         if self.ext(Extension::MmdHeaderIdentifiers)
-            && mmd.ends_with(']')
-            && let Some(open) = mmd.rfind('[')
-            && !ends_with_escape(mmd.get(..open).unwrap_or(""))
+            && let Some((before, label)) = mmd_label(mmd)
+            && !self.label_joins_link(before)
         {
-            let id = mmd.get(open + 1..mmd.len() - 1).unwrap_or("");
-            if !id.is_empty() && !id.contains([' ', '[', ']']) {
-                let text = mmd.get(..open).unwrap_or("").trim_end_matches(SPACE);
-                return (text.to_string(), Attr::new(id, vec![], vec![]));
-            }
+            // Oracle probes: `[Chapter 1]` gives the identifier `chapter1`.
+            // An empty identifier gives an automatic one.
+            let id: Text = label
+                .chars()
+                .filter(|c| !c.is_whitespace())
+                .collect::<Text>()
+                .to_lowercase();
+            let mut attr = Attr::new(id, vec![], vec![]);
+            attr.attributes
+                .push(("\u{0}label".into(), label.to_string()));
+            return (before.trim_end_matches(SPACE).to_string(), attr);
         }
         (content.to_string(), Attr::default())
+    }
+
+    /// Tells whether a heading label after `before` is the second part of a
+    /// reference link or of an image (`[a][b]`, `[a] [b]`, `![b]`), which
+    /// the inline parse reads first.
+    fn label_joins_link(&self, before: &str) -> bool {
+        before.ends_with(']')
+            || before.strip_suffix('!').is_some_and(|text| {
+                // An odd number of backslashes escapes the `!`.
+                text.bytes().rev().take_while(|b| *b == b'\\').count() % 2 == 0
+            })
+            || (self.ext(Extension::SpacedReferenceLinks)
+                && before.trim_end_matches(SPACE).ends_with(']'))
     }
 
     // ----- block quotes -----
@@ -2308,11 +2504,11 @@ impl Parser {
                 rest = after.strip_prefix(' ').unwrap_or(after);
                 levels += 1;
             }
-            let inner = [Ln::new(rest, first.n), Ln::new("", 0)];
+            let inner = [first.tail(rest, first.n), Ln::new("", 0)];
             let saved = std::mem::replace(&mut self.in_list, false);
             // Each stripped level counts toward the nesting limit.
             self.depth += levels.saturating_sub(1);
-            let blocks = self.blocks(&inner);
+            let blocks = self.quote_blocks(&inner, first.n);
             self.depth -= levels.saturating_sub(1);
             self.in_list = saved;
             let mut blocks = blocks?;
@@ -2371,7 +2567,8 @@ impl Parser {
         if alert.is_some() {
             inner.remove(0);
         }
-        let blocks = self.blocks(&inner);
+        let last = lines.get(j - 1).map_or(0, |l| l.n);
+        let blocks = self.quote_blocks(&inner, last);
         self.in_list = saved;
         let blocks = blocks?;
         match alert {
@@ -2389,6 +2586,18 @@ impl Parser {
             None => out.push(Block::BlockQuote(blocks)),
         }
         Ok(Some(j))
+    }
+
+    /// Parses the lines of a block quote whose last line is `last`. Oracle
+    /// probes: an unclosed div in it closes 2 lines after that line.
+    fn quote_blocks(&mut self, inner: &[Ln], last: u32) -> Result<Vec<Block>> {
+        let end_line = self.end_line;
+        if last != 0 {
+            self.end_line = last.saturating_add(2);
+        }
+        let blocks = self.blocks(inner);
+        self.end_line = end_line;
+        blocks
     }
 
     // ----- lists -----
@@ -2437,11 +2646,14 @@ impl Parser {
         if !rest_text.is_empty() && spaces == 0 {
             return None;
         }
+        // A capital letter and a period need two spaces after them, also a
+        // numeral with the value of one letter (oracle probes: `IIIII. a` is
+        // a paragraph).
         if let ListKind::Ordered(
             ListNumberStyle::UpperAlpha | ListNumberStyle::UpperRoman,
             ListNumberDelim::Period,
         ) = kind
-            && width == 2
+            && (width == 2 || matches!(start, 5 | 10 | 50 | 100 | 500 | 1000))
             && spaces < 2
             && !rest_text.is_empty()
         {
@@ -2624,7 +2836,7 @@ impl Parser {
             },
         };
         let mut items: Vec<Vec<Block>> = Vec::new();
-        let mut raw_items: Vec<Vec<Ln>> = Vec::new();
+        let mut raw_items: Vec<(Vec<Ln>, Option<u32>)> = Vec::new();
         let mut fences = FenceMemo::default();
         let mut j = 0;
         let mut current = Some(marker);
@@ -2676,20 +2888,27 @@ impl Parser {
                     j += 1;
                     continue;
                 }
+                // Oracle probes: after `100. one` and a blank line, 4 spaces
+                // start a code block after the list and 5 spaces continue
+                // the item. With `four_space_rule`, 4 spaces always continue
+                // the item. An example item (`(@x)`) needs 4 spaces at most.
+                let content = if self.ext(Extension::FourSpaceRule) {
+                    4
+                } else {
+                    match m.kind {
+                        ListKind::Ordered(ListNumberStyle::Example, _) => m.content.min(4),
+                        _ => m.content,
+                    }
+                };
                 let ind = line.indent();
-                if ind >= m.content.min(4) {
-                    item.push(line.dedent(m.content.min(4)));
+                if ind >= content {
+                    item.push(line.dedent(content));
                     prev_blank = false;
                     j += 1;
                     continue;
                 }
-                if !is_hrule(line.t())
-                    && let Some(next) = self.marker(line.t(), None)
-                {
-                    if self.marker(line.t(), Some(kind)).is_some() && ind <= 3 {
-                        current = self.marker(line.t(), Some(kind));
-                        let _ = next;
-                    }
+                if ind <= 3 && !is_hrule(line.t()) && self.marker(line.t(), None).is_some() {
+                    current = self.marker(line.t(), Some(kind));
                     break;
                 }
                 if prev_blank {
@@ -2718,55 +2937,39 @@ impl Parser {
                 item.push(line.dedent(0));
                 j += 1;
             }
-            raw_items.push(item);
+            // An unclosed div of the item closes at the line after it.
+            raw_items.push((item, lines.get(j).map(|l| l.n)));
             if current.is_none() {
                 break;
             }
         }
-        let count = raw_items.len();
-        let loose = raw_items.iter().enumerate().any(|(k, item)| {
-            let Some(last_text) = item.iter().rposition(|l| !l.is_blank()) else {
-                return false;
-            };
-            // A nested list at the end of the item takes the blank lines in
-            // it and after it, so they do not make this list loose.
-            let mut sublist = None;
-            for i in (1..=last_text).rev() {
-                let Some(l) = item.get(i) else { break };
-                if l.indent() < 4
-                    && !is_hrule(l.t())
-                    && let Some(marker) = self.marker(l.t(), None)
-                {
-                    if marker.start == 1 {
-                        sublist = Some(i);
-                    }
-                } else if !(l.is_blank() || l.indent() > 0) {
-                    break;
-                }
-            }
-            // The marker line of an empty item is no blank line of it.
-            let has_inner_blank = item
-                .iter()
-                .take(sublist.unwrap_or(last_text))
-                .skip(1)
-                .any(|l| l.is_blank());
-            has_inner_blank
-                || (k + 1 < count
-                    && sublist.is_none()
-                    && item.iter().skip(last_text).any(|l| l.is_blank()))
-        });
-        for mut item in raw_items {
-            if loose && !item.last().is_some_and(|l| l.is_blank()) {
-                item.push(Ln::new("", 0));
-            }
+        for (item, next_line) in raw_items {
             let saved = std::mem::replace(&mut self.in_list, true);
-            let saved_loose = std::mem::replace(&mut self.loose_list, loose);
+            let end_line = self.end_line;
+            self.end_line = next_line.unwrap_or(end_line);
             let blocks = self.blocks(&item);
             self.in_list = saved;
-            self.loose_list = saved_loose;
-            let mut blocks = blocks?;
-            self.task_box(&mut blocks);
-            items.push(blocks);
+            self.end_line = end_line;
+            items.push(blocks?);
+        }
+        // Oracle probes: only a paragraph that a blank line ends makes the
+        // list loose, not a blank line after a raw HTML block, a nested list
+        // or a code block. Blank lines at the end of the list do not count.
+        let count = items.len();
+        let loose = items.iter().enumerate().any(|(k, blocks)| {
+            blocks.iter().enumerate().any(|(i, b)| {
+                matches!(b, Block::Para(_)) && (k + 1 < count || i + 1 < blocks.len())
+            })
+        });
+        for blocks in &mut items {
+            if loose {
+                for block in blocks.iter_mut() {
+                    if let Block::Plain(xs) = block {
+                        *block = Block::Para(std::mem::take(xs));
+                    }
+                }
+            }
+            self.task_box(blocks);
         }
         let mut attrs = attrs;
         if let Some(n) = first_example {
@@ -2831,7 +3034,7 @@ impl Parser {
         if levels.len() < 2 {
             return Ok(None);
         }
-        let inner = [Ln::new(rest, first.n)];
+        let inner = [first.tail(rest, first.n)];
         let saved = std::mem::replace(&mut self.in_list, true);
         let extra = levels.len().saturating_sub(1);
         self.depth += extra;
@@ -3123,7 +3326,10 @@ impl Parser {
         let inner_end = if closed { j - 1 } else { lines.len() };
         let inner = lines.get(1..inner_end).unwrap_or(&[]);
         let saved = std::mem::replace(&mut self.in_list, false);
-        let blocks = self.blocks_open(inner, true);
+        // An unclosed div ends where the lines end (oracle: `- ::: d`, `x`,
+        // `- y` gives a `Plain`).
+        let end_blank = closed || self.end_blank;
+        let blocks = self.blocks_open(inner, end_blank);
         self.in_list = saved;
         if !closed {
             let open = self.pos(first.n);
@@ -3487,6 +3693,10 @@ impl Parser {
             let saved_inside = std::mem::replace(&mut self.markdown_inside, inside);
             let extra = attrs.len().saturating_sub(1);
             self.depth += extra;
+            // The content ends where the lines end, so a last paragraph is a
+            // `Plain` before an outer closing tag (oracle: `<ol>`, `<li>one`,
+            // `</ol>`).
+            let end_blank = self.end_blank;
             let blocks = if blank(text) {
                 if VOID_TAGS.contains(&name.as_str()) || tag.ends_with("/>") {
                     // An element with no content: only the next line loses
@@ -3497,14 +3707,14 @@ impl Parser {
                 } else {
                     self.gobble = content_indent;
                 }
-                self.blocks_open(following, true)
+                self.blocks_open(following, end_blank)
             } else if let Some(line) = lines.get(tag_lines).filter(|l| l.t().ends_with(text)) {
                 // The content starts after the tag on its line: the line
                 // starts there while the content is read, so the content is
                 // a part of these lines and shares their token index.
                 self.cover_tokens(lines, tag_lines.saturating_sub(1));
                 let saved = line.skip_to(line.t().len() - text.len());
-                let blocks = self.blocks_open(lines.get(tag_lines..).unwrap_or(&[]), true);
+                let blocks = self.blocks_open(lines.get(tag_lines..).unwrap_or(&[]), end_blank);
                 line.restore(saved);
                 blocks
             } else {
@@ -3515,7 +3725,7 @@ impl Parser {
                     first_n_of(lines, tag_lines),
                 )];
                 inner.extend(following.iter().cloned());
-                self.blocks_open(&inner, true)
+                self.blocks_open(&inner, end_blank)
             };
             self.depth -= extra;
             self.in_list = saved;
@@ -4079,30 +4289,27 @@ impl Parser {
         }
         // A table and its caption are two blocks with blank lines between
         // them. Only a table that starts with a dashed line can contain blank
-        // lines, so it gets all lines.
-        let end = if dash_start {
+        // lines, so it gets all lines, also after a caption.
+        let mut k = 0;
+        while lines.get(k).is_some_and(|l| !l.is_blank()) {
+            k += 1;
+        }
+        while lines.get(k).is_some_and(|l| l.is_blank()) {
+            k += 1;
+        }
+        let caption_first = first_trim.starts_with(':')
+            || first_trim.starts_with("Table:")
+            || first_trim.starts_with("table:");
+        let end = if dash_start || (caption_first && lines.get(k).is_some_and(|l| is_dashes(l.t())))
+        {
             lines.len()
         } else {
-            let mut k = 0;
-            while lines.get(k).is_some_and(|l| !l.is_blank()) {
-                k += 1;
-            }
-            while lines.get(k).is_some_and(|l| l.is_blank()) {
-                k += 1;
-            }
             while lines.get(k).is_some_and(|l| !l.is_blank()) {
                 k += 1;
             }
             (k + 1).min(lines.len())
         };
-        let text: Vec<&str> = lines
-            .get(..end)
-            .unwrap_or(&[])
-            .iter()
-            .map(|l| l.t())
-            .collect();
-        crate::step(text.len());
-        let (block, used) = parse_table(&text, &options, self)?;
+        let (block, used) = parse_table(lines.get(..end).unwrap_or(&[]), &options, self)?;
         out.push(block);
         Some(used.max(1))
     }
@@ -4230,6 +4437,11 @@ impl Parser {
         {
             return None;
         }
+        // Oracle probes: `[@x]: u`, `[see @x]: u` and `[\*@x]: u` are
+        // citations.
+        if self.ext(Extension::Citations) && self.is_citation_label(label) {
+            return None;
+        }
         let rest = rest.strip_prefix(':')?;
         let mut text = rest.to_string();
         if blank(&text) {
@@ -4315,7 +4527,7 @@ impl Parser {
                 used += 1;
             }
         }
-        let (title, after) = match title_of(&after) {
+        let (title, mut after) = match title_of(&after) {
             Some((title, rest)) => (title, rest.trim_matches(SPACE).to_string()),
             None => (Text::new(), after),
         };
@@ -4328,6 +4540,22 @@ impl Parser {
             let (found, more) = mmd_pairs("", lines.get(used..).unwrap_or(&[]))?;
             pairs = Some(found);
             used += more;
+        }
+        // Oracle probes: an attribute block can be alone on the next line.
+        // Text after it makes the lines no definition.
+        if pairs.is_none()
+            && after.is_empty()
+            && self.ext(Extension::LinkAttributes)
+            && let Some(next) = lines.get(used).filter(|l| !l.is_blank())
+            && let nt = next.t().trim_matches(SPACE)
+            && nt.starts_with('{')
+            && let Some((_, len)) = self.attr_prefix(nt)
+        {
+            if len != nt.len() {
+                return None;
+            }
+            after = nt.to_string();
+            used += 1;
         }
         let attr = if let Some(pairs) = pairs {
             if !after.is_empty() {
@@ -4496,7 +4724,10 @@ impl Parser {
             self.warn(LogMessage::DuplicateNoteReference(key.clone(), pos));
         }
         self.note_pos.push((key.clone(), self.pos(first.n)));
-        self.notes.insert(key, blocks);
+        let bytes = inner.iter().fold(0u64, |sum, line| {
+            sum.saturating_add(line.t().len() as u64 + 1)
+        });
+        self.notes.insert(key, (blocks, bytes));
         Ok(Some(consumed))
     }
 
@@ -4504,16 +4735,22 @@ impl Parser {
 
     /// Parses `{#id .class key=value}` attributes. The text must be the whole attribute block.
     pub(crate) fn parse_attr(&self, text: &str) -> Option<Attr> {
+        let (attr, used) = self.attr_prefix(text)?;
+        (used == text.len()).then_some(attr)
+    }
+
+    /// Parses an attribute block at the start of `text`. Returns it and its
+    /// byte length.
+    fn attr_prefix(&self, text: &str) -> Option<(Attr, usize)> {
         let all = self.ext(Extension::AllSymbolsEscapable);
         let angles = self.ext(Extension::AngleBracketsEscapable);
-        let (attr, used) = crate::inline::parse_attributes(text, |b| {
+        crate::inline::parse_attributes(text, |b| {
             if all {
                 b.is_ascii_punctuation()
             } else {
                 b"\\`*_{}[]()>#+-.!".contains(&b) || (angles && b == b'<')
             }
-        })?;
-        (used == text.len()).then_some(attr)
+        })
     }
 
     // ----- the inline phase -----
@@ -4563,6 +4800,11 @@ impl Parser {
             .position(|(k, _)| k == "\u{0}raw")
             .map(|p| attr.attributes.remove(p).1)
             .unwrap_or_default();
+        let label = attr
+            .attributes
+            .iter()
+            .position(|(k, _)| k == "\u{0}label")
+            .map(|p| attr.attributes.remove(p).1);
         if attr.id.is_empty() {
             if self.ext(Extension::AutoIdentifiers) {
                 let base = if raw_text.contains('[') {
@@ -4578,10 +4820,17 @@ impl Parser {
             self.warn(LogMessage::DuplicateIdentifier(attr.id.clone(), pos));
         }
         if self.ext(Extension::ImplicitHeaderReferences) {
-            let key = normalize_key(&raw_text);
             let target = Target::new(format!("#{}", attr.id), "");
-            self.longest_key = self.longest_key.max(key.chars().count());
-            self.header_refs.entry(key).or_insert(target);
+            for text in [Some(raw_text), label].into_iter().flatten() {
+                let key = normalize_key(&text);
+                if key.is_empty() {
+                    continue;
+                }
+                self.longest_key = self.longest_key.max(key.chars().count());
+                self.header_refs
+                    .entry(key)
+                    .or_insert_with(|| target.clone());
+            }
         }
     }
 
@@ -4602,7 +4851,7 @@ impl Parser {
     /// Runs `f` and then restores the note number, the used notes, the
     /// messages and the failure counts, so that a parse made only for an
     /// identifier leaves no trace.
-    fn without_effects<R>(&mut self, f: impl FnOnce(&mut Self) -> R) -> R {
+    pub(crate) fn without_effects<R>(&mut self, f: impl FnOnce(&mut Self) -> R) -> R {
         let note_number = self.note_number;
         let used_notes = self.used_notes.len();
         let log = self.log.len();
@@ -4620,6 +4869,25 @@ impl Parser {
             self.block_tag_cuts,
             self.crossing_closers,
         ) = counts;
+        out
+    }
+
+    /// Returns the format of an explicit raw element (`{=html}`): a raw HTML
+    /// comment that `--strip-comments` keeps takes `KEPT_HTML`.
+    pub(crate) fn raw_format(&mut self, format: &str, text: &str) -> Format {
+        if self.strip_comments && format == "html" && crate::inline::is_one_comment(text) {
+            self.kept_html = true;
+            Format::new(crate::inline::KEPT_HTML)
+        } else {
+            Format::new(format)
+        }
+    }
+
+    /// Runs `f` as `without_effects` does, with `counting` set.
+    pub(crate) fn count_only<R>(&mut self, f: impl FnOnce(&mut Self) -> R) -> R {
+        let saved = std::mem::replace(&mut self.counting, true);
+        let out = self.without_effects(f);
+        self.counting = saved;
         out
     }
 
@@ -4667,7 +4935,16 @@ impl Parser {
             return blocks;
         }
         self.depth += 1;
-        let out = blocks.into_iter().map(|b| self.resolve_block(b)).collect();
+        let strip = self.strip_comments;
+        let mut out = Vec::new();
+        for block in blocks {
+            if !self.can_read() {
+                break;
+            }
+            if !(strip && crate::inline::is_comment_block(&block)) {
+                out.push(self.resolve_block(block));
+            }
+        }
         self.depth -= 1;
         out
     }
@@ -4726,7 +5003,10 @@ impl Parser {
             "\\newenvironment",
             "\\renewenvironment",
         ];
-        if self.ext(Extension::LatexMacros) && DEFINITIONS.iter().any(|d| raw.contains(d)) {
+        if !self.counting
+            && self.ext(Extension::LatexMacros)
+            && DEFINITIONS.iter().any(|d| raw.contains(d))
+        {
             crate::step(raw.len());
             self.macros.define(raw);
         }
@@ -4846,10 +5126,27 @@ impl Parser {
                     out.extend(self.parse_inlines(&text));
                     self.inline_directory = previous;
                 }
+                // A raw TeX block of the metadata is a raw inline here. Its
+                // macro definitions apply to the body (oracle: 4667).
+                Inline::RawInline(format, text) if format.as_str() == "tex" => {
+                    self.define_macros(&text);
+                    out.push(Inline::RawInline(format, text));
+                }
                 other => out.push(other),
             }
         }
-        crate::inline::normalize(out)
+        let out = crate::inline::normalize(out);
+        if !self.strip_comments {
+            return out;
+        }
+        // Oracle: a paragraph loses the white space at its ends after the
+        // comments go away. A cell of a pipe table keeps it.
+        let out = crate::inline::strip_comments(out);
+        if self.inline_cells {
+            out
+        } else {
+            crate::inline::normalize(out)
+        }
     }
 
     fn resolve_meta(&mut self, value: MetaValue) -> MetaValue {
@@ -5156,6 +5453,32 @@ fn mmd_attr(pairs: Vec<(Text, Text)>) -> Attr {
         }
     }
     attr
+}
+
+/// Returns the text before a MultiMarkdown heading label and the label: the
+/// bracket group that ends `s`, with nested brackets and escapes (oracle
+/// probes: `E [[b]]` gives `[b]`, `E [b\]]` gives `b\]`).
+fn mmd_label(s: &str) -> Option<(&str, &str)> {
+    let body = s.trim_end_matches(SPACE).strip_suffix(']')?;
+    let mut opens = Vec::new();
+    let mut escaped = false;
+    for (i, b) in body.bytes().enumerate() {
+        crate::step(1);
+        if escaped {
+            escaped = false;
+            continue;
+        }
+        match b {
+            b'\\' => escaped = true,
+            b'[' => opens.push(i),
+            b']' => {
+                opens.pop();
+            }
+            _ => {}
+        }
+    }
+    let open = *opens.last().filter(|_| !escaped)?;
+    Some((body.get(..open)?, body.get(open + 1..)?))
 }
 
 /// Returns the label inside `[...]` at the start of `s` and the text after `]`.

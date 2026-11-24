@@ -91,15 +91,6 @@ impl RunProps {
                         p.highlight = Some(!v.eq_ignore_ascii_case("none"));
                     }
                 }
-                "rFonts" => {
-                    if let Some(f) = ns
-                        .w_attr(child, "ascii")
-                        .or_else(|| ns.w_attr(child, "hAnsi"))
-                        .or_else(|| ns.w_attr(child, "cs"))
-                    {
-                        p.font = Some(Text::from(f));
-                    }
-                }
                 "rStyle" => {
                     if let Some(v) = ns.w_attr(child, "val") {
                         p.style_id = Some(Text::from(v));
@@ -108,6 +99,13 @@ impl RunProps {
                 _ => {}
             }
         }
+        p.font = first_fonts(el, ns)
+            .and_then(|fonts| {
+                ns.w_attr(fonts, "ascii")
+                    .or_else(|| ns.w_attr(fonts, "hAnsi"))
+                    .or_else(|| ns.w_attr(fonts, "cs"))
+            })
+            .map(Text::from);
         p
     }
 
@@ -149,6 +147,22 @@ impl RunProps {
             self.font = other.font.clone();
         }
     }
+}
+
+/// Returns the first `w:rFonts` element at any depth under `el`, in document
+/// order. Pandoc also finds the fonts inside `mc:AlternateContent` this way.
+fn first_fonts<'a>(el: &'a XmlElement, ns: &DocxNs) -> Option<&'a XmlElement> {
+    let mut stack: Vec<&XmlElement> = el.elements().collect();
+    stack.reverse();
+    while let Some(next) = stack.pop() {
+        if ns.is_w(next, "rFonts") {
+            return Some(next);
+        }
+        let start = stack.len();
+        stack.extend(next.elements());
+        stack[start..].reverse();
+    }
+    None
 }
 
 /// Numbering reference (`w:numPr`).
@@ -404,8 +418,10 @@ impl StyleSheet {
                 names.push(Text::from(id));
             }
         }
-        let style_left =
-            resolved_p.indent_left.unwrap_or(0) - resolved_p.indent_hanging.unwrap_or(0);
+        let style_left = resolved_p
+            .indent_left
+            .unwrap_or(0)
+            .saturating_sub(resolved_p.indent_hanging.unwrap_or(0));
         resolved_p.overlay(direct);
         resolved_p.has_explicit_style = direct.has_explicit_style;
         resolved_p.direct_indent_left = direct.direct_indent_left;

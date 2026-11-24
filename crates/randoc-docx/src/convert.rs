@@ -140,8 +140,12 @@ pub fn read_docx(bytes: &[u8], options: &ReaderOptions, context: &mut Context) -
         meta.insert("references", MetaValue::MetaList(references));
     }
     apply_identifiers_and_bookmarks(&mut blocks, options);
+    let mut doc = Pandoc { meta, blocks };
+    if options.track_changes == TrackChanges::AllChanges {
+        nest_comment_ends(&mut doc, context.limits.max_nesting_depth);
+    }
 
-    Ok(Pandoc { meta, blocks })
+    Ok(doc)
 }
 
 fn extract_page_width(body: &XmlElement, ns: &DocxNs) -> f64 {
@@ -411,12 +415,34 @@ struct ParsedPara {
     style_names: Vec<Text>,
     inlines: Vec<Inline>,
     mark_change: ParaMarkChange,
-    has_seq_table: bool,
     has_seq_any: bool,
     is_bibl_start: bool,
     is_bibl_end: bool,
     extra_blocks: Vec<Block>,
     caption_blocks: Vec<Block>,
+    /// A `HorizontalRule` follows the block of the paragraph: the paragraph
+    /// has a direct bottom border, or it is a VML rule. An empty paragraph
+    /// with a rule gives only the rule. Headings and metadata paragraphs
+    /// do not get the rule.
+    rule: bool,
+}
+
+impl ParsedPara {
+    /// An empty paragraph that gives only a `HorizontalRule`.
+    fn rule_only() -> Self {
+        Self {
+            props: ParaProps::default(),
+            style_names: Vec::new(),
+            inlines: Vec::new(),
+            mark_change: ParaMarkChange::None,
+            has_seq_any: false,
+            is_bibl_start: false,
+            is_bibl_end: false,
+            extra_blocks: Vec::new(),
+            caption_blocks: Vec::new(),
+            rule: true,
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -644,8 +670,20 @@ impl<'a, 'b> Converter<'a, 'b> {
         let mut extra_blocks = Vec::new();
         let mut caption_blocks = Vec::new();
 
-        for child in el.elements() {
-            if ns.is_w(child, "pPr") {
+        // In a caption, Pandoc drops the content up to the end of the first
+        // simple label field (for example "Table 1"). The bookmarks stay.
+        let label_end = if is_caption_style(&style_names) {
+            el.elements().position(|child| {
+                ns.is_w(child, "fldSimple")
+                    && ns.w_attr(child, "instr").is_some_and(is_caption_label)
+            })
+        } else {
+            None
+        };
+        for (index, child) in el.elements().enumerate() {
+            if ns.is_w(child, "pPr")
+                || label_end.is_some_and(|end| index <= end && !ns.is_w(child, "bookmarkStart"))
+            {
                 continue;
             }
             if ns.is_m(child, "oMathPara") {
@@ -690,17 +728,21 @@ impl<'a, 'b> Converter<'a, 'b> {
             }
         }
 
+        let bottom_border = p_pr_el
+            .and_then(|p| ns.w_child(p, "pBdr"))
+            .and_then(|borders| ns.w_child(borders, "bottom"))
+            .is_some();
         Ok(ParsedPara {
             props,
             style_names,
             inlines,
             mark_change,
-            has_seq_table: seq_info.has_table,
             has_seq_any: seq_info.has_any,
             is_bibl_start: seq_info.is_bibl_start,
             is_bibl_end: seq_info.is_bibl_end,
             extra_blocks,
             caption_blocks,
+            rule: bottom_border || is_vml_rule(el, ns),
         })
     }
 
@@ -1038,6 +1080,19 @@ impl<'a, 'b> Converter<'a, 'b> {
         extra_blocks: &mut Vec<Block>,
         caption_blocks: &mut Vec<Block>,
     ) -> Result<()> {
+        // Pandoc reads a run that holds `mc:AlternateContent` as the
+        // `mc:Fallback` of the first such element, one time: the other
+        // children of the run and its properties do not count. Without that
+        // fallback, the run is an ordinary run.
+        let el = el
+            .elements()
+            .find(|child| is_mc(child, "AlternateContent"))
+            .and_then(|alternate| {
+                alternate
+                    .elements()
+                    .find(|branch| is_mc(branch, "Fallback"))
+            })
+            .unwrap_or(el);
         let direct_r = ns
             .w_child(el, "rPr")
             .map(|p| RunProps::parse(p, ns))
@@ -1546,11 +1601,6 @@ impl<'a, 'b> Converter<'a, 'b> {
 
         if upper.starts_with("SEQ ") {
             seq.has_any = true;
-            let rest = trimmed[4..].trim_start();
-            let ident = rest.split_whitespace().next().unwrap_or("");
-            if ident.eq_ignore_ascii_case("Table") {
-                seq.has_table = true;
-            }
             return result;
         }
 
@@ -1884,7 +1934,10 @@ impl<'a, 'b> Converter<'a, 'b> {
             })
             .unwrap_or(false);
 
+        // A grid column width that is not an integer makes all the widths
+        // default; a zero width makes only its column default.
         let mut grid_widths: Vec<f64> = Vec::new();
+        let mut grid_widths_valid = true;
         if let Some(grid) = ns.w_child(tbl, "tblGrid") {
             let max_cells = self.context.limits.max_table_cells;
             for col in ns.w_children(grid, "gridCol") {
@@ -1893,11 +1946,9 @@ impl<'a, 'b> Converter<'a, 'b> {
                         "DOCX table column count exceeded limit of {max_cells}"
                     )));
                 }
-                let w = ns
-                    .w_attr(col, "w")
-                    .and_then(|s| s.parse::<f64>().ok())
-                    .unwrap_or(0.0);
-                grid_widths.push(w);
+                let w = ns.w_attr(col, "w").and_then(parse_grid_width);
+                grid_widths_valid &= w.is_some();
+                grid_widths.push(w.unwrap_or(0.0));
             }
         }
 
@@ -1919,7 +1970,6 @@ impl<'a, 'b> Converter<'a, 'b> {
         }
 
         let mut raw_rows: Vec<RawRow> = Vec::new();
-        let mut max_cols = grid_widths.len();
         let mut table_explicit_cells = 0usize;
 
         let tr_elems = collect_table_children(tbl, ns, "tr");
@@ -1940,7 +1990,6 @@ impl<'a, 'b> Converter<'a, 'b> {
                 .unwrap_or(0);
 
             let mut cells = Vec::new();
-            let mut row_cols = 0usize;
 
             if grid_before > 0 {
                 self.charge_table_cells(grid_before)?;
@@ -1953,7 +2002,6 @@ impl<'a, 'b> Converter<'a, 'b> {
                         align: Alignment::AlignDefault,
                     });
                 }
-                row_cols = row_cols.saturating_add(grid_before);
             }
 
             let tc_elems = collect_table_children(tr, ns, "tc");
@@ -1991,7 +2039,6 @@ impl<'a, 'b> Converter<'a, 'b> {
                 let cell_align = infer_cell_alignment(&items);
                 let blocks = self.build_blocks(items, false, true)?;
 
-                row_cols = row_cols.saturating_add(col_span);
                 cells.push(RawCell {
                     blocks,
                     col_span,
@@ -2011,18 +2058,77 @@ impl<'a, 'b> Converter<'a, 'b> {
                         align: Alignment::AlignDefault,
                     });
                 }
-                row_cols = row_cols.saturating_add(grid_after);
             }
 
-            max_cols = max_cols.max(row_cols);
             raw_rows.push(RawRow {
                 is_header: explicit_hdr,
                 cells,
             });
         }
 
-        // Convert single-Para cells to Plain ONLY when every cell in the entire
-        // table has at most one simple paragraph (oracle-verified).
+        let any_explicit_header = raw_rows.iter().any(|r| r.is_header);
+        if !any_explicit_header && tbl_look_first_row && !raw_rows.is_empty() {
+            raw_rows[0].is_header = true;
+        }
+        // Pandoc puts in the head the rows before the first header row, then
+        // each header row. The body keeps the other rows, in order.
+        let first_header = raw_rows.iter().position(|r| r.is_header).unwrap_or(0);
+        for row in &mut raw_rows[..first_header] {
+            row.is_header = true;
+        }
+        // A row that continues a vertical merge stays with the header row
+        // before it in the document.
+        let mut previous_is_header = false;
+        for row in &mut raw_rows {
+            row.is_header |=
+                previous_is_header && row.cells.iter().any(|c| c.v_merge == VMerge::Continue);
+            previous_is_header = row.is_header;
+        }
+        raw_rows.sort_by_key(|row| !row.is_header);
+        let num_rows = raw_rows.len();
+        let header_count = raw_rows.iter().take_while(|r| r.is_header).count();
+
+        // Pandoc gives the table the columns of the first body row (else of
+        // the first row), at most as many as the grid has. It pads or cuts
+        // each row to that width.
+        let row_width = raw_rows
+            .get(header_count)
+            .or_else(|| raw_rows.first())
+            .map_or(0, |row| {
+                row.cells
+                    .iter()
+                    .fold(0usize, |width, cell| width.saturating_add(cell.col_span))
+            });
+        let max_cols = if grid_widths.is_empty() {
+            row_width
+        } else {
+            row_width.min(grid_widths.len())
+        };
+        let grid_slots = num_rows.saturating_mul(max_cols);
+        let implicit_grid_cells = grid_slots.saturating_sub(table_explicit_cells);
+        if implicit_grid_cells > 0 {
+            self.charge_table_cells(implicit_grid_cells)?;
+        }
+        for row in &mut raw_rows {
+            let mut width = 0usize;
+            row.cells.retain_mut(|cell| {
+                let room = max_cols.saturating_sub(width);
+                cell.col_span = cell.col_span.min(room);
+                width += cell.col_span;
+                room > 0
+            });
+            for _ in width..max_cols {
+                row.cells.push(RawCell {
+                    blocks: Vec::new(),
+                    col_span: 1,
+                    v_merge: VMerge::None,
+                    align: Alignment::AlignDefault,
+                });
+            }
+        }
+
+        // Convert single-Para cells to Plain ONLY when every cell that the
+        // table keeps has at most one simple paragraph (oracle-verified).
         let all_simple_cells = raw_rows.iter().all(|r| {
             r.cells.iter().all(|c| {
                 c.blocks.is_empty()
@@ -2039,18 +2145,6 @@ impl<'a, 'b> Converter<'a, 'b> {
                     }
                 }
             }
-        }
-
-        let any_explicit_header = raw_rows.iter().any(|r| r.is_header);
-        if !any_explicit_header && tbl_look_first_row && !raw_rows.is_empty() {
-            raw_rows[0].is_header = true;
-        }
-
-        let num_rows = raw_rows.len();
-        let grid_slots = num_rows.saturating_mul(max_cols);
-        let implicit_grid_cells = grid_slots.saturating_sub(table_explicit_cells);
-        if implicit_grid_cells > 0 {
-            self.charge_table_cells(implicit_grid_cells)?;
         }
         let mut grid_map: Vec<Vec<Option<usize>>> = vec![vec![None; max_cols]; num_rows];
         let mut row_spans: Vec<Vec<usize>> = raw_rows
@@ -2074,20 +2168,6 @@ impl<'a, 'b> Converter<'a, 'b> {
             }
         }
 
-        // Determine header row count; extend header if a header cell's vMerge continues into the next row.
-        let mut header_count = raw_rows.iter().take_while(|r| r.is_header).count();
-        while header_count > 0 && header_count < num_rows {
-            let next_continues = raw_rows[header_count]
-                .cells
-                .iter()
-                .any(|c| c.v_merge == VMerge::Continue);
-            if next_continues {
-                header_count += 1;
-            } else {
-                break;
-            }
-        }
-
         for &(start_r, end_r) in &[(0usize, header_count), (header_count, num_rows)] {
             for c_pos in 0..max_cols {
                 let mut anchor: Option<(usize, usize)> = None;
@@ -2097,10 +2177,15 @@ impl<'a, 'b> Converter<'a, 'b> {
                         continue;
                     };
                     if c_pos > 0 && grid_map[r_idx][c_pos - 1] == Some(c_idx) {
+                        // A cell that spans this column from the left ends
+                        // the merge in this column.
+                        anchor = None;
                         continue;
                     }
+                    // A continuation joins the cell above it, whatever the
+                    // merge value of that cell.
                     match raw_rows[r_idx].cells[c_idx].v_merge {
-                        VMerge::Restart => {
+                        VMerge::Restart | VMerge::None => {
                             anchor = Some((r_idx, c_idx));
                         }
                         VMerge::Continue => {
@@ -2108,9 +2193,6 @@ impl<'a, 'b> Converter<'a, 'b> {
                                 row_spans[ar][ac] += 1;
                                 skip_cell[r_idx][c_idx] = true;
                             }
-                        }
-                        VMerge::None => {
-                            anchor = None;
                         }
                     }
                 }
@@ -2128,13 +2210,12 @@ impl<'a, 'b> Converter<'a, 'b> {
             }
         }
 
-        // Exact Pandoc 3.13 ColWidth formula:
+        // Exact Pandoc 3.13 ColWidth formula, over the whole grid:
         // fracs = [w / (page_width - 10*(n-1))], normalized by sum(fracs) if sum(fracs) > 1.0.
-        let col_widths: Vec<ColWidth> = if grid_widths.len() == max_cols
-            && !grid_widths.is_empty()
-            && grid_widths.iter().all(|&w| w > 0.0)
-        {
-            let base = (self.page_width - 10.0 * ((max_cols.saturating_sub(1)) as f64)).max(1.0);
+        // The table keeps the first `max_cols` of them; a zero width is the default.
+        let col_widths: Vec<ColWidth> = if !grid_widths.is_empty() && grid_widths_valid {
+            let columns = grid_widths.len();
+            let base = (self.page_width - 10.0 * ((columns.saturating_sub(1)) as f64)).max(1.0);
             let mut fracs: Vec<f64> = grid_widths.iter().map(|&w| w / base).collect();
             let total: f64 = fracs.iter().sum();
             if total > 1.0 {
@@ -2142,7 +2223,17 @@ impl<'a, 'b> Converter<'a, 'b> {
                     *f /= total;
                 }
             }
-            fracs.into_iter().map(ColWidth::ColWidth).collect()
+            fracs.truncate(max_cols);
+            fracs
+                .into_iter()
+                .map(|f| {
+                    if f == 0.0 {
+                        ColWidth::ColWidthDefault
+                    } else {
+                        ColWidth::ColWidth(f)
+                    }
+                })
+                .collect()
         } else {
             vec![ColWidth::ColWidthDefault; max_cols]
         };
@@ -2192,8 +2283,16 @@ impl<'a, 'b> Converter<'a, 'b> {
             body: body_rows,
         }];
 
+        // With `+styles`, Pandoc keeps the table style ID (not its name).
+        let attr = tbl_pr
+            .and_then(|p| ns.w_child(p, "tblStyle"))
+            .and_then(|style| ns.w_attr(style, "val"))
+            .filter(|_| self.keep_styles())
+            .map_or_else(Attr::default, |style| {
+                Attr::new("", vec![], vec![("custom-style".into(), style.into())])
+            });
         let block = Block::Table(Box::new(Table {
-            attr: Attr::default(),
+            attr,
             caption: Caption::default(),
             col_specs,
             head,
@@ -2253,11 +2352,10 @@ impl<'a, 'b> Converter<'a, 'b> {
                     let mut tbl = tbl.clone();
                     // Check for trailing caption paragraph immediately after table.
                     if let Some(BodyItem::Para(next_p)) = merged.get(idx + 1)
-                        && (is_caption_style(&next_p.style_names) || next_p.has_seq_table)
-                        && !next_p.inlines.is_empty()
+                        && is_caption_style(&next_p.style_names)
                     {
                         if let Block::Table(table) = &mut tbl {
-                            table.caption.long = vec![Block::Para(next_p.inlines.clone())];
+                            table.caption.long = caption_blocks(next_p);
                         }
                         blocks.push(tbl);
                         blocks.extend(next_p.extra_blocks.clone());
@@ -2271,7 +2369,7 @@ impl<'a, 'b> Converter<'a, 'b> {
                     let extra = p.extra_blocks.clone();
 
                     // 1. Table caption immediately before a table.
-                    if (is_caption_style(&p.style_names) || p.has_seq_table)
+                    if is_caption_style(&p.style_names)
                         && let Some(BodyItem::Table(mut tbl, list_level)) =
                             merged.get(idx + 1).cloned()
                     {
@@ -2279,7 +2377,7 @@ impl<'a, 'b> Converter<'a, 'b> {
                             reset_deeper_lists(&mut list_counters, level);
                         }
                         if let Block::Table(table) = &mut tbl {
-                            table.caption.long = vec![Block::Para(p.inlines.clone())];
+                            table.caption.long = caption_blocks(p);
                         }
                         blocks.push(tbl);
                         blocks.extend(extra);
@@ -2319,14 +2417,19 @@ impl<'a, 'b> Converter<'a, 'b> {
                                 Attr::new("", vec![], vec![("custom-style".into(), name.into())]),
                                 vec![Block::CodeBlock(Attr::default(), code)],
                             ));
+                            if p.rule {
+                                blocks.push(Block::HorizontalRule);
+                            }
                             blocks.extend(extra);
                             idx += 1;
                         } else {
                             let mut lines = vec![stringify(&p.inlines)];
                             let mut end = idx + 1;
-                            while let Some(BodyItem::Para(next_p)) = merged.get(end) {
+                            let mut rule = p.rule;
+                            while !rule && let Some(BodyItem::Para(next_p)) = merged.get(end) {
                                 if is_source_code_style(&next_p.style_names) {
                                     lines.push(stringify(&next_p.inlines));
+                                    rule = next_p.rule;
                                     end += 1;
                                 } else {
                                     break;
@@ -2336,6 +2439,9 @@ impl<'a, 'b> Converter<'a, 'b> {
                             let joined = lines.join("\n");
                             if !joined.is_empty() || self.empty_paragraphs() {
                                 blocks.push(Block::CodeBlock(Attr::default(), joined));
+                            }
+                            if rule {
+                                blocks.push(Block::HorizontalRule);
                             }
                             blocks.extend(extra);
                             idx = end;
@@ -2347,7 +2453,9 @@ impl<'a, 'b> Converter<'a, 'b> {
                     let effective_inlines = trim_para_edges(p.inlines.clone());
                     if effective_inlines.is_empty() {
                         blocks.extend(extra);
-                        if self.empty_paragraphs() {
+                        if p.rule {
+                            blocks.push(Block::HorizontalRule);
+                        } else if self.empty_paragraphs() {
                             blocks.push(Block::Para(Vec::new()));
                         }
                         idx += 1;
@@ -2414,10 +2522,12 @@ impl<'a, 'b> Converter<'a, 'b> {
                         let style_name = primary_style_name(&p.style_names).map(str::to_owned);
                         let explicit = p.props.has_explicit_style;
                         let mut end = idx + 1;
+                        let mut rule = p.rule;
                         if !self.keep_styles() {
-                            while let Some(BodyItem::Para(next_p)) = merged.get(end) {
+                            while !rule && let Some(BodyItem::Para(next_p)) = merged.get(end) {
                                 if is_blockquote_para(next_p) && !next_p.inlines.is_empty() {
                                     quote_paras.push(Block::Para(next_p.inlines.clone()));
+                                    rule = next_p.rule;
                                     end += 1;
                                 } else {
                                     break;
@@ -2436,6 +2546,9 @@ impl<'a, 'b> Converter<'a, 'b> {
                             ));
                         } else {
                             blocks.push(bq);
+                        }
+                        if rule {
+                            blocks.push(Block::HorizontalRule);
                         }
                         blocks.extend(extra);
                         idx = end;
@@ -2461,6 +2574,9 @@ impl<'a, 'b> Converter<'a, 'b> {
                         ));
                     } else {
                         blocks.push(para);
+                    }
+                    if p.rule {
+                        blocks.push(Block::HorizontalRule);
                     }
                     idx += 1;
                 }
@@ -2495,21 +2611,25 @@ impl<'a, 'b> Converter<'a, 'b> {
                             _ => MergeMode::None,
                         }
                     };
+                    let mut drop_cap_rule = false;
                     if mode != MergeMode::None
                         && let Some(BodyItem::Para(prev)) = out.last_mut()
                     {
                         if mode == MergeMode::WithSpace
                             && !prev.inlines.is_empty()
                             && !p.inlines.is_empty()
-                            && !matches!(prev.inlines.last(), Some(Inline::Space))
-                            && !matches!(p.inlines.first(), Some(Inline::Space))
+                            && !prev.inlines.last().is_some_and(is_space)
+                            && !p.inlines.first().is_some_and(is_space)
                         {
                             prev.inlines.push(Inline::Space);
                         }
                         if mode == MergeMode::Direct {
                             // Keep target paragraph's properties (dropcap inherits body para props).
+                            // The rule of the target follows the merged block; the rule of the
+                            // drop cap comes before it.
                             prev.props = p.props;
                             prev.style_names = p.style_names;
+                            drop_cap_rule = std::mem::replace(&mut prev.rule, p.rule);
                         }
                         for inl in p.inlines {
                             push_normalized_inline(&mut prev.inlines, inl);
@@ -2517,6 +2637,12 @@ impl<'a, 'b> Converter<'a, 'b> {
                         prev.extra_blocks.extend(p.extra_blocks);
                         prev.caption_blocks.extend(p.caption_blocks);
                         mode = next_mode;
+                        if drop_cap_rule {
+                            out.insert(
+                                out.len().saturating_sub(1),
+                                BodyItem::Para(ParsedPara::rule_only()),
+                            );
+                        }
                     } else {
                         p.inlines = normalize_inline_list(p.inlines);
                         out.push(BodyItem::Para(p));
@@ -2618,6 +2744,10 @@ impl<'a, 'b> Converter<'a, 'b> {
         };
 
         let mut item_count = 0i64;
+        // The left indent of the paragraph of the open item: its direct
+        // indent, else the indent of its list level, else the indent of its
+        // style. `None` (no indent) does not match an explicit zero.
+        let mut item_indent = None;
         while idx < items.len() {
             let BodyItem::Para(p) = &items[idx] else {
                 break;
@@ -2668,8 +2798,16 @@ impl<'a, 'b> Converter<'a, 'b> {
                         Block::Para(inlines)
                     };
                     let mut entry = vec![block];
+                    if p.rule {
+                        entry.push(Block::HorizontalRule);
+                    }
                     entry.extend(p.extra_blocks.clone());
                     list_items.push(entry);
+                    item_indent = p
+                        .props
+                        .direct_indent_left
+                        .or_else(|| self.numbering.indent(&num_id, ilvl))
+                        .or(p.props.indent_left);
                     item_count += 1;
                     idx += 1;
                 } else {
@@ -2690,12 +2828,13 @@ impl<'a, 'b> Converter<'a, 'b> {
                     idx = next_idx;
                 }
             } else if !self.empty_paragraphs()
+                && !p.rule
                 && p.extra_blocks.is_empty()
                 && !p.is_bibl_start
                 && !is_source_code_style(&p.style_names)
                 && p.inlines
                     .iter()
-                    .all(|inline| matches!(inline, Inline::Space | Inline::LineBreak))
+                    .all(|inline| is_space(inline) || matches!(inline, Inline::LineBreak))
             {
                 idx += 1;
             } else if !p.inlines.is_empty()
@@ -2705,16 +2844,22 @@ impl<'a, 'b> Converter<'a, 'b> {
                     .num_pr
                     .as_ref()
                     .is_some_and(|np| np.num_id == "0" || np.ilvl >= root_ilvl)
-                    || p.props.direct_indent_left.is_some_and(|l| l > 0))
+                    || (p.props.indent_left.is_some() && p.props.indent_left == item_indent))
                 && let Some(last) = list_items.last_mut()
             {
-                // Continuation paragraph inside a list item (deleted bullet, dummy bullet, or indented follow-up).
+                // Continuation paragraph inside a list item (deleted bullet,
+                // dummy bullet, or follow-up whose direct or style indent is
+                // the indent of the open item: an outer level takes the
+                // indent of its own item).
                 let cont = if is_compact_style(&p.style_names) {
                     Block::Plain(p.inlines.clone())
                 } else {
                     Block::Para(p.inlines.clone())
                 };
                 last.push(cont);
+                if p.rule {
+                    last.push(Block::HorizontalRule);
+                }
                 last.extend(p.extra_blocks.clone());
                 idx += 1;
             } else {
@@ -2747,7 +2892,6 @@ impl<'a, 'b> Converter<'a, 'b> {
 
 #[derive(Default)]
 struct SeqInfo {
-    has_table: bool,
     has_any: bool,
     is_bibl_start: bool,
     is_bibl_end: bool,
@@ -2820,6 +2964,34 @@ fn decode_pua_text(text: &str, font: Option<&str>) -> Text {
         }
     }
     out
+}
+
+/// Returns `true` for the paragraph that Pandoc writes for a horizontal rule:
+/// no paragraph properties, and one run that holds one `w:pict` with one
+/// `v:rect`.
+fn is_vml_rule(el: &XmlElement, ns: &DocxNs) -> bool {
+    only_element(el)
+        .filter(|run| ns.is_w(run, "r"))
+        .and_then(only_element)
+        .filter(|pict| ns.is_w(pict, "pict"))
+        .and_then(only_element)
+        .is_some_and(|rect| is_v(rect, "rect"))
+}
+
+/// Returns `true` for the field of a caption label: `SEQ Table` or
+/// `SEQ Figure`. Pandoc keeps the label of another sequence, for example
+/// `SEQ Figur`.
+fn is_caption_label(instr: &str) -> bool {
+    let mut words = instr.split_whitespace();
+    words
+        .next()
+        .is_some_and(|word| word.eq_ignore_ascii_case("SEQ"))
+        && matches!(words.next(), Some("Table" | "Figure"))
+}
+
+fn only_element(el: &XmlElement) -> Option<&XmlElement> {
+    let mut elements = el.elements();
+    elements.next().filter(|_| elements.next().is_none())
 }
 
 fn is_image_only_inlines(inlines: &[Inline]) -> bool {
@@ -2928,19 +3100,19 @@ fn tokenize_plain_inlines(text: &str) -> Vec<Inline> {
 fn tokenize_text_preserving_edges(text: &str) -> Vec<Inline> {
     let mut out = Vec::new();
     let mut buf = String::new();
-    let mut in_space = false;
 
     for ch in text.chars() {
         if matches!(ch, ' ' | '\t' | '\n' | '\r') {
             if !buf.is_empty() {
                 out.push(Inline::Str(std::mem::take(&mut buf)));
             }
-            if !in_space {
-                out.push(Inline::Space);
-                in_space = true;
-            }
+            let space = if matches!(ch, '\n' | '\r') {
+                Inline::SoftBreak
+            } else {
+                Inline::Space
+            };
+            push_merging_space(&mut out, space);
         } else {
-            in_space = false;
             buf.push(ch);
         }
     }
@@ -2948,6 +3120,23 @@ fn tokenize_text_preserving_edges(text: &str) -> Vec<Inline> {
         out.push(Inline::Str(buf));
     }
     out
+}
+
+fn is_space(inline: &Inline) -> bool {
+    matches!(inline, Inline::Space | Inline::SoftBreak)
+}
+
+/// Pushes `inline` and merges adjacent white space, as Pandoc does: a
+/// `SoftBreak` takes the place of a `Space`.
+fn push_merging_space(out: &mut Vec<Inline>, inline: Inline) {
+    match (out.last_mut(), inline) {
+        (Some(last), next) if is_space(last) && is_space(&next) => {
+            if matches!(next, Inline::SoftBreak) {
+                *last = next;
+            }
+        }
+        (_, other) => out.push(other),
+    }
 }
 
 fn flatten_code_inlines(items: &[RawInline]) -> Vec<Inline> {
@@ -3026,11 +3215,10 @@ fn push_normalized_inline(out: &mut Vec<Inline>, inl: Inline) {
 
     match (out.last_mut(), inl) {
         (Some(Inline::Str(prev)), Inline::Str(next)) => prev.push_str(&next),
-        (Some(Inline::Space), Inline::Space) => {}
         (Some(Inline::Code(a1, s1)), Inline::Code(a2, s2)) if *a1 == a2 => {
             s1.push_str(&s2);
         }
-        (_, other) => out.push(other),
+        (_, other) => push_merging_space(out, other),
     }
 }
 
@@ -3071,27 +3259,18 @@ fn lift_edge_spaces_out_of_formatting(inlines: Vec<Inline>) -> Vec<Inline> {
             let inner = lift_edge_spaces_out_of_formatting(unwrap_formatted(&inl).to_vec());
             let lifted = wrap_moving_spaces(inner, |core| rewrap_formatted(tag, core));
             for item in lifted {
-                match (out.last_mut(), item) {
-                    (Some(Inline::Space), Inline::Space) => {}
-                    (_, other) => out.push(other),
-                }
+                push_merging_space(&mut out, item);
             }
         } else if matches!(&inl, Inline::Span(attr, _) if attr.get("custom-style").is_some()) {
             if let Inline::Span(attr, inner) = inl {
                 let inner = lift_edge_spaces_out_of_formatting(inner);
                 let lifted = wrap_moving_spaces(inner, |core| Inline::Span(attr, core));
                 for item in lifted {
-                    match (out.last_mut(), item) {
-                        (Some(Inline::Space), Inline::Space) => {}
-                        (_, other) => out.push(other),
-                    }
+                    push_merging_space(&mut out, item);
                 }
             }
         } else {
-            match (out.last_mut(), inl) {
-                (Some(Inline::Space), Inline::Space) => {}
-                (_, other) => out.push(other),
-            }
+            push_merging_space(&mut out, inl);
         }
     }
     out
@@ -3175,12 +3354,15 @@ fn peel_format_tag(inl: &Inline, target: FmtTag) -> Option<Inline> {
 fn trim_para_edges(mut inlines: Vec<Inline>) -> Vec<Inline> {
     let start = inlines
         .iter()
-        .take_while(|i| matches!(i, Inline::Space | Inline::LineBreak))
+        .take_while(|i| matches!(i, Inline::Space | Inline::SoftBreak | Inline::LineBreak))
         .count();
     if start > 0 {
         inlines.drain(..start);
     }
-    while matches!(inlines.last(), Some(Inline::Space | Inline::LineBreak)) {
+    while matches!(
+        inlines.last(),
+        Some(Inline::Space | Inline::SoftBreak | Inline::LineBreak)
+    ) {
         inlines.pop();
     }
     inlines
@@ -3191,13 +3373,10 @@ fn wrap_moving_spaces(
     wrap: impl FnOnce(Vec<Inline>) -> Inline,
 ) -> Vec<Inline> {
     let mut out = Vec::new();
-    let lead = inlines
-        .iter()
-        .take_while(|i| matches!(i, Inline::Space))
-        .count();
+    let lead = inlines.iter().take_while(|i| is_space(i)).count();
     let leading: Vec<Inline> = inlines.drain(..lead).collect();
     let mut trailing = Vec::new();
-    while matches!(inlines.last(), Some(Inline::Space)) {
+    while inlines.last().is_some_and(is_space) {
         if let Some(sp) = inlines.pop() {
             trailing.push(sp);
         }
@@ -3243,6 +3422,25 @@ fn is_source_code_style(names: &[Text]) -> bool {
         .any(|n| n.eq_ignore_ascii_case("Source Code") || n.eq_ignore_ascii_case("SourceCode"))
 }
 
+/// Reads a `w:gridCol/@w:w` value as Pandoc does: an optional minus sign and
+/// decimal digits, with optional surrounding white space.
+fn parse_grid_width(value: &str) -> Option<f64> {
+    let value = value.trim();
+    let digits = value.strip_prefix('-').unwrap_or(value);
+    if digits.is_empty() || !digits.bytes().all(|b| b.is_ascii_digit()) {
+        return None;
+    }
+    value.parse::<f64>().ok()
+}
+
+/// The caption of a table: the text of the caption paragraph, if any, then
+/// its rule. A caption with only a label has no text.
+fn caption_blocks(p: &ParsedPara) -> Vec<Block> {
+    let text = (!p.inlines.is_empty()).then(|| Block::Para(p.inlines.clone()));
+    let rule = p.rule.then_some(Block::HorizontalRule);
+    text.into_iter().chain(rule).collect()
+}
+
 fn is_caption_style(names: &[Text]) -> bool {
     names.iter().any(|n| {
         let l = n.to_ascii_lowercase();
@@ -3274,11 +3472,12 @@ fn is_blockquote_para(p: &ParsedPara) -> bool {
     // Direct paragraph left indent relative to the style's own indent (oracle-verified):
     // Only triggers when `w:pPr/w:ind/@w:left` is directly present on the paragraph,
     // `direct_left - direct_hanging > 0`, and `direct_left - direct_hanging > style_indent_left`.
+    // Both indents come from the document, so the difference uses `i128`.
     if p.props.num_pr.is_none()
         && let Some(direct_left) = p.props.direct_indent_left
     {
-        let eff = direct_left - p.props.direct_indent_hanging.unwrap_or(0);
-        if eff > 0 && eff > p.props.style_indent_left {
+        let eff = i128::from(direct_left) - i128::from(p.props.direct_indent_hanging.unwrap_or(0));
+        if eff > 0 && eff > i128::from(p.props.style_indent_left) {
             return true;
         }
     }
@@ -3478,6 +3677,68 @@ fn apply_identifiers_and_bookmarks(blocks: &mut [Block], options: &ReaderOptions
     // 4. Collect all referenced internal `#id` targets and prune unreferenced anchor spans.
     let referenced = collect_internal_link_targets(blocks);
     prune_unreferenced_anchors(blocks, &referenced);
+}
+
+/// Puts each comment end in the empty span before it when that span is a
+/// comment end or a bookmark anchor, as Pandoc does: `[[]{end 2}]{end 1}`.
+/// After a comment end, a bookmark anchor also joins the chain. A chain has
+/// at most `max_depth` spans. The pass includes the metadata.
+fn nest_comment_ends(doc: &mut Pandoc, max_depth: usize) {
+    struct Nester(usize);
+    impl randoc_ast::walk::VisitorMut for Nester {
+        fn inlines(&mut self, inlines: &mut Vec<Inline>) {
+            if !inlines.iter().any(is_comment_end) {
+                return;
+            }
+            let mut out = Vec::with_capacity(inlines.len());
+            // The chain starts with a comment end or with the one anchor
+            // before a comment end.
+            let mut chain = Vec::new();
+            let mut chain_has_end = false;
+            for inline in std::mem::take(inlines) {
+                let is_end = is_comment_end(&inline);
+                let is_anchor = is_anchor_span(&inline).is_some();
+                let joins = !chain.is_empty()
+                    && chain.len() < self.0
+                    && (is_end || (is_anchor && chain_has_end));
+                if !joins {
+                    close_chain(&mut chain, chain_has_end, &mut out);
+                    if !is_end && !is_anchor {
+                        out.push(inline);
+                        continue;
+                    }
+                    chain_has_end = false;
+                }
+                chain_has_end |= is_end;
+                chain.push(inline);
+            }
+            close_chain(&mut chain, chain_has_end, &mut out);
+            *inlines = out;
+        }
+    }
+    randoc_ast::walk::walk_mut(doc, &mut Nester(max_depth.max(1)));
+}
+
+fn is_comment_end(inline: &Inline) -> bool {
+    matches!(inline, Inline::Span(attr, inner)
+        if inner.is_empty() && attr.classes.as_slice() == ["comment-end"])
+}
+
+/// Nests the spans of `chain`, each in the one before it, and moves the
+/// result to `out`. A chain without a comment end (one anchor) stays as it is.
+fn close_chain(chain: &mut Vec<Inline>, has_end: bool, out: &mut Vec<Inline>) {
+    if !has_end {
+        out.append(chain);
+        return;
+    }
+    let mut inner = None;
+    while let Some(mut span) = chain.pop() {
+        if let (Inline::Span(_, children), Some(child)) = (&mut span, inner.take()) {
+            children.push(child);
+        }
+        inner = Some(span);
+    }
+    out.extend(inner);
 }
 
 fn is_anchor_span(inl: &Inline) -> Option<&str> {

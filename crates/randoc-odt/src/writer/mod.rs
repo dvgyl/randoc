@@ -5,15 +5,17 @@ mod package;
 mod show;
 mod tables;
 
+use std::borrow::Cow;
 use std::cell::RefCell;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::sync::Arc;
 
 use randoc_archive::xml::escape_xml_attr;
 use randoc_ast::{
-    Attr, Block, Caption, ListAttributes, ListNumberDelim, ListNumberStyle, MetaValue, Pandoc,
+    Attr, Block, Caption, Inline, ListAttributes, ListNumberDelim, ListNumberStyle, MetaValue,
+    Pandoc,
 };
-use randoc_citeproc::Lang;
+use randoc_citeproc::{Lang, parse_lang};
 use randoc_core::shared::meta_context::meta_to_context;
 use randoc_core::{
     BinaryWriter, CaptionPosition, Context, Error, Extension, LogMessage, Result, TemplateWriter,
@@ -26,6 +28,8 @@ use self::package::Resources;
 
 const BODY: &str = "Text_20_body";
 const FIRST: &str = "First_20_paragraph";
+const RTL: &str = "style:writing-mode=\"rl-tb\" fo:text-align=\"right\"";
+const LTR: &str = "style:writing-mode=\"lr-tb\" fo:text-align=\"left\"";
 const FRAME_STYLES: &str = concat!(
     "<style:style style:name=\"fr2\" style:family=\"graphic\" style:parent-style-name=\"Formula\"><style:graphic-properties style:vertical-pos=\"middle\" style:vertical-rel=\"text\" style:horizontal-pos=\"center\" style:horizontal-rel=\"paragraph-content\" style:wrap=\"none\" /></style:style>\n",
     "<style:style style:name=\"fr1\" style:family=\"graphic\" style:parent-style-name=\"Formula\"><style:graphic-properties style:vertical-pos=\"middle\" style:vertical-rel=\"text\" /></style:style>"
@@ -84,6 +88,7 @@ struct Renderer<'a> {
     /// The languages of the enclosing divs and spans. The greatest one
     /// gives the language of the text.
     languages: BTreeSet<Lang>,
+    direction: Option<&'static str>,
     paragraph_styles: Vec<String>,
     paragraph_style_index: HashMap<(String, String), String>,
     list_styles: BTreeMap<(u8, u8), String>,
@@ -107,6 +112,27 @@ fn render(
     resources: Resources,
 ) -> Result<(String, Resources)> {
     let depth = context.limits.max_nesting_depth;
+    let metadata = |key| doc.meta.0.get(key).and_then(package::meta_text);
+    let language = || match options.variables.0.get("lang") {
+        Some(Val::Simple(value)) => Some(value.render(None)),
+        Some(Val::Bool(_)) => None,
+        _ => metadata("lang"),
+    };
+    let direction = match metadata("dir").as_deref() {
+        Some("rtl") => Some(RTL),
+        None if language()
+            .and_then(|value| parse_lang(&value).ok())
+            .is_some_and(|lang| {
+                matches!(
+                    lang.language.as_str(),
+                    "ar" | "ckb" | "dv" | "fa" | "he" | "sd" | "ur" | "yi"
+                )
+            }) =>
+        {
+            Some(RTL)
+        }
+        _ => None,
+    };
     let mut renderer = Renderer {
         options,
         context,
@@ -115,6 +141,7 @@ fn render(
         text_styles: Vec::new(),
         text_style_index: HashMap::new(),
         languages: BTreeSet::new(),
+        direction,
         paragraph_styles: Vec::new(),
         paragraph_style_index: HashMap::new(),
         list_styles: BTreeMap::new(),
@@ -137,12 +164,20 @@ fn render(
         .then_some(options.columns.max(1) as usize);
     let content = if options.template.is_some() || format != Format::Fragment {
         let abstract_value = doc.meta.0.get("abstract");
+        let title_value = doc.meta.0.get("title");
         let cell = RefCell::new(&mut renderer);
         let mut fields = meta_to_context(
             &doc.meta,
             &options.variables,
             depth,
             &mut |blocks| {
+                if matches!(title_value, Some(MetaValue::MetaBlocks(value)) if std::ptr::eq(value.as_slice(), blocks))
+                {
+                    let mut renderer = cell.borrow_mut();
+                    let mut title = Vec::new();
+                    renderer.title_inlines(blocks, &mut title, 0)?;
+                    return renderer.inlines(&title, 0);
+                }
                 let abstract_blocks = matches!(abstract_value, Some(MetaValue::MetaBlocks(value)) if std::ptr::eq(value.as_slice(), blocks));
                 let style = abstract_blocks.then_some("Abstract");
                 cell.borrow_mut().blocks(blocks, style, 0, !abstract_blocks)
@@ -195,7 +230,9 @@ fn render(
             })
             .map_err(|error| Error::App(error.to_string()))?
         };
-        template.render(&fields).render(width)
+        renderer
+            .context
+            .render_template(&template, &fields, width)?
     } else {
         body.render(width)
     };
@@ -203,6 +240,75 @@ fn render(
 }
 
 impl Renderer<'_> {
+    fn title_inlines(&self, blocks: &[Block], out: &mut Vec<Inline>, depth: usize) -> Result<()> {
+        self.check_depth(depth)?;
+        for (index, block) in blocks.iter().enumerate() {
+            if index > 0 {
+                out.push(Inline::LineBreak);
+            }
+            match block {
+                Block::Plain(text) | Block::Para(text) | Block::Header(_, _, text) => {
+                    out.extend_from_slice(text);
+                }
+                Block::LineBlock(lines) => {
+                    for (index, line) in lines.iter().enumerate() {
+                        if index > 0 {
+                            out.push(Inline::LineBreak);
+                        }
+                        out.extend_from_slice(line);
+                    }
+                }
+                Block::CodeBlock(attr, text) => out.push(Inline::Code(attr.clone(), text.clone())),
+                Block::RawBlock(format, text) => {
+                    out.push(Inline::RawInline(format.clone(), text.clone()))
+                }
+                Block::BlockQuote(blocks) | Block::Div(_, blocks) | Block::Figure(_, _, blocks) => {
+                    self.title_inlines(blocks, out, depth + 1)?;
+                }
+                Block::BulletList(items) | Block::OrderedList(_, items) => {
+                    for item in items {
+                        self.title_inlines(item, out, depth + 1)?;
+                    }
+                }
+                Block::DefinitionList(items) => {
+                    for (term, definitions) in items {
+                        out.extend_from_slice(term);
+                        out.extend([Inline::Str(":".into()), Inline::Space]);
+                        for definition in definitions {
+                            self.title_inlines(definition, out, depth + 1)?;
+                        }
+                    }
+                }
+                Block::Table(table) => {
+                    let rows = table
+                        .head
+                        .rows
+                        .iter()
+                        .chain(
+                            table
+                                .bodies
+                                .iter()
+                                .flat_map(|body| body.head.iter().chain(&body.body)),
+                        )
+                        .chain(&table.foot.rows);
+                    for (index, row) in rows.enumerate() {
+                        if index > 0 {
+                            out.push(Inline::LineBreak);
+                        }
+                        for (index, cell) in row.cells.iter().enumerate() {
+                            if index > 0 {
+                                out.push(Inline::Space);
+                            }
+                            self.title_inlines(&cell.content, out, depth + 1)?;
+                        }
+                    }
+                }
+                Block::HorizontalRule => {}
+            }
+        }
+        Ok(())
+    }
+
     fn has(&self, extension: Extension) -> bool {
         self.options.extensions.contains(extension)
     }
@@ -285,31 +391,42 @@ impl Renderer<'_> {
             Block::Plain(inlines) | Block::Para(inlines) => {
                 if inlines.is_empty() {
                     if self.has(Extension::EmptyParagraphs) || !matches!(style, BODY | FIRST) {
-                        para(style, Doc::default())
+                        para(&self.directional_style(style), Doc::default())
                     } else {
                         Doc::default()
                     }
                 } else {
-                    para(style, self.inlines(inlines, depth + 1)?)
+                    para(
+                        &self.directional_style(style),
+                        self.inlines(inlines, depth + 1)?,
+                    )
                 }
             }
             Block::Header(level, attr, inlines) => {
-                let content = self.inlines(inlines, depth + 1)?;
                 let level = level.clamp(&1, &10);
+                let parent = format!("Heading_20_{level}");
+                let style = self.directional_style(&parent);
+                let content = self.inlines(inlines, depth + 1)?;
                 tag(
                     "text:h",
-                    &format!(
-                        " text:style-name=\"Heading_20_{level}\" text:outline-level=\"{level}\""
-                    ),
+                    &format!(" text:style-name=\"{style}\" text:outline-level=\"{level}\""),
                     bookmark(&attr.id, content),
                 )
             }
             Block::Div(attr, blocks) => {
                 let custom = attr.get("custom-style");
                 let inner_style = custom.or_else(|| (style != BODY).then_some(style));
+                let previous = self.direction;
+                self.direction = match attr.get("dir") {
+                    Some("rtl") => Some(RTL),
+                    Some("ltr") => Some(LTR),
+                    _ => previous,
+                };
                 let body = self.with_language(attr, |renderer| {
                     renderer.blocks(blocks, inner_style, depth + 1, custom.is_none())
-                })?;
+                });
+                self.direction = previous;
+                let body = body?;
                 if attr.id.is_empty() {
                     body
                 } else {
@@ -403,6 +520,13 @@ impl Renderer<'_> {
         self.blocks(&caption.long, Some(&style), depth, true)
     }
 
+    fn directional_style<'a>(&mut self, parent: &'a str) -> Cow<'a, str> {
+        match self.direction {
+            Some(properties) => Cow::Owned(self.paragraph_style(parent, properties)),
+            None => Cow::Borrowed(parent),
+        }
+    }
+
     fn paragraph_style(&mut self, parent: &str, properties: &str) -> String {
         let key = (parent.to_owned(), properties.to_owned());
         if let Some(name) = self.paragraph_style_index.get(&key) {
@@ -415,6 +539,7 @@ impl Renderer<'_> {
 
     fn add_paragraph_style(&mut self, parent: &str, properties: &str) -> String {
         let name = format!("P{}", self.paragraph_styles.len() + 1);
+        let parent = escaped(parent);
         self.paragraph_styles.push(format!("<style:style style:name=\"{name}\" style:family=\"paragraph\" style:parent-style-name=\"{parent}\">\n  <style:paragraph-properties {properties} />\n</style:style>"));
         name
     }
@@ -685,3 +810,6 @@ fn bookmark(id: &str, content: Doc) -> Doc {
         + content
         + text(format!("<text:bookmark-end text:name=\"{id}\" />"))
 }
+
+#[cfg(test)]
+mod wave9_tests;

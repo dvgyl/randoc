@@ -70,11 +70,11 @@ impl Renderer<'_> {
                 Ok(())
             }
             Block::CodeBlock(attr, code) => {
+                let bookmark = self.block_bookmark(out, &attr.id);
                 self.open_paragraph(out, flow, Some("SourceCode"));
-                let id = self.bookmark(out, &attr.id);
                 self.code(out, attr, code, flow.run)?;
-                bookmark_end(out, id);
                 out.raw("</w:p>");
+                block_bookmark_end(out, bookmark);
                 self.first = true;
                 Ok(())
             }

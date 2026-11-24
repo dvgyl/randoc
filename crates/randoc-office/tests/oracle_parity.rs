@@ -28,14 +28,18 @@ fn env_path(key: &str) -> PathBuf {
 }
 
 fn oracle(args: &[&str], input: &[u8]) -> Vec<u8> {
-    let mut child = Command::new(env_path("RANDOC_ORACLE_PANDOC"))
+    convert(&env_path("RANDOC_ORACLE_PANDOC"), args, input)
+}
+
+fn convert(program: &Path, args: &[&str], input: &[u8]) -> Vec<u8> {
+    let mut child = Command::new(program)
         .args(args)
         .env("SOURCE_DATE_EPOCH", "1700000000")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .spawn()
-        .expect("start Pandoc oracle");
+        .expect("start conversion process");
     let mut stdin = child.stdin.take().unwrap();
     let stdout = child.stdout.take().unwrap();
     let stderr = child.stderr.take().unwrap();
@@ -51,7 +55,7 @@ fn oracle(args: &[&str], input: &[u8]) -> Vec<u8> {
             if started.elapsed() > Duration::from_secs(30) {
                 child.kill().unwrap();
                 child.wait().unwrap();
-                panic!("Pandoc oracle timed out for {args:?}");
+                panic!("Conversion timed out for {args:?}");
             }
             thread::sleep(Duration::from_millis(10));
         };
@@ -461,4 +465,160 @@ fn xlsx_number_and_shared_string_lexemes() {
         &expected,
     );
     eprintln!("PASS number and shared-string lexemes, including lowercase cell references");
+}
+
+#[test]
+#[ignore = "requires the Pandoc 3.13 oracle and the writer-baseline reference"]
+fn pptx_reference_shape_id_parity() {
+    version();
+    let reference = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../conformance/fixtures/writer-baseline/reference.pptx");
+    let reference_arg = format!("--reference-doc={}", reference.display());
+    let table = "| Key | Value |\n| --- | --- |\n| One | Two |";
+    for (markdown, ids) in [
+        (
+            format!(
+                "# Two tables\n\n:::: {{.columns}}\n::: {{.column}}\n\n{table}\n\nTable: First caption\n\n:::\n::: {{.column}}\n\n{table}\n\nTable: Second caption\n\n:::\n::::\n"
+            ),
+            [1, 2, 6, 1, 6, 1],
+        ),
+        (
+            format!(
+                "# Mixed slot\n\nBefore the table.\n\n{table}\n\nTable: Middle caption\n\nAfter the table.\n"
+            ),
+            [1, 2, 3, 6, 1, 3],
+        ),
+    ] {
+        let ast = oracle(&["-f", "markdown", "-t", "json"], markdown.as_bytes());
+        let expected = oracle(&["-f", "json", "-t", "pptx", &reference_arg], &ast);
+        let doc = json::from_json(std::str::from_utf8(&ast).unwrap()).unwrap();
+        let actual = write_pptx(&doc, Some(&reference));
+        for pptx in [&expected, &actual] {
+            let limits = ArchiveLimits::from_limits(&Context::pure().limits);
+            let mut archive = Archive::open(pptx, limits).unwrap();
+            assert!(!archive.contains("ppt/slides/slide2.xml"));
+            let slide = part(&mut archive, "ppt/slides/slide1.xml");
+            let tree = slide
+                .root
+                .child(P, "cSld")
+                .unwrap()
+                .child(P, "spTree")
+                .unwrap();
+            let actual_ids: Vec<usize> = tree
+                .elements()
+                .flat_map(XmlElement::elements)
+                .filter_map(|properties| {
+                    if properties.name.ns.as_deref() == Some(P) && properties.name.local == "cNvPr"
+                    {
+                        Some(properties)
+                    } else {
+                        properties.child(P, "cNvPr")
+                    }
+                })
+                .map(|shape| shape.attr_unqualified("id").unwrap().parse().unwrap())
+                .collect();
+            assert_eq!(actual_ids, ids, "{markdown}");
+        }
+    }
+}
+
+#[test]
+#[ignore = "requires the Pandoc 3.13 oracle, writer-baseline fixtures, and RANDOC_TEST_NATIVE_READER"]
+fn pptx_reference_writer_baseline() {
+    version();
+    let repo = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let reference = repo.join("conformance/fixtures/writer-baseline/reference.pptx");
+    let reference_arg = format!("--reference-doc={}", reference.display());
+    let suite =
+        fs::read_to_string(repo.join("conformance/cases/writer-baseline/pptx.toml")).unwrap();
+    let fixture = fs::read(&reference).unwrap();
+    let native_reader = env_path("RANDOC_TEST_NATIVE_READER");
+    let mut count = 0;
+    for case in suite.split("[[case]]").skip(1) {
+        let id = case
+            .split_once("id = \"")
+            .unwrap()
+            .1
+            .split('"')
+            .next()
+            .unwrap();
+        let native = case
+            .split_once("input = '''\n")
+            .unwrap()
+            .1
+            .split_once("'''")
+            .unwrap()
+            .0;
+        let ast = oracle(&["-f", "native", "-t", "json"], native.as_bytes());
+        let native_ast = convert(
+            &native_reader,
+            &["-f", "native", "-t", "json"],
+            native.as_bytes(),
+        );
+        for (unit, format, input, writer_ast) in [
+            ("write:pptx", "json", ast.as_slice(), ast.as_slice()),
+            (
+                "e2e:pptx",
+                "native",
+                native.as_bytes(),
+                native_ast.as_slice(),
+            ),
+        ] {
+            let doc = json::from_json(std::str::from_utf8(writer_ast).unwrap()).unwrap();
+            let expected = oracle(&["-f", format, "-t", "pptx", &reference_arg], input);
+            let Writer::Binary(writer) = randoc_office::writer("pptx").unwrap() else {
+                panic!("binary writer");
+            };
+            let mut context = Context::new(Box::new(randoc_core::PureHost {
+                files: [("reference.pptx".into(), fixture.clone())].into(),
+                environment: [("SOURCE_DATE_EPOCH".into(), "1700000000".into())].into(),
+                ..randoc_core::PureHost::default()
+            }));
+            let mut options = WriterOptions::default();
+            options.reference_doc = Some("reference.pptx".into());
+            let actual = writer.write(&doc, &options, &mut context).unwrap();
+            assert!(context.log().is_empty(), "{id}#{unit}: {:?}", context.log());
+            compare_pptx_entries(&format!("{id}#{unit}"), &actual, &expected);
+        }
+        count += 1;
+    }
+    assert_eq!(count, 8);
+}
+
+fn compare_pptx_entries(id: &str, actual: &[u8], expected: &[u8]) {
+    let limits = ArchiveLimits::from_limits(&Context::pure().limits);
+    let mut actual = Archive::open(actual, limits).unwrap();
+    let mut expected = Archive::open(expected, limits).unwrap();
+    let entry_names = |archive: &Archive<'_>| {
+        let mut names: Vec<_> = archive
+            .entry_names()
+            .into_iter()
+            .map(str::to_owned)
+            .collect();
+        names.sort();
+        names
+    };
+    let entries = entry_names(&expected);
+    assert_eq!(entry_names(&actual), entries, "{id}: archive entries");
+    let mut changed = Vec::new();
+    for path in &entries {
+        let a = actual.read(path).unwrap().unwrap();
+        let e = expected.read(path).unwrap().unwrap();
+        if a != e {
+            let offset = a.iter().zip(&e).take_while(|(a, e)| a == e).count();
+            let snippet = |bytes: &[u8]| {
+                String::from_utf8_lossy(
+                    &bytes[offset.saturating_sub(36)..bytes.len().min(offset + 240)],
+                )
+                .into_owned()
+            };
+            changed.push(format!(
+                "{path} at byte {offset}\nactual: {:?}\nexpected: {:?}",
+                snippet(&a),
+                snippet(&e)
+            ));
+        }
+    }
+    assert!(changed.is_empty(), "{id}:\n{}", changed.join("\n"));
+    eprintln!("PASS {id} ({} archive entries)", entries.len());
 }

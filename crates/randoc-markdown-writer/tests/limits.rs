@@ -505,3 +505,66 @@ fn measure_time_at_50000_repetitions() {
         time_ratios(12_500, true);
     });
 }
+
+/// A table with `columns` columns and `rows` body rows. A row has one cell
+/// that spans `span` columns.
+fn wide_table(columns: usize, rows: usize, span: usize) -> Pandoc {
+    let spec = ColSpec {
+        align: randoc_ast::Alignment::AlignLeft,
+        width: randoc_ast::ColWidth::ColWidthDefault,
+    };
+    let Block::Table(mut t) = table(vec![Block::Plain(vec![Inline::Str("c".into())])]) else {
+        unreachable!()
+    };
+    t.col_specs = vec![spec; columns];
+    t.bodies[0].body[0].cells[0].col_span = i64::try_from(span).unwrap();
+    let row = t.bodies[0].body[0].clone();
+    t.bodies[0].body = vec![row; rows];
+    blocks(vec![Block::Table(t)])
+}
+
+#[test]
+fn a_table_over_the_cell_limit_gives_an_error() {
+    for format in FORMATS {
+        let mut context = Context::pure();
+        context.limits.max_table_cells = 12;
+        assert!(
+            write(&wide_table(4, 3, 1), format, &mut context).is_ok(),
+            "{format}"
+        );
+        let error = write(&wide_table(4, 4, 1), format, &mut context).unwrap_err();
+        assert!(
+            error.to_string().contains("more cells"),
+            "{format}: {error}"
+        );
+        // The default limit stops a grid of 2,001 x 100 positions before
+        // the writer makes it.
+        let large = wide_table(2_001, 100, 1);
+        assert!(
+            write(&large, format, &mut Context::pure()).is_err(),
+            "{format}"
+        );
+    }
+}
+
+#[test]
+fn the_border_of_a_headless_grid_table_is_linear_in_the_columns() {
+    // One cell spans all columns, so the top border has no inner `+`.
+    let text = write_text(&wide_table(3, 1, 3), "markdown", None, false).unwrap();
+    assert!(text.starts_with("+:-"), "{text}");
+    assert!(!text.lines().next().unwrap().contains("-+-"), "{text}");
+    let time = |columns: usize| {
+        let doc = wide_table(columns, 1, columns);
+        (0..3)
+            .map(|_| {
+                let start = Instant::now();
+                write_text(&doc, "markdown", None, false).unwrap();
+                start.elapsed().as_secs_f64()
+            })
+            .fold(f64::INFINITY, f64::min)
+    };
+    // Eight times the columns take about eight times the work. A count of
+    // the edges for each column would take about 64 times.
+    let ratio = time(20_000) / time(2_500).max(1e-6);
+    assert!(ratio < 24.0, "ratio {ratio:.1}");
+}

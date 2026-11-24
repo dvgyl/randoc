@@ -33,6 +33,7 @@ struct Parser<'a> {
     ids: IdentifierSet,
     empty_headings: usize,
     used_bytes: u64,
+    expansion_limit: u64,
     includes_exhausted: bool,
     table_cells: usize,
     source: String,
@@ -62,6 +63,10 @@ pub(super) fn read(
     let bytes = sources.0.iter().fold(0u64, |total, source| {
         total.saturating_add(source.text.len() as u64)
     });
+    let expansion_limit = bytes
+        .saturating_mul(32)
+        .saturating_add(1 << 20)
+        .min(context.limits.max_input_size);
     let mut parser = Parser {
         options,
         context,
@@ -83,6 +88,7 @@ pub(super) fn read(
         ids: IdentifierSet::new(),
         empty_headings: 0,
         used_bytes: 0,
+        expansion_limit,
         includes_exhausted: false,
         table_cells: 0,
         source: String::new(),
@@ -121,18 +127,11 @@ pub(super) fn read(
 
 impl Parser<'_> {
     fn remaining(&self) -> u64 {
-        self.context
-            .limits
-            .max_input_size
-            .saturating_sub(self.used_bytes)
+        self.expansion_limit.saturating_sub(self.used_bytes)
     }
 
     fn charge(&mut self, bytes: u64) -> Result<()> {
-        charge_bytes(
-            &mut self.used_bytes,
-            bytes,
-            self.context.limits.max_input_size,
-        )
+        charge_bytes(&mut self.used_bytes, bytes, self.expansion_limit)
     }
 
     fn check_depth(&self, depth: usize) -> Result<()> {

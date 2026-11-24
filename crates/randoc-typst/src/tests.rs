@@ -1,6 +1,6 @@
 use randoc_ast::*;
 use randoc_core::{
-    Context, Error, ReaderOptions, Result, Sources, WriterOptions, default_extensions,
+    Context, Error, Extension, ReaderOptions, Result, Sources, WriterOptions, default_extensions,
 };
 
 fn read(input: &str, options: &ReaderOptions, context: &mut Context) -> Result<Pandoc> {
@@ -507,5 +507,262 @@ fn writer_escapes_markup_after_line_breaks() -> Result<()> {
             assert!(output.contains(&format!("\n\\{marker}")), "{output}");
         }
     }
+    Ok(())
+}
+
+fn write_blocks(blocks: Vec<Block>) -> Result<String> {
+    let doc = Pandoc {
+        blocks,
+        ..Pandoc::default()
+    };
+    let mut options = WriterOptions::default();
+    options.extensions = default_extensions("typst");
+    super::writer::write(&doc, &options, &mut Context::pure())
+}
+
+fn write_equation(id: &str) -> Result<String> {
+    write_blocks(vec![Block::Para(vec![Inline::Math(
+        MathType::DisplayMath,
+        format!("\\begin{{equation}}\n\\label{{{id}}} z = 4\n\\end{{equation}}"),
+    )])])
+}
+
+#[test]
+fn typst_smart_controls_repeated_dots_and_question_marks_after_dashes() -> Result<()> {
+    let document = Pandoc {
+        blocks: vec![Block::Para(vec![
+            Inline::Str("-?".into()),
+            Inline::Space,
+            Inline::Str("....".into()),
+            Inline::Space,
+            Inline::Str("x..y?".into()),
+            Inline::Space,
+            Inline::Str(".txt".into()),
+        ])],
+        ..Pandoc::default()
+    };
+    let mut options = WriterOptions::default();
+    options.extensions = default_extensions("typst");
+    let output = super::writer::write(&document, &options, &mut Context::pure())?;
+    assert_eq!(output.trim_end(), r"\-\? \.\.\.\. x.\.y? \.txt");
+    options.extensions.disable(Extension::Smart);
+    let output = super::writer::write(&document, &options, &mut Context::pure())?;
+    assert_eq!(output.trim_end(), r"\-? \.... x..y? \.txt");
+    Ok(())
+}
+
+#[test]
+fn display_equation_writes_an_anchor() -> Result<()> {
+    assert_eq!(write_equation("eq:sum")?, "$ z = 4 $<eq:sum>\n");
+    Ok(())
+}
+
+#[test]
+fn display_equation_writes_a_label_call_for_spaces() -> Result<()> {
+    assert_eq!(
+        write_equation("eq:two terms")?,
+        "$ z = 4 $#label(\"eq:two terms\")\n"
+    );
+    Ok(())
+}
+
+#[test]
+fn div_typst_label_replaces_the_identifier() -> Result<()> {
+    let attr = Attr::new(
+        "unused",
+        vec![],
+        vec![("typst-label".into(), "summary".into())],
+    );
+    let body = Block::Para(vec![Inline::Str("Summary".into())]);
+    assert_eq!(
+        write_blocks(vec![Block::Div(attr, vec![body])])?,
+        "#block[\nSummary\n\n] <summary>\n"
+    );
+    Ok(())
+}
+
+#[test]
+fn heading_typst_label_replaces_the_identifier() -> Result<()> {
+    let attr = Attr::new(
+        "section",
+        vec![],
+        vec![("typst-label".into(), "details".into())],
+    );
+    let heading = Block::Header(1, attr, vec![Inline::Str("Details".into())]);
+    assert_eq!(write_blocks(vec![heading])?, "= Details\n<details>\n");
+    Ok(())
+}
+
+#[test]
+fn parentheses_are_escaped_at_an_adjacent_inline_boundary() -> Result<()> {
+    let output = write_blocks(vec![Block::Para(vec![
+        Inline::Emph(vec![Inline::Str("search".into())]),
+        Inline::Str("(8)".into()),
+        Inline::Space,
+        Inline::Str("(plain)".into()),
+    ])])?;
+    assert_eq!(output, "#emph[search]\\(8) (plain)\n");
+    Ok(())
+}
+
+#[test]
+fn period_is_escaped_at_the_start_of_a_text_run() -> Result<()> {
+    let link = Inline::Link(
+        Attr::default(),
+        vec![Inline::Str("Library".into())],
+        Target::new("https://example.org", ""),
+    );
+    assert_eq!(
+        write_blocks(vec![Block::Para(vec![link, Inline::Str(".Method".into())])])?,
+        "#link(\"https://example.org\")[Library]\\.Method\n"
+    );
+    Ok(())
+}
+
+#[test]
+fn punctuation_is_escaped_only_at_the_matching_positions() -> Result<()> {
+    let output = write_blocks(vec![Block::Para(vec![
+        Inline::Str("-?".into()),
+        Inline::Space,
+        Inline::Str("....".into()),
+        Inline::Space,
+        Inline::Str("x..y?".into()),
+        Inline::Space,
+        Inline::Str("x-y.".into()),
+    ])])?;
+    assert_eq!(output, "\\-\\? \\.\\.\\.\\. x.\\.y? x-y.\n");
+    Ok(())
+}
+
+#[test]
+fn fragment_link_decodes_a_label_before_rendering() -> Result<()> {
+    let link = Inline::Link(
+        Attr::default(),
+        vec![Inline::Str("Anchor".into())],
+        Target::new("#a%20caf%C3%A9+%zz", ""),
+    );
+    assert_eq!(
+        write_blocks(vec![Block::Para(vec![link, Inline::Str(".".into())])])?,
+        "#link(label(\"a café+%zz\"))[Anchor].\n"
+    );
+    Ok(())
+}
+
+#[test]
+fn table_figure_kind_applies_to_the_wrapper() -> Result<()> {
+    let table = Table {
+        attr: Attr::new(
+            "",
+            vec![],
+            vec![
+                ("typst:figure:kind".into(), "grid".into()),
+                ("typst:figure:placement".into(), "top".into()),
+                ("typst:fill".into(), "blue".into()),
+            ],
+        ),
+        caption: Caption {
+            short: None,
+            long: vec![Block::Plain(vec![Inline::Str("Summary".into())])],
+        },
+        col_specs: vec![ColSpec::default()],
+        ..Table::default()
+    };
+    let output = write_blocks(vec![Block::Table(Box::new(table))])?;
+    assert!(output.contains("    fill: blue,"));
+    assert!(output.contains("  , caption: [Summary]\n  , kind: grid\n"));
+    assert!(!output.contains("figure:kind:"));
+    assert!(!output.contains("placement:"));
+    Ok(())
+}
+
+#[test]
+fn image_paths_use_the_directory_of_each_source() -> Result<()> {
+    let mut context = Context::new(Box::new(randoc_core::PureHost {
+        files: [(
+            "section/content.typ".into(),
+            b"#image(\"inner.png\")".to_vec(),
+        )]
+        .into(),
+        ..randoc_core::PureHost::default()
+    }));
+    let doc = read(
+        "#include \"section/content.typ\"\n\n#image(\"outer.png\")",
+        &options(),
+        &mut context,
+    )?;
+    let mut paths = Vec::new();
+    randoc_ast::walk::query_inlines(&doc, |inline| {
+        if let Inline::Image(_, _, target) = inline {
+            paths.push(target.url.clone());
+        }
+    });
+    assert_eq!(paths, ["section/inner.png", "outer.png"]);
+    Ok(())
+}
+
+#[test]
+fn rotate_wraps_figures_and_inline_content() -> Result<()> {
+    let doc = read(
+        "#rotate(-45deg, figure([Diagram], caption: [A caption.]))\n\n#rotate(1rad)[Text]",
+        &options(),
+        &mut Context::pure(),
+    )?;
+    assert!(
+        matches!(doc.blocks.as_slice(), [Block::Div(div, blocks), Block::Para(inlines)]
+        if div.has_class("rotate") && div.get("angle") == Some("-45.0")
+            && matches!(blocks.as_slice(), [Block::Figure(_, caption, _)] if !caption.long.is_empty())
+            && matches!(inlines.as_slice(), [Inline::Span(span, _)]
+                if span.has_class("rotate") && span.get("angle") == Some("57.29577951308232")))
+    );
+    Ok(())
+}
+
+#[test]
+fn rotate_without_a_body_keeps_an_empty_span() -> Result<()> {
+    let doc = read(
+        "#rotate(45deg)\n\n#rotate(angle: 45deg)\n\n#rotate(45deg, [])",
+        &options(),
+        &mut Context::pure(),
+    )?;
+    let attr = Attr::new(
+        "",
+        vec!["rotate".into()],
+        vec![("angle".into(), "45.0".into())],
+    );
+    assert_eq!(
+        doc.blocks,
+        vec![Block::Para(vec![Inline::Span(attr, vec![])]); 3]
+    );
+    Ok(())
+}
+
+#[test]
+fn emphasis_trims_the_trailing_line_break_from_expanded_content() -> Result<()> {
+    let doc = read(
+        "#let part = [\n  two words\n]\n*#part*\n\n#emph(part)",
+        &options(),
+        &mut Context::pure(),
+    )?;
+    let text = vec![
+        Inline::SoftBreak,
+        Inline::Str("two".into()),
+        Inline::Space,
+        Inline::Str("words".into()),
+    ];
+    assert_eq!(
+        doc.blocks,
+        vec![
+            Block::Para(vec![Inline::Strong(text.clone())]),
+            Block::Para(vec![Inline::Emph(text)])
+        ]
+    );
+    let doc = read(
+        "#emph[left #block[middle] right ]",
+        &options(),
+        &mut Context::pure(),
+    )?;
+    assert!(matches!(doc.blocks.first(), Some(Block::Para(inlines))
+        if matches!(inlines.as_slice(), [Inline::Emph(text)]
+            if matches!(text.as_slice(), [Inline::Str(left), Inline::Space] if left == "left"))));
     Ok(())
 }

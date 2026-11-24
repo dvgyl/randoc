@@ -416,3 +416,180 @@ fn template_rendering_uses_the_remaining_byte_budget() {
         .unwrap_err();
     assert_eq!(error.to_string(), "DOCX output exceeds the byte limit.");
 }
+
+/// Returns the paragraphs that are open at byte `at` of `xml`.
+fn open_paragraphs(xml: &str, at: usize) -> usize {
+    let before = &xml[..at];
+    before.matches("<w:p>").count() - before.matches("</w:p>").count()
+}
+
+#[test]
+fn code_block_bookmark_surrounds_the_paragraph_at_body_level() {
+    use randoc_ast::{Attr, Block, Inline};
+
+    let code = |id: &str| Block::CodeBlock(Attr::new(id, vec![], vec![]), "x = 1".into());
+    let xml = write_blocks(vec![
+        code("top"),
+        Block::BulletList(vec![vec![
+            Block::Plain(vec![Inline::Str("item".into())]),
+            code("in-list"),
+        ]]),
+        Block::BlockQuote(vec![code("quoted")]),
+    ]);
+    let mut starts = 0;
+    for (at, _) in xml.match_indices("<w:bookmarkStart ") {
+        assert_eq!(open_paragraphs(&xml, at), 0, "{xml}");
+        let paragraph = xml[at..].find("<w:p>").unwrap();
+        let code = xml[at..].find("SourceCode").unwrap();
+        assert!(paragraph < code, "{xml}");
+        starts += 1;
+    }
+    let mut ends = 0;
+    for (at, _) in xml.match_indices("<w:bookmarkEnd ") {
+        assert_eq!(open_paragraphs(&xml, at), 0, "{xml}");
+        let previous = xml[..at].rfind("</w:p>").unwrap();
+        assert!(
+            xml[previous..at]
+                .trim_start_matches("</w:p>")
+                .trim()
+                .is_empty()
+        );
+        ends += 1;
+    }
+    assert_eq!(starts, 3, "{xml}");
+    assert_eq!(ends, 3, "{xml}");
+}
+
+/// Writes an empty document with `reference` as the reference document and
+/// returns its settings part.
+fn settings_with_reference(reference: Vec<u8>) -> String {
+    let host = randoc_core::PureHost {
+        files: std::collections::BTreeMap::from([("ref.docx".into(), reference)]),
+        ..randoc_core::PureHost::default()
+    };
+    let mut options = WriterOptions::default();
+    options.reference_doc = Some("ref.docx".into());
+    let bytes = super::DocxWriter
+        .write(
+            &Pandoc::default(),
+            &options,
+            &mut Context::new(Box::new(host)),
+        )
+        .unwrap();
+    document_xml(&bytes, "word/settings.xml")
+}
+
+/// Returns `archive` with the entry `name` replaced by `xml`.
+fn replace_entry(archive: &[u8], name: &str, xml: &str) -> Vec<u8> {
+    use randoc_archive::zip::{Archive, ArchiveLimits, ArchiveWriter};
+
+    let mut source = Archive::open(archive, ArchiveLimits::default()).unwrap();
+    let mut output = ArchiveWriter::new();
+    let names: Vec<String> = source
+        .entry_names()
+        .into_iter()
+        .map(str::to_owned)
+        .collect();
+    for entry in names {
+        let bytes = if entry == name {
+            xml.as_bytes().to_vec()
+        } else {
+            source.read(&entry).unwrap().unwrap()
+        };
+        output.write_deflated(&entry, &bytes).unwrap();
+    }
+    output.finish().unwrap()
+}
+
+#[test]
+fn settings_have_an_empty_rsids_element_when_the_reference_has_none() {
+    let base = super::DocxWriter
+        .write(
+            &Pandoc::default(),
+            &WriterOptions::default(),
+            &mut Context::pure(),
+        )
+        .unwrap();
+    let w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+    let without = replace_entry(
+        &base,
+        "word/settings.xml",
+        &format!(
+            r#"<w:settings xmlns:w="{w}"><w:listSeparator w:val=";"/><w:zoom w:percent="90"/></w:settings>"#
+        ),
+    );
+    let settings = settings_with_reference(without);
+    assert!(
+        settings.ends_with(
+            "<w:zoom w:percent=\"90\" /><w:rsids>\n  </w:rsids><w:listSeparator w:val=\";\" /></w:settings>"
+        ),
+        "{settings}"
+    );
+
+    let with = replace_entry(
+        &base,
+        "word/settings.xml",
+        &format!(
+            r#"<w:settings xmlns:w="{w}"><w:rsids><w:rsidRoot w:val="00A1"/></w:rsids><w:zoom w:percent="90"/></w:settings>"#
+        ),
+    );
+    let settings = settings_with_reference(with);
+    assert!(
+        settings.ends_with(
+            "<w:zoom w:percent=\"90\" /><w:rsids><w:rsidRoot w:val=\"00A1\" /></w:rsids></w:settings>"
+        ),
+        "{settings}"
+    );
+}
+
+#[test]
+fn reports_each_local_image_once_as_a_loaded_resource() {
+    use randoc_ast::{Attr, Block, Inline, Target};
+    use randoc_core::LogMessage;
+
+    const GIF: &[u8] = b"GIF89a\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\xff\xff\xff\x21\xf9\x04\x01\x00\x00\x00\x00\x2c\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x01\x44\x00\x3b";
+    let image = |url: &str| {
+        Inline::Image(
+            Attr::default(),
+            vec![Inline::Str("alt".into())],
+            Target {
+                url: url.into(),
+                title: String::new(),
+            },
+        )
+    };
+    let doc = Pandoc {
+        blocks: vec![Block::Para(vec![
+            image("chap1/spider.gif"),
+            image("chap1/spider.gif"),
+            image("moon.gif"),
+            image("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"),
+        ])],
+        ..Pandoc::default()
+    };
+    let host = randoc_core::PureHost {
+        files: std::collections::BTreeMap::from([
+            ("chap1/spider.gif".into(), GIF.to_vec()),
+            ("images/moon.gif".into(), GIF.to_vec()),
+        ]),
+        ..randoc_core::PureHost::default()
+    };
+    let mut context = Context::new(Box::new(host));
+    context.state.resource_path = vec![".".into(), "images".into()];
+    super::DocxWriter
+        .write(&doc, &WriterOptions::default(), &mut context)
+        .unwrap();
+    let loaded: Vec<_> = context
+        .log()
+        .iter()
+        .filter(|message| matches!(message, LogMessage::LoadedResource(..)))
+        .cloned()
+        .collect();
+    assert_eq!(
+        loaded,
+        [
+            LogMessage::LoadedResource("chap1/spider.gif".into(), "chap1/spider.gif".into()),
+            LogMessage::LoadedResource("moon.gif".into(), "images/moon.gif".into()),
+        ]
+    );
+}

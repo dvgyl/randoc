@@ -90,7 +90,7 @@ pub(crate) fn write_with_slides(
     };
     let mut out = match (&options.template, template_context.as_mut()) {
         (Some(template), Some(fields)) => {
-            writer.add_writer_fields(fields, &doc.meta, body)?;
+            writer.add_writer_fields(fields, &doc.meta, body, context)?;
             writer.add_slide_fields(fields, context)?;
             if writer.wrote_highlighting
                 && let Some(style) = &options.highlight_style
@@ -105,7 +105,7 @@ pub(crate) fn write_with_slides(
                     .entry("highlighting-css".to_owned())
                     .or_insert(randoc_templates::Val::text(css));
             }
-            template.render(fields).render(width)
+            context.render_template(template, fields, width)?
         }
         _ => {
             let mut out = body.render(width);
@@ -1150,7 +1150,9 @@ impl Html<'_> {
                     || (inlines.is_empty()
                         && self.options.extensions.contains(Extension::EmptyParagraphs))
             }
-            Block::RawBlock(format, _) => self.raw_accepted(format),
+            Block::RawBlock(format, text) => {
+                self.raw_accepted(format) || self.raw_math(format, text)
+            }
             Block::Div(attr, content) if self.slides.is_some() && attr.has_class("notes") => {
                 self.html5()
                     || matches!(
@@ -1164,9 +1166,10 @@ impl Html<'_> {
 
     /// Returns `true` when an inline of the list gives HTML.
     fn inlines_present(&self, inlines: &[Inline]) -> bool {
-        inlines.iter().any(
-            |inline| !matches!(inline, Inline::RawInline(format, _) if !self.raw_accepted(format)),
-        )
+        inlines.iter().any(|inline| {
+            !matches!(inline, Inline::RawInline(format, text)
+                if !self.raw_accepted(format) && !self.raw_math(format, text))
+        })
     }
 
     fn block(&mut self, block: &Block, depth: usize) -> Result<Doc> {
@@ -1232,7 +1235,7 @@ impl Html<'_> {
                 )));
                 doc
             }
-            Block::RawBlock(format, text) => self.raw(format, text),
+            Block::RawBlock(format, text) => self.raw(format, text, depth)?,
             Block::BlockQuote(blocks) => {
                 if self.slides.is_some()
                     && let [list @ (Block::OrderedList(..) | Block::BulletList(_))] =
@@ -1513,12 +1516,25 @@ impl Html<'_> {
             }
     }
 
-    fn raw(&self, format: &Format, text: &str) -> Doc {
-        if self.raw_accepted(format) {
+    /// Returns `true` for raw TeX that the writer shows as display math: a
+    /// math environment with a math method that can show it.
+    fn raw_math(&self, format: &Format, text: &str) -> bool {
+        (format == "tex" || format == "latex")
+            && !matches!(
+                self.options.html_math_method,
+                HtmlMathMethod::PlainMath | HtmlMathMethod::GladTex
+            )
+            && starts_math_environment(text)
+    }
+
+    fn raw(&mut self, format: &Format, text: &str, depth: usize) -> Result<Doc> {
+        Ok(if self.raw_accepted(format) {
             lit(text)
+        } else if self.raw_math(format, text) {
+            self.math(MathType::DisplayMath, text, depth)?
         } else {
             empty()
-        }
+        })
     }
 
     fn list_items(&mut self, items: &[Vec<Block>], depth: usize) -> Result<Doc> {
@@ -2067,7 +2083,7 @@ impl Html<'_> {
                 doc
             }
             Inline::Math(kind, tex) => self.math(*kind, tex, depth)?,
-            Inline::RawInline(format, text) => self.raw(format, text),
+            Inline::RawInline(format, text) => self.raw(format, text, depth)?,
             Inline::Link(attr, content, target) => self.link(attr, content, target, depth)?,
             Inline::Image(attr, content, target) => self.image(attr, content, target),
             Inline::Note(blocks) => self.note(blocks, depth)?,
@@ -2515,8 +2531,48 @@ fn special_span_element(class: &str) -> Option<&'static str> {
         "mark" => Some("mark"),
         "kbd" => Some("kbd"),
         "abbr" => Some("abbr"),
+        "dfn" => Some("dfn"),
         _ => None,
     }
+}
+
+/// The TeX environments that the writer shows as display math when a raw
+/// TeX element starts with one, as Pandoc does.
+pub(crate) const MATH_ENVIRONMENTS: &[&str] = &[
+    "Bmatrix",
+    "CD",
+    "Vmatrix",
+    "align",
+    "align*",
+    "alignat",
+    "alignat*",
+    "aligned",
+    "alignedat",
+    "array",
+    "bmatrix",
+    "cases",
+    "eqnarray",
+    "eqnarray*",
+    "equation",
+    "equation*",
+    "gather",
+    "gather*",
+    "gathered",
+    "matrix",
+    "multline",
+    "multline*",
+    "pmatrix",
+    "smallmatrix",
+    "split",
+    "subarray",
+    "vmatrix",
+];
+
+/// Returns `true` when TeX text starts with a math environment.
+fn starts_math_environment(text: &str) -> bool {
+    text.strip_prefix("\\begin{")
+        .and_then(|rest| rest.split_once('}'))
+        .is_some_and(|(name, _)| MATH_ENVIRONMENTS.binary_search(&name).is_ok())
 }
 
 /// Selects an HTML element for the type of media in an image target.

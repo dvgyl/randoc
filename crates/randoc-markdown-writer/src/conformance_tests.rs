@@ -689,18 +689,28 @@ fn image_and_figure_labels_keep_the_first_marker_and_repeat_the_note() {
 
 #[test]
 fn image_label_note_repeats_have_depth_and_document_limits() {
-    let image_note = |body| {
-        Inline::Image(
-            Attr::default(),
-            vec![Inline::Note(vec![body])],
-            Target::new("a.jpg", ""),
-        )
-    };
-    let nested = (0..5).fold(para("nested note"), |body, _| {
-        Block::Para(vec![image_note(body)])
+    let image = |content| Inline::Image(Attr::default(), content, Target::new("a.jpg", ""));
+    let image_note = |body| image(vec![Inline::Note(vec![body])]);
+    // Pandoc 3.13 doubles the notes at each level of labels inside labels
+    // (16 for 4 levels). The writer repeats a label up to 3 levels deep.
+    let labels_in_labels = (0..4).fold(vec![Inline::Note(vec![para("deep note")])], |inner, _| {
+        vec![image(inner)]
     });
-    let actual = write("markdown", vec![nested]);
-    assert_eq!(actual.matches(": nested note").count(), 8);
+    let actual = write("markdown", vec![Block::Para(labels_in_labels)]);
+    assert_eq!(actual.matches(": deep note").count(), 8);
+
+    // A note is written after its label, so a label in a note is not inside
+    // the outer label: 5 levels give the 32 copies of Pandoc 3.13.
+    let nested = |levels| {
+        (0..levels).fold(para("nested note"), |body, _| {
+            Block::Para(vec![image_note(body)])
+        })
+    };
+    let actual = write("markdown", vec![nested(5)]);
+    assert_eq!(actual.matches(": nested note").count(), 32);
+    // After 64 repeats in a document a label no longer repeats its notes.
+    let actual = write("markdown", vec![nested(12)]);
+    assert_eq!(actual.matches(": nested note").count(), 65);
 
     let labels = vec![Block::Para(vec![image_note(para("separate note"))]); 70];
     let actual = write("markdown", labels);
@@ -817,4 +827,157 @@ fn wave8_fixture_replay() {
         println!("{list}: {passed}/{total}");
     }
     assert!(failures.is_empty(), "{failures:?}");
+}
+
+/// Autolinks in plain text, in strong text and in small caps:
+/// `https://example.test/a`, the same URL with `%20` for a space,
+/// `mailto:` without a class, and an e-mail address.
+fn autolinks() -> Vec<Block> {
+    let link = |class: &str, label: &str, url: &str| {
+        let classes = if class.is_empty() {
+            vec![]
+        } else {
+            vec![class.into()]
+        };
+        Inline::Link(
+            Attr::new("", classes, vec![]),
+            vec![text(label)],
+            Target::new(url, ""),
+        )
+    };
+    vec![
+        Block::Para(vec![
+            link("uri", "https://example.test/a", "https://example.test/a"),
+            Inline::Space,
+            link(
+                "uri",
+                "https://example.test/a b",
+                "https://example.test/a%20b",
+            ),
+            Inline::Space,
+            link("", "mailto:x@y.z", "mailto:x@y.z"),
+            Inline::Space,
+            link("email", "x@y.z", "mailto:x@y.z"),
+        ]),
+        Block::Para(vec![
+            Inline::Strong(vec![link(
+                "uri",
+                "https://example.test/a",
+                "https://example.test/a",
+            )]),
+            Inline::Space,
+            Inline::SmallCaps(vec![link(
+                "uri",
+                "https://example.test/b",
+                "https://example.test/b",
+            )]),
+            Inline::Space,
+            Inline::Strong(vec![link("uri", "HTTPS://EX.TEST/", "HTTPS://EX.TEST/")]),
+        ]),
+    ]
+}
+
+#[test]
+fn autolinks_follow_case_conversion_and_the_markua_link_form() {
+    // `pandoc -f native -t FORMAT [--reference-links]`.
+    let markua = concat!(
+        "[https:~/~/example.test/a](https://example.test/a){class: uri}\n",
+        "[https:~/~/example.test/a b](https://example.test/a%20b){class: uri}\n",
+        "[mailto:x@y.z](mailto:x@y.z) [x@y.z](mailto:x@y.z){class: email}\n\n",
+        "**[https:~/~/example.test/a](https://example.test/a){class: uri}**\n",
+        "[HTTPS:~/~/EXAMPLE.TEST/B](https://example.test/b){class: uri}\n",
+        "**[HTTPS:~/~/EX.TEST/](HTTPS://EX.TEST/){class: uri}**",
+    );
+    let plain_first = "https://example.test/a https://example.test/a%20b mailto:x@y.z x@y.z\n\n";
+    let cases = [
+        ("markua", false, markua.to_owned()),
+        (
+            "markua",
+            true,
+            format!(
+                "{markua}\n\n  [mailto:x@y.z]: mailto:x@y.z\n  [HTTPS:~/~/EXAMPLE.TEST/B]: https://example.test/b"
+            ),
+        ),
+        (
+            "plain+gutenberg",
+            false,
+            format!("{plain_first}HTTPS://EXAMPLE.TEST/A HTTPS://EXAMPLE.TEST/B HTTPS://EX.TEST/"),
+        ),
+        (
+            "plain+gutenberg",
+            true,
+            format!(
+                "{plain_first}HTTPS://EXAMPLE.TEST/A HTTPS://EXAMPLE.TEST/B HTTPS://EX.TEST/\n\n  [mailto:x@y.z]: mailto:x@y.z\n  [HTTPS://EXAMPLE.TEST/A]: https://example.test/a\n  [HTTPS://EXAMPLE.TEST/B]: https://example.test/b"
+            ),
+        ),
+        (
+            "plain",
+            true,
+            format!(
+                "{plain_first}https://example.test/a HTTPS://EXAMPLE.TEST/B HTTPS://EX.TEST/\n\n  [mailto:x@y.z]: mailto:x@y.z\n  [HTTPS://EXAMPLE.TEST/B]: https://example.test/b"
+            ),
+        ),
+    ];
+    for (format, reference_links, expected) in cases {
+        let mut options = WriterOptions::default();
+        options.reference_links = reference_links;
+        let actual = render(format, document(autolinks()), options);
+        assert_eq!(actual, expected, "{format} {reference_links}");
+    }
+}
+
+#[test]
+fn markua_links_keep_the_inline_form_with_attributes() {
+    // `pandoc -f native -t markua --reference-links`.
+    let blocks = vec![Block::Para(vec![
+        Inline::Link(
+            Attr::new(
+                "i",
+                vec!["c".into(), "d".into()],
+                vec![("k".into(), "v".into())],
+            ),
+            vec![text("t1")],
+            Target::new("https://u.test/", "ti"),
+        ),
+        Inline::Space,
+        Inline::Link(Attr::default(), vec![text("t2")], Target::new("u v", "")),
+    ])];
+    let mut options = WriterOptions::default();
+    options.reference_links = true;
+    assert_eq!(
+        render("markua", document(blocks), options),
+        concat!(
+            "[t1](https://u.test/){id: i, class: c, class: d, title: \"ti\", k: v}\n[t2](u v)\n\n",
+            "  [t1]: https://u.test/ \"ti\"\n  [t2]: <u v>"
+        )
+    );
+}
+
+#[test]
+fn markua_scripts_use_their_delimiters() {
+    // `pandoc -f native -t markua`.
+    let s = |t: &str| text(t);
+    let blocks = vec![Block::Para(vec![
+        s("x"),
+        Inline::Superscript(vec![s("1"), Inline::Space, s("2")]),
+        Inline::Space,
+        s("y"),
+        Inline::Subscript(vec![s("1"), Inline::Space, s("2")]),
+        Inline::Space,
+        Inline::Superscript(vec![Inline::Emph(vec![s("e")]), Inline::Space, s("f")]),
+        Inline::Space,
+        Inline::Subscript(vec![s("c~d")]),
+        Inline::Space,
+        Inline::Superscript(vec![Inline::Space, s("p"), Inline::Space]),
+        Inline::Space,
+        Inline::Superscript(vec![Inline::Superscript(vec![s("n")])]),
+        Inline::Space,
+        Inline::Superscript(vec![s("3"), Inline::SoftBreak, s("4")]),
+        Inline::Space,
+        s("a//b"),
+    ])];
+    assert_eq!(
+        write("markua", blocks),
+        "x^1 2^ y~1 2~ ^*e* f^ ~c~d~ ^p^ ^^n^^ ^3 4^ a~/~/b"
+    );
 }

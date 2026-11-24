@@ -52,8 +52,8 @@ impl<'a> Package<'a> {
 
     pub fn xml(&mut self, name: &str) -> Result<PartXml> {
         let bytes = self.read(name)?;
-        let text = xml::decode_utf8(&bytes).map_err(|error| self.error(error.format_pandoc()))?;
-        PartXml::parse(text, &self.xml_limits).map_err(|error| self.error(error.format_pandoc()))
+        PartXml::from_bytes(&bytes, &self.xml_limits)
+            .map_err(|error| self.error(error.format_pandoc()))
     }
 
     pub fn relationships(&mut self, part: &str) -> Result<Vec<Relationship>> {
@@ -77,6 +77,10 @@ pub(crate) fn xml_limits(limits: &Limits) -> XmlLimits {
 pub(crate) struct PartXml(XmlDoc);
 
 impl PartXml {
+    pub fn from_bytes(bytes: &[u8], limits: &XmlLimits) -> std::result::Result<Self, XmlError> {
+        Self::parse(xml::decode_utf8(bytes)?, limits)
+    }
+
     pub fn parse(text: &str, limits: &XmlLimits) -> std::result::Result<Self, XmlError> {
         xml::parse(text, limits, XmlOptions::default()).map(Self)
     }

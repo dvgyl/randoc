@@ -1,9 +1,10 @@
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::fmt::Write;
+use std::sync::Arc;
 
 use randoc_archive::media::is_safe_media_path;
 use randoc_archive::opc::{self, Relationship};
-use randoc_archive::xml::{XmlElement, XmlNode, escape_xml_attr};
+use randoc_archive::xml::{XmlElement, XmlNode, escape_xml_attr, escape_xml_text};
 use randoc_ast::Text;
 use randoc_core::{Context, Error, LogMessage, PathKind, Result, WriterOptions};
 
@@ -23,6 +24,7 @@ pub(super) const NAMESPACES: &str = concat!(
 );
 pub(super) const TYPES: &str = "http://schemas.openxmlformats.org/package/2006/content-types";
 const MIME: &str = "application/vnd.openxmlformats-officedocument.";
+pub(super) const DEFAULT_TABLE_STYLE: &str = "{5C22544A-7EE6-4342-B048-85BDC9FD1C3A}";
 pub(super) const TREE: &str = concat!(
     r#"<p:nvGrpSpPr><p:cNvPr id="1" name="" /><p:cNvGrpSpPr /><p:nvPr /></p:nvGrpSpPr>"#,
     r#"<p:grpSpPr><a:xfrm><a:off x="0" y="0" /><a:ext cx="0" cy="0" />"#,
@@ -125,6 +127,225 @@ impl Bounds {
 struct LayoutPart {
     path: String,
     slots: HashMap<usize, Bounds>,
+    placeholders: HashMap<usize, Placeholder>,
+    shape_ids: HashSet<usize>,
+    group: String,
+    namespaces: Vec<(Arc<str>, Arc<str>)>,
+}
+
+impl LayoutPart {
+    fn read(path: String, root: &XmlElement, slide: &XmlElement) -> Self {
+        let mut part = Self {
+            path,
+            slots: HashMap::new(),
+            placeholders: HashMap::new(),
+            shape_ids: HashSet::new(),
+            group: String::new(),
+            namespaces: Vec::new(),
+        };
+        let Some(tree) = slide.child(P, "spTree") else {
+            return part;
+        };
+        // Serialize the group and keep the whitespace of the layout.
+        for node in &tree.children {
+            if matches!(node, XmlNode::Text(_))
+                || matches!(node, XmlNode::Element(el) if is_presentation(el, "nvGrpSpPr") || is_presentation(el, "grpSpPr"))
+            {
+                write_node(node, &mut part.group);
+            }
+        }
+        for shape in tree.children_ns(P, "sp") {
+            let Some(props) = shape.child(P, "nvSpPr") else {
+                continue;
+            };
+            let Some(ph) = props
+                .child(P, "nvPr")
+                .and_then(|props| props.child(P, "ph"))
+            else {
+                continue;
+            };
+            let slot = ph
+                .attr_unqualified("idx")
+                .and_then(|number| number.parse().ok())
+                .unwrap_or_else(|| {
+                    if ph.attr_unqualified("type") == Some("dt") {
+                        10
+                    } else {
+                        0
+                    }
+                });
+            if let Some(bounds) = Bounds::read(shape) {
+                part.slots.insert(slot, bounds);
+            }
+            if let Some(id) = props
+                .child(P, "cNvPr")
+                .and_then(|el| el.attr_unqualified("id"))
+                .and_then(|id| id.parse::<u32>().ok())
+            {
+                part.placeholders
+                    .insert(slot, Placeholder::read(shape, id as usize));
+            }
+        }
+        part.shape_ids
+            .extend(part.placeholders.values().map(|placeholder| placeholder.id));
+        let mut declared = HashSet::new();
+        for (prefix, uri) in tree
+            .ns_decls
+            .iter()
+            .chain(&slide.ns_decls)
+            .chain(&root.ns_decls)
+        {
+            if let Some(prefix) = prefix
+                && !matches!(prefix.as_ref(), "a" | "r" | "p")
+                && declared.insert(prefix.as_ref())
+            {
+                part.namespaces.push((prefix.clone(), uri.clone()));
+            }
+        }
+        part
+    }
+}
+
+pub(super) struct Placeholder {
+    pub id: usize,
+    before_properties: String,
+    properties: String,
+    before_body: String,
+    after_body: String,
+}
+
+impl Placeholder {
+    fn read(shape: &XmlElement, id: usize) -> Self {
+        let prefix = shape
+            .name
+            .prefix
+            .as_deref()
+            .map_or(String::new(), |p| format!("{p}:"));
+        let tag = format!("{prefix}{}", shape.name.local);
+        let mut before_properties = String::new();
+        let mut properties = String::new();
+        let mut before_body = String::new();
+        let mut after_body = String::new();
+        XmlElement {
+            name: shape.name.clone(),
+            attrs: shape.attrs.clone(),
+            ns_decls: shape.ns_decls.clone(),
+            children: Vec::new(),
+        }
+        .write_to(&mut before_properties);
+        before_properties.truncate(before_properties.len() - " />".len());
+        before_properties.push('>');
+
+        let mut target = &mut before_properties;
+        for node in &shape.children {
+            match node {
+                XmlNode::Element(el) if is_presentation(el, "spPr") => {
+                    el.write_to(&mut properties);
+                    target = &mut before_body;
+                }
+                XmlNode::Element(el) if is_presentation(el, "txBody") => {
+                    target = &mut after_body;
+                }
+                _ => write_node(node, target),
+            }
+        }
+        let _ = write!(after_body, "</{tag}>");
+        Self {
+            id,
+            before_properties,
+            properties,
+            before_body,
+            after_body,
+        }
+    }
+
+    pub fn draw(&self, text: &str, bounds: Option<Bounds>, inherit_bounds: bool) -> String {
+        let properties = match bounds {
+            Some(bounds) => format!("<p:spPr>{}</p:spPr>", bounds.transform("a")),
+            None if inherit_bounds => "<p:spPr />".to_owned(),
+            None => self.properties.clone(),
+        };
+        format!(
+            "{}{properties}{}<p:txBody><a:bodyPr /><a:lstStyle />{text}</p:txBody>{}",
+            self.before_properties, self.before_body, self.after_body
+        )
+    }
+}
+
+fn is_presentation(element: &XmlElement, local: &str) -> bool {
+    element.name.ns.as_deref() == Some(P) && element.name.local == local
+}
+
+fn write_node(node: &XmlNode, out: &mut String) {
+    match node {
+        XmlNode::Element(el) => el.write_to(out),
+        XmlNode::Text(text) => escape_xml_text(text, out),
+    }
+}
+
+fn collect_namespace_prefixes<'a>(mut xml: &'a str, prefixes: &mut HashSet<&'a str>) {
+    while let Some((_, mut tag)) = xml.split_once('<') {
+        let end = if tag.starts_with("!--") {
+            Some("-->")
+        } else if tag.starts_with("![CDATA[") {
+            Some("]]>")
+        } else if tag.starts_with('?') {
+            Some("?>")
+        } else if tag.starts_with('/') {
+            Some(">")
+        } else {
+            None
+        };
+        if let Some(end) = end {
+            let Some((_, rest)) = tag.split_once(end) else {
+                return;
+            };
+            xml = rest;
+            continue;
+        }
+
+        // Read the element and attribute names between quoted values.
+        loop {
+            let Some(offset) = tag.find(['>', '"', '\'']) else {
+                return;
+            };
+            let (names, rest) = tag.split_at(offset);
+            for name in names.split_ascii_whitespace() {
+                if let Some((prefix, _)) = name.split_once(':')
+                    && prefix != "xmlns"
+                {
+                    prefixes.insert(prefix);
+                }
+            }
+            if let Some(rest) = rest.strip_prefix('>') {
+                xml = rest;
+                break;
+            }
+            let Some(quote) = rest.chars().next() else {
+                return;
+            };
+            let Some((_, rest)) = rest[quote.len_utf8()..].split_once(quote) else {
+                return;
+            };
+            tag = rest;
+        }
+    }
+}
+
+#[test]
+fn collects_only_prefixes_in_xml_names() {
+    let mut prefixes = HashSet::new();
+    collect_namespace_prefixes(
+        r#"<shape:sp xmlns:unused="urn:unused" label='value: > "more"' attr:id="1">
+             text:content
+             <!-- <comment:tag /> -->
+             <![CDATA[<cdata:tag />]]>
+             <?target <instruction:tag ?>
+             <nested:sp />
+           </shape:sp>"#,
+        &mut prefixes,
+    );
+    assert_eq!(prefixes, HashSet::from(["shape", "attr", "nested"]));
 }
 
 pub(super) struct Reference {
@@ -136,6 +357,9 @@ pub(super) struct Reference {
     pub main_rels: Vec<Relationship>,
     pub root_rels: Vec<Relationship>,
     pub notes_master: String,
+    pub imported: bool,
+    pub table_style: String,
+    entry_order: HashMap<String, usize>,
     next_part_number: HashMap<(String, String), usize>,
     layouts: Vec<LayoutPart>,
     width: i64,
@@ -170,6 +394,83 @@ impl Reference {
 
     pub fn layout_path(&self, layout: Layout) -> &str {
         &self.layouts[layout.index()].path
+    }
+
+    pub fn placeholder(&self, layout: Layout, slot: usize) -> Option<&Placeholder> {
+        self.layouts[layout.index()].placeholders.get(&slot)
+    }
+
+    pub fn layout_has_shape_id(&self, layout: Layout, id: usize) -> bool {
+        self.layouts[layout.index()].shape_ids.contains(&id)
+    }
+
+    pub fn slide_group(&self, layout: Layout) -> &str {
+        let group = &self.layouts[layout.index()].group;
+        if group.is_empty() { TREE } else { group }
+    }
+
+    pub fn slide_namespaces(&self, layout: Layout, shapes: &str) -> String {
+        let mut result = format!(r#"xmlns:a="{A}" xmlns:r="{R}" xmlns:p="{P}""#);
+        let mut used = HashSet::new();
+        collect_namespace_prefixes(shapes, &mut used);
+        collect_namespace_prefixes(self.slide_group(layout), &mut used);
+        let mut declared = HashSet::new();
+        for (prefix, uri) in &self.layouts[layout.index()].namespaces {
+            if used.contains(prefix.as_ref()) {
+                declared.insert(prefix.as_ref());
+                let _ = write!(result, r#" xmlns:{prefix}=""#);
+                escape_xml_attr(uri, &mut result);
+                result.push('"');
+            }
+        }
+        for declaration in NAMESPACES.split(' ').skip(3) {
+            if let Some((prefix, _)) = declaration
+                .strip_prefix("xmlns:")
+                .and_then(|decl| decl.split_once('='))
+                && !declared.contains(prefix)
+                && used.contains(prefix)
+            {
+                result.push(' ');
+                result.push_str(declaration);
+            }
+        }
+        result
+    }
+
+    pub fn manifest_order(&self, path: &str, mime: &str) -> (u8, usize) {
+        let kind = mime
+            .strip_prefix(MIME)
+            .and_then(|name| name.strip_suffix("+xml"));
+        let rank = match kind {
+            Some("extended-properties") => 0,
+            Some("presentationml.slideLayout") => 1,
+            Some("presentationml.slideMaster") => 2,
+            Some("theme") => 3,
+            Some("presentationml.presProps") => 4,
+            Some("presentationml.tableStyles") => 5,
+            Some("presentationml.notesMaster") => 6,
+            _ if path == "docProps/core.xml" => 7,
+            Some("custom-properties") => 8,
+            Some("presentationml.presentation.main") => 9,
+            Some("presentationml.viewProps") => 10,
+            Some("presentationml.slide") => 11,
+            Some("presentationml.notesSlide") => 12,
+            _ => 13,
+        };
+        let order = match rank {
+            11 | 12 => path
+                .rsplit('/')
+                .next()
+                .and_then(|name| name.strip_suffix(".xml"))
+                .and_then(|name| {
+                    name.trim_start_matches(|c: char| !c.is_ascii_digit())
+                        .parse()
+                        .ok()
+                })
+                .unwrap_or(usize::MAX),
+            _ => self.entry_order.get(path).copied().unwrap_or(usize::MAX),
+        };
+        (rank, order)
     }
 
     pub fn bounds(&self, layout: Layout, slot: usize) -> Bounds {
@@ -281,6 +582,11 @@ impl Reference {
                 .filter_map(|rel| internal_target(&main_path, rel)),
         );
         let mut layouts = HashMap::new();
+        let mut table_style = DEFAULT_TABLE_STYLE.to_owned();
+        let table_styles_path = main_rels
+            .iter()
+            .find(|rel| rel_kind(rel, "tableStyles"))
+            .and_then(|rel| internal_target(&main_path, rel));
         let notes_master = main_rels
             .iter()
             .find(|rel| rel_kind(rel, "notesMaster"))
@@ -298,51 +604,45 @@ impl Reference {
             );
             if !relations.is_empty() {
                 let rels_path = opc::rels_part_for(&path);
-                parts.insert(rels_path.clone(), package.read(&rels_path)?);
+                let bytes = if overrides
+                    .get(&path)
+                    .is_some_and(|mime| mime.ends_with(".slideMaster+xml"))
+                {
+                    canonical_xml(&package.xml(&rels_path)?)
+                } else {
+                    package.read(&rels_path)?
+                };
+                parts.insert(rels_path, bytes);
             }
             let bytes = package.read(&path)?;
             if overrides
                 .get(&path)
                 .is_some_and(|mime| mime.ends_with(".slideLayout+xml"))
             {
-                let document = randoc_archive::xml::decode_utf8(&bytes)
-                    .and_then(|text| PartXml::parse(text, &package.xml_limits))
+                let document = PartXml::from_bytes(&bytes, &package.xml_limits)
                     .map_err(|error| package.error(error.format_pandoc()))?;
                 if let Some(slide) = document.root.child(P, "cSld") {
                     let name = slide.attr_unqualified("name").unwrap_or_default();
-                    let mut slots = HashMap::new();
-                    for shape in slide
-                        .child(P, "spTree")
-                        .into_iter()
-                        .flat_map(|tree| tree.children_ns(P, "sp"))
-                    {
-                        let Some(ph) = shape
-                            .child(P, "nvSpPr")
-                            .and_then(|props| props.child(P, "nvPr"))
-                            .and_then(|props| props.child(P, "ph"))
-                        else {
-                            continue;
-                        };
-                        let idx = ph
-                            .attr_unqualified("idx")
-                            .and_then(|number| number.parse().ok())
-                            .unwrap_or_else(|| {
-                                if ph.attr_unqualified("type") == Some("dt") {
-                                    10
-                                } else {
-                                    0
-                                }
-                            });
-                        if let Some(bounds) = Bounds::read(shape) {
-                            slots.insert(idx, bounds);
-                        }
-                    }
-                    layouts.entry(name.to_owned()).or_insert(LayoutPart {
-                        path: path.clone(),
-                        slots,
-                    });
+                    layouts
+                        .entry(name.to_owned())
+                        .or_insert_with(|| LayoutPart::read(path.clone(), &document.root, slide));
                 }
             }
+            if table_styles_path.as_deref() == Some(&path)
+                && let Ok(document) = PartXml::from_bytes(&bytes, &package.xml_limits)
+                && let Some(style) = document.root.attr_unqualified("def")
+            {
+                table_style = style.to_owned();
+            }
+            let bytes = if overrides.get(&path).is_some_and(|mime| {
+                mime.ends_with(".slideMaster+xml") || mime.ends_with(".viewProps+xml")
+            }) {
+                let document = PartXml::from_bytes(&bytes, &package.xml_limits)
+                    .map_err(|error| package.error(error.format_pandoc()))?;
+                canonical_xml(&document)
+            } else {
+                bytes
+            };
             parts.insert(path, bytes);
         }
         // Pandoc keeps the other entries of the reference too, such as a theme
@@ -352,6 +652,12 @@ impl Reference {
             .entry_names()
             .into_iter()
             .map(str::to_owned)
+            .collect();
+        let entry_order = names
+            .iter()
+            .cloned()
+            .enumerate()
+            .map(|(index, name)| (name, index))
             .collect();
         for name in names {
             if seen.contains(&name)
@@ -383,6 +689,9 @@ impl Reference {
             main_rels,
             root_rels: roots,
             notes_master,
+            imported: true,
+            table_style,
+            entry_order,
             next_part_number: HashMap::new(),
             layouts: Vec::new(),
             width,
@@ -491,6 +800,9 @@ impl Reference {
                 false,
             )],
             notes_master: String::new(),
+            imported: false,
+            table_style: DEFAULT_TABLE_STYLE.to_owned(),
+            entry_order: HashMap::new(),
             next_part_number: HashMap::new(),
             layouts: Vec::new(),
             width,
@@ -583,6 +895,10 @@ impl Reference {
             layouts.push(LayoutPart {
                 path,
                 slots: HashMap::new(),
+                placeholders: HashMap::new(),
+                shape_ids: HashSet::new(),
+                group: String::new(),
+                namespaces: Vec::new(),
             });
         }
         let styles = master_styles();
@@ -735,6 +1051,12 @@ pub(super) fn relationship_xml(relationships: &[Relationship]) -> String {
     xml
 }
 
+fn canonical_xml(document: &PartXml) -> Vec<u8> {
+    let mut xml = DECLARATION.to_owned();
+    document.root.write_to(&mut xml);
+    xml.into_bytes()
+}
+
 pub(super) fn append_main_children(
     reference: &mut Reference,
     slides: &str,
@@ -742,9 +1064,18 @@ pub(super) fn append_main_children(
     limits: &randoc_archive::xml::XmlLimits,
 ) -> Result<()> {
     use randoc_archive::xml::{XmlOptions, parse};
+    let declarations = reference.main.root.ns_decls.clone();
+    let imported = reference.imported;
     let parse_child = |xml| {
         parse(xml, limits, XmlOptions::default())
-            .map(|doc| XmlNode::Element(doc.root))
+            .map(|mut doc| {
+                if imported {
+                    doc.root
+                        .ns_decls
+                        .retain(|decl| !declarations.contains(decl));
+                }
+                XmlNode::Element(doc.root)
+            })
             .map_err(|error| Error::App(error.format_pandoc()))
     };
     let children = &mut reference.main.root.children;
@@ -768,10 +1099,13 @@ pub(super) fn append_main_children(
             && !matches!(el.name.local.as_str(), "sldMasterIdLst" | "notesMasterIdLst" | "handoutMasterIdLst")))
         .unwrap_or(children.len());
     children.insert(slide_index, parse_child(slides)?);
-    let mut xml = String::new();
-    reference.main.root.write_to(&mut xml);
-    reference
-        .parts
-        .insert(reference.main_path.clone(), xml.into_bytes());
+    let bytes = if reference.imported {
+        canonical_xml(&reference.main)
+    } else {
+        let mut xml = String::new();
+        reference.main.root.write_to(&mut xml);
+        xml.into_bytes()
+    };
+    reference.parts.insert(reference.main_path.clone(), bytes);
     Ok(())
 }

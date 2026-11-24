@@ -58,10 +58,14 @@ pub(super) fn write(
         if options.table_of_contents {
             fields.insert("toc", Val::Bool(true));
         }
-        template
-            .render(fields)
-            .render_limited(writer.output_limit)
-            .ok_or_else(output_error)
+        let limit = writer
+            .output_limit
+            .min(usize::try_from(context.limits.max_output_size).unwrap_or(usize::MAX));
+        let work_limit = limit.saturating_mul(4);
+        let output =
+            template.render_limited_width(fields, None, work_limit, limit, context.deadline());
+        context.check_deadline()?;
+        output.ok_or_else(output_error)
     } else {
         let mut text = body.text;
         writer.output_size(text.len().saturating_add(body.final_break.max(1)))?;

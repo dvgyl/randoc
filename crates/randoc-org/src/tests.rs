@@ -62,6 +62,16 @@ fn macro_cycles_and_growth_are_bounded() -> Result<()> {
 }
 
 #[test]
+fn include_expansion_uses_a_budget_based_on_source_size() -> Result<()> {
+    let mut host = PureHost::default();
+    host.files.insert("chapter.org".into(), vec![b'x'; 2 << 20]);
+    let mut context = Context::new(Box::new(host));
+    let doc = read("#+include: \"chapter.org\"\n\nAfter", &mut context)?;
+    assert!(matches!(doc.blocks.as_slice(), [Block::Para(text)] if stringify(text) == "After"));
+    Ok(())
+}
+
+#[test]
 fn include_cycles_use_the_host_and_stop() -> Result<()> {
     let mut host = PureHost::default();
     host.files.insert(

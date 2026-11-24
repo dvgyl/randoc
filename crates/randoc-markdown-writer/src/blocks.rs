@@ -3,14 +3,14 @@
 use randoc_ast::{
     Attr, Block, Caption, Inline, ListAttributes, ListNumberDelim, ListNumberStyle, Text,
 };
-use randoc_core::{Extension, Result};
+use randoc_core::{Extension, LogMessage, Result};
 use randoc_layout::{
     Doc, blankline, blanklines, chomp, cr, empty, hang, literal, nest, nowrap, prefixed,
-    real_length, vcat,
+    real_length, space, vcat,
 };
 
 use crate::html::html_attrs;
-use crate::inlines::{alt_inlines, attr_text, longest_run};
+use crate::inlines::{alt_inlines, attr_text, is_haskell_space, longest_run};
 use crate::{Variant, W};
 use randoc_core::shared::stringify;
 
@@ -388,6 +388,41 @@ fn to_alpha(number: i64) -> Text {
     Text::from(char::from(b'a' + u8::try_from(index).unwrap_or(0)))
 }
 
+/// The marker of a GitHub alert for the first class of a div.
+fn alert_kind(class: &str) -> Option<&'static str> {
+    Some(match class {
+        "note" => "NOTE",
+        "tip" => "TIP",
+        "important" => "IMPORTANT",
+        "warning" => "WARNING",
+        "caution" => "CAUTION",
+        _ => return None,
+    })
+}
+
+/// Ends each blank line of HTML text with `&#10;` in place of its line
+/// break, because a blank line would end the HTML block in CommonMark.
+pub(crate) fn mark_blank_lines(text: &str) -> Text {
+    let mut out = Text::with_capacity(text.len());
+    let mut rest = text;
+    while let Some(start) = rest.find('\n') {
+        let (before, after) = rest.split_at(start + 1);
+        out.push_str(before);
+        let trimmed = after.trim_start_matches(|c| c != '\n' && is_haskell_space(c));
+        let (blank, line) = after.split_at(after.len() - trimmed.len());
+        out.push_str(blank);
+        rest = match line.strip_prefix('\n') {
+            Some(next) => {
+                out.push_str("&#10;");
+                next
+            }
+            None => line,
+        };
+    }
+    out.push_str(rest);
+    out
+}
+
 impl W<'_> {
     /// Renders a list of blocks.
     pub(crate) fn block_list(&mut self, blocks: &[Block]) -> Result<Doc> {
@@ -406,7 +441,9 @@ impl W<'_> {
             }
             let before_definitions =
                 matches!(blocks.get(index + 1), Some(Block::DefinitionList(_)));
-            let promote = (self.list_level == 0 || before_definitions)
+            let before_fence = matches!(blocks.get(index + 1), Some(Block::Div(..)))
+                && self.has(Extension::FencedDivs);
+            let promote = (self.list_level == 0 || before_definitions || before_fence)
                 && matches!(block, Block::Plain(_))
                 && blocks
                     .get(index + 1)
@@ -531,7 +568,15 @@ impl W<'_> {
             } else {
                 '~'
             };
-        let length = (longest_run(text, fence_char) + 1).max(3);
+        // Only a line of fence characters alone could close the fence.
+        let run = text
+            .split('\n')
+            .map(|line| line.trim_matches(is_haskell_space))
+            .filter(|line| line.chars().all(|c| c == fence_char))
+            .map(|line| line.chars().count())
+            .max()
+            .unwrap_or(0);
+        let length = (run + 1).max(3);
         let fence: Text = std::iter::repeat_n(fence_char, length).collect();
         let attr_ext = self.has(Extension::FencedCodeAttributes) || self.has(Extension::Attributes);
         let info = if attr_ext {
@@ -603,7 +648,7 @@ impl W<'_> {
         let tex = matches!(format, "latex" | "tex");
         if self.variant == Variant::Commonmark {
             if html && self.has(Extension::RawHtml) {
-                let text = text.replace("\n\n", "\n&#10;");
+                let text = mark_blank_lines(text);
                 return Some(RawBody::Trimmed(literal(text.trim_end_matches('\n'))));
             }
             if own {
@@ -639,10 +684,20 @@ impl W<'_> {
             let mark = if level == 1 { "=" } else { "-" };
             return Ok(literal(text) + cr() + literal(mark.repeat(width)) + blankline());
         }
+        let gutenberg = self.plain() && self.has(Extension::Gutenberg);
         self.in_heading = true;
+        let upper = self.upper;
+        self.upper = upper || gutenberg && level == 1;
         let contents = self.inline_list(inlines, true);
+        self.upper = upper;
         self.in_heading = false;
         let contents = contents?.render(None);
+        if gutenberg && level == 1 {
+            return Ok(blanklines(3) + literal(contents) + blanklines(2));
+        }
+        if gutenberg && level == 2 {
+            return Ok(blanklines(2) + literal(contents) + blankline());
+        }
         if self.plain() {
             return Ok(literal(contents) + blankline());
         }
@@ -675,6 +730,12 @@ impl W<'_> {
                 + literal(mark.repeat(width))
                 + blankline());
         }
+        if self.has(Extension::LiterateHaskell) {
+            // Literate Haskell does not allow `#` in column 1.
+            self.messages
+                .push(LogMessage::AtxHeadingInLhs(level, contents.clone()));
+            return Ok(literal(contents) + blankline());
+        }
         let hashes = "#".repeat(crate::run_length(level).max(1));
         Ok(literal(format!("{hashes} {contents}{suffix}")) + blankline())
     }
@@ -691,8 +752,8 @@ impl W<'_> {
             _ => return None,
         };
         let box_text = match inlines.first()? {
-            Inline::Str(s) if s == "\u{2610}" => "[ ]",
-            Inline::Str(s) if s == "\u{2612}" => "[x]",
+            Inline::Str(s) if s == "\u{2610}" || s == "\u{274F}" => "[ ]",
+            Inline::Str(s) if s == "\u{2612}" || s == "\u{2713}" => "[x]",
             _ => return None,
         };
         if !matches!(inlines.get(1), Some(Inline::Space) | None) {
@@ -715,7 +776,7 @@ impl W<'_> {
         let first = self.inline_list(tail, false)?;
         let end = if para { blankline() } else { cr() };
         let rest = self.block_list(item.get(1..).unwrap_or(&[]))?;
-        Ok(literal(format!("{task} ")) + first + end + rest)
+        Ok(literal(task) + space() + first + end + rest)
     }
 
     fn join_items(&self, items: Vec<Doc>, tight: bool) -> Doc {
@@ -841,16 +902,22 @@ impl W<'_> {
                 out += term_doc + literal(brk) + cr() + defs + blankline();
                 continue;
             }
+            let width = if self.has(Extension::FourSpaceRule) {
+                crate::run_length(self.opts.tab_stop).max(2)
+            } else {
+                2
+            };
+            let marker = format!(":{}", " ".repeat(width - 1));
             let mut defs = empty();
             for definition in definitions {
                 self.list_level += 1;
                 let contents = self.block_list(definition);
                 self.list_level -= 1;
-                let contents = contents?;
+                let contents = hang(width, literal(marker.clone()), contents?);
                 if tight {
-                    defs += hang(2, literal(": "), contents) + cr();
+                    defs += contents + cr();
                 } else {
-                    defs += blankline() + hang(2, literal(": "), contents) + blankline();
+                    defs += blankline() + contents + blankline();
                 }
             }
             out += term_doc + cr() + defs + blankline();
@@ -867,6 +934,24 @@ impl W<'_> {
     fn div(&mut self, attr: &Attr, blocks: &[Block], caption: Option<&[Block]>) -> Result<Doc> {
         if self.plain() {
             return self.div_contents(blocks, caption);
+        }
+        // The HTML writer wraps a highlighted code block in this div.
+        if attr.classes.first().is_some_and(|c| c == "sourceCode")
+            && let [Block::CodeBlock(code, text)] = blocks
+            && code.classes.first().is_some_and(|c| c == "sourceCode")
+        {
+            return Ok(self.code_block(code, text));
+        }
+        if self.variant == Variant::Commonmark
+            && self.has(Extension::Alerts)
+            && let Some(kind) = attr.classes.first().and_then(|c| alert_kind(c))
+            && let [Block::Div(title, _), rest @ ..] = blocks
+            && title.id.is_empty()
+            && title.attributes.is_empty()
+            && title.classes == ["title"]
+        {
+            let inner = literal(format!("[!{kind}]")) + cr() + self.block_list(rest)?;
+            return Ok(literal("> ") + prefixed("> ", inner) + blankline());
         }
         if self.has(Extension::FencedDivs) {
             let outer = std::mem::take(&mut self.div_count);

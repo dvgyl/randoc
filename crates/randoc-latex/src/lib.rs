@@ -18,6 +18,8 @@ mod option_tests;
 pub mod shared;
 mod standalone;
 mod table;
+#[cfg(test)]
+mod wave9_tests;
 
 use std::collections::HashSet;
 use std::sync::Arc;
@@ -77,6 +79,9 @@ fn write(
     // The class lookup below reads the variables, also for a fragment.
     standalone::check_variable_depth(&options.variables, max_depth)?;
     let mut writer = LatexWriter::new(options, max_depth, beamer)?;
+    if options.variables.get("csquotes").is_none() {
+        writer.csquotes = doc.meta.get("csquotes").is_some();
+    }
     writer.chapter_class = standalone::has_chapters(
         standalone::document_class(&doc.meta, &options.variables).as_deref(),
     );
@@ -98,7 +103,7 @@ fn write(
     let text = match (&options.template, fields.as_mut()) {
         (Some(template), Some(fields)) => {
             writer.add_writer_fields(fields, doc, body, context)?;
-            template.render(fields).render(width)
+            context.render_template(template, fields, width)?
         }
         _ => {
             let mut text = body.render(width);
@@ -182,6 +187,7 @@ pub(crate) struct LatexWriter<'a> {
     pub(crate) options: &'a WriterOptions,
     pub(crate) beamer: bool,
     pub(crate) smart: bool,
+    pub(crate) csquotes: bool,
     pub(crate) max_depth: usize,
     pub(crate) depth: usize,
     /// `true` when the writer skips notes, images and spans with an
@@ -265,6 +271,10 @@ impl<'a> LatexWriter<'a> {
             options,
             beamer,
             smart: options.extensions.contains(Extension::Smart),
+            csquotes: options
+                .variables
+                .get("csquotes")
+                .is_some_and(standalone::csquotes_enabled),
             max_depth,
             depth: 0,
             skip_invalid: false,
@@ -329,7 +339,7 @@ impl<'a> LatexWriter<'a> {
     }
 
     pub(crate) fn escape(&self, context: StringContext, text: &str) -> String {
-        string_to_latex(context, text, self.smart)
+        escape::escape_string(context, text, self.smart, self.options.prefer_ascii)
     }
 
     pub(crate) fn top_level_offset(&self) -> i64 {

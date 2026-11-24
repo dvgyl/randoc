@@ -10,7 +10,9 @@ use std::process::{Command, Stdio};
 use randoc_archive::xml::{XmlElement, XmlLimits, XmlNode, XmlOptions, parse};
 use randoc_archive::zip::{Archive, ArchiveLimits, ArchiveWriter};
 use randoc_ast::{Block, Inline, Pandoc, json};
-use randoc_core::{Context, Extension, Host, NativeHost, Output, PureHost, WriterOptions};
+use randoc_core::{
+    Context, Extension, HighlightMethod, Host, NativeHost, Output, PureHost, WriterOptions,
+};
 
 const EPOCH: &str = "1700000001";
 const W: &str = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
@@ -762,6 +764,17 @@ fn entry_differences(label: &str, actual: &[u8], expected: &[u8], reference: &[u
             .contains(&name)
                 && !reference.contains(name))
     };
+    compare_entries(label, actual, expected, licensed)
+}
+
+/// Returns each difference between two DOCX archives, entry by entry, for
+/// each entry that `skip` does not name.
+fn compare_entries(
+    label: &str,
+    actual: &[u8],
+    expected: &[u8],
+    skip: impl Fn(&str) -> bool,
+) -> Vec<String> {
     let mut a = Archive::open(actual, ArchiveLimits::default()).unwrap();
     let mut b = Archive::open(expected, ArchiveLimits::default()).unwrap();
     let names: Vec<String> = b.entry_names().into_iter().map(str::to_owned).collect();
@@ -774,7 +787,7 @@ fn entry_differences(label: &str, actual: &[u8], expected: &[u8], reference: &[u
         ));
     }
     for name in names {
-        if licensed(&name) || !a.contains(&name) {
+        if skip(&name) || !a.contains(&name) {
             continue;
         }
         let left = a.read(&name).unwrap().unwrap();
@@ -944,5 +957,64 @@ fn shared_reference_entries_match_oracle() {
         }
     }
     eprintln!("{matched}/{total} DOCX archives match entry by entry");
+    assert!(differences.is_empty(), "{}", differences.join("\n"));
+}
+
+/// The DOCX units of the writer baseline of the conformance harness: each
+/// archive must match the oracle entry by entry, `word/settings.xml` included.
+#[test]
+#[ignore = "Requires Pandoc 3.13."]
+fn writer_baseline_harness_units_match_oracle() {
+    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let cases =
+        std::fs::read_to_string(root.join("conformance/cases/writer-baseline/docx.toml")).unwrap();
+    let reference =
+        std::fs::read(root.join("conformance/fixtures/writer-baseline/reference.docx")).unwrap();
+    let scratch = Scratch::new("baseline");
+    std::fs::write(scratch.0.join("reference.docx"), &reference).unwrap();
+    let ids = cases
+        .lines()
+        .filter_map(|line| line.strip_prefix("id = \""))
+        .map(|id| id.trim_end_matches('"'));
+    let inputs = cases
+        .split("input = '''\n")
+        .skip(1)
+        .map(|rest| rest.split("'''").next().unwrap());
+    let mut differences = Vec::new();
+    let mut total = 0;
+    for (id, input) in ids.zip(inputs) {
+        total += 1;
+        let json = oracle(
+            &scratch.0,
+            &["-f", "native", "-t", "json"],
+            input.as_bytes(),
+        );
+        let expected = oracle(
+            &scratch.0,
+            &[
+                "-f",
+                "json",
+                "-t",
+                "docx",
+                "--reference-doc=reference.docx",
+                "--syntax-highlighting=none",
+                "-o",
+                "-",
+            ],
+            &json,
+        );
+        let mut options = WriterOptions::default();
+        options.reference_doc = Some("reference.docx".into());
+        options.highlight_method = HighlightMethod::None;
+        options.highlight_style = None;
+        let host = PureHost {
+            files: BTreeMap::from([("reference.docx".into(), reference.clone())]),
+            environment: BTreeMap::from([("SOURCE_DATE_EPOCH".into(), EPOCH.into())]),
+            ..PureHost::default()
+        };
+        let actual = writer(&ast(&json), &options, &mut Context::new(Box::new(host)));
+        differences.extend(compare_entries(id, &actual, &expected, |_| false));
+    }
+    assert_eq!(total, 8);
     assert!(differences.is_empty(), "{}", differences.join("\n"));
 }

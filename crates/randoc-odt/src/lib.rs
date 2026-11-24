@@ -1,5 +1,7 @@
 //! Pandoc 3.13 compatible ODT, FODT, and OpenDocument readers and writers.
 
+#![forbid(unsafe_code)]
+
 mod ns;
 mod reader;
 

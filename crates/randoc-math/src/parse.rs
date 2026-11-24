@@ -1085,6 +1085,16 @@ impl Parser {
             "}" => sym(Class::Close, "}"),
             "|" => sym(Class::Close, "\u{2225}"),
             "$" | "%" | "#" | "&" | "_" | "^" => sym(Class::Ord, name),
+            "ensuremath" => {
+                self.skip_space();
+                if self.peek() != Some('{') {
+                    return self.fail(
+                        r#"unexpected control sequence \ensuremath
+  expecting "%", "\\label", "\\tag", "\\nonumber", whitespace, "\\allowbreak" or "{""#,
+                    );
+                }
+                self.expression()?
+            }
             "frac" => self.fraction(true)?,
             "dfrac" => Exp::Display(true, boxed(self.fraction(true)?)),
             "tfrac" => Exp::Display(false, boxed(self.fraction(true)?)),

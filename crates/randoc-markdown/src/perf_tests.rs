@@ -659,3 +659,38 @@ fn check_pairs(limit: usize, ends: &'static [&'static str]) {
     }
     assert!(wrong.is_empty(), "{wrong:?}");
 }
+
+/// Tables one after the other. Each table can read up to the end of its
+/// container, but the reader must not copy the rest of the lines for each
+/// table (review finding MD-B1-3).
+const CONSECUTIVE_TABLES: &[(&str, &str)] = &[
+    (
+        "markdown",
+        ": Cap\n\n----------\nA   B\n----------\nx   y\n\n----------\n\n",
+    ),
+    (
+        "markdown",
+        ": Cap\n\n-----  -----\na      b\n-----  -----\n\n",
+    ),
+    ("markdown", "-----  -----\na      b\n-----  -----\n\n"),
+    (
+        "markdown",
+        "----------\nA   B\n----------\nx   y\n\n----------\n\n",
+    ),
+    (
+        "markdown",
+        "Table: Cap\n\n+---+---+\n| a | b |\n+---+---+\n\n",
+    ),
+];
+
+#[test]
+fn consecutive_captioned_tables_grow_linearly() {
+    let worker = std::thread::Builder::new().stack_size(1 << 30).spawn(|| {
+        let slow = faster_than_linear(CONSECUTIVE_TABLES, 200, 2000);
+        assert!(slow.is_empty(), "faster than linear: {slow:?}");
+    });
+    assert!(
+        matches!(worker.map(|handle| handle.join()), Ok(Ok(()))),
+        "the consecutive table step test failed"
+    );
+}

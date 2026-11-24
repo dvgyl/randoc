@@ -77,7 +77,11 @@ pub(super) fn write(
             scope.insert("titleblock", Val::Simple(titleblock));
         }
         scope.insert("body", Val::Simple(body));
-        template.render(&scope)
+        let output_limit =
+            usize::try_from(render.context.limits.max_output_size).unwrap_or(usize::MAX);
+        template
+            .render_doc_limited(&scope, limit.min(output_limit), render.context.deadline())
+            .ok_or_else(super::output_limit_error)?
     } else {
         body
     };
@@ -92,7 +96,14 @@ pub(super) fn write(
     } else {
         output
     };
-    Ok(output.render_ansi(super::columns(options)))
+    let output_limit = usize::try_from(render.context.limits.max_output_size).unwrap_or(usize::MAX);
+    output
+        .render_ansi_limited_until(
+            super::columns(options),
+            output_limit,
+            render.context.deadline(),
+        )
+        .ok_or_else(super::output_limit_error)
 }
 
 fn ends_with_line_break(mut blocks: &[Block]) -> bool {

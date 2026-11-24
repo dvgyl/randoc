@@ -16,12 +16,48 @@ pub enum StringContext {
 /// `ligatures` is `true` when the `smart` extension is on. Then curly quotes
 /// and dashes become the TeX ligatures.
 pub fn string_to_latex(context: StringContext, input: &str, ligatures: bool) -> String {
+    escape_string(context, input, ligatures, false)
+}
+
+pub(crate) fn escape_string(
+    context: StringContext,
+    input: &str,
+    ligatures: bool,
+    prefer_ascii: bool,
+) -> String {
     let mut out = String::with_capacity(input.len() + 8);
     let mut chars = input.chars().peekable();
     while let Some(c) = chars.next() {
         let next = chars.peek().copied();
         let code = context == StringContext::Code;
         let url = context == StringContext::Url;
+        if prefer_ascii
+            && !url
+            && !code
+            && let Some(accent) = next.and_then(accent_command)
+            && c.is_alphabetic()
+            && ascii_command(c).is_none()
+            && latin_decomposition(c).is_none()
+        {
+            chars.next();
+            out.extend(['\\', accent, '{', c, '}']);
+            continue;
+        }
+        let command_next = || {
+            if prefer_ascii
+                && !code
+                && next.is_some_and(|c| {
+                    ascii_command(c).is_some()
+                        || latin_decomposition(c).is_some()
+                        || c.is_alphabetic()
+                            && chars.clone().nth(1).and_then(accent_command).is_some()
+                })
+            {
+                Some('\\')
+            } else {
+                next
+            }
+        };
         match c {
             '{' | '}' | '$' | '%' | '&' | '_' | '#' if url && c != '%' && c != '#' => out.push(c),
             '{' | '}' | '$' | '%' | '&' | '_' | '#' => {
@@ -37,36 +73,158 @@ pub fn string_to_latex(context: StringContext, input: &str, ligatures: bool) -> 
                     out.push_str("\\/");
                 }
             }
-            '~' => command(&mut out, "\\textasciitilde", next, code),
+            '~' => command(&mut out, "\\textasciitilde", command_next(), code),
             '^' => out.push_str("\\^{}"),
-            '\\' => command(&mut out, "\\textbackslash", next, code),
-            '|' => command(&mut out, "\\textbar", next, code),
-            '<' => command(&mut out, "\\textless", next, code),
-            '>' => command(&mut out, "\\textgreater", next, code),
+            '\\' => command(&mut out, "\\textbackslash", command_next(), code),
+            '|' => command(&mut out, "\\textbar", command_next(), code),
+            '<' => command(&mut out, "\\textless", command_next(), code),
+            '>' => command(&mut out, "\\textgreater", command_next(), code),
             '[' => out.push_str("{[}"),
             ']' => out.push_str("{]}"),
-            '\'' => command(&mut out, "\\textquotesingle", next, code),
+            '\'' => command(&mut out, "\\textquotesingle", command_next(), code),
             '`' if code => out.push_str("\\textasciigrave{}"),
             '\u{a0}' => out.push('~'),
             '\u{200b}' => out.push_str("\\hspace{0pt}"),
             '\u{202f}' => out.push_str("\\,"),
             '\u{ad}' => out.push_str("\\-"),
             // `!` or `?` before a backquote would be a Spanish ligature.
-            '!' | '?' if ligatures && !code && next == Some('`') => {
+            '!' | '?' if ligatures && !code && matches!(next, Some('`' | '‘' | '“')) => {
                 out.push(c);
                 out.push_str("{\\kern0pt}");
             }
-            '\u{2026}' if ligatures && !code => command(&mut out, "\\ldots", next, false),
+            '\u{2026}' if ligatures && !code => command(&mut out, "\\ldots", command_next(), false),
             '\u{2018}' if ligatures && !code => quote(&mut out, "`", next),
             '\u{2019}' if ligatures && !code => quote(&mut out, "'", next),
             '\u{201C}' if ligatures && !code => quote(&mut out, "``", next),
             '\u{201D}' if ligatures && !code => quote(&mut out, "''", next),
             '\u{2013}' if ligatures && !code => out.push_str("--"),
             '\u{2014}' if ligatures && !code => out.push_str("---"),
+            _ if prefer_ascii && !c.is_ascii() => escape_ascii(&mut out, c, command_next, code),
             _ => out.push(c),
         }
     }
     out
+}
+
+fn escape_ascii(out: &mut String, c: char, next: impl FnOnce() -> Option<char>, code: bool) {
+    if let Some(name) = ascii_command(c) {
+        command(out, name, next(), code);
+    } else if let Some((base, mark)) = latin_decomposition(c) {
+        if code {
+            out.extend([base, mark]);
+        } else if let Some(accent) = accent_command(mark) {
+            out.extend(['\\', accent, '{', base, '}']);
+        } else {
+            out.push(c);
+        }
+    } else {
+        out.push(c);
+    }
+}
+
+fn ascii_command(c: char) -> Option<&'static str> {
+    Some(match c {
+        'Æ' => "\\AE",
+        'æ' => "\\ae",
+        'Ø' => "\\O",
+        'ø' => "\\o",
+        'Ł' => "\\L",
+        'ł' => "\\l",
+        'Œ' => "\\OE",
+        'œ' => "\\oe",
+        'ß' => "\\ss",
+        'ı' => "\\i",
+        '€' => "\\euro",
+        '£' => "\\pounds",
+        '©' => "\\copyright",
+        _ => return None,
+    })
+}
+
+fn accent_command(mark: char) -> Option<char> {
+    Some(match mark {
+        '\u{0300}' => '`',
+        '\u{0301}' => '\'',
+        '\u{0302}' => '^',
+        '\u{0303}' => '~',
+        '\u{0304}' => '=',
+        '\u{0306}' => 'u',
+        '\u{0307}' => '.',
+        '\u{0308}' => '"',
+        '\u{0309}' => 'h',
+        '\u{030a}' => 'r',
+        '\u{030b}' => 'H',
+        '\u{030c}' => 'v',
+        '\u{030d}' => '|',
+        '\u{030e}' => 'U',
+        '\u{030f}' => 'G',
+        '\u{0311}' => 'f',
+        '\u{0323}' => 'd',
+        '\u{0327}' => 'c',
+        '\u{0328}' => 'k',
+        '\u{0331}' => 'b',
+        '\u{0340}' => '`',
+        '\u{0341}' => '\'',
+        '\u{0361}' => 't',
+        _ => return None,
+    })
+}
+
+// Each row pairs composed Latin letters with their ASCII base letters.
+// These canonical decompositions come from the Unicode data in randoc-core.
+const LATIN_ACCENTS: &[(char, &str, &[u8])] = &[
+    ('\u{0300}', "ÀÈÌÒÙàèìòùǸǹẀẁỲỳ", b"AEIOUaeiouNnWwYy"),
+    (
+        '\u{0301}',
+        "ÁÉÍÓÚÝáéíóúýĆćĹĺŃńŔŕŚśŹźǴǵḰḱḾḿṔṕẂẃ",
+        b"AEIOUYaeiouyCcLlNnRrSsZzGgKkMmPpWw",
+    ),
+    (
+        '\u{0302}',
+        "ÂÊÎÔÛâêîôûĈĉĜĝĤĥĴĵŜŝŴŵŶŷẐẑ",
+        b"AEIOUaeiouCcGgHhJjSsWwYyZz",
+    ),
+    ('\u{0303}', "ÃÑÕãñõĨĩŨũṼṽẼẽỸỹ", b"ANOanoIiUuVvEeYy"),
+    ('\u{0304}', "ĀāĒēĪīŌōŪūȲȳḠḡ", b"AaEeIiOoUuYyGg"),
+    ('\u{0306}', "ĂăĔĕĞğĬĭŎŏŬŭ", b"AaEeGgIiOoUu"),
+    (
+        '\u{0307}',
+        "ĊċĖėĠġİŻżȦȧȮȯḂḃḊḋḞḟḢḣṀṁṄṅṖṗṘṙṠṡṪṫẆẇẊẋẎẏ",
+        b"CcEeGgIZzAaOoBbDdFfHhMmNnPpRrSsTtWwXxYy",
+    ),
+    ('\u{0308}', "ÄËÏÖÜäëïöüÿŸḦḧẄẅẌẍẗ", b"AEIOUaeiouyYHhWwXxt"),
+    ('\u{0309}', "ẢảẺẻỈỉỎỏỦủỶỷ", b"AaEeIiOoUuYy"),
+    ('\u{030a}', "ÅåŮůẘẙÅ", b"AaUuwyA"),
+    ('\u{030b}', "ŐőŰű", b"OoUu"),
+    (
+        '\u{030c}',
+        "ČčĎďĚěĽľŇňŘřŠšŤťŽžǍǎǏǐǑǒǓǔǦǧǨǩǰȞȟ",
+        b"CcDdEeLlNnRrSsTtZzAaIiOoUuGgKkjHh",
+    ),
+    ('\u{030f}', "ȀȁȄȅȈȉȌȍȐȑȔȕ", b"AaEeIiOoRrUu"),
+    ('\u{0311}', "ȂȃȆȇȊȋȎȏȒȓȖȗ", b"AaEeIiOoRrUu"),
+    (
+        '\u{0323}',
+        "ḄḅḌḍḤḥḲḳḶḷṂṃṆṇṚṛṢṣṬṭṾṿẈẉẒẓẠạẸẹỊịỌọỤụỴỵ",
+        b"BbDdHhKkLlMmNnRrSsTtVvWwZzAaEeIiOoUuYy",
+    ),
+    (
+        '\u{0327}',
+        "ÇçĢģĶķĻļŅņŖŗŞşŢţȨȩḐḑḨḩ",
+        b"CcGgKkLlNnRrSsTtEeDdHh",
+    ),
+    ('\u{0328}', "ĄąĘęĮįŲųǪǫ", b"AaEeIiUuOo"),
+    ('\u{0331}', "ḆḇḎḏḴḵḺḻṈṉṞṟṮṯẔẕẖ", b"BbDdKkLlNnRrTtZzh"),
+];
+
+fn latin_decomposition(c: char) -> Option<(char, char)> {
+    if !matches!(c, '\u{00c0}'..='\u{024f}' | '\u{1e00}'..='\u{1eff}' | 'Å') {
+        return None;
+    }
+    LATIN_ACCENTS.iter().find_map(|(mark, letters, bases)| {
+        let index = letters.chars().position(|letter| letter == c)?;
+        Some((char::from(*bases.get(index)?), *mark))
+    })
 }
 
 /// Writes a control word. In text, a following letter needs a space and a

@@ -66,7 +66,7 @@ pub(crate) fn write(
         if options.table_of_contents {
             fields.insert("toc", Val::Bool(true));
         }
-        Ok(template.render(fields).render(None))
+        context.render_template(template, fields, None)
     } else if writer.notes.is_empty() {
         if wiki == Wiki::Doku && matches!(doc.blocks.last(), Some(Block::Div(..))) {
             body.pop();

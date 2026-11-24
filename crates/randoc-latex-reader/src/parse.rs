@@ -10,7 +10,7 @@ use randoc_ast::{
     Row, Table, TableBody, TableHead, Target, Text,
 };
 use randoc_core::shared::{IdentifierSet, auto_identifier, nfc};
-use randoc_core::{Context, Extension, Extensions, LogMessage, SourcePos, Term};
+use randoc_core::{Context, Extension, Extensions, LogMessage, SourcePos};
 
 use crate::FieldOptions;
 use crate::inlines::Inlines;
@@ -41,7 +41,9 @@ const FOOTNOTE_MARK: &str = "\0latex-footnote-mark";
 
 mod eval;
 mod theorem;
+pub(crate) mod translations;
 mod xparse;
+use translations::caption_term;
 use xparse::Signature;
 
 #[cfg(test)]
@@ -311,7 +313,6 @@ pub(crate) struct Parser<'c> {
     /// True in the preamble. Pandoc gives no parse error for a missing
     /// argument group there, but it does for a definition without a name.
     in_preamble: bool,
-    figure_label: Option<&'static str>,
     file_contents: HashMap<Text, Text>,
     /// The flags of `\newif`, without the `if`.
     flags: Scoped<bool>,
@@ -326,6 +327,7 @@ pub(crate) struct Parser<'c> {
     quote_kinds: Vec<QuoteType>,
     titlecase_exclusions: HashSet<Text>,
     case_depth: usize,
+    translation_tables: translations::Tables,
     /// The number of tokens that the lookahead rules examined.
     scanned: std::cell::Cell<usize>,
 }
@@ -400,12 +402,12 @@ impl<'c> Parser<'c> {
             cell_copies: 0,
             top_depth: 0,
             in_preamble: false,
-            figure_label: None,
             file_contents: HashMap::new(),
             scanned: std::cell::Cell::new(0),
             quote_kinds: Vec::new(),
             titlecase_exclusions: HashSet::new(),
             case_depth: 0,
+            translation_tables: translations::Tables::new(),
             flags: Scoped::default(),
             toggles: Scoped::default(),
             skips: HashMap::new(),
@@ -2446,17 +2448,9 @@ impl<'c> Parser<'c> {
                 }
                 Ok(true)
             }
-            "setmainlanguage" => {
+            "setmainlanguage" | "setdefaultlanguage" => {
                 self.bump();
-                self.skip_options()?;
-                self.figure_label = match babel_language(&self.argument_text()?) {
-                    Some("de-DE" | "de-DE-1901" | "de-CH" | "de-CH-1901") => Some("Abbildung"),
-                    Some("fr") => Some("Figure"),
-                    Some("it") => Some("Figura"),
-                    Some("es") => Some("Figura"),
-                    Some("en") => Some("Figure"),
-                    _ => None,
-                };
+                self.caption_language()?;
                 Ok(true)
             }
             "graphicspath" => {
@@ -4601,13 +4595,11 @@ impl<'c> Parser<'c> {
                 out.append(Inlines(content));
                 Ok(())
             }
-            "figurename" if self.field.is_none() => {
+            name if self.field.is_none()
+                && let Some(term) = caption_term(name) =>
+            {
                 self.skip_word_spaces();
-                if let Some(label) = self.figure_label {
-                    out.push_str(label);
-                } else {
-                    out.push_str(&self.context.term(Term::Figure));
-                }
+                out.push_str(&self.context.term(term));
                 Ok(())
             }
             "faCheck" | "faClose" | "faTimes" | "faRemove" => {
@@ -4651,6 +4643,13 @@ impl<'c> Parser<'c> {
             }
             _ => self.other_inline_command(name, source, depth, out),
         }
+    }
+
+    fn caption_language(&mut self) -> R<()> {
+        self.skip_options()?;
+        let language = self.argument_text()?;
+        translations::switch(self.context, &mut self.translation_tables, &language);
+        Ok(())
     }
 
     fn skip_overlay(&mut self) {
@@ -6629,6 +6628,7 @@ pub(crate) fn is_block_only(name: &str) -> bool {
                 | "addtocounter"
                 | "graphicspath"
                 | "setmainlanguage"
+                | "setdefaultlanguage"
                 | "lstinputlisting"
                 | "raggedright"
                 | "parbox"
@@ -7399,6 +7399,7 @@ fn is_known_environment(name: &str) -> bool {
 pub(crate) fn is_unknown_command(name: &str) -> bool {
     acronym_form(name).is_none()
         && language_command(name).is_none()
+        && caption_term(name).is_none()
         && !matches!(
             name,
             "emph"

@@ -25,6 +25,11 @@ const RAW_TEX_WINDOW: usize = 1024;
 /// holds it only by a rare mistake.
 pub(crate) const ESCAPED_PERIOD: char = '\u{fdd0}';
 
+/// The format of a raw HTML comment that `{=html}` gave, with
+/// `--strip-comments`: it stays (oracle probes), and the end of the read
+/// makes it `html` again.
+pub(crate) const KEPT_HTML: &str = "\u{0}kept-html";
+
 /// What ends a sequence of inlines.
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 enum Stop {
@@ -203,6 +208,19 @@ struct Tables {
     spans: Option<HashMap<usize, usize>>,
 }
 
+/// A math span that `math_span` found.
+struct MathSpan {
+    /// The span is `$$…$$`.
+    display: bool,
+    /// The body, without the dollars.
+    body: Range<usize>,
+    /// The closing `$` follows a TeX comment line: the body loses its
+    /// trailing spaces.
+    after_comment: bool,
+    /// The position after the closing dollars.
+    end: usize,
+}
+
 #[derive(Clone, Copy)]
 struct MathEnd {
     dollar: usize,
@@ -218,6 +236,26 @@ fn is_space(c: Option<char>) -> bool {
 }
 
 impl Parser {
+    /// Tells whether the text of a bracket label is a bracketed citation, as
+    /// the inline parse reads it (oracle: `[see @x]` and `[\*@x]` are
+    /// citations, `[*@x*]` and `[a@b.com]` are not). The check changes no
+    /// state.
+    pub(crate) fn is_citation_label(&mut self, label: &str) -> bool {
+        if !label.contains('@') {
+            return false;
+        }
+        let depth = self.depth;
+        self.count_only(|p| {
+            let empty = Chars {
+                all: Rc::from([]),
+                lo: 0,
+                hi: 0,
+            };
+            let mut inl = Inl::new(p, empty, Index::default(), false, depth);
+            inl.citations(&split_citations(label)).is_some()
+        })
+    }
+
     /// Parses raw Markdown text into inlines.
     pub(crate) fn parse_inlines(&mut self, text: &str) -> Vec<Inline> {
         self.parse_inlines_in(text, false)
@@ -609,6 +647,14 @@ impl Inl<'_> {
                         continue;
                     }
                 }
+                // A `]` in math is no bracket (oracle: `[link $(0,1]$](url)`
+                // and `[a $$x $ y] z$$ b](u)`).
+                '$' if self.ext(Extension::TexMathDollars) => {
+                    if let Some(span) = self.math_span(k) {
+                        k = span.end;
+                        continue;
+                    }
+                }
                 '[' => stack.push(k),
                 ']' => {
                     if let Some(open) = stack.pop()
@@ -649,7 +695,7 @@ impl Inl<'_> {
 
     fn seq(&mut self, stop: Stop) -> Vec<Inline> {
         let mut out = Vec::new();
-        while self.i < self.s.len() && !self.at_stop(stop) {
+        while self.i < self.s.len() && !self.at_stop(stop) && self.p.can_read() {
             if matches!(stop, Stop::Superscript | Stop::Subscript)
                 && matches!(self.cur(), Some(' ' | '\n'))
             {
@@ -692,7 +738,7 @@ impl Inl<'_> {
         let mark = self.buf.len();
         self.closing += 1;
         let found = loop {
-            if self.failed_before(self.i, Construct::Contents(stop)) {
+            if !self.p.can_read() || self.failed_before(self.i, Construct::Contents(stop)) {
                 break false;
             }
             if self.at_stop(stop) {
@@ -778,6 +824,10 @@ impl Inl<'_> {
     }
 
     fn inline(&mut self) -> Vec<Inline> {
+        if !self.p.can_read() {
+            self.i = self.s.len();
+            return Vec::new();
+        }
         // Only the call that an emphasis loop makes may write into the
         // emphasis buffer.
         let direct = std::mem::take(&mut self.direct);
@@ -819,7 +869,13 @@ impl Inl<'_> {
             '*' | '_' => return self.enclosure(c, false),
             '`' => return self.code(),
             '[' => self.bracket(false),
-            '!' if self.peek(1) == Some('[') => self.bracket(true),
+            '!' if self.peek(1) == Some('[') => {
+                let image = self.bracket(true);
+                if image.is_none() {
+                    self.count_label_notes(self.i + 1);
+                }
+                image
+            }
             '^' => self.caret(),
             '~' => self.tilde(),
             '<' => self.angle(),
@@ -1263,7 +1319,7 @@ impl Inl<'_> {
                 out.push(Inline::Str("`".repeat(skip)));
             }
             if let Some(format) = self.trailing_raw_attr() {
-                out.push(Inline::RawInline(Format::new(format), body));
+                out.push(Inline::RawInline(self.p.raw_format(&format, &body), body));
             } else {
                 out.push(Inline::Code(attr.unwrap_or_default(), body));
             }
@@ -1575,9 +1631,17 @@ impl Inl<'_> {
                 }
                 return None;
             }
-            if let Some(blocks) = self.p.notes.get(key).cloned() {
+            if let Some((_, bytes)) = self.p.notes.get(key) {
                 self.i = close + 1;
                 self.p.used_notes.push(key.to_string());
+                if self.p.counting {
+                    self.p.note_number += 1;
+                    return Some(Vec::new());
+                }
+                if !self.p.charge_expansion(*bytes) {
+                    return Some(Vec::new());
+                }
+                let blocks = self.p.notes.get(key).map(|(blocks, _)| blocks.clone())?;
                 return Some(vec![self.note(blocks)]);
             }
             // A reference to a note with no definition is text, and it
@@ -1695,6 +1759,39 @@ impl Inl<'_> {
         out
     }
 
+    /// After `![` that makes no image, parses the label at `open` once
+    /// more only for its note numbers: each citation group, inline note and
+    /// note reference in it takes one, as in Pandoc (oracle: `Wow![@a]` and
+    /// `![^[n]]` give a later citation the note number 2 and 3). The parse
+    /// copies no note and defines no macro, and a budget of the reader keeps
+    /// the time linear.
+    fn count_label_notes(&mut self, open: usize) {
+        if !self.ext(Extension::Citations) {
+            return;
+        }
+        let Some(close) = self.matching_bracket(open) else {
+            return;
+        };
+        let before_close = |found: Option<usize>| found.is_some_and(|at| at < close);
+        if !(before_close(self.find(Find::Char('@'), open + 1))
+            || before_close(self.find(Find::Char('^'), open + 1)))
+            || close - open > self.p.label_budget
+        {
+            return;
+        }
+        self.p.label_budget -= close - open;
+        let window = self.window(open + 1..close);
+        let ix = self.shared_index();
+        let depth = self.depth;
+        let note_number = self.p.count_only(|p| {
+            let mut inner = Inl::new(p, window, ix, false, depth);
+            inner.window = Window::Content;
+            let _ = inner.seq(Stop::None);
+            inner.p.note_number
+        });
+        self.p.note_number = note_number;
+    }
+
     fn window(&self, range: Range<usize>) -> Chars {
         Chars {
             all: Rc::clone(&self.s.all),
@@ -1769,12 +1866,16 @@ impl Inl<'_> {
 
     fn note(&mut self, blocks: Vec<Block>) -> Inline {
         self.p.note_number += 1;
+        // Oracle probes: an inline note in the text of a referenced note
+        // takes no number (`[^1] [@c]` with `[^1]: n ^[m]` gives 2).
+        let number = self.p.note_number;
         let saved_depth = self.p.depth;
         self.p.depth = self.depth;
         let saved = std::mem::replace(&mut self.p.in_note, true);
         let blocks = self.p.resolve_blocks(blocks);
         self.p.in_note = saved;
         self.p.depth = saved_depth;
+        self.p.note_number = number;
         Inline::Note(blocks)
     }
 
@@ -1923,13 +2024,34 @@ impl Inl<'_> {
             return None;
         }
         let key = normalize_key(&self.text(key_range.start, key_range.end));
-        let found = self.p.refs.get(&key).cloned().or_else(|| {
+        let (target, attr) = self
+            .p
+            .refs
+            .get(&key)
+            .map(|(target, attr)| (target, Some(attr)))
+            .or_else(|| self.p.header_refs.get(&key).map(|target| (target, None)))?;
+        let mut bytes = target.url.len().saturating_add(target.title.len()) as u64;
+        if let Some(attr) = attr {
+            bytes = bytes.saturating_add(attr.id.len() as u64);
+            for class in &attr.classes {
+                bytes = bytes.saturating_add(class.len() as u64);
+            }
+            for (key, value) in &attr.attributes {
+                bytes = bytes
+                    .saturating_add(key.len() as u64)
+                    .saturating_add(value.len() as u64);
+            }
+        }
+        if !self.p.charge_expansion(bytes) {
+            self.i = k;
+            return Some(Vec::new());
+        }
+        let (target, mut attr) = self.p.refs.get(&key).cloned().or_else(|| {
             self.p
                 .header_refs
                 .get(&key)
                 .map(|t| (t.clone(), Attr::default()))
-        });
-        let (target, mut attr) = found?;
+        })?;
         self.i = k;
         if let Some(mut local) = self.trailing_attr(Extension::LinkAttributes) {
             if !local.id.is_empty() {
@@ -1997,6 +2119,15 @@ impl Inl<'_> {
             .iter()
             .map(|part| find_cite_key(part))
             .collect::<Option<Vec<_>>>()?;
+        // Oracle: in `[[@a]]` the key is in an inner bracket, so the
+        // outer bracket is no citation.
+        if parts
+            .iter()
+            .zip(&keys)
+            .any(|(part, at)| opens_bracket(part.get(..at.0).unwrap_or("")))
+        {
+            return None;
+        }
         let saved_note_number = self.p.note_number;
         let note_num = self.cite_note_num();
         let failures = self.p.emphasis_failures;
@@ -2018,7 +2149,9 @@ impl Inl<'_> {
             // opener that finds no closer takes the closing bracket.
             for text in [prefix_text.as_str(), suffix_text] {
                 if text.contains(['*', '_']) {
+                    let number = self.p.note_number;
                     let _ = self.sub(&format!("{text}]"), false);
+                    self.p.note_number = number;
                 }
             }
             cites.push(Citation {
@@ -2035,6 +2168,13 @@ impl Inl<'_> {
         if self.p.emphasis_failures != failures {
             self.p.note_number = saved_note_number;
             return None;
+        }
+        // Oracle: the group takes the note number after the citations in
+        // its text (`[@a, also @b]` gives 2 to both).
+        if !self.p.in_note {
+            for cite in &mut cites {
+                cite.note_num = self.p.note_number;
+            }
         }
         Some(cites)
     }
@@ -2128,7 +2268,8 @@ impl Inl<'_> {
                 self.i = end + 1;
             }
         }
-        let raw = self.text(start, self.i);
+        // Oracle: the text of `@{key}` leaves out the braces.
+        let raw = format!("@{key}{}", self.text(start + len, self.i));
         let cite = Citation {
             id: key,
             prefix: Vec::new(),
@@ -2181,6 +2322,9 @@ impl Inl<'_> {
             let saved_in_note = std::mem::replace(&mut self.p.in_note, true);
             let inner = self.sub_window(start..close, false, Window::Content);
             self.p.in_note = saved_in_note;
+            if self.p.counting {
+                return Some(Vec::new());
+            }
             return Some(vec![Inline::Note(vec![Block::Para(inner)])]);
         }
         if self.ext(Extension::Superscript)
@@ -2327,21 +2471,46 @@ impl Inl<'_> {
     }
 
     fn dollar_math(&mut self) -> Option<Vec<Inline>> {
-        if self.starts_with("$$") {
-            let start = self.i + 2;
-            let k = self.find(Find::DoubleDollar, start)?;
-            let body = self.text(start, k);
-            if body.trim_matches(SPACE).is_empty() {
-                return None;
-            }
-            self.i = k + 2;
+        let span = self.math_span(self.i)?;
+        self.i = span.end;
+        let body = self.text(span.body.start, span.body.end);
+        if span.display {
             let body = self.p.expand_math(body.trim_matches(SPACE));
             return Some(vec![Inline::Math(MathType::DisplayMath, body)]);
         }
-        if is_space(self.peek(1)) {
+        let body = if span.after_comment {
+            body.trim_end_matches(SPACE)
+        } else {
+            &body
+        };
+        let body = self.p.expand_math(body);
+        Some(vec![Inline::Math(MathType::InlineMath, body)])
+    }
+
+    /// Finds the math span that starts with the `$` at `at` in the window:
+    /// `$$…$$` with a body that is not blank, or `$…$` with no space after
+    /// the opener, no space before the closer (outside a TeX comment), no
+    /// digit after it and no blank line in it. The inline parse and the
+    /// bracket index use this check, so that they agree. The finds and the
+    /// comment ends are cached, so the scans of one text take linear time.
+    fn math_span(&mut self, at: usize) -> Option<MathSpan> {
+        if self.s.get(at + 1) == Some(&'$') {
+            let start = at + 2;
+            let k = self.find(Find::DoubleDollar, start)?;
+            if self.text(start, k).trim_matches(SPACE).is_empty() {
+                return None;
+            }
+            return Some(MathSpan {
+                display: true,
+                body: start..k,
+                after_comment: false,
+                end: k + 2,
+            });
+        }
+        if is_space(self.s.get(at + 1).copied()) {
             return None;
         }
-        let start = self.i + 1;
+        let start = at + 1;
         let MathEnd {
             dollar: k,
             after_comment,
@@ -2361,13 +2530,12 @@ impl Inl<'_> {
         {
             return None;
         }
-        let mut body = self.text(start, k);
-        if after_comment {
-            body.truncate(body.trim_end_matches(SPACE).len());
-        }
-        self.i = k + 1;
-        let body = self.p.expand_math(&body);
-        Some(vec![Inline::Math(MathType::InlineMath, body)])
+        Some(MathSpan {
+            display: false,
+            body: start..k,
+            after_comment,
+            end: k + 1,
+        })
     }
 
     fn inline_math_end(&mut self, mut from: usize) -> Option<MathEnd> {
@@ -2790,6 +2958,22 @@ fn cite_key(s: &str) -> Option<(Text, usize)> {
     Some((rest.get(..len)?.into(), len + 1))
 }
 
+/// Tells whether `text` has a `[` that no later `]` closes, outside escapes.
+fn opens_bracket(text: &str) -> bool {
+    let mut depth = 0usize;
+    let mut escaped = false;
+    for c in text.chars() {
+        match c {
+            _ if escaped => escaped = false,
+            '\\' => escaped = true,
+            '[' => depth += 1,
+            ']' => depth = depth.saturating_sub(1),
+            _ => {}
+        }
+    }
+    depth > 0
+}
+
 /// Finds the citation key in one part of a bracketed citation.
 /// Returns the byte index of `@` (or of `-@`), the key and the byte length from that index to the end of the key.
 fn find_cite_key(part: &str) -> Option<(usize, Text, usize)> {
@@ -3058,6 +3242,112 @@ fn join_white_space(xs: Vec<Inline>) -> Vec<Inline> {
         }
     }
     out
+}
+
+/// Tells whether the text of a raw HTML element is one comment. Only such
+/// an element goes away with `--strip-comments` (oracle: the comment in
+/// `<pre><!-- c --></pre>` stays).
+pub(crate) fn is_one_comment(text: &str) -> bool {
+    text.trim_matches(SPACE)
+        .strip_prefix("<!--")
+        .and_then(|rest| rest.find("-->").map(|end| end + 3 == rest.len()))
+        .unwrap_or(false)
+}
+
+/// Tells whether a block is a raw HTML element that is one comment.
+pub(crate) fn is_comment_block(block: &Block) -> bool {
+    matches!(block, Block::RawBlock(format, text)
+        if format.as_str() == "html" && is_one_comment(text))
+}
+
+/// Removes each raw HTML element that is one comment from `xs` and from the
+/// inline lists in it (`--strip-comments`). The white space around a removed
+/// comment joins: a line break takes a soft break and a space, and a soft
+/// break takes a space (oracle: `a <!-- c --> b`, `baz<!-- bim -->boop`).
+/// The blocks of a note are stripped when the note is read.
+pub(crate) fn strip_comments(xs: Vec<Inline>) -> Vec<Inline> {
+    let strip = |c: Vec<Inline>| strip_comments(c);
+    let strip_text = |c: Vec<Inline>| {
+        let had = c.iter().any(|x| {
+            matches!(x, Inline::RawInline(format, text)
+                if format.as_str() == "html" && is_one_comment(text))
+        });
+        let c = strip_comments(c);
+        if had { normalize(c) } else { c }
+    };
+    let mut out: Vec<Inline> = Vec::with_capacity(xs.len());
+    let mut removed = false;
+    for x in xs {
+        crate::step(1);
+        out.push(match x {
+            Inline::RawInline(format, text)
+                if format.as_str() == "html" && is_one_comment(&text) =>
+            {
+                removed = true;
+                continue;
+            }
+            Inline::Emph(c) => Inline::Emph(strip(c)),
+            Inline::Underline(c) => Inline::Underline(strip(c)),
+            Inline::Strong(c) => Inline::Strong(strip(c)),
+            Inline::Strikeout(c) => Inline::Strikeout(strip(c)),
+            Inline::Superscript(c) => Inline::Superscript(strip(c)),
+            Inline::Subscript(c) => Inline::Subscript(strip(c)),
+            Inline::SmallCaps(c) => Inline::SmallCaps(strip(c)),
+            Inline::Quoted(kind, c) => Inline::Quoted(kind, strip(c)),
+            // Oracle: link text loses the white space at its ends.
+            Inline::Link(attr, c, target) => Inline::Link(attr, strip_text(c), target),
+            Inline::Image(attr, c, target) => Inline::Image(attr, strip_text(c), target),
+            Inline::Span(attr, c) => Inline::Span(attr, strip(c)),
+            // Oracle probes: the paragraph of an inline note keeps the white
+            // space at its ends (`x^[ <!-- c --> b]`). A referenced note was
+            // stripped when it was read, so a second strip keeps it.
+            Inline::Note(blocks) => Inline::Note(
+                blocks
+                    .into_iter()
+                    .filter(|b| !is_comment_block(b))
+                    .map(|b| match b {
+                        Block::Para(c) => Block::Para(strip(c)),
+                        Block::Plain(c) => Block::Plain(strip(c)),
+                        other => other,
+                    })
+                    .collect(),
+            ),
+            Inline::Cite(citations, c) => Inline::Cite(
+                citations
+                    .into_iter()
+                    .map(|mut citation| {
+                        citation.prefix = strip(std::mem::take(&mut citation.prefix));
+                        citation.suffix = strip(std::mem::take(&mut citation.suffix));
+                        citation
+                    })
+                    .collect(),
+                strip(c),
+            ),
+            other => other,
+        });
+    }
+    if !removed {
+        return out;
+    }
+    let mut joined: Vec<Inline> = Vec::with_capacity(out.len());
+    let rank = |x: &Inline| match x {
+        Inline::Space => 1,
+        Inline::SoftBreak => 2,
+        Inline::LineBreak => 3,
+        _ => 0,
+    };
+    for x in out {
+        match (joined.last_mut(), x) {
+            (Some(Inline::Str(a)), Inline::Str(b)) => a.push_str(&b),
+            (Some(last), x) if rank(last) > 0 && rank(&x) > 0 => {
+                if rank(&x) > rank(last) {
+                    *last = x;
+                }
+            }
+            (_, x) => joined.push(x),
+        }
+    }
+    joined
 }
 
 /// Merges adjacent `Str` inlines and white space, without trimming the ends.

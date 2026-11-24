@@ -178,10 +178,20 @@ impl Renderer<'_> {
             .map_err(|error| Error::Template(error.to_string()))?;
             &fallback
         };
-        let limit = self.budget.remaining();
-        let rendered = template
-            .render_limited(&fields, limit, limit)
-            .ok_or_else(size_error)?;
+        let limit = self
+            .budget
+            .remaining()
+            .min(usize::try_from(self.context.limits.max_output_size).unwrap_or(usize::MAX));
+        let work_limit = limit.saturating_mul(4);
+        let rendered = template.render_limited_width(
+            &fields,
+            None,
+            work_limit,
+            limit,
+            self.context.deadline(),
+        );
+        self.context.check_deadline()?;
+        let rendered = rendered.ok_or_else(size_error)?;
         self.budget.charge(rendered.len())?;
         Ok(rendered)
     }

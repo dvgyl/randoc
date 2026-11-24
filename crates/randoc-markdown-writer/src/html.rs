@@ -20,6 +20,7 @@ impl W<'_> {
     pub(crate) fn html_text(&self, blocks: &[Block]) -> Result<Text> {
         let mut context = Context::pure();
         context.limits.max_nesting_depth = self.max_depth.saturating_sub(self.depth);
+        context.limits.max_table_cells = self.max_table_cells;
         randoc_html::render_blocks(blocks, self.opts, &mut context)
     }
 }

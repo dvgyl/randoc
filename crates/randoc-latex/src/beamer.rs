@@ -373,7 +373,10 @@ impl LatexWriter<'_> {
             return Ok(());
         }
         let nodes = std::mem::take(run);
-        if bare {
+        if bare
+            || (title.is_some()
+                && matches!(nodes.as_slice(), [Node::Block(Block::Div(attr, _))] if attr.has_class("notes")))
+        {
             docs.push(self.nodes(&nodes)?);
             return Ok(());
         }

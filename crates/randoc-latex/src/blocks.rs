@@ -326,6 +326,13 @@ pub(crate) fn listings_language(attr: &Attr) -> Option<&'static str> {
     })
 }
 
+pub(crate) fn listings_attributes(attr: &Attr) -> impl Iterator<Item = (&str, &str)> {
+    attr.attributes.iter().filter_map(|(key, value)| {
+        (!matches!(key.as_str(), "exports" | "tangle" | "results"))
+            .then_some((key.as_str(), value.as_str()))
+    })
+}
+
 /// A line break that joins lines of a line block or paragraphs of a caption.
 static LINE_BREAK: Inline = Inline::LineBreak;
 static SPACE: Inline = Inline::Space;
@@ -547,6 +554,14 @@ impl LatexWriter<'_> {
         }
     }
 
+    fn listings_block_option(&self, key: &str, value: &str) -> String {
+        if value.chars().all(char::is_alphanumeric) {
+            format!("{key}={value}")
+        } else {
+            format!("{key}={{{}}}", self.escape(StringContext::Text, value))
+        }
+    }
+
     fn code_block(&mut self, attr: &Attr, code: &str) -> Doc {
         self.saw_code = true;
         let anchor = if attr.id.is_empty() || self.options.listings {
@@ -580,9 +595,14 @@ impl LatexWriter<'_> {
             if attr.has_class("numberLines") {
                 options.push("numbers=left".into());
             }
-            if let Some(start) = attr.get("startFrom") {
-                options.push(format!("firstnumber={start}"));
-            }
+            options.extend(listings_attributes(attr).map(|(key, value)| {
+                let key = if key == "startFrom" {
+                    "firstnumber"
+                } else {
+                    key
+                };
+                self.listings_block_option(key, value)
+            }));
             if !attr.id.is_empty() {
                 options.push(format!("label={}", to_label(&attr.id)));
             }
@@ -795,6 +815,9 @@ impl LatexWriter<'_> {
         let mut notes = Vec::new();
         let mut tight = true;
         for (term, definitions) in items {
+            let has_equals = term
+                .iter()
+                .any(|inline| matches!(inline, Inline::Str(text) if text.contains('=')));
             let was_in_term = std::mem::replace(&mut self.in_term, true);
             let term = self.with_note_marks(|writer| writer.inlines(term));
             self.in_term = was_in_term;
@@ -815,9 +838,9 @@ impl LatexWriter<'_> {
                 self.in_definition = was_in_definition;
                 definition_docs.push(definition_doc?);
             }
-            // A bracket in the term would end the optional argument early.
+            // A closing bracket or an equals sign can change how LaTeX reads the label.
             let text = term_doc.render(None);
-            let item = if text.replace("{]}", "").replace("\\]", "").contains(']') {
+            let item = if has_equals || text.replace("{]}", "").replace("\\]", "").contains(']') {
                 literal("\\item[{") + term_doc + literal("}]")
             } else {
                 literal("\\item[") + term_doc + literal("]")

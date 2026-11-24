@@ -21,6 +21,8 @@ pub struct LevelDef {
     pub font: Option<Text>,
     /// Optional paragraph style linked to this level (`w:pStyle/@w:val`).
     pub p_style: Option<Text>,
+    /// Left indent of the level (`w:pPr/w:ind/@w:left`), in twips.
+    pub indent: Option<i64>,
 }
 
 /// Concrete list marker kind resolved from `numbering.xml`.
@@ -140,9 +142,7 @@ impl Numbering {
             .map(|(n, i)| (n.as_str(), *i))
     }
 
-    /// Resolves `(num_id, ilvl)` to a [`ListKind`]. Returns `None` if `num_id`
-    /// is `"0"` (explicitly no list), unknown, or has `numFmt="none"`.
-    pub fn resolve(&self, num_id: &str, ilvl: i64) -> Option<ListKind> {
+    fn level(&self, num_id: &str, ilvl: i64) -> Option<(&LevelDef, Option<&NumOverride>)> {
         if num_id == "0" {
             return None;
         }
@@ -153,7 +153,18 @@ impl Numbering {
             .and_then(|o| o.lvl_override.as_ref())
             .or_else(|| abs.get(&ilvl))
             .or_else(|| (0..=8).contains(&ilvl).then(|| abs.get(&0)).flatten())?;
+        Some((lvl, ov))
+    }
 
+    /// Returns the left indent of the level `(num_id, ilvl)`, in twips.
+    pub fn indent(&self, num_id: &str, ilvl: i64) -> Option<i64> {
+        self.level(num_id, ilvl)?.0.indent
+    }
+
+    /// Resolves `(num_id, ilvl)` to a [`ListKind`]. Returns `None` if `num_id`
+    /// is `"0"` (explicitly no list), unknown, or has `numFmt="none"`.
+    pub fn resolve(&self, num_id: &str, ilvl: i64) -> Option<ListKind> {
+        let (lvl, ov) = self.level(num_id, ilvl)?;
         let start = ov.and_then(|o| o.start_override).unwrap_or(lvl.start);
         match lvl.num_fmt.as_deref()? {
             "none" => None,
@@ -229,6 +240,11 @@ fn parse_lvl(el: &XmlElement, ns: &DocxNs) -> Option<(i64, LevelDef)> {
         .w_child(el, "pStyle")
         .and_then(|c| ns.w_attr(c, "val"))
         .map(Text::from);
+    let indent = ns
+        .w_child(el, "pPr")
+        .and_then(|p| ns.w_child(p, "ind"))
+        .and_then(|ind| ns.w_attr(ind, "left").or_else(|| ns.w_attr(ind, "start")))
+        .and_then(|s| s.parse::<i64>().ok());
     Some((
         ilvl,
         LevelDef {
@@ -237,6 +253,7 @@ fn parse_lvl(el: &XmlElement, ns: &DocxNs) -> Option<(i64, LevelDef)> {
             lvl_text: Text::from(lvl_text),
             font,
             p_style,
+            indent,
         },
     ))
 }

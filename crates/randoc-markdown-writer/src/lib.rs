@@ -20,7 +20,7 @@ mod uri;
 
 use std::sync::Arc;
 
-use randoc_ast::{Block, Pandoc, Target, Text};
+use randoc_ast::{Block, Inline, Pandoc, Target, Text};
 use randoc_core::{
     Context, Error, Extension, Extensions, LogMessage, ReferenceLocation, Result, WrapOption,
     Writer, WriterOptions,
@@ -75,6 +75,7 @@ fn write(
     variant: Variant,
 ) -> Result<Text> {
     let mut w = W::new(options, variant, context.limits.max_nesting_depth);
+    w.max_table_cells = context.limits.max_table_cells;
     let blocks = match doc.blocks.split_last() {
         Some((Block::Div(attr, _), rest)) if attr.id == "refs" && w.has(Extension::Citations) => {
             rest
@@ -82,18 +83,18 @@ fn write(
         _ => &doc.blocks,
     };
     let output = match &options.template {
-        Some(template) => w.standalone(doc, blocks, template)?,
+        Some(template) => w.standalone(doc, blocks, template, context)?,
         None => {
             // Pandoc converts the metadata before the body, also for a
             // fragment, so the notes of the metadata take the first numbers.
             w.meta_context(&doc.meta)?;
-            w.document(blocks)?
+            w.document(blocks)?.render(line_width(options))
         }
     };
     for message in std::mem::take(&mut w.messages) {
         context.report(message);
     }
-    let mut text = output.render(line_width(options));
+    let mut text = output;
     // Remove the layout's final line break. A final blank line can
     // be part of a raw block and must stay.
     if options.template.is_none() && text.ends_with('\n') && !text.ends_with("\n\n") {
@@ -121,21 +122,51 @@ pub(crate) struct LinkRef {
 /// text of the element.
 pub(crate) type RefKey = (Text, Text, Text);
 
+/// The content of a note that waits for output.
+pub(crate) enum NoteBody {
+    /// A copy of a note outside the notes that are being written.
+    Owned(Vec<Block>),
+    /// A note inside a note that is being written, by its [`note_key`].
+    /// The writer takes the content from the outer note without a copy.
+    Inner(usize),
+}
+
+/// A note that waits for output.
+pub(crate) struct PendingNote {
+    pub body: NoteBody,
+    pub state: NoteState,
+}
+
+/// The number of a waiting note, its nesting depth and the changes of its
+/// position: the text of a heading or of upper-case text changes the text
+/// of its notes too.
+pub(crate) struct NoteState {
+    pub number: usize,
+    pub depth: usize,
+    pub upper: bool,
+    pub breaks_as_spaces: bool,
+}
+
 /// The state of one run of the writer.
 pub(crate) struct W<'a> {
     pub opts: &'a WriterOptions,
     pub variant: Variant,
     pub ext: Extensions,
-    /// The rendered notes that wait for output.
-    pub notes: Vec<Doc>,
-    /// For each waiting note: `true` when it starts with a paragraph.
-    pub note_starts: Vec<bool>,
-    /// The number of notes that were already written.
-    pub notes_written: usize,
+    /// The notes that wait for output. They are rendered with the other
+    /// notes of their section, so that a note inside a note takes the
+    /// number after the last waiting note, as in Pandoc.
+    pub notes: Vec<PendingNote>,
+    /// The number of note numbers given so far.
+    pub note_count: usize,
+    /// The [`note_key`] of each note directly inside the notes that are
+    /// being written.
+    pub note_keys: std::collections::HashSet<usize>,
     /// The link references that wait for output.
     pub refs: Vec<LinkRef>,
     pub depth: usize,
     pub max_depth: usize,
+    /// The largest number of grid positions (rows times columns) of one table.
+    pub max_table_cells: usize,
     pub messages: Vec<LogMessage>,
     /// `true` inside a table cell.
     pub in_table: bool,
@@ -155,6 +186,8 @@ pub(crate) struct W<'a> {
     pub upper: bool,
     /// `true` inside a superscript or subscript, where spaces need a backslash.
     pub in_script: bool,
+    /// `true` in a note of a heading, whose line breaks are spaces.
+    pub breaks_as_spaces: bool,
     /// The text labels of the link references, as [`reference_key`] gives
     /// them, with each target of the label and its number: 0 for the
     /// target of the text label, else the number of its numbered label.
@@ -181,6 +214,9 @@ pub(crate) struct W<'a> {
     /// The number of lists that the edge-space walk visited.
     #[cfg(test)]
     pub edge_steps: usize,
+    /// The number of note contents that the writer copied.
+    #[cfg(test)]
+    pub note_copies: usize,
 }
 
 impl<'a> W<'a> {
@@ -190,11 +226,12 @@ impl<'a> W<'a> {
             variant,
             ext: opts.extensions,
             notes: Vec::new(),
-            note_starts: Vec::new(),
-            notes_written: 0,
+            note_count: 0,
+            note_keys: std::collections::HashSet::new(),
             refs: Vec::new(),
             depth: 0,
             max_depth,
+            max_table_cells: randoc_core::Limits::default().max_table_cells,
             messages: Vec::new(),
             in_table: false,
             in_heading: false,
@@ -206,6 +243,7 @@ impl<'a> W<'a> {
             div_count: 0,
             upper: false,
             in_script: false,
+            breaks_as_spaces: false,
             ref_index: std::collections::HashMap::new(),
             pending_targets: std::collections::HashMap::new(),
             next_ref_number: 1,
@@ -216,6 +254,8 @@ impl<'a> W<'a> {
             edge_keys: Vec::new(),
             #[cfg(test)]
             edge_steps: 0,
+            #[cfg(test)]
+            note_copies: 0,
         }
     }
 
@@ -274,7 +314,7 @@ impl<'a> W<'a> {
             for block in blocks {
                 if location == ReferenceLocation::EndOfSection && matches!(block, Block::Header(..))
                 {
-                    let pending = self.pending_notes_and_refs();
+                    let pending = self.pending_notes_and_refs()?;
                     // With a table of contents, Pandoc starts the body with
                     // a blank line before the notes of the first section.
                     let lead = parts.is_empty()
@@ -285,45 +325,22 @@ impl<'a> W<'a> {
                 }
                 parts.push(self.block_list(std::slice::from_ref(block))?);
                 if location == ReferenceLocation::EndOfBlock {
-                    parts.push(self.pending_notes_and_refs());
+                    parts.push(self.pending_notes_and_refs()?);
                 }
             }
             for part in parts {
                 out = out.above_blank(part);
             }
         }
-        let rest = self.pending_notes_and_refs();
+        let rest = self.pending_notes_and_refs()?;
         Ok(out.above_blank(rest))
     }
 
     /// Renders the notes and references that wait for output.
-    fn pending_notes_and_refs(&mut self) -> Doc {
-        let notes = std::mem::take(&mut self.notes);
-        let note_starts_inline = std::mem::take(&mut self.note_starts);
-        let first = self.notes_written + 1;
-        self.notes_written += notes.len();
+    fn pending_notes_and_refs(&mut self) -> Result<Doc> {
         let mut notes_doc = empty();
-        for (index, note) in notes.into_iter().enumerate() {
-            let number = first + index;
-            let item = if self.has(Extension::Footnotes) && !self.plain() {
-                let marker = format!("[^{}{number}]:", self.opts.identifier_prefix);
-                if note.is_empty() {
-                    literal(marker)
-                } else if note_starts_inline.get(index).copied().unwrap_or(true) {
-                    hang(4, literal(marker) + literal(" "), note)
-                } else {
-                    literal(marker) + cr() + nest(4, note)
-                }
-            } else {
-                let marker = literal(format!("[{}{number}]", self.opts.identifier_prefix));
-                if note_starts_inline.get(index).copied().unwrap_or(true) {
-                    marker.spaced(note)
-                } else {
-                    marker + cr() + note
-                }
-            };
-            notes_doc = notes_doc.above_blank(item);
-        }
+        let first: Vec<PendingNote> = std::mem::take(&mut self.notes);
+        self.note_generation(&std::collections::HashMap::new(), first, &mut notes_doc)?;
         let refs = std::mem::take(&mut self.refs);
         self.pending_targets.clear();
         let mut refs_doc = empty();
@@ -333,7 +350,96 @@ impl<'a> W<'a> {
         if !refs_doc.is_empty() {
             refs_doc = nest(2, refs_doc) + blankline();
         }
-        notes_doc.above_blank(refs_doc)
+        Ok(notes_doc.above_blank(refs_doc))
+    }
+
+    /// Renders one generation of waiting notes, then the notes that they
+    /// add. A note adds its inner notes to the end of the queue, so each
+    /// generation follows the previous one, and the numbers stay in the
+    /// order of Pandoc. An inner note takes its content from `outer`, the
+    /// notes of the previous generation, without a copy, so the work is
+    /// linear in the size of the notes. There is one recursion for each
+    /// generation, and each generation is at least one level deeper.
+    fn note_generation(
+        &mut self,
+        outer: &std::collections::HashMap<usize, &[Block]>,
+        notes: Vec<PendingNote>,
+        out: &mut Doc,
+    ) -> Result<()> {
+        if notes.is_empty() {
+            return Ok(());
+        }
+        let mut copies = Vec::new();
+        let mut sources = Vec::with_capacity(notes.len());
+        for PendingNote { body, state } in notes {
+            sources.push(match body {
+                NoteBody::Owned(blocks) => {
+                    copies.push(blocks);
+                    (None, state)
+                }
+                NoteBody::Inner(key) => (Some(key), state),
+            });
+        }
+        let mut copy = copies.iter();
+        let mut items = Vec::with_capacity(sources.len());
+        for (key, state) in sources {
+            let blocks = match key {
+                None => copy.next().map(Vec::as_slice),
+                Some(key) => outer.get(&key).copied(),
+            };
+            let blocks = blocks.ok_or_else(|| Error::App(Text::from("A waiting note is lost")))?;
+            items.push((blocks, state));
+        }
+        let inner: std::collections::HashMap<usize, &[Block]> = items
+            .iter()
+            .flat_map(|(blocks, _)| outer_notes(blocks))
+            .collect();
+        let saved_keys = std::mem::replace(&mut self.note_keys, inner.keys().copied().collect());
+        let mut result = Ok(());
+        for (blocks, state) in &items {
+            match self.note_item(blocks, state) {
+                Ok(item) => *out = std::mem::take(out).above_blank(item),
+                Err(error) => {
+                    result = Err(error);
+                    break;
+                }
+            }
+        }
+        self.note_keys = saved_keys;
+        result?;
+        let next = std::mem::take(&mut self.notes);
+        self.note_generation(&inner, next, out)
+    }
+
+    /// Renders one note at the nesting depth and in the state of its position.
+    fn note_item(&mut self, blocks: &[Block], note: &NoteState) -> Result<Doc> {
+        let depth = std::mem::replace(&mut self.depth, note.depth);
+        let upper = std::mem::replace(&mut self.upper, note.upper);
+        let breaks = std::mem::replace(&mut self.breaks_as_spaces, note.breaks_as_spaces);
+        let rendered = self.block_list(blocks);
+        self.depth = depth;
+        self.upper = upper;
+        self.breaks_as_spaces = breaks;
+        let rendered = rendered?;
+        let number = note.number;
+        let starts_inline = matches!(blocks.first(), Some(Block::Para(_) | Block::Plain(_)));
+        Ok(if self.has(Extension::Footnotes) && !self.plain() {
+            let marker = format!("[^{}{number}]:", self.opts.identifier_prefix);
+            if rendered.is_empty() {
+                literal(marker)
+            } else if starts_inline {
+                hang(4, literal(marker) + literal(" "), rendered)
+            } else {
+                literal(marker) + cr() + nest(4, rendered)
+            }
+        } else {
+            let marker = literal(format!("[{}{number}]", self.opts.identifier_prefix));
+            if starts_inline {
+                marker.spaced(rendered)
+            } else {
+                marker + cr() + rendered
+            }
+        })
     }
 
     fn reference_line(&self, reference: &LinkRef) -> Doc {
@@ -378,10 +484,174 @@ pub(crate) fn run_length(value: i64) -> usize {
     usize::try_from(value).unwrap_or(0).min(MAX_RUN)
 }
 
+/// A list of blocks or of inlines in a document tree.
+#[derive(Clone, Copy)]
+enum Level<'t> {
+    Blocks(&'t [Block]),
+    Inlines(&'t [Inline]),
+}
+
+/// A part directly below a list: a list, or a note with its content.
+enum Child<'t> {
+    Level(Level<'t>),
+    Note(&'t Inline, &'t [Block]),
+}
+
+#[cfg(test)]
+thread_local! {
+    /// The number of lists that the walks of the notes visited on this thread.
+    pub(crate) static NOTE_WALK: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+}
+
+/// Gives each part directly below a list to `child`.
+fn for_each_child<'t>(level: Level<'t>, mut child: impl FnMut(Child<'t>)) {
+    #[cfg(test)]
+    NOTE_WALK.with(|count| count.set(count.get() + 1));
+    match level {
+        Level::Blocks(list) => {
+            for block in list {
+                match block {
+                    Block::Plain(inlines) | Block::Para(inlines) | Block::Header(_, _, inlines) => {
+                        child(Child::Level(Level::Inlines(inlines)));
+                    }
+                    Block::LineBlock(lines) => {
+                        for line in lines {
+                            child(Child::Level(Level::Inlines(line)));
+                        }
+                    }
+                    Block::BlockQuote(inner) | Block::Div(_, inner) => {
+                        child(Child::Level(Level::Blocks(inner)));
+                    }
+                    Block::OrderedList(_, items) | Block::BulletList(items) => {
+                        for item in items {
+                            child(Child::Level(Level::Blocks(item)));
+                        }
+                    }
+                    Block::DefinitionList(items) => {
+                        for (term, definitions) in items {
+                            child(Child::Level(Level::Inlines(term)));
+                            for definition in definitions {
+                                child(Child::Level(Level::Blocks(definition)));
+                            }
+                        }
+                    }
+                    Block::Figure(_, caption, inner) => {
+                        child(Child::Level(Level::Blocks(&caption.long)));
+                        if let Some(short) = &caption.short {
+                            child(Child::Level(Level::Inlines(short)));
+                        }
+                        child(Child::Level(Level::Blocks(inner)));
+                    }
+                    Block::Table(table) => {
+                        child(Child::Level(Level::Blocks(&table.caption.long)));
+                        if let Some(short) = &table.caption.short {
+                            child(Child::Level(Level::Inlines(short)));
+                        }
+                        let rows = table
+                            .head
+                            .rows
+                            .iter()
+                            .chain(
+                                table
+                                    .bodies
+                                    .iter()
+                                    .flat_map(|b| b.head.iter().chain(&b.body)),
+                            )
+                            .chain(&table.foot.rows);
+                        for cell in rows.flat_map(|row| &row.cells) {
+                            child(Child::Level(Level::Blocks(&cell.content)));
+                        }
+                    }
+                    Block::CodeBlock(..) | Block::RawBlock(..) | Block::HorizontalRule => {}
+                }
+            }
+        }
+        Level::Inlines(list) => {
+            for inline in list {
+                match inline {
+                    Inline::Emph(inner)
+                    | Inline::Underline(inner)
+                    | Inline::Strong(inner)
+                    | Inline::Strikeout(inner)
+                    | Inline::Superscript(inner)
+                    | Inline::Subscript(inner)
+                    | Inline::SmallCaps(inner)
+                    | Inline::Quoted(_, inner)
+                    | Inline::Span(_, inner)
+                    | Inline::Link(_, inner, _)
+                    | Inline::Image(_, inner, _) => child(Child::Level(Level::Inlines(inner))),
+                    Inline::Cite(citations, inner) => {
+                        child(Child::Level(Level::Inlines(inner)));
+                        for citation in citations {
+                            child(Child::Level(Level::Inlines(&citation.prefix)));
+                            child(Child::Level(Level::Inlines(&citation.suffix)));
+                        }
+                    }
+                    Inline::Note(inner) => child(Child::Note(inline, inner)),
+                    Inline::Str(_)
+                    | Inline::Space
+                    | Inline::SoftBreak
+                    | Inline::LineBreak
+                    | Inline::Code(..)
+                    | Inline::Math(..)
+                    | Inline::RawInline(..) => {}
+                }
+            }
+        }
+    }
+}
+
+/// Returns `true` when the blocks hold more than `limit` levels of nested
+/// lists. The walk uses no recursion, so that a deep tree cannot overflow
+/// the stack before the writer copies it.
+pub(crate) fn deeper_than(blocks: &[Block], limit: usize) -> bool {
+    let mut stack = vec![(Level::Blocks(blocks), 1)];
+    while let Some((level, depth)) = stack.pop() {
+        if depth > limit {
+            return true;
+        }
+        for_each_child(level, |child| {
+            let list = match child {
+                Child::Level(list) => list,
+                Child::Note(_, inner) => Level::Blocks(inner),
+            };
+            stack.push((list, depth + 1));
+        });
+    }
+    false
+}
+
+/// Returns the notes in the blocks that no other note holds, by the
+/// address of the note element, with their content. The walk uses no
+/// recursion and does not go into the notes.
+fn outer_notes(blocks: &[Block]) -> impl Iterator<Item = (usize, &[Block])> {
+    let mut stack = vec![Level::Blocks(blocks)];
+    let mut notes = Vec::new();
+    while let Some(level) = stack.pop() {
+        for_each_child(level, |child| match child {
+            Child::Level(list) => stack.push(list),
+            Child::Note(note, inner) => notes.push((note_key(note), inner)),
+        });
+    }
+    notes.into_iter()
+}
+
+/// The key of a note element in [`W::note_keys`]: its address.
+pub(crate) fn note_key(note: &Inline) -> usize {
+    std::ptr::from_ref(note).addr()
+}
+
 /// The error for a document that is deeper than the nesting limit.
 pub(crate) fn depth_error() -> Error {
     Error::App(Text::from(
         "The document is nested too deeply for the Markdown writer",
+    ))
+}
+
+/// The error for a table with more grid positions than the table-cell limit.
+pub(crate) fn table_size_error() -> Error {
+    Error::App(Text::from(
+        "A table has more cells than the Markdown writer allows",
     ))
 }
 

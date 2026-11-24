@@ -819,7 +819,7 @@ fn metadata(meta: &Meta, timestamp: i64) -> Vec<String> {
     out
 }
 
-fn meta_text(value: &MetaValue) -> Option<String> {
+pub(super) fn meta_text(value: &MetaValue) -> Option<String> {
     match value {
         MetaValue::MetaString(value) => Some(value.clone()),
         MetaValue::MetaBool(value) => Some(value.to_string()),

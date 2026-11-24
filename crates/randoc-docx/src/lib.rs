@@ -6,6 +6,8 @@ mod convert;
 mod ns;
 mod numbering;
 mod omml;
+#[cfg(test)]
+mod reader_tests;
 mod styles;
 mod symbol;
 
@@ -254,7 +256,8 @@ mod tests {
 
     #[test]
     fn enforces_sparse_table_grid_map_bound() {
-        // 500 gridCols * 100 empty rows = 50,000 grid_map slots > restricted max_table_cells (20,000).
+        // 500 columns (the grid and the first row) * 100 rows = 50,000
+        // grid_map slots > restricted max_table_cells (20,000).
         let mut xml = String::from(
             r#"<?xml version="1.0" encoding="UTF-8"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:tbl><w:tblGrid>"#,
         );
@@ -262,7 +265,10 @@ mod tests {
             xml.push_str(r#"<w:gridCol w:w="100"/>"#);
         }
         xml.push_str("</w:tblGrid>");
-        for _ in 0..100 {
+        xml.push_str(
+            r#"<w:tr><w:tc><w:tcPr><w:gridSpan w:val="500"/></w:tcPr><w:p/></w:tc></w:tr>"#,
+        );
+        for _ in 0..99 {
             xml.push_str("<w:tr/>");
         }
         xml.push_str("</w:tbl></w:body></w:document>");

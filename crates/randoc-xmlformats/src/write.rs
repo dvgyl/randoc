@@ -1,19 +1,20 @@
 mod fb2;
+mod jats;
 mod languages;
 mod tables;
 
 use std::cell::RefCell;
+use std::fmt::Write as _;
 
 use randoc_archive::{
     media::mime_from_extension,
-    xml::{XmlLimits, XmlNode, XmlOptions, escape_xml_text_quot, parse_fragment},
+    xml::{XmlLimits, XmlNode, XmlOptions, parse_fragment},
 };
 use randoc_ast::*;
 use randoc_core::{
     Context, Extension, HtmlMathMethod, Result, TextWriter, TopLevelDivision, WrapOption,
     WriterOptions,
     shared::{
-        is_haskell_alphanum,
         meta_context::{meta_to_context, normalize_date},
         sections::make_sections,
         stringify, stringify_meta,
@@ -55,7 +56,6 @@ impl TextWriter for XmlWriter {
             binaries: Vec::new(),
             remaining_media,
             remaining_encoded_media: input,
-            table_inline: false,
             raw_table: false,
             fb2_indent: 0,
             fb2_layout_left: input,
@@ -65,7 +65,7 @@ impl TextWriter for XmlWriter {
         }
         let body = writer.blocks(&blocks, 0)?;
         let Some(template) = &opts.template else {
-            return Ok(body.render(writer.width()));
+            return Ok(writer.render(body));
         };
         let state = RefCell::new(&mut writer);
         let mut vars = meta_to_context(
@@ -73,7 +73,7 @@ impl TextWriter for XmlWriter {
             &opts.variables,
             depth,
             &mut |blocks| state.borrow_mut().blocks(blocks, 0),
-            &mut |inlines| state.borrow_mut().inlines(inlines),
+            &mut |inlines| state.borrow_mut().inlines_with_breaks(inlines, true),
         )?;
         if self.0.docbook() {
             vars.insert(
@@ -106,6 +106,7 @@ impl TextWriter for XmlWriter {
             }
         }
         if self.0.jats() {
+            jats::credit_roles(&mut vars);
             if let Some(date) = doc.meta.get("date")
                 && !matches!(date, MetaValue::MetaMap(_))
                 && let Some(iso) = normalize_date(&stringify_meta(date))
@@ -131,7 +132,16 @@ impl TextWriter for XmlWriter {
             }
         }
         vars.insert("body", Val::Simple(body));
-        Ok(template.render(&vars).render(writer.width()))
+        let text = writer
+            .context
+            .render_template(template, &vars, writer.width())?;
+        let text = writer.escape_output(text);
+        if text.len() as u64 > writer.context.limits.max_output_size {
+            return Err(randoc_core::Error::App(
+                "The output exceeds the output limit.".into(),
+            ));
+        }
+        Ok(text)
     }
 }
 
@@ -146,7 +156,6 @@ struct Write<'a> {
     binaries: Vec<Doc>,
     remaining_media: usize,
     remaining_encoded_media: usize,
-    table_inline: bool,
     raw_table: bool,
     fb2_indent: usize,
     fb2_layout_left: usize,
@@ -154,12 +163,19 @@ struct Write<'a> {
 
 fn escape(value: &str, fb2: bool) -> String {
     let mut result = String::new();
-    escape_xml_text_quot(value, &mut result);
-    if fb2 {
-        result.replace('\'', "&#39;")
-    } else {
-        result
+    for ch in value.chars() {
+        match ch {
+            '&' => result.push_str("&amp;"),
+            '<' => result.push_str("&lt;"),
+            '>' => result.push_str("&gt;"),
+            '"' => result.push_str("&quot;"),
+            '\'' if fb2 => result.push_str("&#39;"),
+            '\0'..='\u{8}' | '\u{b}' | '\u{c}' | '\u{e}'..='\u{1f}' | '\u{fffe}' | '\u{ffff}'
+                if !fb2 => {}
+            _ => result.push(ch),
+        }
     }
+    result
 }
 
 fn attribute(name: &str, value: &str, fb2: bool) -> String {
@@ -191,6 +207,27 @@ fn compact_tag(tag: &str, attrs: &str, contents: Doc) -> Doc {
 }
 
 impl Write<'_> {
+    fn render(&self, doc: Doc) -> String {
+        self.escape_output(doc.render(self.width()))
+    }
+
+    fn escape_output(&self, text: String) -> String {
+        if !(self.opts.prefer_ascii && (self.dialect.docbook() || self.dialect.jats()))
+            || text.is_ascii()
+        {
+            return text;
+        }
+        let mut escaped = String::with_capacity(text.len());
+        for ch in text.chars() {
+            if ch.is_ascii() {
+                escaped.push(ch);
+            } else {
+                let _ = write!(escaped, "&#x{:X};", u32::from(ch));
+            }
+        }
+        escaped
+    }
+
     fn width(&self) -> Option<usize> {
         (self.opts.wrap_text == WrapOption::WrapAuto && self.dialect != Dialect::Fb2)
             .then(|| usize::try_from(self.opts.columns.max(1)).unwrap_or(usize::MAX))
@@ -217,7 +254,11 @@ impl Write<'_> {
         } else {
             "id"
         };
-        self.attr(key, id)
+        if self.dialect.jats() {
+            self.attr(key, &jats::xml_id(id))
+        } else {
+            self.attr(key, id)
+        }
     }
 
     fn language(&self, attr: &Attr) -> String {
@@ -362,7 +403,7 @@ impl Write<'_> {
                     };
                     container(
                         tag,
-                        &(self.id(&jats_div_id(&a.id)) + &self.language(a)),
+                        &(self.id(&a.id) + &self.language(a)),
                         self.blocks(children, level)?,
                     )
                 } else {
@@ -614,7 +655,7 @@ impl Write<'_> {
                 "title"
             },
             "",
-            self.inlines(title)?,
+            self.inlines_with_breaks(title, true)?,
         );
         let body = if children.is_empty() && docbook {
             vcat([literal("<para>"), literal("</para>")])
@@ -708,14 +749,18 @@ impl Write<'_> {
     }
 
     fn inlines(&mut self, inlines: &[Inline]) -> Result<Doc> {
+        self.inlines_with_breaks(inlines, false)
+    }
+
+    fn inlines_with_breaks(&mut self, inlines: &[Inline], allow_break: bool) -> Result<Doc> {
         let mut result = Vec::new();
         for inline in inlines {
-            result.push(self.inline(inline)?);
+            result.push(self.inline(inline, allow_break)?);
         }
         Ok(hcat(result))
     }
 
-    fn inline(&mut self, inline: &Inline) -> Result<Doc> {
+    fn inline(&mut self, inline: &Inline, allow_break: bool) -> Result<Doc> {
         let (tag, attrs, content) = match inline {
             Inline::Str(value) => return Ok(self.esc(value)),
             Inline::Space => return Ok(if self.fb() { literal(" ") } else { space() }),
@@ -730,7 +775,7 @@ impl Write<'_> {
             Inline::LineBreak => {
                 return Ok(if self.dialect == Dialect::Tei {
                     empty_tag("lb", "")
-                } else if self.dialect.jats() && self.table_inline {
+                } else if self.dialect.jats() && allow_break {
                     literal("<break/>")
                 } else {
                     literal("\n")
@@ -901,7 +946,7 @@ impl Write<'_> {
                 if !label.is_empty() {
                     attrs.push_str(&self.attr("alt", &stringify(label)));
                 }
-                attrs.push_str(&self.attr("rid", url));
+                attrs.push_str(&self.attr("rid", &jats::xml_id(url)));
                 if let Some(typ) = a.get("ref-type") {
                     attrs.push_str(&self.attr("ref-type", typ));
                 }
@@ -1181,7 +1226,18 @@ impl Write<'_> {
             }
             return Ok(hcat(children));
         }
-        let tag = if self.dialect.jats() { "fig" } else { "figure" };
+        let tag = if self.dialect.jats() {
+            if blocks
+                .iter()
+                .any(|block| matches!(block, Block::Figure(..)))
+            {
+                "fig-group"
+            } else {
+                "fig"
+            }
+        } else {
+            "figure"
+        };
         Ok(container(tag, &self.id(&a.id), vcat(children)))
     }
 
@@ -1407,24 +1463,6 @@ impl Write<'_> {
             container("list", " type=\"definition\"", vcat(output))
         })
     }
-}
-
-fn jats_div_id(id: &str) -> String {
-    use std::fmt::Write as _;
-
-    let mut output = String::new();
-    for (index, ch) in id.chars().enumerate() {
-        let letter = is_haskell_alphanum(ch) && !ch.is_numeric();
-        let continuation = ch.is_ascii_digit()
-            || matches!(ch, '.' | '-' | '\u{00B7}' | '\u{0300}'..='\u{036F}' | '\u{203F}'..='\u{2040}');
-        let valid = letter || ch == '_' || index > 0 && continuation;
-        if valid {
-            output.push(ch);
-        } else {
-            let _ = write!(output, "U{:04X}", u32::from(ch));
-        }
-    }
-    output
 }
 
 type Fields = std::collections::BTreeMap<String, MetaValue>;

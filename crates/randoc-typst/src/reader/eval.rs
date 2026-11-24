@@ -181,7 +181,7 @@ struct Budget {
 
 pub(super) struct Evaluator<'a, 'c> {
     source: &'a str,
-    path: &'a str,
+    pub(super) path: &'a str,
     budget: &'c mut Budget,
     options: &'c ReaderOptions,
     pub context: &'c mut Context,
@@ -449,10 +449,17 @@ impl<'a> Evaluator<'a, '_> {
             Mark::Break(_) => out.push(Item::Inline(Inline::SoftBreak)),
             Mark::Paragraph(_) => out.push(Item::Paragraph),
             Mark::Styled(name, body) => {
-                let flow = self.markup(body, depth - 1)?;
+                let mut flow = self.markup(body, depth - 1)?;
                 if *name == "linebreak" {
                     out.push(Item::Inline(Inline::LineBreak));
                 } else {
+                    // The expression can end with a line break from a content block.
+                    if matches!(*name, "emph" | "strong")
+                        && matches!(body.last(), Some(Mark::Expression(_)))
+                        && matches!(flow.last(), Some(Item::Inline(Inline::SoftBreak)))
+                    {
+                        flow.pop();
+                    }
                     out.append(wrap(flow, |xs| lower::style(name, xs)));
                 }
             }
@@ -1944,6 +1951,7 @@ fn builtin(name: &str) -> bool {
             | "regex"
             | "repr"
             | "rgb"
+            | "rotate"
             | "set"
             | "smallcaps"
             | "smartquote"

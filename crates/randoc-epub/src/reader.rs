@@ -136,6 +136,7 @@ fn read(bytes: &[u8], options: &ReaderOptions, context: &mut Context) -> Result<
     let table_limit = context.limits.max_table_cells;
     let mut remaining = table_limit;
     for (item, itemref) in spine {
+        context.check_deadline()?;
         if itemref
             .attr_unqualified("linear")
             .is_some_and(|value| value.eq_ignore_ascii_case("no"))
@@ -150,6 +151,8 @@ fn read(bytes: &[u8], options: &ReaderOptions, context: &mut Context) -> Result<
         let href = path::decode(item.href);
         let archive_path =
             path::resolve(dir, &href).ok_or_else(|| missing(&path::join(dir, &href)))?;
+        // Each occurrence consumes the cumulative archive budget because it
+        // also contributes a separate chapter to the document.
         let bytes = entry(media.archive, &archive_path)?;
         if item.mime != "application/xhtml+xml" {
             continue;

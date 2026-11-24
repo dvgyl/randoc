@@ -727,10 +727,16 @@ impl<'a> Evaluator<'a, '_> {
                         attrs.push((key.into(), value));
                     }
                 }
+                let mut path = self.text(&first(), pos)?;
+                if !path.starts_with('/')
+                    && let Some((directory, _)) = self.path.rsplit_once('/')
+                {
+                    path = format!("{directory}/{path}");
+                }
                 inline(Inline::Image(
                     Attr::new("", vec![], attrs),
                     inlines(self.content(alt, depth, pos)?, true),
-                    Target::new(self.text(&first(), pos)?, ""),
+                    Target::new(path, ""),
                 ))
             }
             "figure" => {
@@ -752,19 +758,43 @@ impl<'a> Evaluator<'a, '_> {
                     block(Block::Figure(Attr::default(), caption, content))
                 }
             }
-            "box" | "align" => {
-                let attr = if name == "box" {
-                    Attr::new("", vec!["box".into()], vec![])
-                } else {
-                    Attr::new(
+            "box" | "align" | "rotate" => {
+                let attr = match name {
+                    "box" => Attr::new("", vec!["box".into()], vec![]),
+                    "align" => Attr::new(
                         "",
                         vec![],
                         vec![("align".into(), self.text(&first(), pos)?)],
-                    )
+                    ),
+                    _ => {
+                        let angle = match setting("angle").unwrap_or_else(first) {
+                            Value::Number(angle, "deg") => Some(angle),
+                            Value::Number(angle, "rad") => Some(angle.to_degrees()),
+                            _ => None,
+                        };
+                        let attrs = angle
+                            .map(|angle| ("angle".into(), randoc_ast::json::show_double(angle)))
+                            .into_iter()
+                            .collect();
+                        Attr::new("", vec!["rotate".into()], attrs)
+                    }
                 };
-                let body = self.content(body(), depth, pos)?;
+                let value = if name == "rotate" {
+                    match setting("body").unwrap_or_else(body) {
+                        value @ (Value::Content(_)
+                        | Value::Element(_)
+                        | Value::Text(_)
+                        | Value::Builtin(_)) => value,
+                        _ => Value::None,
+                    }
+                } else {
+                    body()
+                };
+                let body = self.content(value, depth, pos)?;
                 if body.as_slice().iter().any(|i| matches!(i, Item::Block(_))) {
                     block(Block::Div(attr, finish(body)))
+                } else if name == "rotate" && body.as_slice().is_empty() {
+                    inline(Inline::Span(attr, vec![]))
                 } else {
                     wrap(body, |xs| Inline::Span(attr.clone(), xs))
                 }

@@ -85,6 +85,7 @@ impl Renderer<'_> {
         content.extend([nest(2, hcat(rows)), cr(), literal(")")]);
         let content = hcat(content);
         let out = if figure {
+            let kind = table.attr.get("typst:figure:kind").unwrap_or("table");
             let caption = self.blocks(&table.caption.long, depth)?;
             let table_doc = nest(
                 2,
@@ -110,7 +111,7 @@ impl Renderer<'_> {
                 table_doc,
                 cr(),
                 caption,
-                literal("  , kind: table\n  )"),
+                literal(format!("  , kind: {kind}\n  )")),
             ])
         } else if rules.is_empty() {
             surround("#", content, "")

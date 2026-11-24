@@ -87,7 +87,8 @@ const SETTINGS: &str = "word/settings.xml";
 /// The children of `w:settings` that Pandoc takes from the reference, in its
 /// order: the order of the schema without `footnotePr`, `endnotePr`, `mathPr`
 /// and `schemaLibrary`. Pandoc takes each missing child from its own
-/// reference document, a GPL data file (I-DATA-01); Randoc leaves it out.
+/// reference document, a GPL data file (I-DATA-01); Randoc leaves it out,
+/// except `rsids`, which that file has as an element with only white space.
 const SETTINGS_CHILDREN: [&str; 94] = [
     "writeProtection",
     "view",
@@ -1018,17 +1019,15 @@ fn settings_part(budget: &Budget, reference: &XmlDoc) -> Result<String> {
     out.raw(DECL);
     out.raw("<w:settings ");
     out.raw(SETTINGS_NAMESPACES);
-    let children: Vec<_> = SETTINGS_CHILDREN
-        .iter()
-        .flat_map(|name| reference.root.children_ns(W, name))
-        .collect();
-    if children.is_empty() {
-        out.raw(" />");
-    } else {
-        out.raw(">");
+    out.raw(">");
+    for name in SETTINGS_CHILDREN {
+        let children: Vec<_> = reference.root.children_ns(W, name).collect();
+        if name == "rsids" && children.is_empty() {
+            out.raw("<w:rsids>\n  </w:rsids>");
+        }
         write_elements(&mut out, children);
-        out.raw("</w:settings>");
     }
+    out.raw("</w:settings>");
     out.into_string()
 }
 

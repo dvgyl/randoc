@@ -106,7 +106,7 @@ pub(super) fn write(
     let output = super::render_template(
         doc,
         options,
-        context.limits,
+        context,
         literal(body),
         &mut |blocks| renderer.borrow_mut().blocks(blocks).map(literal),
         &mut |inlines| renderer.borrow_mut().inlines(inlines).map(literal),

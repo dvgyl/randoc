@@ -59,7 +59,9 @@ pub(super) fn write(
     let body = chomp(vsep([body, vsep(std::mem::take(&mut writer.notes))]));
     if let Some(template) = &options.template {
         fields.insert("body", Val::Simple(body));
-        Ok(template.render(&fields).render(writer.width()))
+        writer
+            .context
+            .render_template(template, &fields, writer.width())
     } else {
         Ok(body.render(writer.width()))
     }

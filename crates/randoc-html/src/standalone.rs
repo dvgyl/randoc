@@ -12,7 +12,7 @@ use std::cell::RefCell;
 use randoc_ast::{Attr, Block, Citation, Inline, Meta, MetaValue, Target};
 use randoc_core::shared::meta_context::{meta_to_context, normalize_date};
 use randoc_core::shared::{stringify, stringify_blocks, stringify_meta};
-use randoc_core::{CaptionPosition, Context, Error, HighlightMethod, HtmlMathMethod, Result};
+use randoc_core::{CaptionPosition, Context, Error, HighlightMethod, HtmlMathMethod, Result, Term};
 use randoc_layout::Doc;
 use randoc_templates::{Context as TemplateContext, Val};
 
@@ -51,11 +51,13 @@ impl Html<'_> {
     }
 
     /// Adds the fields of the writer to a context from `meta_context`.
+    /// `core` gives the translated terms.
     pub(crate) fn add_writer_fields(
         &mut self,
         context: &mut TemplateContext,
         meta: &Meta,
         body: Doc,
+        core: &mut Context,
     ) -> Result<()> {
         let mut fields: Vec<(&str, Val)> = vec![("body", Val::Simple(body))];
         if self.options.table_of_contents
@@ -110,7 +112,9 @@ impl Html<'_> {
         if let Some(description) = meta.get("description").and_then(description_text) {
             fields.push(("description-meta", text(description)));
         }
-        fields.push(("abstract-title", Val::text("Abstract")));
+        // Pandoc looks up the term also when a variable replaces it, so the
+        // warnings of a missing translation are the same.
+        fields.push(("abstract-title", Val::text(core.term(Term::Abstract))));
         fields.push((
             "document-css",
             Val::Bool(self.slides.is_none() && context.get("css").is_none()),

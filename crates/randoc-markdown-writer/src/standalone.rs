@@ -8,7 +8,7 @@
 //! variable does not already give them.
 
 use randoc_ast::{Attr, Block, Inline, Pandoc, Text};
-use randoc_core::{Extension, ReferenceLocation, Result};
+use randoc_core::{Context, Extension, ReferenceLocation, Result};
 use randoc_layout::{
     Doc, blankline, chomp, cr, double_quotes, empty, hang, literal, nest, space, vcat,
 };
@@ -23,7 +23,8 @@ impl W<'_> {
         doc: &Pandoc,
         blocks: &[Block],
         template: &Template,
-    ) -> Result<Doc> {
+        conversion: &Context,
+    ) -> Result<Text> {
         let mut context = self.meta_context(&doc.meta)?;
         let json = context.0.remove("meta-json");
         let title_block = if doc.meta.0.is_empty() {
@@ -60,7 +61,7 @@ impl W<'_> {
                 .entry(name.to_owned())
                 .or_insert(Val::Simple(value));
         }
-        Ok(template.render(&context))
+        conversion.render_template(template, &context, crate::line_width(self.opts))
     }
 
     /// The title block of the format for the converted metadata, or `None`
@@ -232,7 +233,7 @@ impl W<'_> {
         let mut index = 0;
         let mut out = self.toc_items(&scan.entries, &mut index, 0)?;
         if self.opts.reference_location == ReferenceLocation::EndOfBlock {
-            out = out.above_blank(self.pending_notes_and_refs());
+            out = out.above_blank(self.pending_notes_and_refs()?);
         }
         Ok(out)
     }
@@ -249,7 +250,9 @@ impl W<'_> {
                     self.enter()?;
                     let result = match div_section(inner) {
                         Some(level) => {
-                            scan.section_id = (!attr.id.is_empty()).then_some(attr.id.as_str());
+                            // A notebook cell does not give its identifier to its heading.
+                            scan.section_id = (!attr.id.is_empty() && !attr.has_class("cell"))
+                                .then_some(attr.id.as_str());
                             let base = scan.open.iter().take_while(|(l, _)| *l < level).count();
                             let result = self.toc_scan(inner, scan);
                             // The section of the div ends with the div.

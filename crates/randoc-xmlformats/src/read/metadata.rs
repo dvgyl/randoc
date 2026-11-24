@@ -31,7 +31,7 @@ impl<'a> Read<'a, '_> {
     }
 
     fn docbook_meta_fields(&mut self, el: &'a Element, depth: usize) -> Result<()> {
-        for key in ["title", "subtitle", "date"] {
+        for key in ["title", "subtitle", "date", "releaseinfo"] {
             if let Some(child) = el.child_local(key) {
                 self.meta_inlines(key, child, depth)?;
             }
@@ -84,7 +84,10 @@ impl<'a> Read<'a, '_> {
                     .elements()
                     .find(|el| matches!(name(el), "article-title" | "book-title" | "title"))
             {
-                self.meta_inlines("title", title, depth)?;
+                let title = self.inlines(&title.children, depth)?;
+                if !title.is_empty() {
+                    self.meta.insert("title", MetaValue::MetaInlines(title));
+                }
             }
             if let Some(subtitle) = group.child_local("subtitle") {
                 let mut inlines = vec![Inline::Str(":".into()), Inline::Space];
@@ -174,17 +177,17 @@ impl<'a> Read<'a, '_> {
                 if let Some(kind) = license.attr_local("license-type") {
                     fields.insert("type".into(), MetaValue::MetaString(kind.into()));
                 }
-                if let Some(link) = license
-                    .attr_local("href")
-                    .map(str::to_owned)
-                    .or_else(|| license.child_local("license_ref").map(Element::all_text))
+                if let Some(link) =
+                    license.child("http://www.niso.org/schemas/ali/1.0/", "license_ref")
                 {
-                    fields.insert("link".into(), MetaValue::MetaString(link));
+                    fields.insert("link".into(), MetaValue::MetaString(link.all_text()));
                 }
                 if let Some(text) = license.child_local("license-p") {
                     fields.insert("text".into(), MetaValue::MetaString(text.text()));
                 }
-                self.meta.insert("license", MetaValue::MetaMap(fields));
+                if !fields.is_empty() {
+                    self.meta.insert("license", MetaValue::MetaMap(fields));
+                }
             }
         }
         Ok(())
@@ -198,9 +201,10 @@ impl<'a> Read<'a, '_> {
     ) -> Result<()> {
         let mut refs = Vec::new();
         for reference in el.children_local("ref") {
+            let id = attr(reference, "id");
             let mut map = BTreeMap::from([(
                 "id".into(),
-                MetaValue::MetaString(attr(reference, "id").into()),
+                MetaValue::MetaString(id.strip_prefix("ref-").unwrap_or(id).into()),
             )]);
             if let Some(citation) = reference
                 .elements()

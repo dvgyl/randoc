@@ -134,6 +134,7 @@ fn fetch(context: &mut Context, source: &str, limit: u64) -> Option<(Vec<u8>, Op
     }
     let path = resource_path(source, context)?;
     let bytes = context.read_file_limited(&path, limit as usize).ok()?;
+    context.report(LogMessage::LoadedResource(source.to_owned(), path));
     Some((bytes, None))
 }
 

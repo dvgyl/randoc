@@ -469,21 +469,54 @@ fn finish(
     stamp: i64,
     context: &Context,
 ) -> Result<Vec<u8>> {
-    let mut used: HashSet<_> = reference
-        .main_rels
-        .iter()
-        .map(|rel| rel.id.clone())
-        .collect();
-    let mut next = 1;
-    let mut make_rel = |kind: &str, target: String| {
+    let mut next = if reference.imported {
+        reference
+            .main_rels
+            .iter()
+            .filter(|rel| rel_kind(rel, "slideMaster"))
+            .filter_map(|rel| rel.id.strip_prefix("rId")?.parse::<usize>().ok())
+            .max()
+            .and_then(|id| id.checked_add(1))
+            .unwrap_or(1)
+    } else {
+        1
+    };
+    let mut trailing = Vec::new();
+    let mut used = HashSet::new();
+    for (index, rel) in reference.main_rels.iter().enumerate() {
+        if reference.imported
+            && ["presProps", "viewProps", "tableStyles"]
+                .iter()
+                .any(|kind| rel_kind(rel, kind))
+            && let Some(number) = rel
+                .id
+                .strip_prefix("rId")
+                .and_then(|id| id.parse::<usize>().ok())
+            && number >= next
+        {
+            trailing.push((index, number));
+        } else {
+            used.insert(rel.id.clone());
+        }
+    }
+    let mut allocate = || {
         loop {
-            let rel = relationship(next, kind, target.clone(), false);
-            next += 1;
-            if used.insert(rel.id.clone()) {
-                return rel;
+            let number = next;
+            next = next.checked_add(1).unwrap_or(1);
+            if used.insert(format!("rId{number}")) {
+                return number;
             }
         }
     };
+    let mut make_rel = |kind: &str, target: String| relationship(allocate(), kind, target, false);
+    let mut slide_rels = Vec::new();
+    if reference.imported {
+        slide_rels.extend(
+            slides
+                .iter()
+                .map(|path| make_rel("slide", relative_target(&reference.main_path, path))),
+        );
+    }
     let mut notes_xml = String::new();
     if !reference.notes_master.is_empty() {
         let id = if let Some(rel) = reference
@@ -498,7 +531,11 @@ fn finish(
                 relative_target(&reference.main_path, &reference.notes_master),
             );
             let id = rel.id.clone();
-            reference.main_rels.push(rel);
+            if reference.imported {
+                slide_rels.push(rel);
+            } else {
+                reference.main_rels.push(rel);
+            }
             id
         };
         let id = attr(&id);
@@ -509,14 +546,29 @@ fn finish(
     }
     let mut slide_xml = format!(r#"<p:sldIdLst xmlns:p="{P}" xmlns:r="{R}">"#);
     for (index, path) in slides.iter().enumerate() {
-        let rel = make_rel("slide", relative_target(&reference.main_path, path));
+        let rel = if let Some(rel) = slide_rels.get(index) {
+            rel.clone()
+        } else {
+            make_rel("slide", relative_target(&reference.main_path, path))
+        };
         let _ = write!(
             slide_xml,
             r#"<p:sldId id="{}" r:id="{}" />"#,
             index + 256,
             rel.id
         );
-        reference.main_rels.push(rel);
+        if !reference.imported {
+            reference.main_rels.push(rel);
+        }
+    }
+    if reference.imported {
+        // Allocate the property IDs in numeric order and keep their XML order.
+        trailing.sort_by_key(|&(_, number)| number);
+        for (index, _) in trailing {
+            reference.main_rels[index].id = format!("rId{}", allocate());
+        }
+        slide_rels.append(&mut reference.main_rels);
+        reference.main_rels = slide_rels;
     }
     slide_xml.push_str("</p:sldIdLst>");
     let xml_limits = xml_limits(&context.limits);
@@ -533,7 +585,17 @@ fn finish(
         r#"{}<Types xmlns="{TYPES}">"#,
         super::reference::DECLARATION
     );
-    for (ext, mime) in &reference.defaults {
+    let mut defaults: Vec<_> = reference.defaults.iter().collect();
+    let mut overrides: Vec<_> = reference.overrides.iter().collect();
+    if reference.imported {
+        defaults.sort_by_key(|(ext, _)| match ext.as_str() {
+            "xml" => 0,
+            "rels" => 1,
+            _ => 2,
+        });
+        overrides.sort_by_key(|(path, mime)| reference.manifest_order(path, mime));
+    }
+    for (ext, mime) in defaults {
         let _ = write!(
             types,
             r#"<Default Extension="{}" ContentType="{}" />"#,
@@ -541,7 +603,7 @@ fn finish(
             attr(mime)
         );
     }
-    for (part, mime) in &reference.overrides {
+    for (part, mime) in overrides {
         let _ = write!(
             types,
             r#"<Override PartName="/{}" ContentType="{}" />"#,

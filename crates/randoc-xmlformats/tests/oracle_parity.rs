@@ -83,8 +83,19 @@ impl Oracle {
         let mut command = vec!["-f", "json", "-t", format];
         command.extend(args);
         let output = self.run(&command, json::to_json(&doc).as_bytes())?;
+        self.compare_write(&doc, format, args, &output)
+    }
+
+    fn compare_write(
+        &self,
+        doc: &Pandoc,
+        format: &str,
+        args: &[&str],
+        output: &Output,
+    ) -> TestResult<Option<String>> {
         let mut options = WriterOptions::default();
         options.extensions = randoc_core::default_extensions(format);
+        options.prefer_ascii = args.contains(&"--ascii");
         options.wrap_text = if args.contains(&"--wrap=preserve") {
             WrapOption::WrapPreserve
         } else if args.contains(&"--wrap=none") {
@@ -122,7 +133,7 @@ impl Oracle {
             randoc_xmlformats::writer(format).ok_or_else(|| io::Error::other("Missing writer."))?;
         let mut context = Context::native();
         context.state.resource_path = vec![self.suite.to_string_lossy().into_owned()];
-        let (exit, actual, err) = match writer.write(&doc, &options, &mut context) {
+        let (exit, actual, err) = match writer.write(doc, &options, &mut context) {
             Ok(output) => {
                 let mut text = output.into_bytes();
                 if !text.ends_with(b"\n") {
@@ -160,6 +171,133 @@ impl Oracle {
         }
         Ok(None)
     }
+}
+
+#[test]
+#[ignore = "Requires the external command fixtures and Pandoc 3.13 oracle."]
+fn wave9_xmlformats() -> TestResult {
+    let oracle = Oracle::new()?;
+    let readers = [
+        "10594.md#1",
+        "5885.md#1",
+        "6541.md#1",
+        "6719.md#1",
+        "6719.md#2",
+        "6791.md#1",
+        "8365.md#1",
+        "8437.md#3",
+        "8867.md#1",
+        "bits-book.md#1",
+    ];
+    let writers = [
+        "10152.md#4",
+        "11342.md#1",
+        "5119.md#1",
+        "7041.md#1",
+        "8344.md#1",
+        "ascii.md#5",
+        "ascii.md#6",
+    ];
+    let commands = Command::new("python3")
+        .args([
+            "-B",
+            "-c",
+            r#"
+import json, sys
+sys.path.insert(0, sys.argv[1])
+import suite
+found = suite.Discovery()
+suite.discover_commands(sys.argv[2], found)
+wanted = {'command/' + name for name in sys.argv[3:]}
+print(json.dumps([vars(case) for case in found.cases if case.id in wanted]))
+"#,
+        ])
+        .arg(oracle.repo.join("tools/pandoc-testsuite"))
+        .arg(&oracle.suite)
+        .args(readers)
+        .args(writers)
+        .output()?;
+    if !commands.status.success() {
+        return Err(
+            io::Error::other(String::from_utf8_lossy(&commands.stderr).into_owned()).into(),
+        );
+    }
+    let mut reader_report = Report::default();
+    let mut writer_report = Report::default();
+    for case in serde_json::from_slice::<Vec<Value>>(&commands.stdout)? {
+        let id = case["id"].as_str().unwrap_or_default();
+        let input = case["stdin"].as_str().unwrap_or_default();
+        let command = case["command"].as_str().unwrap_or_default();
+        let args: Vec<_> = command.split_whitespace().skip(1).collect();
+        let option = |flag| {
+            args.windows(2)
+                .find(|pair| pair[0] == flag)
+                .map(|pair| pair[1])
+        };
+        let from = option("-f").unwrap_or("markdown");
+        let to = option("-t").ok_or_else(|| io::Error::other("Missing output format."))?;
+        let flags: Vec<_> = args
+            .iter()
+            .copied()
+            .filter(|arg| matches!(*arg, "-s" | "--ascii"))
+            .collect();
+        if id
+            .strip_prefix("command/")
+            .is_some_and(|id| readers.contains(&id))
+        {
+            reader_report.record(
+                id,
+                (|| {
+                    let quiet = args.contains(&"--quiet");
+                    let mut json_args = vec!["-f", from, "-t", "json"];
+                    if quiet {
+                        json_args.push("--quiet");
+                    }
+                    let expected = oracle.run(&json_args, input.as_bytes())?;
+                    let (exit, actual, stderr) = read(from, input, quiet)?;
+                    if (flags.contains(&"-s")
+                        || expected.status.code() != Some(exit)
+                        || expected.stderr != stderr.as_bytes())
+                        && let Some(diff) = compare_reader(&expected, exit, &actual, &stderr)
+                    {
+                        return Ok(Some(diff));
+                    }
+                    let expected = oracle.run(&args, input.as_bytes())?;
+                    let mut render = vec!["-f", "json", "-t", to];
+                    render.extend(flags);
+                    let actual = oracle.run(&render, &actual)?;
+                    Ok(
+                        (!actual.status.success() || actual.stdout != expected.stdout).then(|| {
+                            format!(
+                                "Expected output {:?}, got {:?}",
+                                String::from_utf8_lossy(&expected.stdout),
+                                String::from_utf8_lossy(&actual.stdout)
+                            )
+                        }),
+                    )
+                })(),
+            );
+        } else {
+            writer_report.record(
+                id,
+                (|| {
+                    let expected = oracle.run(&args, input.as_bytes())?;
+                    let doc = oracle.json(from, input.as_bytes())?;
+                    oracle.compare_write(&doc, to, &flags, &expected)
+                })(),
+            );
+        }
+    }
+    reader_report.finish("X-R", readers.len());
+    writer_report.finish("X-W", writers.len());
+
+    let mut ids = Report::default();
+    let input = b"# Title {#a:b}\n\n[Label]{#c.d} [See](#a:b) ![](a.png){#g:h}\n";
+    for format in ["jats_archiving", "jats_publishing", "jats_articleauthoring"] {
+        ids.record(format, oracle.write_case("markdown", format, input, &[]));
+    }
+    ids.finish("JATS XML identifiers", 3);
+    Ok(())
 }
 
 fn log(context: &Context) -> String {

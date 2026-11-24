@@ -6,6 +6,7 @@
 use randoc_ast::Text;
 use randoc_core::{Context, Extension, Extensions};
 
+use crate::parse::translations::caption_term;
 use crate::parse::{self, MacroState, Parser};
 
 /// The longest text that one call reads. A longer raw TeX text is no raw TeX.
@@ -55,7 +56,7 @@ pub struct RawTex {
 
 /// Returns the class of the command `name` (without the backslash).
 pub fn command_class(name: &str) -> CommandClass {
-    if parse::is_block_only(name) {
+    if parse::is_block_only(name) || matches!(name, "titleformat" | "write") {
         CommandClass::Block
     } else if matches!(
         name,
@@ -98,8 +99,14 @@ fn raw_tex_with_letters(text: &str, at_letter: bool) -> Option<RawTex> {
         }
         _ => {
             let class = command_class(name);
-            match class {
-                CommandClass::Inline => scan.known_arguments(name)?,
+            scan.spaces();
+            scan.star();
+            scan.overlays();
+            match name {
+                "titleformat" => scan.title_format()?,
+                "parbox" => scan.parbox()?,
+                "write" => scan.write_stream()?,
+                _ if class == CommandClass::Inline => scan.known_arguments(name)?,
                 _ => scan.unknown_arguments()?,
             }
             RawKind::Command(class)
@@ -278,6 +285,19 @@ impl<'t> Scan<'t> {
         }
     }
 
+    fn overlays(&mut self) {
+        while let Some(rest) = self.rest().strip_prefix('<') {
+            let Some(end) = rest.find(['<', '>', '\n', '\r']) else {
+                break;
+            };
+            if rest.as_bytes()[end] != b'>' {
+                break;
+            }
+            self.take(end + 2);
+            self.spaces();
+        }
+    }
+
     /// The length of the brace group at the start, with its braces.
     fn group_len(&self) -> Option<usize> {
         closing(self.rest(), '{', '}', false)
@@ -289,21 +309,23 @@ impl<'t> Scan<'t> {
         closing(self.rest(), '[', ']', true)
     }
 
-    /// Spaces, a star, options with the spaces after each, then the
-    /// adjacent argument groups. A group without its end makes the command
-    /// text.
+    /// Options, a dimension if present, then adjacent argument groups.
+    /// A group without its end makes the command text.
     fn unknown_arguments(&mut self) -> Option<()> {
-        self.spaces();
-        self.star();
-        while let Some(len) = self.option_len() {
-            self.take(len);
-            self.spaces();
-        }
+        self.options_with_spaces();
+        self.take(dimension_len(self.rest()));
         while self.rest().starts_with('{') {
             let len = self.group_len()?;
             self.take(len);
         }
         Some(())
+    }
+
+    fn options_with_spaces(&mut self) {
+        while let Some(len) = self.option_len() {
+            self.take(len);
+            self.spaces();
+        }
     }
 
     /// The arguments of a command that the LaTeX reader knows: options
@@ -313,8 +335,6 @@ impl<'t> Scan<'t> {
     /// then stands alone.
     fn known_arguments(&mut self, name: &str) -> Option<()> {
         let accent = name.chars().count() == 1;
-        self.spaces();
-        self.star();
         while let Some(len) = self.option_len() {
             self.take(len);
         }
@@ -331,11 +351,8 @@ impl<'t> Scan<'t> {
             }
             let rest = self.rest();
             match rest.chars().next() {
-                Some('{') => match self.group_len() {
-                    Some(len) => self.take(len),
-                    None if accent => return Some(()),
-                    None => return None,
-                },
+                Some('{') if accent && self.group_len().is_none() => return Some(()),
+                Some('{') => self.known_group()?,
                 Some('\\') => {
                     let len = control_word(rest, self.at_letter).map_or_else(
                         || 1 + rest.chars().nth(1).map_or(0, char::len_utf8),
@@ -343,10 +360,51 @@ impl<'t> Scan<'t> {
                     );
                     self.take(len);
                 }
+                Some('#') if rest.as_bytes().get(1).is_some_and(u8::is_ascii_digit) => {
+                    return None;
+                }
                 Some(c) if !c.is_whitespace() && c != '}' => self.take(c.len_utf8()),
                 _ => return Some(()),
             }
         }
+        Some(())
+    }
+
+    fn known_group(&mut self) -> Option<()> {
+        let len = self.group_len()?;
+        if has_parameter(self.rest().get(..len)?) {
+            return None;
+        }
+        self.take(len);
+        Some(())
+    }
+
+    fn parbox(&mut self) -> Option<()> {
+        self.options_with_spaces();
+        self.known_group()?;
+        self.spaces();
+        self.known_group()
+    }
+
+    fn title_format(&mut self) -> Option<()> {
+        self.known_group()?;
+        if let Some(len) = self.option_len() {
+            self.take(len);
+        }
+        for _ in 0..4 {
+            self.known_group()?;
+        }
+        if let Some(len) = self.option_len() {
+            self.take(len);
+        }
+        Some(())
+    }
+
+    fn write_stream(&mut self) -> Option<()> {
+        let digits = self.rest().bytes().take_while(u8::is_ascii_digit).count();
+        self.take(digits);
+        let len = self.group_len()?;
+        self.take(len);
         Some(())
     }
 
@@ -443,6 +501,9 @@ impl<'t> Scan<'t> {
 
 /// The number of arguments of a command of class `Inline`.
 fn argument_count(name: &str) -> usize {
+    if caption_term(name).is_some() {
+        return 0;
+    }
     match name {
         "ifstrequal" => 4,
         "textfrench" | "textgerman" | "textngerman" | "textswissgerman" | "textnswissgerman"
@@ -458,6 +519,54 @@ fn argument_count(name: &str) -> usize {
         | "normalsize" | "huge" | "LARGE" | "Huge" | "hfill" | "vfill" | "footnotemark" => 0,
         _ => 1,
     }
+}
+
+/// The length of an optional numeric argument of an unknown command.
+fn dimension_len(text: &str) -> usize {
+    let number = text.strip_prefix('-').unwrap_or(text);
+    let integer = number.bytes().take_while(u8::is_ascii_digit).count();
+    let fraction = number[integer..].strip_prefix('.').map_or(0, |rest| {
+        rest.bytes().take_while(u8::is_ascii_digit).count()
+    });
+    if integer == 0 && fraction == 0 {
+        return 0;
+    }
+    let end = integer + if fraction > 0 { 1 + fraction } else { 0 };
+    let unit = &number[end..];
+    let unit = &unit[..unit
+        .find(|c: char| !c.is_alphabetic())
+        .unwrap_or(unit.len())];
+    if unit.is_empty()
+        || matches!(
+            unit,
+            "pt" | "pc" | "in" | "bp" | "cm" | "mm" | "dd" | "cc" | "sp" | "em" | "ex" | "mu"
+        )
+    {
+        text.len() - number.len() + end + unit.len()
+    } else {
+        0
+    }
+}
+
+fn has_parameter(group: &str) -> bool {
+    let mut chars = group.chars().peekable();
+    while let Some(c) = chars.next() {
+        match c {
+            '\\' => {
+                chars.next();
+            }
+            '%' => {
+                for c in chars.by_ref() {
+                    if c == '\n' {
+                        break;
+                    }
+                }
+            }
+            '#' if chars.peek().is_some_and(char::is_ascii_digit) => return true,
+            _ => {}
+        }
+    }
+    false
 }
 
 /// The length of the group from `open` at the start of `text` to its
@@ -642,6 +751,125 @@ mod tests {
         assert_eq!(raw_tex_block("\\centering text"), None);
         assert_eq!(raw_tex_block("\\emph{x}"), None);
         assert_eq!(raw_tex_block("\\foo\n{a} d"), Some((4, "\\foo".into())));
+    }
+
+    #[test]
+    fn overlay_groups_stay_with_the_command() {
+        for text in [r"\textbf<1>{B}", r"\emph<2->{x}", r"\emph<1><2->{x}"] {
+            assert_eq!(
+                raw(text),
+                Some((
+                    text.len(),
+                    text.into(),
+                    RawKind::Command(CommandClass::Inline)
+                ))
+            );
+            assert_eq!(raw_tex_block(text), None);
+        }
+        for text in [r"\foo<1>{B}", r"\only<1>{x}", r"\foo<1><2>{x}"] {
+            assert_eq!(raw_tex_block(text), Some((text.len(), text.into())));
+        }
+        for text in ["\\emph<1\n2>{x}", r"\emph<1<2>>{x}", r"\emph<unclosed{x}"] {
+            assert_eq!(raw(text).unwrap().1, r"\emph<");
+        }
+    }
+
+    #[test]
+    fn write_stream_keeps_one_group() {
+        for text in [r"\write18{a}", r"\write18{example --flag}", r"\write 1{a}"] {
+            assert_eq!(raw_tex_block(text), Some((text.len(), text.into())));
+            let followed = format!("{text}{{b}}");
+            assert_eq!(
+                raw(&followed),
+                Some((
+                    text.len(),
+                    text.into(),
+                    RawKind::Command(CommandClass::Block)
+                ))
+            );
+        }
+        for text in [
+            r"\write18",
+            r"\write18{open",
+            r"\write 18 {a}",
+            r"\write-1{a}",
+        ] {
+            assert_eq!(raw(text), None);
+            assert_eq!(raw_tex_block(text), None);
+        }
+    }
+
+    #[test]
+    fn known_arguments_reject_parameters() {
+        for text in [
+            r"\parbox{1em}{#1}",
+            r"\textbf{#1}",
+            r"\textbf#1",
+            r"\textbf{{#0}}",
+            r"\textbf{\\#1}",
+        ] {
+            assert_eq!(raw(text), None, "{text}");
+            assert_eq!(raw_tex_block(text), None, "{text}");
+        }
+        let unknown = r"\foo{#1}";
+        assert_eq!(
+            raw_tex_block(unknown),
+            Some((unknown.len(), unknown.into()))
+        );
+        for text in [r"\textbf{\#1}", r"\textbf{# 1}"] {
+            assert_eq!(raw(text).unwrap().1, text);
+        }
+        let parbox = r"\parbox[t][2em][s]{1em} {B}";
+        assert_eq!(raw_tex_block(parbox), Some((parbox.len(), parbox.into())));
+    }
+
+    #[test]
+    fn malformed_macro_leaves_the_dimension_commands_available() {
+        let input = r"\newcommand{\boxedtext}[1]{\colorbox{blue}{\parbox{\dimexpr\linewidth-2\fboxsep}{#1}}";
+        assert_eq!(raw_tex_block(input), None);
+        let mut remaining = input;
+        let mut commands = Vec::new();
+        while let Some(start) = remaining.find('\\') {
+            remaining = &remaining[start..];
+            if let Some(command) = raw_tex_inline(remaining) {
+                remaining = &remaining[command.len..];
+                commands.push(command.text);
+            } else {
+                remaining = &remaining[1..];
+            }
+        }
+        assert_eq!(
+            commands,
+            [r"\boxedtext", r"\dimexpr", r"\linewidth-2", r"\fboxsep"]
+        );
+        assert_eq!(
+            raw(r"\linewidth-2.5pt tail").unwrap().1,
+            r"\linewidth-2.5pt"
+        );
+        assert_eq!(raw(r"\linewidth-2abc").unwrap().1, r"\linewidth");
+    }
+
+    #[test]
+    fn title_format_requires_five_groups() {
+        for text in [
+            r"\titleformat{\chapter}[display]{a}{b}{20pt}{\Huge}",
+            r"\titleformat{\chapter}[hang]{\bfseries}{§\thechapter{}}{2em}{\large}",
+            r"\titleformat{x}{a}{b}{20pt}{\Huge}[after]",
+        ] {
+            assert_eq!(raw_tex_block(text), Some((text.len(), text.into())));
+        }
+        for text in [
+            r"\titleformat{x}",
+            r"\titleformat{x}[display]{a}{b}{20pt}",
+            r"\titleformat[display]{x}{a}{b}{20pt}{\Huge}",
+        ] {
+            assert_eq!(raw(text), None, "{text}");
+            assert_eq!(raw_tex_block(text), None, "{text}");
+        }
+        let prefix = r"\foo{a}";
+        let text = r"\foo{a}[b]{c}";
+        assert_eq!(raw_tex_block(text), None);
+        assert_eq!(raw(text).unwrap().1, prefix);
     }
 
     #[test]

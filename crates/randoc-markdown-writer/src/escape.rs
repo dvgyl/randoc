@@ -77,6 +77,7 @@ impl W<'_> {
         let raw_tex = self.variant == Variant::Markdown && self.has(Extension::RawTex);
         // A run of three colons could open or close a fenced div.
         let fenced_divs = self.has(Extension::FencedDivs);
+        let markua = self.variant == Variant::Markua;
         let chars: Vec<char> = text.chars().collect();
         let offsets: Vec<usize> = text.char_indices().map(|(offset, _)| offset).collect();
         let mut out = Text::with_capacity(text.len() + 8);
@@ -157,6 +158,11 @@ impl W<'_> {
                 '#' if i == 0 && (commonmark || chars.iter().all(|&h| h == '#')) => {
                     out.push_str("\\#");
                 }
+                // Two slashes start italic text in Markua.
+                '/' if markua && next == Some('/') => {
+                    out.push_str("~/~/");
+                    i += 1;
+                }
                 ':' if fenced_divs && next == Some(':') && chars.get(i + 2) == Some(&':') => {
                     out.push_str("\\:::");
                     i += 2;
@@ -168,7 +174,11 @@ impl W<'_> {
             }
             i += 1;
         }
-        ascii_text(out, self.opts.prefer_ascii)
+        // Markua ignores `--ascii`.
+        ascii_text(
+            out,
+            self.opts.prefer_ascii && self.variant != Variant::Markua,
+        )
     }
 
     /// Escapes a list marker at the start of a line.
@@ -220,39 +230,83 @@ impl W<'_> {
     }
 }
 
-/// Returns `true` when `text` is a roman numeral of one case.
-fn is_roman(text: &str) -> bool {
-    !text.is_empty()
-        && (text.chars().all(|c| "ivxlcdm".contains(c))
-            || text.chars().all(|c| "IVXLCDM".contains(c)))
+/// The parts of the roman numeral grammar of the Markdown reader, in order:
+/// the letters, the value and `true` when the part can repeat.
+const ROMAN_PARTS: &[(&[u8], u64, bool)] = &[
+    (b"M", 1000, true),
+    (b"CM", 900, false),
+    (b"D", 500, false),
+    (b"CD", 400, false),
+    (b"C", 100, true),
+    (b"XC", 90, false),
+    (b"L", 50, false),
+    (b"XL", 40, false),
+    (b"X", 10, true),
+    (b"IX", 9, false),
+    (b"V", 5, false),
+    (b"IV", 4, false),
+    (b"I", 1, true),
+];
+
+/// Returns the value of a roman numeral of one case, or `None` when the
+/// reader does not accept the text as one (`ID`, `VV` or `Iv`).
+fn roman_value(text: &str) -> Option<u64> {
+    let bytes = text.as_bytes();
+    let one_case =
+        bytes.iter().all(u8::is_ascii_uppercase) || bytes.iter().all(u8::is_ascii_lowercase);
+    if bytes.is_empty() || !one_case {
+        return None;
+    }
+    let mut rest = bytes;
+    let mut value: u64 = 0;
+    for &(letters, part, repeats) in ROMAN_PARTS {
+        while let Some((head, after)) = rest.split_at_checked(letters.len())
+            && head.eq_ignore_ascii_case(letters)
+        {
+            rest = after;
+            value = value.saturating_add(part);
+            if !repeats {
+                break;
+            }
+        }
+    }
+    rest.is_empty().then_some(value)
 }
 
-/// Returns the escaped form of an ordered list marker, or `None` when the
-/// text is not a marker.
-pub(crate) fn ordered_marker(text: &str) -> Option<Text> {
+/// Splits an ordered list marker into the opening parenthesis, the number
+/// and the delimiter, or returns `None` when the text is not a marker.
+///
+/// The reader needs two spaces after an upper-case letter with a period,
+/// and after an upper-case roman numeral with a period whose value is that
+/// of one letter (`V.` or `IIIII.`). `loose` accepts these markers too.
+fn marker_parts(text: &str, loose: bool) -> Option<(bool, &str, char)> {
     let (open, body) = match text.strip_prefix('(') {
         Some(body) => (true, body),
         None => (false, text),
     };
     let delim = body.chars().last()?;
-    if delim != '.' && delim != ')' {
-        return None;
-    }
-    if open && delim != ')' {
+    if delim != '.' && delim != ')' || open && delim != ')' {
         return None;
     }
     let number = &body[..body.len() - 1];
+    let upper_period = delim == '.' && number.starts_with(|c: char| c.is_ascii_uppercase());
     let valid =
         (number.len() <= 9 && !number.is_empty() && number.chars().all(|c| c.is_ascii_digit()))
-            || (number.chars().count() == 1
-                && number
-                    .chars()
-                    .all(|c| c.is_ascii_lowercase() || c.is_ascii_uppercase() && delim == ')'))
             || number == "#"
-            || (delim != '.' || number.len() > 1 || open) && is_roman(number);
-    if !valid {
-        return None;
-    }
+            || (number.len() == 1 && number.starts_with(|c: char| c.is_ascii_lowercase()))
+            || (number.len() == 1
+                && number.starts_with(|c: char| c.is_ascii_uppercase())
+                && (loose || !upper_period))
+            || roman_value(number).is_some_and(|value| {
+                loose || !upper_period || !matches!(value, 1 | 5 | 10 | 50 | 100 | 500 | 1000)
+            });
+    valid.then_some((open, number, delim))
+}
+
+/// Returns the escaped form of an ordered list marker, or `None` when the
+/// text is not a marker.
+pub(crate) fn ordered_marker(text: &str) -> Option<Text> {
+    let (open, number, delim) = marker_parts(text, false)?;
     Some(if open {
         format!("\\({number}\\{delim}")
     } else {
@@ -264,9 +318,7 @@ pub(crate) fn ordered_marker(text: &str) -> Option<Text> {
 /// quote that can interrupt a paragraph.
 pub(crate) fn is_interrupting_marker(text: &str, in_list: bool) -> bool {
     matches!(text, "-" | "+" | "*" | ">" | "1." | "1)")
-        || in_list
-            && (ordered_marker(text).is_some()
-                || matches!(text.as_bytes(), [letter, b'.'] if letter.is_ascii_uppercase()))
+        || in_list && marker_parts(text, true).is_some()
 }
 
 #[cfg(test)]
@@ -284,6 +336,54 @@ mod tests {
         assert_eq!(ordered_marker("1.x"), None);
         assert_eq!(ordered_marker("(1."), None);
         assert_eq!(ordered_marker("."), None);
+    }
+
+    #[test]
+    fn roman_numerals_follow_the_grammar_of_the_reader() {
+        // Values and refusals of the Pandoc 3.13 reader.
+        for (text, value) in [
+            ("IV", 4),
+            ("IIII", 4),
+            ("IIIII", 5),
+            ("IVI", 5),
+            ("VIV", 9),
+            ("XCXX", 110),
+            ("LXL", 90),
+            ("CMD", 1400),
+            ("DCD", 900),
+            ("CDC", 500),
+            ("MCMXCIX", 1999),
+            ("MMMMM", 5000),
+            ("xcxx", 110),
+        ] {
+            assert_eq!(roman_value(text), Some(value), "{text}");
+        }
+        for text in [
+            "ID", "XM", "IC", "VV", "LL", "il", "Iv", "IVV", "XLL", "XCC", "DCM", "MDM", "IIX",
+            "VX", "CMCM", "",
+        ] {
+            assert_eq!(roman_value(text), None, "{text}");
+        }
+    }
+
+    #[test]
+    fn an_upper_case_numeral_with_a_period_needs_a_value_of_two_letters() {
+        assert_eq!(ordered_marker("IV.").as_deref(), Some("IV\\."));
+        assert_eq!(ordered_marker("XCXX.").as_deref(), Some("XCXX\\."));
+        assert_eq!(ordered_marker("IIIII)").as_deref(), Some("IIIII\\)"));
+        assert_eq!(ordered_marker("iiiii.").as_deref(), Some("iiiii\\."));
+        for text in [
+            "IIIII.", "IVI.", "CDC.", "CMC.", "I.", "V.", "ID.", "VV.", "il.",
+        ] {
+            assert_eq!(ordered_marker(text), None, "{text}");
+        }
+        // In a list a break before these words would start an item.
+        for text in ["IIIII.", "IVI.", "CDC.", "V.", "A.", "XCXX."] {
+            assert!(is_interrupting_marker(text, true), "{text}");
+        }
+        for text in ["ID.", "XM.", "IC.", "VV.", "LL.", "il.", "ID)"] {
+            assert!(!is_interrupting_marker(text, true), "{text}");
+        }
     }
 
     #[test]

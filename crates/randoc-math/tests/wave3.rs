@@ -10,6 +10,20 @@ const RENDERERS: [Renderer; 3] = [to_typst, to_omml, to_eqn];
 const CASES: &str = include_str!("wave3.tex");
 
 #[test]
+fn ensuremath_parses_as_a_math_group() {
+    for tex in [r"1-{\ensuremath{r}}", r"1-{\ensuremath{\ensuremath{r}}}"] {
+        assert_eq!(
+            randoc_math::to_inlines(InlineMath, tex, 128),
+            Ok(vec![
+                randoc_ast::Inline::Str("1\u{2005}−\u{2005}".into()),
+                randoc_ast::Inline::Emph(vec![randoc_ast::Inline::Str("r".into())]),
+            ])
+        );
+    }
+    assert!(randoc_math::to_inlines(InlineMath, r"\ensuremath x", 128).is_err());
+}
+
+#[test]
 fn typst_formats_fractions_and_scripts() {
     assert_eq!(
         to_typst(InlineMath, r"\frac{x_i^2}{y} + \sqrt[3]{x+y}", 128),

@@ -789,6 +789,35 @@ fn chunked_html_checks_entry_and_cumulative_output_limits() {
 }
 
 #[test]
+fn icml_warns_when_it_cannot_read_image_dimensions() {
+    let path = "broken.svg";
+    let host = randoc_core::PureHost {
+        files: [(path.into(), b"Invalid image data".to_vec())].into(),
+        ..randoc_core::PureHost::default()
+    };
+    let mut context = Context::new(Box::new(host));
+    let doc = Pandoc {
+        blocks: vec![Block::Para(vec![Inline::Image(
+            Attr::default(),
+            vec![],
+            Target::new(path, ""),
+        )])],
+        ..Pandoc::default()
+    };
+
+    let output = write("icml", &doc, &WriterOptions::default(), &mut context).expect("ICML output");
+    let text = std::str::from_utf8(&output).expect("valid UTF-8");
+    assert!(text.contains(r#"GraphicBounds Left="0" Top="0" Right="300" Bottom="200""#));
+    assert_eq!(
+        context.log(),
+        [randoc_core::LogMessage::CouldNotDetermineImageSize(
+            path.into(),
+            "could not determine image type".into(),
+        )],
+    );
+}
+
+#[test]
 fn text_writers_limit_high_amplification() {
     for (format, mut items) in [
         ("context", vec![Inline::Str("\\".repeat(130))]),

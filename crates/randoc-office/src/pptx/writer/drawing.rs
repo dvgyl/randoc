@@ -29,6 +29,7 @@ struct Builder<'a, 'b, 'c> {
     reference: &'a mut Reference,
     relationships: Vec<Relationship>,
     slide: usize,
+    layout: Layout,
     next_shape: usize,
     animations: Vec<(usize, usize)>,
     suppress_notes: bool,
@@ -56,7 +57,7 @@ pub(super) fn draw_slide<'d>(
     if matches!(layout, Layout::Title) {
         if !metadata[0].is_empty() {
             let para = builder.plain_paragraph(&metadata[0], "ctr", 3200)?;
-            shapes.push_str(&builder.text_shape(Some("ctrTitle"), 0, None, &para, &[]));
+            shapes.push_str(&builder.placeholder_shape(Some("ctrTitle"), 0, None, &para, &[]));
         }
         let mut subtitles = String::new();
         for line in std::iter::once(metadata[1].as_str())
@@ -66,11 +67,11 @@ pub(super) fn draw_slide<'d>(
             subtitles.push_str(&builder.plain_paragraph(line, "ctr", 2000)?);
         }
         if !subtitles.is_empty() {
-            shapes.push_str(&builder.text_shape(Some("subTitle"), 1, None, &subtitles, &[]));
+            shapes.push_str(&builder.placeholder_shape(Some("subTitle"), 1, None, &subtitles, &[]));
         }
         if !metadata[3].is_empty() {
             let para = builder.plain_paragraph(&metadata[3], "ctr", 1600)?;
-            shapes.push_str(&builder.text_shape(Some("dt"), 10, None, &para, &[]));
+            shapes.push_str(&builder.placeholder_shape(Some("dt"), 10, None, &para, &[]));
         }
     } else if !slide.title.is_empty() || slide.toc {
         let title = if slide.toc {
@@ -78,7 +79,7 @@ pub(super) fn draw_slide<'d>(
         } else {
             builder.paragraph(Paragraph::new(slide.title, 1), "", 3200)?
         };
-        shapes.push_str(&builder.text_shape(Some("title"), 0, None, &title, &[]));
+        shapes.push_str(&builder.placeholder_shape(Some("title"), 0, None, &title, &[]));
     }
     if slide.toc {
         builder.suppress_notes = true;
@@ -115,8 +116,12 @@ pub(super) fn draw_slide<'d>(
         }
         builder.suppress_notes = false;
         if !paras.is_empty() {
-            let bounds = builder.reference.bounds(layout, 1);
-            shapes.push_str(&builder.text_shape(Some(""), 1, Some(bounds), &paras, &[]));
+            let bounds = builder
+                .reference
+                .placeholder(layout, 1)
+                .is_none()
+                .then(|| builder.reference.bounds(layout, 1));
+            shapes.push_str(&builder.placeholder_shape(Some(""), 1, bounds, &paras, &[]));
         }
     }
     let mut notes = Vec::new();
@@ -165,7 +170,7 @@ pub(super) fn draw_endnotes(
     let mut builder = Builder::new(state, reference, index, layout);
     builder.suppress_notes = true;
     let title = builder.plain_paragraph("Notes", "", 3200)?;
-    let mut shapes = builder.text_shape(Some("title"), 0, None, &title, &[]);
+    let mut shapes = builder.placeholder_shape(Some("title"), 0, None, &title, &[]);
     let mut paras = String::new();
     let depth = builder.state.context.limits.max_nesting_depth;
     for (index, note) in notes.iter().enumerate() {
@@ -185,8 +190,12 @@ pub(super) fn draw_endnotes(
             paras.push_str(&builder.plain_paragraph(prefix.trim_end(), "", 2000)?);
         }
     }
-    let bounds = builder.reference.bounds(layout, 1);
-    shapes.push_str(&builder.text_shape(Some(""), 1, Some(bounds), &paras, &[]));
+    let bounds = builder
+        .reference
+        .placeholder(layout, 1)
+        .is_none()
+        .then(|| builder.reference.bounds(layout, 1));
+    shapes.push_str(&builder.placeholder_shape(Some(""), 1, bounds, &paras, &[]));
     builder.finish(&shapes, "", None)
 }
 
@@ -205,6 +214,8 @@ struct Paragraph<'a> {
     indent: usize,
     bullet: Bullet,
     animate: bool,
+    quote: bool,
+    heading: bool,
 }
 
 impl<'a> Paragraph<'a> {
@@ -216,6 +227,8 @@ impl<'a> Paragraph<'a> {
             indent: 0,
             bullet: Bullet::None,
             animate: false,
+            quote: false,
+            heading: false,
         }
     }
 }
@@ -242,6 +255,7 @@ struct BlockStyle {
     indent: usize,
     bullet: Bullet,
     incremental: bool,
+    quote: bool,
 }
 
 impl BlockStyle {
@@ -250,6 +264,7 @@ impl BlockStyle {
             indent: self.indent.saturating_sub(1),
             bullet: self.bullet,
             animate: self.incremental && !matches!(self.bullet, Bullet::None),
+            quote: self.quote,
             ..Paragraph::new(inlines, self.depth)
         }
     }
@@ -288,6 +303,7 @@ fn flatten_from<'a>(
         indent: 0,
         bullet: Bullet::None,
         incremental,
+        quote: false,
     };
     let mut work: Vec<_> = blocks.rev().map(|block| Work::Block(block, base)).collect();
     let mut output = Vec::new();
@@ -306,7 +322,10 @@ fn flatten_from<'a>(
                 if let [Inline::Image(attr, alt, target)] = inlines.as_slice() {
                     output.push(Item::Picture(attr, alt, target, None, style.depth));
                 } else {
-                    output.push(Item::Paragraph(style.paragraph(inlines)));
+                    output.push(Item::Paragraph(Paragraph {
+                        heading: matches!(block, Block::Header(..)),
+                        ..style.paragraph(inlines)
+                    }));
                 }
             }
             Block::LineBlock(lines) => {
@@ -343,6 +362,10 @@ fn flatten_from<'a>(
                 work.extend(children.iter().rev().map(|block| Work::Block(block, child)));
             }
             Block::BlockQuote(children) => {
+                let child = BlockStyle {
+                    quote: true,
+                    ..child
+                };
                 work.extend(children.iter().rev().map(|block| Work::Block(block, child)));
             }
             Block::Figure(_, caption, children) => {
@@ -415,6 +438,7 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
             state,
             reference,
             slide,
+            layout,
             relationships: vec![relationship(1, "slideLayout", link, false)],
             next_shape: 2,
             animations: Vec::new(),
@@ -444,6 +468,12 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
     }
 
     fn shape_id(&mut self) -> usize {
+        while self
+            .reference
+            .layout_has_shape_id(self.layout, self.next_shape)
+        {
+            self.next_shape += 1;
+        }
         let id = self.next_shape;
         self.next_shape += 1;
         id
@@ -451,8 +481,14 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
 
     fn finish(self, shapes: &str, background: &str, notes: Option<String>) -> Result<SlideOutput> {
         let timing = timing(&self.animations);
+        let group = self.reference.slide_group(self.layout);
+        let (namespaces, color) = if self.reference.imported {
+            (self.reference.slide_namespaces(self.layout, shapes), "")
+        } else {
+            (NAMESPACES.to_owned(), COLOR_OVERRIDE)
+        };
         let xml = format!(
-            r#"<p:sld {NAMESPACES}><p:cSld>{background}<p:spTree>{TREE}{shapes}</p:spTree></p:cSld>{COLOR_OVERRIDE}{timing}</p:sld>"#
+            r#"<p:sld {namespaces}><p:cSld>{background}<p:spTree>{group}{shapes}</p:spTree></p:cSld>{color}{timing}</p:sld>"#
         );
         self.state
             .charge(xml.len() + notes.as_ref().map_or(0, String::len))?;
@@ -503,13 +539,16 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
                         index += 1;
                         paragraph += 1;
                     }
-                    shapes.push_str(&self.text_shape(
-                        Some(""),
-                        slot,
-                        Some(bounds),
-                        &paras,
-                        &animation,
-                    ));
+                    shapes.push_str(
+                        &self.placeholder_shape(
+                            Some(""),
+                            slot,
+                            (count != 1 || self.reference.placeholder(layout, slot).is_none())
+                                .then_some(bounds),
+                            &paras,
+                            &animation,
+                        ),
+                    );
                 }
                 Item::Table(table, depth) => {
                     shapes.push_str(&self.table(table, *depth, bounds, slot)?);
@@ -627,8 +666,15 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
         size: u32,
         prefix: &str,
     ) -> Result<String> {
+        let imported = self.reference.imported && size != 1200;
         let style = Style {
-            size,
+            size: if imported {
+                if para.quote { 2000 } else { 0 }
+            } else {
+                size
+            },
+            bold: imported && para.heading,
+            compact: imported,
             ..Style::default()
         };
         let body = if let Some((attr, text)) = para.code {
@@ -647,26 +693,38 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
             format!(r#" algn="{alignment}""#)
         };
         let level = para.indent.min(8);
+        let space = if imported && para.heading {
+            r#"<a:spcBef><a:spcPts val="3000" /></a:spcBef>"#
+        } else {
+            ""
+        };
+        let margin = if imported && para.quote { 1_270_000 } else { 0 };
         let properties = match para.bullet {
             Bullet::None if para.code.is_some() => {
                 format!(r#"<a:pPr lvl="{level}" indent="0"{alignment}><a:buNone /></a:pPr>"#)
             }
             Bullet::None => format!(
-                r#"<a:pPr lvl="{level}" indent="0" marL="0"{alignment}><a:buNone /></a:pPr>"#
+                r#"<a:pPr lvl="{level}" indent="0" marL="{margin}"{alignment}>{space}<a:buNone /></a:pPr>"#
             ),
             Bullet::Unordered => format!(r#"<a:pPr lvl="{level}"{alignment} />"#),
             Bullet::Ordered(list, start) => {
                 let kind = number_style(list);
                 let number = list.start.clamp(1, 32767);
-                let start = if start && number != 1 {
+                let start = if (imported || start) && number != 1 {
                     format!(r#" startAt="{number}""#)
                 } else {
                     String::new()
                 };
-                let margin = 342_900 * (level + 1);
-                format!(
-                    r#"<a:pPr lvl="{level}" indent="-342900" marL="{margin}"{alignment}><a:buAutoNum type="{kind}"{start} /></a:pPr>"#
-                )
+                if imported {
+                    format!(
+                        r#"<a:pPr lvl="{level}"{alignment}><a:buAutoNum{start} type="{kind}" /></a:pPr>"#
+                    )
+                } else {
+                    let margin = 342_900 * (level + 1);
+                    format!(
+                        r#"<a:pPr lvl="{level}" indent="-342900" marL="{margin}"{alignment}><a:buAutoNum type="{kind}"{start} /></a:pPr>"#
+                    )
+                }
             }
         };
         Ok(format!("<a:p>{properties}{body}</a:p>"))
@@ -681,13 +739,38 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
         let run = make_run(
             text,
             Style {
-                size,
+                size: if self.reference.imported && size != 1200 {
+                    0
+                } else {
+                    size
+                },
+                compact: self.reference.imported && size != 1200,
                 ..Style::default()
             },
         );
         Ok(format!(
             r#"<a:p><a:pPr{alignment}><a:buNone /></a:pPr>{run}</a:p>"#
         ))
+    }
+
+    fn placeholder_shape(
+        &mut self,
+        kind: Option<&str>,
+        slot: usize,
+        bounds: Option<Bounds>,
+        paras: &str,
+        animate: &[usize],
+    ) -> String {
+        if let Some(placeholder) = self.reference.placeholder(self.layout, slot) {
+            // Pandoc 3.13 reuses the layout ID for each text shape in the slot.
+            let id = placeholder.id;
+            let xml = placeholder.draw(paras, bounds, kind == Some(""));
+            self.animations
+                .extend(animate.iter().map(|paragraph| (id, *paragraph)));
+            math_shape(xml, paras.contains("<a14:m>"))
+        } else {
+            self.text_shape(kind, slot, bounds, paras, animate)
+        }
     }
 
     fn text_shape(
@@ -761,7 +844,26 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
             return Err(table_limit());
         }
         let has_caption = !table.caption.long.is_empty() || table.caption.short.is_some();
-        let frame = if has_caption {
+        let imported = self.reference.imported;
+        const EMU_PER_POINT: i64 = 12_700;
+        const CAPTION_HEIGHT: i64 = 40 * EMU_PER_POINT;
+        let area = if imported {
+            let whole_points = |value| (value / EMU_PER_POINT) * EMU_PER_POINT;
+            Bounds {
+                x: whole_points(area.x),
+                y: whole_points(area.y),
+                w: whole_points(area.w).max(1),
+                h: whole_points(area.h).max(1),
+            }
+        } else {
+            area
+        };
+        let frame = if imported && has_caption {
+            Bounds {
+                h: (area.h - CAPTION_HEIGHT).max(1),
+                ..area
+            }
+        } else if has_caption {
             Bounds {
                 h: (area.h * 4 / 5).max(1),
                 ..area
@@ -772,8 +874,23 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
         let id = self.shape_id();
         let position = frame.transform("p");
         let first = usize::from(!table.head.rows.is_empty());
+        let frame_properties = if imported {
+            // Pandoc 3.13 uses ID 6 for each table frame.
+            r#"<p:cNvPr id="6" name="Content Placeholder 5" /><p:cNvGraphicFramePr><a:graphicFrameLocks noGrp="1" /></p:cNvGraphicFramePr>"#.to_owned()
+        } else {
+            format!(r#"<p:cNvPr id="{id}" name="Table {id}" /><p:cNvGraphicFramePr />"#)
+        };
+        let table_properties = if imported {
+            let mut style = String::new();
+            escape_content(&self.reference.table_style, &mut style);
+            format!(
+                r#"<a:tblPr firstRow="{first}" bandRow="1"><a:tableStyleId>{style}</a:tableStyleId></a:tblPr>"#
+            )
+        } else {
+            format!(r#"<a:tblPr firstRow="{first}" bandRow="1" />"#)
+        };
         let mut xml = format!(
-            r#"<p:graphicFrame><p:nvGraphicFramePr><p:cNvPr id="{id}" name="Table {id}" /><p:cNvGraphicFramePr /><p:nvPr><p:ph idx="{slot}" /></p:nvPr></p:nvGraphicFramePr>{position}<a:graphic><a:graphicData uri="{TABLE_URI}"><a:tbl><a:tblPr firstRow="{first}" bandRow="1" /><a:tblGrid>"#
+            r#"<p:graphicFrame><p:nvGraphicFramePr>{frame_properties}<p:nvPr><p:ph idx="{slot}" /></p:nvPr></p:nvGraphicFramePr>{position}<a:graphic><a:graphicData uri="{TABLE_URI}"><a:tbl>{table_properties}<a:tblGrid>"#
         );
         let equal = (area.w / width as i64).max(1);
         let custom = table.col_specs.len() == width && table.col_specs.iter().all(|spec| matches!(spec.width, ColWidth::ColWidth(frac) if frac.is_finite() && frac > 0.0 && frac <= 1.0));
@@ -787,7 +904,11 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
             let _ = write!(xml, r#"<a:gridCol w="{width}" />"#);
         }
         xml.push_str("</a:tblGrid>");
-        let row_height = (frame.h / height as i64).clamp(1, 381_000);
+        let row_height = if imported {
+            0
+        } else {
+            (frame.h / height as i64).clamp(1, 381_000)
+        };
         let mut covering = vec![0usize; width];
         let mut has_math = false;
         for (row_index, row) in rows.enumerate() {
@@ -840,7 +961,11 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
                 if !written {
                     xml.push_str("<a:p />");
                 }
-                xml.push_str("</a:txBody><a:tcPr /></a:tc>");
+                xml.push_str("</a:txBody>");
+                if !imported || row_index < table.head.rows.len() {
+                    xml.push_str("<a:tcPr />");
+                }
+                xml.push_str("</a:tc>");
                 self.padding(&mut xml, span - 1)?;
                 col += span;
             }
@@ -857,13 +982,29 @@ impl<'a, 'b, 'c> Builder<'a, 'b, 'c> {
                 || stringify_blocks(&table.caption.long),
                 |text| stringify(text),
             );
-            let para = self.plain_paragraph(&caption, "ctr", 1400)?;
             let bounds = Bounds {
                 y: area.y + frame.h,
                 h: (area.h - frame.h).max(1),
                 ..area
             };
-            xml.push_str(&self.text_shape(None, 0, Some(bounds), &para, &[]));
+            if imported {
+                // Pandoc 3.13 uses the group ID 1 for each table caption.
+                let position = bounds.transform("a");
+                let run = make_run(
+                    &caption,
+                    Style {
+                        compact: true,
+                        ..Style::default()
+                    },
+                );
+                let _ = write!(
+                    xml,
+                    r#"<p:sp><p:nvSpPr><p:cNvPr id="1" name="TextBox 3" /><p:cNvSpPr txBox="1" /><p:nvPr><p:ph idx="{slot}" /></p:nvPr></p:nvSpPr><p:spPr>{position}<a:prstGeom prst="rect"><a:avLst /></a:prstGeom><a:noFill /></p:spPr><p:txBody><a:bodyPr /><a:lstStyle /><a:p><a:pPr lvl="0" indent="0" marL="0" algn="ctr"><a:buNone /></a:pPr>{run}</a:p></p:txBody></p:sp>"#
+                );
+            } else {
+                let para = self.plain_paragraph(&caption, "ctr", 1400)?;
+                xml.push_str(&self.text_shape(None, 0, Some(bounds), &para, &[]));
+            }
         }
         Ok(xml)
     }
@@ -1018,6 +1159,7 @@ struct Style {
     baseline: i32,
     size: u32,
     link: Option<(usize, bool)>,
+    compact: bool,
 }
 
 enum Run<'a> {
@@ -1245,6 +1387,12 @@ fn make_run(text: &str, style: Style) -> String {
     }
     if style.size != 0 {
         let _ = write!(xml, r#" sz="{}""#, style.size);
+    }
+    if style.compact && style.color.is_none() && !style.code && style.link.is_none() {
+        xml.push_str(" /><a:t>");
+        escape_content(text, &mut xml);
+        xml.push_str("</a:t></a:r>");
+        return xml;
     }
     xml.push('>');
     if let Some(color) = style.color {

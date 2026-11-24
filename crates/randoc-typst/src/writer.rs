@@ -126,7 +126,7 @@ pub(super) fn write(
         default("nocite-ids", Val::List(ids));
     }
     vars.insert("body", Val::Simple(body));
-    Ok(template.render(&vars).render(width))
+    context.render_template(template, &vars, width)
 }
 
 struct Renderer<'a> {
@@ -210,7 +210,7 @@ impl Renderer<'_> {
                     } else {
                         hcat([literal(format!("{} ", "=".repeat(level as usize))), title])
                     };
-                heading.above(literal(label(&attr.id, true)))
+                heading.above(literal(block_label(attr)))
             }
             Block::BlockQuote(blocks) => {
                 surround("#quote(block: true)[\n", self.blocks(blocks, depth)?, "\n]")
@@ -305,7 +305,7 @@ impl Renderer<'_> {
                 } else {
                     format!("#block({})[\n", params.join(", "))
                 };
-                let tail = label(&attr.id, true);
+                let tail = block_label(attr);
                 let separator = if matches!(
                     blocks.last(),
                     Some(
@@ -404,14 +404,26 @@ impl Renderer<'_> {
                 {
                     empty()
                 } else {
-                    self.inline(inline, start && index == 0, depth - 1)?
+                    let attached = index.checked_sub(1).is_some_and(|previous| {
+                        !matches!(
+                            inlines[previous],
+                            Inline::Space | Inline::SoftBreak | Inline::LineBreak
+                        )
+                    });
+                    self.inline(inline, start && index == 0, attached, depth - 1)?
                 },
             );
         }
         Ok(hcat(docs))
     }
 
-    fn inline(&mut self, inline: &Inline, line_start: bool, depth: usize) -> Result<Doc> {
+    fn inline(
+        &mut self,
+        inline: &Inline,
+        line_start: bool,
+        attached: bool,
+        depth: usize,
+    ) -> Result<Doc> {
         if let Some((name, body)) = match inline {
             Inline::Emph(xs) => Some(("emph", xs)),
             Inline::Strong(xs) => Some(("strong", xs)),
@@ -428,13 +440,26 @@ impl Renderer<'_> {
                 "]",
             ));
         }
-        self.inline_other(inline, line_start, depth)
+        self.inline_other(inline, line_start, attached, depth)
     }
 
-    fn inline_other(&mut self, inline: &Inline, line_start: bool, depth: usize) -> Result<Doc> {
+    fn inline_other(
+        &mut self,
+        inline: &Inline,
+        line_start: bool,
+        attached: bool,
+        depth: usize,
+    ) -> Result<Doc> {
         let smart = self.options.extensions.contains(Extension::Smart);
         Ok(match inline {
-            Inline::Str(text) => markup(text, smart, line_start),
+            Inline::Str(text) => {
+                let doc = markup(text, smart, line_start);
+                if attached && text.starts_with('(') {
+                    literal("\\") + doc
+                } else {
+                    doc
+                }
+            }
             Inline::Space => space(),
             Inline::SoftBreak if self.options.wrap_text == WrapOption::WrapPreserve => cr(),
             Inline::SoftBreak => space(),
@@ -452,7 +477,10 @@ impl Renderer<'_> {
                 surround(open, self.inlines(inlines, depth)?, close)
             }
             Inline::Math(kind, tex) => match randoc_math::to_typst(*kind, tex, self.depth) {
-                Ok(text) if *kind == MathType::DisplayMath => literal(format!("$ {text} $")),
+                Ok(text) if *kind == MathType::DisplayMath => {
+                    let anchor = equation_label(tex).map_or_else(String::new, |id| label(id, true));
+                    literal(format!("$ {text} ${anchor}"))
+                }
                 Ok(text) => literal(format!("${text}$")),
                 Err(error) => {
                     self.context.report(LogMessage::CouldNotConvertTexMath(
@@ -470,8 +498,9 @@ impl Renderer<'_> {
             Inline::Link(_, inlines, target) => {
                 let url = &target.url;
                 if let Some(id) = url.strip_prefix('#') {
+                    let id = decode_percent(id, false).unwrap_or_default();
                     surround(
-                        format!("#link({})[", label(id, false)),
+                        format!("#link({})[", label(&String::from_utf8_lossy(&id), false)),
                         randoc_layout::nowrap(self.inlines(inlines, depth)?),
                         "]",
                     )
@@ -611,6 +640,17 @@ fn label(id: &str, markup: bool) -> String {
     }
 }
 
+fn block_label(attr: &Attr) -> String {
+    label(attr.get("typst-label").unwrap_or(&attr.id), true)
+}
+
+fn equation_label(tex: &str) -> Option<&str> {
+    // The math parser skips labels. Recover the first label for the anchor.
+    let (_, group) = tex.split_once("\\label{")?;
+    let (id, _) = group.split_once('}')?;
+    Some(id)
+}
+
 fn quoted(text: &str) -> String {
     format!("\"{}\"", text.replace('\\', "\\\\").replace('"', "\\\""))
 }
@@ -621,8 +661,7 @@ fn markup(text: &str, smart: bool, line_start: bool) -> Doc {
         end_number > 0 && (text[end_number..].starts_with(". ") || &text[end_number..] == ".");
     let mut out = String::new();
     let mut previous = None;
-    let mut chars = text.chars().peekable();
-    while let Some(c) = chars.next() {
+    for c in text.chars() {
         if smart && c == '’' {
             out.push('\'');
         } else if smart && c == '–' {
@@ -633,13 +672,10 @@ fn markup(text: &str, smart: bool, line_start: bool) -> Doc {
             out.push('~');
         } else {
             if "#$*<>@[\\]_`~".contains(c)
-                || smart
-                    && (c == '"'
-                        || c == '\''
-                        || c == '-' && previous == Some('-')
-                        || c == '.'
-                            && previous == Some('.')
-                            && (chars.peek() == Some(&'.') || out.ends_with("\\.")))
+                || smart && (c == '"' || c == '\'' || c == '-' && previous == Some('-'))
+                || c == '.'
+                    && (smart && previous == Some('.') || previous.is_none() && text.len() > 1)
+                || smart && c == '?' && previous == Some('-')
                 || c == '/' && previous == Some('/')
             {
                 out.push('\\');
@@ -650,10 +686,7 @@ fn markup(text: &str, smart: bool, line_start: bool) -> Doc {
     }
     let start = text.chars().next();
     let escape_after_break = starts_list_number || start.is_some_and(|c| "+-/=".contains(c));
-    if start == Some(';')
-        || line_start
-            && (escape_after_break || start == Some('(') || smart && text.starts_with("..."))
-    {
+    if start == Some(';') || line_start && (escape_after_break || start == Some('(')) {
         literal(format!("\\{out}"))
     } else if escape_after_break {
         hcat([after_break("\\"), literal(out)])
@@ -674,7 +707,9 @@ fn properties(attr: &Attr, lang: Option<&str>) -> (Vec<String>, String) {
     for (key, value) in &attr.attributes {
         if let Some(name) = key.strip_prefix("typst:text:") {
             text.push(format!("{name}: {value}"));
-        } else if let Some(name) = key.strip_prefix("typst:") {
+        } else if !key.starts_with("typst:figure:")
+            && let Some(name) = key.strip_prefix("typst:")
+        {
             params.push(format!("{name}: {value}"));
         }
     }
@@ -714,23 +749,9 @@ fn image_source(url: &str) -> String {
     let Some((header, data)) = url.strip_prefix("data:").and_then(|s| s.split_once(',')) else {
         return quoted(url);
     };
-    let mut bytes = Vec::new();
-    let mut input = data.bytes();
-    while let Some(byte) = input.next() {
-        let byte = if byte == b'%' {
-            let hex = |b: u8| (b as char).to_digit(16).map(|n| n as u8);
-            let Some(a) = input.next().and_then(hex) else {
-                return quoted(url);
-            };
-            let Some(b) = input.next().and_then(hex) else {
-                return quoted(url);
-            };
-            a * 16 + b
-        } else {
-            byte
-        };
-        bytes.push(byte);
-    }
+    let Some(mut bytes) = decode_percent(data, true) else {
+        return quoted(url);
+    };
     if header.ends_with(";base64") {
         let mut decoded = Vec::new();
         let mut bits = 0u32;
@@ -767,6 +788,29 @@ fn image_source(url: &str) -> String {
         .join(",");
     let comma = if bytes.len() == 1 { "," } else { "" };
     format!("bytes(({numbers}{comma}))")
+}
+
+fn decode_percent(input: &str, strict: bool) -> Option<Vec<u8>> {
+    let hex = |b: u8| char::from(b).to_digit(16).map(|n| n as u8);
+    let mut bytes = Vec::with_capacity(input.len());
+    let mut remaining = input.as_bytes();
+    while let [byte, rest @ ..] = remaining {
+        if let b'%' = byte {
+            if let [a, b, tail @ ..] = rest
+                && let (Some(a), Some(b)) = (hex(*a), hex(*b))
+            {
+                bytes.push(a * 16 + b);
+                remaining = tail;
+                continue;
+            }
+            if strict {
+                return None;
+            }
+        }
+        bytes.push(*byte);
+        remaining = rest;
+    }
+    Some(bytes)
 }
 
 pub(super) fn east_asian(c: char) -> bool {

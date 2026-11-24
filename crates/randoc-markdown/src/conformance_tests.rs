@@ -45,6 +45,9 @@ fn run_case(from: &str, input: &str) -> (String, String, i64) {
     };
     let options = options_for(&spec);
     let mut context = Context::pure();
+    // The program expands the tabs before the reader reads (no
+    // `--preserve-tabs`), and the reader keeps the tabs of code.
+    let input = expand_tabs(input);
     let result = reader.read(&Sources::from_text(input), &options, &mut context);
     let mut stderr: String = context.log().iter().map(|m| m.render()).collect();
     match result {

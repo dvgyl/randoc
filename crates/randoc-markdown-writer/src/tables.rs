@@ -211,10 +211,15 @@ fn doc_lines(doc: &Doc, width: Option<usize>) -> Vec<Text> {
     }
 }
 
-/// Fits the natural widths within the available room. Give each long column
-/// the same share and redistribute the room that short columns do not use.
+/// Fits the natural widths of grid columns within a line of `columns`
+/// characters.
 fn fit_grid_widths(natural: &[usize], columns: usize) -> Vec<usize> {
-    let mut room = columns.saturating_sub(3 * natural.len() + 1);
+    fit_widths(natural, columns.saturating_sub(3 * natural.len() + 1))
+}
+
+/// Fits the natural widths within `room` characters. Give each long column
+/// the same share and redistribute the room that short columns do not use.
+fn fit_widths(natural: &[usize], mut room: usize) -> Vec<usize> {
     let mut remaining = natural.len();
     let mut sorted = natural.to_vec();
     sorted.sort_unstable();
@@ -269,6 +274,16 @@ impl W<'_> {
             content: Vec::new(),
         };
         let columns = table.col_specs.len();
+        let rows = table.head.rows.len()
+            + table
+                .bodies
+                .iter()
+                .map(|b| b.head.len() + b.body.len())
+                .sum::<usize>()
+            + table.foot.rows.len();
+        if rows.saturating_mul(columns) > self.max_table_cells {
+            return Err(crate::table_size_error());
+        }
         let placed = layout(table, columns);
         let many_heads = table.head.rows.len() > 1;
         let regular = |g: &Grid<'_>| {
@@ -330,7 +345,7 @@ impl W<'_> {
             } else if self.has(Extension::RawHtml) {
                 // A blank line would end the HTML block in Markdown.
                 let html = self.html_text(std::slice::from_ref(block))?;
-                return Ok(literal(html.replace("\n\n", "\n&#10;")) + blankline());
+                return Ok(literal(crate::blocks::mark_blank_lines(&html)) + blankline());
             } else if spans_ok && all_simple && pipe {
                 self.pipe_lines(&placed.positions(&g, &blank))?
             } else {
@@ -725,6 +740,20 @@ impl W<'_> {
         for (p, text) in l.cells.iter().zip(&texts) {
             heights[p.row] = heights[p.row].max(text.len());
         }
+        // The top line of a table without a head has a `+` where some row
+        // has a cell edge. Part `k` between two `+` takes the alignment of
+        // column `k`.
+        let top_edge: Vec<bool> = (0..columns)
+            .map(|c| c > 0 && (0..rows).any(|r| !l.same(r, c - 1, c)))
+            .collect();
+        // The number of edges in `top_edge[..=c]`, the part of column `c`.
+        let parts: Vec<usize> = top_edge
+            .iter()
+            .scan(0, |count, edge| {
+                *count += usize::from(*edge);
+                Some(*count)
+            })
+            .collect();
         let mut tops = Vec::with_capacity(rows);
         let mut y = 0;
         for height in &heights {
@@ -758,15 +787,14 @@ impl W<'_> {
                         if filled { '+' } else { '|' }
                     } else {
                         let before = owner(c - 1);
+                        let edge = match (aligns, above) {
+                            (true, _) if fill == '=' => true,
+                            (true, None) => top_edge[c],
+                            _ => vertical(above, c) || vertical(below, c),
+                        };
                         match (before, shown) {
                             (Some(_), Some(_)) => '|',
-                            (None, None)
-                                if !(aligns && (above.is_none() || fill == '='))
-                                    && !vertical(above, c)
-                                    && !vertical(below, c) =>
-                            {
-                                fill
-                            }
+                            (None, None) if !edge => fill,
                             _ => '+',
                         }
                     }
@@ -783,16 +811,27 @@ impl W<'_> {
                     }
                     None => {
                         out.push(if fill == ' ' { '|' } else { junction(true) });
-                        let align = g.aligns.get(c).copied().unwrap_or(Alignment::AlignDefault);
+                        let (column, starts, ends) = if aligns && above.is_none() {
+                            let part = parts[c];
+                            let ends = top_edge.get(c + 1).is_none_or(|e| *e);
+                            (part, c == 0 || top_edge[c], ends)
+                        } else {
+                            (c, true, true)
+                        };
+                        let align = g
+                            .aligns
+                            .get(column)
+                            .copied()
+                            .unwrap_or(Alignment::AlignDefault);
                         let (left, right) = match (aligns, align) {
                             (true, Alignment::AlignLeft) => (':', fill),
                             (true, Alignment::AlignRight) => (fill, ':'),
                             (true, Alignment::AlignCenter) => (':', ':'),
                             _ => (fill, fill),
                         };
-                        out.push(left);
+                        out.push(if starts { left } else { fill });
                         out.extend(std::iter::repeat_n(fill, widths[c]));
-                        out.push(right);
+                        out.push(if ends { right } else { fill });
                         c += 1;
                     }
                 }
@@ -839,18 +878,42 @@ impl W<'_> {
     fn grid_lines(&mut self, g: &Grid<'_>) -> Result<Vec<Text>> {
         let docs = self.cell_docs(g)?;
         let columns = g.aligns.len();
-        let widths =
-            Self::relative_widths(g, &docs, self.opts.columns, 3, 0).unwrap_or_else(|| {
+        let relative =
+            Self::relative_widths(g, &docs, self.opts.columns, 3, 0).map(|mut widths| {
+                // The columns without a width share the room of the others.
+                let (defaults, explicit): (Vec<usize>, Vec<usize>) =
+                    (0..widths.len()).partition(|&i| g.widths.get(i).is_some_and(|w| *w == 0.0));
+                if defaults.is_empty() {
+                    return widths;
+                }
                 let natural =
                     Self::natural_widths(&docs.0, &docs.1, columns, |doc| cell_width(doc, None));
-                let mut widths = fit_grid_widths(&natural, crate::run_length(self.opts.columns));
-                let minimum =
-                    Self::natural_widths(&docs.0, &docs.1, columns, |doc| cell_width(doc, Some(1)));
-                for (width, minimum) in widths.iter_mut().zip(minimum) {
-                    *width = (*width).max(minimum).max(1);
+                let used: usize = explicit.iter().filter_map(|&i| widths.get(i)).sum();
+                let room = crate::run_length(self.opts.columns)
+                    .saturating_sub(3 * columns + 1)
+                    .saturating_sub(used);
+                let wanted: Vec<usize> = defaults
+                    .iter()
+                    .map(|&i| natural.get(i).copied().unwrap_or(0))
+                    .collect();
+                for (&index, fitted) in defaults.iter().zip(fit_widths(&wanted, room)) {
+                    if let Some(width) = widths.get_mut(index) {
+                        *width = (*width).max(fitted);
+                    }
                 }
                 widths
             });
+        let widths = relative.unwrap_or_else(|| {
+            let natural =
+                Self::natural_widths(&docs.0, &docs.1, columns, |doc| cell_width(doc, None));
+            let mut widths = fit_grid_widths(&natural, crate::run_length(self.opts.columns));
+            let minimum =
+                Self::natural_widths(&docs.0, &docs.1, columns, |doc| cell_width(doc, Some(1)));
+            for (width, minimum) in widths.iter_mut().zip(minimum) {
+                *width = (*width).max(minimum).max(1);
+            }
+            widths
+        });
         let (head, body) = Self::rows_lines(&docs, Some(&widths), true);
         let border = |fill: char, aligns: bool| -> Text {
             let mut out = Text::from("+");

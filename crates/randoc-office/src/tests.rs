@@ -972,3 +972,150 @@ fn pptx_toc_handles_minimum_heading_level_and_keeps_column_notes() {
     .unwrap();
     assert!(notes.contains("Column notes"));
 }
+
+fn write_with_reference(doc: &Pandoc) -> Vec<u8> {
+    let reference = write(
+        &Pandoc::default(),
+        &WriterOptions::default(),
+        &mut Context::pure(),
+    )
+    .unwrap();
+    let limits = ArchiveLimits::from_limits(&Limits::default());
+    let mut input = Archive::open(&reference, limits).unwrap();
+    let mut template = ArchiveWriter::new();
+    for path in input
+        .entry_names()
+        .into_iter()
+        .rev()
+        .map(str::to_owned)
+        .collect::<Vec<_>>()
+    {
+        let xml = String::from_utf8(input.read(&path).unwrap().unwrap()).unwrap();
+        let xml = match path.as_str() {
+            "ppt/slideLayouts/slideLayout2.xml" => xml.replace(
+                r#"id="3" name="obj""#,
+                r#"id="27" name="Body &amp; Content""#,
+            ),
+            "ppt/slideMasters/slideMaster1.xml"
+            | "ppt/slideMasters/_rels/slideMaster1.xml.rels" => {
+                xml.split_once("?>").unwrap().1.replace(" />", "/>")
+            }
+            _ => xml,
+        };
+        template.write_deflated(&path, xml.as_bytes()).unwrap();
+    }
+    let host = PureHost {
+        files: [("reference.pptx".into(), template.finish().unwrap())].into(),
+        ..PureHost::default()
+    };
+    let mut options = WriterOptions::default();
+    options.reference_doc = Some("reference.pptx".into());
+    write(doc, &options, &mut Context::new(Box::new(host))).unwrap()
+}
+
+#[test]
+fn pptx_reference_orders_manifest_and_presentation_relationships() {
+    let doc = Pandoc {
+        blocks: vec![
+            header(1, "First"),
+            para("Text"),
+            header(1, "Second"),
+            para("Text"),
+        ],
+        ..Pandoc::default()
+    };
+    let bytes = write_with_reference(&doc);
+    let limits = ArchiveLimits::from_limits(&Limits::default());
+    let mut archive = Archive::open(&bytes, limits).unwrap();
+    let rels = parse_relationships(&part(&mut archive, "ppt/_rels/presentation.xml.rels"));
+    let pairs: Vec<_> = rels
+        .iter()
+        .map(|rel| (rel.id.as_str(), rel.target.as_str()))
+        .collect();
+    assert_eq!(
+        pairs,
+        [
+            ("rId2", "slides/slide1.xml"),
+            ("rId3", "slides/slide2.xml"),
+            ("rId1", "slideMasters/slideMaster1.xml"),
+            ("rId4", "presProps.xml"),
+            ("rId5", "viewProps.xml"),
+            ("rId6", "tableStyles.xml"),
+        ]
+    );
+    let manifest = part(&mut archive, "[Content_Types].xml");
+    let paths: Vec<_> = manifest
+        .root
+        .elements()
+        .filter_map(|el| el.attr_unqualified("PartName"))
+        .collect();
+    assert_eq!(paths[0], "/docProps/app.xml");
+    assert_eq!(paths[1], "/ppt/slideLayouts/slideLayout7.xml");
+    assert_eq!(paths[7], "/ppt/slideLayouts/slideLayout1.xml");
+    assert_eq!(
+        &paths[paths.len() - 6..],
+        [
+            "/docProps/core.xml",
+            "/docProps/custom.xml",
+            "/ppt/presentation.xml",
+            "/ppt/viewProps.xml",
+            "/ppt/slides/slide1.xml",
+            "/ppt/slides/slide2.xml",
+        ]
+    );
+}
+
+#[test]
+fn pptx_reference_serializes_the_master_and_presentation_xml() {
+    let doc = Pandoc {
+        blocks: vec![para("Body")],
+        ..Pandoc::default()
+    };
+    let bytes = write_with_reference(&doc);
+    let limits = ArchiveLimits::from_limits(&Limits::default());
+    let mut archive = Archive::open(&bytes, limits).unwrap();
+    for path in [
+        "ppt/presentation.xml",
+        "ppt/slideMasters/slideMaster1.xml",
+        "ppt/slideMasters/_rels/slideMaster1.xml.rels",
+        "ppt/viewProps.xml",
+    ] {
+        let xml = String::from_utf8(archive.read(path).unwrap().unwrap()).unwrap();
+        assert!(xml.starts_with(r#"<?xml version="1.0" encoding="UTF-8"?>"#));
+        assert!(!xml.replace(" />", "").contains("/>"));
+    }
+    let main = part(&mut archive, "ppt/presentation.xml");
+    let slides = main.root.child(P, "sldIdLst").unwrap();
+    assert!(slides.ns_decls.is_empty());
+    assert_eq!(
+        slides.child(P, "sldId").unwrap().attr(R, "id"),
+        Some("rId2")
+    );
+}
+
+#[test]
+fn pptx_reference_uses_layout_placeholders_and_formats_body_headings() {
+    let doc = Pandoc {
+        blocks: vec![
+            header(1, "Title"),
+            para("Body"),
+            header(2, "Heading"),
+            para("More"),
+        ],
+        ..Pandoc::default()
+    };
+    let bytes = write_with_reference(&doc);
+    let limits = ArchiveLimits::from_limits(&Limits::default());
+    let mut archive = Archive::open(&bytes, limits).unwrap();
+    let slide = String::from_utf8(archive.read("ppt/slides/slide1.xml").unwrap().unwrap()).unwrap();
+    assert!(slide.contains(&format!(
+        r#"<p:sld xmlns:a="{A}" xmlns:r="{R}" xmlns:p="{P}">"#
+    )));
+    assert!(slide.contains(r#"<p:ph type="title" idx="0" />"#));
+    assert!(slide.contains(r#"<p:cNvPr id="27" name="Body &amp; Content" />"#));
+    assert!(slide.contains(r#"<p:ph type="obj" idx="1" /></p:nvPr></p:nvSpPr><p:spPr />"#));
+    assert!(slide.contains(r#"<a:spcBef><a:spcPts val="3000" /></a:spcBef>"#));
+    assert!(slide.contains(r#"<a:rPr b="1" /><a:t>Heading</a:t>"#));
+    assert!(!slide.contains(" sz="));
+    assert!(!slide.contains("clrMapOvr"));
+}

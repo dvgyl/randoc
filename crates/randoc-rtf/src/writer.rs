@@ -128,7 +128,7 @@ pub(crate) fn write(
             fields.insert("table-of-contents", Val::text(toc));
         }
     }
-    Ok(template.render(&fields).render(None))
+    context.render_template(template, &fields, None)
 }
 
 fn has_metadata_text(value: Option<&MetaValue>) -> bool {

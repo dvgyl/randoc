@@ -1,4 +1,4 @@
-mod docbook;
+pub(crate) mod docbook;
 mod fb2;
 mod metadata;
 
@@ -38,6 +38,7 @@ impl TextReader for XmlReader {
         }
         let input = input.strip_prefix('\u{feff}').unwrap_or(&input);
         let limits = XmlLimits::from_limits(&context.limits);
+        let mut has_table_widths = false;
         let nodes = if self.0 == Dialect::Fb2 {
             vec![Node::Element(
                 xml::parse(input, &limits, XmlOptions::default())
@@ -49,7 +50,27 @@ impl TextReader for XmlReader {
                 html_entities: self.0.docbook(),
                 extra_entities: self.0.docbook().then_some(docbook_entity),
             };
-            xml::parse_fragment(input, &limits, options)
+            let table_widths = if self.0.docbook() {
+                docbook::table_width_instructions(input)
+            } else {
+                None
+            };
+            let with_widths = table_widths.as_deref().unwrap_or(input);
+            has_table_widths = table_widths.is_some();
+            xml::parse_fragment(with_widths, &limits, options)
+                .or_else(|error| {
+                    if has_table_widths
+                        && matches!(
+                            error,
+                            XmlError::Syntax { .. } | XmlError::UnknownEntity { .. }
+                        )
+                    {
+                        has_table_widths = false;
+                        xml::parse_fragment(input, &limits, options)
+                    } else {
+                        Err(error)
+                    }
+                })
                 .map_err(xml_error)?
                 .nodes
         };
@@ -66,6 +87,7 @@ impl TextReader for XmlReader {
             expansions_left: limits.max_dom_bytes,
             note_costs: HashMap::new(),
             table_cells_left: context.limits.max_table_cells,
+            has_table_widths,
             reference_labels: HashMap::new(),
             depth: limits.max_depth,
             context,
@@ -96,6 +118,7 @@ pub(crate) struct Read<'a, 'c> {
     expansions_left: usize,
     note_costs: HashMap<&'a str, usize>,
     pub(crate) table_cells_left: usize,
+    pub(crate) has_table_widths: bool,
     reference_labels: HashMap<(&'a str, bool), String>,
     depth: usize,
     pub(crate) context: &'c mut Context,
@@ -367,15 +390,18 @@ impl<'a> Read<'a, '_> {
                     }
                 }
                 None => {
-                    let Some(mut finished) = stack.pop() else {
+                    let Some(finished) = stack.pop() else {
                         break;
                     };
                     let Some(parent) = stack.last_mut() else {
                         return Ok(finished.out);
                     };
                     if let Some(wrap) = finished.wrap {
-                        trim(&mut finished.out);
-                        append(&mut parent.out, [wrap(finished.out)]);
+                        let mut content = finished.out;
+                        if self.dialect == Dialect::Fb2 {
+                            trim(&mut content);
+                        }
+                        append(&mut parent.out, [wrap(content)]);
                     }
                 }
             }
@@ -415,7 +441,7 @@ impl<'a> Read<'a, '_> {
                         vec![role.into()],
                         vec![("role".into(), role.into())],
                     ),
-                    self.inlines(&el.children, depth)?,
+                    self.inline_content(&el.children, depth)?,
                 )
             }
             "email" => {
@@ -426,11 +452,12 @@ impl<'a> Read<'a, '_> {
                     Target::new(format!("mailto:{addr}"), ""),
                 )
             }
-            "equation" if docbook => {
-                for math in el.children_local("math") {
-                    if let Some(value) = mathml_to_tex(math, self.depth) {
-                        out.push(Inline::Math(MathType::DisplayMath, value));
-                    }
+            "equation" | "informalequation" if docbook => {
+                let math = self.docbook_equation(el);
+                if let Some(role) = el.attr_local("role") {
+                    out.push(Inline::Span(docbook::role_wrapper(role), math));
+                } else {
+                    out.extend(math);
                 }
                 return Ok(());
             }
@@ -466,7 +493,7 @@ impl<'a> Read<'a, '_> {
                     QuoteType::SingleQuote
                 };
                 self.quote_depth += 1;
-                let inlines = self.inlines(&el.children, depth);
+                let inlines = self.inline_content(&el.children, depth);
                 self.quote_depth -= 1;
                 Inline::Quoted(kind, inlines?)
             }
@@ -508,7 +535,7 @@ impl<'a> Read<'a, '_> {
             "monospace" | "code" | "literal" => Inline::Code(Attr::default(), el.all_text()),
             _ => {
                 if let Some(wrap) = inline_wrapper(el) {
-                    wrap(self.inlines(&el.children, depth)?)
+                    wrap(self.inline_content(&el.children, depth)?)
                 } else {
                     append(out, self.inline_content(&el.children, depth)?);
                     return Ok(());
@@ -554,7 +581,7 @@ impl<'a> Read<'a, '_> {
     fn link(&mut self, el: &'a Element, depth: usize) -> Result<Inline> {
         let tag = name(el);
         let docbook = self.dialect.docbook();
-        let mut label = if docbook {
+        let mut label = if docbook || self.dialect.jats() {
             self.inline_content(&el.children, depth)?
         } else {
             self.inlines(&el.children, depth)?
@@ -748,10 +775,18 @@ impl<'a> Read<'a, '_> {
                 attributes.attributes.push((key.into(), value.into()));
             }
         }
+        let title = if docbook {
+            el.child_local("imageobject")
+                .and_then(|image| image.child_local("objectinfo"))
+                .and_then(|info| info.child_local("title"))
+                .map_or_else(|| attr(graphic, "title").into(), Element::all_text)
+        } else {
+            attr(graphic, "title").into()
+        };
         Ok(Some(Inline::Image(
             attributes,
             alt,
-            Target::new(url, attr(graphic, "title")),
+            Target::new(url, title),
         )))
     }
 
@@ -817,7 +852,7 @@ impl<'a> Read<'a, '_> {
                 continue;
             };
             let tag = name(el);
-            if frame.skip.contains(&tag) {
+            if frame.skip.contains(&tag) || self.has_table_widths && tag == docbook::DBFO {
                 continue;
             }
             flush_plain(&mut frame.plain, &mut frame.out);
@@ -907,6 +942,14 @@ impl<'a> Read<'a, '_> {
                 )?))
             },
             "disp-formula" if !docbook => Self::display_formula,
+            "equation" | "informalequation" if docbook => |state, el, _, _| {
+                let equation = Block::Para(state.docbook_equation(el));
+                Ok(if name(el) == "informalequation" {
+                    Block::Div(docbook::element_attr(el), vec![equation])
+                } else {
+                    equation
+                })
+            },
             "variablelist" | "def-list" | "glosslist" => Self::definitions,
             "table" | "informaltable" => {
                 |state, el, level, depth| crate::table::read(state, el, level, depth)
@@ -927,18 +970,13 @@ impl<'a> Read<'a, '_> {
         let block = convert(self, el, level, depth)?;
         let block = if docbook
             && let Some(role) = el.attr_local("role")
-            && matches!(
+            && (matches!(
                 tag,
-                "para" | "simpara" | "blockquote" | "abstract" | "orderedlist" | "itemizedlist"
-            ) {
-            Block::Div(
-                Attr::new(
-                    "",
-                    Vec::new(),
-                    vec![("wrapper".into(), "1".into()), ("role".into(), role.into())],
-                ),
-                vec![block],
-            )
+                "para" | "simpara" | "blockquote" | "abstract" | "equation"
+            ) || matches!(tag, "orderedlist" | "itemizedlist")
+                && el.child_local("title").is_none())
+        {
+            Block::Div(docbook::role_wrapper(role), vec![block])
         } else {
             block
         };
@@ -1001,7 +1039,7 @@ impl<'a> Read<'a, '_> {
                 self.docbook_meta(el, depth)?;
                 return Ok(true);
             }
-            "book-meta" | "book-part-meta" => {
+            "article-meta" | "book-meta" | "book-part-meta" if !docbook => {
                 self.jats_meta(el, depth)?;
                 return Ok(true);
             }
@@ -1102,6 +1140,10 @@ impl<'a> Read<'a, '_> {
                 (level, &["article-meta", "journal-meta"][..])
             }
             "book-part" | "front-matter-part" => (level + 1, &[][..]),
+            "book-back" if self.dialect.jats() => (
+                level + i64::from(el.child_local("title").is_none()),
+                &["title"][..],
+            ),
             "supplementary-material" | "boxed-text" | "sec-meta" if self.dialect.jats() => {
                 (level, &["label", "title"][..])
             }
@@ -1302,10 +1344,10 @@ impl<'a> Read<'a, '_> {
             items.push(item);
         }
         let jats_style = style(typ);
-        if matches!(tag, "orderedlist" | "procedure" | "substeps")
+        let list = if matches!(tag, "orderedlist" | "procedure" | "substeps")
             || jats_style != ListNumberStyle::DefaultStyle
         {
-            Ok(Block::OrderedList(
+            Block::OrderedList(
                 ListAttributes {
                     start: attr(el, "startingnumber").parse().unwrap_or(1),
                     style: if typ == "order" {
@@ -1323,9 +1365,19 @@ impl<'a> Read<'a, '_> {
                     delim: ListNumberDelim::DefaultDelim,
                 },
                 items,
-            ))
+            )
         } else {
-            Ok(Block::BulletList(items))
+            Block::BulletList(items)
+        };
+        if self.dialect.docbook()
+            && let Some(title) = el.child_local("title")
+        {
+            let mut attributes = docbook::element_attr(el);
+            attributes.classes.clear();
+            let title = docbook::title_div(self.inlines(&title.children, depth)?);
+            Ok(Block::Div(attributes, vec![title, list]))
+        } else {
+            Ok(list)
         }
     }
 

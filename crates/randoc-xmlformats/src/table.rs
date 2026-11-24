@@ -5,7 +5,7 @@ use randoc_ast::*;
 use randoc_core::Result;
 
 use crate::limit_error;
-use crate::read::{Read, attr, id, name};
+use crate::read::{Read, attr, docbook::DBFO, id, name};
 
 pub(crate) fn check_grid(rows: usize, cols: usize, limit: usize) -> Result<usize> {
     rows.max(1)
@@ -128,6 +128,14 @@ pub(crate) fn read<'a>(
     } else {
         100.0
     };
+    let scale = if state.has_table_widths && cal {
+        el.children_local(DBFO)
+            .filter_map(|pi| attr(pi, "width").parse::<f64>().ok())
+            .find(|width| width.is_finite())
+            .map_or(1.0, |width| width / 100.0)
+    } else {
+        1.0
+    };
     let mut table = Table {
         attr: if docbook {
             let mut attributes = id(el);
@@ -155,7 +163,7 @@ pub(crate) fn read<'a>(
                     .or_else(|| (cal && docbook && has_width).then_some(1.0))
                     .filter(|_| total > 0.0 && total.is_finite())
                     .map_or(ColWidth::ColWidthDefault, |width| {
-                        ColWidth::ColWidth(width / total)
+                        ColWidth::ColWidth(width / total * scale)
                     }),
             })
             .collect(),

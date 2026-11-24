@@ -272,6 +272,9 @@ impl LatexWriter<'_> {
             }
             Inline::Math(kind, math) => {
                 self.usage.cancel |= uses_cancel(math);
+                if *kind == MathType::DisplayMath && has_display_environment(math) {
+                    return Ok(literal(math.clone()));
+                }
                 let math = handle_math_comment(math);
                 match kind {
                     MathType::InlineMath if self.in_soul => literal(format!("${math}$")),
@@ -311,13 +314,19 @@ impl LatexWriter<'_> {
 
     fn quoted(&mut self, kind: QuoteType, inlines: &[Inline]) -> Result<Doc> {
         let contents = self.inlines(inlines)?;
-        let is_quoted = |inline: Option<&Inline>| matches!(inline, Some(Inline::Quoted(..)));
-        let before = if is_quoted(inlines.first()) {
+        if self.csquotes {
+            let open = match kind {
+                QuoteType::DoubleQuote => "\\enquote{",
+                QuoteType::SingleQuote => "\\enquote*{",
+            };
+            return Ok(literal(open) + contents + literal("}"));
+        }
+        let before = if quoted_at_edge(inlines, <[_]>::first) {
             literal("\\,")
         } else {
             empty()
         };
-        let after = if is_quoted(inlines.last()) {
+        let after = if quoted_at_edge(inlines, <[_]>::last) {
             literal("\\,")
         } else {
             empty()
@@ -333,11 +342,11 @@ impl LatexWriter<'_> {
     }
 
     fn code(&mut self, attr: &Attr, code: &str) -> Doc {
+        let protect = if self.in_caption { "\\protect" } else { "" };
         // `\lstinline` cannot be in a moving argument, so a heading and a
         // term get `\texttt`.
         if self.options.listings && !self.in_heading && !self.in_term {
             self.usage.verbatim_in_note |= self.in_note;
-            let protect = if self.in_caption { "\\protect" } else { "" };
             return literal(format!("{protect}{}", listings_inline(attr, code)));
         }
         let highlight = if self.in_heading {
@@ -348,10 +357,11 @@ impl LatexWriter<'_> {
         if let Some(Highlight::Code(highlighted)) = &highlight {
             self.usage.highlighting = true;
             let opts = crate::blocks::format_options(attr, &highlighted.language);
-            return literal(randoc_highlight::format_latex_inline(
-                &opts,
-                &highlighted.lines,
-            ));
+            return literal(protect)
+                + literal(randoc_highlight::format_latex_inline(
+                    &opts,
+                    &highlighted.lines,
+                ));
         }
         if highlight.is_none()
             && self.options.highlight_style.is_some()
@@ -364,10 +374,9 @@ impl LatexWriter<'_> {
         {
             self.usage.highlighting = true;
             let escaped = crate::blocks::highlight_escape(code);
-            return literal(format!("\\VERB|\\NormalTok{{{escaped}}}|"));
+            return literal(format!("{protect}\\VERB|\\NormalTok{{{escaped}}}|"));
         }
         let escaped = self.escape(StringContext::Code, code).replace(' ', "\\ ");
-        let protect = if self.in_caption { "\\protect" } else { "" };
         literal(format!("{protect}\\texttt{{{escaped}}}"))
     }
 
@@ -730,10 +739,29 @@ impl LatexWriter<'_> {
             CitationMode::NormalCitation => "\\autocites",
         };
         let mut doc = literal(plural);
-        for citation in citations {
-            doc += self.cite_arguments(&citation.prefix, &citation.suffix, &citation.id, true)?;
+        let mut rest = citations.iter().peekable();
+        while let Some(citation) = rest.next() {
+            let mut keys = citation.id.clone();
+            if citation.suffix.is_empty() {
+                while let Some(next) = rest.next_if(|c| c.prefix.is_empty() && c.suffix.is_empty())
+                {
+                    keys.push(',');
+                    keys.push_str(&next.id);
+                }
+            }
+            doc += self.cite_arguments(&citation.prefix, &citation.suffix, &keys, true)?;
         }
         Ok(doc)
+    }
+}
+
+fn quoted_at_edge(mut inlines: &[Inline], edge: fn(&[Inline]) -> Option<&Inline>) -> bool {
+    loop {
+        match edge(inlines) {
+            Some(Inline::Quoted(..)) => return true,
+            Some(Inline::Span(_, children)) => inlines = children,
+            _ => return false,
+        }
     }
 }
 
@@ -932,6 +960,38 @@ fn uses_cancel(math: &str) -> bool {
     })
 }
 
+/// Returns `true` if the math already starts with a display environment.
+fn has_display_environment(math: &str) -> bool {
+    let name = math
+        .trim_start()
+        .strip_prefix("\\begin{")
+        .and_then(|tail| tail.split_once('}'));
+    matches!(
+        name.map(|(name, _)| name),
+        Some(
+            "equation"
+                | "equation*"
+                | "align"
+                | "align*"
+                | "gather"
+                | "gather*"
+                | "multline"
+                | "multline*"
+                | "flalign"
+                | "flalign*"
+                | "alignat"
+                | "alignat*"
+                | "eqnarray"
+                | "dmath"
+                | "dmath*"
+                | "dgroup"
+                | "dgroup*"
+                | "subequations"
+                | "displaymath"
+        )
+    )
+}
+
 /// Math that ends in a comment needs a newline before the closing delimiter.
 fn handle_math_comment(math: &str) -> String {
     let last_line = math.rsplit('\n').next().unwrap_or(math);
@@ -976,10 +1036,19 @@ fn listings_inline(attr: &Attr, code: &str) -> String {
         }
         escaped.push(c);
     }
-    let language = crate::blocks::listings_language(attr)
-        .map(|language| format!("[language={language}]"))
-        .unwrap_or_default();
-    format!("\\passthrough{{\\lstinline{language}{delimiter}{escaped}{delimiter}}}")
+    let options: Vec<_> = crate::blocks::listings_language(attr)
+        .map(|language| format!("language={language}"))
+        .into_iter()
+        .chain(
+            crate::blocks::listings_attributes(attr).map(|(key, value)| format!("{key}={value}")),
+        )
+        .collect();
+    let options = if options.is_empty() {
+        String::new()
+    } else {
+        format!("[{}]", options.join(", "))
+    };
+    format!("\\passthrough{{\\lstinline{options}{delimiter}{escaped}{delimiter}}}")
 }
 
 #[cfg(test)]
