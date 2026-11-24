@@ -280,43 +280,27 @@ fn too_large(max_bytes: usize) -> io::Error {
     )
 }
 
-/// Validates that `rel_path` is a safe relative POSIX path without traversal
-/// segments, backslashes, or NUL bytes.
-fn validate_relative_media_path(rel_path: &str) -> io::Result<Vec<&str>> {
-    if rel_path.is_empty()
-        || rel_path.starts_with('/')
-        || rel_path.ends_with('/')
-        || rel_path.bytes().any(|b| b == 0 || b == b'\\')
+fn validate_relative_media_path(rel_path: &str) -> io::Result<(&str, Vec<&str>)> {
+    let mut segments = rel_path.rsplit('/');
+    let filename = segments.next().unwrap_or_default();
+    let dirs: Vec<_> = segments.rev().collect();
+    if std::iter::once(filename)
+        .chain(dirs.iter().copied())
+        .any(|s| matches!(s, "" | "." | "..") || s.contains(['\\', '\0']))
     {
         return Err(io::Error::new(
             io::ErrorKind::InvalidInput,
             format!("unsafe media extraction path: {rel_path}"),
         ));
     }
-    let segments: Vec<&str> = rel_path.split('/').collect();
-    if segments
-        .iter()
-        .any(|s| s.is_empty() || *s == "." || *s == "..")
-    {
-        return Err(io::Error::new(
-            io::ErrorKind::InvalidInput,
-            format!("unsafe media extraction path: {rel_path}"),
-        ));
-    }
-    Ok(segments)
+    Ok((filename, dirs))
 }
 
 /// Writes `contents` to `rel_path` inside `root_dir` on the real filesystem,
 /// refusing to traverse or overwrite symbolic links in `root_dir`, any
 /// intermediate subdirectory, or the target file.
 pub fn write_real_media_file(root_dir: &str, rel_path: &str, contents: &[u8]) -> io::Result<()> {
-    let segments = validate_relative_media_path(rel_path)?;
-    let Some((filename, dirs)) = segments.split_last() else {
-        return Err(io::Error::new(
-            io::ErrorKind::InvalidInput,
-            "empty media extraction path",
-        ));
-    };
+    let (filename, dirs) = validate_relative_media_path(rel_path)?;
     let root = if root_dir == "/" {
         "/"
     } else {
@@ -347,7 +331,7 @@ pub fn write_real_media_file(root_dir: &str, rel_path: &str, contents: &[u8]) ->
             Err(err) => return Err(io::Error::from(err)),
         };
 
-        for &seg in dirs {
+        for seg in dirs {
             match mkdirat(&dir_fd, seg, Mode::from_bits_truncate(0o755)) {
                 Ok(()) | Err(Errno::EEXIST) => {}
                 Err(err) => return Err(io::Error::from(err)),
@@ -355,11 +339,11 @@ pub fn write_real_media_file(root_dir: &str, rel_path: &str, contents: &[u8]) ->
             dir_fd = openat(&dir_fd, seg, dir_flags, Mode::empty()).map_err(io::Error::from)?;
         }
 
-        match fstatat(&dir_fd, *filename, nix::fcntl::AtFlags::AT_SYMLINK_NOFOLLOW) {
+        match fstatat(&dir_fd, filename, nix::fcntl::AtFlags::AT_SYMLINK_NOFOLLOW) {
             Ok(stat)
                 if SFlag::from_bits_truncate(stat.st_mode) & SFlag::S_IFMT == SFlag::S_IFREG =>
             {
-                match unlinkat(&dir_fd, *filename, UnlinkatFlags::NoRemoveDir) {
+                match unlinkat(&dir_fd, filename, UnlinkatFlags::NoRemoveDir) {
                     Ok(()) | Err(Errno::ENOENT) => {}
                     Err(err) => return Err(io::Error::from(err)),
                 }
@@ -377,7 +361,7 @@ pub fn write_real_media_file(root_dir: &str, rel_path: &str, contents: &[u8]) ->
             OFlag::O_WRONLY | OFlag::O_CREAT | OFlag::O_EXCL | OFlag::O_NOFOLLOW | OFlag::O_CLOEXEC;
         let file_fd = openat(
             &dir_fd,
-            *filename,
+            filename,
             file_flags,
             Mode::from_bits_truncate(0o666),
         )
@@ -405,7 +389,7 @@ pub fn write_real_media_file(root_dir: &str, rel_path: &str, contents: &[u8]) ->
             Err(err) => return Err(err),
         }
         let mut cur = root_path.to_path_buf();
-        for &seg in dirs {
+        for seg in dirs {
             cur.push(seg);
             match std::fs::symlink_metadata(&cur) {
                 Ok(meta) if meta.file_type().is_symlink() || !meta.is_dir() => {
@@ -821,22 +805,22 @@ impl Host for NativeHost {
             let stdout_bytes = &mut stdout_bytes;
             let stderr_bytes = &mut stderr_bytes;
             scope.spawn(move || {
-                let result = read_process_pipe(
+                read_process_pipe(
                     stdout,
                     request.max_stdout_bytes,
                     "Standard output",
                     stdout_bytes,
+                    stdout_ready,
                 );
-                let _ = stdout_ready.send(result);
             });
             scope.spawn(move || {
-                let result = read_process_pipe(
+                read_process_pipe(
                     stderr,
                     request.max_stderr_bytes,
                     "Standard error",
                     stderr_bytes,
+                    stderr_ready,
                 );
-                let _ = stderr_ready.send(result);
             });
 
             // Stop the child before the scope waits for the other threads.
@@ -884,24 +868,28 @@ fn read_process_pipe(
     limit: Option<u64>,
     name: &str,
     bytes: &mut Vec<u8>,
-) -> io::Result<()> {
-    use std::io::Read;
+    ready: std::sync::mpsc::Sender<io::Result<()>>,
+) {
+    let read = || -> io::Result<()> {
+        use std::io::Read;
 
-    let Some(mut pipe) = pipe else {
-        return Ok(());
-    };
-    if let Some(limit) = limit {
-        pipe.take(limit.saturating_add(1)).read_to_end(bytes)?;
-        if bytes.len() as u64 > limit {
-            return Err(io::Error::new(
-                io::ErrorKind::FileTooLarge,
-                format!("{name} exceeds {limit} bytes."),
-            ));
+        let Some(mut pipe) = pipe else {
+            return Ok(());
+        };
+        if let Some(limit) = limit {
+            pipe.take(limit.saturating_add(1)).read_to_end(bytes)?;
+            if bytes.len() as u64 > limit {
+                return Err(io::Error::new(
+                    io::ErrorKind::FileTooLarge,
+                    format!("{name} exceeds {limit} bytes."),
+                ));
+            }
+        } else {
+            pipe.read_to_end(bytes)?;
         }
-    } else {
-        pipe.read_to_end(bytes)?;
-    }
-    Ok(())
+        Ok(())
+    };
+    let _ = ready.send(read());
 }
 
 #[cfg(unix)]

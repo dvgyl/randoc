@@ -583,7 +583,11 @@ impl Parser<'_> {
             loop {
                 if let Some((body, tail)) = part.split_once(delimiter) {
                     text.push_str(body);
-                    self.pending.extend(tokenize(tail).into_iter().rev());
+                    self.pending.extend(
+                        tokenize(tail, self.extensions.contains(Extension::LiterateHaskell))
+                            .into_iter()
+                            .rev(),
+                    );
                     break;
                 }
                 text.push_str(&part);
@@ -768,7 +772,7 @@ impl Parser<'_> {
                 let out = if let Some(result) = result {
                     vec![self.synthetic(Kind::Letters(result.clone()), &result)]
                 } else {
-                    tokenize(&input)
+                    tokenize(&input, self.extensions.contains(Extension::LiterateHaskell))
                 };
                 self.push_tokens(name, depth, out)?;
             }
@@ -779,7 +783,7 @@ impl Parser<'_> {
             }
             "expandableinput" if !self.raw_tex() => {
                 self.bump();
-                self.nested(|parser| parser.include(depth))?;
+                self.nested(|parser| parser.include_file(depth, false))?;
             }
             _ => return Ok(false),
         }

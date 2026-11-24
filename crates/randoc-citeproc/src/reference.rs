@@ -33,6 +33,10 @@ impl Variable {
         &self.original
     }
 
+    pub(crate) fn folded_name(&self) -> &str {
+        &self.folded
+    }
+
     /// The type of the variable, which decides how its value is read.
     pub fn kind(&self) -> VariableType {
         variable_type(&self.folded)

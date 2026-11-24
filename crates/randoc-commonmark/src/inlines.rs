@@ -337,7 +337,7 @@ impl<'a, 'e> Parser<'a, 'e> {
     }
 
     fn peek(&self) -> u8 {
-        self.s.get(self.pos).copied().unwrap_or(0)
+        self.byte(self.pos)
     }
 
     fn byte(&self, pos: usize) -> u8 {
@@ -562,7 +562,7 @@ impl<'a, 'e> Parser<'a, 'e> {
         let Some(node) = self.nodes.get_mut(index) else {
             return;
         };
-        let kind = std::mem::replace(&mut node.kind, Kind::Removed);
+        let mut kind = std::mem::replace(&mut node.kind, Kind::Removed);
         if let Some(positions) = &self.positions {
             let mut range = node.source.clone();
             if matches!(kind, Kind::Inline(Inline::LineBreak | Inline::SoftBreak, _))
@@ -571,7 +571,7 @@ impl<'a, 'e> Parser<'a, 'e> {
                 range.end -= 1;
             }
             let position = ("data-pos".to_owned(), positions.render(range));
-            match kind {
+            match &mut kind {
                 Kind::Bracket("![") => {
                     let start = node.source.start;
                     for (offset, symbol) in [(start, "!"), (start + 1, "[")] {
@@ -579,15 +579,11 @@ impl<'a, 'e> Parser<'a, 'e> {
                         out.push(add_inline_attrs(&pairs, Inline::Str(symbol.into())));
                     }
                 }
-                Kind::Inline(Inline::Link(mut attr, text, target), _) => {
+                Kind::Inline(Inline::Link(attr, ..) | Inline::Image(attr, ..), _) => {
                     attr.attributes.push(position);
-                    out.push(Inline::Link(attr, text, target));
+                    Self::emit_kind(kind, out);
                 }
-                Kind::Inline(Inline::Image(mut attr, text, target), _) => {
-                    attr.attributes.push(position);
-                    out.push(Inline::Image(attr, text, target));
-                }
-                kind => {
+                _ => {
                     let mut inlines = Inlines::new();
                     Self::emit_kind(kind, &mut inlines);
                     let pairs = vec![position];

@@ -40,17 +40,25 @@ const MAX_JSON_DEPTH: usize = 127;
 
 fn read(sources: &Sources, _: &ReaderOptions, context: &mut Context) -> Result<Pandoc> {
     let max_depth = context.limits.max_nesting_depth;
-    let references = read_references(&sources.concat(), max_depth)?;
+    read_references(&sources.concat(), max_depth).map(references_to_document)
+}
+
+/// Reads a CSL JSON document without adding source padding.
+pub fn read_document_unpadded(text: &str, max_depth: usize) -> Result<Pandoc> {
+    read_bibliography(text, max_depth).map(references_to_document)
+}
+
+fn references_to_document(references: Vec<Reference<Vec<Markup>>>) -> Pandoc {
     let mut meta = Meta::default();
     meta.insert("nocite", nocite_all());
     meta.insert(
         "references",
         MetaValue::MetaList(references.iter().map(reference_to_meta).collect()),
     );
-    Ok(Pandoc {
+    Pandoc {
         meta,
         blocks: Vec::new(),
-    })
+    }
 }
 
 /// Reads the references of a CSL JSON text: an array of items, or an object
@@ -761,6 +769,19 @@ mod tests {
     fn round_trip(text: &str) -> String {
         let doc = read_text(text).unwrap();
         write(&doc, &WriterOptions::default(), &mut Context::pure()).unwrap()
+    }
+
+    #[test]
+    fn unpadded_document_keeps_the_input_in_parse_errors() {
+        let text = r#"[{"id":"a","title":"A"}]"#;
+        assert_eq!(
+            read_document_unpadded(text, 32).unwrap(),
+            read_text(text).unwrap()
+        );
+        assert_eq!(
+            read_document_unpadded("nope", 32).unwrap_err().to_string(),
+            r#"Unexpected "nope", expecting JSON value"#
+        );
     }
 
     #[test]

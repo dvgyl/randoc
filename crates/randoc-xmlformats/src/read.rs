@@ -917,17 +917,21 @@ impl<'a> Read<'a, '_> {
         }
         let docbook = self.dialect.docbook();
         let tag = name(el);
+        if tag == "p" && attr(el, "specific-use") == "wrapper" {
+            return self.container_children(el, level, depth, out);
+        }
+        let paragraph = match (tag, docbook) {
+            ("p", false) => Some(InlineContainer::JatsParagraph),
+            ("para", true) => Some(InlineContainer::DocBookParagraph),
+            _ => None,
+        };
+        if let Some(container) = paragraph
+            && el.elements().any(|child| container.is_block(child))
+        {
+            return self.split_children(el, level, depth, out, container);
+        }
         // Keep the conversion frame small for elements that contain child blocks.
         let convert: fn(&mut Self, &'a Element, i64, usize) -> Result<Block> = match tag {
-            "p" if attr(el, "specific-use") == "wrapper" => {
-                return self.container_children(el, level, depth, out);
-            }
-            "p" if !docbook && el.elements().any(jats_nested_block) => {
-                return self.split_paragraph(el, level, depth, out, jats_nested_block);
-            }
-            "para" if docbook && el.elements().any(docbook_nested_block) => {
-                return self.split_paragraph(el, level, depth, out, docbook_nested_block);
-            }
             "para" | "simpara" | "p" | "bibliomisc" => {
                 |state, el, _, depth| Ok(Block::Para(state.inlines(&el.children, depth)?))
             }
@@ -1163,53 +1167,30 @@ impl<'a> Read<'a, '_> {
         depth: usize,
     ) -> Result<Vec<Block>> {
         let mut out = Vec::new();
-        let mut start = 0;
-        for (index, node) in el.children.iter().enumerate() {
-            if let Node::Element(child) = node
-                && (jats_nested_block(child)
-                    || matches!(
-                        name(child),
-                        "para"
-                            | "simpara"
-                            | "itemizedlist"
-                            | "orderedlist"
-                            | "blockquote"
-                            | "informaltable"
-                            | "table"
-                    ))
-            {
-                let lines = self.inlines(&el.children[start..index], depth)?;
-                if !lines.is_empty() {
-                    out.push(Block::Plain(lines));
-                }
-                self.check(depth)?;
-                self.block(child, level, depth + 1, &mut out)?;
-                start = index + 1;
-            }
-        }
-        let lines = self.inlines(&el.children[start..], depth)?;
-        if !lines.is_empty() {
-            out.push(Block::Plain(lines));
-        }
+        self.split_children(el, level, depth, &mut out, InlineContainer::TableCell)?;
         Ok(out)
     }
 
-    fn split_paragraph(
+    fn split_children(
         &mut self,
         el: &'a Element,
         level: i64,
         depth: usize,
         out: &mut Vec<Block>,
-        is_block: fn(&Element) -> bool,
+        container: InlineContainer,
     ) -> Result<()> {
+        let inline_block = match container {
+            InlineContainer::TableCell => Block::Plain,
+            InlineContainer::DocBookParagraph | InlineContainer::JatsParagraph => Block::Para,
+        };
         let mut start = 0;
         for (index, node) in el.children.iter().enumerate() {
             if let Node::Element(child) = node
-                && is_block(child)
+                && container.is_block(child)
             {
                 let inlines = self.inlines(&el.children[start..index], depth)?;
                 if !inlines.is_empty() {
-                    out.push(Block::Para(inlines));
+                    out.push(inline_block(inlines));
                 }
                 self.check(depth)?;
                 self.block(child, level, depth + 1, out)?;
@@ -1218,7 +1199,7 @@ impl<'a> Read<'a, '_> {
         }
         let inlines = self.inlines(&el.children[start..], depth)?;
         if !inlines.is_empty() {
-            out.push(Block::Para(inlines));
+            out.push(inline_block(inlines));
         }
         Ok(())
     }
@@ -1370,6 +1351,7 @@ impl<'a> Read<'a, '_> {
             Block::BulletList(items)
         };
         if self.dialect.docbook()
+            && !matches!(tag, "procedure" | "substeps")
             && let Some(title) = el.child_local("title")
         {
             let mut attributes = docbook::element_attr(el);
@@ -1520,6 +1502,35 @@ fn docbook_literal(el: &Element) -> String {
         return text;
     }
     text.lines().map(str::trim).collect::<Vec<_>>().join(" ")
+}
+
+#[derive(Clone, Copy)]
+enum InlineContainer {
+    DocBookParagraph,
+    JatsParagraph,
+    TableCell,
+}
+
+impl InlineContainer {
+    fn is_block(self, child: &Element) -> bool {
+        match self {
+            Self::DocBookParagraph => docbook_nested_block(child),
+            Self::JatsParagraph => jats_nested_block(child),
+            Self::TableCell => {
+                jats_nested_block(child)
+                    || matches!(
+                        name(child),
+                        "para"
+                            | "simpara"
+                            | "itemizedlist"
+                            | "orderedlist"
+                            | "blockquote"
+                            | "informaltable"
+                            | "table"
+                    )
+            }
+        }
+    }
 }
 
 fn docbook_nested_block(el: &Element) -> bool {

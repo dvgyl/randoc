@@ -698,6 +698,67 @@ mod tests {
     }
 
     #[test]
+    fn failed_table_discards_logs_before_raw_fallback() {
+        let input = "<table><tr><td><foo>x</foo></td></tr>junk</table>\
+            <table><tr><td>Y</td></tr></table>";
+        let mut context = Context::pure();
+        let doc = read_html(input, SOURCE_NAME, &ReaderOptions::default(), &mut context).unwrap();
+        let [Block::Plain(first), Block::Plain(second), Block::Table(_)] = doc.blocks.as_slice()
+        else {
+            panic!("expected two text blocks and one table");
+        };
+        assert_eq!(first, &[Inline::Str("x".into())]);
+        assert_eq!(second, &[Inline::Str("junk".into())]);
+        let skipped: Vec<_> = context
+            .log()
+            .iter()
+            .filter_map(|log| match log {
+                LogMessage::SkippedContent(text, _) => Some(text.as_str()),
+                _ => None,
+            })
+            .collect();
+        assert_eq!(
+            skipped,
+            [
+                "<table>", "<tr>", "<td>", "<foo>", "</foo>", "</td>", "</tr>", "</table>"
+            ]
+        );
+    }
+
+    #[test]
+    fn list_style_is_a_fallback_for_list_style_type() {
+        use randoc_ast::ListNumberStyle::{Decimal, DefaultStyle, LowerRoman};
+
+        for (style, expected) in [
+            ("list-style:lower-roman", LowerRoman),
+            ("list-style:lower-roman;list-style-type:decimal", Decimal),
+            ("list-style:inside lower-roman", DefaultStyle),
+        ] {
+            let input = format!(r#"<ol style="{style}"><li>A</li></ol>"#);
+            let doc = read_html(
+                &input,
+                SOURCE_NAME,
+                &ReaderOptions::default(),
+                &mut Context::pure(),
+            )
+            .unwrap();
+            let [Block::OrderedList(attrs, _)] = doc.blocks.as_slice() else {
+                panic!("expected one ordered list");
+            };
+            assert_eq!(attrs.style, expected);
+        }
+    }
+
+    #[test]
+    fn a_footer_opener_closes_the_table_body() {
+        let input = "<table><thead><tr><td>A</td></tr><tbody><tr><td>B</td></tr><tfoot><tr><td>C</td></tr></table>";
+        let with_close = input.replace("<tfoot>", "</tbody><tfoot>");
+        let expected = blocks(&with_close);
+        assert!(expected.starts_with(r#"[{"t":"Table""#));
+        assert_eq!(blocks(input), expected);
+    }
+
+    #[test]
     fn a_row_span_past_the_section_merges_later_sections() {
         let rows = r#"<tbody id="body"><tr><td>b</tr></tbody>
             <tfoot><tr><td>c</tr></tfoot>"#;

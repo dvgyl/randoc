@@ -60,11 +60,11 @@ struct ReadCell {
 type ReadRow = (Attr, Vec<ReadCell>);
 
 fn at_open(parser: &Parser<'_>, tag: &str) -> bool {
-    matches!(parser.peek_kind(), Some(TokenKind::Open(name, _)) if name == tag)
+    matches!(parser.peek(), Some(TokenKind::Open(name, _)) if name == tag)
 }
 
 fn open_attr(parser: &Parser<'_>) -> Attr {
-    match parser.peek_kind() {
+    match parser.peek() {
         Some(TokenKind::Open(_, attributes)) => to_attr(&clean_attributes(attributes)),
         _ => Attr::default(),
     }
@@ -72,7 +72,7 @@ fn open_attr(parser: &Parser<'_>) -> Attr {
 
 /// Moves over white space and comments between the parts of a table.
 fn skip_blank(parser: &mut Parser<'_>) {
-    while let Some(kind) = parser.peek_kind() {
+    while let Some(kind) = parser.peek() {
         match kind {
             TokenKind::Text(text) if is_blank(text) => parser.advance(),
             TokenKind::Comment(_) => parser.advance(),
@@ -84,11 +84,11 @@ fn skip_blank(parser: &mut Parser<'_>) {
 /// Reads the `table` element at the current token.
 pub(crate) fn table(parser: &mut Parser<'_>, out: &mut Vec<Block>) -> Parse<()> {
     let attr = open_attr(parser);
-    let table = parser.within(|parser| {
+    let table = parser.nested(|parser| {
         parser.advance();
         skip_blank(parser);
         let caption = if at_open(parser, "caption") {
-            parser.container("caption")?
+            parser.blocks_in("caption")?
         } else {
             Vec::new()
         };
@@ -122,7 +122,7 @@ pub(crate) fn table(parser: &mut Parser<'_>, out: &mut Vec<Block>) -> Parse<()> 
         }
         let mut bodies: Vec<(Attr, Vec<ReadRow>)> = Vec::new();
         loop {
-            parser.count_step()?;
+            parser.step()?;
             if pending.is_none() && at_open(parser, "tbody") {
                 bodies.push(section(parser, "tbody")?);
             } else if pending.is_some() || at_open(parser, "tr") {
@@ -134,7 +134,7 @@ pub(crate) fn table(parser: &mut Parser<'_>, out: &mut Vec<Block>) -> Parse<()> 
                 }
                 bodies.push((Attr::default(), rows));
                 // Rows without an open `tbody` tag can end with its close tag.
-                if matches!(parser.peek_kind(), Some(TokenKind::Close(name)) if name == "tbody") {
+                if matches!(parser.peek(), Some(TokenKind::Close(name)) if name == "tbody") {
                     parser.advance();
                 }
             } else {
@@ -147,7 +147,7 @@ pub(crate) fn table(parser: &mut Parser<'_>, out: &mut Vec<Block>) -> Parse<()> 
             skip_blank(parser);
         }
         // A table needs its close tag.
-        match parser.peek_kind() {
+        match parser.peek() {
             Some(TokenKind::Close(name)) if name == "table" => parser.advance(),
             _ => return Err(Stop::Fail),
         }
@@ -177,11 +177,11 @@ fn columns(parser: &mut Parser<'_>) -> Parse<Vec<Width>> {
     let mut widths = Vec::new();
     if at_open(parser, "colgroup") {
         while at_open(parser, "colgroup") {
-            parser.count_step()?;
+            parser.step()?;
             parser.advance();
             loop {
                 skip_blank(parser);
-                if parser.element_ends("colgroup") {
+                if parser.ends("colgroup") {
                     break;
                 }
                 if !at_open(parser, "col") {
@@ -193,7 +193,7 @@ fn columns(parser: &mut Parser<'_>) -> Parse<Vec<Width>> {
         }
     } else {
         while at_open(parser, "col") {
-            parser.count_step()?;
+            parser.step()?;
             column(parser, &mut widths);
             skip_blank(parser);
         }
@@ -202,12 +202,12 @@ fn columns(parser: &mut Parser<'_>) -> Parse<Vec<Width>> {
 }
 
 fn column(parser: &mut Parser<'_>, widths: &mut Vec<Width>) {
-    let clean = match parser.peek_kind() {
+    let clean = match parser.peek() {
         Some(TokenKind::Open(_, attributes)) => clean_attributes(attributes),
         _ => Vec::new(),
     };
     parser.advance();
-    if matches!(parser.peek_kind(), Some(TokenKind::Close(name)) if name == "col") {
+    if matches!(parser.peek(), Some(TokenKind::Close(name)) if name == "col") {
         parser.advance();
     }
     // A relative width (`2*`) is only a `width` attribute. Its factor is an
@@ -257,9 +257,9 @@ fn section(parser: &mut Parser<'_>, tag: &str) -> Parse<(Attr, Vec<ReadRow>)> {
         // If the last cell has no close tag, a span past the section
         // makes Pandoc keep all later rows in the same section.
         loop {
-            parser.count_step()?;
+            parser.step()?;
             skip_blank(parser);
-            match parser.peek_kind() {
+            match parser.peek() {
                 Some(TokenKind::Open(name, _)) if matches!(name.as_str(), "tbody" | "tfoot") => {
                     rows.extend(section_rows(parser, name)?);
                 }
@@ -272,13 +272,13 @@ fn section(parser: &mut Parser<'_>, tag: &str) -> Parse<(Attr, Vec<ReadRow>)> {
 }
 
 fn section_rows(parser: &mut Parser<'_>, tag: &str) -> Parse<Vec<ReadRow>> {
-    parser.within(|parser| {
+    parser.nested(|parser| {
         parser.advance();
         let mut rows = Vec::new();
         loop {
-            parser.count_step()?;
+            parser.step()?;
             skip_blank(parser);
-            if parser.element_ends(tag) {
+            if parser.ends(tag) {
                 break;
             }
             if !at_open(parser, "tr") {
@@ -292,18 +292,18 @@ fn section_rows(parser: &mut Parser<'_>, tag: &str) -> Parse<Vec<ReadRow>> {
 
 fn row(parser: &mut Parser<'_>) -> Parse<ReadRow> {
     let attr = open_attr(parser);
-    let cells = parser.within(|parser| {
+    let cells = parser.nested(|parser| {
         parser.advance();
         let mut cells = Vec::new();
         loop {
-            parser.count_step()?;
+            parser.step()?;
             skip_blank(parser);
-            if parser.element_ends("tr") {
+            if parser.ends("tr") {
                 break;
             }
-            match parser.peek_kind() {
+            match parser.peek() {
                 Some(TokenKind::Open(name, attributes)) if name == "td" || name == "th" => {
-                    let content = parser.container(name)?;
+                    let content = parser.blocks_in(name)?;
                     cells.push(ReadCell {
                         is_header: name == "th",
                         explicitly_closed: parser.previous_is_close("td")

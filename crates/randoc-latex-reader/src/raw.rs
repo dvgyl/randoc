@@ -240,7 +240,7 @@ fn environment(text: &str) -> Option<RawTex> {
         len: end,
         text: text.get(..end)?.into(),
         kind: RawKind::Environment {
-            math: parse::INLINE_ENVIRONMENTS.contains(&name),
+            math: parse::is_inline_environment(name),
         },
     })
 }

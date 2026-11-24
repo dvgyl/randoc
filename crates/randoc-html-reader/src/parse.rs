@@ -159,7 +159,7 @@ fn closes(opening: &str, open: &str) -> bool {
         (_, "option" | "style" | "script" | "textarea" | "title") => true,
         (_, "select") if opening != "option" => true,
         ("thead", "colgroup") => true,
-        ("tfoot", "thead" | "colgroup") => true,
+        ("tfoot", "tbody" | "thead" | "colgroup") => true,
         ("tbody", "tbody" | "tfoot" | "thead" | "colgroup") => true,
         _ if (is_heading(opening)
             || matches!(opening, "dl" | "ol" | "ul" | "table" | "div" | "main" | "p"))
@@ -301,7 +301,7 @@ impl<'a> Parser<'a> {
         self.extensions.contains(extension)
     }
 
-    fn peek(&self) -> Option<&'a TokenKind> {
+    pub(crate) fn peek(&self) -> Option<&'a TokenKind> {
         self.toks.get(self.pos).map(|token| &token.kind)
     }
 
@@ -309,7 +309,7 @@ impl<'a> Parser<'a> {
         self.pos >= self.toks.len()
     }
 
-    fn step(&mut self) -> Parse<()> {
+    pub(crate) fn step(&mut self) -> Parse<()> {
         self.steps += 1;
         if self.steps > self.max_steps {
             return Err(Stop::Budget);
@@ -317,7 +317,7 @@ impl<'a> Parser<'a> {
         Ok(())
     }
 
-    fn nested<T>(&mut self, rule: impl FnOnce(&mut Self) -> Parse<T>) -> Parse<T> {
+    pub(crate) fn nested<T>(&mut self, rule: impl FnOnce(&mut Self) -> Parse<T>) -> Parse<T> {
         if self.depth >= self.max_depth {
             return Err(Stop::TooDeep);
         }
@@ -448,7 +448,7 @@ impl<'a> Parser<'a> {
 
     /// Returns true when the element `tag` ends at the current token. The
     /// close tag of the element is consumed.
-    fn ends(&mut self, tag: &str) -> bool {
+    pub(crate) fn ends(&mut self, tag: &str) -> bool {
         self.ended_at_eof = self.at_end();
         match self.peek() {
             None => true,
@@ -493,7 +493,7 @@ impl<'a> Parser<'a> {
     }
 
     /// Reads the content of a block container whose open tag is the current token.
-    fn blocks_in(&mut self, tag: &str) -> Parse<Vec<Block>> {
+    pub(crate) fn blocks_in(&mut self, tag: &str) -> Parse<Vec<Block>> {
         self.nested(|parser| {
             parser.pos += 1;
             let mut out = Vec::new();
@@ -578,7 +578,7 @@ impl<'a> Parser<'a> {
                 out.push(Block::HorizontalRule);
                 Ok(())
             }
-            "table" => self.attempt(out, Self::table),
+            "table" => self.attempt(out, crate::table::table),
             // A `div` with the class `line-block` and other attributes is
             // unknown markup, also with `native_divs`.
             "div"
@@ -705,30 +705,33 @@ impl<'a> Parser<'a> {
         out: &mut Vec<Block>,
         rule: fn(&mut Self, &mut Vec<Block>) -> Parse<()>,
     ) -> Parse<()> {
+        let mut blocks = Vec::new();
+        match self.try_rule(FAILED_BLOCK, |parser| rule(parser, &mut blocks)) {
+            Ok(()) => out.append(&mut blocks),
+            Err(Stop::Fail) => self.raw_block(out),
+            Err(stop) => return Err(stop),
+        }
+        Ok(())
+    }
+
+    fn try_rule(&mut self, flag: u8, rule: impl FnOnce(&mut Self) -> Parse<()>) -> Parse<()> {
         let start = self.pos;
-        let known_failure = self
+        if self
             .failed
             .get(start)
-            .is_some_and(|f| f & FAILED_BLOCK != 0);
-        if !known_failure {
-            let snapshot = self.snapshot();
-            let mut blocks = Vec::new();
-            match rule(self, &mut blocks) {
-                Ok(()) => {
-                    out.append(&mut blocks);
-                    return Ok(());
-                }
-                Err(Stop::Fail) => {
-                    self.restore(snapshot);
-                    if let Some(flags) = self.failed.get_mut(start) {
-                        *flags |= FAILED_BLOCK;
-                    }
-                }
-                Err(stop) => return Err(stop),
+            .is_some_and(|flags| flags & flag != 0)
+        {
+            return Err(Stop::Fail);
+        }
+        let snapshot = self.snapshot();
+        let result = rule(self);
+        if result == Err(Stop::Fail) {
+            self.restore(snapshot);
+            if let Some(flags) = self.failed.get_mut(start) {
+                *flags |= flag;
             }
         }
-        self.raw_block(out);
-        Ok(())
+        result
     }
 
     /// Reads inlines as a `Plain` block, or one tag as unknown markup.
@@ -1381,23 +1384,7 @@ impl<'a> Parser<'a> {
                 } else {
                     FAILED_IN_PARA
                 };
-                let start = self.pos;
-                if self
-                    .failed
-                    .get(start)
-                    .is_some_and(|flags| flags & flag != 0)
-                {
-                    return Err(Stop::Fail);
-                }
-                let snapshot = self.snapshot();
-                let result = self.inline_element(name, attributes, out);
-                if result == Err(Stop::Fail) {
-                    self.restore(snapshot);
-                    if let Some(flags) = self.failed.get_mut(start) {
-                        *flags |= flag;
-                    }
-                }
-                result
+                self.try_rule(flag, |parser| parser.inline_element(name, attributes, out))
             }
         }
     }
@@ -1828,18 +1815,10 @@ impl<'a> Parser<'a> {
         out.push(Inline::Space);
         Ok(())
     }
-
-    fn table(&mut self, out: &mut Vec<Block>) -> Parse<()> {
-        crate::table::table(self, out)
-    }
 }
 
 /// The parts of the parser that the table rules use.
 impl<'a> Parser<'a> {
-    pub(crate) fn peek_kind(&self) -> Option<&'a TokenKind> {
-        self.peek()
-    }
-
     pub(crate) fn previous_is_close(&self, tag: &str) -> bool {
         matches!(
             self.pos.checked_sub(1).and_then(|index| self.toks.get(index)),
@@ -1849,22 +1828,6 @@ impl<'a> Parser<'a> {
 
     pub(crate) fn advance(&mut self) {
         self.pos += 1;
-    }
-
-    pub(crate) fn count_step(&mut self) -> Parse<()> {
-        self.step()
-    }
-
-    pub(crate) fn within<T>(&mut self, rule: impl FnOnce(&mut Self) -> Parse<T>) -> Parse<T> {
-        self.nested(rule)
-    }
-
-    pub(crate) fn element_ends(&mut self, tag: &str) -> bool {
-        self.ends(tag)
-    }
-
-    pub(crate) fn container(&mut self, tag: &str) -> Parse<Vec<Block>> {
-        self.blocks_in(tag)
     }
 }
 
@@ -1969,7 +1932,10 @@ fn list_attributes(clean: &[(Text, Text)]) -> ListAttributes {
     };
     let from_style = || {
         attribute(clean, "style")
-            .and_then(|style| style_property(style, "list-style-type"))
+            .and_then(|style| {
+                style_property(style, "list-style-type")
+                    .or_else(|| style_property(style, "list-style"))
+            })
             .and_then(|name| style_from_name(&name))
     };
     ListAttributes {

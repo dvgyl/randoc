@@ -5,6 +5,7 @@
 
 use std::collections::HashMap;
 
+use randoc_archive::mathml::mathml_to_tex;
 use randoc_archive::media::{base64_decode, image_size_and_mime, is_safe_media_path};
 use randoc_archive::xml::{self, XmlElement, XmlLimits, XmlNode, XmlOptions};
 use randoc_archive::zip::Archive;
@@ -17,7 +18,6 @@ use randoc_core::shared::{IdentifierSet, auto_identifier, stringify};
 use randoc_core::{Context, Error, Extensions, MediaItem, ReaderOptions, Result};
 
 use crate::ns::{DRAW, MATH, OFFICE, SVG, TABLE, TEXT, XLINK, XML, is_el};
-use crate::reader::mathml::mathml_to_tex;
 use crate::reader::styles::{ListLevelKind, StyleTable, TextProps, VerticalPos};
 
 /// Converts an already-parsed `<office:text>` element + [`StyleTable`] into a [`Pandoc`] document.
@@ -103,6 +103,18 @@ enum RawBlock {
     CodeLine(String),
     /// A blockquote paragraph.
     QuotePara(Vec<Inline>),
+}
+
+enum FrameFormula {
+    Formula(String),
+    Omit,
+    Fallback,
+}
+
+impl FrameFormula {
+    fn decode(math: &XmlElement, max_depth: usize) -> Self {
+        mathml_to_tex(math, max_depth).map_or(Self::Omit, Self::Formula)
+    }
 }
 
 impl<'a, 'b> Converter<'a, 'b> {
@@ -951,27 +963,26 @@ impl<'a, 'b> Converter<'a, 'b> {
         out: &mut Vec<Inline>,
     ) -> Result<()> {
         self.check_depth(depth)?;
-        // 1. Check for `<draw:object>` (MathML formula or OLE object).
         if let Some(obj) = frame.child(DRAW, "object") {
-            if let Some(math_el) = obj.child(MATH, "math").or_else(|| obj.child_local("math")) {
-                if let Some(tex) = mathml_to_tex(math_el, self.max_depth) {
+            let formula =
+                if let Some(math) = obj.child(MATH, "math").or_else(|| obj.child_local("math")) {
+                    FrameFormula::decode(math, self.max_depth)
+                } else if let Some(href) = obj.attr(XLINK, "href") {
+                    self.read_external_math_object(href)?
+                } else {
+                    FrameFormula::Fallback
+                };
+            match formula {
+                FrameFormula::Formula(tex) => {
                     self.charge_repeated_bytes(tex.len())?;
                     out.push(Inline::Math(MathType::DisplayMath, tex));
+                    return Ok(());
                 }
-                return Ok(());
-            }
-            if let Some(href) = obj.attr(XLINK, "href")
-                && let Some(tex) = self.read_external_math_object(href)?
-            {
-                if let Some(tex) = tex {
-                    self.charge_repeated_bytes(tex.len())?;
-                    out.push(Inline::Math(MathType::DisplayMath, tex));
-                }
-                return Ok(());
+                FrameFormula::Omit => return Ok(()),
+                FrameFormula::Fallback => {}
             }
         }
 
-        // 2. Check for `<draw:image>`.
         if let Some(img) = frame.child(DRAW, "image")
             && let Some((attr, target)) = self.extract_frame_image(frame, img)?
         {
@@ -979,7 +990,6 @@ impl<'a, 'b> Converter<'a, 'b> {
             return Ok(());
         }
 
-        // 3. Fallback: `<draw:text-box>` inside an inline context.
         if let Some(tb) = frame.child(DRAW, "text-box") {
             for p in tb.elements() {
                 if is_el(p, TEXT, "p") {
@@ -991,25 +1001,21 @@ impl<'a, 'b> Converter<'a, 'b> {
         Ok(())
     }
 
-    /// Reads `{href}/content.xml` from the ZIP archive.
-    /// Returns `Ok(Some(Some(tex)))` if it's a MathML object with TeX,
-    /// `Ok(Some(None))` if it's a MathML object with empty/StarMath-only body (drop it),
-    /// `Ok(None)` if it's NOT a MathML object (so caller can fall back to `<draw:image>`).
-    fn read_external_math_object(&mut self, href: &str) -> Result<Option<Option<String>>> {
+    fn read_external_math_object(&mut self, href: &str) -> Result<FrameFormula> {
         let Some(archive) = self.archive.as_deref_mut() else {
-            return Ok(None);
+            return Ok(FrameFormula::Fallback);
         };
         let clean = href
             .strip_prefix("./")
             .unwrap_or(href)
             .trim_end_matches('/');
         if !is_safe_media_path(clean) {
-            return Ok(None);
+            return Ok(FrameFormula::Fallback);
         }
         let entry_path = format!("{clean}/content.xml");
         let bytes = match archive.read(&entry_path) {
             Ok(Some(b)) => b,
-            Ok(None) => return Ok(None),
+            Ok(None) => return Ok(FrameFormula::Fallback),
             Err(err) => {
                 return Err(Error::Parse(format!(
                     "Could not read ODT object '{entry_path}': {err}"
@@ -1017,16 +1023,16 @@ impl<'a, 'b> Converter<'a, 'b> {
             }
         };
         let Ok(text) = xml::decode_utf8(&bytes) else {
-            return Ok(None);
+            return Ok(FrameFormula::Fallback);
         };
         let xml_limits = XmlLimits::from_limits(&self.context.limits);
         let Ok(doc) = xml::parse(text, &xml_limits, XmlOptions::default()) else {
-            return Ok(None);
+            return Ok(FrameFormula::Fallback);
         };
         if doc.root.name.local == "math" {
-            Ok(Some(mathml_to_tex(&doc.root, self.max_depth)))
+            Ok(FrameFormula::decode(&doc.root, self.max_depth))
         } else {
-            Ok(None)
+            Ok(FrameFormula::Fallback)
         }
     }
 
@@ -1428,6 +1434,68 @@ fn ext_for_mime(mime: &str) -> &'static str {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn external_formula_uses_image_only_for_unrecognized_objects() -> Result<()> {
+        use randoc_archive::zip::{ArchiveLimits, ArchiveWriter};
+
+        let mut context = Context::pure();
+        let zip_error = |error: randoc_archive::zip::ArchiveError| Error::Parse(error.to_string());
+        let mut archive = ArchiveWriter::new();
+        for (name, xml) in [
+            (
+                "formula",
+                format!(r#"<math xmlns="{MATH}"><mi>x</mi></math>"#),
+            ),
+            ("empty", format!(r#"<math xmlns="{MATH}"/>"#)),
+            ("other", "<object/>".into()),
+        ] {
+            archive
+                .write_deflated(&format!("{name}/content.xml"), xml.as_bytes())
+                .map_err(zip_error)?;
+        }
+        let bytes = archive.finish().map_err(zip_error)?;
+        let mut archive = Archive::open(&bytes, ArchiveLimits::from_limits(&context.limits))
+            .map_err(zip_error)?;
+        let mut content = format!(
+            r#"<office:text xmlns:office="{OFFICE}" xmlns:text="{TEXT}" xmlns:draw="{DRAW}" xmlns:xlink="{XLINK}">"#
+        );
+        for name in ["formula", "empty", "other"] {
+            content.push_str(&format!(
+                r#"<text:p>{name}<draw:frame><draw:object xlink:href="./{name}/"/><draw:image xlink:href="fallback.png"/></draw:frame></text:p>"#
+            ));
+        }
+        content.push_str("</office:text>");
+        let content = xml::parse(
+            &content,
+            &XmlLimits::from_limits(&context.limits),
+            XmlOptions::default(),
+        )
+        .map_err(|error| Error::Parse(error.to_string()))?;
+        let doc = convert_office_text(
+            &content.root,
+            &StyleTable::default(),
+            Some(&mut archive),
+            false,
+            &ReaderOptions::default(),
+            &mut context,
+        )?;
+        assert_eq!(
+            doc.blocks,
+            [
+                Block::Para(vec![
+                    Inline::Str("formula".into()),
+                    Inline::Math(MathType::DisplayMath, "x".into()),
+                ]),
+                Block::Para(vec![Inline::Str("empty".into())]),
+                Block::Para(vec![
+                    Inline::Str("other".into()),
+                    Inline::Image(Attr::default(), Vec::new(), Target::new("fallback.png", "")),
+                ]),
+            ]
+        );
+        Ok(())
+    }
 
     #[test]
     fn inline_image_size_limit_uses_decoded_bytes() {

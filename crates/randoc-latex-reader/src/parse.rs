@@ -336,7 +336,7 @@ const NBSP: &str = "\u{a0}";
 
 impl<'c> Parser<'c> {
     pub(crate) fn new(input: &str, extensions: Extensions, context: &'c mut Context) -> Self {
-        let tokens = tokenize(input);
+        let tokens = tokenize(input, extensions.contains(Extension::LiterateHaskell));
         let conditionals = match_conditionals(&tokens);
         let closed_begins = match_environments(&tokens);
         let group_ends = match_groups(&tokens);
@@ -1247,7 +1247,7 @@ impl<'c> Parser<'c> {
                 }
                 Kind::Word(name)
                     if sectioning_level(name).is_some()
-                        || matches!(name.as_str(), "title" | "author" | "date") =>
+                        || matches!(name.as_str(), "title" | "author" | "date" | "rule") =>
                 {
                     return true;
                 }
@@ -2148,13 +2148,15 @@ impl<'c> Parser<'c> {
                     {
                         return Err(Stop::NestedDocument);
                     }
-                    if is_inline_environment(&environment) {
+                    let class = self.classify_environment(&environment);
+                    if class.kind == EnvironmentKind::Math {
                         self.paragraph(blocks)?;
                     } else {
                         let mut parsed = Vec::new();
                         self.group(|parser| {
                             parser.environment(
                                 &environment,
+                                class,
                                 &mut parsed,
                                 matches!(end, End::Item(_)),
                             )
@@ -2270,6 +2272,34 @@ impl<'c> Parser<'c> {
             return Ok(true);
         }
         match name {
+            "rule" => {
+                self.bump();
+                self.star();
+                self.skip_options()?;
+                for _ in 0..2 {
+                    self.skip_spaces();
+                    match self.peek_raw() {
+                        Some(tok) if tok.is_word("end") => {
+                            return Err(self.error_at(tok, "unexpected \\end"));
+                        }
+                        Some(Tok {
+                            kind: Kind::Open, ..
+                        }) => {
+                            self.bump();
+                            if !self.tokens_until_close_or_end().1 {
+                                self.ends_inside("unexpected ()")?;
+                            }
+                        }
+                        _ => {
+                            if self.argument_tokens().is_none() {
+                                self.ends_inside("unexpected end of input")?;
+                            }
+                        }
+                    }
+                }
+                blocks.push(Block::HorizontalRule);
+                Ok(true)
+            }
             "hypertarget" => {
                 self.bump();
                 self.star();
@@ -2415,7 +2445,7 @@ impl<'c> Parser<'c> {
                 let depth = self.bump().map_or(0, |tok| tok.depth);
                 self.star();
                 self.skip_options()?;
-                self.include(depth)?;
+                self.include_file(depth, false)?;
                 Ok(true)
             }
             "newtheorem" | "theoremstyle" => {
@@ -2663,11 +2693,6 @@ impl<'c> Parser<'c> {
         Some(parts.join("."))
     }
 
-    /// `\input` and `\include` put the tokens of the file in the input.
-    fn include(&mut self, depth: u32) -> R<()> {
-        self.include_file(depth, false)
-    }
-
     fn include_file(&mut self, depth: u32, subfile: bool) -> R<()> {
         let argument = self.argument_text_with(false, |tok| tok.kind != Kind::Comment)?;
         if self.field.is_some() {
@@ -2690,7 +2715,7 @@ impl<'c> Parser<'c> {
             return Ok(());
         };
         let text = String::from_utf8_lossy(&bytes).replace('\r', "");
-        let mut tokens = tokenize(&text);
+        let mut tokens = tokenize(&text, self.extensions.contains(Extension::LiterateHaskell));
         let mut groups = 0usize;
         if let Some(end) = tokens.iter().position(|tok| {
             match tok.kind {
@@ -2880,7 +2905,7 @@ impl<'c> Parser<'c> {
                 }
                 if command == "DeclareMathOperator" {
                     let op = tokens_text(&body);
-                    body = tokenize(&format!("\\mathop{{\\mathrm{{{op}}}}}"));
+                    body = tokenize(&format!("\\mathop{{\\mathrm{{{op}}}}}"), false);
                 }
                 let exists = self.macros.contains_key(&name);
                 if exists && command == "newcommand" {
@@ -2958,18 +2983,27 @@ impl<'c> Parser<'c> {
     /// in Pandoc: the reader reads the environment again with the next rule
     /// of a chain (a table as an unknown environment, then the source text
     /// as raw TeX, which only `raw_tex` keeps).
-    fn environment(&mut self, name: &str, blocks: &mut Vec<Block>, in_item: bool) -> R<()> {
-        let raw_tex = self.extensions.contains(Extension::RawTex);
-        if self.theorems.contains(name) {
-            self.bump();
-            self.argument_tokens();
-            return self.theorem(name, blocks);
-        }
-        if raw_tex && !is_known_environment(name) {
+    fn environment(
+        &mut self,
+        name: &str,
+        class: Environment,
+        blocks: &mut Vec<Block>,
+        in_item: bool,
+    ) -> R<()> {
+        let raw_tex = self.raw_tex();
+        if raw_tex
+            && matches!(
+                class.policy,
+                EnvironmentPolicy::Raw | EnvironmentPolicy::RawRetry
+            )
+        {
             return self.raw_environment(name, blocks);
         }
-        if !falls_back(name) {
-            return self.known_environment(name, blocks, in_item);
+        if !matches!(
+            class.policy,
+            EnvironmentPolicy::Retry | EnvironmentPolicy::RawRetry
+        ) {
+            return self.known_environment(name, class.kind, blocks, in_item);
         }
         let start = self.snapshot();
         let failed = start.as_ref().and_then(|s| s.source_position);
@@ -2977,10 +3011,10 @@ impl<'c> Parser<'c> {
             failed.is_some_and(|p| self.failed_tables.contains(&p)) && !plain_scans();
         if !tabular_failed {
             let Some(snapshot) = start.clone() else {
-                return self.known_environment(name, blocks, in_item);
+                return self.known_environment(name, class.kind, blocks, in_item);
             };
             let mut parsed = Vec::new();
-            match self.known_environment(name, &mut parsed, in_item) {
+            match self.known_environment(name, class.kind, &mut parsed, in_item) {
                 Ok(()) => {
                     blocks.extend(parsed);
                     return Ok(());
@@ -2988,7 +3022,7 @@ impl<'c> Parser<'c> {
                 Err(Stop::Unexpected(_)) => self.restore(snapshot),
                 Err(other) => return Err(other),
             }
-            tabular_failed = is_tabular(name);
+            tabular_failed = class.kind == EnvironmentKind::Tabular;
             if let Some(position) = failed.filter(|_| tabular_failed) {
                 self.failed_tables.insert(position);
             }
@@ -3064,19 +3098,33 @@ impl<'c> Parser<'c> {
         self.sections = snapshot.sections;
     }
 
-    /// An environment by the rule of its name.
-    fn known_environment(&mut self, name: &str, blocks: &mut Vec<Block>, in_item: bool) -> R<()> {
+    fn classify_environment(&self, name: &str) -> Environment {
+        let class = environment_class(name, self.extensions.contains(Extension::LiterateHaskell));
+        if class.kind != EnvironmentKind::Math && self.theorems.contains(name) {
+            Environment::new(EnvironmentKind::Theorem, EnvironmentPolicy::Semantic)
+        } else {
+            class
+        }
+    }
+
+    fn known_environment(
+        &mut self,
+        name: &str,
+        kind: EnvironmentKind,
+        blocks: &mut Vec<Block>,
+        in_item: bool,
+    ) -> R<()> {
         self.bump();
         self.argument_tokens();
-        match name {
-            name if babel_language(name).is_some() => {
-                let language = babel_language(name).unwrap_or_default();
+        match kind {
+            EnvironmentKind::Theorem => return self.theorem(name, blocks),
+            EnvironmentKind::Language(language) => {
                 blocks.push(Block::Div(
                     language_attr(language),
                     self.blocks(End::Environment(name))?,
                 ));
             }
-            "document" => {
+            EnvironmentKind::Document => {
                 blocks.extend(self.blocks(End::Environment(name))?);
                 if self.peek_raw().is_none() {
                     self.unclosed(name)?;
@@ -3084,48 +3132,46 @@ impl<'c> Parser<'c> {
                 self.finished = true;
                 return Ok(());
             }
-            "abstract" | "proof" | "sloppypar" | "otherlanguage" | "alltt" => {
-                self.semantic_environment(name, blocks)?;
-            }
-            "itemize" | "enumerate" | "description" => {
-                return self.list_environment(name, blocks, in_item);
-            }
-            "quote" | "quotation" | "verse" => {
+            EnvironmentKind::List => return self.list_environment(name, blocks, in_item),
+            EnvironmentKind::Quote => {
                 blocks.push(Block::BlockQuote(self.blocks(End::Environment(name))?));
             }
-            "filecontents" | "filecontents*" => self.store_file_contents(),
-            "verbatim" | "Verbatim" | "lstlisting" | "minted" | "comment" => {
+            EnvironmentKind::FileContents => self.store_file_contents(),
+            EnvironmentKind::Verbatim => {
                 if let Some(block) = self.verbatim(name) {
                     blocks.push(block);
                 }
             }
-            "figure" | "figure*" | "subfigure" => blocks.push(self.figure(name)?),
-            "tikzpicture" => {
+            EnvironmentKind::Figure => blocks.push(self.figure(name)?),
+            EnvironmentKind::Tikz => {
                 let (_, closed) = self.environment_body_tokens(name);
                 if !closed {
                     self.unclosed(name)?;
                 }
                 return Ok(());
             }
-            "table" => blocks.extend(self.table_float(name)?),
-            _ if is_tabular(name) => return self.tabular_environment(name, blocks),
-            _ => return self.div_body(name, blocks),
-        }
-        self.close_environment(name)
-    }
-
-    fn semantic_environment(&mut self, name: &str, blocks: &mut Vec<Block>) -> R<()> {
-        match name {
-            "abstract" => {
+            EnvironmentKind::Table => blocks.extend(self.table_float(name)?),
+            EnvironmentKind::Tabular => return self.tabular_environment(name, blocks),
+            EnvironmentKind::Div | EnvironmentKind::Math => return self.div_body(name, blocks),
+            EnvironmentKind::ObeyLines => {
+                let mut content = self.blocks(End::Environment(name))?;
+                walk_inlines_mut(&mut content, |inline| {
+                    if *inline == Inline::SoftBreak {
+                        *inline = Inline::LineBreak;
+                    }
+                });
+                blocks.extend(content);
+            }
+            EnvironmentKind::Abstract => {
                 let content = MetaValue::MetaBlocks(self.blocks(End::Environment(name))?);
                 if self.cell_copies > 0 {
                     self.append_meta("abstract", content.clone());
                 }
                 self.append_meta("abstract", content);
             }
-            "proof" => blocks.push(self.proof(name)?),
-            "sloppypar" => blocks.extend(self.blocks(End::Environment(name))?),
-            "otherlanguage" => {
+            EnvironmentKind::Proof => blocks.push(self.proof(name)?),
+            EnvironmentKind::Sloppy => blocks.extend(self.blocks(End::Environment(name))?),
+            EnvironmentKind::OtherLanguage => {
                 self.skip_options()?;
                 let language = babel_language(&self.argument_text()?);
                 let content = self.blocks(End::Environment(name))?;
@@ -3135,7 +3181,7 @@ impl<'c> Parser<'c> {
                     blocks.extend(content);
                 }
             }
-            "alltt" => {
+            EnvironmentKind::Alltt => {
                 let mut content = self.blocks(End::Environment(name))?;
                 walk_inlines_mut(&mut content, |inline| {
                     let replacement = match inline {
@@ -3148,9 +3194,8 @@ impl<'c> Parser<'c> {
                 });
                 blocks.extend(content);
             }
-            _ => return Err(self.stuck("has no environment handler")),
         }
-        Ok(())
+        self.close_environment(name)
     }
 
     fn list_environment(&mut self, name: &str, blocks: &mut Vec<Block>, in_item: bool) -> R<()> {
@@ -3775,16 +3820,14 @@ impl<'c> Parser<'c> {
     /// One cell. A parse error inside ends the cell: the cell keeps the
     /// blocks before the error, as in Pandoc.
     fn cell(&mut self, tokens: Vec<Tok>) -> R<Cell> {
-        self.scope(|parser| parser.cell_in_group(tokens))
-    }
-
-    fn cell_in_group(&mut self, tokens: Vec<Tok>) -> R<Cell> {
-        self.with_tokens(tokens, |parser| {
-            let saved = (parser.cell_copies, parser.top_depth);
-            (parser.cell_copies, parser.top_depth) = (parser.copies, parser.depth);
-            let cell = parser.cell_content();
-            (parser.cell_copies, parser.top_depth) = saved;
-            cell
+        self.scope(|parser| {
+            parser.with_tokens(tokens, |parser| {
+                let saved = (parser.cell_copies, parser.top_depth);
+                (parser.cell_copies, parser.top_depth) = (parser.copies, parser.depth);
+                let cell = parser.cell_content();
+                (parser.cell_copies, parser.top_depth) = saved;
+                cell
+            })
         })
     }
 
@@ -4376,7 +4419,7 @@ impl<'c> Parser<'c> {
         if !text.contains('\\') {
             return Ok(text);
         }
-        let tokens = tokenize(&text);
+        let tokens = tokenize(&text, self.extensions.contains(Extension::LiterateHaskell));
         let expanded = self.expand_tokens(tokens.clone())?;
         if expanded.len() == tokens.len()
             && expanded.iter().zip(&tokens).all(|(a, b)| a.text == b.text)
@@ -4489,9 +4532,15 @@ impl<'c> Parser<'c> {
                 Kind::Word(name)
                     if name == "begin"
                         && let Some(environment) = self.environment_name_ahead()
-                        && matches!(environment.as_str(), "filecontents" | "filecontents*") =>
+                        && environment_class(&environment, false).kind
+                            == EnvironmentKind::FileContents =>
                 {
-                    self.known_environment(&environment, &mut ignored, false)?;
+                    self.known_environment(
+                        &environment,
+                        EnvironmentKind::FileContents,
+                        &mut ignored,
+                        false,
+                    )?;
                 }
                 Kind::Word(name) if self.block_command(&name, &mut ignored)? => {}
                 _ => {
@@ -5219,12 +5268,12 @@ impl<'c> Parser<'c> {
             },
             "lstinline" | "mintinline" => {}
             "hskip" | "vskip" | "kern" => self.skip_dimension(name, source, out)?,
-            "include" if self.field.is_some() => self.include(depth)?,
+            "include" if self.field.is_some() => self.include_file(depth, false)?,
             "today" if self.field.is_some() => self.unknown_inline(source, out)?,
             "input" if self.raw_tex() => self.unknown_inline(source, out)?,
             "input" => {
                 self.skip_options()?;
-                self.include(depth)?;
+                self.include_file(depth, false)?;
             }
             "today" => {
                 self.skip_word_spaces();
@@ -5295,10 +5344,11 @@ impl<'c> Parser<'c> {
             }
             "begin" => {
                 let environment = self.argument_text()?;
-                if is_inline_environment(&environment) {
+                let class = self.classify_environment(&environment);
+                if class.kind == EnvironmentKind::Math {
                     self.group(|parser| parser.inline_environment(&environment, out))?;
                 } else {
-                    self.block_environment_in_inlines(source, &environment, out)?;
+                    self.block_environment_in_inlines(source, &environment, class, out)?;
                 }
             }
             _ => {
@@ -5500,20 +5550,18 @@ impl<'c> Parser<'c> {
         if name == "label" && self.raw_tex() {
             return Ok(());
         }
-        let Some(rule) = argument_rule(name) else {
+        let Some(grammar) = argument_grammar(name) else {
             return Ok(());
         };
-        if self.in_preamble && rule == ArgumentRule::Group {
+        if self.in_preamble && grammar.required == ArgumentRule::Group {
             return Ok(());
         }
         let mut tokens = self.scan().skip(skip).peekable();
-        let verbatim = takes_verbatim_argument(name);
         let blank = |tok: &&Tok| {
             matches!(tok.kind, Kind::Space)
-                || (!verbatim && matches!(tok.kind, Kind::Newline | Kind::Comment))
+                || (!grammar.spaces_only && matches!(tok.kind, Kind::Newline | Kind::Comment))
         };
-        if !matches!(name, "begin" | "let")
-            && !is_def_word(name)
+        if grammar.star
             && tokens
                 .peek()
                 .is_some_and(|tok| tok.kind == Kind::Other('*'))
@@ -5522,12 +5570,12 @@ impl<'c> Parser<'c> {
         }
         // Pandoc reads an option after one line end only, also when a
         // comment line follows it (matrix `errors/optcomment-*`).
-        if !verbatim && rule == ArgumentRule::Group && takes_options(name) {
+        if !grammar.spaces_only && grammar.options != ArgumentOptions::None {
             skip_option_gap(&mut tokens, 1);
         } else {
             while tokens.next_if(blank).is_some() {}
         }
-        if multi_citation_mode(name).is_some() {
+        if grammar.options == ArgumentOptions::MultiCitation {
             for _ in 0..2 {
                 if tokens.next_if(|tok| tok.kind == Kind::Other('(')).is_none() {
                     break;
@@ -5543,8 +5591,8 @@ impl<'c> Parser<'c> {
             }
         }
         let mut options = 0;
-        if rule == ArgumentRule::Group && takes_options(name) {
-            if name == "hyperref"
+        if grammar.options != ArgumentOptions::None {
+            if grammar.options == ArgumentOptions::Hyperref
                 && tokens
                     .peek()
                     .is_some_and(|tok| tok.kind == Kind::Other('['))
@@ -5553,7 +5601,7 @@ impl<'c> Parser<'c> {
             }
             while let Some(open) = tokens.next_if(|tok| tok.kind == Kind::Other('[')) {
                 options += 1;
-                if name == "includegraphics" && options > 1 {
+                if grammar.options == ArgumentOptions::Graphics && options > 1 {
                     return Err(self.error_at(open, "unexpected ["));
                 }
                 let mut nesting = 0usize;
@@ -5575,7 +5623,7 @@ impl<'c> Parser<'c> {
                 if !closed {
                     return Ok(());
                 }
-                if verbatim {
+                if grammar.spaces_only {
                     skip_option_gap(&mut tokens, 1);
                 } else {
                     while tokens.next_if(blank).is_some() {}
@@ -5588,7 +5636,10 @@ impl<'c> Parser<'c> {
             }
             return self.ends_inside("unexpected ()");
         };
-        if tok.kind == Kind::Par && (!verbatim || (name == "includegraphics" && options > 0)) {
+        if tok.kind == Kind::Par
+            && (!grammar.spaces_only
+                || (grammar.options == ArgumentOptions::Graphics && options > 0))
+        {
             if !tok.text.contains("\n\n") && tokens.next().is_none() {
                 return self.ends_inside("unexpected ()");
             }
@@ -5599,7 +5650,7 @@ impl<'c> Parser<'c> {
             return self.stop_at(tok.line + 2, 1, "unexpected ()");
         }
         let is_name = |tok: &Tok| matches!(tok.kind, Kind::Word(_) | Kind::Symbol(_));
-        match rule {
+        match grammar.required {
             ArgumentRule::Group if tok.kind == Kind::Open => return Ok(()),
             ArgumentRule::Name if is_name(tok) => return Ok(()),
             ArgumentRule::NameOrGroup if is_name(tok) => return Ok(()),
@@ -5626,7 +5677,7 @@ impl<'c> Parser<'c> {
             }
             _ => {}
         }
-        if self.expands(tok) || (matches!(tok.kind, Kind::Par) && !verbatim) {
+        if self.expands(tok) || (matches!(tok.kind, Kind::Par) && !grammar.spaces_only) {
             return Ok(());
         }
         if let Some(call) = &self.expansion_call {
@@ -5696,7 +5747,7 @@ impl<'c> Parser<'c> {
         for _ in 0..count {
             self.bump();
         }
-        let mut rest = tokenize(&after);
+        let mut rest = tokenize(&after, self.extensions.contains(Extension::LiterateHaskell));
         for token in &mut rest {
             if token.line == 1 {
                 token.column = token.column.saturating_add(column.saturating_sub(1));
@@ -5812,15 +5863,16 @@ impl<'c> Parser<'c> {
         &mut self,
         source: &str,
         name: &str,
+        class: Environment,
         out: &mut Inlines,
     ) -> R<()> {
         let mut begin = vec![self.synthetic(Kind::Word("begin".into()), source)];
         begin.push(self.synthetic(Kind::Open, "{"));
-        begin.extend(tokenize(name));
+        begin.extend(tokenize(name, false));
         begin.push(self.synthetic(Kind::Close, "}"));
         self.pending.extend(begin.into_iter().rev());
         let mut blocks = Vec::new();
-        self.group(|parser| parser.environment(name, &mut blocks, false))?;
+        self.group(|parser| parser.environment(name, class, &mut blocks, false))?;
         for block in blocks {
             if let Block::Para(inlines) | Block::Plain(inlines) = block {
                 out.push(Inline::Space);
@@ -6576,6 +6628,12 @@ fn listing_extension(path: &str) -> Option<&'static str> {
 
 /// the start of the verbatim body.
 fn code_attributes<'a>(name: &str, body: &'a str) -> (Attr, &'a str) {
+    if name == "code" {
+        return (
+            Attr::new("", vec!["haskell".into(), "literate".into()], vec![]),
+            body,
+        );
+    }
     let mut attr = Attr::default();
     if !matches!(name, "Verbatim" | "lstlisting" | "minted") {
         return (attr, body);
@@ -6632,6 +6690,7 @@ pub(crate) fn is_block_only(name: &str) -> bool {
         || matches!(
             name,
             "item"
+                | "rule"
                 | "title"
                 | "author"
                 | "date"
@@ -7183,32 +7242,78 @@ enum ArgumentRule {
     NameOrGroup,
 }
 
-/// The commands for which Pandoc stops with a parse error when the
-/// argument is not there. Found with probes of each command of
-/// `tools/names.tsv` (matrix `braced` of `rules.toml`).
-fn argument_rule(name: &str) -> Option<ArgumentRule> {
-    if citation_mode(name).is_some()
-        || multi_citation_mode(name).is_some()
-        || name == "footcite"
-        || sectioning_level(name).is_some()
-    {
-        return Some(ArgumentRule::Group);
-    }
-    match name {
-        "def" | "gdef" | "edef" | "xdef" | "let" => Some(ArgumentRule::Name),
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum ArgumentOptions {
+    None,
+    Brackets,
+    Hyperref,
+    Graphics,
+    MultiCitation,
+}
+
+#[derive(Clone, Copy)]
+struct ArgumentGrammar {
+    required: ArgumentRule,
+    spaces_only: bool,
+    star: bool,
+    options: ArgumentOptions,
+}
+
+fn argument_grammar(name: &str) -> Option<ArgumentGrammar> {
+    use ArgumentOptions as Options;
+    let group = ArgumentGrammar {
+        required: ArgumentRule::Group,
+        spaces_only: false,
+        star: true,
+        options: Options::Brackets,
+    };
+    let no_options = ArgumentGrammar {
+        options: Options::None,
+        ..group
+    };
+    Some(match name {
+        "def" | "gdef" | "edef" | "xdef" | "let" => ArgumentGrammar {
+            required: ArgumentRule::Name,
+            star: false,
+            ..no_options
+        },
         "newcommand" | "renewcommand" | "providecommand" | "DeclareMathOperator" => {
-            Some(ArgumentRule::NameOrGroup)
+            ArgumentGrammar {
+                required: ArgumentRule::NameOrGroup,
+                ..no_options
+            }
         }
-        "label" | "ref" | "vref" | "eqref" | "autoref" | "cref" | "Cref" | "nocite" | "begin"
-        | "usepackage" | "includegraphics" | "footnote" | "footnotetext" | "documentclass"
-        | "url" | "href" | "nolinkurl" | "hyperlink" | "hypertarget" | "hyperref" | "title"
-        | "author" | "thanks" | "bibliography" | "addbibresource" | "input" | "include"
-        | "newenvironment" | "newtheorem" | "theoremstyle" | "textcolor" | "colorbox"
-        | "foreignquote" | "SI" | "SIrange" | "SIlist" | "si" | "num" | "numlist" | "numrange"
-        | "qty" | "ang" | "ensuremath" | "gls" | "Gls" | "glspl" | "ac" | "parbox"
-        | "graphicspath" => Some(ArgumentRule::Group),
-        _ => None,
-    }
+        "begin" => ArgumentGrammar {
+            star: false,
+            ..no_options
+        },
+        "includegraphics" => ArgumentGrammar {
+            spaces_only: true,
+            options: Options::Graphics,
+            ..group
+        },
+        "hyperref" => ArgumentGrammar {
+            options: Options::Hyperref,
+            ..group
+        },
+        "label" | "ref" | "eqref" | "autoref" | "cref" | "Cref" | "url" | "href" | "nolinkurl"
+        | "hyperlink" | "hypertarget" | "foreignquote" | "ensuremath" => ArgumentGrammar {
+            spaces_only: true,
+            ..no_options
+        },
+        "newenvironment" | "newtheorem" | "theoremstyle" | "gls" | "Gls" | "glspl" | "ac"
+        | "graphicspath" => no_options,
+        "vref" | "nocite" | "usepackage" | "footnote" | "footnotetext" | "documentclass"
+        | "title" | "author" | "thanks" | "bibliography" | "addbibresource" | "input"
+        | "include" | "textcolor" | "colorbox" | "SI" | "SIrange" | "SIlist" | "si" | "num"
+        | "numlist" | "numrange" | "qty" | "ang" | "parbox" | "footcite" => group,
+        _ if multi_citation_mode(name).is_some() => ArgumentGrammar {
+            options: Options::MultiCitation,
+            ..group
+        },
+        _ if citation_mode(name).is_some() || sectioning_level(name).is_some() => group,
+        _ => return None,
+    })
 }
 
 /// Skips the tokens that Pandoc skips around an optional argument:
@@ -7231,29 +7336,6 @@ fn skip_option_gap<'t>(
     (skip, seen > 0)
 }
 
-/// The commands whose argument group must follow after spaces only: a
-/// line end or a comment there is the parse error of Pandoc (matrix
-/// `errors/eofarg-*`).
-fn takes_verbatim_argument(name: &str) -> bool {
-    matches!(
-        name,
-        "label"
-            | "ref"
-            | "eqref"
-            | "autoref"
-            | "cref"
-            | "Cref"
-            | "includegraphics"
-            | "nolinkurl"
-            | "ensuremath"
-            | "url"
-            | "href"
-            | "hypertarget"
-            | "hyperlink"
-            | "foreignquote"
-    )
-}
-
 /// The number of `[n]`. A number too large for `usize` is `usize::MAX`:
 /// no input has so many arguments.
 fn parameter_count(text: &str) -> Option<usize> {
@@ -7261,36 +7343,6 @@ fn parameter_count(text: &str) -> Option<usize> {
         return None;
     }
     Some(text.parse().unwrap_or(usize::MAX))
-}
-
-/// False for a command of `argument_rule` for which Pandoc reads no
-/// `[...]` option: a `[` there is the parse error.
-fn takes_options(name: &str) -> bool {
-    !matches!(
-        name,
-        "label"
-            | "ref"
-            | "eqref"
-            | "autoref"
-            | "cref"
-            | "Cref"
-            | "begin"
-            | "url"
-            | "href"
-            | "nolinkurl"
-            | "hyperlink"
-            | "hypertarget"
-            | "newenvironment"
-            | "newtheorem"
-            | "theoremstyle"
-            | "foreignquote"
-            | "ensuremath"
-            | "gls"
-            | "Gls"
-            | "glspl"
-            | "ac"
-            | "graphicspath"
-    )
 }
 
 pub(crate) fn is_definition(name: &str) -> bool {
@@ -7317,103 +7369,123 @@ fn is_def_word(name: &str) -> bool {
     matches!(name, "def" | "gdef" | "edef" | "xdef")
 }
 
-fn is_tabular(name: &str) -> bool {
-    matches!(name, "tabular" | "tabular*" | "tabularx" | "longtable")
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub(crate) enum EnvironmentKind {
+    Math,
+    Theorem,
+    Language(&'static str),
+    Document,
+    List,
+    Quote,
+    FileContents,
+    Verbatim,
+    Figure,
+    Tikz,
+    Table,
+    Tabular,
+    Div,
+    Abstract,
+    Proof,
+    Sloppy,
+    OtherLanguage,
+    Alltt,
+    ObeyLines,
 }
 
-/// The math environments. Pandoc reads them as inline math.
-pub(crate) const INLINE_ENVIRONMENTS: &[&str] = &[
-    "math",
-    "displaymath",
-    "subequations",
-    "equation",
-    "equation*",
-    "align",
-    "align*",
-    "gather",
-    "gather*",
-    "multline",
-    "multline*",
-    "eqnarray",
-    "eqnarray*",
-    "flalign",
-    "flalign*",
-    "alignat",
-    "alignat*",
-];
-
-/// The block environments that the reader knows. With `raw_tex`, each
-/// other environment is raw TeX.
-pub(crate) const BLOCK_ENVIRONMENTS: &[&str] = &[
-    "proof",
-    "alltt",
-    "sloppypar",
-    "subfigure",
-    "otherlanguage",
-    "document",
-    "abstract",
-    "itemize",
-    "enumerate",
-    "description",
-    "quote",
-    "quotation",
-    "verse",
-    "center",
-    "minipage",
-    "verbatim",
-    "Verbatim",
-    "lstlisting",
-    "minted",
-    "comment",
-    "figure",
-    "figure*",
-    "table",
-    "tabular",
-    "tabular*",
-    "tabularx",
-    "longtable",
-];
-
-/// The environments that Pandoc reads again with a fallback rule after a
-/// parse error inside: lists, tables and each environment that Pandoc does
-/// not know. A parse error in other environments stops the document.
-fn falls_back(name: &str) -> bool {
-    matches!(name, "itemize" | "enumerate" | "description")
-        || is_tabular(name)
-        || !matches!(
-            name,
-            "document"
-                | "abstract"
-                | "quote"
-                | "quotation"
-                | "verse"
-                | "center"
-                | "minipage"
-                | "figure"
-                | "figure*"
-                | "table"
-                | "verbatim"
-                | "Verbatim"
-                | "lstlisting"
-                | "minted"
-                | "comment"
-                | "proof"
-                | "subfigure"
-                | "alltt"
-                | "otherlanguage"
-                | "sloppypar"
-                | "letter"
-        )
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum EnvironmentPolicy {
+    Semantic,
+    Retry,
+    Raw,
+    RawRetry,
 }
 
-fn is_inline_environment(name: &str) -> bool {
-    INLINE_ENVIRONMENTS.contains(&name)
+#[derive(Clone, Copy)]
+pub(crate) struct Environment {
+    pub(crate) kind: EnvironmentKind,
+    policy: EnvironmentPolicy,
 }
 
-fn is_known_environment(name: &str) -> bool {
-    BLOCK_ENVIRONMENTS.contains(&name)
-        || is_inline_environment(name)
-        || babel_language(name).is_some()
+impl Environment {
+    const fn new(kind: EnvironmentKind, policy: EnvironmentPolicy) -> Self {
+        Self { kind, policy }
+    }
+}
+
+pub(crate) const ENVIRONMENTS: &[(&str, Environment)] = {
+    use EnvironmentKind::*;
+    use EnvironmentPolicy::*;
+    &[
+        ("Verbatim", Environment::new(Verbatim, Semantic)),
+        ("abstract", Environment::new(Abstract, Semantic)),
+        ("align", Environment::new(Math, Retry)),
+        ("align*", Environment::new(Math, Retry)),
+        ("alignat", Environment::new(Math, Retry)),
+        ("alignat*", Environment::new(Math, Retry)),
+        ("alltt", Environment::new(Alltt, Semantic)),
+        ("center", Environment::new(Div, Semantic)),
+        ("comment", Environment::new(Verbatim, Semantic)),
+        ("description", Environment::new(List, Retry)),
+        ("displaymath", Environment::new(Math, Retry)),
+        ("document", Environment::new(Document, Semantic)),
+        ("enumerate", Environment::new(List, Retry)),
+        ("eqnarray", Environment::new(Math, Retry)),
+        ("eqnarray*", Environment::new(Math, Retry)),
+        ("equation", Environment::new(Math, Retry)),
+        ("equation*", Environment::new(Math, Retry)),
+        ("figure", Environment::new(Figure, Semantic)),
+        ("figure*", Environment::new(Figure, Semantic)),
+        ("filecontents", Environment::new(FileContents, RawRetry)),
+        ("filecontents*", Environment::new(FileContents, RawRetry)),
+        ("flalign", Environment::new(Math, Retry)),
+        ("flalign*", Environment::new(Math, Retry)),
+        ("gather", Environment::new(Math, Retry)),
+        ("gather*", Environment::new(Math, Retry)),
+        ("itemize", Environment::new(List, Retry)),
+        ("letter", Environment::new(Div, Raw)),
+        ("longtable", Environment::new(Tabular, Retry)),
+        ("lstlisting", Environment::new(Verbatim, Semantic)),
+        ("math", Environment::new(Math, Retry)),
+        ("minipage", Environment::new(Div, Semantic)),
+        ("minted", Environment::new(Verbatim, Semantic)),
+        ("multline", Environment::new(Math, Retry)),
+        ("multline*", Environment::new(Math, Retry)),
+        ("obeylines", Environment::new(ObeyLines, Semantic)),
+        ("otherlanguage", Environment::new(OtherLanguage, Semantic)),
+        ("proof", Environment::new(Proof, Semantic)),
+        ("quotation", Environment::new(Quote, Semantic)),
+        ("quote", Environment::new(Quote, Semantic)),
+        ("sloppypar", Environment::new(Sloppy, Semantic)),
+        ("subequations", Environment::new(Math, Retry)),
+        ("subfigure", Environment::new(Figure, Semantic)),
+        ("table", Environment::new(Table, Semantic)),
+        ("tabular", Environment::new(Tabular, Retry)),
+        ("tabular*", Environment::new(Tabular, Retry)),
+        ("tabularx", Environment::new(Tabular, Retry)),
+        ("tikzpicture", Environment::new(Tikz, RawRetry)),
+        ("verbatim", Environment::new(Verbatim, Semantic)),
+        ("verse", Environment::new(Quote, Semantic)),
+    ]
+};
+
+pub(crate) fn environment_class(name: &str, literate_haskell: bool) -> Environment {
+    if name == "code" && literate_haskell {
+        return Environment::new(EnvironmentKind::Verbatim, EnvironmentPolicy::Semantic);
+    }
+    if let Ok(index) = ENVIRONMENTS.binary_search_by_key(&name, |&(name, _)| name) {
+        return ENVIRONMENTS[index].1;
+    }
+    if let Some(language) = babel_language(name) {
+        return Environment::new(
+            EnvironmentKind::Language(language),
+            EnvironmentPolicy::Retry,
+        );
+    }
+    Environment::new(EnvironmentKind::Div, EnvironmentPolicy::RawRetry)
+}
+
+pub(crate) fn is_inline_environment(name: &str) -> bool {
+    environment_class(name, false).kind == EnvironmentKind::Math
 }
 
 /// A command that the reader does not know. With `raw_tex`, it is raw TeX.

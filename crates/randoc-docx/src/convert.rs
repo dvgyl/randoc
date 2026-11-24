@@ -116,8 +116,7 @@ pub fn read_docx(bytes: &[u8], options: &ReaderOptions, context: &mut Context) -
         footnotes: &footnotes,
         endnotes: &endnotes,
         comments: &comments,
-        active_footnotes: HashSet::new(),
-        active_endnotes: HashSet::new(),
+        active_notes: Default::default(),
         active_comments: HashSet::new(),
         expanded_nodes_used: 0,
         max_expanded_nodes,
@@ -134,7 +133,6 @@ pub fn read_docx(bytes: &[u8], options: &ReaderOptions, context: &mut Context) -
     let mut blocks = conv.build_blocks(raw_items, true, true)?;
     let references: Vec<MetaValue> = conv.references.into_values().collect();
 
-    // Post-passes: metadata extraction, auto-identifiers, bookmark pruning/retargeting.
     let mut meta = extract_metadata(&mut blocks);
     if !references.is_empty() {
         meta.insert("references", MetaValue::MetaList(references));
@@ -449,7 +447,7 @@ impl ParsedPara {
 #[allow(clippy::large_enum_variant)]
 enum BodyItem {
     Para(ParsedPara),
-    Table(Block, Option<i64>),
+    Table(Box<Table>, Option<i64>),
 }
 
 type ListCounters = BTreeMap<i64, HashMap<Text, i64>>;
@@ -481,6 +479,7 @@ enum RawInline {
     FldSeparate,
     FldEnd,
     FldInstr(Text),
+    FormatBarrier,
 }
 
 #[derive(Debug, Clone)]
@@ -489,6 +488,12 @@ enum RunAtom {
     Tab,
     LineBreak,
     Inline(Inline),
+}
+
+#[derive(Clone, Copy)]
+enum NoteKind {
+    Footnote,
+    Endnote,
 }
 
 struct Converter<'a, 'b> {
@@ -500,8 +505,7 @@ struct Converter<'a, 'b> {
     footnotes: &'a NotesPart,
     endnotes: &'a NotesPart,
     comments: &'a CommentsPart,
-    active_footnotes: HashSet<Text>,
-    active_endnotes: HashSet<Text>,
+    active_notes: [HashSet<Text>; 2],
     active_comments: HashSet<Text>,
     expanded_nodes_used: usize,
     max_expanded_nodes: usize,
@@ -516,9 +520,7 @@ struct Converter<'a, 'b> {
 
 impl<'a, 'b> Converter<'a, 'b> {
     fn in_expanded_note_or_comment(&self) -> bool {
-        !self.active_footnotes.is_empty()
-            || !self.active_endnotes.is_empty()
-            || !self.active_comments.is_empty()
+        self.active_notes.iter().any(|ids| !ids.is_empty()) || !self.active_comments.is_empty()
     }
 
     fn charge_expanded_node(&mut self) -> Result<()> {
@@ -844,12 +846,15 @@ impl<'a, 'b> Converter<'a, 'b> {
         } else if ns.is_w(el, "bookmarkStart") {
             if let Some(name) = ns.w_attr(el, "name")
                 && !name.is_empty()
-                && !name.eq_ignore_ascii_case("_GoBack")
             {
-                out.push(RawInline::Inline(Inline::Span(
-                    Attr::new(name, vec!["anchor".into()], vec![]),
-                    Vec::new(),
-                )));
+                if name.eq_ignore_ascii_case("_GoBack") {
+                    out.push(RawInline::FormatBarrier);
+                } else {
+                    out.push(RawInline::Inline(Inline::Span(
+                        Attr::new(name, vec!["anchor".into()], vec![]),
+                        Vec::new(),
+                    )));
+                }
             }
         } else if ns.is_w(el, "ins") || ns.is_w(el, "moveTo") {
             match self.options.track_changes {
@@ -1148,13 +1153,13 @@ impl<'a, 'b> Converter<'a, 'b> {
             } else if ns.is_w(child, "footnoteReference") {
                 if let Some(id) = ns.w_attr(child, "id") {
                     flush_atoms(&props, &mut atoms, out);
-                    let note = self.expand_footnote(id)?;
+                    let note = self.expand_note(NoteKind::Footnote, id)?;
                     out.push(RawInline::Inline(note));
                 }
             } else if ns.is_w(child, "endnoteReference") {
                 if let Some(id) = ns.w_attr(child, "id") {
                     flush_atoms(&props, &mut atoms, out);
-                    let note = self.expand_endnote(id)?;
+                    let note = self.expand_note(NoteKind::Endnote, id)?;
                     out.push(RawInline::Inline(note));
                 }
             } else if ns.is_w(child, "drawing") {
@@ -1183,48 +1188,24 @@ impl<'a, 'b> Converter<'a, 'b> {
         Ok(())
     }
 
-    fn expand_footnote(&mut self, id: &str) -> Result<Inline> {
+    fn expand_note(&mut self, kind: NoteKind, id: &str) -> Result<Inline> {
         self.charge_expanded_node()?;
-        if self.active_footnotes.contains(id) {
+        let part = match kind {
+            NoteKind::Footnote => self.footnotes,
+            NoteKind::Endnote => self.endnotes,
+        };
+        let active = &mut self.active_notes[kind as usize];
+        if active.contains(id) {
             return Ok(Inline::Note(Vec::new()));
         }
-        let footnotes = self.footnotes;
-        let Some(note_el) = footnotes.notes.get(id) else {
+        let Some(note) = part.notes.get(id) else {
             return Ok(Inline::Note(Vec::new()));
         };
 
-        self.active_footnotes.insert(Text::from(id));
-        let res = self.parse_body_children(
-            note_el,
-            &footnotes.ns,
-            &footnotes.part_path,
-            &footnotes.rels,
-        );
-        self.active_footnotes.remove(id);
-        let items = res?;
-
-        let mut blocks = self.build_blocks(items, false, false)?;
-        trim_all_block_edges(&mut blocks);
-        Ok(Inline::Note(blocks))
-    }
-
-    fn expand_endnote(&mut self, id: &str) -> Result<Inline> {
-        self.charge_expanded_node()?;
-        if self.active_endnotes.contains(id) {
-            return Ok(Inline::Note(Vec::new()));
-        }
-        let endnotes = self.endnotes;
-        let Some(note_el) = endnotes.notes.get(id) else {
-            return Ok(Inline::Note(Vec::new()));
-        };
-
-        self.active_endnotes.insert(Text::from(id));
-        let res =
-            self.parse_body_children(note_el, &endnotes.ns, &endnotes.part_path, &endnotes.rels);
-        self.active_endnotes.remove(id);
-        let items = res?;
-
-        let mut blocks = self.build_blocks(items, false, false)?;
+        active.insert(Text::from(id));
+        let parsed = self.parse_body_children(note, &part.ns, &part.part_path, &part.rels);
+        self.active_notes[kind as usize].remove(id);
+        let mut blocks = self.build_blocks(parsed?, false, false)?;
         trim_all_block_edges(&mut blocks);
         Ok(Inline::Note(blocks))
     }
@@ -1776,6 +1757,9 @@ impl<'a, 'b> Converter<'a, 'b> {
                         )
                     });
                 }
+                RawInline::FormatBarrier => {
+                    out = lift_outer_edge_spaces(normalize_inline_list(out));
+                }
                 RawInline::FldBegin
                 | RawInline::FldSeparate
                 | RawInline::FldEnd
@@ -1888,7 +1872,7 @@ impl<'a, 'b> Converter<'a, 'b> {
         ns: &DocxNs,
         part_path: &str,
         rels: &RelsMap,
-    ) -> Result<(Block, Option<i64>)> {
+    ) -> Result<(Box<Table>, Option<i64>)> {
         // A list in a cell resets deeper lists in the enclosing document.
         // The cell keeps its own item counts.
         let mut list_level = None;
@@ -2265,15 +2249,15 @@ impl<'a, 'b> Converter<'a, 'b> {
             .map_or_else(Attr::default, |style| {
                 Attr::new("", vec![], vec![("custom-style".into(), style.into())])
             });
-        let block = Block::Table(Box::new(Table {
+        let table = Box::new(Table {
             attr,
             caption: Caption::default(),
             col_specs,
             head,
             bodies,
             foot: TableFoot::default(),
-        }));
-        Ok((block, list_level))
+        });
+        Ok((table, list_level))
     }
 
     fn charge_table_cells(&mut self, count: usize) -> Result<()> {
@@ -2313,247 +2297,229 @@ impl<'a, 'b> Converter<'a, 'b> {
                 idx += 1;
                 continue;
             }
-            match &merged[idx] {
-                BodyItem::Para(p) if p.is_bibl_start => {
-                    in_bibl = !p.is_bibl_end;
+            let current = &merged[idx];
+            if let BodyItem::Para(p) = current
+                && p.is_bibl_start
+            {
+                in_bibl = !p.is_bibl_end;
+                idx += 1;
+                continue;
+            }
+            let next = merged.get(idx + 1);
+            let table = match (current, next) {
+                (BodyItem::Para(p), Some(BodyItem::Table(table, level)))
+                | (BodyItem::Table(table, level), Some(BodyItem::Para(p)))
+                    if is_caption_style(&p.style_names) =>
+                {
+                    Some((table, level, Some(p)))
+                }
+                (BodyItem::Table(table, level), _) => Some((table, level, None)),
+                _ => None,
+            };
+            if let Some((table, level, caption)) = table {
+                if let Some(level) = level {
+                    reset_deeper_lists(&mut list_counters, *level);
+                }
+                let mut table = table.clone();
+                if let Some(p) = caption {
+                    table.caption.long = caption_blocks(p);
+                }
+                blocks.push(Block::Table(table));
+                idx += 1;
+                if let Some(p) = caption {
+                    blocks.extend(p.extra_blocks.clone());
+                    idx += 1;
+                }
+                continue;
+            }
+
+            if let BodyItem::Para(p) = current {
+                let extra = p.extra_blocks.clone();
+
+                if !p.caption_blocks.is_empty()
+                    && let Some(fig) = try_make_figure(&p.inlines, &p.caption_blocks)
+                {
+                    blocks.push(fig);
+                    blocks.extend(extra);
                     idx += 1;
                     continue;
                 }
-                BodyItem::Table(tbl, list_level) => {
-                    if let Some(level) = list_level {
-                        reset_deeper_lists(&mut list_counters, *level);
-                    }
-                    let mut tbl = tbl.clone();
-                    // Check for trailing caption paragraph immediately after table.
-                    if let Some(BodyItem::Para(next_p)) = merged.get(idx + 1)
-                        && is_caption_style(&next_p.style_names)
-                    {
-                        if let Block::Table(table) = &mut tbl {
-                            table.caption.long = caption_blocks(next_p);
-                        }
-                        blocks.push(tbl);
-                        blocks.extend(next_p.extra_blocks.clone());
-                        idx += 2;
-                        continue;
-                    }
-                    blocks.push(tbl);
-                    idx += 1;
+                if is_image_only_inlines(&p.inlines)
+                    && let Some(BodyItem::Para(next_p)) = merged.get(idx + 1)
+                    && is_caption_style(&next_p.style_names)
+                    && !next_p.inlines.is_empty()
+                    && let Some(fig) =
+                        try_make_figure(&p.inlines, &[Block::Para(next_p.inlines.clone())])
+                {
+                    blocks.extend(extra);
+                    blocks.push(fig);
+                    blocks.extend(next_p.extra_blocks.clone());
+                    idx += 2;
+                    continue;
                 }
-                BodyItem::Para(p) => {
-                    let extra = p.extra_blocks.clone();
 
-                    // 1. Table caption immediately before a table.
-                    if is_caption_style(&p.style_names)
-                        && let Some(BodyItem::Table(mut tbl, list_level)) =
-                            merged.get(idx + 1).cloned()
-                    {
-                        if let Some(level) = list_level {
-                            reset_deeper_lists(&mut list_counters, level);
-                        }
-                        if let Block::Table(table) = &mut tbl {
-                            table.caption.long = caption_blocks(p);
-                        }
-                        blocks.push(tbl);
-                        blocks.extend(extra);
-                        idx += 2;
-                        continue;
-                    }
-
-                    // 2. Image with caption (either in textbox in same paragraph or in next paragraph) -> Figure.
-                    if !p.caption_blocks.is_empty()
-                        && let Some(fig) = try_make_figure(&p.inlines, &p.caption_blocks)
-                    {
-                        blocks.push(fig);
-                        blocks.extend(extra);
-                        idx += 1;
-                        continue;
-                    }
-                    if is_image_only_inlines(&p.inlines)
-                        && let Some(BodyItem::Para(next_p)) = merged.get(idx + 1)
-                        && is_caption_style(&next_p.style_names)
-                        && !next_p.inlines.is_empty()
-                        && let Some(fig) =
-                            try_make_figure(&p.inlines, &[Block::Para(next_p.inlines.clone())])
-                    {
-                        blocks.extend(extra);
-                        blocks.push(fig);
-                        blocks.extend(next_p.extra_blocks.clone());
-                        idx += 2;
-                        continue;
-                    }
-
-                    // 3. Code blocks (`Source Code`), including empty Source Code lines.
-                    if is_source_code_style(&p.style_names) {
-                        if self.keep_styles() {
-                            let code = stringify(&p.inlines);
-                            let name = primary_style_name(&p.style_names).unwrap_or("Source Code");
-                            blocks.push(Block::Div(
-                                Attr::new("", vec![], vec![("custom-style".into(), name.into())]),
-                                vec![Block::CodeBlock(Attr::default(), code)],
-                            ));
-                            if p.rule {
-                                blocks.push(Block::HorizontalRule);
-                            }
-                            blocks.extend(extra);
-                            idx += 1;
-                        } else {
-                            let mut lines = vec![stringify(&p.inlines)];
-                            let mut end = idx + 1;
-                            let mut rule = p.rule;
-                            while !rule && let Some(BodyItem::Para(next_p)) = merged.get(end) {
-                                if is_source_code_style(&next_p.style_names) {
-                                    lines.push(stringify(&next_p.inlines));
-                                    rule = next_p.rule;
-                                    end += 1;
-                                } else {
-                                    break;
-                                }
-                            }
-                            // Trim trailing empty lines if any.
-                            let joined = lines.join("\n");
-                            if !joined.is_empty() || self.empty_paragraphs() {
-                                blocks.push(Block::CodeBlock(Attr::default(), joined));
-                            }
-                            if rule {
-                                blocks.push(Block::HorizontalRule);
-                            }
-                            blocks.extend(extra);
-                            idx = end;
-                        }
-                        continue;
-                    }
-
-                    // 4. Empty paragraph check (unless +empty_paragraphs or extra blocks).
-                    let effective_inlines = trim_para_edges(p.inlines.clone());
-                    if effective_inlines.is_empty() {
-                        blocks.extend(extra);
+                if is_source_code_style(&p.style_names) {
+                    if self.keep_styles() {
+                        let code = stringify(&p.inlines);
+                        let name = primary_style_name(&p.style_names).unwrap_or("Source Code");
+                        blocks.push(Block::Div(
+                            Attr::new("", vec![], vec![("custom-style".into(), name.into())]),
+                            vec![Block::CodeBlock(Attr::default(), code)],
+                        ));
                         if p.rule {
                             blocks.push(Block::HorizontalRule);
-                        } else if self.empty_paragraphs() {
-                            blocks.push(Block::Para(Vec::new()));
                         }
-                        idx += 1;
-                        continue;
-                    }
-
-                    // 5. Metadata styles (Title, Subtitle, Author, Date, Abstract).
-                    if allow_meta && let Some(meta_key) = meta_style_key(&p.style_names) {
-                        blocks.push(Block::Div(
-                            Attr::new(
-                                "",
-                                vec!["__docx_meta".into()],
-                                vec![("key".into(), meta_key.into())],
-                            ),
-                            vec![Block::Para(p.inlines.clone())],
-                        ));
                         blocks.extend(extra);
                         idx += 1;
-                        continue;
-                    }
-
-                    // 6. Headings (`Heading 1..9`, or `outlineLvl` 0..=8).
-                    if let Some((level, custom_class)) =
-                        heading_info(&p.style_names, p.props.outline_lvl)
-                    {
-                        let classes = custom_class.into_iter().collect();
-                        blocks.push(Block::Header(
-                            level,
-                            Attr::new("", classes, vec![]),
-                            p.inlines.clone(),
-                        ));
-                        blocks.extend(extra);
-                        idx += 1;
-                        continue;
-                    }
-
-                    // 7. Definition lists (`Definition Term` + `Definition`).
-                    if is_def_term_style(&p.style_names) {
-                        let (dl, next_idx) = self.consume_definition_list(&merged, idx);
-                        blocks.push(dl);
-                        idx = next_idx;
-                        continue;
-                    }
-
-                    // 8. List items (`numPr` resolving to a valid list in `numbering.xml`).
-                    if allow_lists && let Some((num_id, ilvl, kind)) = self.para_list_info(p) {
-                        let (list_block, next_idx) = self.consume_list(
-                            &merged,
-                            idx,
-                            &num_id,
-                            ilvl,
-                            kind,
-                            &mut list_counters,
-                            0,
-                        )?;
-                        blocks.push(list_block);
-                        idx = next_idx;
-                        continue;
-                    }
-
-                    // 9. BlockQuotes (`Block Text`, `Quote`, or relative direct left indent).
-                    if is_blockquote_para(p) {
-                        let mut quote_paras = vec![Block::Para(p.inlines.clone())];
-                        let style_name = primary_style_name(&p.style_names).map(str::to_owned);
-                        let explicit = p.props.has_explicit_style;
+                    } else {
+                        let mut lines = vec![stringify(&p.inlines)];
                         let mut end = idx + 1;
                         let mut rule = p.rule;
-                        if !self.keep_styles() {
-                            while !rule && let Some(BodyItem::Para(next_p)) = merged.get(end) {
-                                if is_blockquote_para(next_p) && !next_p.inlines.is_empty() {
-                                    quote_paras.push(Block::Para(next_p.inlines.clone()));
-                                    rule = next_p.rule;
-                                    end += 1;
-                                } else {
-                                    break;
-                                }
+                        while !rule && let Some(BodyItem::Para(next_p)) = merged.get(end) {
+                            if is_source_code_style(&next_p.style_names) {
+                                lines.push(stringify(&next_p.inlines));
+                                rule = next_p.rule;
+                                end += 1;
+                            } else {
+                                break;
                             }
                         }
-                        let bq = Block::BlockQuote(quote_paras);
-                        if self.keep_styles()
-                            && explicit
-                            && let Some(sn) = style_name
-                            && !is_compact_style_name(&sn)
-                        {
-                            blocks.push(Block::Div(
-                                Attr::new("", vec![], vec![("custom-style".into(), sn)]),
-                                vec![bq],
-                            ));
-                        } else {
-                            blocks.push(bq);
+                        let joined = lines.join("\n");
+                        if !joined.is_empty() || self.empty_paragraphs() {
+                            blocks.push(Block::CodeBlock(Attr::default(), joined));
                         }
                         if rule {
                             blocks.push(Block::HorizontalRule);
                         }
                         blocks.extend(extra);
                         idx = end;
-                        continue;
                     }
+                    continue;
+                }
 
-                    // 10. Regular paragraph (`Compact` -> `Plain`, else `Para`; under `+styles` wrap explicit styles).
+                let effective_inlines = trim_para_edges(p.inlines.clone());
+                if effective_inlines.is_empty() {
                     blocks.extend(extra);
-                    let is_compact = is_compact_style(&p.style_names);
-                    let para = if is_compact {
-                        Block::Plain(p.inlines.clone())
-                    } else {
-                        Block::Para(p.inlines.clone())
-                    };
-                    if self.keep_styles()
-                        && p.props.has_explicit_style
-                        && !is_compact
-                        && let Some(sn) = primary_style_name(&p.style_names)
-                    {
-                        blocks.push(Block::Div(
-                            Attr::new("", vec![], vec![("custom-style".into(), sn.into())]),
-                            vec![para],
-                        ));
-                    } else {
-                        blocks.push(para);
-                    }
                     if p.rule {
                         blocks.push(Block::HorizontalRule);
+                    } else if self.empty_paragraphs() {
+                        blocks.push(Block::Para(Vec::new()));
                     }
                     idx += 1;
+                    continue;
                 }
+
+                if allow_meta && let Some(meta_key) = meta_style_key(&p.style_names) {
+                    blocks.push(Block::Div(
+                        Attr::new(
+                            "",
+                            vec!["__docx_meta".into()],
+                            vec![("key".into(), meta_key.into())],
+                        ),
+                        vec![Block::Para(p.inlines.clone())],
+                    ));
+                    blocks.extend(extra);
+                    idx += 1;
+                    continue;
+                }
+
+                if let Some((level, custom_class)) =
+                    heading_info(&p.style_names, p.props.outline_lvl)
+                {
+                    let classes = custom_class.into_iter().collect();
+                    blocks.push(Block::Header(
+                        level,
+                        Attr::new("", classes, vec![]),
+                        p.inlines.clone(),
+                    ));
+                    blocks.extend(extra);
+                    idx += 1;
+                    continue;
+                }
+
+                if is_def_term_style(&p.style_names) {
+                    let (dl, next_idx) = self.consume_definition_list(&merged, idx);
+                    blocks.push(dl);
+                    idx = next_idx;
+                    continue;
+                }
+
+                if allow_lists && let Some((num_id, ilvl, kind)) = self.para_list_info(p) {
+                    let (list_block, next_idx) = self.consume_list(
+                        &merged,
+                        idx,
+                        &num_id,
+                        ilvl,
+                        kind,
+                        &mut list_counters,
+                        0,
+                    )?;
+                    blocks.push(list_block);
+                    idx = next_idx;
+                    continue;
+                }
+
+                if is_blockquote_para(p) {
+                    let mut quote_paras = vec![Block::Para(p.inlines.clone())];
+                    let style_name = primary_style_name(&p.style_names).map(str::to_owned);
+                    let explicit = p.props.has_explicit_style;
+                    let mut end = idx + 1;
+                    let mut rule = p.rule;
+                    if !self.keep_styles() {
+                        while !rule && let Some(BodyItem::Para(next_p)) = merged.get(end) {
+                            if is_blockquote_para(next_p) && !next_p.inlines.is_empty() {
+                                quote_paras.push(Block::Para(next_p.inlines.clone()));
+                                rule = next_p.rule;
+                                end += 1;
+                            } else {
+                                break;
+                            }
+                        }
+                    }
+                    let bq = Block::BlockQuote(quote_paras);
+                    if self.keep_styles()
+                        && explicit
+                        && let Some(sn) = style_name
+                        && !is_compact_style_name(&sn)
+                    {
+                        blocks.push(Block::Div(
+                            Attr::new("", vec![], vec![("custom-style".into(), sn)]),
+                            vec![bq],
+                        ));
+                    } else {
+                        blocks.push(bq);
+                    }
+                    if rule {
+                        blocks.push(Block::HorizontalRule);
+                    }
+                    blocks.extend(extra);
+                    idx = end;
+                    continue;
+                }
+
+                blocks.extend(extra);
+                let is_compact = is_compact_style(&p.style_names);
+                let para = if is_compact {
+                    Block::Plain(p.inlines.clone())
+                } else {
+                    Block::Para(p.inlines.clone())
+                };
+                if self.keep_styles()
+                    && p.props.has_explicit_style
+                    && !is_compact
+                    && let Some(sn) = primary_style_name(&p.style_names)
+                {
+                    blocks.push(Block::Div(
+                        Attr::new("", vec![], vec![("custom-style".into(), sn.into())]),
+                        vec![para],
+                    ));
+                } else {
+                    blocks.push(para);
+                }
+                if p.rule {
+                    blocks.push(Block::HorizontalRule);
+                }
+                idx += 1;
             }
         }
         Ok(blocks)
@@ -3155,101 +3121,6 @@ fn normalize_inline_list(inlines: Vec<Inline>) -> Vec<Inline> {
     out
 }
 
-fn push_normalized_inline(out: &mut Vec<Inline>, inl: Inline) {
-    // Fast in-place merge for adjacent formatting wrappers to avoid O(n^2) re-normalization.
-    if let Some(prev) = out.last_mut()
-        && let Some(tag_a) = format_tag(prev)
-    {
-        if format_tag(&inl) == Some(tag_a) {
-            if let Some(prev_children) = unwrap_formatted_mut(prev) {
-                for child in into_formatted_children(inl) {
-                    push_normalized_inline(prev_children, child);
-                }
-                return;
-            }
-        } else if let Some(peeled_b) = peel_format_tag(&inl, tag_a)
-            && let Some(prev_children) = unwrap_formatted_mut(prev)
-        {
-            push_normalized_inline(prev_children, peeled_b);
-            return;
-        }
-    }
-    if let Some(prev) = out.last()
-        && let Some(tag_b) = format_tag(&inl)
-        && let Some(peeled_a) = peel_format_tag(prev, tag_b)
-    {
-        out.pop();
-        let mut combined = vec![peeled_a];
-        for child in into_formatted_children(inl) {
-            push_normalized_inline(&mut combined, child);
-        }
-        push_normalized_inline(out, rewrap_formatted(tag_b, combined));
-        return;
-    }
-
-    match (out.last_mut(), inl) {
-        (Some(Inline::Str(prev)), Inline::Str(next)) => prev.push_str(&next),
-        (Some(Inline::Code(a1, s1)), Inline::Code(a2, s2)) if *a1 == a2 => {
-            s1.push_str(&s2);
-        }
-        (_, other) => push_merging_space(out, other),
-    }
-}
-
-fn unwrap_formatted_mut(inl: &mut Inline) -> Option<&mut Vec<Inline>> {
-    match inl {
-        Inline::Emph(v)
-        | Inline::Strong(v)
-        | Inline::Underline(v)
-        | Inline::Strikeout(v)
-        | Inline::SmallCaps(v)
-        | Inline::Superscript(v)
-        | Inline::Subscript(v)
-        | Inline::Span(_, v) => Some(v),
-        _ => None,
-    }
-}
-
-fn into_formatted_children(inl: Inline) -> Vec<Inline> {
-    match inl {
-        Inline::Emph(v)
-        | Inline::Strong(v)
-        | Inline::Underline(v)
-        | Inline::Strikeout(v)
-        | Inline::SmallCaps(v)
-        | Inline::Superscript(v)
-        | Inline::Subscript(v)
-        | Inline::Span(_, v) => v,
-        _ => Vec::new(),
-    }
-}
-
-/// Recursively lifts leading and trailing `Space`s outside formatting wrappers
-/// (keeping spaces inside tracked-change spans untouched).
-fn lift_edge_spaces_out_of_formatting(inlines: Vec<Inline>) -> Vec<Inline> {
-    let mut out = Vec::with_capacity(inlines.len());
-    for inl in inlines {
-        if let Some(tag) = format_tag(&inl) {
-            let inner = lift_edge_spaces_out_of_formatting(unwrap_formatted(&inl).to_vec());
-            let lifted = wrap_moving_spaces(inner, |core| rewrap_formatted(tag, core));
-            for item in lifted {
-                push_merging_space(&mut out, item);
-            }
-        } else if matches!(&inl, Inline::Span(attr, _) if attr.get("custom-style").is_some()) {
-            if let Inline::Span(attr, inner) = inl {
-                let inner = lift_edge_spaces_out_of_formatting(inner);
-                let lifted = wrap_moving_spaces(inner, |core| Inline::Span(attr, core));
-                for item in lifted {
-                    push_merging_space(&mut out, item);
-                }
-            }
-        } else {
-            push_merging_space(&mut out, inl);
-        }
-    }
-    out
-}
-
 #[derive(Clone, Copy, PartialEq, Eq)]
 enum FmtTag {
     Emph,
@@ -3262,38 +3133,113 @@ enum FmtTag {
     Mark,
 }
 
-fn format_tag(inl: &Inline) -> Option<FmtTag> {
-    match inl {
-        Inline::Emph(_) => Some(FmtTag::Emph),
-        Inline::Strong(_) => Some(FmtTag::Strong),
-        Inline::Underline(_) => Some(FmtTag::Underline),
-        Inline::Strikeout(_) => Some(FmtTag::Strikeout),
-        Inline::SmallCaps(_) => Some(FmtTag::SmallCaps),
-        Inline::Superscript(_) => Some(FmtTag::Superscript),
-        Inline::Subscript(_) => Some(FmtTag::Subscript),
-        Inline::Span(attr, _)
-            if attr.id.is_empty()
-                && attr.attributes.is_empty()
-                && attr.classes.as_slice() == ["mark"] =>
-        {
-            Some(FmtTag::Mark)
+macro_rules! formatted_parts {
+    ($inline:expr) => {
+        match $inline {
+            Inline::Emph(v) => Some((FmtTag::Emph, v)),
+            Inline::Strong(v) => Some((FmtTag::Strong, v)),
+            Inline::Underline(v) => Some((FmtTag::Underline, v)),
+            Inline::Strikeout(v) => Some((FmtTag::Strikeout, v)),
+            Inline::SmallCaps(v) => Some((FmtTag::SmallCaps, v)),
+            Inline::Superscript(v) => Some((FmtTag::Superscript, v)),
+            Inline::Subscript(v) => Some((FmtTag::Subscript, v)),
+            Inline::Span(attr, v)
+                if attr.id.is_empty()
+                    && attr.attributes.is_empty()
+                    && attr.classes.as_slice() == ["mark"] =>
+            {
+                Some((FmtTag::Mark, v))
+            }
+            _ => None,
         }
-        _ => None,
+    };
+}
+
+fn push_normalized_inline(out: &mut Vec<Inline>, mut inl: Inline) {
+    // Merge in place to avoid repeated normalization of a growing run.
+    if let Some(prev) = out.last_mut()
+        && let Some((tag_a, children_a)) = formatted_parts!(prev)
+        && let Some((tag_b, children_b)) = formatted_parts!(&mut inl)
+    {
+        if tag_a == tag_b {
+            for child in std::mem::take(children_b) {
+                push_normalized_inline(children_a, child);
+            }
+            return;
+        }
+        if let Some(peeled_b) = peel_format_tag(tag_b, children_b, tag_a) {
+            push_normalized_inline(children_a, peeled_b);
+            return;
+        }
+        if let Some(peeled_a) = peel_format_tag(tag_a, children_a, tag_b) {
+            out.pop();
+            let mut combined = vec![peeled_a];
+            for child in std::mem::take(children_b) {
+                push_normalized_inline(&mut combined, child);
+            }
+            push_normalized_inline(out, rewrap_formatted(tag_b, combined));
+            return;
+        }
+    }
+
+    match (out.last_mut(), inl) {
+        (Some(Inline::Str(prev)), Inline::Str(next)) => prev.push_str(&next),
+        (Some(Inline::Code(a1, s1)), Inline::Code(a2, s2)) if *a1 == a2 => {
+            s1.push_str(&s2);
+        }
+        (_, other) => push_merging_space(out, other),
     }
 }
 
-fn unwrap_formatted(inl: &Inline) -> &[Inline] {
-    match inl {
-        Inline::Emph(v)
-        | Inline::Strong(v)
-        | Inline::Underline(v)
-        | Inline::Strikeout(v)
-        | Inline::SmallCaps(v)
-        | Inline::Superscript(v)
-        | Inline::Subscript(v)
-        | Inline::Span(_, v) => v,
-        _ => &[],
+/// Lifts leading and trailing spaces only through outermost single-child
+/// formatting chains (used at `_GoBack` barriers before subsequent runs merge).
+fn lift_outer_edge_spaces(inlines: Vec<Inline>) -> Vec<Inline> {
+    fn lift_single_chain(mut inl: Inline) -> Vec<Inline> {
+        let Some((tag, children)) = formatted_parts!(&mut inl) else {
+            return vec![inl];
+        };
+        let inner = std::mem::take(children);
+        let unwrapped = match <[Inline; 1]>::try_from(inner) {
+            Ok([only]) => lift_single_chain(only),
+            Err(many) => many,
+        };
+        wrap_moving_spaces(unwrapped, |core| rewrap_formatted(tag, core))
     }
+
+    let mut out = Vec::with_capacity(inlines.len());
+    for inl in inlines {
+        for item in lift_single_chain(inl) {
+            push_merging_space(&mut out, item);
+        }
+    }
+    out
+}
+
+/// Moves leading and trailing spaces outside formatting. Keeps spaces inside
+/// tracked changes.
+fn lift_edge_spaces_out_of_formatting(inlines: Vec<Inline>) -> Vec<Inline> {
+    let mut out = Vec::with_capacity(inlines.len());
+    for mut inl in inlines {
+        let lifted = if let Some((tag, children)) = formatted_parts!(&mut inl) {
+            let inner = lift_edge_spaces_out_of_formatting(std::mem::take(children));
+            wrap_moving_spaces(inner, |core| rewrap_formatted(tag, core))
+        } else {
+            match inl {
+                Inline::Span(attr, inner) if attr.get("custom-style").is_some() => {
+                    let inner = lift_edge_spaces_out_of_formatting(inner);
+                    wrap_moving_spaces(inner, |core| Inline::Span(attr, core))
+                }
+                other => {
+                    push_merging_space(&mut out, other);
+                    continue;
+                }
+            }
+        };
+        for item in lifted {
+            push_merging_space(&mut out, item);
+        }
+    }
+    out
 }
 
 fn rewrap_formatted(tag: FmtTag, inner: Vec<Inline>) -> Inline {
@@ -3309,19 +3255,16 @@ fn rewrap_formatted(tag: FmtTag, inner: Vec<Inline>) -> Inline {
     }
 }
 
-/// If `inl` is a nested single-child chain of formatting wrappers containing
-/// `target`, removes `target` from inside the chain and returns the remaining wrapper.
-fn peel_format_tag(inl: &Inline, target: FmtTag) -> Option<Inline> {
-    let outer = format_tag(inl)?;
-    let children = unwrap_formatted(inl);
-    if children.len() != 1 {
+/// Removes the target tag from a chain of single-child formatting wrappers.
+fn peel_format_tag(outer: FmtTag, children: &[Inline], target: FmtTag) -> Option<Inline> {
+    let [child] = children else {
         return None;
+    };
+    let (tag, inner) = formatted_parts!(child)?;
+    if tag == target {
+        return Some(rewrap_formatted(outer, inner.clone()));
     }
-    let child = &children[0];
-    if format_tag(child) == Some(target) {
-        return Some(rewrap_formatted(outer, unwrap_formatted(child).to_vec()));
-    }
-    let deeper = peel_format_tag(child, target)?;
+    let deeper = peel_format_tag(tag, inner, target)?;
     Some(rewrap_formatted(outer, vec![deeper]))
 }
 
@@ -3637,18 +3580,14 @@ fn apply_identifiers_and_bookmarks(blocks: &mut [Block], options: &ReaderOptions
     let mut id_set = IdentifierSet::new();
     let mut retarget: HashMap<Text, Text> = HashMap::new();
 
-    // 1. Absorb bookmarks inside headings & assign auto-identifiers.
     assign_heading_ids(blocks, options, auto_ids, &mut id_set, &mut retarget);
 
-    // 2. Collapse consecutive empty anchor spans anywhere in the document.
     collapse_adjacent_anchors(blocks, &mut retarget);
 
-    // 3. Apply retargeting (following transitive chains if any).
     if !retarget.is_empty() {
         retarget_links(blocks, &retarget);
     }
 
-    // 4. Collect all referenced internal `#id` targets and prune unreferenced anchor spans.
     let referenced = collect_internal_link_targets(blocks);
     prune_unreferenced_anchors(blocks, &referenced);
 }

@@ -24,6 +24,8 @@ struct Parts<'a> {
     styles: &'a str,
     numbering: &'a str,
     comments: &'a str,
+    footnotes: &'a str,
+    endnotes: &'a str,
 }
 
 fn docx(body: &str, parts: &Parts<'_>) -> Vec<u8> {
@@ -33,6 +35,8 @@ fn docx(body: &str, parts: &Parts<'_>) -> Vec<u8> {
         ("styles", "styles.xml", "styles", parts.styles),
         ("numbering", "numbering.xml", "numbering", parts.numbering),
         ("comments", "comments.xml", "comments", parts.comments),
+        ("footnotes", "footnotes.xml", "footnotes", parts.footnotes),
+        ("endnotes", "endnotes.xml", "endnotes", parts.endnotes),
     ] {
         if !content.is_empty() {
             rels.push_str(&format!(
@@ -113,6 +117,89 @@ fn paragraph(properties: &str, value: &str) -> String {
 
 const BORDER: &str =
     r#"<w:pBdr><w:bottom w:val="single" w:sz="6" w:space="1" w:color="auto"/></w:pBdr>"#;
+
+#[test]
+fn goback_bookmark_preserves_character_style_run_boundary() {
+    let body = r#"<w:p>
+  <w:r><w:rPr><w:rStyle w:val="Italic"/></w:rPr><w:t xml:space="preserve">One </w:t></w:r>
+  <w:bookmarkStart w:id="0" w:name="_GoBack"/>
+  <w:r><w:rPr><w:rStyle w:val="Italic"/><w:b/></w:rPr><w:t>two</w:t></w:r>
+  <w:bookmarkEnd w:id="0"/>
+  <w:r><w:rPr><w:rStyle w:val="Italic"/></w:rPr><w:t>.</w:t></w:r>
+</w:p>"#;
+    let parts = Parts {
+        styles: r#"<w:style w:type="character" w:styleId="Italic"><w:rPr><w:i/></w:rPr></w:style>"#,
+        ..Parts::default()
+    };
+    assert_eq!(
+        read(body, &parts),
+        [Block::Para(vec![
+            Inline::Emph(text("One")),
+            Inline::Space,
+            Inline::Emph(vec![Inline::Strong(text("two")), Inline::Str(".".into())]),
+        ])]
+    );
+}
+
+#[test]
+fn goback_bookmark_drops_empty_para_merges_words_and_preserves_multi_child_strong() {
+    let body = r#"<w:p>
+  <w:bookmarkStart w:id="0" w:name="_GoBack"/>
+  <w:bookmarkEnd w:id="0"/>
+</w:p>
+<w:p>
+  <w:r><w:t>hel</w:t></w:r>
+  <w:bookmarkStart w:id="1" w:name="_GoBack"/>
+  <w:bookmarkEnd w:id="1"/>
+  <w:r><w:t>lo</w:t></w:r>
+</w:p>
+<w:p>
+  <w:r><w:rPr><w:b/></w:rPr><w:t xml:space="preserve">foo </w:t></w:r>
+  <w:r><w:rPr><w:b/><w:i/></w:rPr><w:t xml:space="preserve">are </w:t></w:r>
+  <w:bookmarkStart w:id="2" w:name="_GoBack"/>
+  <w:bookmarkEnd w:id="2"/>
+  <w:r><w:rPr><w:b/></w:rPr><w:t>very</w:t></w:r>
+</w:p>"#;
+    assert_eq!(
+        read(body, &Parts::default()),
+        [
+            para("hello"),
+            Block::Para(vec![Inline::Strong(vec![
+                Inline::Str("foo".into()),
+                Inline::Space,
+                Inline::Emph(text("are")),
+                Inline::Space,
+                Inline::Str("very".into()),
+            ])]),
+        ]
+    );
+}
+
+#[test]
+fn notes_with_the_same_id_expand_until_the_reference_cycles() {
+    let footnotes = r#"<w:footnote w:id="1"><w:p><w:r><w:t>foot</w:t><w:endnoteReference w:id="1"/></w:r></w:p></w:footnote>"#;
+    let endnotes = r#"<w:endnote w:id="1"><w:p><w:r><w:t>end</w:t><w:footnoteReference w:id="1"/></w:r></w:p></w:endnote>"#;
+    let body = r#"<w:p><w:r><w:footnoteReference w:id="1"/><w:endnoteReference w:id="2"/><w:endnoteReference w:id="1"/></w:r></w:p>"#;
+    let note = |word: &str, nested| {
+        Inline::Note(vec![Block::Para(vec![Inline::Str(word.into()), nested])])
+    };
+    let empty = || Inline::Note(Vec::new());
+    assert_eq!(
+        read(
+            body,
+            &Parts {
+                footnotes,
+                endnotes,
+                ..Parts::default()
+            }
+        ),
+        [Block::Para(vec![
+            note("foot", note("end", empty())),
+            empty(),
+            note("end", note("foot", empty())),
+        ])]
+    );
+}
 
 #[test]
 fn run_with_alternate_content_is_its_fallback() {

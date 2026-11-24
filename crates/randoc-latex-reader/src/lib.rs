@@ -916,6 +916,53 @@ mod tests {
     }
 
     #[test]
+    fn a_rule_splits_a_paragraph() {
+        let input = r"\begin{center}A\rule[1pt]{1em}{2pt}B\end{center}";
+        for format in ["latex", "latex+raw_tex"] {
+            let tree = convert(input, format).expect("document");
+            assert!(matches!(tree.blocks.as_slice(), [Block::Div(_, blocks)]
+                if matches!(blocks.as_slice(), [first, Block::HorizontalRule, last]
+                    if *first == para("A")[0] && *last == para("B")[0])));
+        }
+        for malformed in [r"A\rule{x}", r"A\rule{x}{unfinished"] {
+            assert!(convert(malformed, "latex").is_err());
+        }
+    }
+
+    #[test]
+    fn obeylines_converts_breaks_inside_emphasis() {
+        let tree = convert(
+            "\\begin{obeylines}\n\\emph{u\nv}\n\\end{obeylines}",
+            "latex",
+        )
+        .expect("document");
+        assert_eq!(
+            tree.blocks,
+            vec![Block::Para(vec![Inline::Emph(vec![
+                Inline::Str("u".into()),
+                Inline::LineBreak,
+                Inline::Str("v".into()),
+            ])])]
+        );
+    }
+
+    #[test]
+    fn code_is_verbatim_with_literate_haskell() {
+        let input = "\\begin{code}\nx  = y % #\n\\end{code}";
+        for format in ["latex+literate_haskell", "latex+raw_tex+literate_haskell"] {
+            let tree = convert(input, format).expect("document");
+            assert!(
+                matches!(tree.blocks.as_slice(), [Block::CodeBlock(attr, body)]
+                if attr.classes == ["haskell", "literate"] && body == "x  = y % #")
+            );
+        }
+        let plain = convert(input, "latex").expect("document");
+        assert!(matches!(plain.blocks.as_slice(), [Block::Div(_, _)]));
+        let raw = convert(input, "latex+raw_tex").expect("document");
+        assert!(matches!(raw.blocks.as_slice(), [Block::RawBlock(_, _)]));
+    }
+
+    #[test]
     fn document_verbatim_arguments_keep_special_characters() {
         let tree =
             convert(r"\NewDocumentCommand\show{v}{[#1]}\show|a_b% c|.", "latex").expect("document");

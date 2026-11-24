@@ -304,16 +304,16 @@ impl State<'_> {
                 }
             }
             if format == Format::Muse
-                && let Some(tag) = ["example", "verse"].into_iter().find(|tag| {
-                    trim.strip_prefix('<').and_then(|s| s.strip_suffix('>')) == Some(*tag)
-                })
+                && let Some(region) = MuseRegion::from_open_tag(trim)
             {
-                let close = format!("</{tag}>");
-                let (text, end) = collect_delimited(lines, i, "", &close);
+                let close = region.close_tag();
+                let (text, end) = collect_delimited(lines, i, "", close);
                 let text = text.trim_matches('\n');
-                let block = match tag {
-                    "example" => Block::CodeBlock(Attr::default(), strip_shared_margin(text)),
-                    "verse" => Block::LineBlock(
+                let block = match region {
+                    MuseRegion::Example => {
+                        Block::CodeBlock(Attr::default(), strip_shared_margin(text))
+                    }
+                    MuseRegion::Verse => Block::LineBlock(
                         text.lines()
                             .map(|line| {
                                 let text = verse_line(line);
@@ -321,7 +321,6 @@ impl State<'_> {
                             })
                             .collect::<Result<_>>()?,
                     ),
-                    _ => Block::Para(self.inline.parse(text, depth)?),
                 };
                 out.push(block);
                 i = end.unwrap_or(lines.len());
@@ -995,7 +994,9 @@ impl State<'_> {
                     if let Some(spec) = cols.get_mut(col) {
                         if format == Format::T2t && spec.align != align {
                             spec.align = Alignment::AlignDefault;
-                        } else if format == Format::Textile && (align as u8) < (spec.align as u8) {
+                        } else if format == Format::Textile
+                            && textile_alignment_rank(align) < textile_alignment_rank(spec.align)
+                        {
                             spec.align = align;
                         }
                     } else {
@@ -1094,6 +1095,37 @@ fn joined(first: &str, other: &[&str]) -> String {
         other.join("\n")
     } else {
         format!("{first}\n{}", other.join("\n"))
+    }
+}
+
+enum MuseRegion {
+    Example,
+    Verse,
+}
+
+impl MuseRegion {
+    fn from_open_tag(tag: &str) -> Option<Self> {
+        match tag {
+            "<example>" => Some(Self::Example),
+            "<verse>" => Some(Self::Verse),
+            _ => None,
+        }
+    }
+
+    fn close_tag(&self) -> &'static str {
+        match self {
+            Self::Example => "</example>",
+            Self::Verse => "</verse>",
+        }
+    }
+}
+
+fn textile_alignment_rank(align: Alignment) -> u8 {
+    match align {
+        Alignment::AlignLeft => 0,
+        Alignment::AlignRight => 1,
+        Alignment::AlignCenter => 2,
+        Alignment::AlignDefault => 3,
     }
 }
 

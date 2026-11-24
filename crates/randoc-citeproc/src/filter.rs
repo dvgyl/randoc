@@ -519,10 +519,24 @@ fn to_inlines(
 /// A citation of the document and the facts the output step needs.
 struct Collected {
     citation: Citation,
-    in_note: bool,
-    /// The citation is the first inline of the first paragraph of a note.
-    opens_note: bool,
+    note_location: NoteLocation,
     author_in_text: bool,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum NoteLocation {
+    Outside,
+    Inside,
+    Start,
+}
+
+impl NoteLocation {
+    fn without_start(self) -> Self {
+        match self {
+            Self::Outside => Self::Outside,
+            Self::Inside | Self::Start => Self::Inside,
+        }
+    }
 }
 
 /// The citations of the document in document order: the citations of the
@@ -552,8 +566,7 @@ fn collect_citations(doc: &mut Pandoc, terms: &[(String, String)]) -> Vec<Collec
         }
         Visit::Cite {
             inline: Inline::Cite(citations, _),
-            in_note,
-            opens_note,
+            note_location,
         } => {
             let mut citation = to_citation(citations, terms);
             citation.reset_position = std::mem::take(&mut reset);
@@ -562,8 +575,7 @@ fn collect_citations(doc: &mut Pandoc, terms: &[(String, String)]) -> Vec<Collec
             }
             out.push(Collected {
                 citation,
-                in_note,
-                opens_note,
+                note_location,
                 author_in_text: citations
                     .first()
                     .is_some_and(|c| c.mode == CitationMode::AuthorInText),
@@ -576,12 +588,9 @@ fn collect_citations(doc: &mut Pandoc, terms: &[(String, String)]) -> Vec<Collec
 
 /// A step of [`visit_citations`].
 enum Visit<'a> {
-    /// A `Cite`, inside a note or not, and the first inline of the first
-    /// paragraph of a note or not.
     Cite {
         inline: &'a mut Inline,
-        in_note: bool,
-        opens_note: bool,
+        note_location: NoteLocation,
     },
     /// A heading with the class `reset-citation-positions` at the top
     /// level or in a top-level div.
@@ -610,7 +619,7 @@ fn visit_citations(doc: &mut Pandoc, f: Visitor) {
         {
             f(Visit::Reset);
         }
-        visit_block(block, false, f);
+        visit_block(block, NoteLocation::Outside, f);
     };
     for block in &mut doc.blocks {
         match block {
@@ -630,89 +639,92 @@ fn visit_meta(value: &mut MetaValue, f: Visitor) {
     match value {
         MetaValue::MetaMap(map) => map.values_mut().for_each(|v| visit_meta(v, f)),
         MetaValue::MetaList(list) => list.iter_mut().for_each(|v| visit_meta(v, f)),
-        MetaValue::MetaInlines(inlines) => visit_inlines(inlines, false, false, f),
-        MetaValue::MetaBlocks(blocks) => visit_blocks(blocks, false, f),
+        MetaValue::MetaInlines(inlines) => visit_inlines(inlines, NoteLocation::Outside, f),
+        MetaValue::MetaBlocks(blocks) => visit_blocks(blocks, NoteLocation::Outside, f),
         MetaValue::MetaBool(_) | MetaValue::MetaString(_) => {}
     }
 }
 
-fn visit_blocks(blocks: &mut [Block], in_note: bool, f: Visitor) {
+fn visit_blocks(blocks: &mut [Block], note_location: NoteLocation, f: Visitor) {
     for block in blocks {
-        visit_block(block, in_note, f);
+        visit_block(block, note_location, f);
     }
 }
 
-fn visit_rows(rows: &mut [randoc_ast::Row], in_note: bool, f: Visitor) {
+fn visit_rows(rows: &mut [randoc_ast::Row], note_location: NoteLocation, f: Visitor) {
     for row in rows {
         for cell in &mut row.cells {
-            visit_blocks(&mut cell.content, in_note, f);
+            visit_blocks(&mut cell.content, note_location, f);
         }
     }
 }
 
-fn visit_caption(caption: &mut randoc_ast::Caption, in_note: bool, f: Visitor) {
+fn visit_caption(caption: &mut randoc_ast::Caption, note_location: NoteLocation, f: Visitor) {
     if let Some(short) = &mut caption.short {
-        visit_inlines(short, in_note, false, f);
+        visit_inlines(short, note_location.without_start(), f);
     }
-    visit_blocks(&mut caption.long, in_note, f);
+    visit_blocks(&mut caption.long, note_location, f);
 }
 
-fn visit_block(block: &mut Block, in_note: bool, f: Visitor) {
+fn visit_block(block: &mut Block, note_location: NoteLocation, f: Visitor) {
     match block {
         Block::Plain(parts) | Block::Para(parts) | Block::Header(_, _, parts) => {
-            visit_inlines(parts, in_note, false, f);
+            visit_inlines(parts, note_location.without_start(), f);
         }
         Block::LineBlock(lines) => {
             for line in lines {
-                visit_inlines(line, in_note, false, f);
+                visit_inlines(line, note_location.without_start(), f);
             }
         }
-        Block::BlockQuote(parts) | Block::Div(_, parts) => visit_blocks(parts, in_note, f),
+        Block::BlockQuote(parts) | Block::Div(_, parts) => visit_blocks(parts, note_location, f),
         Block::OrderedList(_, items) | Block::BulletList(items) => {
             for item in items {
-                visit_blocks(item, in_note, f);
+                visit_blocks(item, note_location, f);
             }
         }
         Block::DefinitionList(items) => {
             for (term, definitions) in items {
-                visit_inlines(term, in_note, false, f);
+                visit_inlines(term, note_location.without_start(), f);
                 for definition in definitions {
-                    visit_blocks(definition, in_note, f);
+                    visit_blocks(definition, note_location, f);
                 }
             }
         }
         Block::Figure(_, caption, parts) => {
-            visit_caption(caption, in_note, f);
-            visit_blocks(parts, in_note, f);
+            visit_caption(caption, note_location, f);
+            visit_blocks(parts, note_location, f);
         }
         Block::Table(table) => {
-            visit_caption(&mut table.caption, in_note, f);
-            visit_rows(&mut table.head.rows, in_note, f);
+            visit_caption(&mut table.caption, note_location, f);
+            visit_rows(&mut table.head.rows, note_location, f);
             for body in &mut table.bodies {
-                visit_rows(&mut body.head, in_note, f);
-                visit_rows(&mut body.body, in_note, f);
+                visit_rows(&mut body.head, note_location, f);
+                visit_rows(&mut body.body, note_location, f);
             }
-            visit_rows(&mut table.foot.rows, in_note, f);
+            visit_rows(&mut table.foot.rows, note_location, f);
         }
         Block::CodeBlock(..) | Block::RawBlock(..) | Block::HorizontalRule => {}
     }
 }
 
-fn visit_inlines(inlines: &mut [Inline], in_note: bool, opens_note: bool, f: Visitor) {
+fn visit_inlines(inlines: &mut [Inline], note_location: NoteLocation, f: Visitor) {
     for (n, inline) in inlines.iter_mut().enumerate() {
         match inline {
             Inline::Cite(..) => f(Visit::Cite {
                 inline,
-                in_note,
-                opens_note: opens_note && n == 0,
+                note_location: if n == 0 {
+                    note_location
+                } else {
+                    note_location.without_start()
+                },
             }),
             Inline::Note(blocks) => {
                 for (m, block) in blocks.iter_mut().enumerate() {
                     match block {
                         Block::Para(parts) | Block::Plain(parts) if m == 0 => {
-                            visit_inlines(parts, true, true, f);
+                            visit_inlines(parts, NoteLocation::Start, f);
                         }
-                        block => visit_block(block, true, f),
+                        block => visit_block(block, NoteLocation::Inside, f),
                     }
                 }
             }
@@ -726,7 +738,7 @@ fn visit_inlines(inlines: &mut [Inline], in_note: bool, opens_note: bool, f: Vis
             | Inline::Quoted(_, parts)
             | Inline::Link(_, parts, _)
             | Inline::Image(_, parts, _)
-            | Inline::Span(_, parts) => visit_inlines(parts, in_note, false, f),
+            | Inline::Span(_, parts) => visit_inlines(parts, note_location.without_start(), f),
             Inline::Str(_)
             | Inline::Code(..)
             | Inline::Space
@@ -1205,10 +1217,6 @@ fn clean_quotes(mut inlines: Vec<Inline>) -> Vec<Inline> {
     inlines
 }
 
-fn is_note_span(inline: &Inline) -> bool {
-    matches!(inline, Inline::Span(attr, _) if attr.classes == ["csl-note"])
-}
-
 /// The output of a citation in a note style. Outside a note, the note part
 /// becomes a footnote that starts with a capital letter. In a note, a
 /// normal citation goes in parentheses and an author-in-text citation gets
@@ -1222,7 +1230,7 @@ fn note_citation(
     depth: usize,
 ) -> Result<Vec<Inline>> {
     let mut out = Vec::with_capacity(inlines.len() + 2);
-    if cite.in_note {
+    if cite.note_location != NoteLocation::Outside {
         if cite.author_in_text {
             for inline in inlines {
                 match inline {
@@ -1242,7 +1250,7 @@ fn note_citation(
             }
             return Ok(remove_final_period(out));
         }
-        if cite.opens_note {
+        if cite.note_location == NoteLocation::Start {
             return Ok(inlines
                 .into_iter()
                 .map(|inline| match inline {
@@ -1266,20 +1274,18 @@ fn note_citation(
         return Ok(out);
     }
     for inline in inlines {
-        if is_note_span(&inline) {
-            let Inline::Span(_, content) = inline else {
-                continue;
-            };
-            let content = crate::case_transform::add_text_case(
-                lang,
-                TextCase::CapitalizeFirst,
-                content,
-                depth,
-            )
-            .map_err(|_| Error::App("the citations are nested too deeply".into()))?;
-            out.push(Inline::Note(vec![Block::Para(content)]));
-        } else {
-            out.push(inline);
+        match inline {
+            Inline::Span(attr, content) if attr.classes == ["csl-note"] => {
+                let content = crate::case_transform::add_text_case(
+                    lang,
+                    TextCase::CapitalizeFirst,
+                    content,
+                    depth,
+                )
+                .map_err(|_| Error::App("the citations are nested too deeply".into()))?;
+                out.push(Inline::Note(vec![Block::Para(content)]));
+            }
+            other => out.push(other),
         }
     }
     Ok(out)
@@ -1600,8 +1606,7 @@ mod tests {
     fn author_in_text_in_a_note_uses_a_comma_between_nonempty_parts() {
         let cite = Collected {
             citation: Citation::default(),
-            in_note: true,
-            opens_note: false,
+            note_location: NoteLocation::Inside,
             author_in_text: true,
         };
         let note = |inlines| Inline::Span(Attr::new("", vec!["csl-note".into()], vec![]), inlines);

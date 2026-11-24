@@ -739,7 +739,7 @@ impl Engine<'_> {
                 }
             }
         }
-        if let Some(lang) = eval::language_of(reference) {
+        if let Some(lang) = eval::reference_lang(reference) {
             eval::add_language(&mut xs, &lang);
         }
         Ok(xs)

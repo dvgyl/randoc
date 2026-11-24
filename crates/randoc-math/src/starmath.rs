@@ -12,17 +12,32 @@ pub(crate) fn render(items: &[Exp], display: bool) -> Result<String, Unsupported
     list(items, display)
 }
 
+enum ListItem<'a> {
+    Fence { left: bool, text: &'a str },
+    Infix(&'a str),
+    Ordinary,
+}
+
 fn list(items: &[Exp], display: bool) -> Result<String, Unsupported> {
     let fences = paired_fences(items);
     let mut out = String::new();
     let mut after = false;
     for (index, item) in items.iter().enumerate() {
-        let (value, before, next) = if let Some((left, text)) = fences[index] {
-            let direction = if left { "left" } else { "right" };
-            (format!("{direction} {}", delimiter(text, left)), true, true)
-        } else {
-            let (before, next) = spacing(item);
-            (expression(item, display)?, before, next)
+        let kind = match (fences[index], item) {
+            (Some((left, text)), _) => ListItem::Fence { left, text },
+            (None, Exp::Sym(class, text)) if infix(*class, text) => ListItem::Infix(text),
+            _ => ListItem::Ordinary,
+        };
+        let (value, before, next) = match kind {
+            ListItem::Fence { left, text } => {
+                let direction = if left { "left" } else { "right" };
+                (format!("{direction} {}", delimiter(text, left)), true, true)
+            }
+            ListItem::Infix(_) => (expression(item, display)?, true, true),
+            ListItem::Ordinary => {
+                let (before, next) = spacing(item);
+                (expression(item, display)?, before, next)
+            }
         };
         if value.is_empty() {
             if matches!(item, Exp::Space(space) if !matches!(space.width, "-0.167em" | "0.333em"))
@@ -39,12 +54,10 @@ fn list(items: &[Exp], display: bool) -> Result<String, Unsupported> {
         {
             out.push(' ');
         }
-        if let Exp::Sym(class, text) = item
-            && infix(*class, text)
-            && fences[index].is_none()
+        if let ListItem::Infix(text) = kind
             && !(items.len() == 1 && text == "*")
         {
-            if out.is_empty() && !matches!(text.as_str(), "+" | "−") {
+            if out.is_empty() && !matches!(text, "+" | "−") {
                 out.push_str("{} ");
             }
             out.push_str(&value);
@@ -95,7 +108,7 @@ fn infix(class: Class, text: &str) -> bool {
 
 fn spacing(item: &Exp) -> (bool, bool) {
     match item {
-        Exp::Sym(class, text) if infix(*class, text) || text == "/" => (true, true),
+        Exp::Sym(_, text) if text == "/" => (true, true),
         Exp::Sym(Class::Punct, _) => (false, true),
         Exp::Sym(Class::Func | Class::FuncLimits, _) => (true, true),
         Exp::Sym(_, text) if greek(text).is_some() => (false, true),

@@ -21,6 +21,44 @@
 use super::emoji::replace_emoji_with_aliases;
 use randoc_ast::{Attr, Block, Caption, Format, Inline, MetaValue, QuoteType, Row, Text};
 
+/// Returns the value of a Roman numeral in one case, or `None` when `s` does
+/// not match `M* CM? D? CD? C* XC? L? XL? X* IX? V? IV? I*` (oracle probes:
+/// `IIIII`, `IVI`, `XCXX` and `LXL` are numerals, `ID`, `IC`, `VV` and `IIV`
+/// are not).
+pub fn parse_roman_numeral(s: &str) -> Option<u64> {
+    const PARTS: [(&[u8], u64, bool); 13] = [
+        (b"M", 1000, true),
+        (b"CM", 900, false),
+        (b"D", 500, false),
+        (b"CD", 400, false),
+        (b"C", 100, true),
+        (b"XC", 90, false),
+        (b"L", 50, false),
+        (b"XL", 40, false),
+        (b"X", 10, true),
+        (b"IX", 9, false),
+        (b"V", 5, false),
+        (b"IV", 4, false),
+        (b"I", 1, true),
+    ];
+    let upper = s.to_ascii_uppercase();
+    if s.is_empty() || (s != upper && s != s.to_ascii_lowercase()) {
+        return None;
+    }
+    let mut rest = upper.as_bytes();
+    let mut total: u64 = 0;
+    for (part, value, repeats) in PARTS {
+        while let Some(after) = rest.strip_prefix(part) {
+            rest = after;
+            total = total.saturating_add(value);
+            if !repeats {
+                break;
+            }
+        }
+    }
+    rest.is_empty().then_some(total)
+}
+
 enum Node<'a> {
     Inline(&'a Inline),
     Block(&'a Block),

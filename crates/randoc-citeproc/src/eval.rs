@@ -528,8 +528,7 @@ pub(crate) fn citation_label(reference: &Reference<Vec<Inline>>) -> String {
     name_part + &date_part
 }
 
-/// `stateReferenceLang`: the `language` variable of the reference as a tag.
-fn reference_lang(reference: &Reference<Vec<Inline>>) -> Option<Lang> {
+pub(crate) fn reference_lang(reference: &Reference<Vec<Inline>>) -> Option<Lang> {
     let text = val_to_text(
         reference
             .variables
@@ -636,7 +635,6 @@ pub(crate) fn eval_elements(
         label: context.label,
         positions: context.positions,
         var_count: VarCount::default(),
-        in_substitute: false,
         substitute_names_form: None,
         name_format: context.name_format,
         substituted: BTreeSet::new(),
@@ -652,12 +650,6 @@ pub(crate) fn eval_elements(
     Ok((xs, eval.used))
 }
 
-/// `stateReferenceLang` of a reference.
-pub(crate) fn language_of(reference: &Reference<Vec<Inline>>) -> Option<Lang> {
-    reference_lang(reference)
-}
-
-/// `addLangToFormatting` on each formatted part of the outputs.
 pub(crate) fn add_language(outputs: &mut [Output], lang: &Lang) {
     for x in outputs {
         add_lang(x, lang);
@@ -670,32 +662,22 @@ struct Eval<'a, 'w> {
     locale: &'a Locale,
     reference: &'a Reference<Vec<Inline>>,
     reference_lang: Option<Lang>,
-    /// `contextLocator`.
     locator: Option<&'a str>,
-    /// `contextLabel`.
     label: Option<&'a str>,
-    /// `contextPosition`.
     positions: Vec<Position>,
     var_count: VarCount,
-    /// `contextInSubstitute`.
-    in_substitute: bool,
-    /// `contextSubstituteNamesForm`: the options of the `names` element
-    /// whose `substitute` runs.
+    /// The name options of the active substitution.
     substitute_names_form: Option<NamesFormat>,
     /// `contextNameFormat`: the name options of the layout and the style.
     name_format: NameFormat,
     /// The variables that a `substitute` element has used.
     substituted: BTreeSet<reference::Variable>,
     warnings: &'w mut BTreeSet<String>,
-    /// `contextInSortKey`.
     in_sort_key: bool,
-    /// `contextInBibliography`.
     in_bibliography: bool,
     /// `referenceDisambiguation` of the reference.
     disamb: Option<&'a DisambiguationData>,
-    /// `contextAbbreviations`.
     abbreviations: Option<&'a crate::abbreviations::Abbreviations>,
-    /// `stateUsedYearSuffix`.
     used_year_suffix: bool,
     used: Used,
 }
@@ -835,20 +817,18 @@ impl<'a> Eval<'a, '_> {
 
     /// `lookupVariable` on the reference of the state.
     fn find(&self, name: &str) -> Option<Found> {
-        if !self.substituted.is_empty()
-            && !same(name, "id")
-            && !same(name, "type")
-            && self.substituted.contains(&reference::Variable::new(name))
+        let variable = reference::Variable::new(name);
+        if !matches!(variable.folded_name(), "id" | "type") && self.substituted.contains(&variable)
         {
             return Some(Found::Substituted);
         }
-        lookup_variable(self.reference, name).map(Found::Value)
+        lookup_reference_variable(self.reference, &variable).map(Found::Value)
     }
 
     /// `deleteSubstitutedVariables`: inside `substitute`, a variable that
     /// gave output is not used again.
     fn delete_substituted(&mut self, name: &str) {
-        if self.in_substitute {
+        if self.substitute_names_form.is_some() {
             self.substituted.insert(reference::Variable::new(name));
         }
     }
@@ -904,22 +884,7 @@ impl<'a> Eval<'a, '_> {
         depth: usize,
     ) -> Result<Output, EvalError> {
         let name = variable.as_str();
-        // The special variables compare without case (Codex citeproc-R3b-02).
-        let special = [
-            "id",
-            "type",
-            "locator",
-            "year-suffix",
-            "citation-number",
-            "citation-label",
-            "doi",
-            "pmcid",
-            "pmid",
-            "url",
-        ]
-        .into_iter()
-        .find(|key| same(name, key))
-        .unwrap_or("");
+        let special = variable.folded_name();
         Ok(match special {
             "id" => {
                 self.update_var_count(1, 1);
@@ -1031,16 +996,16 @@ impl<'a> Eval<'a, '_> {
                     }
                 }
                 let result = match value {
-                    Some(Val::Text(x)) if same(name, "page") => self.page_range(&x, depth)?,
+                    Some(Val::Text(x)) if special == "page" => self.page_range(&x, depth)?,
                     Some(Val::Text(x)) => Output::Literal(output::from_text(&x)),
-                    Some(Val::Fancy(x)) if same(name, "page") => {
+                    Some(Val::Fancy(x)) if special == "page" => {
                         self.page_range(&output::stringify(&x), depth)?
                     }
                     Some(Val::Fancy(x)) => Output::Literal(x),
                     Some(Val::Num(n)) => Output::Literal(output::from_text(&n.to_string())),
                     _ => Output::Null,
                 };
-                if same(name, "title") && result != Output::Null {
+                if special == "title" && result != Output::Null {
                     self.used.title = true;
                     Output::Tagged(Tag::Title, Box::new(result))
                 } else {
@@ -1549,14 +1514,12 @@ impl<'a> Eval<'a, '_> {
             contributions.push((name, self.ask_variable(asked)));
         }
         if contributions.iter().all(|(_, value)| value.is_none()) {
-            if substitute.is_empty() || self.in_substitute {
+            if substitute.is_empty() || self.substitute_names_form.is_some() {
                 return Ok(Output::Null);
             }
-            let outer_in = std::mem::replace(&mut self.in_substitute, true);
-            let outer_form = self.substitute_names_form.replace(names_format.clone());
+            self.substitute_names_form = Some(names_format.clone());
             let found = self.substitute(substitute, depth);
-            self.in_substitute = outer_in;
-            self.substitute_names_form = outer_form;
+            self.substitute_names_form = None;
             let found = found?;
             return Ok(match found {
                 Some(found @ Output::Tagged(Tag::Names { .. }, _)) => {
@@ -2450,19 +2413,19 @@ pub(crate) fn lookup_variable(
     reference: &Reference<Vec<Inline>>,
     name: &str,
 ) -> Option<Val<Vec<Inline>>> {
-    match name {
-        _ if same(name, "id") => {
-            (!reference.id.is_empty()).then(|| Val::Text(reference.id.clone()))
-        }
-        _ if same(name, "type") => {
-            (!reference.kind.is_empty()).then(|| Val::Text(reference.kind.clone()))
-        }
+    lookup_reference_variable(reference, &reference::Variable::new(name))
+}
+
+fn lookup_reference_variable(
+    reference: &Reference<Vec<Inline>>,
+    variable: &reference::Variable,
+) -> Option<Val<Vec<Inline>>> {
+    match variable.folded_name() {
+        "id" => (!reference.id.is_empty()).then(|| Val::Text(reference.id.clone())),
+        "type" => (!reference.kind.is_empty()).then(|| Val::Text(reference.kind.clone())),
         _ => {
-            let found = reference
-                .variables
-                .get(&reference::Variable::new(name))
-                .cloned();
-            if !same(name, "page-first") || found.is_some() {
+            let found = reference.variables.get(variable).cloned();
+            if variable.folded_name() != "page-first" || found.is_some() {
                 return found;
             }
             let digits = |text: &str| -> Option<Val<Vec<Inline>>> {

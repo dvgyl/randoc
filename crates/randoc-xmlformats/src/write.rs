@@ -26,6 +26,24 @@ use randoc_templates::Val;
 
 use crate::{Dialect, limit_error, validate::validate, xml_error};
 
+impl Dialect {
+    fn id_attribute(self) -> &'static str {
+        match self {
+            Self::DocBook5 | Self::Tei => "xml:id",
+            _ => "id",
+        }
+    }
+
+    fn inline_code(self) -> (&'static str, &'static str) {
+        match self {
+            Self::DocBook4 | Self::DocBook5 => ("literal", ""),
+            Self::Archiving | Self::Publishing | Self::ArticleAuthoring => ("monospace", ""),
+            Self::Fb2 => ("code", ""),
+            Self::Tei => ("seg", " type=\"code\""),
+        }
+    }
+}
+
 pub(crate) struct XmlWriter(pub(crate) Dialect);
 
 impl TextWriter for XmlWriter {
@@ -250,12 +268,7 @@ impl Write<'_> {
         if id.is_empty() {
             return String::new();
         }
-        let key = if matches!(self.dialect, Dialect::DocBook5 | Dialect::Tei) {
-            "xml:id"
-        } else {
-            "id"
-        };
-        self.attr(key, &self.prefixed_id(id))
+        self.attr(self.dialect.id_attribute(), &self.prefixed_id(id))
     }
 
     fn prefixed_id(&self, id: &str) -> String {
@@ -834,23 +847,8 @@ impl Write<'_> {
                 });
             }
             Inline::Code(_, value) => {
-                return Ok(tagged(
-                    if self.dialect.docbook() {
-                        "literal"
-                    } else if self.dialect.jats() {
-                        "monospace"
-                    } else if self.fb() {
-                        "code"
-                    } else {
-                        "seg"
-                    },
-                    if self.dialect == Dialect::Tei {
-                        " type=\"code\""
-                    } else {
-                        ""
-                    },
-                    self.esc(value),
-                ));
+                let (tag, attrs) = self.dialect.inline_code();
+                return Ok(tagged(tag, attrs, self.esc(value)));
             }
             Inline::Math(kind, value) => return self.math(*kind, value),
             Inline::Link(a, label, target) => return self.link(a, label, target),

@@ -6,9 +6,7 @@
 
 use randoc_core::{Context, FormatSpec};
 
-use crate::parse::{
-    BASE_ROUNDS, BLOCK_ENVIRONMENTS, INLINE_ENVIRONMENTS, Parser, ROUNDS_PER_TOKEN, Stop,
-};
+use crate::parse::{BASE_ROUNDS, ENVIRONMENTS, Parser, ROUNDS_PER_TOKEN, Stop};
 
 const OPENERS: &[&str] = &[
     "{",
@@ -123,7 +121,7 @@ const FORMATS: &[&str] = &["latex+raw_tex", "latex-latex_macros-smart"];
 
 fn openers() -> Vec<String> {
     let mut openers: Vec<String> = OPENERS.iter().map(|&open| open.to_owned()).collect();
-    for name in BLOCK_ENVIRONMENTS.iter().chain(INLINE_ENVIRONMENTS) {
+    for (name, _) in ENVIRONMENTS {
         openers.push(format!("\\begin{{{name}}}"));
     }
     openers

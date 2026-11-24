@@ -1,6 +1,7 @@
 //! The table parser of the Markdown reader: simple, multiline, grid and pipe tables.
 
 use crate::block::SPACE;
+use randoc_core::{Extension, Extensions};
 use std::collections::BTreeSet;
 
 use randoc_ast::{
@@ -18,25 +19,27 @@ pub(crate) trait CellParser {
     fn attributes(&mut self, text: &str) -> Option<Attr>;
 }
 
-/// The table extensions that are on, and the column count for relative widths.
 pub(crate) struct TableOptions {
-    /// The `simple_tables` extension.
-    pub simple: bool,
-    /// The `raw_html` extension.
-    pub raw_html: bool,
-    /// The `multiline_tables` extension.
-    pub multiline: bool,
-    /// The `grid_tables` extension.
-    pub grid: bool,
-    /// The `pipe_tables` extension.
-    pub pipe: bool,
-    /// The `table_captions` extension.
-    pub captions: bool,
-    /// The `table_attributes` extension.
-    pub attributes: bool,
-    /// `ReaderOptions::columns`, 72 by default.
+    pub extensions: Extensions,
     pub columns: usize,
 }
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum TableForm {
+    Grid,
+    MultilineHeader,
+    Simple,
+    MultilineHeadless,
+    Pipe,
+}
+
+const TABLE_FORMS: [(TableForm, Extension); 5] = [
+    (TableForm::Grid, Extension::GridTables),
+    (TableForm::MultilineHeader, Extension::MultilineTables),
+    (TableForm::Simple, Extension::SimpleTables),
+    (TableForm::MultilineHeadless, Extension::MultilineTables),
+    (TableForm::Pipe, Extension::PipeTables),
+];
 
 /// Tries to parse a table at the start of `lines`.
 /// `lines` are the remaining lines of the current block container, which the parse reads in place. Each line has no newline at the end; tabs are already expanded to spaces.
@@ -47,11 +50,16 @@ pub(crate) fn parse_table<L: AsRef<str>>(
     options: &TableOptions,
     parser: &mut dyn CellParser,
 ) -> Option<(Block, usize)> {
+    let mut forms = TABLE_FORMS
+        .into_iter()
+        .filter_map(|(form, extension)| options.extensions.contains(extension).then_some(form))
+        .peekable();
+    forms.peek()?;
+    let lines = table_candidate(lines)?;
+    let captions = options.extensions.contains(Extension::TableCaptions);
     let mut pos = 0;
     let mut caption_text = None;
-    if options.captions
-        && let Some((text, used)) = caption_at(lines)
-    {
+    if captions && let Some((text, used)) = caption_at(lines) {
         let after = used + count_blank(rest(lines, used));
         if after == used {
             return None;
@@ -59,11 +67,21 @@ pub(crate) fn parse_table<L: AsRef<str>>(
         caption_text = Some(text);
         pos = after;
     }
-    let (parts, used, grid) = table_parts(rest(lines, pos), options, parser)?;
+    let body = rest(lines, pos);
+    let (form, (parts, used)) = forms.find_map(|form| {
+        let found = match form {
+            TableForm::Grid => grid_table(body, options, parser),
+            TableForm::MultilineHeader => multiline_table(body, options, parser, false),
+            TableForm::Simple => simple_table(body, parser),
+            TableForm::MultilineHeadless => multiline_table(body, options, parser, true),
+            TableForm::Pipe => pipe_table(body, options, parser),
+        };
+        found.map(|parts| (form, parts))
+    })?;
     pos += used;
     pos += count_blank(rest(lines, pos));
     if caption_text.is_none()
-        && options.captions
+        && captions
         && let Some((text, used)) = caption_at(rest(lines, pos))
     {
         caption_text = Some(text);
@@ -71,7 +89,7 @@ pub(crate) fn parse_table<L: AsRef<str>>(
         pos += count_blank(rest(lines, pos));
     }
     let (mut attr, caption) = build_caption(caption_text.as_deref(), options, parser);
-    if grid {
+    if form == TableForm::Grid {
         attr.attributes.push((GRID_MARK.into(), String::new()));
     }
     let empty_head = parts
@@ -117,39 +135,35 @@ struct Parts {
 /// so an image alone in it is a figure; the resolve step removes the mark.
 pub(crate) const GRID_MARK: &str = "\u{0}grid";
 
-/// Tries each table kind in the order that gives the same choice as Pandoc.
-/// The flag tells whether the table is a grid table.
-fn table_parts<L: AsRef<str>>(
-    lines: &[L],
-    options: &TableOptions,
-    parser: &mut dyn CellParser,
-) -> Option<(Parts, usize, bool)> {
-    if options.grid
-        && let Some((parts, used)) = grid_table(lines, options, parser)
+fn table_candidate<L: AsRef<str>>(lines: &[L]) -> Option<&[L]> {
+    let is_dashes = |line: &L| {
+        let text = line.as_ref().trim_matches(SPACE);
+        !text.is_empty() && text.chars().all(|c| matches!(c, '-' | ' ' | ':'))
+    };
+    let first = lines.first()?;
+    let text = first.as_ref();
+    let trimmed = text.trim_start_matches(SPACE);
+    let dash_start = is_dashes(first);
+    let caption_first = caption_prefix(trimmed).is_some();
+    if !(dash_start
+        || text.contains('|')
+        || trimmed.starts_with('+')
+        || caption_first
+        || lines.get(1).is_some_and(is_dashes))
     {
-        return Some((parts, used, true));
+        return None;
     }
-    if options.multiline
-        && let Some(found) = multiline_table(lines, options, parser, false)
-    {
-        return Some((found.0, found.1, false));
+    if dash_start {
+        return Some(lines);
     }
-    if options.simple
-        && let Some(found) = simple_table(lines, parser)
-    {
-        return Some((found.0, found.1, false));
+    let paragraph = |line: &&L| !is_blank(line.as_ref());
+    let end = lines.iter().take_while(paragraph).count();
+    let next = end + count_blank(rest(lines, end));
+    if caption_first && lines.get(next).is_some_and(is_dashes) {
+        return Some(lines);
     }
-    if options.multiline
-        && let Some(found) = multiline_table(lines, options, parser, true)
-    {
-        return Some((found.0, found.1, false));
-    }
-    if options.pipe
-        && let Some(found) = pipe_table(lines, options, parser)
-    {
-        return Some((found.0, found.1, false));
-    }
-    None
+    let end = next + rest(lines, next).iter().take_while(paragraph).count();
+    lines.get(..(end + 1).min(lines.len()))
 }
 
 /// Returns the lines from `start`, or no lines when `start` is past the end.
@@ -185,10 +199,7 @@ fn caption_at<L: AsRef<str>>(lines: &[L]) -> Option<(String, usize)> {
     if body.starts_with(":::") {
         return None;
     }
-    let text = body
-        .strip_prefix("Table:")
-        .or_else(|| body.strip_prefix("table:"))
-        .or_else(|| body.strip_prefix(':'))?;
+    let text = caption_prefix(body)?;
     // Spaces at the end of a line stay: two of them make a line break.
     let mut parts = vec![text.trim_start_matches(SPACE)];
     let mut used = 1;
@@ -203,6 +214,12 @@ fn caption_at<L: AsRef<str>>(lines: &[L]) -> Option<(String, usize)> {
     Some((parts.join("\n").trim_matches(SPACE).to_string(), used))
 }
 
+fn caption_prefix(text: &str) -> Option<&str> {
+    text.strip_prefix("Table:")
+        .or_else(|| text.strip_prefix("table:"))
+        .or_else(|| text.strip_prefix(':'))
+}
+
 /// Builds the table attributes and the caption from the caption text.
 fn build_caption(
     text: Option<&str>,
@@ -212,7 +229,7 @@ fn build_caption(
     let Some(text) = text else {
         return (Attr::default(), Caption::default());
     };
-    let (text, attr) = if options.attributes {
+    let (text, attr) = if options.extensions.contains(Extension::TableAttributes) {
         split_attributes(text, parser)
     } else {
         (text, Attr::default())
@@ -439,7 +456,7 @@ fn simple_table<L: AsRef<str>>(lines: &[L], parser: &mut dyn CellParser) -> Opti
     let (header, columns, mut pos) = match dashed_line(first) {
         Some(columns) => (None, columns, 1),
         None => {
-            if is_blank(first) || indent(first) > 3 {
+            if is_blank(first) {
                 return None;
             }
             (Some(first), dashed_line(lines.get(1)?.as_ref())?, 2)
@@ -554,20 +571,18 @@ fn multiline_table<L: AsRef<str>>(
     if !current.is_empty() {
         rows.push(current);
     }
-    if rows.is_empty() {
-        return None;
-    }
+    let first_row = rows.first()?;
     let align_lines = if headless {
-        rows.first().cloned().unwrap_or_default()
+        first_row.get(..1)?
     } else {
-        header_lines.clone()
+        &header_lines
     };
     let widths = multiline_widths(
         lines.first().map_or(0, |l| indent(l.as_ref())),
         &columns,
         options,
     );
-    let col_specs = alignments(&align_lines, &columns)
+    let col_specs = alignments(align_lines, &columns)
         .into_iter()
         .zip(widths)
         .map(|(align, width)| ColSpec {
@@ -745,7 +760,7 @@ fn pipe_table<L: AsRef<str>>(
     if indent(header_line) > 3 {
         return None;
     }
-    let header = split_pipes(header_line, options.raw_html)?;
+    let header = split_pipes(header_line, options.extensions.contains(Extension::RawHtml))?;
     let separator_line = lines.get(1)?.as_ref();
     let separator = pipe_separator(separator_line)?;
     let mut rows: Vec<Vec<String>> = Vec::new();
@@ -758,7 +773,7 @@ fn pipe_table<L: AsRef<str>>(
         }
         let mut end = pos;
         let mut joined = String::new();
-        if options.raw_html
+        if options.extensions.contains(Extension::RawHtml)
             && !scanned_pi_end
             && let Some((_, tail)) = line.rsplit_once("<?")
             && tail.starts_with(|ch: char| ch.is_ascii_alphabetic())
@@ -784,7 +799,7 @@ fn pipe_table<L: AsRef<str>>(
             scanned_pi_end = end == pos;
         }
         let row = if joined.is_empty() { line } else { &joined };
-        let Some(cells) = split_pipes(row, options.raw_html) else {
+        let Some(cells) = split_pipes(row, options.extensions.contains(Extension::RawHtml)) else {
             break;
         };
         rows.push(cells);
@@ -828,6 +843,7 @@ const WIDE_FILL: char = '\0';
 struct Grid {
     /// The lines of the table, with the table indentation removed.
     rows: Vec<Vec<char>>,
+    zero_width: Vec<Vec<(usize, char)>>,
     /// For each line, true when `=` and `:` count as `-` in the line: the top line and each `=` separator line.
     rules: Vec<bool>,
     /// For each display column, the sorted lines where the column holds a character other than `|`.
@@ -860,7 +876,24 @@ struct Trace {
 
 impl Grid {
     /// Builds the grid and its indexes from the lines of display columns.
-    fn new(rows: Vec<Vec<char>>, rules: Vec<bool>) -> Grid {
+    fn new(texts: &[String], rules: Vec<bool>) -> Grid {
+        let (rows, zero_width): (Vec<_>, Vec<_>) = texts
+            .iter()
+            .map(|text| {
+                let mut columns = Vec::new();
+                let mut zero_width = Vec::new();
+                for c in text.chars() {
+                    let width = char_width(c);
+                    if width == 0 {
+                        zero_width.push((columns.len(), c));
+                    } else {
+                        columns.push(c);
+                        columns.extend(std::iter::repeat_n(WIDE_FILL, width - 1));
+                    }
+                }
+                (columns, zero_width)
+            })
+            .unzip();
         let outer = rows
             .iter()
             .filter(|row| row.first() == Some(&'+'))
@@ -880,6 +913,7 @@ impl Grid {
         let width = rows.iter().map(Vec::len).max().unwrap_or(0);
         let mut grid = Grid {
             rows,
+            zero_width,
             rules,
             marks: vec![Vec::new(); width],
             verticals: vec![Vec::new(); width],
@@ -1028,9 +1062,28 @@ impl Grid {
                 } else {
                     cell.right
                 };
-                let inside = row.get(cell.left + 1..right.min(row.len())).unwrap_or(&[]);
+                let start = cell.left + 1;
+                let end = right.min(row.len());
+                let inside = row.get(start..end).unwrap_or(&[]);
                 crate::step(inside.len() + 1);
-                let text: String = inside.iter().filter(|c| **c != WIDE_FILL).collect();
+                let zero_width = self.zero_width.get(y).map_or(&[][..], Vec::as_slice);
+                let before = zero_width.partition_point(|&(column, _)| column < start);
+                let mut zero_width = zero_width.iter().skip(before).peekable();
+                let mut text = String::new();
+                for (column, &c) in (start..).zip(inside) {
+                    while let Some(&&(at, c)) = zero_width.peek()
+                        && at == column
+                    {
+                        text.push(c);
+                        zero_width.next();
+                    }
+                    if c != WIDE_FILL {
+                        text.push(c);
+                    }
+                }
+                for &(_, c) in zero_width.take_while(|&&(column, _)| column <= end) {
+                    text.push(c);
+                }
                 text.trim_end_matches(SPACE).to_string()
             })
             .collect();
@@ -1129,20 +1182,7 @@ fn grid_table<L: AsRef<str>>(
     }
     let texts = texts.get(..=last_border)?;
     let grid = Grid::new(
-        texts
-            .iter()
-            .map(|text| {
-                let mut row = Vec::new();
-                for c in text.chars() {
-                    row.push(c);
-                    row.extend(std::iter::repeat_n(
-                        WIDE_FILL,
-                        char_width(c).saturating_sub(1),
-                    ));
-                }
-                row
-            })
-            .collect(),
+        texts,
         texts
             .iter()
             .enumerate()
@@ -1412,13 +1452,15 @@ mod tests {
 
     fn options() -> TableOptions {
         TableOptions {
-            simple: true,
-            raw_html: true,
-            multiline: true,
-            grid: true,
-            pipe: true,
-            captions: true,
-            attributes: true,
+            extensions: Extensions::from_list(&[
+                Extension::SimpleTables,
+                Extension::RawHtml,
+                Extension::MultilineTables,
+                Extension::GridTables,
+                Extension::PipeTables,
+                Extension::TableCaptions,
+                Extension::TableAttributes,
+            ]),
             columns: 72,
         }
     }
@@ -2593,34 +2635,26 @@ table: lower"#,
     #[test]
     fn extensions_turn_kinds_off() {
         let pipe = ["| a |", "|---|", "| 1 |"];
-        let off = TableOptions {
-            pipe: false,
-            ..options()
-        };
+        let mut off = options();
+        off.extensions.disable(Extension::PipeTables);
         assert!(parse_table(&pipe, &off, &mut WordParser).is_none());
         let grid = ["+---+", "| a |", "+---+"];
-        let off = TableOptions {
-            grid: false,
-            ..options()
-        };
+        let mut off = options();
+        off.extensions.disable(Extension::GridTables);
         assert!(parse_table(&grid, &off, &mut WordParser).is_none());
     }
 
     #[test]
     fn caption_extensions() {
         let lines = ["| a |", "|---|", "| 1 |", "", ": Caption {#tbl}"];
-        let no_captions = TableOptions {
-            captions: false,
-            ..options()
-        };
+        let mut no_captions = options();
+        no_captions.extensions.disable(Extension::TableCaptions);
         let (block, used) = parse_table(&lines, &no_captions, &mut WordParser)
             .unwrap_or((Block::HorizontalRule, 0));
         assert_eq!(used, 4);
         assert!(summary(&block).ends_with("cap=[] attr=[]"));
-        let no_attributes = TableOptions {
-            attributes: false,
-            ..options()
-        };
+        let mut no_attributes = options();
+        no_attributes.extensions.disable(Extension::TableAttributes);
         let (block, used) = parse_table(&lines, &no_attributes, &mut WordParser)
             .unwrap_or((Block::HorizontalRule, 0));
         assert_eq!(used, 5);

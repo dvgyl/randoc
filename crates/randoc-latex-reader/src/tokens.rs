@@ -7,21 +7,12 @@ use std::collections::HashMap;
 
 use randoc_ast::Text;
 
+use crate::parse::{EnvironmentKind, environment_class};
+
 /// The longest environment name that the tokenizer looks for after `\begin`.
 const MAX_NAME_LENGTH: usize = 64;
 /// The longest verbatim URL argument; a longer one is read as tokens.
 const MAX_URL_LENGTH: usize = 8192;
-
-/// The environments whose body is verbatim text.
-pub(crate) const VERBATIM_ENVIRONMENTS: &[&str] = &[
-    "verbatim",
-    "Verbatim",
-    "lstlisting",
-    "minted",
-    "comment",
-    "filecontents",
-    "filecontents*",
-];
 
 /// One token.
 #[derive(Debug, Clone, PartialEq)]
@@ -86,7 +77,7 @@ impl Tok {
 }
 
 /// Splits the input into tokens.
-pub(crate) fn tokenize(input: &str) -> Vec<Tok> {
+pub(crate) fn tokenize(input: &str, literate_haskell: bool) -> Vec<Tok> {
     Tokenizer {
         chars: input.chars().collect(),
         index: 0,
@@ -94,6 +85,7 @@ pub(crate) fn tokenize(input: &str) -> Vec<Tok> {
         column: 1,
         at_letter: false,
         expl_syntax: false,
+        literate_haskell,
         out: Vec::new(),
         line_end: 0,
         line_last: HashMap::new(),
@@ -108,6 +100,7 @@ struct Tokenizer {
     column: u32,
     at_letter: bool,
     expl_syntax: bool,
+    literate_haskell: bool,
     out: Vec<Tok>,
     /// The end of the line that `line_last` describes.
     line_end: usize,
@@ -439,7 +432,10 @@ impl Tokenizer {
         }
         let start = self.index + spaces + 1;
         let name: Text = self.chars[start..start + name_length].iter().collect();
-        if !VERBATIM_ENVIRONMENTS.contains(&name.as_str()) {
+        if !matches!(
+            environment_class(&name, self.literate_haskell).kind,
+            EnvironmentKind::Verbatim | EnvironmentKind::FileContents
+        ) {
             return;
         }
         if spaces > 0 {
@@ -471,7 +467,10 @@ mod tests {
     use super::*;
 
     fn kinds(input: &str) -> Vec<Kind> {
-        tokenize(input).into_iter().map(|tok| tok.kind).collect()
+        tokenize(input, false)
+            .into_iter()
+            .map(|tok| tok.kind)
+            .collect()
     }
 
     #[test]
@@ -514,7 +513,7 @@ mod tests {
 
     #[test]
     fn positions_count_lines_and_columns() {
-        let tokens = tokenize("a\n \\b");
+        let tokens = tokenize("a\n \\b", false);
         let last = &tokens[tokens.len() - 1];
         assert_eq!((last.line, last.column), (2, 2));
     }

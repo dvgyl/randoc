@@ -2,7 +2,7 @@
 //! `tools/abbreviations.py` writes this file from the results of the oracle. Do not edit it.
 
 /// The kept candidates, sorted by bytes.
-pub(super) static ABBREVIATIONS: [&str; 76] = [
+pub(super) static ABBREVIATIONS: [&str; 77] = [
     "Apr.",
     "Aug.",
     "Bros.",
@@ -22,6 +22,7 @@ pub(super) static ABBREVIATIONS: [&str; 76] = [
     "Jul.",
     "Jun.",
     "Ltd.",
+    "M.A.",
     "Mar.",
     "Mr.",
     "Mrs.",

@@ -1,8 +1,8 @@
 use std::cell::RefCell;
 
 use randoc_ast::{
-    Alignment, Attr, Block, ColWidth, Inline, MathType, MetaValue, Pandoc, QuoteType, Row, Table,
-    Target,
+    Alignment, Attr, Block, Cell, ColWidth, Inline, MathType, MetaValue, Pandoc, QuoteType, Row,
+    Table, Target,
 };
 use randoc_core::shared::{meta_context, stringify};
 use randoc_core::{Context, Error, Result, WrapOption, WriterOptions};
@@ -488,8 +488,6 @@ impl<'a, 'd> State<'a, 'd> {
                     if matches!(next.name.local.as_str(), "em" | "i")) =>
                 {
                     let next_emphasis = pending.pop();
-                    // The next element continues the same emphasis run.
-                    // Its closing marker ends the run.
                     if let Some((Some(XmlNode::Element(next)), _)) = next_emphasis {
                         pending.push((None, "*"));
                         pending.extend(next.children.iter().rev().map(|node| (Some(node), "")));
@@ -574,8 +572,8 @@ impl<'a, 'd> State<'a, 'd> {
             }
             Format::Haddock if auto && !url.starts_with("mailto:") => literal(format!("<{url}>")),
             Format::Haddock => layout::nowrap(literal(format!("<{url} ")) + label + literal(">")),
-            Format::Vimdoc if vim_url(url).is_some() => {
-                let help = literal(format!("|{}|", vim_url(url).unwrap_or_default()));
+            Format::Vimdoc if let Some(tag) = vim_url(url) => {
+                let help = literal(format!("|{tag}|"));
                 if auto || xs.is_empty() {
                     help
                 } else {
@@ -1361,46 +1359,23 @@ impl<'a, 'd> State<'a, 'd> {
         if columns == 0 {
             return Ok(Doc::default());
         }
-        if self.format == Format::Textile && !native_textile_table(table) {
-            return self.html_table(table);
-        }
-        let grid = self.format == Format::Haddock
-            || self.format == Format::Muse
-                && table
+        let mode = match self.format {
+            Format::Textile if !native_textile_table(table) => return self.html_table(table),
+            Format::Textile => TableMode::Textile,
+            Format::Haddock => return self.grid_table(table, true, None),
+            Format::Muse
+                if table
                     .col_specs
                     .iter()
-                    .any(|col| col.width != ColWidth::ColWidthDefault);
-        if grid {
-            let mut remaining = self.budget;
-            let haddock = self.format == Format::Haddock;
-            let mut result = randoc_markdown_writer::render_grid_table(
-                table,
-                self.columns,
-                haddock,
-                self.context.limits.max_table_cells,
-                self.budget,
-                |cell| {
-                    let doc = self.blocks(&cell.content)?;
-                    let text = doc.render_limited(remaining).ok_or_else(output_limit)?;
-                    remaining -= text.len();
-                    Ok(doc)
-                },
-            )?;
-            if haddock {
-                let caption = self
-                    .blocks(&table.caption.long)?
-                    .render_limited(remaining)
-                    .ok_or_else(output_limit)?;
-                if !caption.is_empty() {
-                    result.push_str("\n\n");
-                    result.push_str(&caption);
-                }
+                    .any(|col| col.width != ColWidth::ColWidthDefault) =>
+            {
+                return self.grid_table(table, false, None);
             }
-            if result.len() > self.budget {
-                return Err(output_limit());
-            }
-            return Ok(literal(result));
-        }
+            Format::Muse => TableMode::Muse,
+            Format::T2t => TableMode::T2t,
+            Format::Vimdoc => TableMode::Vimdoc,
+            Format::Opml => return Ok(Doc::default()),
+        };
         let rows = table
             .head
             .rows
@@ -1414,9 +1389,8 @@ impl<'a, 'd> State<'a, 'd> {
             }))
             .chain(table.foot.rows.iter().map(|row| (row, false)));
         let mut cells = Vec::new();
-        let mut muse_docs = std::collections::HashMap::new();
+        let mut muse_docs = (mode == TableMode::Muse).then(std::collections::HashMap::new);
         let mut headers = Vec::new();
-        let mut widths = vec![0; columns];
         let mut generated = 0usize;
         let mut remaining = self.budget;
         for (row, header) in rows {
@@ -1425,17 +1399,15 @@ impl<'a, 'd> State<'a, 'd> {
                 return Err(output_limit());
             }
             let mut rendered = Vec::new();
-            for (col, cell) in row.cells.iter().take(columns).enumerate() {
+            for cell in row.cells.iter().take(columns) {
                 let doc = self.blocks(&cell.content)?;
                 let content = doc.render_limited(remaining).ok_or_else(output_limit)?;
                 remaining -= content.len();
-                if self.format == Format::Muse {
-                    muse_docs.insert(std::ptr::from_ref(cell), doc);
+                if let Some(docs) = &mut muse_docs {
+                    docs.insert(std::ptr::from_ref(cell), doc);
                 }
-                widths[col] = widths[col].max(display_width(&content));
                 rendered.push(content);
             }
-            rendered.resize_with(columns, String::new);
             headers.push(header);
             cells.push(rendered);
         }
@@ -1443,13 +1415,25 @@ impl<'a, 'd> State<'a, 'd> {
             .blocks(&table.caption.long)?
             .render_limited(remaining)
             .ok_or_else(output_limit)?;
+        if let Some(docs) = muse_docs
+            && cells.iter().flatten().any(|s| s.contains('\n'))
+        {
+            return self.grid_table(table, false, Some(docs));
+        }
+        let mut widths = vec![0usize; columns];
+        for row in &mut cells {
+            for (width, content) in widths.iter_mut().zip(row.iter()) {
+                *width = (*width).max(display_width(content));
+            }
+            row.resize_with(columns, String::new);
+        }
         let aligns = table
             .col_specs
             .iter()
             .map(|spec| spec.align)
             .collect::<Vec<_>>();
-        let result = match self.format {
-            Format::Textile => cells
+        let result = match mode {
+            TableMode::Textile => cells
                 .iter()
                 .zip(&headers)
                 .map(|(row, header)| {
@@ -1473,7 +1457,7 @@ impl<'a, 'd> State<'a, 'd> {
                 })
                 .collect::<Vec<_>>()
                 .join("\n"),
-            Format::T2t => {
+            TableMode::T2t => {
                 for (width, align) in widths.iter_mut().zip(&aligns) {
                     *width += if *align == Alignment::AlignDefault {
                         0
@@ -1503,21 +1487,7 @@ impl<'a, 'd> State<'a, 'd> {
                 }
                 lines.join("\n")
             }
-            Format::Muse if cells.iter().flatten().any(|s| s.contains('\n')) => {
-                randoc_markdown_writer::render_grid_table(
-                    table,
-                    self.columns,
-                    false,
-                    self.context.limits.max_table_cells,
-                    self.budget,
-                    |cell| {
-                        Ok(muse_docs
-                            .remove(&std::ptr::from_ref(cell))
-                            .unwrap_or_default())
-                    },
-                )?
-            }
-            Format::Muse => {
+            TableMode::Muse => {
                 self.check_table_width(&widths, cells.len(), 4)?;
                 let mut lines = Vec::new();
                 for (row, header) in cells.iter().zip(&headers) {
@@ -1546,9 +1516,49 @@ impl<'a, 'd> State<'a, 'd> {
                 }
                 lines.join("\n")
             }
-            Format::Vimdoc => self.vim_table(table, &cells, &headers, &caption, widths)?,
-            Format::Opml | Format::Haddock => String::new(),
+            TableMode::Vimdoc => self.vim_table(table, &cells, &headers, &caption, widths)?,
         };
+        if result.len() > self.budget {
+            return Err(output_limit());
+        }
+        Ok(literal(result))
+    }
+
+    fn grid_table(
+        &mut self,
+        table: &'d Table,
+        haddock: bool,
+        mut prepared: Option<std::collections::HashMap<*const Cell, Doc>>,
+    ) -> Result<Doc> {
+        let mut remaining = self.budget;
+        let mut result = randoc_markdown_writer::render_grid_table(
+            table,
+            self.columns,
+            haddock,
+            self.context.limits.max_table_cells,
+            self.budget,
+            |cell| {
+                if let Some(prepared) = &mut prepared {
+                    return Ok(prepared
+                        .remove(&std::ptr::from_ref(cell))
+                        .unwrap_or_default());
+                }
+                let doc = self.blocks(&cell.content)?;
+                let text = doc.render_limited(remaining).ok_or_else(output_limit)?;
+                remaining -= text.len();
+                Ok(doc)
+            },
+        )?;
+        if haddock {
+            let caption = self
+                .blocks(&table.caption.long)?
+                .render_limited(remaining)
+                .ok_or_else(output_limit)?;
+            if !caption.is_empty() {
+                result.push_str("\n\n");
+                result.push_str(&caption);
+            }
+        }
         if result.len() > self.budget {
             return Err(output_limit());
         }
@@ -2329,6 +2339,14 @@ fn complex_list(items: &[Vec<Block>]) -> bool {
             .count()
             > 1
     })
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum TableMode {
+    Textile,
+    Muse,
+    T2t,
+    Vimdoc,
 }
 
 fn native_textile_table(table: &Table) -> bool {

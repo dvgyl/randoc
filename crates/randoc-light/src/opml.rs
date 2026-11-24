@@ -280,6 +280,7 @@ fn recover_label(mut text: &str, limits: &XmlLimits) -> Result<Vec<XmlNode>> {
                     open.push(element);
                 }
             } else if !matches!(tag.as_str(), "html" | "head" | "body" | "div" | "p") {
+                // An empty element name marks raw HTML for label_nodes.
                 content.push(XmlNode::Element(XmlElement {
                     name: QName {
                         ns: None,

@@ -167,12 +167,116 @@ mod tests {
         assert!(read_markdown(input, "", &options, &mut context).is_ok());
     }
 
-    #[allow(dead_code)]
     pub(crate) fn read_with(text: &str, format: &str) -> Pandoc {
         let mut options = ReaderOptions::default();
         options.extensions = default_extensions(format);
         let mut context = Context::pure();
         read_markdown(text, "", &options, &mut context).unwrap_or_default()
+    }
+
+    #[test]
+    fn scripts_allow_spaces_in_span_attributes() {
+        use randoc_ast::{Block, Inline};
+        for markup in [
+            r#"x^[z]{a=1 b=2}\ k^"#,
+            r#"x^[z]{a="1 2"}^"#,
+            r#"x^[z]{a="^ a"}^"#,
+        ] {
+            let doc = read_with(markup, "markdown");
+            assert!(
+                matches!(
+                    doc.blocks.as_slice(),
+                    [Block::Para(inlines)]
+                        if matches!(inlines.as_slice(), [Inline::Str(_), Inline::Superscript(body)]
+                            if matches!(body.first(), Some(Inline::Span(attr, _))
+                                if attr.attributes.first().is_some_and(|(key, _)| key == "a")))
+                ),
+                "{markup}"
+            );
+        }
+        for markup in [
+            r#"x^[a b]{a=1 b=2}^"#,
+            "x^\x60a b\x60^",
+            r#"x^[z](u\ "a b")^"#,
+        ] {
+            let doc = read_with(markup, "markdown");
+            assert!(
+                matches!(
+                    doc.blocks.as_slice(),
+                    [Block::Para(inlines)]
+                        if !inlines.iter().any(|inline| matches!(inline, Inline::Superscript(_)))
+                ),
+                "{markup}"
+            );
+        }
+    }
+
+    #[test]
+    fn link_destinations_and_titles_use_decoded_text() {
+        use randoc_ast::{Block, Inline, Target};
+        for (source, url, title) in [
+            ("[x](u  v)", "u%20v", ""),
+            ("[x](u\n  v)", "u%20v", ""),
+            ("[x](<u  v>)", "u%20%20v", ""),
+            ("<a@t&eacute;st.io>", "mailto:a@tést.io", ""),
+            ("[x]\n\n[x]: /&uuml; \"&ouml;\"", "/ü", "ö"),
+        ] {
+            let doc = read_with(source, "markdown");
+            assert!(
+                matches!(
+                    doc.blocks.as_slice(),
+                    [Block::Para(inlines)]
+                        if matches!(inlines.as_slice(), [Inline::Link(_, _, target)]
+                            if *target == Target::new(url, title))
+                ),
+                "{source}: {:?}",
+                doc.blocks
+            );
+        }
+    }
+
+    #[test]
+    fn forward_example_reference_reserves_a_citation_number() {
+        use randoc_ast::{Block, Inline};
+        for (source, expected) in [
+            ("See (@k).\n\n(@k) item\n\n[@z]", 2),
+            ("(@k) item\n\nSee (@k).\n\n[@z]", 1),
+        ] {
+            let doc = read_with(source, "markdown");
+            assert!(
+                matches!(doc.blocks.last(), Some(Block::Para(inlines))
+                if matches!(inlines.as_slice(), [Inline::Cite(citations, _)]
+                    if citations.first().is_some_and(|cite| cite.note_num == expected))),
+                "{source}: {:?}",
+                doc.blocks
+            );
+        }
+    }
+
+    #[test]
+    fn table_geometry_uses_display_columns_and_physical_lines() {
+        use randoc_ast::{Alignment, Block, ColWidth};
+        let source = "+--+--+\n|a\u{200c}b|xy|\n+--+--+";
+        let doc = read_with(source, "markdown");
+        assert!(matches!(doc.blocks.as_slice(), [Block::Table(table)]
+            if table.col_specs.len() == 2
+                && table.col_specs.iter().all(|spec| spec.width == ColWidth::ColWidth(3.0 / ReaderOptions::default().columns as f64))
+                && matches!(table.bodies.as_slice(), [body]
+                    if matches!(body.body.as_slice(), [row]
+                        if matches!(row.cells.as_slice(), [left, right]
+                            if randoc_core::shared::stringify_blocks(&left.content) == "a\u{200c}b"
+                                && randoc_core::shared::stringify_blocks(&right.content) == "xy")))));
+
+        let source = "    A   B\n  ---   ---\n    a   b\n\n  : title";
+        let doc = read_with(source, "markdown");
+        assert!(matches!(doc.blocks.as_slice(), [Block::Table(table)]
+            if table.head.rows.first().is_some_and(|row| row.cells.len() == 2)
+                && randoc_core::shared::stringify_blocks(&table.caption.long) == "title"));
+
+        let source = "------  ---\na       xyz\nb       x\n\nc       d\n------  ---";
+        let doc = read_with(source, "markdown");
+        assert!(matches!(doc.blocks.as_slice(), [Block::Table(table)]
+            if table.col_specs.last().is_some_and(|spec| spec.align == Alignment::AlignDefault)));
     }
 
     #[test]

@@ -1,7 +1,6 @@
 //! ODT (ZIP) and FODT (single XML) readers.
 
 mod convert;
-mod mathml;
 mod styles;
 
 use randoc_archive::xml::{self, XmlError, XmlLimits, XmlOptions};

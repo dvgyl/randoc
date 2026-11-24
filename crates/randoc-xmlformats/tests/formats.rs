@@ -208,6 +208,29 @@ fn docbook_normalizes_heading_levels() {
 }
 
 #[test]
+fn docbook_omits_titles_and_ids_on_procedures_and_substeps() {
+    let text = r#"<procedure id="p"><title>A</title><step><para>B</para>
+        <substeps id="s"><title>C</title><step><para>D</para></step></substeps>
+        </step></procedure>
+        <orderedlist id="o"><title>E</title><listitem><para>F</para></listitem></orderedlist>"#;
+    let doc = read("docbook", text, &mut Context::pure()).unwrap();
+    let [Block::OrderedList(_, steps), Block::Div(attrs, _)] = doc.blocks.as_slice() else {
+        panic!("expected a procedure and a titled ordered list");
+    };
+    assert_eq!(attrs.id, "o");
+    let [step] = steps.as_slice() else {
+        panic!("expected one step");
+    };
+    let [Block::Para(_), Block::OrderedList(_, substeps)] = step.as_slice() else {
+        panic!("expected a paragraph and a substep list");
+    };
+    assert_eq!(
+        substeps,
+        &[vec![Block::Para(vec![Inline::Str("D".into())])]]
+    );
+}
+
+#[test]
 fn fb2_decodes_and_stages_media() {
     let mut context = Context::pure();
     let text = "<FictionBook><binary id='i' content-type='text/plain'>!!aG???k=!!</binary><binary id='i' content-type='image/png'>QQ</binary><binary id='../i' content-type='text/plain'>!!!</binary></FictionBook>";

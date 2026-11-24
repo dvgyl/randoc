@@ -28,6 +28,10 @@ impl Variable {
     pub fn as_str(&self) -> &str {
         &self.original
     }
+
+    pub(crate) fn folded_name(&self) -> &str {
+        &self.folded
+    }
 }
 
 impl PartialEq for Variable {

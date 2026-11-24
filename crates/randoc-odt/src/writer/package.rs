@@ -68,6 +68,12 @@ impl Resources {
         );
     }
 
+    fn ordered_entry_names(&self) -> impl Iterator<Item = &str> {
+        std::iter::once("content.xml")
+            .chain(self.added.iter().rev().map(String::as_str))
+            .chain(self.layout.iter().map(String::as_str))
+    }
+
     fn charge(&mut self, context: &Context, bytes: usize, entries: usize) -> Result<()> {
         self.added_bytes = self.added_bytes.saturating_add(bytes as u64);
         if self.added_bytes > context.limits.max_archive_size
@@ -114,7 +120,7 @@ pub(super) fn write_odt(
     archive
         .write_stored_with_time("mimetype", MIME.as_bytes(), Some(stamp))
         .map_err(zip_error)?;
-    let mut parts = resources.parts;
+    let mut parts = std::mem::take(&mut resources.parts);
     let mut write = |name: &str, bytes: &[u8]| {
         archive
             .write_deflated_with_time(name, bytes, Some(stamp))
@@ -126,10 +132,7 @@ pub(super) fn write_odt(
         .unwrap_or_default();
     write("meta.xml", &meta)?;
     write(MANIFEST_FILE, manifest.as_bytes())?;
-    for name in std::iter::once("content.xml")
-        .chain(resources.added.iter().rev().map(String::as_str))
-        .chain(resources.layout.iter().map(String::as_str))
-    {
+    for name in resources.ordered_entry_names() {
         if let Some(part) = parts.remove(name) {
             write(name, &part.bytes)?;
         }
@@ -457,9 +460,8 @@ fn manifest(resources: &Resources) -> String {
         ns::MANIFEST
     );
     let mut seen = HashSet::new();
-    let listed: Vec<&str> = std::iter::once("content.xml")
-        .chain(resources.added.iter().rev().map(String::as_str))
-        .chain(resources.layout.iter().map(String::as_str))
+    let listed: Vec<&str> = resources
+        .ordered_entry_names()
         .chain(resources.parts.keys().map(String::as_str))
         .filter(|path| {
             *path != "mimetype"
@@ -1354,6 +1356,20 @@ mod tests {
         assert_eq!(write_odt(&doc, &options, &mut context)?, odt);
         let mut zip =
             Archive::open(&odt, ArchiveLimits::from_limits(&context.limits)).map_err(zip_error)?;
+        assert_eq!(
+            zip.entry_names(),
+            [
+                "mimetype",
+                "meta.xml",
+                MANIFEST_FILE,
+                "content.xml",
+                "Pictures/2.gif",
+                "Formula-0/settings.xml",
+                "Formula-0/content.xml",
+                "manifest.rdf",
+                "styles.xml",
+            ]
+        );
         assert_eq!(
             zip.read("mimetype").map_err(zip_error)?.as_deref(),
             Some(MIME.as_bytes())

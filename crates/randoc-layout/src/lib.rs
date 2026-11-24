@@ -103,23 +103,23 @@ struct Summary {
     non_blank: bool,
 }
 
-/// A wrapper node without its child.
-enum Shell {
-    Prefixed(String),
+#[derive(PartialEq)]
+enum Shell<'a> {
+    Prefixed(&'a String),
     BeforeNonBlank,
     Flush,
-    Styled(StyleReq),
-    Linked(String),
+    Styled(&'a StyleReq),
+    Linked(&'a String),
 }
 
-impl Shell {
-    fn of(node: &Node) -> Option<(Shell, &Doc)> {
+impl<'a> Shell<'a> {
+    fn of(node: &'a Node) -> Option<(Self, &'a Doc)> {
         Some(match node {
-            Node::Prefixed(prefix, inner) => (Shell::Prefixed(prefix.clone()), inner),
+            Node::Prefixed(prefix, inner) => (Shell::Prefixed(prefix), inner),
             Node::BeforeNonBlank(_, inner) => (Shell::BeforeNonBlank, inner),
             Node::Flush(_, inner) => (Shell::Flush, inner),
-            Node::Styled(style, inner) => (Shell::Styled(*style), inner),
-            Node::Linked(target, inner) => (Shell::Linked(target.clone()), inner),
+            Node::Styled(style, inner) => (Shell::Styled(style), inner),
+            Node::Linked(target, inner) => (Shell::Linked(target), inner),
             _ => return None,
         })
     }
@@ -128,12 +128,22 @@ impl Shell {
         let non_blank = is_non_blank(&doc);
         let inner = Box::new(doc);
         Doc(match self {
-            Shell::Prefixed(prefix) => Node::Prefixed(prefix, inner),
+            Shell::Prefixed(prefix) => Node::Prefixed(prefix.clone(), inner),
             Shell::BeforeNonBlank => Node::BeforeNonBlank(non_blank, inner),
             Shell::Flush => Node::Flush(non_blank, inner),
-            Shell::Styled(style) => Node::Styled(style, inner),
-            Shell::Linked(target) => Node::Linked(target, inner),
+            Shell::Styled(style) => Node::Styled(*style, inner),
+            Shell::Linked(target) => Node::Linked(target.clone(), inner),
         })
+    }
+
+    fn debug_parts(self) -> (&'static str, Option<&'a dyn std::fmt::Debug>) {
+        match self {
+            Shell::Prefixed(prefix) => ("Prefixed(", Some(prefix)),
+            Shell::BeforeNonBlank => ("BeforeNonBlank(", None),
+            Shell::Flush => ("Flush(", None),
+            Shell::Styled(style) => ("Styled(", Some(style)),
+            Shell::Linked(target) => ("Linked(", Some(target)),
+        }
     }
 }
 
@@ -179,7 +189,7 @@ fn item_count(doc: &Doc) -> usize {
 fn rebuild(doc: &Doc, leaf: &dyn Fn(&Node) -> Node) -> Doc {
     enum Step<'a> {
         Visit(&'a Doc),
-        Wrap(Shell),
+        Wrap(Shell<'a>),
         Join(usize),
     }
     let mut steps = vec![Step::Visit(doc)];
@@ -246,25 +256,20 @@ impl PartialEq for Doc {
         let mut pairs = vec![(self, other)];
         while let Some((a, b)) = pairs.pop() {
             steps::count(1);
-            let same_shell = match (&a.0, &b.0) {
-                (Node::Concat(_, x), Node::Concat(_, y)) => {
-                    if x.items != y.items {
-                        return false;
-                    }
-                    pairs.extend(items(a).into_iter().zip(items(b)));
-                    continue;
+            if let (Node::Concat(_, x), Node::Concat(_, y)) = (&a.0, &b.0) {
+                if x.items != y.items {
+                    return false;
                 }
-                (Node::Prefixed(x, _), Node::Prefixed(y, _))
-                | (Node::Linked(x, _), Node::Linked(y, _)) => x == y,
-                (Node::Styled(x, _), Node::Styled(y, _)) => x == y,
-                (Node::BeforeNonBlank(..), Node::BeforeNonBlank(..))
-                | (Node::Flush(..), Node::Flush(..)) => true,
-                (x, y) => children(x).is_empty() && children(y).is_empty() && x == y,
-            };
-            if !same_shell {
-                return false;
+                pairs.extend(items(a).into_iter().zip(items(b)));
+                continue;
             }
-            pairs.extend(children(&a.0).iter().zip(children(&b.0)));
+            match (Shell::of(&a.0), Shell::of(&b.0)) {
+                (Some((x, inner_a)), Some((y, inner_b))) if x == y => {
+                    pairs.push((inner_a, inner_b));
+                }
+                (None, None) if a.0 == b.0 => {}
+                _ => return false,
+            }
         }
         true
     }
@@ -303,31 +308,26 @@ impl std::fmt::Debug for Doc {
                             plan.extend([Out::Close("]"), Out::End { last: true }]);
                             plan.push(Out::Close(")"));
                         }
-                        Node::Prefixed(text, d) | Node::Linked(text, d) => {
-                            let name = if matches!(doc.0, Node::Prefixed(..)) {
-                                "Prefixed("
+                        node => {
+                            if let Some((shell, inner)) = Shell::of(node) {
+                                let (name, value) = shell.debug_parts();
+                                plan.extend([Out::Open(name), Out::Start]);
+                                if let Some(value) = value {
+                                    plan.extend([
+                                        Out::Value(value),
+                                        Out::End { last: false },
+                                        Out::Start,
+                                    ]);
+                                }
+                                plan.extend([
+                                    Out::Doc(inner),
+                                    Out::End { last: true },
+                                    Out::Close(")"),
+                                ]);
                             } else {
-                                "Linked("
-                            };
-                            plan.extend([Out::Open(name), Out::Start, Out::Value(text)]);
-                            plan.extend([Out::End { last: false }, Out::Start, Out::Doc(d)]);
-                            plan.extend([Out::End { last: true }, Out::Close(")")]);
+                                plan.push(Out::Value(node));
+                            }
                         }
-                        Node::Styled(style, d) => {
-                            plan.extend([Out::Open("Styled("), Out::Start, Out::Value(style)]);
-                            plan.extend([Out::End { last: false }, Out::Start, Out::Doc(d)]);
-                            plan.extend([Out::End { last: true }, Out::Close(")")]);
-                        }
-                        Node::BeforeNonBlank(_, d) | Node::Flush(_, d) => {
-                            let name = if matches!(doc.0, Node::Flush(..)) {
-                                "Flush("
-                            } else {
-                                "BeforeNonBlank("
-                            };
-                            plan.extend([Out::Open(name), Out::Start, Out::Doc(d)]);
-                            plan.extend([Out::End { last: true }, Out::Close(")")]);
-                        }
-                        leaf => plan.push(Out::Value(leaf)),
                     }
                     plan.extend([Out::End { last: true }, Out::Close(")")]);
                     work.extend(plan.into_iter().rev());
@@ -954,14 +954,6 @@ fn join_before(mut before: Vec<Doc>, mut last: Doc) -> Doc {
     last
 }
 
-/// Joins the documents that [`split_first`] took off after `first`.
-fn join_after(mut first: Doc, mut after: Vec<Doc>) -> Doc {
-    while let Some(doc) = after.pop() {
-        first += doc;
-    }
-    first
-}
-
 /// Removes trailing spaces, line breaks and blank lines from `doc`.
 pub fn chomp(doc: Doc) -> Doc {
     enum Context {
@@ -1007,7 +999,10 @@ pub fn nestle(doc: Doc) -> Doc {
             first.0,
             Node::BlankLines(_) | Node::NewLine | Node::CarriageReturn
         ) {
-            return join_after(first, after);
+            return after.into_iter().rev().fold(first, |mut doc, next| {
+                doc += next;
+                doc
+            });
         }
         match after.pop() {
             Some(next) => current = next,

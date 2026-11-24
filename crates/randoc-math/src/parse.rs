@@ -322,6 +322,57 @@ pub(crate) fn parse(tex: &str, max_depth: usize) -> Parsed<Vec<Exp>> {
     parser.list(Stop::End)
 }
 
+enum Delimiter {
+    Missing,
+    Invisible,
+    Visible(String),
+}
+
+impl Delimiter {
+    fn into_visible(self) -> Option<String> {
+        match self {
+            Self::Missing | Self::Invisible => None,
+            Self::Visible(text) => Some(text),
+        }
+    }
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum ScriptSide {
+    Sub,
+    Sup,
+}
+
+impl ScriptSide {
+    fn apply(self, base: Exp, arg: Exp, other: Option<Exp>, limits: Option<bool>) -> Exp {
+        let (sub, sup) = match self {
+            Self::Sub => (Some(arg), other),
+            Self::Sup => (other, Some(arg)),
+        };
+        Exp::Scripts {
+            base: Box::new(base),
+            sub: sub.map(Box::new),
+            sup: sup.map(Box::new),
+            limits,
+        }
+    }
+}
+
+#[derive(Clone, Copy)]
+enum ScriptMarker {
+    Argument(ScriptSide),
+    Prime,
+}
+
+impl ScriptMarker {
+    fn side(self) -> ScriptSide {
+        match self {
+            Self::Argument(side) => side,
+            Self::Prime => ScriptSide::Sup,
+        }
+    }
+}
+
 struct Parser {
     chars: Vec<char>,
     pos: usize,
@@ -435,10 +486,6 @@ fn lookup<T: 'static>(table: &'static [(&str, T)], name: &str) -> Option<&'stati
 
 fn sym(class: Class, text: &str) -> Exp {
     Exp::Sym(class, text.to_string())
-}
-
-fn boxed(exp: Exp) -> Box<Exp> {
-    Box::new(exp)
 }
 
 fn primes(count: usize) -> String {
@@ -663,11 +710,15 @@ impl Parser {
                     } else if stop == Stop::Right && self.at_word("middle") {
                         self.pos += 7;
                         let after = self.pos;
-                        let Some(delimiter) = self.delimiter(false)? else {
-                            self.pos = after;
-                            return self.unknown("middle");
+                        let delimiter = match self.delimiter(false)? {
+                            Delimiter::Missing => {
+                                self.pos = after;
+                                return self.unknown("middle");
+                            }
+                            Delimiter::Invisible => String::new(),
+                            Delimiter::Visible(text) => text,
                         };
-                        items.push(Exp::Middle(delimiter.unwrap_or_default()));
+                        items.push(Exp::Middle(delimiter));
                     } else if self.style_switch(stop)? {
                         continue;
                     } else if let Some(infix) = self.infix() {
@@ -696,8 +747,8 @@ impl Parser {
             });
         };
         let frac = Exp::Frac {
-            num: boxed(single(num)),
-            den: boxed(single(items)),
+            num: Box::new(single(num)),
+            den: Box::new(single(items)),
             line: infix.line,
         };
         Ok(vec![match infix.fence {
@@ -732,53 +783,23 @@ impl Parser {
             limits = Some(on);
             self.skip_space();
         }
-        let (mut sub, mut sup) = (None, None);
-        match self.peek() {
-            Some('\'') => {
-                sup = Some(self.prime_marks());
-                self.skip_space();
-                if self.peek() == Some('_') {
-                    self.pos += 1;
-                    sub = Some(self.script_argument()?);
-                }
-            }
-            Some(first @ ('^' | '_')) => {
-                self.pos += 1;
-                let arg = self.script_argument()?;
-                self.skip_space();
-                let (same, other) = if first == '^' {
-                    (&mut sup, &mut sub)
-                } else {
-                    (&mut sub, &mut sup)
-                };
-                match self.peek() {
-                    Some('\'') if first == '_' => {
-                        *same = Some(arg);
-                        *other = Some(self.prime_marks());
-                    }
-                    Some(c @ ('^' | '_')) if c != first => {
-                        self.pos += 1;
-                        *same = Some(arg);
-                        *other = Some(self.script_argument()?);
-                    }
-                    _ => *same = Some(self.nested_script(arg, first)?),
-                }
-            }
-            _ => {}
-        }
-        if sub.is_none() && sup.is_none() {
+        let Some(marker) = self.script_marker() else {
             return Ok(base);
-        }
-        let pair = sub.is_some() && sup.is_some();
-        let scripted = Exp::Scripts {
-            base: boxed(base),
-            sub: sub.map(boxed),
-            sup: sup.map(boxed),
-            limits,
         };
+        let side = marker.side();
+        let arg = self.read_script(marker)?;
+        self.skip_space();
+        let other = self.other_script(side)?;
+        let pair = other.is_some();
+        let arg = if !pair && matches!(marker, ScriptMarker::Argument(_)) {
+            self.nested_script(arg, side)?
+        } else {
+            arg
+        };
+        let scripted = side.apply(base, arg, other, limits);
         if empty && pair {
             self.skip_space();
-            if matches!(self.peek(), Some('^' | '_' | '\'')) {
+            if self.script_marker().is_some() {
                 self.enter()?;
                 let result = self.scripts_on(scripted, false);
                 self.depth -= 1;
@@ -786,6 +807,25 @@ impl Parser {
             }
         }
         Ok(scripted)
+    }
+
+    fn script_marker(&self) -> Option<ScriptMarker> {
+        match self.peek()? {
+            '^' => Some(ScriptMarker::Argument(ScriptSide::Sup)),
+            '_' => Some(ScriptMarker::Argument(ScriptSide::Sub)),
+            '\'' => Some(ScriptMarker::Prime),
+            _ => None,
+        }
+    }
+
+    fn read_script(&mut self, marker: ScriptMarker) -> Parsed<Exp> {
+        match marker {
+            ScriptMarker::Argument(_) => {
+                self.pos += 1;
+                self.script_argument()
+            }
+            ScriptMarker::Prime => Ok(self.prime_marks()),
+        }
     }
 
     /// The prime marks at the cursor, as the superscript that they make.
@@ -813,61 +853,36 @@ impl Parser {
         }
     }
 
-    /// The single script `arg` of the kind `kind` with the scripts of the
-    /// same kind after it: `x^2^3` is `x^{2^3}`, and `x^2'` is `x^{2'}`.
-    fn nested_script(&mut self, arg: Exp, kind: char) -> Parsed<Exp> {
+    fn nested_script(&mut self, arg: Exp, side: ScriptSide) -> Parsed<Exp> {
         self.enter()?;
         self.skip_space();
-        let scripts = match self.peek() {
-            Some(c) if c == kind => {
-                self.pos += 1;
-                let next = self.script_argument()?;
-                self.skip_space();
-                let deeper =
-                    self.peek() == Some(kind) || (kind == '^' && self.peek() == Some('\''));
-                // The script of the other kind after the chain belongs to
-                // the innermost level: `x_a_b^2` is `x_{a_b^2}`.
-                let (inner, other) = if deeper {
-                    (self.nested_script(next, kind)?, None)
-                } else {
-                    (next, self.other_script(kind)?)
-                };
-                Some((inner, other))
+        let scripts = if let Some(marker) = self.script_marker().filter(|m| m.side() == side) {
+            let next = self.read_script(marker)?;
+            self.skip_space();
+            // The other script belongs to the innermost level. For example,
+            // `x_a_b^2` is `x_{a_b^2}`.
+            if matches!(marker, ScriptMarker::Argument(_))
+                && self.script_marker().is_some_and(|m| m.side() == side)
+            {
+                Some((self.nested_script(next, side)?, None))
+            } else {
+                Some((next, self.other_script(side)?))
             }
-            Some('\'') if kind == '^' => {
-                let marks = self.prime_marks();
-                self.skip_space();
-                Some((marks, self.other_script(kind)?))
-            }
-            _ => None,
+        } else {
+            None
         };
         self.depth -= 1;
-        let Some((inner, other)) = scripts else {
-            return Ok(arg);
-        };
-        let (sub, sup) = if kind == '^' {
-            (other, Some(inner))
-        } else {
-            (Some(inner), other)
-        };
-        Ok(Exp::Scripts {
-            base: boxed(arg),
-            sub: sub.map(boxed),
-            sup: sup.map(boxed),
-            limits: None,
+        Ok(match scripts {
+            Some((inner, other)) => side.apply(arg, inner, other, None),
+            None => arg,
         })
     }
 
-    /// The script of the kind that is not `kind` at the cursor, if any.
-    fn other_script(&mut self, kind: char) -> Parsed<Option<Exp>> {
-        Ok(match (kind, self.peek()) {
-            ('^', Some('_')) | ('_', Some('^')) => {
-                self.pos += 1;
-                Some(self.script_argument()?)
-            }
-            ('_', Some('\'')) => Some(self.prime_marks()),
-            _ => None,
-        })
+    fn other_script(&mut self, side: ScriptSide) -> Parsed<Option<Exp>> {
+        self.script_marker()
+            .filter(|m| m.side() != side)
+            .map(|marker| self.read_script(marker))
+            .transpose()
     }
 
     /// One argument of a command: a group, one digit, one character or one
@@ -1088,7 +1103,7 @@ impl Parser {
             return Ok(Some(Exp::Space(*space)));
         }
         if let Some(mark) = lookup(ACCENTS, name) {
-            let body = boxed(self.argument()?);
+            let body = Box::new(self.argument()?);
             return Ok(Some(Exp::Accent { body, mark }));
         }
         if let Some(alphabet) = lookup(ALPHABETS, name) {
@@ -1114,8 +1129,8 @@ impl Parser {
                 self.expression()?
             }
             "frac" => self.fraction(true)?,
-            "dfrac" => Exp::Display(true, boxed(self.fraction(true)?)),
-            "tfrac" => Exp::Display(false, boxed(self.fraction(true)?)),
+            "dfrac" => Exp::Display(true, Box::new(self.fraction(true)?)),
+            "tfrac" => Exp::Display(false, Box::new(self.fraction(true)?)),
             "binom" => Exp::Fenced {
                 open: Some("(".into()),
                 body: vec![self.fraction(false)?],
@@ -1128,14 +1143,14 @@ impl Parser {
                     self.pos += 1;
                     let index = self.list(Stop::Bracket)?;
                     let body = self.argument()?;
-                    Exp::Root(boxed(body), boxed(single(index)))
+                    Exp::Root(Box::new(body), Box::new(single(index)))
                 } else if self.peek().is_none() {
                     sym(Class::Op, "\u{221a}")
                 } else {
-                    Exp::Sqrt(boxed(self.argument()?))
+                    Exp::Sqrt(Box::new(self.argument()?))
                 }
             }
-            "surd" => Exp::Sqrt(boxed(self.argument()?)),
+            "surd" => Exp::Sqrt(Box::new(self.argument()?)),
             "left" => match self.fenced()? {
                 Some(exp) => exp,
                 None => {
@@ -1206,17 +1221,17 @@ impl Parser {
                 self.argument()?;
                 self.argument()?
             }
-            "boxed" => Exp::Enclose("box", boxed(self.argument()?)),
-            "cancel" => Exp::Enclose("updiagonalstrike", boxed(self.argument()?)),
-            "bcancel" => Exp::Enclose("downdiagonalstrike", boxed(self.argument()?)),
+            "boxed" => Exp::Enclose("box", Box::new(self.argument()?)),
+            "cancel" => Exp::Enclose("updiagonalstrike", Box::new(self.argument()?)),
+            "bcancel" => Exp::Enclose("downdiagonalstrike", Box::new(self.argument()?)),
             "xcancel" => Exp::Enclose(
                 "updiagonalstrike downdiagonalstrike",
-                boxed(self.argument()?),
+                Box::new(self.argument()?),
             ),
-            "phantom" => Exp::Phantom(boxed(self.argument()?)),
+            "phantom" => Exp::Phantom(Box::new(self.argument()?)),
             "stackrel" | "overset" | "underset" => {
-                let script = Some(boxed(self.argument()?));
-                let base = boxed(self.argument()?);
+                let script = Some(Box::new(self.argument()?));
+                let base = Box::new(self.argument()?);
                 let (under, over) = if name == "underset" {
                     (script, None)
                 } else {
@@ -1234,11 +1249,11 @@ impl Parser {
                 let mut under = None;
                 if self.peek() == Some('[') {
                     self.pos += 1;
-                    under = Some(boxed(single(self.list(Stop::Bracket)?)));
+                    under = Some(Box::new(single(self.list(Stop::Bracket)?)));
                 }
-                let over = Some(boxed(self.argument()?));
+                let over = Some(Box::new(self.argument()?));
                 Exp::Stack {
-                    base: boxed(sym(Class::Op, arrow)),
+                    base: Box::new(sym(Class::Op, arrow)),
                     under,
                     over,
                 }
@@ -1268,8 +1283,8 @@ impl Parser {
     }
 
     fn fraction(&mut self, line: bool) -> Parsed<Exp> {
-        let num = boxed(self.argument()?);
-        let den = boxed(self.argument()?);
+        let num = Box::new(self.argument()?);
+        let den = Box::new(self.argument()?);
         Ok(Exp::Frac { num, den, line })
     }
 
@@ -1290,7 +1305,7 @@ impl Parser {
         }
         let mut frac = self.fraction(thickness != "0pt")?;
         if style == "0" {
-            frac = Exp::Display(true, boxed(frac));
+            frac = Exp::Display(true, Box::new(frac));
         }
         Ok(Exp::Fenced {
             open: Some(open).filter(|d| !d.is_empty()),
@@ -1322,7 +1337,7 @@ impl Parser {
             }
             _ => return Ok(None),
         };
-        Ok(Some(Exp::Sized(percent, boxed(delimiter))))
+        Ok(Some(Exp::Sized(percent, Box::new(delimiter))))
     }
 
     /// The failure after a control sequence that is not a delimiter. The
@@ -1336,18 +1351,15 @@ impl Parser {
         self.fail(format!("{found}\n  {EXPECTING_SPACE}"))
     }
 
-    /// The delimiter after `\left`, `\right` or `\middle`: `Some(None)` is
-    /// `.`, and `None` is no delimiter. `strict`: a control sequence that is
-    /// not a delimiter is a failure at the character after it.
-    fn delimiter(&mut self, strict: bool) -> Parsed<Option<Option<String>>> {
+    fn delimiter(&mut self, strict: bool) -> Parsed<Delimiter> {
         self.skip_space();
         let start = self.pos;
         let Some(c) = self.peek() else {
-            return Ok(None);
+            return Ok(Delimiter::Missing);
         };
         self.pos += 1;
         let text = match c {
-            '.' => return Ok(Some(None)),
+            '.' => return Ok(Delimiter::Invisible),
             '(' | ')' | '[' | ']' | '|' => c.to_string(),
             '<' => "\u{27e8}".to_string(),
             '>' => "\u{27e9}".to_string(),
@@ -1358,42 +1370,44 @@ impl Parser {
                     None if strict => return self.not_a_delimiter(),
                     None => {
                         self.pos = start;
-                        return Ok(None);
+                        return Ok(Delimiter::Missing);
                     }
                 }
             }
             _ => {
                 self.pos = start;
-                return Ok(None);
+                return Ok(Delimiter::Missing);
             }
         };
-        Ok(Some(Some(text)))
+        Ok(Delimiter::Visible(text))
     }
 
-    /// `\left` with its delimiter, the body and `\right` with its delimiter.
-    /// `None`: no delimiter follows `\left`.
     fn fenced(&mut self) -> Parsed<Option<Exp>> {
-        let Some(open) = self.delimiter(true)? else {
+        let open = self.delimiter(true)?;
+        if matches!(open, Delimiter::Missing) {
             return Ok(None);
-        };
+        }
         let body = self.list(Stop::Right)?;
         let close = if self.peek().is_some() {
             self.pos += "\\right".len();
-            match self.delimiter(true)? {
-                Some(close) => close,
-                None => {
-                    let found = if self.peek().is_none() {
-                        "unexpected eof"
-                    } else {
-                        "unexpected control sequence \\right"
-                    };
-                    return self.fail(format!("{found}\n  {EXPECTING_DELIMITER}"));
-                }
+            let close = self.delimiter(true)?;
+            if matches!(close, Delimiter::Missing) {
+                let found = if self.peek().is_none() {
+                    "unexpected eof"
+                } else {
+                    "unexpected control sequence \\right"
+                };
+                return self.fail(format!("{found}\n  {EXPECTING_DELIMITER}"));
             }
+            close.into_visible()
         } else {
             None
         };
-        Ok(Some(Exp::Fenced { open, body, close }))
+        Ok(Some(Exp::Fenced {
+            open: open.into_visible(),
+            body,
+            close,
+        }))
     }
 
     /// The content of `\operatorname{...}` or of `\mathop{...}`. Content
@@ -1430,7 +1444,7 @@ impl Parser {
                 let arg = self.argument()?;
                 let styled = Exp::Styled(&NORMAL, flatten(arg));
                 return Ok(if class == Class::FuncLimits {
-                    Exp::Limits(boxed(styled))
+                    Exp::Limits(Box::new(styled))
                 } else {
                     styled
                 });

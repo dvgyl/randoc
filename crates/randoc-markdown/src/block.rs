@@ -12,9 +12,10 @@ use randoc_ast::{
 };
 use randoc_core::{Error, Extension, Extensions, LogMessage, ReaderOptions, Result, SourcePos};
 
+use crate::inline::decode_entities;
 use crate::tables::{CellParser, GRID_MARK, TableOptions, parse_table};
 use crate::tokens::{TokenIndex, TokenRules, View};
-use randoc_core::shared::{IdentifierSet, auto_identifier};
+use randoc_core::shared::{IdentifierSet, auto_identifier, parse_roman_numeral};
 
 /// The format name of a placeholder inline that holds raw Markdown text.
 pub(crate) const PLACEHOLDER: &str = "\u{0}markdown";
@@ -231,7 +232,7 @@ pub(crate) struct Parser {
     indented_code_classes: Vec<Text>,
     pub source: Text,
     source_lines: Vec<(u32, Text)>,
-    source_line: u32,
+    pub(crate) source_line: u32,
     inline_directory: Text,
     pub max_depth: usize,
     pub depth: usize,
@@ -278,7 +279,7 @@ pub(crate) struct Parser {
     no_marker_below: HashMap<(usize, usize, Text), (usize, usize)>,
     rest: RestHandoff,
     idset: IdentifierSet,
-    pub examples: HashMap<Text, i64>,
+    pub examples: HashMap<Text, (i64, u32)>,
     example_count: i64,
     pub note_number: i64,
     pub in_note: bool,
@@ -538,6 +539,13 @@ impl Tokens {
     }
 }
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum ParagraphBoundary {
+    Continue,
+    Plain,
+    Paragraph,
+}
+
 /// A list marker at the start of a line.
 #[derive(Debug, Clone, Copy, PartialEq)]
 enum ListKind {
@@ -556,44 +564,6 @@ struct Marker {
     /// The text of the first line after the marker.
     /// The byte offset in the line where the item text starts.
     rest_from: usize,
-}
-
-/// Returns the value of a Roman numeral in one case, or `None` when `s` does
-/// not match `M* CM? D? CD? C* XC? L? XL? X* IX? V? IV? I*` (oracle probes:
-/// `IIIII`, `IVI`, `XCXX` and `LXL` are numerals, `ID`, `IC`, `VV` and `IIV`
-/// are not).
-fn roman_value(s: &str) -> Option<i64> {
-    const PARTS: [(&[u8], i64, bool); 13] = [
-        (b"M", 1000, true),
-        (b"CM", 900, false),
-        (b"D", 500, false),
-        (b"CD", 400, false),
-        (b"C", 100, true),
-        (b"XC", 90, false),
-        (b"L", 50, false),
-        (b"XL", 40, false),
-        (b"X", 10, true),
-        (b"IX", 9, false),
-        (b"V", 5, false),
-        (b"IV", 4, false),
-        (b"I", 1, true),
-    ];
-    let upper = s.to_ascii_uppercase();
-    if s.is_empty() || (s != upper && s != s.to_ascii_lowercase()) {
-        return None;
-    }
-    let mut rest = upper.as_bytes();
-    let mut total: i64 = 0;
-    for (part, value, repeats) in PARTS {
-        while let Some(after) = rest.strip_prefix(part) {
-            rest = after;
-            total = total.saturating_add(value);
-            if !repeats {
-                break;
-            }
-        }
-    }
-    rest.is_empty().then_some(total)
 }
 
 fn is_hrule(s: &str) -> bool {
@@ -1444,11 +1414,12 @@ impl Parser {
     }
 
     fn placeholder(&self, text: &str) -> Inline {
-        let format = if self.ext(Extension::RebaseRelativePaths) {
-            Format::new(format!("{PLACEHOLDER}{}", self.source_directory()))
+        let directory = if self.ext(Extension::RebaseRelativePaths) {
+            self.source_directory()
         } else {
-            Format::new(PLACEHOLDER)
+            ""
         };
+        let format = Format::new(format!("{PLACEHOLDER}{}:{directory}", self.source_line));
         Inline::RawInline(format, text.into())
     }
 
@@ -1871,68 +1842,55 @@ impl Parser {
 
     // ----- paragraphs -----
 
-    /// Returns the kind of paragraph that the line `s` ends, or `None` when the paragraph continues.
-    fn interrupts(&self, s: &str) -> Option<bool> {
+    fn interrupts(&self, s: &str) -> ParagraphBoundary {
         if !self.ext(Extension::BlankBeforeBlockquote)
             && s.trim_start_matches(SPACE).starts_with('>')
         {
-            return Some(true);
+            return ParagraphBoundary::Paragraph;
         }
         if self.in_fenced_div
             && div_fence(s)
                 .is_some_and(|(_, rest)| rest.trim_end_matches(':').trim_matches(SPACE).is_empty())
         {
-            return Some(true);
+            return ParagraphBoundary::Paragraph;
         }
         if !self.in_list
             && !self.ext(Extension::BlankBeforeHeader)
             && s.starts_with("#.")
             && self.marker(s, None).is_some()
         {
-            return Some(false);
+            return ParagraphBoundary::Plain;
         }
         if !self.ext(Extension::BlankBeforeHeader) && self.atx(s).is_some() {
-            return Some(true);
+            return ParagraphBoundary::Paragraph;
         }
         if self.html_interrupts(s) {
-            return Some(false);
+            return ParagraphBoundary::Plain;
         }
         // A list marker ends a paragraph of an item. The list makes it a
         // `Para` when the list is loose.
-        if self.in_list
-            && indent(s) <= 3
-            && !is_hrule(s)
-            && (self.marker(s, None).is_some() || self.foreign_marker(s))
-        {
-            return Some(false);
+        if self.in_list && self.list_marker_line(s, false) {
+            return ParagraphBoundary::Plain;
         }
         // In a list item, a definition marker ends the paragraph, also with
         // `definition_lists` off. With no term before it, the marker line is
         // then a paragraph of its own.
         if self.in_list && self.def_marker(s).is_some() {
-            return Some(false);
+            return ParagraphBoundary::Plain;
         }
         // The marker forms of `fancy_lists` end the paragraph also when
         // that extension is off.
-        if self.ext(Extension::ListsWithoutPrecedingBlankline)
-            && indent(s) <= 3
-            && !is_hrule(s)
-            && (self.marker(s, None).is_some()
-                || self.foreign_marker(s)
-                || self.def_marker(s).is_some())
-        {
-            return Some(true);
+        if self.ext(Extension::ListsWithoutPrecedingBlankline) && self.list_marker_line(s, true) {
+            return ParagraphBoundary::Paragraph;
         }
-        None
+        ParagraphBoundary::Continue
     }
 
     /// Tells whether the line `s` starts a block that needs a line break at
     /// the end of the line: a list item, an ATX heading, a line block or a
     /// horizontal rule.
     fn needs_line_end(&self, s: &str) -> bool {
-        let item = indent(s) <= 3
-            && !is_hrule(s)
-            && (self.marker(s, None).is_some() || self.foreign_marker(s));
+        let item = self.list_marker_line(s, false);
         let line_block = self.ext(Extension::LineBlocks) && (s == "|" || s.starts_with("| "));
         item || self.atx(s).is_some() || line_block || is_hrule(s)
     }
@@ -1943,11 +1901,15 @@ impl Parser {
     fn ends_lazy_quote(&self, s: &str) -> bool {
         (!self.ext(Extension::BlankBeforeHeader) && self.atx(s).is_some())
             || (self.ext(Extension::ListsWithoutPrecedingBlankline)
-                && indent(s) <= 3
-                && !is_hrule(s)
-                && (self.marker(s, None).is_some()
-                    || self.foreign_marker(s)
-                    || self.def_marker(s).is_some()))
+                && self.list_marker_line(s, true))
+    }
+
+    fn list_marker_line(&self, s: &str, definitions: bool) -> bool {
+        indent(s) <= 3
+            && !is_hrule(s)
+            && (self.marker(s, None).is_some()
+                || self.foreign_marker(s)
+                || (definitions && self.def_marker(s).is_some()))
     }
 
     /// Tells whether a block tag ends a paragraph. Its indentation does not
@@ -1969,7 +1931,7 @@ impl Parser {
     ) -> Result<usize> {
         let lines = all.get(at..).unwrap_or(&[]);
         let mut j = 1;
-        let mut para = None;
+        let mut boundary = ParagraphBoundary::Continue;
         // The paragraph text ends at the first line with a block tag after
         // text, so that the text after the tag is not read again.
         let has_tag = |p: &Self, line: &Ln| p.inline_block_tag(line.t()).is_some();
@@ -1996,7 +1958,7 @@ impl Parser {
                     j = m + 1;
                     continue;
                 }
-                para = Some(true);
+                boundary = ParagraphBoundary::Paragraph;
                 break;
             }
             // Only a backtick fence with no space before it ends a paragraph.
@@ -2013,12 +1975,14 @@ impl Parser {
                     )
                     .is_some()
             {
-                para = Some(true);
+                boundary = ParagraphBoundary::Paragraph;
                 break;
             }
-            if !inside && let Some(kind) = self.interrupts(line.t()) {
-                para = Some(kind);
-                break;
+            if !inside {
+                boundary = self.interrupts(line.t());
+                if boundary != ParagraphBoundary::Continue {
+                    break;
+                }
             }
             tagged = !inside && has_tag(self, line);
             if !inside {
@@ -2039,7 +2003,9 @@ impl Parser {
             return Ok(n);
         }
         let inlines = vec![self.placeholder(text.trim_start_matches(SPACE))];
-        if para.unwrap_or(self.end_blank) {
+        if boundary == ParagraphBoundary::Paragraph
+            || (boundary == ParagraphBoundary::Continue && self.end_blank)
+        {
             out.push(Block::Para(inlines));
         } else {
             out.push(Block::Plain(inlines));
@@ -2828,7 +2794,8 @@ impl Parser {
                 (Some(c), None) => Some(c),
                 _ => None,
             };
-            if let Some(v) = roman_value(&token) {
+            if let Some(v) = parse_roman_numeral(&token) {
+                let v = i64::try_from(v).unwrap_or(i64::MAX);
                 if token.chars().all(|c| c.is_ascii_lowercase()) {
                     candidates.push((LowerRoman, v, None));
                 } else if token.chars().all(|c| c.is_ascii_uppercase()) {
@@ -2916,7 +2883,7 @@ impl Parser {
                 let known = m
                     .label
                     .as_ref()
-                    .and_then(|label| self.examples.get(label).copied());
+                    .and_then(|label| self.examples.get(label).map(|&(number, _)| number));
                 let number = match known {
                     Some(n) => n,
                     None => {
@@ -2928,7 +2895,13 @@ impl Parser {
                         if let Some(label) = &m.label
                             && !label.is_empty()
                         {
-                            self.examples.insert(label.clone(), self.example_count);
+                            let defined_on = if start_line == 0 {
+                                self.source_line
+                            } else {
+                                start_line
+                            };
+                            self.examples
+                                .insert(label.clone(), (self.example_count, defined_on));
                         }
                         self.example_count
                     }
@@ -3045,12 +3018,11 @@ impl Parser {
             attrs.start = n;
         }
         compactify(&mut items);
-        let consumed = trailing_blank_trim(lines, j);
         out.push(match kind {
             ListKind::Bullet => Block::BulletList(items),
             ListKind::Ordered(..) => Block::OrderedList(attrs, items),
         });
-        Ok(Some(consumed))
+        Ok(Some(j))
     }
 
     /// Parses a single line with nested list markers (`- - - a`) at once,
@@ -4328,63 +4300,15 @@ impl Parser {
 
     fn table(&mut self, lines: &[Ln], out: &mut Vec<Block>) -> Option<usize> {
         let options = TableOptions {
-            simple: self.ext(Extension::SimpleTables),
-            raw_html: self.ext(Extension::RawHtml),
-            multiline: self.ext(Extension::MultilineTables),
-            grid: self.ext(Extension::GridTables),
-            pipe: self.ext(Extension::PipeTables),
-            captions: self.ext(Extension::TableCaptions),
-            attributes: self.ext(Extension::TableAttributes),
+            extensions: self.exts,
             columns: self.columns,
         };
-        if !(options.simple || options.multiline || options.grid || options.pipe) {
-            return None;
-        }
         if lines.first().is_some_and(|l| is_hrule(l.t()))
             && lines.get(1).is_some_and(|l| l.is_blank())
         {
             return None;
         }
-        let is_dashes = |s: &str| {
-            let t = s.trim_matches(SPACE);
-            !t.is_empty() && t.chars().all(|c| c == '-' || c == ' ' || c == ':')
-        };
-        let first = lines.first()?.t();
-        let first_trim = first.trim_start_matches(SPACE);
-        let dash_start = is_dashes(first);
-        let possible = dash_start
-            || first.contains('|')
-            || first_trim.starts_with('+')
-            || first_trim.starts_with(':')
-            || first_trim.starts_with("Table:")
-            || first_trim.starts_with("table:")
-            || lines.get(1).is_some_and(|l| is_dashes(l.t()));
-        if !possible {
-            return None;
-        }
-        // A table and its caption are two blocks with blank lines between
-        // them. Only a table that starts with a dashed line can contain blank
-        // lines, so it gets all lines, also after a caption.
-        let mut k = 0;
-        while lines.get(k).is_some_and(|l| !l.is_blank()) {
-            k += 1;
-        }
-        while lines.get(k).is_some_and(|l| l.is_blank()) {
-            k += 1;
-        }
-        let caption_first = first_trim.starts_with(':')
-            || first_trim.starts_with("Table:")
-            || first_trim.starts_with("table:");
-        let end = if dash_start || (caption_first && lines.get(k).is_some_and(|l| is_dashes(l.t())))
-        {
-            lines.len()
-        } else {
-            while lines.get(k).is_some_and(|l| !l.is_blank()) {
-                k += 1;
-            }
-            (k + 1).min(lines.len())
-        };
-        let (block, used) = parse_table(lines.get(..end).unwrap_or(&[]), &options, self)?;
+        let (block, used) = parse_table(lines, &options, self)?;
         out.push(block);
         Some(used.max(1))
     }
@@ -4649,13 +4573,13 @@ impl Parser {
             return None;
         };
         let key = normalize_key(label);
-        let url = escape_uri(&crate::inline::unescape(&url));
+        let url = escape_uri(&decode_entities(&crate::inline::unescape(&url)));
         let url = if self.ext(Extension::RebaseRelativePaths) {
             rebase_target(url, self.source_directory())
         } else {
             url
         };
-        let target = Target::new(url, title);
+        let target = Target::new(url, decode_entities(&title));
         if self
             .refs
             .get(&key)
@@ -4792,7 +4716,6 @@ impl Parser {
             inner.push(line.clone());
             j += 1;
         }
-        let consumed = trailing_blank_trim(lines, j);
         let saved = std::mem::replace(&mut self.in_list, false);
         let blocks = self.blocks_open(&inner, true);
         self.in_list = saved;
@@ -4807,7 +4730,7 @@ impl Parser {
             sum.saturating_add(line.t().len() as u64 + 1)
         });
         self.notes.insert(key, (blocks, bytes));
-        Ok(Some(consumed))
+        Ok(Some(j))
     }
 
     // ----- attributes -----
@@ -5200,10 +5123,14 @@ impl Parser {
         for inline in inlines {
             match inline {
                 Inline::RawInline(format, text) if format.as_str().starts_with(PLACEHOLDER) => {
-                    let directory = format.as_str().strip_prefix(PLACEHOLDER).unwrap_or("");
+                    let (_, position) = format.as_str().split_at(PLACEHOLDER.len());
+                    let (line, directory) = position.split_once(':').unwrap_or_default();
+                    let previous_line = self.source_line;
+                    self.source_line = line.parse().unwrap_or(previous_line);
                     let previous = std::mem::replace(&mut self.inline_directory, directory.into());
                     out.extend(self.parse_inlines(&text));
                     self.inline_directory = previous;
+                    self.source_line = previous_line;
                 }
                 // A raw TeX block of the metadata is a raw inline here. Its
                 // macro definitions apply to the body (oracle: 4667).
@@ -5360,11 +5287,6 @@ fn rebase_target(target: Text, directory: &str) -> Text {
         return target;
     }
     format!("{}/{target}", directory.trim_end_matches('/'))
-}
-
-/// Returns the number of lines to consume so that the trailing blank lines stay for the next block.
-fn trailing_blank_trim(_lines: &[Ln], j: usize) -> usize {
-    j
 }
 
 fn first_n_of(lines: &[Ln], index: usize) -> u32 {

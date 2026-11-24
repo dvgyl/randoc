@@ -19,6 +19,7 @@ mod abbreviations;
 #[rustfmt::skip]
 mod abbreviation_table;
 pub mod chunks;
+mod date;
 mod emoji;
 mod entities;
 mod identifiers;
@@ -33,6 +34,7 @@ mod text;
 pub mod toc;
 
 pub use abbreviations::default_abbreviations;
+pub use date::civil_date;
 pub use emoji::{alias_from_emoji, emoji_from_alias, replace_emoji_with_aliases};
 pub use entities::{named_entity, numeric_entity};
 pub use identifiers::{
@@ -41,4 +43,4 @@ pub use identifiers::{
 };
 pub use nfc::{is_nfc_quick, nfc};
 pub use randoc_ast::json::{show_char, show_string};
-pub use text::{stringify, stringify_blocks, stringify_meta};
+pub use text::{parse_roman_numeral, stringify, stringify_blocks, stringify_meta};

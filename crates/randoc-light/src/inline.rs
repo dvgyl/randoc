@@ -330,8 +330,14 @@ impl Parser<'_> {
         {
             let mut out = Vec::new();
             let mut end = 0;
-            for word in text.split_ascii_whitespace() {
-                let start = word.as_ptr() as usize - text.as_ptr() as usize;
+            let mut offset = 0;
+            for token in text.split_inclusive(|ch: char| ch.is_ascii_whitespace()) {
+                let start = offset;
+                offset += token.len();
+                let word = token.trim_ascii_end();
+                if word.is_empty() {
+                    continue;
+                }
                 if end > 0 {
                     out.push(if !text[end..start].contains('\n') {
                         Inline::Space

@@ -184,7 +184,6 @@ struct Parser<'c> {
     partially_consumed_tab: bool,
     all_closed: bool,
     last_matched_container: usize,
-    consumed: bool,
     pending_attrs: Option<attrs::Pairs>,
     /// The container and the last line of the last block of attribute lines.
     attr_block: Option<(usize, usize)>,
@@ -192,12 +191,13 @@ struct Parser<'c> {
     last_other: Option<usize>,
 }
 
-/// Result of a block start: no match, a container, or a leaf that takes the line.
+/// Result of a block start.
 #[derive(PartialEq, Eq)]
 enum Start {
     None,
     Container,
     Leaf,
+    Consumed,
 }
 
 /// Result of a block continuation.
@@ -267,7 +267,6 @@ pub(crate) fn parse_with(text: &str, config: &Config, open_last_line: bool) -> T
         partially_consumed_tab: false,
         all_closed: true,
         last_matched_container: 0,
-        consumed: false,
         pending_attrs: None,
         attr_block: None,
         last_other: None,
@@ -575,7 +574,6 @@ impl Parser<'_> {
         self.column = 0;
         self.blank = false;
         self.partially_consumed_tab = false;
-        self.consumed = false;
         self.line_number += 1;
         let mut container = 0;
         self.oldtip = self.tip;
@@ -648,16 +646,17 @@ impl Parser<'_> {
                     container = self.tip;
                     matched_leaf = true;
                 }
+                Start::Consumed => {
+                    self.close_unmatched_blocks();
+                    return;
+                }
                 Start::None => {
                     self.advance_next_nonspace();
                     break;
                 }
             }
         }
-        if self.consumed {
-            self.close_unmatched_blocks();
-        } else if !self.all_closed && !self.blank && matches!(self.kind(self.tip), Kind::Paragraph)
-        {
+        if !self.all_closed && !self.blank && matches!(self.kind(self.tip), Kind::Paragraph) {
             self.add_line();
         } else {
             self.close_unmatched_blocks();
@@ -686,7 +685,6 @@ impl Parser<'_> {
                         && self.nodes.get(container).is_some_and(|n| {
                             n.children.is_empty() && n.start_line == self.line_number
                         })));
-            // The value reaches the ancestors when they are finalized.
             let line = self.line_number;
             if let Some(node) = self.nodes.get_mut(container) {
                 node.last_line_blank = last_line_blank;
@@ -1036,9 +1034,7 @@ impl Parser<'_> {
             waiting => *waiting = Some(pairs),
         }
         self.attr_block = Some((container, self.line_number + self.skip_lines));
-        self.consumed = true;
-        self.offset = self.line.len();
-        Start::Leaf
+        Start::Consumed
     }
 
     fn push_open_div(&mut self, node: usize, fence: usize) {
@@ -1124,10 +1120,8 @@ impl Parser<'_> {
                 if let Some(node) = self.nodes.get_mut(index) {
                     node.content = name.to_uppercase();
                 }
-                self.consumed = true;
-                self.offset = self.line.len();
                 self.add_empty_paragraph();
-                return Start::Leaf;
+                return Start::Consumed;
             }
         }
         Start::Container
@@ -1165,11 +1159,9 @@ impl Parser<'_> {
             node.content = content;
             node.attr = attr;
         }
-        self.offset = self.line.len();
-        self.consumed = true;
         self.close_unmatched_blocks();
         self.add_empty_paragraph();
-        Start::Leaf
+        Start::Consumed
     }
 
     /// On an open last line, a block that takes the whole line is followed by an
@@ -1223,9 +1215,7 @@ impl Parser<'_> {
             fence_offset,
             info,
         });
-        self.consumed = true;
-        self.offset = self.line.len();
-        Start::Leaf
+        Start::Consumed
     }
 
     fn start_div(&mut self) -> Start {
@@ -1418,9 +1408,7 @@ impl Parser<'_> {
             node.source.marker = marker;
             node.content.clear();
         }
-        self.consumed = true;
-        self.offset = self.line.len();
-        Start::Leaf
+        Start::Consumed
     }
 
     /// The cells of this line as a table row. The parser removes at most 3 spaces
@@ -1616,9 +1604,7 @@ impl Parser<'_> {
                 node.content = text;
                 node.content.push('\n');
             }
-            self.consumed = true;
-            self.offset = self.line.len();
-            return Start::Leaf;
+            return Start::Consumed;
         }
         Start::Container
     }

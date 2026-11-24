@@ -115,11 +115,15 @@ struct Inl<'p> {
     quotes: u8,
     /// The shared result buffer of emphasis attempts.
     buf: Vec<Inline>,
-    /// The next call of `inline` comes from an emphasis loop.
-    direct: bool,
     /// The number of active `seq_closing` loops. When it is above zero, the
     /// result of an inline that runs to the end of the text is discarded.
     closing: usize,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum InlineDestination {
+    Result,
+    EmphasisBuffer,
 }
 
 /// A construct whose failure the memo keeps.
@@ -261,15 +265,15 @@ impl Parser {
 
     /// Parses raw Markdown text into inlines.
     pub(crate) fn parse_inlines(&mut self, text: &str) -> Vec<Inline> {
-        self.parse_inlines_in(text, false)
+        self.parse_inlines_in(text, false, self.depth)
     }
 
-    fn parse_inlines_in(&mut self, text: &str, in_link: bool) -> Vec<Inline> {
+    fn parse_inlines_in(&mut self, text: &str, in_link: bool, depth: usize) -> Vec<Inline> {
         crate::step(text.len());
         let all: Rc<[char]> = text.chars().collect();
         let hi = all.len();
         let chars = Chars { all, lo: 0, hi };
-        self.parse_window(chars, Index::default(), in_link, Window::Text)
+        self.parse_window(chars, Index::default(), in_link, Window::Text, depth)
     }
 
     fn parse_window(
@@ -278,8 +282,8 @@ impl Parser {
         ix: Index,
         in_link: bool,
         kind: Window,
+        depth: usize,
     ) -> Vec<Inline> {
-        let depth = self.depth;
         let mut inl = Inl::new(self, chars, ix, in_link, depth);
         inl.window = kind;
         let seq = inl.seq();
@@ -311,7 +315,6 @@ impl<'p> Inl<'p> {
             scripts: 0,
             quotes: 0,
             buf: Vec::new(),
-            direct: false,
             closing: 0,
         }
     }
@@ -699,7 +702,7 @@ impl Inl<'_> {
         let mut out = Vec::new();
         while self.i < self.s.len() && self.p.can_read() {
             let start = self.i;
-            out.extend(self.inline());
+            out.extend(self.inline(InlineDestination::Result));
             if self.i == start {
                 self.i += 1;
             }
@@ -808,14 +811,11 @@ impl Inl<'_> {
         }
     }
 
-    fn inline(&mut self) -> Vec<Inline> {
+    fn inline(&mut self, destination: InlineDestination) -> Vec<Inline> {
         if !self.p.can_read() {
             self.i = self.s.len();
             return Vec::new();
         }
-        // Only the call that an emphasis loop makes may write into the
-        // emphasis buffer.
-        let direct = std::mem::take(&mut self.direct);
         let Some(c) = self.cur() else {
             return Vec::new();
         };
@@ -826,7 +826,7 @@ impl Inl<'_> {
         }
         self.depth += 1;
         let out = if matches!(c, '*' | '_') {
-            self.enclosure(c, direct)
+            self.enclosure(c, destination)
         } else {
             self.inline_inner(c)
         };
@@ -837,9 +837,7 @@ impl Inl<'_> {
     /// Parses one inline inside an emphasis and appends it to the emphasis buffer.
     fn inline_into_buffer(&mut self) {
         let start = self.i;
-        self.direct = true;
-        let out = self.inline();
-        self.direct = false;
+        let out = self.inline(InlineDestination::EmphasisBuffer);
         self.buf.extend(out);
         if self.i == start {
             self.i += 1;
@@ -851,7 +849,6 @@ impl Inl<'_> {
             ' ' | '\t' => return self.whitespace(),
             '\n' => return self.newline(),
             '\\' => return self.escape(),
-            '*' | '_' => return self.enclosure(c, false),
             '`' => return self.code(),
             '[' => self.bracket(false),
             '!' if self.peek(1) == Some('[') => {
@@ -1140,9 +1137,8 @@ impl Inl<'_> {
     /// Parses an emphasis opener. An emphasis writes its result into one
     /// buffer that nested emphasis shares, so that a failed attempt (a
     /// literal opener and its contents) is not copied again by each level
-    /// around it. `direct` is true when the caller is an emphasis loop that
-    /// reads the buffer; otherwise the result is taken out of the buffer.
-    fn enclosure(&mut self, c: char, direct: bool) -> Vec<Inline> {
+    /// around it. An emphasis loop reads the buffer directly.
+    fn enclosure(&mut self, c: char, destination: InlineDestination) -> Vec<Inline> {
         if c == '_' && self.ext(Extension::IntrawordUnderscores) && is_alnum(self.prev()) {
             let start = self.i;
             while self.cur() == Some('_') {
@@ -1189,7 +1185,7 @@ impl Inl<'_> {
             self.i = start + n;
             return vec![Inline::Str(self.text(start, start + n))];
         }
-        if direct {
+        if destination == InlineDestination::EmphasisBuffer {
             Vec::new()
         } else {
             self.buf.drain(mark..).collect()
@@ -1845,23 +1841,15 @@ impl Inl<'_> {
     /// Parses the window `range` of this buffer as a separate text.
     fn sub_window(&mut self, range: Range<usize>, in_link: bool, kind: Window) -> Vec<Inline> {
         crate::step(1);
-        let saved = self.p.depth;
-        self.p.depth = self.depth;
         let window = self.window(range);
         let ix = self.shared_index();
-        let out = self
-            .p
-            .parse_window(window, ix, in_link || self.in_link, kind);
-        self.p.depth = saved;
-        out
+        self.p
+            .parse_window(window, ix, in_link || self.in_link, kind, self.depth)
     }
 
     fn sub(&mut self, text: &str, in_link: bool) -> Vec<Inline> {
-        let saved = self.p.depth;
-        self.p.depth = self.depth;
-        let out = self.p.parse_inlines_in(text, in_link || self.in_link);
-        self.p.depth = saved;
-        out
+        self.p
+            .parse_inlines_in(text, in_link || self.in_link, self.depth)
     }
 
     fn note(&mut self, blocks: Vec<Block>) -> Inline {
@@ -1923,6 +1911,8 @@ impl Inl<'_> {
             k = j + 1;
         } else {
             let mut depth = 0usize;
+            let mut bare = Text::new();
+            let mut part_start = k;
             loop {
                 match self.s.get(k) {
                     None => return None,
@@ -1944,12 +1934,18 @@ impl Inl<'_> {
                         if matches!(self.s.get(m), Some('"' | '\'' | ')')) {
                             break;
                         }
+                        crate::step(k - part_start);
+                        bare.extend(self.s.get(part_start..k)?.iter());
+                        bare.push(' ');
+                        part_start = m;
                         k = m;
                     }
                     Some(_) => k += 1,
                 }
             }
-            url = self.text(url_start, k.min(self.s.len()));
+            crate::step(k - part_start);
+            bare.extend(self.s.get(part_start..k)?.iter());
+            url = bare;
         }
         while self.s.get(k).is_some_and(|c| c.is_whitespace()) {
             k += 1;
@@ -2224,10 +2220,13 @@ impl Inl<'_> {
         let (key, len) = cite_key(&rest)?;
         let len = rest.get(..len)?.chars().count();
         if self.ext(Extension::ExampleLists)
-            && let Some(n) = self.p.examples.get(&key).copied()
+            && let Some((number, defined_on)) = self.p.examples.get(&key).copied()
         {
+            if defined_on > self.p.source_line && self.ext(Extension::Citations) {
+                self.cite_note_num();
+            }
             self.i += len;
-            return Some(vec![Inline::Str(n.to_string())]);
+            return Some(vec![Inline::Str(number.to_string())]);
         }
         if !self.ext(Extension::Citations) {
             return None;
@@ -2394,6 +2393,39 @@ impl Inl<'_> {
         self.short_script(Inline::Subscript)
     }
 
+    fn script_end(&mut self, mut from: usize, delimiter: char) -> Option<usize> {
+        loop {
+            let end = self.find(Find::Unescaped(delimiter), from)?;
+            let boundary = self
+                .find(Find::ScriptSpace, from)
+                .map_or(end, |space| space.min(end));
+            if self.ext(Extension::BracketedSpans) {
+                let mut next = from;
+                while let Some(open) = self
+                    .find(Find::Unescaped('['), next)
+                    .filter(|&at| at < boundary)
+                {
+                    next = open + 1;
+                    if open > 0 && self.s.get(open - 1) == Some(&'!') && !self.escaped(open - 1) {
+                        continue;
+                    }
+                    if let Some(close) = self.matching_bracket(open)
+                        && close + 1 < boundary
+                        && let Some((_, after)) = self.attrs_at(close + 1)
+                        && boundary < after
+                    {
+                        from = after;
+                        break;
+                    }
+                }
+                if from > boundary {
+                    continue;
+                }
+            }
+            return (boundary == end).then_some(end);
+        }
+    }
+
     fn long_script(
         &mut self,
         delimiter: char,
@@ -2403,25 +2435,16 @@ impl Inl<'_> {
             return None;
         }
         let mut start = self.i + 1;
-        let mut end = self.find(Find::Unescaped(delimiter), start)?;
+        let mut end = self.script_end(start, delimiter)?;
         // Pandoc permits an extra pair of tildes on either side of a subscript.
         if delimiter == '~'
             && end == start
             && self.s.get(start + 1) == Some(&delimiter)
             && self.s.get(start + 2).is_some_and(|&c| c != delimiter)
-            && let Some(close) = self.find(Find::Unescaped(delimiter), start + 2)
-            && self
-                .find(Find::ScriptSpace, start + 2)
-                .is_none_or(|space| space > close)
+            && let Some(close) = self.script_end(start + 2, delimiter)
         {
             start += 2;
             end = close;
-        }
-        if self
-            .find(Find::ScriptSpace, start)
-            .is_some_and(|space| space < end)
-        {
-            return None;
         }
         let window = self.window(start..end);
         let ix = self.shared_index();
@@ -3014,7 +3037,12 @@ fn autolink_len(s: &str) -> Option<usize> {
         return None;
     }
     let body = inner.get(..end)?;
-    if is_email(body) {
+    let email = if body.contains('&') {
+        is_email(&decode_entities(body))
+    } else {
+        is_email(body)
+    };
+    if email {
         return Some(end + 2);
     }
     let colon = body.find(':')?;
