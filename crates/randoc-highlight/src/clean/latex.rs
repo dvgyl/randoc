@@ -8,107 +8,96 @@ use crate::syntax::Syntax;
 use crate::token::TokenType::*;
 
 pub(crate) fn syntax() -> Syntax {
-    let lang = Lang::new(
-        "LaTeX",
-        "latex",
-        &[
-            "*.tex", "*.ltx", "*.dtx", "*.sty", "*.cls", "*.bbx", "*.cbx", "*.lbx", "*.tikz",
-            "*.pgf",
-        ],
-    )
-    .weak_delims("\\")
-    .list("builtins", BUILTINS)
-    .list("definitions", DEFINITIONS)
-    .list("keywords", KEYWORDS)
-    .list("references", REFERENCES)
-    .context("Normal", Normal, |c| {
-        let c = c.rule(M::Char('%'), Comment, Push("Comment"));
-        let c = environment(c, MATH_ENVIRONMENTS, "Math Begin");
-        let c = environment(c, VERBATIM_ENVIRONMENTS, "Verbatim Begin");
-        let c = environment(c, &["comment"], "Comment Begin");
-        let c = MINTED.iter().fold(c, |c, (language, begin, _, _)| {
-            c.rule_pattern(
-                format!(r"\\begin(?=\s*\{{minted\}}(?:\[[^\]]*\])?\{{(?i:{language})\}})"),
-                Keyword,
-                Push(begin),
+    let lang = Lang::new(super::LATEX)
+        .weak_delims("\\")
+        .list("builtins", BUILTINS)
+        .list("definitions", DEFINITIONS)
+        .list("keywords", KEYWORDS)
+        .list("references", REFERENCES)
+        .context("Normal", Normal, |c| {
+            let c = c.rule(M::Char('%'), Comment, Push("Comment"));
+            let c = environment(c, MATH_ENVIRONMENTS, "Math Begin");
+            let c = environment(c, VERBATIM_ENVIRONMENTS, "Verbatim Begin");
+            let c = environment(c, &["comment"], "Comment Begin");
+            let c = MINTED.iter().fold(c, |c, (language, begin, _, _)| {
+                c.rule_pattern(
+                    format!(r"\\begin(?=\s*\{{minted\}}(?:\[[^\]]*\])?\{{(?i:{language})\}})"),
+                    Keyword,
+                    Push(begin),
+                )
+            });
+            c.rule(M::Str("$$"), SpecialString, Push("Display Math"))
+                .rule(M::Char('$'), SpecialString, Push("Inline Math"))
+                .rule(M::Str("\\("), SpecialString, Push("Parenthesis Math"))
+                .rule(M::Str("\\["), SpecialString, Push("Bracket Math"))
+                .rule(M::Kw("builtins"), BuiltIn, Push("Argument"))
+                .rule(M::Kw("references"), Keyword, Push("Argument"))
+                .rule(M::Kw("keywords"), Keyword, Push("Star"))
+                .rule(M::Kw("definitions"), Function, Push("Argument"))
+                .rule(M::Re(COMMAND), Function, Stay)
+        })
+        .context("Comment", Comment, |c| {
+            c.rule(M::Spaces, Comment, Stay)
+                .include("##Comments")
+                .line_end(Pop(1))
+        })
+        .context("Star", Keyword, |c| {
+            c.rule(M::Char('*'), Keyword, Pop(1))
+                .fallthrough(Pop(1))
+                .line_end(Pop(1))
+        })
+        .context("Argument", Normal, |c| {
+            c.rule(M::Spaces, Normal, Stay)
+                .rule(M::Char('['), Normal, Push("Optional"))
+                .rule(M::Char('{'), Normal, PopPush(1, "Argument Content"))
+                .fallthrough(Pop(1))
+        })
+        .context("Optional", Normal, |c| {
+            c.rule(M::Char(']'), Normal, Pop(1)).include("Normal")
+        })
+        .context("Argument Content", Extension, |c| {
+            c.rule(M::Char('}'), Normal, Pop(1))
+        })
+        .context("Display Math", SpecialString, |c| {
+            math(c.rule(M::Str("$$"), SpecialString, Pop(1)))
+        })
+        .context("Inline Math", SpecialString, |c| {
+            math(c.rule(M::Char('$'), SpecialString, Pop(1)))
+        })
+        .context("Parenthesis Math", SpecialString, |c| {
+            math(c.rule(M::Str("\\)"), SpecialString, Pop(1)))
+        })
+        .context("Bracket Math", SpecialString, |c| {
+            math(c.rule(M::Str("\\]"), SpecialString, Pop(1)))
+        })
+        .context("Math Begin", Normal, |c| name(c, "Math Environment"))
+        .context("Verbatim Begin", Normal, |c| {
+            name(c, "Verbatim Environment")
+        })
+        .context("Comment Begin", Normal, |c| name(c, "Comment Environment"))
+        .context("Math Environment", SpecialString, |c| {
+            let c = c.lookahead_pattern(
+                format!(r"\\end\s*\{{(?:{})\}}", alternation(MATH_ENVIRONMENTS)),
+                SpecialString,
+                Pop(1),
+            );
+            math(c)
+        })
+        .context("Verbatim Environment", VerbatimString, |c| {
+            c.lookahead_pattern(
+                format!(r"\\end\s*\{{(?:{})\}}", alternation(VERBATIM_ENVIRONMENTS)),
+                VerbatimString,
+                Pop(1),
+            )
+        })
+        .context("Comment Environment", Comment, |c| {
+            c.rule_with(
+                M::Re(r"\\end\s*\{comment\}"),
+                Comment,
+                Pop(1),
+                opts().lookahead(),
             )
         });
-        c.rule(M::Str("$$"), SpecialString, Push("Display Math"))
-            .rule(M::Char('$'), SpecialString, Push("Inline Math"))
-            .rule(M::Str("\\("), SpecialString, Push("Parenthesis Math"))
-            .rule(M::Str("\\["), SpecialString, Push("Bracket Math"))
-            .rule(M::Kw("builtins"), BuiltIn, Push("Argument"))
-            .rule(M::Kw("references"), Keyword, Push("Argument"))
-            .rule(M::Kw("keywords"), Keyword, Push("Star"))
-            .rule(M::Kw("definitions"), Function, Push("Argument"))
-            .rule(M::Re(COMMAND), Function, Stay)
-    })
-    .context("Comment", Comment, |c| {
-        c.rule(M::Spaces, Comment, Stay)
-            .include("##Comments")
-            .line_end(Pop(1))
-    })
-    .context("Star", Keyword, |c| {
-        c.rule(M::Char('*'), Keyword, Pop(1))
-            .fallthrough(Pop(1))
-            .line_end(Pop(1))
-    })
-    // The first `{...}` argument after the command is an extension; an
-    // optional argument before it is text.
-    .context("Argument", Normal, |c| {
-        c.rule(M::Spaces, Normal, Stay)
-            .rule(M::Char('['), Normal, Push("Optional"))
-            .rule(M::Char('{'), Normal, PopPush(1, "Argument Content"))
-            .fallthrough(Pop(1))
-    })
-    .context("Optional", Normal, |c| {
-        c.rule(M::Char(']'), Normal, Pop(1)).include("Normal")
-    })
-    .context("Argument Content", Extension, |c| {
-        c.rule(M::Char('}'), Normal, Pop(1))
-    })
-    .context("Display Math", SpecialString, |c| {
-        math(c.rule(M::Str("$$"), SpecialString, Pop(1)))
-    })
-    .context("Inline Math", SpecialString, |c| {
-        math(c.rule(M::Char('$'), SpecialString, Pop(1)))
-    })
-    .context("Parenthesis Math", SpecialString, |c| {
-        math(c.rule(M::Str("\\)"), SpecialString, Pop(1)))
-    })
-    .context("Bracket Math", SpecialString, |c| {
-        math(c.rule(M::Str("\\]"), SpecialString, Pop(1)))
-    })
-    .context("Math Begin", Normal, |c| name(c, "Math Environment"))
-    .context("Verbatim Begin", Normal, |c| {
-        name(c, "Verbatim Environment")
-    })
-    .context("Comment Begin", Normal, |c| name(c, "Comment Environment"))
-    .context("Math Environment", SpecialString, |c| {
-        let c = c.rule_pattern_with(
-            format!(r"\\end\s*\{{(?:{})\}}", alternation(MATH_ENVIRONMENTS)),
-            SpecialString,
-            Pop(1),
-            opts().lookahead(),
-        );
-        math(c)
-    })
-    .context("Verbatim Environment", VerbatimString, |c| {
-        c.rule_pattern_with(
-            format!(r"\\end\s*\{{(?:{})\}}", alternation(VERBATIM_ENVIRONMENTS)),
-            VerbatimString,
-            Pop(1),
-            opts().lookahead(),
-        )
-    })
-    .context("Comment Environment", Comment, |c| {
-        c.rule_with(
-            M::Re(r"\\end\s*\{comment\}"),
-            Comment,
-            Pop(1),
-            opts().lookahead(),
-        )
-    });
     MINTED
         .iter()
         .fold(lang, |lang, (_, begin, body, syntax)| {

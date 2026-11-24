@@ -7,7 +7,7 @@ use crate::syntax::Syntax;
 use crate::token::TokenType::*;
 
 pub(crate) fn syntax() -> Syntax {
-    Lang::new("R Script", "r", &["*.r", "*.R"])
+    Lang::new(super::R)
         .weak_delims(".")
         .list("constants", CONSTANTS)
         .list("control flow", CONTROL_FLOW)

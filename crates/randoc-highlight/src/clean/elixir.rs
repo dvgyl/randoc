@@ -7,7 +7,7 @@ use crate::syntax::Syntax;
 use crate::token::TokenType::*;
 
 pub(crate) fn syntax() -> Syntax {
-    let lang = Lang::new("Elixir", "elixir", &["*.ex", "*.exs"])
+    let lang = Lang::new(super::ELIXIR)
         .weak_delims("?!")
         .list("builtins", BUILTINS)
         .list("control flow", CONTROL_FLOW)

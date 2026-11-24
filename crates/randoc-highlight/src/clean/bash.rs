@@ -43,55 +43,44 @@ const IN_BACKTICKS: Names = Names {
 };
 
 pub(crate) fn syntax() -> Syntax {
-    let lang = Lang::new(
-        "Bash",
-        "bash",
-        &[
-            "*.sh",
-            "*.bash",
-            "*.ebuild",
-            "*.eclass",
-            "*.exheres-0",
-            "*.exlib",
-        ],
-    )
-    .weak_delims("-./:%^@[]{}=\\")
-    .additional_delims("`")
-    .list("builtins", BUILTINS)
-    .list("control flow", CONTROL_FLOW)
-    .list("unixcommands", UNIX_COMMANDS)
-    .context("Start", Normal, |c| statement(c, "Command"))
-    .context("BashOneLine", Normal, |c| {
-        statement(c, "Command").line_end(Pop(1))
-    })
-    .context("Group", Normal, |c| {
-        statement(c.rule(M::Char('}'), Keyword, Pop(1)), "Command")
-    })
-    .context("Subshell", Normal, |c| {
-        statement(c.rule(M::Char(')'), Keyword, Pop(1)), "Command")
-    })
-    .context("Command Substitution", Normal, |c| {
-        statement(c.rule(M::Char(')'), Variable, Pop(1)), "Command")
-    })
-    .context("Process Substitution", Normal, |c| {
-        statement(c.rule(M::Char(')'), Operator, Pop(1)), "Command")
-    })
-    .context("Backtick", Normal, |c| {
-        statement(c.rule(M::Char('`'), Keyword, Pop(1)), "Backtick Command")
-    })
-    .context("Case Body", Normal, |c| {
-        let c = c.rule(M::Re(";;&?|;&"), ControlFlow, Pop(1)).rule(
-            M::Re(concat!("esac", word_end!())),
-            ControlFlow,
-            Pop(2),
-        );
-        statement(c, "Command")
-    })
-    .context("Comment", Comment, |c| {
-        c.rule(M::Spaces, Comment, Stay)
-            .include("##Comments")
-            .line_end(Pop(1))
-    });
+    let lang = Lang::new(super::BASH)
+        .weak_delims("-./:%^@[]{}=\\")
+        .additional_delims("`")
+        .list("builtins", BUILTINS)
+        .list("control flow", CONTROL_FLOW)
+        .list("unixcommands", UNIX_COMMANDS)
+        .context("Start", Normal, |c| statement(c, "Command"))
+        .context("BashOneLine", Normal, |c| {
+            statement(c, "Command").line_end(Pop(1))
+        })
+        .context("Group", Normal, |c| {
+            statement(c.rule(M::Char('}'), Keyword, Pop(1)), "Command")
+        })
+        .context("Subshell", Normal, |c| {
+            statement(c.rule(M::Char(')'), Keyword, Pop(1)), "Command")
+        })
+        .context("Command Substitution", Normal, |c| {
+            statement(c.rule(M::Char(')'), Variable, Pop(1)), "Command")
+        })
+        .context("Process Substitution", Normal, |c| {
+            statement(c.rule(M::Char(')'), Operator, Pop(1)), "Command")
+        })
+        .context("Backtick", Normal, |c| {
+            statement(c.rule(M::Char('`'), Keyword, Pop(1)), "Backtick Command")
+        })
+        .context("Case Body", Normal, |c| {
+            let c = c.rule(M::Re(";;&?|;&"), ControlFlow, Pop(1)).rule(
+                M::Re(concat!("esac", word_end!())),
+                ControlFlow,
+                Pop(2),
+            );
+            statement(c, "Command")
+        })
+        .context("Comment", Comment, |c| {
+            c.rule(M::Spaces, Comment, Stay)
+                .include("##Comments")
+                .line_end(Pop(1))
+        });
     let lang = command(lang, &PLAIN);
     let lang = command(lang, &IN_BACKTICKS);
     arguments(lang)

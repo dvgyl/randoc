@@ -6,7 +6,7 @@ use crate::syntax::Syntax;
 use crate::token::TokenType::*;
 
 pub(crate) fn syntax() -> Syntax {
-    let lang = Lang::new("C", "c", &["*.c", "*.h"])
+    let lang = Lang::new(super::C)
         .list("control flow", CONTROL_FLOW)
         .list("keywords", KEYWORDS)
         .list("types", TYPES)

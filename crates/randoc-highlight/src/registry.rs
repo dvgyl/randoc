@@ -2,7 +2,7 @@
 
 use std::collections::BTreeMap;
 use std::path::Path;
-use std::sync::OnceLock;
+use std::sync::{Arc, OnceLock};
 
 use crate::clean;
 use crate::syntax::{self, Syntax};
@@ -12,6 +12,16 @@ use crate::xml;
 /// The embedded syntax definitions: each one starts with a form feed, the
 /// file name and a newline.
 const EMBEDDED: &str = include_str!("../data/syntax-definitions.txt");
+
+#[derive(Debug)]
+struct XmlMetadata {
+    path: &'static str,
+    name: &'static str,
+    extensions: &'static str,
+    range: std::ops::Range<usize>,
+}
+
+const XML_INDEX: &[XmlMetadata] = &include!(concat!(env!("OUT_DIR"), "/syntax-index.rs"));
 
 /// The result of [`Registry::highlight_classes`].
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -26,7 +36,89 @@ pub struct HighlightedCode {
 /// A set of syntax definitions, keyed by the full syntax name.
 #[derive(Debug, Clone, Default)]
 pub struct Registry {
-    syntaxes: BTreeMap<String, Syntax>,
+    syntaxes: BTreeMap<String, Definition>,
+}
+
+#[derive(Debug, Clone)]
+enum Definition {
+    Owned(Box<Syntax>),
+    Embedded(Arc<EmbeddedDefinition>),
+}
+
+#[derive(Debug)]
+struct EmbeddedDefinition {
+    short_name: String,
+    extensions: Vec<String>,
+    source: Source,
+    parsed: OnceLock<Option<Syntax>>,
+    resolved: OnceLock<Option<Syntax>>,
+}
+
+#[derive(Debug, Clone, Copy)]
+enum Source {
+    Xml(&'static XmlMetadata),
+    Clean(fn() -> Syntax),
+}
+
+impl Definition {
+    fn embedded(short_name: String, extensions: Vec<String>, source: Source) -> Self {
+        Self::Embedded(Arc::new(EmbeddedDefinition {
+            short_name,
+            extensions,
+            source,
+            parsed: OnceLock::new(),
+            resolved: OnceLock::new(),
+        }))
+    }
+
+    fn short_name(&self) -> &str {
+        match self {
+            Self::Owned(syntax) => &syntax.short_name,
+            Self::Embedded(definition) => &definition.short_name,
+        }
+    }
+
+    fn extensions(&self) -> &[String] {
+        match self {
+            Self::Owned(syntax) => &syntax.extensions,
+            Self::Embedded(definition) => &definition.extensions,
+        }
+    }
+
+    fn parsed(&self) -> Option<&Syntax> {
+        match self {
+            Self::Owned(syntax) => Some(syntax),
+            Self::Embedded(definition) => definition
+                .parsed
+                .get_or_init(|| match definition.source {
+                    Source::Xml(metadata) => {
+                        let text = EMBEDDED.get(metadata.range.clone())?;
+                        parse_definition(metadata.path, text).ok()
+                    }
+                    Source::Clean(build) => Some(build()),
+                })
+                .as_ref(),
+        }
+    }
+
+    fn resolved(&self, registry: &Registry) -> Option<&Syntax> {
+        let Self::Embedded(definition) = self else {
+            return self.parsed();
+        };
+        definition
+            .resolved
+            .get_or_init(|| {
+                let mut syntax = self.parsed()?.clone();
+                let mut budget = syntax::MAX_RESOLVED_BYTES;
+                syntax::resolve_syntax_keywords(
+                    &mut syntax,
+                    |name, list| registry.keyword_list(name, list),
+                    &mut budget,
+                );
+                Some(syntax)
+            })
+            .as_ref()
+    }
 }
 
 /// The most definition files that [`Registry::load_dir`] reads from one
@@ -73,7 +165,7 @@ impl Registry {
     }
 
     /// The registry of the embedded definitions and the clean-room
-    /// languages of the crate. The first call parses them.
+    /// languages of the crate. Definitions load on demand.
     ///
     /// ```
     /// let registry = randoc_highlight::Registry::embedded();
@@ -82,21 +174,55 @@ impl Registry {
     /// ```
     pub fn embedded() -> &'static Registry {
         static EMBEDDED_REGISTRY: OnceLock<Registry> = OnceLock::new();
-        EMBEDDED_REGISTRY.get_or_init(|| {
-            let mut registry = Registry::new();
-            // The embedded definitions include contexts of the clean-room
-            // languages, so both go into one resolution.
-            let mut parsed = clean::all();
-            for part in EMBEDDED.split('\u{c}').skip(1) {
-                let (name, text) = part.split_once('\n').unwrap_or((part, ""));
-                // The embedded files are tested to parse; a failure leaves the language out.
-                if let Ok(s) = parse_definition(name, text) {
-                    parsed.push(s);
-                }
-            }
-            registry.insert_all(parsed);
-            registry
-        })
+        EMBEDDED_REGISTRY.get_or_init(Self::index_embedded)
+    }
+
+    fn index_embedded() -> Self {
+        let mut syntaxes = BTreeMap::new();
+        for &(language, build) in clean::DEFINITIONS {
+            syntaxes.insert(
+                language.name.to_string(),
+                Definition::embedded(
+                    language.short_name.to_string(),
+                    language
+                        .extensions
+                        .iter()
+                        .map(|word| (*word).to_string())
+                        .collect(),
+                    Source::Clean(build),
+                ),
+            );
+        }
+        for metadata in XML_INDEX {
+            syntaxes.insert(
+                metadata.name.to_string(),
+                Definition::embedded(
+                    syntax::short_name(metadata.path),
+                    syntax::extensions(metadata.extensions),
+                    Source::Xml(metadata),
+                ),
+            );
+        }
+        Registry { syntaxes }
+    }
+
+    fn keyword_list(&self, name: &str, list: &str) -> Option<&[syntax::ListItem]> {
+        static EXTERNAL: OnceLock<syntax::KeywordLists> = OnceLock::new();
+        self.syntaxes
+            .get(name)
+            .and_then(Definition::parsed)
+            .and_then(|syntax| syntax.lists.get(list))
+            .or_else(|| {
+                EXTERNAL
+                    .get_or_init(|| {
+                        let mut lists = syntax::KeywordLists::new();
+                        syntax::install_external_lists(&mut lists, clean::EXTERNAL_LISTS);
+                        lists
+                    })
+                    .get(name)?
+                    .get(list)
+            })
+            .map(Vec::as_slice)
     }
 
     /// Adds one definition from the text of its XML file. A definition with
@@ -214,12 +340,29 @@ impl Registry {
     }
 
     fn insert_all(&mut self, parsed: Vec<Syntax>) {
-        for s in parsed {
-            self.syntaxes.insert(s.name.clone(), s);
+        let previous = std::mem::take(self);
+        let mut all = BTreeMap::new();
+        for (name, definition) in &previous.syntaxes {
+            if let Definition::Embedded(_) = definition
+                && let Some(syntax) = definition.resolved(&previous)
+            {
+                all.insert(name.clone(), syntax.clone());
+            }
         }
-        let mut all: Vec<Syntax> = std::mem::take(&mut self.syntaxes).into_values().collect();
+        for (name, definition) in previous.syntaxes {
+            if let Definition::Owned(syntax) = definition {
+                all.insert(name, *syntax);
+            }
+        }
+        for syntax in parsed {
+            all.insert(syntax.name.clone(), syntax);
+        }
+        let mut all: Vec<Syntax> = all.into_values().collect();
         syntax::resolve_keywords(&mut all, clean::EXTERNAL_LISTS);
-        self.syntaxes = all.into_iter().map(|s| (s.name.clone(), s)).collect();
+        self.syntaxes = all
+            .into_iter()
+            .map(|syntax| (syntax.name.clone(), Definition::Owned(Box::new(syntax))))
+            .collect();
     }
 
     /// Finds a syntax by its full name, by its short name (both without
@@ -239,24 +382,30 @@ impl Registry {
             _ => {}
         }
         let lower = lang.to_lowercase();
-        self.syntaxes
-            .get(lang)
+        self.get(lang)
             .or_else(|| {
                 self.syntaxes
                     .iter()
-                    .find(|(k, _)| k.to_lowercase() == lower)
-                    .map(|(_, s)| s)
+                    .filter(|(name, _)| name.to_lowercase() == lower)
+                    .find_map(|(_, definition)| definition.resolved(self))
             })
             .or_else(|| {
                 self.syntaxes
                     .values()
-                    .find(|s| s.short_name.to_lowercase() == lower)
+                    .filter(|definition| definition.short_name().to_lowercase() == lower)
+                    .find_map(|definition| definition.resolved(self))
             })
             .or_else(|| {
                 let file = format!("*.{lang}");
                 self.syntaxes
                     .values()
-                    .find(|s| s.extensions.iter().any(|g| match_glob(g, &file)))
+                    .filter(|definition| {
+                        definition
+                            .extensions()
+                            .iter()
+                            .any(|glob| match_glob(glob, &file))
+                    })
+                    .find_map(|definition| definition.resolved(self))
             })
     }
 
@@ -348,7 +497,7 @@ impl Registry {
         let mut names: Vec<String> = self
             .syntaxes
             .values()
-            .map(|s| s.short_name.to_lowercase())
+            .map(|definition| definition.short_name().to_lowercase())
             .filter(|name| name != "alert")
             .collect();
         names.sort();
@@ -358,11 +507,13 @@ impl Registry {
 
     /// Each syntax, in the order of the full names.
     pub fn syntaxes(&self) -> impl Iterator<Item = &Syntax> {
-        self.syntaxes.values()
+        self.syntaxes
+            .values()
+            .filter_map(|definition| definition.resolved(self))
     }
 
     pub(crate) fn get(&self, name: &str) -> Option<&Syntax> {
-        self.syntaxes.get(name)
+        self.syntaxes.get(name)?.resolved(self)
     }
 }
 
@@ -389,9 +540,7 @@ pub fn utf8_message(bytes: &[u8], error: &std::str::Utf8Error) -> String {
 }
 
 fn parse_definition(path: &str, text: &str) -> Result<Syntax, String> {
-    let text = text.strip_prefix('\u{feff}').unwrap_or(text);
-    let text: String = text.chars().filter(|&c| c != '\r').collect();
-    let root = xml::parse(&text)?;
+    let root = xml::parse_definition(text)?;
     syntax::document_to_syntax(path, &root)
 }
 
@@ -500,21 +649,99 @@ mod tests {
     }
 
     #[test]
-    fn embedded_definitions_all_parse() {
-        let mut failures = Vec::new();
-        let mut count = 0;
-        for part in EMBEDDED.split('\u{c}').skip(1) {
-            let (name, text) = part.split_once('\n').unwrap_or((part, ""));
-            count += 1;
-            if let Err(e) = parse_definition(name, text) {
-                failures.push(format!("{name}: {e}"));
-            }
+    fn cold_highlight_loads_only_one_xml_definition() {
+        use std::time::{Duration, Instant};
+
+        let start = Instant::now();
+        let registry = Registry::index_embedded();
+        let index_time = start.elapsed();
+        assert!(registry.language_names().contains(&"cabal".to_string()));
+        let parsed = || {
+            registry
+                .syntaxes
+                .iter()
+                .filter_map(|(name, definition)| match definition {
+                    Definition::Embedded(definition)
+                        if matches!(definition.source, Source::Xml(_))
+                            && definition.parsed.get().is_some() =>
+                    {
+                        Some(name.as_str())
+                    }
+                    _ => None,
+                })
+                .collect::<Vec<_>>()
+        };
+        assert!(parsed().is_empty());
+        let start = Instant::now();
+        let result = registry.highlight_classes(&names("cabal"), "name: test", 64);
+        let highlight_time = start.elapsed();
+        assert!(
+            matches!(result, Some(Ok(code)) if code.language == "cabal" && !code.lines.is_empty())
+        );
+        assert_eq!(parsed(), ["Cabal"]);
+        eprintln!("Cabal index in {index_time:?}, cold highlight in {highlight_time:?}");
+        assert!(index_time < Duration::from_millis(10), "{index_time:?}");
+        assert!(
+            highlight_time < Duration::from_millis(500),
+            "{highlight_time:?}"
+        );
+    }
+
+    #[test]
+    fn embedded_definitions_match_eager_resolution() {
+        let registry = Registry::embedded();
+        assert_eq!(registry.syntaxes.len(), 63 + clean::DEFINITIONS.len());
+        let mut parsed: Vec<_> = registry
+            .syntaxes
+            .values()
+            .filter_map(Definition::parsed)
+            .cloned()
+            .collect();
+        assert_eq!(parsed.len(), registry.syntaxes.len());
+        syntax::resolve_keywords(&mut parsed, clean::EXTERNAL_LISTS);
+        for (lazy, eager) in registry.syntaxes().zip(&parsed) {
+            assert!(
+                lazy == eager,
+                "keyword resolution differs for {}",
+                lazy.name()
+            );
         }
-        assert_eq!(failures, Vec::<String>::new());
-        assert_eq!(count, 63);
-        assert_eq!(
-            Registry::embedded().syntaxes().count(),
-            63 + clean::all().len()
+        for (name, definition) in &registry.syntaxes {
+            let syntax = definition.parsed().unwrap();
+            assert_eq!(name, syntax.name());
+            assert_eq!(definition.short_name(), syntax.short_name());
+            assert_eq!(definition.extensions(), syntax.extensions());
+        }
+    }
+
+    #[test]
+    fn embeds_context_dependencies_only_when_used() {
+        let registry = Registry::index_embedded();
+        let registry = &registry;
+        std::thread::scope(|scope| {
+            for _ in 0..3 {
+                scope.spawn(|| {
+                    let code = registry
+                        .highlight_classes(&names("literatehaskell"), "> import Data.List", 64)
+                        .unwrap()
+                        .unwrap();
+                    assert!(
+                        code.lines.iter().flatten().any(|(kind, text)| {
+                            *kind == TokenType::Keyword && text == "import"
+                        }),
+                        "{:?}",
+                        code.lines
+                    );
+                });
+            }
+        });
+        assert!(
+            matches!(&registry.syntaxes["Haskell"], Definition::Embedded(definition)
+            if definition.resolved.get().is_some())
+        );
+        assert!(
+            matches!(&registry.syntaxes["Cabal"], Definition::Embedded(definition)
+            if definition.parsed.get().is_none())
         );
     }
 
@@ -559,6 +786,12 @@ mod tests {
         assert_eq!(name("RS"), None);
         assert_eq!(name("nope"), None);
         assert_eq!(name("csharp").as_deref(), Some("C#"));
+        assert_eq!(
+            r.lookup("fortran")
+                .map(|syntax| syntax.short_name().to_lowercase())
+                .as_deref(),
+            Some("fortranfixed")
+        );
         assert_eq!(name("c#").as_deref(), Some("C#"));
         assert_eq!(name("ddl").as_deref(), Some("SQL"));
         assert_eq!(name("pm").as_deref(), Some("Perl"));

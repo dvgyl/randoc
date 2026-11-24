@@ -11,119 +11,109 @@ use crate::syntax::Syntax;
 use crate::token::TokenType::*;
 
 pub(crate) fn syntax() -> Syntax {
-    Lang::new(
-        "PHP/PHP",
-        "php",
-        &[
-            "*.php", "*.php3", "*.wml", "*.phtml", "*.phtm", "*.inc", "*.ctp",
-        ],
-    )
-    .list("keywords", KEYWORDS)
-    .list("control flow", CONTROL_FLOW)
-    .list("types", TYPES)
-    .list("builtins", BUILTINS)
-    .list("functions", FUNCTIONS)
-    .list("operators", OPERATORS)
-    .context("Start", Normal, |c| {
-        c.rule(M::Re(r"^<\?(?:php\b|=)?"), Keyword, Push("Source"))
-            .fallthrough(Push("Markup"))
-    })
-    .context("Markup", Normal, |c| {
-        code(
-            c.rule(M::Re(r"<\?(?i:php\b)?"), Keyword, PopPush(1, "Source"))
-                .rule(M::Str("?>"), Keyword, Stay),
-        )
-    })
-    .context("Source", Normal, |c| {
-        code(c.rule(M::Str("?>"), Keyword, PopPush(1, "Markup")))
-    })
-    .context("phpsource", Normal, |c| {
-        code(c.rule_with(M::Str("?>"), Keyword, Pop(1), opts().lookahead()))
-    })
-    .context("Comment", Comment, |c| {
-        c.rule_with(M::Str("?>"), Comment, Pop(1), opts().lookahead())
-            .rule(M::Spaces, Comment, Stay)
-            .include("##Comments")
-            .line_end(Pop(1))
-    })
-    .context("Block Comment", Comment, |c| {
-        c.rule(M::Spaces, Comment, Stay)
-            .rule(M::Str("*/"), Comment, Pop(1))
-            .rule(M::Re(r"@[A-Za-z_]\w*"), Annotation, Push("Doc Type"))
-            .include("##Comments")
-    })
-    // The type after a tag of a documentation comment.
-    .context("Doc Type", Comment, |c| {
-        c.rule(M::Spaces, Comment, Stay)
-            .rule(M::Re(r"[A-Za-z_\\][\w\\|\[\]?]*"), CommentVar, Pop(1))
-            .fallthrough(Pop(1))
-            .line_end(Pop(1))
-    })
-    .context("Attribute", Normal, |c| {
-        c.rule(M::Char(']'), Attribute, Pop(1))
-    })
-    .context("Const Name", Normal, |c| {
-        c.rule(M::Spaces, Normal, Stay)
-            .rule(M::Re(r"[A-Za-z_]\w*(?=\s*=)"), Function, Pop(1))
-            .fallthrough(Pop(1))
-            .line_end(Pop(1))
-    })
-    .context("String", String, |c| {
-        interpolation(c.rule(M::Char('"'), String, Pop(1)))
-    })
-    .context("String SQ", String, |c| {
-        c.rule(M::Re(r"\\[\\']"), SpecialChar, Stay)
-            .rule(M::Char('\''), String, Pop(1))
-    })
-    .context("Interpolation", String, interpolation)
-    // The index or the property after a variable in a string.
-    .context("String Variable", Normal, |c| {
-        c.rule(M::Re(r"->[A-Za-z_]\w*"), Normal, Pop(1))
-            .rule(M::Char('['), Normal, PopPush(1, "String Index"))
-            .fallthrough(Pop(1))
-            .line_end(Pop(1))
-    })
-    .context("String Index", Normal, |c| {
-        c.rule(M::Char(']'), Normal, Pop(1))
-            .rule(M::Re("[0-9]+"), DecVal, Stay)
-            .rule(M::Re(r"\$[A-Za-z_]\w*"), Variable, Stay)
-            .line_end(Pop(1))
-    })
-    .context("Complex Variable", Normal, |c| {
-        c.rule(M::Char('}'), Normal, Pop(1))
-            .rule(M::Re(r"\$[A-Za-z_]\w*"), Variable, Stay)
-            .line_end(Pop(1))
-    })
-    // `${name}`: the name is a variable.
-    .context("Dollar Brace", Normal, |c| {
-        c.rule(M::Char('}'), Normal, Pop(1))
-            .rule(M::Char('{'), Normal, Stay)
-            .rule(M::Re(r"[A-Za-z_]\w*"), Variable, Stay)
-            .line_end(Pop(1))
-    })
-    .context("Heredoc", String, |c| {
-        interpolation(c.dynamic().rule_with(
-            M::Re(r"^\s*%1\b"),
-            SpecialString,
-            PopPush(1, "Heredoc End"),
-            opts().dynamic(),
-        ))
-    })
-    .context("Nowdoc", String, |c| {
-        c.dynamic().rule_with(
-            M::Re(r"^\s*%1\b"),
-            VerbatimString,
-            PopPush(1, "Heredoc End"),
-            opts().dynamic(),
-        )
-    })
-    // The `;` after the end of a here document is plain.
-    .context("Heredoc End", Normal, |c| {
-        c.rule(M::Char(';'), Normal, Pop(1))
-            .fallthrough(Pop(1))
-            .line_end(Pop(1))
-    })
-    .build()
+    Lang::new(super::PHP)
+        .list("keywords", KEYWORDS)
+        .list("control flow", CONTROL_FLOW)
+        .list("types", TYPES)
+        .list("builtins", BUILTINS)
+        .list("functions", FUNCTIONS)
+        .list("operators", OPERATORS)
+        .context("Start", Normal, |c| {
+            c.rule(M::Re(r"^<\?(?:php\b|=)?"), Keyword, Push("Source"))
+                .fallthrough(Push("Markup"))
+        })
+        .context("Markup", Normal, |c| {
+            code(
+                c.rule(M::Re(r"<\?(?i:php\b)?"), Keyword, PopPush(1, "Source"))
+                    .rule(M::Str("?>"), Keyword, Stay),
+            )
+        })
+        .context("Source", Normal, |c| {
+            code(c.rule(M::Str("?>"), Keyword, PopPush(1, "Markup")))
+        })
+        .context("phpsource", Normal, |c| {
+            code(c.rule_with(M::Str("?>"), Keyword, Pop(1), opts().lookahead()))
+        })
+        .context("Comment", Comment, |c| {
+            c.rule_with(M::Str("?>"), Comment, Pop(1), opts().lookahead())
+                .rule(M::Spaces, Comment, Stay)
+                .include("##Comments")
+                .line_end(Pop(1))
+        })
+        .context("Block Comment", Comment, |c| {
+            c.rule(M::Spaces, Comment, Stay)
+                .rule(M::Str("*/"), Comment, Pop(1))
+                .rule(M::Re(r"@[A-Za-z_]\w*"), Annotation, Push("Doc Type"))
+                .include("##Comments")
+        })
+        .context("Doc Type", Comment, |c| {
+            c.rule(M::Spaces, Comment, Stay)
+                .rule(M::Re(r"[A-Za-z_\\][\w\\|\[\]?]*"), CommentVar, Pop(1))
+                .fallthrough(Pop(1))
+                .line_end(Pop(1))
+        })
+        .context("Attribute", Normal, |c| {
+            c.rule(M::Char(']'), Attribute, Pop(1))
+        })
+        .context("Const Name", Normal, |c| {
+            c.rule(M::Spaces, Normal, Stay)
+                .rule(M::Re(r"[A-Za-z_]\w*(?=\s*=)"), Function, Pop(1))
+                .fallthrough(Pop(1))
+                .line_end(Pop(1))
+        })
+        .context("String", String, |c| {
+            interpolation(c.rule(M::Char('"'), String, Pop(1)))
+        })
+        .context("String SQ", String, |c| {
+            c.rule(M::Re(r"\\[\\']"), SpecialChar, Stay)
+                .rule(M::Char('\''), String, Pop(1))
+        })
+        .context("Interpolation", String, interpolation)
+        .context("String Variable", Normal, |c| {
+            c.rule(M::Re(r"->[A-Za-z_]\w*"), Normal, Pop(1))
+                .rule(M::Char('['), Normal, PopPush(1, "String Index"))
+                .fallthrough(Pop(1))
+                .line_end(Pop(1))
+        })
+        .context("String Index", Normal, |c| {
+            c.rule(M::Char(']'), Normal, Pop(1))
+                .rule(M::Re("[0-9]+"), DecVal, Stay)
+                .rule(M::Re(r"\$[A-Za-z_]\w*"), Variable, Stay)
+                .line_end(Pop(1))
+        })
+        .context("Complex Variable", Normal, |c| {
+            c.rule(M::Char('}'), Normal, Pop(1))
+                .rule(M::Re(r"\$[A-Za-z_]\w*"), Variable, Stay)
+                .line_end(Pop(1))
+        })
+        .context("Dollar Brace", Normal, |c| {
+            c.rule(M::Char('}'), Normal, Pop(1))
+                .rule(M::Char('{'), Normal, Stay)
+                .rule(M::Re(r"[A-Za-z_]\w*"), Variable, Stay)
+                .line_end(Pop(1))
+        })
+        .context("Heredoc", String, |c| {
+            interpolation(c.dynamic().rule_with(
+                M::Re(r"^\s*%1\b"),
+                SpecialString,
+                PopPush(1, "Heredoc End"),
+                opts().dynamic(),
+            ))
+        })
+        .context("Nowdoc", String, |c| {
+            c.dynamic().rule_with(
+                M::Re(r"^\s*%1\b"),
+                VerbatimString,
+                PopPush(1, "Heredoc End"),
+                opts().dynamic(),
+            )
+        })
+        .context("Heredoc End", Normal, |c| {
+            c.rule(M::Char(';'), Normal, Pop(1))
+                .fallthrough(Pop(1))
+                .line_end(Pop(1))
+        })
+        .build()
 }
 
 /// The rules of PHP code.

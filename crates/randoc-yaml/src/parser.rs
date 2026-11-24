@@ -457,6 +457,32 @@ fn key_kind_message(open: char) -> &'static str {
     }
 }
 
+enum MappingValueStart {
+    Inline,
+    Block,
+    Empty,
+}
+
+#[derive(Clone, Copy)]
+enum FlowKind {
+    Sequence,
+    Mapping,
+}
+
+#[derive(Default)]
+struct FlowState {
+    indent: usize,
+    kinds: Vec<FlowKind>,
+    violation: Option<YamlError>,
+}
+
+struct QuoteState {
+    indent: usize,
+    start: usize,
+    kind: &'static str,
+    violation: Option<YamlError>,
+}
+
 struct Parser<'a, 'b> {
     text: &'a str,
     lines: &'b LineIndex<'a>,
@@ -469,23 +495,9 @@ struct Parser<'a, 'b> {
     /// The properties in front of a node, for its first key when the node is
     /// a block mapping.
     key_props: Option<Props>,
-    /// The smallest column of a continuation line of a quoted scalar.
-    quote_indent: usize,
-    /// The first line in a flow collection with too little indentation. It
-    /// is an error when the collection ends.
-    flow_violation: Option<YamlError>,
-    /// The first bad continuation line of the current quoted scalar.
-    quote_error: Option<YamlError>,
-    /// `true` after an explicit key without a `:` line.
-    empty_value: bool,
-    /// `true` after the `:` line of an explicit key.
-    explicit_value: bool,
+    flow: FlowState,
     /// `true` in a document that starts with `---`.
     explicit: bool,
-    /// The smallest indentation of a line in the current flow collection.
-    flow_indent: usize,
-    /// The open flow collections, as their opening characters.
-    flow_kinds: Vec<char>,
     /// The tag handles of the document.
     handles: Handles,
 }
@@ -515,14 +527,8 @@ impl<'a, 'b> Parser<'a, 'b> {
             references: Vec::new(),
             path: Vec::new(),
             key_props: None,
-            empty_value: false,
-            quote_error: None,
-            explicit_value: false,
-            quote_indent: 0,
-            flow_violation: None,
+            flow: FlowState::default(),
             explicit,
-            flow_indent: 0,
-            flow_kinds: Vec::new(),
             handles: Handles::new(),
         }
     }
@@ -596,32 +602,29 @@ impl<'a, 'b> Parser<'a, 'b> {
         }
     }
 
-    /// Moves past spaces, newlines and comments in a flow collection.
-    fn skip_flow_space(&mut self) -> Result<()> {
+    fn skip_flow_space(&mut self) {
         loop {
             match self.peek() {
                 Some(' ' | '\t') => self.pos += 1,
                 Some('\n') => {
                     self.pos += 1;
-                    self.check_flow_line()?;
+                    self.check_flow_line();
                 }
                 Some('#') if self.after_space() => self.skip_to_eol(),
-                _ => return Ok(()),
+                _ => return,
             }
         }
     }
 
-    /// Checks the indentation of a new line in a flow collection.
-    fn check_flow_line(&mut self) -> Result<()> {
-        if self.flow_violation.is_none() {
-            self.flow_violation = self.flow_line_error().err();
+    fn check_flow_line(&mut self) {
+        if self.flow.violation.is_none() {
+            self.flow.violation = self.flow_line_error().err();
         }
-        Ok(())
     }
 
     fn flow_line_error(&self) -> Result<()> {
         let n = self.rest().bytes().take_while(|b| *b == b' ').count();
-        if n >= self.flow_indent {
+        if n >= self.flow.indent {
             return Ok(());
         }
         let at = self.pos + n;
@@ -629,10 +632,9 @@ impl<'a, 'b> Parser<'a, 'b> {
             None | Some(b'\n' | b'#') => Ok(()),
             Some(b'\t') => Err(self.error(at, "tabs cannot be used for indentation")),
             Some(&c) => {
-                let (kind, close) = if self.flow_kinds.last() == Some(&'[') {
-                    ("sequence", b']')
-                } else {
-                    ("mapping", b'}')
+                let (kind, close) = match self.flow.kinds.last() {
+                    Some(FlowKind::Sequence) => ("sequence", b']'),
+                    Some(FlowKind::Mapping) | None => ("mapping", b'}'),
                 };
                 let message = if c == close {
                     format!(
@@ -1150,7 +1152,7 @@ impl<'a, 'b> Parser<'a, 'b> {
         self.bump();
         let name = self.take_name();
         if name.is_empty() {
-            let at = if self.flow_kinds.is_empty() {
+            let at = if self.flow.kinds.is_empty() {
                 self.pos
             } else {
                 star
@@ -1339,7 +1341,7 @@ impl<'a, 'b> Parser<'a, 'b> {
         parent: isize,
         depth: usize,
     ) -> Result<Parsed> {
-        self.flow_indent = usize::try_from(parent.saturating_add(1)).unwrap_or(0);
+        self.flow.indent = usize::try_from(parent.saturating_add(1)).unwrap_or(0);
         let value = self.flow_collection(depth)?;
         self.skip_spaces();
         if self.peek() == Some(':') && matches!(self.peek_second(), None | Some(' ' | '\t' | '\n'))
@@ -1372,9 +1374,8 @@ impl<'a, 'b> Parser<'a, 'b> {
         depth: usize,
     ) -> Result<Parsed> {
         let after_key = !context.own_line();
-        self.quote_indent = usize::try_from(parent.saturating_add(1)).unwrap_or(0);
-        let text = self.quoted(quote)?;
-        self.quote_indent = 0;
+        let indent = usize::try_from(parent.saturating_add(1)).unwrap_or(0);
+        let text = self.quoted(quote, indent)?;
         let end = self.pos;
         self.skip_spaces();
         if self.peek() == Some(':') && matches!(self.peek_second(), None | Some(' ' | '\t' | '\n'))
@@ -1424,7 +1425,7 @@ impl<'a, 'b> Parser<'a, 'b> {
     /// Returns `true` when an indicator `?`, `-` or `:` at the position starts
     /// a plain scalar, because a character that is not a space follows it.
     fn plain_indicator(&self) -> bool {
-        let flow = !self.flow_kinds.is_empty();
+        let flow = !self.flow.kinds.is_empty();
         self.peek_second()
             .is_some_and(|c| !c.is_whitespace() && !(flow && is_flow_indicator(c)))
     }
@@ -1520,31 +1521,30 @@ impl<'a, 'b> Parser<'a, 'b> {
             let explicit = self.key_props.as_ref().is_none_or(Props::is_empty)
                 && self.peek() == Some('?')
                 && !self.plain_indicator();
-            let key = if explicit {
+            let (key, value_start) = if explicit {
                 self.key_props = None;
                 self.explicit_key(col, depth)?
             } else {
-                self.block_key()?
+                (self.block_key()?, MappingValueStart::Inline)
             };
             self.path
                 .push(Segment::Key(key.text().unwrap_or_default().to_string()));
-            let explicit_value = std::mem::take(&mut self.explicit_value);
-            let empty_value = std::mem::take(&mut self.empty_value);
-            // After an explicit key without a value, the position is at the
-            // start of the next line, and its indentation belongs to the loop.
-            if !empty_value {
-                self.skip_spaces();
-            }
-            let value = if empty_value {
-                scalar_raw(empty_scalar_at(self.pos))
-            } else if self.at_comment_or_eol() {
-                let _ = self.finish_line();
-                let parsed = self.parsed_below(col as isize, true, depth)?;
-                self.finish_node(parsed, Props::default())
-            } else if explicit_value {
-                self.block_node(col as isize, Context::Block, depth + 1)?
-            } else {
-                self.block_node(col as isize, Context::AfterKey, depth + 1)?
+            let value = match value_start {
+                MappingValueStart::Empty => scalar_raw(empty_scalar_at(self.pos)),
+                start => {
+                    self.skip_spaces();
+                    if self.at_comment_or_eol() {
+                        let _ = self.finish_line();
+                        let parsed = self.parsed_below(col as isize, true, depth)?;
+                        self.finish_node(parsed, Props::default())
+                    } else {
+                        let context = match start {
+                            MappingValueStart::Block => Context::Block,
+                            _ => Context::AfterKey,
+                        };
+                        self.block_node(col as isize, context, depth + 1)?
+                    }
+                }
             };
             self.path.pop();
             entries.push((key, value));
@@ -1636,7 +1636,7 @@ impl<'a, 'b> Parser<'a, 'b> {
         }
         let (text, style) = match self.peek() {
             Some(quote @ ('"' | '\'')) => {
-                let key = self.quoted(quote)?;
+                let key = self.quoted(quote, 0)?;
                 if self.source_has_break(start) {
                     self.skip_spaces();
                     return Err(
@@ -1704,7 +1704,7 @@ impl<'a, 'b> Parser<'a, 'b> {
 
     /// Reads an explicit key `? key` and the `:` line after it. Without a
     /// `:` line, the value is empty.
-    fn explicit_key(&mut self, col: usize, depth: usize) -> Result<Raw> {
+    fn explicit_key(&mut self, col: usize, depth: usize) -> Result<(Raw, MappingValueStart)> {
         self.bump();
         self.skip_spaces();
         let key = if self.at_comment_or_eol() {
@@ -1727,17 +1727,17 @@ impl<'a, 'b> Parser<'a, 'b> {
         let n = self.indent_here()?;
         let at = self.pos + n;
         let colon = self.text.get(at..).unwrap_or("");
-        if n == col
+        let start = if n == col
             && colon.starts_with(':')
             && matches!(colon.as_bytes().get(1), None | Some(b' ' | b'\t' | b'\n'))
         {
             self.pos = at + 1;
-            self.explicit_value = true;
+            MappingValueStart::Block
         } else {
             self.pos = line_start;
-            self.empty_value = true;
-        }
-        Ok(key)
+            MappingValueStart::Empty
+        };
+        Ok((key, start))
     }
 
     /// Finds where a plain scalar stops on the current line. Returns the end
@@ -2008,36 +2008,44 @@ impl<'a, 'b> Parser<'a, 'b> {
         self.slice(start, self.pos).contains('\n')
     }
 
-    fn quoted(&mut self, quote: char) -> Result<String> {
-        if quote == '"' {
-            self.double_quoted()
+    fn quoted(&mut self, quote: char, indent: usize) -> Result<String> {
+        let double = quote == '"';
+        let state = QuoteState {
+            indent,
+            start: self.pos,
+            kind: if double { "double" } else { "single" },
+            violation: None,
+        };
+        if double {
+            self.double_quoted(state)
         } else {
-            self.single_quoted()
+            self.single_quoted(state)
         }
     }
 
-    fn double_quoted(&mut self) -> Result<String> {
-        let start = self.pos;
+    fn double_quoted(&mut self, mut state: QuoteState) -> Result<String> {
         self.bump();
         let mut out = String::new();
         let mut floor = 0;
         loop {
             let at = self.pos;
             match self.bump() {
-                None => return Err(self.error(start, "unterminated double-quoted scalar")),
-                Some('"') => return self.quote_error.take().map_or(Ok(out), Err),
+                None => return Err(self.error(state.start, "unterminated double-quoted scalar")),
+                Some('"') => return state.violation.map_or(Ok(out), Err),
                 Some('\n') => {
-                    self.fold_line_break(&mut out, floor, true, start)?;
+                    self.fold_quoted_continuation(&mut out, floor, &mut state)?;
                     floor = out.len();
                 }
                 Some('\\') => {
                     match self.bump() {
                         None => {
-                            return Err(self.error(start, "unterminated double-quoted scalar"));
+                            return Err(
+                                self.error(state.start, "unterminated double-quoted scalar")
+                            );
                         }
                         Some('\n') => loop {
                             // An escaped line break keeps the empty lines after it.
-                            self.quote_line(true, start)?;
+                            self.quote_line(&mut state)?;
                             self.skip_spaces();
                             if self.peek() != Some('\n') {
                                 break;
@@ -2102,22 +2110,21 @@ impl<'a, 'b> Parser<'a, 'b> {
         }
     }
 
-    fn single_quoted(&mut self) -> Result<String> {
-        let start = self.pos;
+    fn single_quoted(&mut self, mut state: QuoteState) -> Result<String> {
         self.bump();
         let mut out = String::new();
         let mut floor = 0;
         loop {
             match self.bump() {
-                None => return Err(self.error(start, "unterminated single-quoted scalar")),
+                None => return Err(self.error(state.start, "unterminated single-quoted scalar")),
                 Some('\'') if self.peek() == Some('\'') => {
                     self.bump();
                     out.push('\'');
                     floor = out.len();
                 }
-                Some('\'') => return self.quote_error.take().map_or(Ok(out), Err),
+                Some('\'') => return state.violation.map_or(Ok(out), Err),
                 Some('\n') => {
-                    self.fold_line_break(&mut out, floor, false, start)?;
+                    self.fold_quoted_continuation(&mut out, floor, &mut state)?;
                     floor = out.len();
                 }
                 Some(c) => out.push(c),
@@ -2125,22 +2132,18 @@ impl<'a, 'b> Parser<'a, 'b> {
         }
     }
 
-    /// Folds a line break in a quoted scalar. The break is already consumed.
-    /// Spaces after `floor` at the end of `out` are removed. Returns `false`
-    /// when the next line has too little indentation to continue the scalar.
-    fn fold_line_break(
+    fn fold_quoted_continuation(
         &mut self,
         out: &mut String,
         floor: usize,
-        double: bool,
-        start: usize,
+        state: &mut QuoteState,
     ) -> Result<()> {
         while out.len() > floor && out.ends_with([' ', '\t']) {
             out.pop();
         }
         let mut empty_lines = 0;
         loop {
-            self.quote_line(double, start)?;
+            self.quote_line(state)?;
             self.skip_spaces();
             if self.peek() == Some('\n') {
                 self.pos += 1;
@@ -2164,9 +2167,9 @@ impl<'a, 'b> Parser<'a, 'b> {
     ///
     /// Pandoc reports a bad line only when the scalar ends; a line that looks
     /// like a mapping key ends the scalar as unterminated.
-    fn quote_line(&mut self, double: bool, start: usize) -> Result<()> {
+    fn quote_line(&self, state: &mut QuoteState) -> Result<()> {
         let n = self.rest().bytes().take_while(|b| *b == b' ').count();
-        if n >= self.quote_indent || self.quote_error.is_some() {
+        if n >= state.indent || state.violation.is_some() {
             return Ok(());
         }
         let after = self.rest().get(n..).unwrap_or("");
@@ -2175,16 +2178,16 @@ impl<'a, 'b> Parser<'a, 'b> {
         if content.is_empty() {
             // An empty line can have spaces, but no tab in the indentation.
             if after.starts_with('\t') {
-                self.quote_error =
+                state.violation =
                     Some(self.error(self.pos + n, "tabs cannot be used for indentation"));
             }
             return Ok(());
         }
-        let kind = if double { "double" } else { "single" };
+        let kind = state.kind;
         if content.contains(": ") || content.ends_with(':') {
-            return Err(self.error(start, format!("unterminated {kind}-quoted scalar")));
+            return Err(self.error(state.start, format!("unterminated {kind}-quoted scalar")));
         }
-        self.quote_error = Some(if after.starts_with('\t') {
+        state.violation = Some(if after.starts_with('\t') {
             self.error(self.pos + n, "tabs cannot be used for indentation")
         } else {
             self.error(
@@ -2198,16 +2201,20 @@ impl<'a, 'b> Parser<'a, 'b> {
     /// Reads a flow sequence or a flow mapping.
     fn flow_collection(&mut self, depth: usize) -> Result<RawKind> {
         self.check_depth(depth)?;
-        let open = self.peek().unwrap_or('[');
-        self.flow_kinds.push(open);
-        let kind = if open == '[' {
-            self.flow_sequence(depth)
+        let open = if self.peek() == Some('{') {
+            FlowKind::Mapping
         } else {
-            self.flow_mapping(depth)
-        }?;
-        self.flow_kinds.pop();
-        if self.flow_kinds.is_empty()
-            && let Some(error) = self.flow_violation.take()
+            FlowKind::Sequence
+        };
+        self.flow.kinds.push(open);
+        let kind = match open {
+            FlowKind::Sequence => self.flow_sequence(depth),
+            FlowKind::Mapping => self.flow_mapping(depth),
+        };
+        self.flow.kinds.pop();
+        let kind = kind?;
+        if self.flow.kinds.is_empty()
+            && let Some(error) = self.flow.violation.take()
         {
             return Err(error);
         }
@@ -2236,7 +2243,7 @@ impl<'a, 'b> Parser<'a, 'b> {
         let mut broken = false;
         loop {
             let end = self.pos;
-            self.skip_flow_space()?;
+            self.skip_flow_space();
             broken |= !props.is_empty() && self.source_has_break(end);
             if props.is_empty() || !matches!(self.peek(), Some('&' | '!')) {
                 break;
@@ -2254,12 +2261,7 @@ impl<'a, 'b> Parser<'a, 'b> {
             None | Some(',' | ']' | '}') => empty_scalar(start),
             Some('[' | '{') => Parsed::Node(self.flow_collection(depth)?, start),
             Some(quote @ ('"' | '\'')) => Parsed::Scalar(Scalar {
-                text: {
-                    let outer = std::mem::replace(&mut self.quote_indent, self.flow_indent);
-                    let text = self.quoted(quote);
-                    self.quote_indent = outer;
-                    text?
-                },
+                text: self.quoted(quote, self.flow.indent)?,
                 style: if quote == '"' {
                     Style::DoubleQuoted
                 } else {
@@ -2347,7 +2349,7 @@ impl<'a, 'b> Parser<'a, 'b> {
             let mut empty_lines = 0;
             while self.peek() == Some('\n') {
                 self.pos += 1;
-                self.check_flow_line()?;
+                self.check_flow_line();
                 self.skip_spaces();
                 if self.peek() == Some('\n') {
                     empty_lines += 1;
@@ -2378,7 +2380,7 @@ impl<'a, 'b> Parser<'a, 'b> {
         self.bump();
         let mut items = Vec::new();
         loop {
-            self.skip_flow_space()?;
+            self.skip_flow_space();
             match self.peek() {
                 None => return Err(self.error(start, "unterminated flow sequence")),
                 Some(']') => {
@@ -2401,14 +2403,14 @@ impl<'a, 'b> Parser<'a, 'b> {
             let explicit = self.peek() == Some('?') && !self.plain_indicator();
             if explicit {
                 self.bump();
-                self.skip_flow_space()?;
+                self.skip_flow_space();
                 if self.peek() == Some('?') && !self.plain_indicator() {
                     return Err(self.error(self.pos, "expected ',' or ']'"));
                 }
             }
             let key_pos = self.pos;
             let (parsed, props, broken) = self.flow_parsed(depth + 1, SEQUENCE_NEXT, true)?;
-            self.skip_flow_space()?;
+            self.skip_flow_space();
             if broken && !explicit && self.peek() == Some(':') {
                 return Err(self.error(self.pos, SEQUENCE_NEXT));
             }
@@ -2421,7 +2423,7 @@ impl<'a, 'b> Parser<'a, 'b> {
                 if colon {
                     self.bump();
                 }
-                self.skip_flow_space()?;
+                self.skip_flow_space();
                 let value = if !colon || matches!(self.peek(), Some(',' | ']')) {
                     scalar_raw(empty_scalar_at(self.pos))
                 } else {
@@ -2442,7 +2444,7 @@ impl<'a, 'b> Parser<'a, 'b> {
             };
             self.path.pop();
             items.push(item);
-            self.skip_flow_space()?;
+            self.skip_flow_space();
             match self.peek() {
                 Some(',') => {
                     self.bump();
@@ -2473,7 +2475,7 @@ impl<'a, 'b> Parser<'a, 'b> {
         self.bump();
         let mut entries = Vec::new();
         loop {
-            self.skip_flow_space()?;
+            self.skip_flow_space();
             match self.peek() {
                 None => return Err(self.error(start, "unterminated flow mapping")),
                 Some('}') => {
@@ -2496,13 +2498,13 @@ impl<'a, 'b> Parser<'a, 'b> {
             }
             if self.peek() == Some('?') && !self.plain_indicator() {
                 self.bump();
-                self.skip_flow_space()?;
+                self.skip_flow_space();
             }
             let key_pos = self.pos;
             let (parsed, props, _) =
                 self.flow_parsed(depth + 1, "expected ':', ',' or '}'", true)?;
             let key = self.flow_key(parsed, props, key_pos)?;
-            self.skip_flow_space()?;
+            self.skip_flow_space();
             if !matches!(self.peek(), None | Some(':' | ',' | '}')) {
                 return Err(self.error(self.pos, "expected ':', ',' or '}'"));
             }
@@ -2521,7 +2523,7 @@ impl<'a, 'b> Parser<'a, 'b> {
                 if plain && !matches!(self.peek(), None | Some(' ' | '\t' | '\n' | ',' | '}')) {
                     return Err(self.error(self.pos, "expected ',' or '}'"));
                 }
-                self.skip_flow_space()?;
+                self.skip_flow_space();
                 if matches!(self.peek(), Some(',' | '}')) {
                     scalar_raw(empty_scalar_at(self.pos))
                 } else {
@@ -2535,7 +2537,7 @@ impl<'a, 'b> Parser<'a, 'b> {
                 scalar_raw(empty_scalar_at(self.pos))
             };
             entries.push((key, value));
-            self.skip_flow_space()?;
+            self.skip_flow_space();
             match self.peek() {
                 Some(',') => {
                     self.bump();

@@ -9,7 +9,7 @@ use crate::syntax::Syntax;
 use crate::token::TokenType::*;
 
 pub(crate) fn syntax() -> Syntax {
-    Lang::new("Lua", "lua", &["*.lua", "*.rockspec"])
+    Lang::new(super::LUA)
         .weak_delims(".")
         .list("keywords", KEYWORDS)
         .list("control flow", CONTROL_FLOW)

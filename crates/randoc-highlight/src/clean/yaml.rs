@@ -8,7 +8,7 @@ use crate::syntax::Syntax;
 use crate::token::TokenType::*;
 
 pub(crate) fn syntax() -> Syntax {
-    Lang::new("YAML", "yaml", &["*.yaml", "*.yml", "*.ksy"])
+    Lang::new(super::YAML)
         .context("Normal", Attribute, |c| {
             c.rule(M::Re("^%.*"), Preprocessor, Stay)
                 .rule(M::Re(r"^---(?:[ \t]|$)"), Preprocessor, Stay)

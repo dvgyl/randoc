@@ -18,21 +18,21 @@ enum Dialect {
 }
 
 /// The extensions of the SQL languages.
-const EXTENSIONS: &[&str] = &["*.sql", "*.ddl"];
+pub(super) const EXTENSIONS: &[&str] = &["*.sql", "*.ddl"];
 
 pub(crate) fn sql() -> Syntax {
-    family("SQL", "sql", Dialect::Standard)
+    family(super::SQL, Dialect::Standard)
 }
 
 pub(crate) fn mysql() -> Syntax {
-    family("SQL (MySQL)", "sqlmysql", Dialect::MySql)
+    family(super::MYSQL, Dialect::MySql)
 }
 
 pub(crate) fn postgresql() -> Syntax {
-    family("SQL (PostgreSQL)", "sqlpostgresql", Dialect::PostgreSql)
+    family(super::POSTGRESQL, Dialect::PostgreSql)
 }
 
-fn family(name: &str, short: &str, dialect: Dialect) -> Syntax {
+fn family(language: super::Language, dialect: Dialect) -> Syntax {
     let (keywords, control_flow, functions, types) = match dialect {
         Dialect::Standard => (SQL_KEYWORDS, SQL_CONTROL_FLOW, SQL_FUNCTIONS, SQL_TYPES),
         Dialect::MySql => (
@@ -48,7 +48,7 @@ fn family(name: &str, short: &str, dialect: Dialect) -> Syntax {
             POSTGRESQL_TYPES,
         ),
     };
-    let lang = Lang::new(name, short, EXTENSIONS)
+    let lang = Lang::new(language)
         .list("keywords", keywords)
         .list("control flow", control_flow)
         .list("functions", functions)

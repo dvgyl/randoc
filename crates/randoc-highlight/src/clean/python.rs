@@ -7,7 +7,7 @@ use crate::syntax::Syntax;
 use crate::token::TokenType::{self, *};
 
 pub(crate) fn syntax() -> Syntax {
-    Lang::new("Python", "python", &["*.py", "*.pyi", "*.pyw"])
+    Lang::new(super::PYTHON)
         .list("builtins", BUILTINS)
         .list("control flow", CONTROL_FLOW)
         .list("exceptions", EXCEPTIONS)

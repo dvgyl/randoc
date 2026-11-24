@@ -8,7 +8,7 @@ use crate::syntax::Syntax;
 use crate::token::TokenType::*;
 
 pub(crate) fn syntax() -> Syntax {
-    let lang = Lang::new("Markdown", "markdown", &["*.md", "*.markdown", "*.mmd"])
+    let lang = Lang::new(super::MARKDOWN)
         // Metadata lines at the start of the document, or front matter.
         .context("Start", Normal, |c| {
             c.rule(M::Re("^---$"), Comment, Push("Front Matter"))

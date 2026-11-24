@@ -10,10 +10,10 @@ use crate::syntax::Syntax;
 use crate::token::TokenType::*;
 
 /// The extensions of the oracle's `javascript` language.
-const EXTENSIONS: &[&str] = &["*.cjs", "*.js", "*.julius", "*.kwinscript", "*.mjs"];
+pub(super) const EXTENSIONS: &[&str] = &["*.cjs", "*.js", "*.julius", "*.kwinscript", "*.mjs"];
 
 pub(crate) fn syntax() -> Syntax {
-    Lang::new("JavaScript", "javascript", EXTENSIONS)
+    Lang::new(super::JAVASCRIPT)
         .list(
             "builtins",
             &[

@@ -72,6 +72,15 @@ impl Element {
     }
 }
 
+pub(crate) fn parse_definition(text: &str) -> Result<Element, String> {
+    let text = text.strip_prefix('\u{feff}').unwrap_or(text);
+    if text.contains('\r') {
+        parse(&text.replace('\r', ""))
+    } else {
+        parse(text)
+    }
+}
+
 /// Parses a document and returns its root element.
 pub(crate) fn parse(text: &str) -> Result<Element, String> {
     let mut p = Parser {

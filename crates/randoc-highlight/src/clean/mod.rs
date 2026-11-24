@@ -49,41 +49,99 @@ const LICENSE: &str = "MIT OR Apache-2.0";
 /// The author of each clean-room syntax.
 const AUTHOR: &str = "Randoc contributors (clean-room)";
 
-/// Each clean-room language.
-pub(crate) fn all() -> Vec<Syntax> {
-    vec![
-        bash::syntax(),
-        c::syntax(),
-        cpp::syntax(),
-        cpp::gcc_extensions(),
-        cpp::iso_cpp(),
-        cs::syntax(),
-        css::syntax(),
-        elixir::syntax(),
-        go::syntax(),
-        haskell::syntax(),
-        html::syntax(),
-        ini::syntax(),
-        java::syntax(),
-        javascript::syntax(),
-        json::syntax(),
-        latex::syntax(),
-        literate_haskell::syntax(),
-        lua::syntax(),
-        markdown::syntax(),
-        perl::syntax(),
-        php::syntax(),
-        python::syntax(),
-        r::syntax(),
-        rest::syntax(),
-        ruby::syntax(),
-        sql::sql(),
-        sql::mysql(),
-        sql::postgresql(),
-        toml::syntax(),
-        xml::syntax(),
-        yaml::syntax(),
-    ]
+#[derive(Clone, Copy)]
+pub(crate) struct Language {
+    pub(crate) name: &'static str,
+    pub(crate) short_name: &'static str,
+    pub(crate) extensions: &'static [&'static str],
+}
+
+type Definition = (Language, fn() -> Syntax);
+
+macro_rules! definitions {
+    ($($id:ident: $build:path, $name:literal, $short:literal, $extensions:expr;)*) => {
+        $(const $id: Language = Language {
+            name: $name,
+            short_name: $short,
+            extensions: $extensions,
+        };)*
+        pub(crate) const DEFINITIONS: &[Definition] = &[$(($id, $build)),*];
+    };
+}
+
+definitions! {
+    BASH: bash::syntax, "Bash",
+        "bash",
+        &[
+            "*.sh",
+            "*.bash",
+            "*.ebuild",
+            "*.eclass",
+            "*.exheres-0",
+            "*.exlib",
+        ];
+    C: c::syntax, "C", "c", &["*.c", "*.h"];
+    CPP: cpp::syntax, "C++",
+            "cpp",
+            &["*.cpp", "*.hpp", "*.cc", "*.hh", "*.cxx", "*.hxx"];
+    GCC: cpp::gcc_extensions, "GCCExtensions", "gcc", &[];
+    ISO_CPP: cpp::iso_cpp, "ISO C++", "isocpp", &[];
+    CS: cs::syntax, "C#", "cs", &["*.cs", "*.ascx"];
+    CSS: css::syntax, "CSS", "css", &["*.css"];
+    ELIXIR: elixir::syntax, "Elixir", "elixir", &["*.ex", "*.exs"];
+    GO: go::syntax, "Go", "go", &["*.go"];
+    HASKELL: haskell::syntax, "Haskell", "haskell", &["*.hs"];
+    HTML: html::syntax, "HTML", "html", &["*.html", "*.shtml", "*.shtm"];
+    INI: ini::syntax, "INI Files", "ini", &["*.ini", "*.cfg", "*.pls", "*.kcfgc"];
+    JAVA: java::syntax, "Java", "java", &["*.java"];
+    JAVASCRIPT: javascript::syntax, "JavaScript", "javascript", javascript::EXTENSIONS;
+    JSON: json::syntax, "JSON",
+        "json",
+        &["*.json", "*.geojson", "*.gltf", "*.jsonl", "*.ndjson"];
+    LATEX: latex::syntax, "LaTeX",
+        "latex",
+        &[
+            "*.tex", "*.ltx", "*.dtx", "*.sty", "*.cls", "*.bbx", "*.cbx", "*.lbx", "*.tikz",
+            "*.pgf",
+        ];
+    LITERATE_HASKELL: literate_haskell::syntax, "Literate Haskell", "literatehaskell", &["*.lhs"];
+    LUA: lua::syntax, "Lua", "lua", &["*.lua", "*.rockspec"];
+    MARKDOWN: markdown::syntax, "Markdown", "markdown", &["*.md", "*.markdown", "*.mmd"];
+    PERL: perl::syntax, "Perl", "perl", &["*.pl", "*.PL", "*.pm"];
+    PHP: php::syntax, "PHP/PHP",
+        "php",
+        &[
+            "*.php", "*.php3", "*.wml", "*.phtml", "*.phtm", "*.inc", "*.ctp",
+        ];
+    PYTHON: python::syntax, "Python", "python", &["*.py", "*.pyi", "*.pyw"];
+    R: r::syntax, "R Script", "r", &["*.r", "*.R"];
+    REST: rest::syntax, "reStructuredText", "rest", &["*.rst", "*.rest"];
+    RUBY: ruby::syntax, "Ruby",
+        "ruby",
+        &["*.rb", "*.rjs", "*.rxml", "*.gemspec", "*.rake"];
+    SQL: sql::sql, "SQL", "sql", sql::EXTENSIONS;
+    MYSQL: sql::mysql, "SQL (MySQL)", "sqlmysql", sql::EXTENSIONS;
+    POSTGRESQL: sql::postgresql, "SQL (PostgreSQL)", "sqlpostgresql", sql::EXTENSIONS;
+    TOML: toml::syntax, "TOML", "toml", &["*.toml", "*.conf", "*.cnf", "*.rc"];
+    XML: xml::syntax, "XML",
+        "xml",
+        &[
+            "*.xml",
+            "*.xsd",
+            "*.svg",
+            "*.rss",
+            "*.xbel",
+            "*.xspf",
+            "*.wsdl",
+            "*.ui",
+            "*.rdf",
+            "*.docbook",
+            "*.kcfg",
+            "*.qrc",
+            "*.page",
+            "*.sch",
+        ];
+    YAML: yaml::syntax, "YAML", "yaml", &["*.yaml", "*.yml", "*.ksy"];
 }
 
 /// The keyword lists that embedded definitions include from syntaxes that
@@ -265,7 +323,12 @@ pub(crate) struct Lang {
 impl Lang {
     /// A language with its full name, its short name (the lookup name in
     /// lower case) and its file name patterns.
-    pub(crate) fn new(name: &str, short_name: &str, extensions: &[&str]) -> Lang {
+    pub(crate) fn new(language: Language) -> Lang {
+        let Language {
+            name,
+            short_name,
+            extensions,
+        } = language;
         Lang {
             syntax: Syntax {
                 name: name.to_string(),
@@ -370,7 +433,7 @@ impl Ctx {
     }
 
     /// A rule with options.
-    pub(crate) fn rule_with(mut self, m: M, attr: TokenType, then: Switch, o: RuleOpts) -> Ctx {
+    pub(crate) fn rule_with(self, m: M, attr: TokenType, then: Switch, o: RuleOpts) -> Ctx {
         let mut column = o.column;
         let matcher = match m {
             M::Char(c) => Matcher::DetectChar(c),
@@ -396,6 +459,10 @@ impl Ctx {
             M::Int => Matcher::Int,
             M::Float => Matcher::Float,
         };
+        self.push_rule(matcher, attr, then, RuleOpts { column, ..o })
+    }
+
+    fn push_rule(mut self, matcher: Matcher, attr: TokenType, then: Switch, o: RuleOpts) -> Ctx {
         self.context.rules.push(Rule {
             matcher,
             attribute: attr,
@@ -406,7 +473,7 @@ impl Ctx {
             children: Vec::new(),
             lookahead: o.lookahead,
             first_non_space: o.first_non_space,
-            column,
+            column: o.column,
             context_switch: then.switches(&self.context.syntax),
         });
         self
@@ -415,32 +482,25 @@ impl Ctx {
     /// A `RegExpr` rule whose pattern the language builds, for example
     /// from a word list.
     pub(crate) fn rule_pattern(self, pattern: String, attr: TokenType, then: Switch) -> Ctx {
-        self.rule_pattern_with(pattern, attr, then, opts())
+        self.push_pattern(pattern, attr, then, false)
     }
 
-    /// [`Ctx::rule_pattern`] with options; only `lookahead` applies.
-    pub(crate) fn rule_pattern_with(
-        mut self,
-        pattern: String,
-        attr: TokenType,
-        then: Switch,
-        o: RuleOpts,
-    ) -> Ctx {
+    pub(crate) fn lookahead_pattern(self, pattern: String, attr: TokenType, then: Switch) -> Ctx {
+        self.push_pattern(pattern, attr, then, true)
+    }
+
+    fn push_pattern(self, pattern: String, attr: TokenType, then: Switch, lookahead: bool) -> Ctx {
         let (matcher, column) = reg_expr(&pattern, true);
-        self.context.rules.push(Rule {
+        self.push_rule(
             matcher,
-            attribute: attr,
-            include_attribute: false,
-            word_delimiters: self.delims.clone(),
-            dynamic: false,
-            case_sensitive: true,
-            children: Vec::new(),
-            lookahead: o.lookahead,
-            first_non_space: false,
-            column,
-            context_switch: then.switches(&self.context.syntax),
-        });
-        self
+            attr,
+            then,
+            RuleOpts {
+                column,
+                lookahead,
+                ..opts()
+            },
+        )
     }
 
     /// The rules of a different context at this place: `Name`,
@@ -569,8 +629,25 @@ mod tests {
     }
 
     #[test]
+    fn stylesheet_keyword_order_matches_the_original_lists() {
+        for (words, expected) in [
+            (scss::COLORS, 0xbcb897b2d891019e),
+            (css::VALUES, 0xd5984f20b96c16d4),
+            (scss::VALUES, 0xab972bfbc127f9d0),
+            (css::PROPERTIES, 0x7d9f4d71cb48910d),
+            (scss::PROPERTIES, 0xd9a975cc6ac341eb),
+        ] {
+            let bytes = words.iter().flat_map(|word| word.bytes().chain([0]));
+            let hash = bytes.fold(0xcbf29ce484222325u64, |hash, byte| {
+                (hash ^ u64::from(byte)).wrapping_mul(0x100000001b3)
+            });
+            assert_eq!(hash, expected);
+        }
+    }
+
+    #[test]
     fn clean_syntaxes_have_the_clean_room_licence() {
-        for syntax in all() {
+        for syntax in DEFINITIONS.iter().map(|(_, build)| build()) {
             assert_eq!(syntax.license(), "MIT OR Apache-2.0", "{}", syntax.name);
             assert_eq!(syntax.author, "Randoc contributors (clean-room)");
             assert!(syntax.context(&syntax.starting_context).is_some());
@@ -583,7 +660,7 @@ mod tests {
     fn clean_targets_and_keyword_lists_resolve() {
         let registry = Registry::embedded();
         let mut missing = Vec::new();
-        for syntax in all() {
+        for syntax in DEFINITIONS.iter().map(|(_, build)| build()) {
             missing.extend(dangling(registry, &syntax));
             for (context, rule) in rules(&syntax) {
                 if let Matcher::Keyword(_, KeywordList::Unresolved(list)) = &rule.matcher
@@ -636,7 +713,7 @@ mod tests {
     #[test]
     fn clean_regexes_compile_without_nested_repetition() {
         let mut bad = Vec::new();
-        for syntax in all() {
+        for syntax in DEFINITIONS.iter().map(|(_, build)| build()) {
             for (context, rule) in rules(&syntax) {
                 let Matcher::RegExpr(re) = &rule.matcher else {
                     continue;
@@ -646,7 +723,7 @@ mod tests {
                         "{} {}: {}: {e}",
                         syntax.name, context.name, re.source
                     )),
-                    Ok((compiled, _)) if nested_repetition(compiled, false) => {
+                    Ok(compiled) if nested_repetition(&compiled.expression, false) => {
                         bad.push(format!(
                             "{} {}: {}: nested",
                             syntax.name, context.name, re.source
@@ -658,7 +735,7 @@ mod tests {
         }
         assert_eq!(bad, Vec::<String>::new());
         assert!(nested_repetition(
-            &crate::regex::compile("(a+)*b", true, false).unwrap_or(Regex::MatchNull),
+            &crate::regex::compile_expression("(a+)*b", true, false).unwrap_or(Regex::MatchNull),
             false
         ));
     }
@@ -755,7 +832,10 @@ mod tests {
             .map(|unit| (format!("{unit:?}"), unit.repeat((1 << 14) / unit.len())))
             .collect();
         lines.push(("all units".to_string(), mixed));
-        let names: Vec<String> = all().into_iter().map(|s| s.name).collect();
+        let names: Vec<String> = DEFINITIONS
+            .iter()
+            .map(|(language, _)| language.name.to_string())
+            .collect();
         // Each syntax runs in its own thread.
         let bad: Vec<String> = std::thread::scope(|scope| {
             let handles: Vec<_> = names

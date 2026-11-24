@@ -6,7 +6,7 @@ use std::borrow::Cow;
 use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 use std::sync::Arc;
 
-use crate::regex::{self, Regex};
+use crate::regex;
 use crate::token::TokenType;
 use crate::xml::Element;
 
@@ -66,40 +66,16 @@ pub(crate) enum KeywordList {
 pub(crate) struct Re {
     pub(crate) source: String,
     pub(crate) case_sensitive: bool,
-    /// The compiled expression and its capturing groups, or the compile
-    /// error. The tokenizer reports the error only when it tries the rule.
-    pub(crate) compiled: Result<(Regex, HashMap<usize, Regex>), String>,
-    /// The characters that can start a match, when they are known.
-    pub(crate) first: Option<regex::FirstChars>,
-    /// True when the ordered search gives the match of the set search.
-    pub(crate) ordered: bool,
-    /// True when the probe can prove that the expression has no match.
-    pub(crate) probe: bool,
+    pub(crate) compiled: Result<Arc<regex::Compiled>, String>,
 }
 
 impl Re {
     pub(crate) fn new(source: String, case_sensitive: bool, minimal: bool) -> Re {
-        let compiled = regex::compile(&source, case_sensitive, minimal).map(|re| {
-            let groups = regex::capturing_groups(&re);
-            (re, groups)
-        });
-        let first = compiled
-            .as_ref()
-            .ok()
-            .and_then(|(re, _)| regex::first_chars(re));
-        let ordered = compiled
-            .as_ref()
-            .is_ok_and(|(re, _)| regex::ordered_search_applies(re));
-        let probe = compiled
-            .as_ref()
-            .is_ok_and(|(re, _)| regex::probe_applies(re));
+        let compiled = regex::compile(&source, case_sensitive, minimal).map(Arc::new);
         Re {
             source,
             case_sensitive,
             compiled,
-            first,
-            ordered,
-            probe,
         }
     }
 }
@@ -259,26 +235,31 @@ pub(crate) fn document_to_syntax(path: &str, root: &Element) -> Result<Syntax, S
         }
     }
     let starting_context = starting_context.ok_or_else(|| "No contexts".to_string())?;
-    let stem = filename
-        .rsplit_once('.')
-        .map_or(filename.as_str(), |(stem, _)| stem);
     Ok(Syntax {
         name: syntax_name,
-        short_name: path_to_lang_name(stem),
+        short_name: short_name(&filename),
         filename,
         author: root.attr("author").to_string(),
         version: root.attr("version").to_string(),
         license: root.attr("license").to_string(),
-        extensions: root
-            .attr("extensions")
-            .split(|c: char| c == ';' || c.is_whitespace())
-            .filter(|s| !s.is_empty())
-            .map(str::to_string)
-            .collect(),
+        extensions: extensions(root.attr("extensions")),
         lists,
         contexts,
         starting_context,
     })
+}
+
+pub(crate) fn extensions(patterns: &str) -> Vec<String> {
+    patterns
+        .split(|c: char| c == ';' || c.is_whitespace())
+        .filter(|s| !s.is_empty())
+        .map(str::to_string)
+        .collect()
+}
+
+pub(crate) fn short_name(filename: &str) -> String {
+    let stem = filename.rsplit_once('.').map_or(filename, |(stem, _)| stem);
+    path_to_lang_name(stem)
 }
 
 fn path_to_lang_name(stem: &str) -> String {
@@ -623,6 +604,16 @@ fn resolve_keywords_with_limit(
         .iter()
         .map(|s| (s.name.clone(), s.lists.clone()))
         .collect();
+    install_external_lists(&mut lists, external);
+    for syntax in syntaxes {
+        let lookup = |syntax: &str, list: &str| lists.get(syntax)?.get(list).map(Vec::as_slice);
+        resolve_syntax_keywords(syntax, lookup, &mut byte_budget);
+    }
+}
+
+pub(crate) type KeywordLists = HashMap<String, BTreeMap<String, Vec<ListItem>>>;
+
+pub(crate) fn install_external_lists(lists: &mut KeywordLists, external: &[ExternalList]) {
     for e in external {
         lists
             .entry(e.syntax.to_string())
@@ -635,40 +626,45 @@ fn resolve_keywords_with_limit(
                     .collect()
             });
     }
-    for syntax in syntaxes.iter_mut() {
-        let mut resolved: HashMap<(String, bool), Arc<WordSet>> = HashMap::new();
-        let mut word_budget = MAX_RESOLVED_WORDS;
-        for context in syntax.contexts.values_mut() {
-            for rule in &mut context.rules {
-                let Matcher::Keyword(attr, list) = &mut rule.matcher else {
-                    continue;
-                };
-                let KeywordList::Unresolved(name) = list else {
-                    continue;
-                };
-                if !syntax.lists.contains_key(name.as_str()) {
-                    continue;
-                }
-                let key = (std::mem::take(name), attr.case_sensitive);
-                let words = resolved
-                    .entry(key)
-                    .or_insert_with_key(|(name, case_sensitive)| {
-                        let words = collect_words(
-                            &syntax.name,
-                            name,
-                            &lists,
-                            *case_sensitive,
-                            &mut word_budget,
-                            &mut byte_budget,
-                        );
-                        Arc::new(if *case_sensitive {
-                            WordSet::CaseSensitive(words)
-                        } else {
-                            WordSet::CaseInsensitive(words)
-                        })
-                    });
-                *list = KeywordList::Resolved(Arc::clone(words));
+}
+
+pub(crate) fn resolve_syntax_keywords<'a>(
+    syntax: &mut Syntax,
+    lookup: impl Fn(&str, &str) -> Option<&'a [ListItem]>,
+    byte_budget: &mut usize,
+) {
+    let mut resolved: HashMap<(String, bool), Arc<WordSet>> = HashMap::new();
+    let mut word_budget = MAX_RESOLVED_WORDS;
+    for context in syntax.contexts.values_mut() {
+        for rule in &mut context.rules {
+            let Matcher::Keyword(attr, list) = &mut rule.matcher else {
+                continue;
+            };
+            let KeywordList::Unresolved(name) = list else {
+                continue;
+            };
+            if !syntax.lists.contains_key(name.as_str()) {
+                continue;
             }
+            let key = (std::mem::take(name), attr.case_sensitive);
+            let words = resolved
+                .entry(key)
+                .or_insert_with_key(|(name, case_sensitive)| {
+                    let words = collect_words(
+                        &syntax.name,
+                        name,
+                        &lookup,
+                        *case_sensitive,
+                        &mut word_budget,
+                        byte_budget,
+                    );
+                    Arc::new(if *case_sensitive {
+                        WordSet::CaseSensitive(words)
+                    } else {
+                        WordSet::CaseInsensitive(words)
+                    })
+                });
+            *list = KeywordList::Resolved(Arc::clone(words));
         }
     }
 }
@@ -681,16 +677,16 @@ const MAX_RESOLVED_WORDS: usize = 1_000_000;
 /// The largest cumulative byte length of resolved keyword strings collected
 /// across all keyword lists in the registry (32 MiB), preventing byte
 /// amplification when many lists include a list containing huge words.
-const MAX_RESOLVED_BYTES: usize = 32 * 1024 * 1024;
+pub(crate) const MAX_RESOLVED_BYTES: usize = 32 * 1024 * 1024;
 
 /// The distinct words of the list `list` of `syntax` and of each list that
 /// its `include` items reach. Each list is expanded once, so a cycle ends
 /// and a list that two paths include costs nothing the second time.
 /// `word_budget` and `byte_budget` cap total collected words and string bytes.
-fn collect_words(
+fn collect_words<'a>(
     syntax: &str,
     list: &str,
-    all: &HashMap<String, BTreeMap<String, Vec<ListItem>>>,
+    lookup: &impl Fn(&str, &str) -> Option<&'a [ListItem]>,
     case_sensitive: bool,
     word_budget: &mut usize,
     byte_budget: &mut usize,
@@ -705,7 +701,7 @@ fn collect_words(
         if !expanded.insert((syntax, list)) {
             continue;
         }
-        let Some(items) = all.get(syntax).and_then(|lists| lists.get(list)) else {
+        let Some(items) = lookup(syntax, list) else {
             continue;
         };
         for item in items {

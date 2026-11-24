@@ -24,7 +24,7 @@ macro_rules! name {
 }
 
 pub(crate) fn syntax() -> Syntax {
-    Lang::new("HTML", "html", &["*.html", "*.shtml", "*.shtm"])
+    Lang::new(super::HTML)
         .context("Start", Normal, |c| c.include("FindHTML"))
         .context("FindHTML", Normal, |c| {
             c.rule(M::Str("<!--"), Comment, Push("Comment"))

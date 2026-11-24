@@ -16,7 +16,7 @@ macro_rules! name {
 }
 
 pub(crate) fn syntax() -> Syntax {
-    Lang::new("C#", "cs", &["*.cs", "*.ascx"])
+    Lang::new(super::CS)
         .list("keywords", KEYWORDS)
         .list("types", TYPES)
         .context("Normal", Normal, |c| {

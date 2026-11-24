@@ -186,13 +186,29 @@ struct Dynamic {
     groups: HashMap<usize, regex::Regex>,
 }
 
-/// The line state that a failed attempt must restore.
-struct Snapshot {
-    pos: usize,
+#[derive(Clone, Copy)]
+struct Cursor {
+    byte_pos: usize,
     endline: bool,
     prev_char: char,
-    column: usize,
+    char_column: usize,
     loop_counter: usize,
+}
+
+impl Cursor {
+    fn new(endline: bool) -> Self {
+        Self {
+            byte_pos: 0,
+            endline,
+            prev_char: '\n',
+            char_column: 0,
+            loop_counter: 0,
+        }
+    }
+}
+
+struct Snapshot {
+    cursor: Cursor,
     line_continuation: bool,
     captures: Captures,
 }
@@ -202,17 +218,11 @@ struct Tokenizer<'s, 'l> {
     stack: Vec<Frame<'s>>,
     max_depth: usize,
     line: &'l str,
-    /// Byte position in `line`.
-    pos: usize,
-    endline: bool,
-    prev_char: char,
-    /// Column in characters.
-    column: usize,
+    cursor: Cursor,
     line_continuation: bool,
     /// A byte index, as skylighting computes it, compared with the
     /// character column.
     first_nonspace: Option<usize>,
-    loop_counter: usize,
     captures: Captures,
     rule_depth: usize,
     /// The contexts whose rules an `IncludeRules` is trying now, to stop a
@@ -258,13 +268,9 @@ impl<'s, 'l> Tokenizer<'s, 'l> {
             stack: vec![Frame::new(start)],
             max_depth: max_depth.max(1),
             line: "",
-            pos: 0,
-            endline: text.is_empty(),
-            prev_char: '\n',
-            column: 0,
+            cursor: Cursor::new(text.is_empty()),
             line_continuation: false,
             first_nonspace: None,
-            loop_counter: 0,
             captures: Captures::new(),
             rule_depth: 0,
             including: HashSet::new(),
@@ -311,40 +317,28 @@ impl<'s, 'l> Tokenizer<'s, 'l> {
     }
 
     fn rest(&self) -> &'l str {
-        self.line.get(self.pos..).unwrap_or("")
+        self.line.get(self.cursor.byte_pos..).unwrap_or("")
     }
 
     fn snapshot(&self) -> Snapshot {
         Snapshot {
-            pos: self.pos,
-            endline: self.endline,
-            prev_char: self.prev_char,
-            column: self.column,
-            loop_counter: self.loop_counter,
+            cursor: self.cursor,
             line_continuation: self.line_continuation,
             captures: self.captures.clone(),
         }
     }
 
     fn restore(&mut self, s: Snapshot) {
-        self.pos = s.pos;
-        self.endline = s.endline;
-        self.prev_char = s.prev_char;
-        self.column = s.column;
-        self.loop_counter = s.loop_counter;
+        self.cursor = s.cursor;
         self.line_continuation = s.line_continuation;
         self.captures = s.captures;
     }
 
     fn tokenize_line(&mut self, line: &'l str, linenum: usize) -> Result<SourceLine, String> {
         self.line = line;
-        self.pos = 0;
-        self.endline = line.is_empty();
-        self.prev_char = '\n';
+        self.cursor = Cursor::new(line.is_empty());
         self.line_continuation = false;
-        self.column = 0;
         self.first_nonspace = line.bytes().position(|b| !is_space_byte(b));
-        self.loop_counter = 0;
         self.range_memo.clear();
         self.dead_ends.clear();
         self.shared_line = None;
@@ -366,7 +360,7 @@ impl<'s, 'l> Tokenizer<'s, 'l> {
             }
         }
         let tokens = normalize(tokens);
-        if self.endline {
+        if self.cursor.endline {
             if !self.line_continuation {
                 self.switch_until_stable(|c| &c.line_end_context)?;
             }
@@ -374,7 +368,7 @@ impl<'s, 'l> Tokenizer<'s, 'l> {
         } else {
             Err(format!(
                 "Could not match anything at line {linenum} column {}",
-                self.column
+                self.cursor.char_column
             ))
         }
     }
@@ -467,22 +461,22 @@ impl<'s, 'l> Tokenizer<'s, 'l> {
     /// `getToken`. `Ok(None)` is a failure; `Ok(Some(None))` is a step
     /// without a token.
     fn get_token(&mut self) -> Attempt<Option<Token>> {
-        if self.endline {
+        if self.cursor.endline {
             return Ok(None);
         }
         let context = self.top_context()?;
-        if self.loop_counter > LOOP_LIMIT {
+        if self.cursor.loop_counter > LOOP_LIMIT {
             let rest = self.rest();
             if let Some(last) = rest.chars().next_back() {
-                self.prev_char = last;
+                self.cursor.prev_char = last;
             }
-            self.column += rest.chars().count();
+            self.cursor.char_column += rest.chars().count();
             self.charge(rest.len());
-            self.pos = self.line.len();
-            self.endline = true;
+            self.cursor.byte_pos = self.line.len();
+            self.cursor.endline = true;
             return Ok(Some(Some((context.attribute, rest.to_string()))));
         }
-        self.loop_counter += 1;
+        self.cursor.loop_counter += 1;
         self.attempts = 0;
         for rule in &context.rules {
             if let Some(result) = self.try_rule(rule)? {
@@ -510,11 +504,11 @@ impl<'s, 'l> Tokenizer<'s, 'l> {
         let taken = rest.get(..end)?;
         let last = taken.chars().next_back()?;
         self.charge(end);
-        self.pos += end;
-        self.endline = self.pos >= self.line.len();
-        self.prev_char = last;
-        self.column += n;
-        self.loop_counter = 0;
+        self.cursor.byte_pos += end;
+        self.cursor.endline = self.cursor.byte_pos >= self.line.len();
+        self.cursor.prev_char = last;
+        self.cursor.char_column += n;
+        self.cursor.loop_counter = 0;
         Some(taken.to_string())
     }
 
@@ -544,16 +538,16 @@ impl<'s, 'l> Tokenizer<'s, 'l> {
     }
 
     fn try_rule_inner(&mut self, rule: &'s Rule) -> Attempt<Option<Token>> {
-        if self.pos >= self.line.len() {
+        if self.cursor.byte_pos >= self.line.len() {
             return Ok(None);
         }
-        if rule.column.is_some_and(|n| n != self.column) {
+        if rule.column.is_some_and(|n| n != self.cursor.char_column) {
             return Ok(None);
         }
-        if rule.first_non_space && self.first_nonspace != Some(self.column) {
+        if rule.first_non_space && self.first_nonspace != Some(self.cursor.char_column) {
             return Ok(None);
         }
-        let old = rule.lookahead.then(|| self.snapshot());
+        let cursor = self.cursor;
         self.captures.clear();
         let attr = rule.attribute;
         let token = match &rule.matcher {
@@ -579,13 +573,7 @@ impl<'s, 'l> Tokenizer<'s, 'l> {
         let token = match token {
             None => None,
             Some(_) if rule.lookahead => {
-                if let Some(old) = old {
-                    self.pos = old.pos;
-                    self.endline = old.endline;
-                    self.prev_char = old.prev_char;
-                    self.column = old.column;
-                    self.loop_counter = old.loop_counter;
-                }
+                self.cursor = cursor;
                 None
             }
             Some((tt, mut text)) => {
@@ -732,7 +720,7 @@ impl<'s, 'l> Tokenizer<'s, 'l> {
         if self.rest().chars().next()? != c {
             return None;
         }
-        let from = self.pos + c.len_utf8();
+        let from = self.cursor.byte_pos + c.len_utf8();
         let end = self.find_from(d, from)?;
         let inner = self.line.get(from..end)?.chars().count();
         self.take_chars(inner + 2)
@@ -758,21 +746,15 @@ impl<'s, 'l> Tokenizer<'s, 'l> {
         let rest = self.rest();
         if re.source.starts_with("\\b")
             && let Some(d) = rest.chars().next()
-            && regex::is_word_char(self.prev_char) == regex::is_word_char(d)
+            && regex::is_word_char(self.cursor.prev_char) == regex::is_word_char(d)
         {
             return Ok(None);
         }
-        let (compiled, groups) = match &re.compiled {
+        let compiled = match &re.compiled {
             Ok(x) => x,
             Err(e) => return Err(format!("Error compiling regex {}: {e}", re.source)),
         };
         if self.regex_budget == 0 {
-            return Ok(None);
-        }
-        if !dynamic
-            && let Some(first) = &re.first
-            && !rest.chars().next().is_some_and(|c| first.allows(c))
-        {
             return Ok(None);
         }
         let budget = self.regex_budget;
@@ -786,7 +768,7 @@ impl<'s, 'l> Tokenizer<'s, 'l> {
             base: 0,
         };
         let (found, steps) = if dynamic {
-            let Some(sub) = self.dynamic_pattern(re, compiled)? else {
+            let Some(sub) = self.dynamic_pattern(re, &compiled.expression)? else {
                 return Ok(None);
             };
             regex::match_budgeted(
@@ -796,22 +778,14 @@ impl<'s, 'l> Tokenizer<'s, 'l> {
                 plain(&mut regex::DeadEnds::default()),
             )
         } else {
-            let search = regex::Search {
-                max_steps: budget,
-                ordered: re.ordered,
-                probe: re.probe,
-                dead_ends: &mut self.dead_ends,
-                base: self.pos,
+            let Some(result) =
+                compiled.search(rest, budget, &mut self.dead_ends, self.cursor.byte_pos)
+            else {
+                return Ok(None);
             };
-            let result = regex::match_budgeted(groups, compiled, rest, search);
             #[cfg(test)]
             if let Some((calls, diffs)) = &mut self.compare_engines {
-                let set = regex::match_budgeted(
-                    groups,
-                    compiled,
-                    rest,
-                    plain(&mut regex::DeadEnds::default()),
-                );
+                let set = compiled.search_set(rest, plain(&mut regex::DeadEnds::default()));
                 *calls += 1;
                 // The set search can stop at the budget where the ordered
                 // search ends below it.
@@ -842,7 +816,7 @@ impl<'s, 'l> Tokenizer<'s, 'l> {
                 .shared_line
                 .get_or_insert_with(|| Rc::from(self.line))
                 .clone();
-            let base = self.pos;
+            let base = self.cursor.byte_pos;
             self.captures = found
                 .captures
                 .iter()
@@ -897,7 +871,7 @@ impl<'s, 'l> Tokenizer<'s, 'l> {
         delims: &BTreeSet<char>,
         scan: fn(&[u8]) -> Option<usize>,
     ) -> Option<String> {
-        if !delims.contains(&self.prev_char) {
+        if !delims.contains(&self.cursor.prev_char) {
             return None;
         }
         let n = scan(self.rest().as_bytes())?;
@@ -910,7 +884,7 @@ impl<'s, 'l> Tokenizer<'s, 'l> {
         delims: &BTreeSet<char>,
         contains: impl Fn(&str) -> bool,
     ) -> Option<String> {
-        if !delims.contains(&self.prev_char) {
+        if !delims.contains(&self.cursor.prev_char) {
             return None;
         }
         let rest = self.rest();
@@ -1000,7 +974,7 @@ impl<'s, 'l> Tokenizer<'s, 'l> {
         let first = text.chars().next()?;
         let last = text.chars().next_back()?;
         let is_delim = |c: char| delims.contains(&c);
-        if !(is_delim(self.prev_char) || is_delim(first)) {
+        if !(is_delim(self.cursor.prev_char) || is_delim(first)) {
             return None;
         }
         let after = self.rest().chars().nth(n).unwrap_or('\n');

@@ -7,7 +7,7 @@ use crate::syntax::Syntax;
 use crate::token::TokenType::*;
 
 pub(crate) fn syntax() -> Syntax {
-    Lang::new("reStructuredText", "rest", &["*.rst", "*.rest"])
+    Lang::new(super::REST)
         .context("Normal", Normal, |c| {
             let c = c
                 .rule_with(

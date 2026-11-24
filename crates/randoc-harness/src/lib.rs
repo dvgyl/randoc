@@ -49,11 +49,16 @@ Options:
 record and verify-oracle need the oracle: Pandoc 3.13.
 ";
 
+#[derive(Debug, PartialEq, Eq)]
+enum Selection {
+    Exact(String),
+    Filters(Vec<String>),
+}
+
 #[derive(Debug)]
 struct Config {
     command: String,
-    unit_id: Option<String>,
-    filters: Vec<String>,
+    selection: Selection,
     files_only: bool,
     all: bool,
     randoc: Option<PathBuf>,
@@ -70,14 +75,17 @@ struct Config {
 impl Config {
     /// Returns `true` when the run uses each unit of the suite.
     fn whole_suite(&self) -> bool {
-        self.filters.is_empty() && self.unit_id.is_none() && !self.files_only
+        matches!(&self.selection, Selection::Filters(filters) if filters.is_empty())
+            && !self.files_only
     }
 
     /// Returns `true` when a unit identifier is in the part of the suite that the run uses.
     fn selects(&self, id: &str) -> bool {
-        match &self.unit_id {
-            Some(unit_id) => unit_id == id,
-            None => self.filters.is_empty() || self.filters.iter().any(|f| id.contains(f)),
+        match &self.selection {
+            Selection::Exact(unit_id) => unit_id == id,
+            Selection::Filters(filters) => {
+                filters.is_empty() || filters.iter().any(|f| id.contains(f))
+            }
         }
     }
 }
@@ -85,8 +93,7 @@ impl Config {
 fn parse_config(args: &[String]) -> Result<Config, String> {
     let mut config = Config {
         command: args.first().cloned().ok_or("no command")?,
-        unit_id: None,
-        filters: Vec::new(),
+        selection: Selection::Filters(Vec::new()),
         files_only: false,
         all: false,
         randoc: None,
@@ -103,7 +110,12 @@ fn parse_config(args: &[String]) -> Result<Config, String> {
     while let Some(arg) = rest.next() {
         let mut value = || rest.next().cloned().ok_or(format!("{arg} needs a value"));
         match arg.as_str() {
-            "--filter" => config.filters.push(value()?),
+            "--filter" => {
+                let filter = value()?;
+                if let Selection::Filters(filters) = &mut config.selection {
+                    filters.push(filter);
+                }
+            }
             "--files" => config.files_only = true,
             "--all" => config.all = true,
             "--randoc" => config.randoc = Some(PathBuf::from(value()?)),
@@ -120,8 +132,10 @@ fn parse_config(args: &[String]) -> Result<Config, String> {
                 config.timeout = Duration::from_secs(seconds);
             }
             "--root" => config.root = PathBuf::from(value()?),
-            other if !other.starts_with('-') && config.unit_id.is_none() => {
-                config.unit_id = Some(other.to_owned());
+            other
+                if !other.starts_with('-') && matches!(config.selection, Selection::Filters(_)) =>
+            {
+                config.selection = Selection::Exact(other.to_owned());
             }
             other => return Err(format!("unknown argument {other}")),
         }
@@ -175,7 +189,7 @@ impl Session {
         let conformance = config.root.join("conformance");
         let mut units =
             cases::load_units(&conformance.join("cases"), &conformance.join("fixtures"))?;
-        if let Some(id) = &config.unit_id
+        if let Selection::Exact(id) = &config.selection
             && !units.iter().any(|unit| unit.id == *id)
         {
             return Err(format!("there is no unit with the identifier {id}"));
@@ -300,8 +314,17 @@ fn oracle_version(oracle: &Program, work_dir: &Path) -> Result<String, String> {
     Ok(first_line.to_owned())
 }
 
-/// The identifier, the case file key and the local identifier of a unit, with its new oracle result.
-type RecordUpdate = (String, String, String, Option<Result<Outcome, String>>);
+#[derive(Clone, Copy)]
+enum RecordPhase {
+    Independent,
+    TreeDependent,
+}
+
+enum RecordUpdate {
+    Recorded(Outcome),
+    OracleError(String),
+    MissingTree,
+}
 
 fn record(mut session: Session) -> Result<bool, String> {
     let oracle = session.oracle()?;
@@ -313,11 +336,14 @@ fn record(mut session: Session) -> Result<bool, String> {
     let mut changed: BTreeSet<String> = BTreeSet::new();
 
     // The write units need the document tree from the read units, so the read units run first.
-    for write_phase in [false, true] {
+    for phase in [RecordPhase::Independent, RecordPhase::TreeDependent] {
         let todo: Vec<(&Unit, Option<Vec<u8>>)> = session
             .units
             .iter()
-            .filter(|unit| (unit.kind == UnitKind::Write) == write_phase)
+            .filter(|unit| match phase {
+                RecordPhase::Independent => unit.kind != UnitKind::Write,
+                RecordPhase::TreeDependent => unit.kind == UnitKind::Write,
+            })
             .map(|unit| (unit, session.stdin(unit)))
             .filter(|(unit, stdin)| match stdin {
                 Some(stdin) => all || session.current(unit, stdin).is_none(),
@@ -325,44 +351,36 @@ fn record(mut session: Session) -> Result<bool, String> {
             })
             .collect();
         let outcomes = parallel_map(&todo, session.oracle_jobs(), |worker, (unit, stdin)| {
-            let stdin = stdin.as_ref()?;
-            let result =
-                oracle.run_unit(unit, stdin, &session.work_dir(worker), &session.config.root);
-            Some(result.map(|mut outcome| {
-                outcome.key = unit.fingerprint(stdin);
-                outcome
-            }))
+            let Some(stdin) = stdin else {
+                return RecordUpdate::MissingTree;
+            };
+            match oracle.run_unit(unit, stdin, &session.work_dir(worker), &session.config.root) {
+                Ok(mut outcome) => {
+                    outcome.key = unit.fingerprint(stdin);
+                    RecordUpdate::Recorded(outcome)
+                }
+                Err(error) => RecordUpdate::OracleError(error),
+            }
         });
-        let updates: Vec<RecordUpdate> = todo
-            .iter()
-            .zip(outcomes)
-            .map(|((unit, _), outcome)| {
-                (
-                    unit.id.clone(),
-                    unit.file_key.clone(),
-                    unit.local_id.clone(),
-                    outcome.flatten(),
-                )
-            })
-            .collect();
-        for (id, file_key, local_id, outcome) in updates {
-            let file = session.expected.entry(file_key.clone()).or_default();
+        for ((unit, _), outcome) in todo.into_iter().zip(outcomes) {
+            let file = session.expected.entry(unit.file_key.clone()).or_default();
             let change = match outcome {
-                Some(Ok(outcome)) => {
+                Some(RecordUpdate::Recorded(outcome)) => {
                     recorded += 1;
-                    file.units.insert(local_id, outcome);
+                    file.units.insert(unit.local_id.clone(), outcome);
                     true
                 }
-                Some(Err(error)) => {
-                    println!("  ORACLE ERROR {id}: {error}");
+                Some(RecordUpdate::OracleError(error)) => {
+                    println!("  ORACLE ERROR {}: {error}", unit.id);
                     errors += 1;
-                    file.units.remove(&local_id).is_some()
+                    file.units.remove(&unit.local_id).is_some()
                 }
-                // The oracle gives no document tree for this case, so the write unit has no result.
-                None => file.units.remove(&local_id).is_some(),
+                Some(RecordUpdate::MissingTree) | None => {
+                    file.units.remove(&unit.local_id).is_some()
+                }
             };
             if change {
-                changed.insert(file_key);
+                changed.insert(unit.file_key.clone());
             }
         }
     }
@@ -403,46 +421,56 @@ fn record(mut session: Session) -> Result<bool, String> {
     Ok(errors == 0)
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-enum Status {
-    Pass,
-    Fail,
-    /// There is no stored oracle result for the current input of the unit. Run `record`.
+enum RunOutcome<'a> {
+    Compared {
+        expected: &'a Outcome,
+        actual: Outcome,
+        verdict: Verdict,
+        detail: Option<String>,
+    },
     NotRecorded,
-    /// The oracle gives no document tree for the case, so the write unit does not apply.
     Skipped,
-    /// The harness has no result of Randoc, for example because of a timeout.
-    NoResult(String),
+    NoResult {
+        expected: &'a Outcome,
+        error: String,
+    },
 }
 
-impl Status {
+impl RunOutcome<'_> {
     fn name(&self) -> &'static str {
         match self {
-            Status::Pass => "pass",
-            Status::Fail => "fail",
-            Status::NotRecorded => "not_recorded",
-            Status::Skipped => "skipped",
-            Status::NoResult(_) => "no_result",
+            Self::Compared { verdict, .. } if verdict.pass => "pass",
+            Self::Compared { .. } => "fail",
+            Self::NotRecorded => "not_recorded",
+            Self::Skipped => "skipped",
+            Self::NoResult { .. } => "no_result",
+        }
+    }
+
+    fn passes(&self) -> bool {
+        matches!(self, Self::Compared { verdict, .. } if verdict.pass)
+    }
+
+    fn expected(&self) -> Option<&Outcome> {
+        match self {
+            Self::Compared { expected, .. } | Self::NoResult { expected, .. } => Some(expected),
+            Self::NotRecorded | Self::Skipped => None,
         }
     }
 }
 
 struct UnitResult<'a> {
     unit: &'a Unit,
-    status: Status,
-    verdict: Option<Verdict>,
-    actual: Option<Outcome>,
-    /// What is different in the output, when the harness can tell more than the verdict.
-    detail: Option<String>,
+    outcome: RunOutcome<'a>,
 }
 
 fn run_units<'a>(session: &'a Session, randoc: &Program) -> Vec<UnitResult<'a>> {
     let run = |worker, unit: &Unit| {
         let Some(stdin) = session.stdin(unit) else {
-            return (Status::Skipped, None, None, None);
+            return RunOutcome::Skipped;
         };
         let Some(expected) = session.current(unit, &stdin) else {
-            return (Status::NotRecorded, None, None, None);
+            return RunOutcome::NotRecorded;
         };
         match randoc.run_unit(
             unit,
@@ -452,19 +480,23 @@ fn run_units<'a>(session: &'a Session, randoc: &Program) -> Vec<UnitResult<'a>> 
         ) {
             Ok(actual) => {
                 let verdict = compare::compare(unit, expected, &actual);
-                let (status, detail) = if verdict.pass {
-                    (Status::Pass, None)
+                let detail = if verdict.pass {
+                    None
                 } else {
-                    let detail = compare::zip_stdout_difference(
+                    compare::zip_stdout_difference(
                         unit,
                         &expected.stdout_bytes(),
                         &actual.stdout_bytes(),
-                    );
-                    (Status::Fail, detail)
+                    )
                 };
-                (status, Some(verdict), Some(actual), detail)
+                RunOutcome::Compared {
+                    expected,
+                    actual,
+                    verdict,
+                    detail,
+                }
             }
-            Err(error) => (Status::NoResult(error), None, None, None),
+            Err(error) => RunOutcome::NoResult { expected, error },
         }
     };
     let results = parallel_map(&session.units, session.config.jobs, run);
@@ -473,17 +505,11 @@ fn run_units<'a>(session: &'a Session, randoc: &Program) -> Vec<UnitResult<'a>> 
         .iter()
         .zip(results)
         .map(|(unit, result)| {
-            let (status, verdict, actual, detail) = match result {
-                Some((Status::NoResult(_), _, _, _)) | None => run(0, unit),
+            let outcome = match result {
+                Some(RunOutcome::NoResult { .. }) | None => run(0, unit),
                 Some(result) => result,
             };
-            UnitResult {
-                unit,
-                status,
-                verdict,
-                actual,
-                detail,
-            }
+            UnitResult { unit, outcome }
         })
         .collect()
 }
@@ -513,10 +539,12 @@ fn write_json<T: serde::Serialize>(path: &Path, value: &T) -> Result<(), String>
 }
 
 fn failure_reason(result: &UnitResult<'_>) -> String {
-    match (&result.status, result.verdict) {
-        (Status::NoResult(error), _) => format!("no result: {error}"),
-        (Status::NotRecorded, _) => "no current oracle result, run record".to_owned(),
-        (_, Some(verdict)) => {
+    match &result.outcome {
+        RunOutcome::NoResult { error, .. } => format!("no result: {error}"),
+        RunOutcome::NotRecorded => "no current oracle result, run record".to_owned(),
+        RunOutcome::Compared {
+            verdict, detail, ..
+        } => {
             let mut parts = Vec::new();
             if !verdict.exit_ok {
                 parts.push("exit code");
@@ -535,13 +563,13 @@ fn failure_reason(result: &UnitResult<'_>) -> String {
                 });
             }
             let mut reason = parts.join(", ");
-            if let Some(detail) = &result.detail {
+            if let Some(detail) = detail {
                 reason.push_str(": ");
                 reason.push_str(detail);
             }
             reason
         }
-        (status, None) => status.name().to_owned(),
+        RunOutcome::Skipped => result.outcome.name().to_owned(),
     }
 }
 
@@ -550,17 +578,31 @@ fn run(session: Session) -> Result<bool, String> {
     let results = run_units(&session, &randoc);
     let config = &session.config;
 
-    let count = |name: &str| results.iter().filter(|r| r.status.name() == name).count();
-    let (passing, failing) = (count("pass"), count("fail"));
-    let (not_recorded, skipped, no_result) =
-        (count("not_recorded"), count("skipped"), count("no_result"));
-    let verdicts = || results.iter().filter_map(|r| r.verdict);
-    let byte_identical = verdicts()
-        .filter(|v| v.exit_ok && v.stderr_ok && v.bytes_ok && v.files_ok)
-        .count();
-    let content_identical = verdicts()
-        .filter(|v| v.exit_ok && v.stderr_ok && v.content_ok && v.files_ok)
-        .count();
+    let (mut passing, mut failing, mut skipped, mut not_recorded, mut no_result) = (0, 0, 0, 0, 0);
+    let (mut byte_identical, mut content_identical) = (0, 0);
+    let mut problems = Vec::new();
+    for result in &results {
+        match &result.outcome {
+            RunOutcome::Compared { verdict, .. } => {
+                if verdict.exit_ok && verdict.stderr_ok && verdict.files_ok {
+                    byte_identical += usize::from(verdict.bytes_ok);
+                    content_identical += usize::from(verdict.content_ok);
+                }
+                if verdict.pass {
+                    passing += 1;
+                    continue;
+                }
+                failing += 1;
+            }
+            RunOutcome::Skipped => {
+                skipped += 1;
+                continue;
+            }
+            RunOutcome::NotRecorded => not_recorded += 1,
+            RunOutcome::NoResult { .. } => no_result += 1,
+        }
+        problems.push(result);
+    }
     println!(
         "harness: {} units: {passing} pass, {failing} fail, {no_result} no result, {not_recorded} not recorded, {skipped} skipped",
         results.len()
@@ -568,10 +610,6 @@ fn run(session: Session) -> Result<bool, String> {
     println!(
         "harness: output byte-identical {byte_identical}, content-identical {content_identical}"
     );
-    let problems: Vec<&UnitResult<'_>> = results
-        .iter()
-        .filter(|r| !matches!(r.status, Status::Pass | Status::Skipped))
-        .collect();
     for result in problems.iter().take(25) {
         println!("  FAIL {} ({})", result.unit.id, failure_reason(result));
     }
@@ -589,20 +627,23 @@ fn run(session: Session) -> Result<bool, String> {
     let report_units: Vec<serde_json::Value> = results
         .iter()
         .map(|result| {
+            let (verdict, detail) = match &result.outcome {
+                RunOutcome::Compared {
+                    verdict, detail, ..
+                } => (Some(verdict), detail.as_deref()),
+                _ => (None, None),
+            };
             let mut entry = serde_json::json!({
                 "id": result.unit.id,
-                "status": result.status.name(),
-                "verdict": result.verdict,
+                "status": result.outcome.name(),
+                "verdict": verdict,
             });
-            if let Some(detail) = &result.detail {
+            if let Some(detail) = detail {
                 entry["detail"] = serde_json::json!(detail);
             }
             if result.unit.capture_files.is_some() {
-                let expected = session
-                    .stdin(result.unit)
-                    .and_then(|stdin| session.current(result.unit, &stdin));
                 entry["oracle_writes_file"] =
-                    serde_json::json!(expected.and_then(|o| o.writes_file()));
+                    serde_json::json!(result.outcome.expected().and_then(Outcome::writes_file));
             }
             entry
         })
@@ -625,13 +666,13 @@ fn run(session: Session) -> Result<bool, String> {
         }
         let facts: Vec<UnitFact> = results
             .iter()
-            .filter(|r| r.status != Status::Skipped)
+            .filter(|r| !matches!(r.outcome, RunOutcome::Skipped))
             .map(|r| UnitFact {
                 kind: r.unit.kind.clone(),
                 from: r.unit.from.clone(),
                 to: r.unit.to.clone(),
                 covers: r.unit.covers.clone(),
-                pass: r.status == Status::Pass,
+                pass: r.outcome.passes(),
             })
             .collect();
         write_json(
@@ -644,7 +685,7 @@ fn run(session: Session) -> Result<bool, String> {
     if let Some(baseline_path) = &config.baseline {
         let passing_ids: BTreeSet<&str> = results
             .iter()
-            .filter(|r| r.status == Status::Pass)
+            .filter(|r| r.outcome.passes())
             .map(|r| r.unit.id.as_str())
             .collect();
         // The first baseline does not exist before the first update.
@@ -654,22 +695,9 @@ fn run(session: Session) -> Result<bool, String> {
             load_baseline(baseline_path)?
         };
         // A unit of the baseline that the suite no longer has is a regression too.
-        let selected_files: Option<BTreeSet<&str>> = config.files_only.then(|| {
-            results
-                .iter()
-                .map(|result| result.unit.id.as_str())
-                .collect()
+        let regressions = baseline_regressions(&baseline, &results, |id, present| {
+            config.selects(id) && (!config.files_only || present)
         });
-        let regressions: Vec<&String> = baseline
-            .iter()
-            .filter(|id| {
-                config.selects(id)
-                    && selected_files
-                        .as_ref()
-                        .is_none_or(|files| files.contains(id.as_str()))
-                    && !passing_ids.contains(id.as_str())
-            })
-            .collect();
         let new_passes = passing_ids
             .iter()
             .filter(|id| !baseline.contains(**id))
@@ -679,7 +707,7 @@ fn run(session: Session) -> Result<bool, String> {
             baseline.len(),
             regressions.len()
         );
-        for id in &regressions {
+        for (id, _) in &regressions {
             println!("  REGRESSION {id}");
         }
         ok = regressions.is_empty();
@@ -799,19 +827,15 @@ fn show(session: Session) -> Result<bool, String> {
     };
     let unit = result.unit;
     println!("unit: {}", unit.id);
-    println!("status: {}", result.status.name());
-    if let Status::NoResult(error) = &result.status {
+    println!("status: {}", result.outcome.name());
+    if let RunOutcome::NoResult { error, .. } = &result.outcome {
         println!("harness: {error}");
     }
     println!("command: pandoc {}", unit.args.join(" "));
-    let stdin = session.stdin(unit);
-    if let Some(stdin) = &stdin {
-        print_block("stdin", stdin);
+    if let Some(stdin) = session.stdin(unit) {
+        print_block("stdin", &stdin);
     }
-    if let Some(expected) = stdin
-        .as_ref()
-        .and_then(|stdin| session.current(unit, stdin))
-    {
+    if let Some(expected) = result.outcome.expected() {
         println!("expected exit code: {}", expected.exit);
         print_block("expected stdout", &expected.stdout_bytes());
         print_block("expected stderr", &expected.stderr_bytes());
@@ -819,21 +843,25 @@ fn show(session: Session) -> Result<bool, String> {
             println!("expected file changes: {changes:#?}");
         }
     }
-    if let Some(actual) = &result.actual {
+    if let RunOutcome::Compared {
+        actual,
+        verdict,
+        detail,
+        ..
+    } = &result.outcome
+    {
         println!("randoc exit code: {}", actual.exit);
         print_block("randoc stdout", &actual.stdout_bytes());
         print_block("randoc stderr", &actual.stderr_bytes());
         if let Some(changes) = &actual.file_changes {
             println!("randoc file changes: {changes:#?}");
         }
-    }
-    if let Some(verdict) = result.verdict {
         println!("verdict: {verdict:?}");
+        if let Some(detail) = detail {
+            println!("difference: {detail}");
+        }
     }
-    if let Some(detail) = &result.detail {
-        println!("difference: {detail}");
-    }
-    Ok(result.status == Status::Pass)
+    Ok(result.outcome.passes())
 }
 
 /// The result of [`check_baseline`].
@@ -875,27 +903,41 @@ pub fn check_baseline(
     if local.exists() {
         baseline.extend(load_baseline(&local)?);
     }
-    let by_id: BTreeMap<&str, &UnitResult<'_>> = results
-        .iter()
-        .map(|result| (result.unit.id.as_str(), result))
+    let regressions = baseline_regressions(&baseline, &results, |_, _| true)
+        .into_iter()
+        .map(|(id, result)| match result {
+            Some(result) => format!("{id} ({})", failure_reason(result)),
+            None => format!("{id} (the suite has no such unit)"),
+        })
         .collect();
-    let mut regressions = Vec::new();
-    for id in &baseline {
-        match by_id.get(id.as_str()) {
-            Some(result) if result.status == Status::Pass => {}
-            Some(result) => regressions.push(format!("{id} ({})", failure_reason(result))),
-            None => regressions.push(format!("{id} (the suite has no such unit)")),
-        }
-    }
     let passing = results
         .iter()
-        .filter(|result| result.status == Status::Pass)
+        .filter(|result| result.outcome.passes())
         .count();
     Ok(BaselineCheck {
         units: results.len(),
         passing,
         regressions,
     })
+}
+
+fn baseline_regressions<'a, 'b>(
+    baseline: &'a BTreeSet<String>,
+    results: &'a [UnitResult<'b>],
+    selected: impl Fn(&str, bool) -> bool,
+) -> Vec<(&'a str, Option<&'a UnitResult<'b>>)> {
+    let by_id: BTreeMap<_, _> = results
+        .iter()
+        .map(|result| (result.unit.id.as_str(), result))
+        .collect();
+    baseline
+        .iter()
+        .filter_map(|id| {
+            let result = by_id.get(id.as_str()).copied();
+            (selected(id, result.is_some()) && !result.is_some_and(|r| r.outcome.passes()))
+                .then_some((id.as_str(), result))
+        })
+        .collect()
 }
 
 /// Runs the `randoc-harness` program. `args` does not include the program name.
@@ -960,7 +1002,7 @@ mod tests {
         ]))
         .unwrap();
         assert_eq!(config.command, "run");
-        assert_eq!(config.filters, ["a", "b"]);
+        assert_eq!(config.selection, Selection::Filters(args(&["a", "b"])));
         assert_eq!(
             config.baseline.as_deref(),
             Some(Path::new("spec/baseline.json"))
@@ -974,7 +1016,7 @@ mod tests {
         assert_eq!(config.root, Path::new("repo"));
 
         let show = parse_config(&args(&["show", "s/f/c#read"])).unwrap();
-        assert_eq!(show.unit_id.as_deref(), Some("s/f/c#read"));
+        assert_eq!(show.selection, Selection::Exact("s/f/c#read".to_owned()));
     }
 
     #[test]
@@ -1164,8 +1206,10 @@ cmd = ["--reference-doc=conformance/fixtures/docs/reference.docx"]
         let session = fixture.session("run", &[], &program, &program);
         let results = run_units(&session, &session.randoc().unwrap());
         assert_eq!(results.len(), 1);
-        assert_eq!(results[0].status, Status::Pass);
-        let actual = results[0].actual.as_ref().unwrap();
+        assert!(results[0].outcome.passes());
+        let RunOutcome::Compared { actual, .. } = &results[0].outcome else {
+            panic!("expected a completed comparison");
+        };
         assert_eq!(actual.exit, 0);
         assert_eq!(actual.stdout_bytes(), [0x50, 0x4b, 0xff, 0, 0xfe]);
     }
@@ -1389,6 +1433,14 @@ cmd = []
         assert_eq!(report["units"][0]["oracle_writes_file"], true);
         assert!(run(fixture.session("run", &["--files"], &oracle, &wrong)).unwrap());
         assert_eq!(fixture.report_statuses()["s/f/changes#cmd"], "fail");
+        let stopped = fixture.program("stopped", "kill -KILL $$");
+        assert!(run(fixture.session("run", &["--files"], &oracle, &stopped)).unwrap());
+        let report: serde_json::Value =
+            serde_json::from_str(&fs::read_to_string(fixture.root.join("report.json")).unwrap())
+                .unwrap();
+        assert_eq!(report["units"][0]["status"], "no_result");
+        assert!(report["units"][0]["verdict"].is_null());
+        assert_eq!(report["units"][0]["oracle_writes_file"], true);
     }
 
     #[cfg(unix)]
@@ -1405,7 +1457,6 @@ cmd = []
         ];
         assert!(run(fixture.session("run", &extra, &oracle, &oracle)).unwrap());
 
-        // Change the input of case `a` and remove case `b`.
         fixture.cases(
             "from = \"markdown\"\nto = [\"html\"]\n[[case]]\nid = \"a\"\ninput = \"new\\n\"\n",
         );

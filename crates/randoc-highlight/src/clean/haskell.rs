@@ -8,7 +8,7 @@ use crate::syntax::Syntax;
 use crate::token::TokenType::*;
 
 pub(crate) fn syntax() -> Syntax {
-    Lang::new("Haskell", "haskell", &["*.hs"])
+    Lang::new(super::HASKELL)
         .list("functions", FUNCTIONS)
         .list("import keywords", &["as", "hiding", "qualified"])
         .list("keywords", KEYWORDS)

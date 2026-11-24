@@ -8,7 +8,7 @@ use crate::syntax::Syntax;
 use crate::token::TokenType::*;
 
 pub(crate) fn syntax() -> Syntax {
-    Lang::new("Literate Haskell", "literatehaskell", &["*.lhs"])
+    Lang::new(super::LITERATE_HASKELL)
         .context("text", Normal, |c| {
             c.rule_with(M::Char('>'), Other, Push("bird"), opts().column(0))
                 .rule(

@@ -6,7 +6,7 @@ use crate::syntax::Syntax;
 use crate::token::TokenType::*;
 
 pub(crate) fn syntax() -> Syntax {
-    Lang::new("INI Files", "ini", &["*.ini", "*.cfg", "*.pls", "*.kcfgc"])
+    Lang::new(super::INI)
         .list("keywords", KEYWORDS)
         .context("ini", DataType, |c| {
             c.rule_with(M::Re("[;#].*"), Comment, Stay, opts().first_non_space())

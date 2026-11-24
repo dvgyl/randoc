@@ -18,7 +18,7 @@ macro_rules! tags {
 }
 
 pub(crate) fn syntax() -> Syntax {
-    Lang::new("Java", "java", &["*.java"])
+    Lang::new(super::JAVA)
         .list("classes", CLASSES)
         .list("control flow", CONTROL_FLOW)
         .list("keywords", KEYWORDS)

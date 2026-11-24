@@ -6,7 +6,7 @@ use crate::syntax::Syntax;
 use crate::token::TokenType::*;
 
 pub(crate) fn syntax() -> Syntax {
-    Lang::new("TOML", "toml", &["*.toml", "*.conf", "*.cnf", "*.rc"])
+    Lang::new(super::TOML)
         .context("Normal", Error, |c| {
             c.rule(M::Spaces, Normal, Stay)
                 .rule(M::Char('#'), Comment, Push("Comment"))

@@ -9,7 +9,7 @@ use crate::syntax::Syntax;
 use crate::token::TokenType::*;
 
 pub(crate) fn syntax() -> Syntax {
-    let lang = Lang::new("Perl", "perl", &["*.pl", "*.PL", "*.pm"])
+    let lang = Lang::new(super::PERL)
         .list("keywords", KEYWORDS)
         .list("control flow", CONTROL_FLOW)
         .list("operators", OPERATORS)

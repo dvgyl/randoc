@@ -1059,6 +1059,23 @@ mod tests {
     }
 
     #[test]
+    fn explicit_empty_and_block_values_can_precede_an_implicit_entry() {
+        let node = ok(
+            "? missing\n? list\n: - item\nplain: value\n",
+            Limits::default(),
+        );
+        assert_eq!(node.get("missing").unwrap().value(), Ok(Value::Null));
+        assert!(matches!(
+            node.get("list").unwrap().value(),
+            Ok(Value::Sequence(_))
+        ));
+        assert_eq!(
+            node.get("plain").unwrap().value(),
+            Ok(Value::String("value"))
+        );
+    }
+
+    #[test]
     fn a_defaults_file_ends_only_at_an_exact_end_line() {
         for text in [
             "--- {}\n... x\n",

@@ -9,7 +9,7 @@ use crate::syntax::Syntax;
 use crate::token::TokenType::*;
 
 pub(crate) fn syntax() -> Syntax {
-    Lang::new("Go", "go", &["*.go"])
+    Lang::new(super::GO)
         .list("keywords", KEYWORDS)
         .list("control flow", CONTROL_FLOW)
         .list("types", TYPES)

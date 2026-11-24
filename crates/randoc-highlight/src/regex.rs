@@ -355,10 +355,75 @@ impl CharPred {
 // Parser
 // ---------------------------------------------------------------------------
 
+#[derive(Debug, Clone, PartialEq)]
+pub(crate) struct Compiled {
+    pub(crate) expression: Regex,
+    groups: HashMap<usize, Regex>,
+    first: Option<FirstChars>,
+    ordered: bool,
+    probe: bool,
+}
+
+impl Compiled {
+    pub(crate) fn search(
+        &self,
+        input: &str,
+        max_steps: usize,
+        dead_ends: &mut DeadEnds,
+        base: usize,
+    ) -> Option<(Option<RegexMatch>, usize)> {
+        if let Some(first) = &self.first
+            && !input.chars().next().is_some_and(|c| first.allows(c))
+        {
+            return None;
+        }
+        Some(match_budgeted(
+            &self.groups,
+            &self.expression,
+            input,
+            Search {
+                max_steps,
+                ordered: self.ordered,
+                probe: self.probe,
+                dead_ends,
+                base,
+            },
+        ))
+    }
+
+    #[cfg(test)]
+    pub(crate) fn search_set(
+        &self,
+        input: &str,
+        search: Search<'_>,
+    ) -> (Option<RegexMatch>, usize) {
+        match_budgeted(&self.groups, &self.expression, input, search)
+    }
+}
+
+pub(crate) fn compile(
+    pattern: &str,
+    case_sensitive: bool,
+    minimal: bool,
+) -> Result<Compiled, String> {
+    let expression = compile_expression(pattern, case_sensitive, minimal)?;
+    Ok(Compiled {
+        groups: capturing_groups(&expression),
+        first: first_chars(&expression),
+        ordered: ordered_search_applies(&expression),
+        probe: probe_applies(&expression),
+        expression,
+    })
+}
+
 /// Compiles a pattern. With `case_sensitive` false, literals and classes
 /// ignore case. With `minimal` true, quantifiers are lazy by default and a
 /// `?` suffix makes them greedy (PCRE `UNGREEDY`).
-pub(crate) fn compile(pattern: &str, case_sensitive: bool, minimal: bool) -> Result<Regex, String> {
+pub(crate) fn compile_expression(
+    pattern: &str,
+    case_sensitive: bool,
+    minimal: bool,
+) -> Result<Regex, String> {
     let mut parser = Parser {
         src: pattern,
         pos: 0,
@@ -3302,6 +3367,7 @@ const GC_TABLE: &[u32] = &[
 
 #[cfg(test)]
 mod tests {
+    use super::compile_expression as compile;
     use super::*;
 
     /// The length of the match of `pattern` at the start of `input`.

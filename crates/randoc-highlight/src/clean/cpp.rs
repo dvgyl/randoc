@@ -10,23 +10,16 @@ use crate::syntax::Syntax;
 use crate::token::TokenType::*;
 
 pub(crate) fn syntax() -> Syntax {
-    family(
-        Lang::new(
-            "C++",
-            "cpp",
-            &["*.cpp", "*.hpp", "*.cc", "*.hh", "*.cxx", "*.hxx"],
-        ),
-        true,
-    )
+    family(Lang::new(super::CPP), true)
 }
 
 pub(crate) fn iso_cpp() -> Syntax {
-    family(Lang::new("ISO C++", "isocpp", &[]), false)
+    family(Lang::new(super::ISO_CPP), false)
 }
 
 /// The words of the GNU compilers. `__attribute__((...))` is one token.
 pub(crate) fn gcc_extensions() -> Syntax {
-    Lang::new("GCCExtensions", "gcc", &[])
+    Lang::new(super::GCC)
         .list("gcc extensions", GCC_EXTENSIONS)
         .list("gcc functions", GCC_FUNCTIONS)
         .list("gcc types", GCC_TYPES)
