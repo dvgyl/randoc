@@ -1420,9 +1420,9 @@ pub(crate) fn capturing_groups(re: &Regex) -> HashMap<usize, Regex> {
 /// `subDynamic`). Returns `None` when a capture is missing; the rule then
 /// fails. As in skylighting, the replacement is case sensitive and
 /// `Possessive` and `Lazy` sub-patterns are not visited.
-pub(crate) fn substitute_dynamic(
+pub(crate) fn substitute_dynamic<'c>(
     re: &Regex,
-    capture: &impl Fn(usize) -> Option<String>,
+    capture: &impl Fn(usize) -> Option<&'c str>,
 ) -> Option<Regex> {
     // An explicit stack instead of recursion: the tree can be
     // `MAX_TREE_DEPTH` levels deep.
@@ -3617,7 +3617,7 @@ mod tests {
                 .map(|g| g.len),
             Some(3)
         );
-        let capture = |n: usize| (n == 1).then(|| "a.b".to_string());
+        let capture = |n: usize| (n == 1).then_some("a.b");
         let sub = re.ok().and_then(|r| substitute_dynamic(&r, &capture));
         let lens = sub.map(|s| {
             (
@@ -3635,7 +3635,7 @@ mod tests {
 
     #[test]
     fn dynamic_inside_lazy_is_not_substituted() {
-        let capture = |_: usize| Some("z".to_string());
+        let capture = |_: usize| Some("z");
         let sub = compile("%1+?", true, false)
             .ok()
             .and_then(|r| substitute_dynamic(&r, &capture));
@@ -3718,7 +3718,7 @@ mod tests {
                     let (_, stats) = run_plain(&groups, &re, &input, MAX_STEPS, false);
                     let copy = re.clone();
                     let text = format!("{copy:?}");
-                    let capture = |_: usize| Some(String::new());
+                    let capture = |_: usize| Some("");
                     let same = substitute_dynamic(&re, &capture) == Some(copy);
                     if !same || text.is_empty() {
                         return Err(pat);

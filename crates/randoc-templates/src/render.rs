@@ -759,27 +759,30 @@ impl<'a> Found<'a> {
     }
 
     /// The documents that an interpolation of the value renders.
-    fn render(&self, docs: &mut Vec<Doc>) {
+    fn render(&self, docs: &mut Vec<Doc>, budget: &mut RenderBudget) -> Option<()> {
+        match self {
+            Found::Ref(value) => return resolve(value, docs, budget),
+            Found::Made(value) => return resolve(value, docs, budget),
+            _ => {}
+        }
+        budget.charge(std::mem::size_of::<Doc>())?;
         match self.kind() {
             Kind::Map | Kind::Bool(true) => docs.push(literal("true")),
             Kind::Bool(false) => docs.push(literal("false")),
             Kind::Null => {}
             Kind::Simple => {
                 if let Some(d) = self.simple_doc().filter(|d| !d.is_empty()) {
+                    budget.charge_doc(&d)?;
                     docs.push(remove_final_newline(d));
                 }
             }
-            Kind::List => match self {
-                Found::Ref(v) => {
-                    resolve(v, docs);
+            Kind::List => {
+                for item in self.list_items() {
+                    item.render(docs, budget)?;
                 }
-                _ => {
-                    for item in self.list_items() {
-                        item.render(docs);
-                    }
-                }
-            },
+            }
         }
+        Some(())
     }
 }
 
@@ -919,41 +922,66 @@ fn lookup<'a>(var: &'a Variable, scope: &Scope<'a>) -> Found<'a> {
 }
 
 /// `resolveVariable'` for a value of the context.
-fn resolve(val: &Val, docs: &mut Vec<Doc>) {
+fn resolve(val: &Val, docs: &mut Vec<Doc>, budget: &mut RenderBudget) -> Option<()> {
+    budget.charge(std::mem::size_of::<Doc>())?;
     match val {
         Val::List(xs) => {
             for x in xs {
-                resolve(x, docs);
+                resolve(x, docs, budget)?;
             }
         }
         Val::Simple(d) if d.is_empty() => {}
-        Val::Simple(d) => docs.push(remove_final_newline(d.clone())),
+        Val::Simple(d) => {
+            budget.charge_doc(d)?;
+            docs.push(remove_final_newline(d.clone()));
+        }
         Val::Map(_) | Val::Bool(true) => docs.push(literal("true")),
         Val::Bool(false) => docs.push(literal("false")),
         Val::Null => {}
     }
+    Some(())
 }
 
 pub(crate) fn render(node: &Node, ctx: &Context) -> Doc {
-    render_with_budget(node, ctx, None).unwrap_or_default()
+    render_with_budget(node, ctx, None, None).unwrap_or_default()
 }
 
-pub(crate) fn render_with_budget(node: &Node, ctx: &Context, budget: Option<usize>) -> Option<Doc> {
-    render_node(node, &Scope::Root(ctx), &mut 0, &mut RenderBudget(budget))
+pub(crate) fn render_with_budget(
+    node: &Node,
+    ctx: &Context,
+    remaining: Option<usize>,
+    deadline: Option<std::time::Instant>,
+) -> Option<Doc> {
+    let mut budget = RenderBudget {
+        remaining,
+        deadline,
+        steps: 0,
+    };
+    render_node(node, &Scope::Root(ctx), &mut 0, &mut budget)
 }
 
-struct RenderBudget(Option<usize>);
+struct RenderBudget {
+    remaining: Option<usize>,
+    deadline: Option<std::time::Instant>,
+    steps: usize,
+}
 
 impl RenderBudget {
     fn charge(&mut self, bytes: usize) -> Option<()> {
-        if let Some(remaining) = &mut self.0 {
+        if let Some(deadline) = self.deadline {
+            if self.steps.is_multiple_of(256) && std::time::Instant::now() >= deadline {
+                return None;
+            }
+            self.steps = self.steps.wrapping_add(1);
+        }
+        if let Some(remaining) = &mut self.remaining {
             *remaining = remaining.checked_sub(bytes)?;
         }
         Some(())
     }
 
     fn charge_doc(&mut self, doc: &Doc) -> Option<()> {
-        if self.0.is_some() {
+        if self.remaining.is_some() {
             self.charge(doc.estimated_size())?;
         }
         Some(())
@@ -981,10 +1009,8 @@ fn render_node<'a>(
         }
         Node::Interpolate(var) => {
             let mut docs = Vec::new();
-            lookup(var, scope).render(&mut docs);
-            let doc: Doc = docs.into_iter().sum();
-            budget.charge_doc(&doc)?;
-            update_column(doc, column)
+            lookup(var, scope).render(&mut docs, budget)?;
+            update_column(docs.into_iter().sum(), column)
         }
         Node::Conditional(branch) => {
             let node = if lookup(&branch.var, scope).truth() {

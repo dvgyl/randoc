@@ -14,7 +14,9 @@ Randoc prepared `data/terms.tsv` and `data/babel_aliases.tsv` under
 `MIT OR Apache-2.0`. The labels use independent linguistic knowledge and
 standard LaTeX caption conventions. The aliases use documented language
 names. The Pandoc checks used only the command fixture and the installed
-Pandoc executable.
+Pandoc executable. The tag list matches the `translations/*.yaml` file names
+in `crates/randoc-cli/src/data_files.rs`. The `nko` table repeats the English
+labels until a speaker of N'Ko writes them.
 
 - [Babel locale naming](https://latex3.github.io/babel/guides/locale-naming.html)
 - [Babel German language guide](https://latex3.github.io/babel/guides/locale-german.html)

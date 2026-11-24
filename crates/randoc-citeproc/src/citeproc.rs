@@ -109,11 +109,21 @@ pub struct CiteprocResult {
 /// `citeproc`: evaluates the document and renders each citation and each
 /// bibliography entry.
 pub fn citeproc(options: RenderOptions, input: Input) -> Result<CiteprocResult, EvalError> {
+    citeproc_until(options, input, None)
+}
+
+pub(crate) fn citeproc_until(
+    options: RenderOptions,
+    input: Input,
+    deadline: Option<std::time::Instant>,
+) -> Result<CiteprocResult, EvalError> {
     let locale = input.locale;
     let max_depth = input.max_depth;
     let citations_in = input.citations;
-    let evaluated = evaluate(input)?;
+    let evaluated = evaluate_with_budget(input, eval::EvalBudget::new(deadline))?;
+    let render_budget = eval::EvalBudget::new(deadline);
     let render = |options: RenderOptions, x: &Output| -> Result<Vec<Inline>, EvalError> {
+        render_budget.check_deadline()?;
         let inlines = output::render_output(options, locale, x, max_depth)?;
         Ok(output::finish(locale, inlines, max_depth)?)
     };
@@ -186,13 +196,20 @@ pub(crate) struct Engine<'a> {
     notes: HashMap<i64, HashSet<String>>,
     pub warnings: BTreeSet<String>,
     pub max_depth: usize,
+    budget: eval::EvalBudget,
 }
 
 /// `evalStyle`: the output trees of the citations and of the bibliography.
 pub fn evaluate(input: Input) -> Result<Evaluated, EvalError> {
+    evaluate_with_budget(input, eval::EvalBudget::new(None))
+}
+
+fn evaluate_with_budget(input: Input, budget: eval::EvalBudget) -> Result<Evaluated, EvalError> {
+    budget.check_deadline()?;
     let style = input.style;
     let (refs, index) = reference_map(input.references);
     let mut engine = Engine {
+        budget,
         style,
         locale: input.locale,
         collator: Collator::for_lang(input.lang),
@@ -452,8 +469,13 @@ impl Engine<'_> {
                     in_sort_key: true,
                     in_bibliography: false,
                 };
-                let (xs, _) =
-                    eval::eval_elements(context, elements, &mut self.warnings, self.max_depth)?;
+                let (xs, _) = eval::eval_elements(
+                    context,
+                    elements,
+                    &mut self.warnings,
+                    self.max_depth,
+                    &mut self.budget,
+                )?;
                 let inlines = output::render_output(
                     RenderOptions::default(),
                     self.locale,
@@ -697,6 +719,7 @@ impl Engine<'_> {
             &layout.elements,
             &mut self.warnings,
             self.max_depth,
+            &mut self.budget,
         )?;
         if !used.identifier && in_bibliography {
             let url = ["DOI", "PMCID", "PMID", "URL"]
@@ -792,6 +815,30 @@ mod tests {
         r.variables
             .insert(Variable::new("title"), Val::Text(title.to_owned()));
         r
+    }
+
+    #[test]
+    fn citation_elements_use_the_shared_evaluation_budget() {
+        let style = crate::loader::parse_style(&mut Context::pure(), &format!(
+            "<style {NS}><citation><layout><text variable=\"title\"/><text value=\".\"/></layout></citation></style>"
+        )).unwrap();
+        let locale = Locale::default();
+        let citations = [citation(&["a"]), citation(&["b"])];
+        let input = Input {
+            style: &style,
+            locale: &locale,
+            lang: None,
+            abbreviations: None,
+            references: vec![reference("a", "A"), reference("b", "B")],
+            citations: &citations,
+            max_depth: 100,
+        };
+        let mut budget = eval::EvalBudget::new(None);
+        budget.remaining = 3;
+        assert!(matches!(
+            evaluate_with_budget(input, budget),
+            Err(EvalError::WorkLimit)
+        ));
     }
 
     fn texts(

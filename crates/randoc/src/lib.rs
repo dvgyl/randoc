@@ -16,6 +16,10 @@ pub mod formats;
 mod json_format;
 
 pub use randoc_ast as ast;
+/// Reads BibTeX, BibLaTeX or RIS bibliography references for the citation filter.
+pub use randoc_bibtex::references as bibliography_references;
+/// CSL citation filter and processor.
+pub use randoc_citeproc as citeproc;
 pub use randoc_core::*;
 
 /// The Pandoc version that Randoc is compatible with.

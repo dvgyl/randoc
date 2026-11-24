@@ -504,10 +504,22 @@ fn base64_value(byte: u8) -> Option<u8> {
 /// Decodes Base64 and skips characters outside its alphabet.
 /// Returns `None` if the decoded data exceeds `max_bytes`.
 pub fn base64_decode_lenient(input: &str, max_bytes: usize) -> Option<Vec<u8>> {
+    decode_lenient_bytes(input.bytes(), max_bytes)
+}
+
+pub(crate) fn base64_decode_percent_lenient(input: &str, max_bytes: usize) -> Option<Vec<u8>> {
+    let mut raw = input.as_bytes();
+    decode_lenient_bytes(
+        std::iter::from_fn(|| next_percent_byte(&mut raw)),
+        max_bytes,
+    )
+}
+
+fn decode_lenient_bytes(input: impl Iterator<Item = u8>, max_bytes: usize) -> Option<Vec<u8>> {
     let mut out = Vec::new();
     let mut bits = 0;
     let mut pending = 0u16;
-    for value in input.bytes().filter_map(base64_value) {
+    for value in input.filter_map(base64_value) {
         pending = (pending << 6) | u16::from(value);
         bits += 6;
         if bits >= 8 {

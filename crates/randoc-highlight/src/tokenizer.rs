@@ -164,6 +164,26 @@ type Attempt<T> = Result<Option<T>, String>;
 struct Frame<'s> {
     context: &'s Context,
     captures: Captures,
+    /// The dynamic patterns of the context with these captures, by the
+    /// address of the rule pattern. A here document substitutes its
+    /// delimiter once, not once per line.
+    dynamic: HashMap<*const Re, Option<Rc<Dynamic>>>,
+}
+
+impl<'s> Frame<'s> {
+    fn new(context: &'s Context) -> Frame<'s> {
+        Frame {
+            context,
+            captures: Captures::new(),
+            dynamic: HashMap::new(),
+        }
+    }
+}
+
+/// A dynamic regular expression with the captures of its frame.
+struct Dynamic {
+    re: regex::Regex,
+    groups: HashMap<usize, regex::Regex>,
 }
 
 /// The line state that a failed attempt must restore.
@@ -235,10 +255,7 @@ impl<'s, 'l> Tokenizer<'s, 'l> {
             .ok_or_else(|| "No starting context specified".to_string())?;
         Ok(Tokenizer {
             registry,
-            stack: vec![Frame {
-                context: start,
-                captures: Captures::new(),
-            }],
+            stack: vec![Frame::new(start)],
             max_depth: max_depth.max(1),
             line: "",
             pos: 0,
@@ -424,10 +441,7 @@ impl<'s, 'l> Tokenizer<'s, 'l> {
                             self.max_depth
                         ));
                     }
-                    self.stack.push(Frame {
-                        context,
-                        captures: Captures::new(),
-                    });
+                    self.stack.push(Frame::new(context));
                 }
             }
         }
@@ -439,14 +453,15 @@ impl<'s, 'l> Tokenizer<'s, 'l> {
             let captures = self.captures.clone();
             if let Some(top) = self.stack.last_mut() {
                 top.captures = captures;
+                top.dynamic.clear();
             }
         }
     }
 
-    fn get_capture(&self, n: usize) -> Option<String> {
+    fn get_capture(&self, n: usize) -> Option<&str> {
         self.top()
             .and_then(|f| f.captures.get(&n))
-            .map(|c| c.text().to_string())
+            .map(Capture::text)
     }
 
     /// `getToken`. `Ok(None)` is a failure; `Ok(Some(None))` is a step
@@ -771,15 +786,15 @@ impl<'s, 'l> Tokenizer<'s, 'l> {
             base: 0,
         };
         let (found, steps) = if dynamic {
-            match regex::substitute_dynamic(compiled, &|n| self.get_capture(n)) {
-                Some(sub) => regex::match_budgeted(
-                    &regex::capturing_groups(&sub),
-                    &sub,
-                    rest,
-                    plain(&mut regex::DeadEnds::default()),
-                ),
-                None => return Ok(None),
-            }
+            let Some(sub) = self.dynamic_pattern(re, compiled) else {
+                return Ok(None);
+            };
+            regex::match_budgeted(
+                &sub.groups,
+                &sub.re,
+                rest,
+                plain(&mut regex::DeadEnds::default()),
+            )
         } else {
             let search = regex::Search {
                 max_steps: budget,
@@ -845,6 +860,33 @@ impl<'s, 'l> Tokenizer<'s, 'l> {
         Ok(self.take_chars(n))
     }
 
+    /// `subDynamic` of `re` with the captures of the top frame. The frame
+    /// keeps the result, so the work grows with the delimiter once per
+    /// frame, not once per line.
+    fn dynamic_pattern(&mut self, re: &'s Re, compiled: &regex::Regex) -> Option<Rc<Dynamic>> {
+        let top = self.stack.last_mut()?;
+        let key = std::ptr::from_ref(re);
+        if let Some(found) = top.dynamic.get(&key) {
+            return found.clone();
+        }
+        let captures = &top.captures;
+        let work = std::cell::Cell::new(0);
+        let sub = regex::substitute_dynamic(compiled, &|n| {
+            let text = captures.get(&n).map(Capture::text)?;
+            work.set(work.get() + text.len());
+            Some(text)
+        })
+        .map(|re| {
+            Rc::new(Dynamic {
+                groups: regex::capturing_groups(&re),
+                re,
+            })
+        });
+        top.dynamic.insert(key, sub.clone());
+        self.charge(work.get());
+        sub
+    }
+
     /// `parseInt`, `parseOct`, `parseHex` and `parseFloat`: the previous
     /// character must be a word delimiter.
     fn number(
@@ -878,19 +920,20 @@ impl<'s, 'l> Tokenizer<'s, 'l> {
         self.take_chars(word.chars().count())
     }
 
-    /// `subDynamicText`: replaces `%N` with capture N.
-    fn sub_dynamic_text(&self, s: &str) -> Option<String> {
+    /// `subDynamicText`: the pieces of `s` with `%N` replaced by capture
+    /// N. The pieces borrow the captures, so a long capture is not copied.
+    fn sub_dynamic_text<'a>(&'a self, s: &'a str) -> Option<Vec<&'a str>> {
         let mut parts = s.split('%');
-        let mut out = parts.next().unwrap_or("").to_string();
+        let mut out = vec![parts.next().unwrap_or("")];
         for part in parts {
             match part.chars().next() {
                 Some(c) if c.is_ascii_digit() => {
-                    out.push_str(&self.get_capture(c.to_digit(10)? as usize)?);
-                    out.push_str(part.get(1..).unwrap_or(""));
+                    out.push(self.get_capture(c.to_digit(10)? as usize)?);
+                    out.push(part.get(1..).unwrap_or(""));
                 }
                 _ => {
-                    out.push('%');
-                    out.push_str(part);
+                    out.push("%");
+                    out.push(part);
                 }
             }
         }
@@ -905,20 +948,30 @@ impl<'s, 'l> Tokenizer<'s, 'l> {
     }
 
     fn string_detect(&mut self, dynamic: bool, case_sensitive: bool, s: &str) -> Option<String> {
-        let target = if dynamic {
+        let pieces = if dynamic {
             self.sub_dynamic_text(s)?
         } else {
-            s.to_string()
+            vec![s]
         };
-        let n = target.chars().count();
-        let ok = if case_sensitive {
-            self.rest().starts_with(&target)
+        let rest = self.rest();
+        let n = if case_sensitive {
+            // A failed comparison stops at the first different byte.
+            let mut at = 0;
+            for piece in &pieces {
+                if !rest.get(at..)?.starts_with(piece) {
+                    return None;
+                }
+                at += piece.len();
+            }
+            rest.get(..at)?.chars().count()
         } else {
-            fold_case(&target) == fold_case(self.prefix_chars(n))
+            let target: String = pieces.concat();
+            let n = target.chars().count();
+            if fold_case(&target) != fold_case(self.prefix_chars(n)) {
+                return None;
+            }
+            n
         };
-        if !ok {
-            return None;
-        }
         self.take_chars(n)
     }
 
@@ -1586,6 +1639,74 @@ mod tests {
     #[test]
     fn constructs_are_linear_part_3() {
         check_linear(14..usize::MAX);
+    }
+
+    /// The work of the tokenizer on a here document with a delimiter of
+    /// `d` characters and `l` body lines, and the token of the last line.
+    fn here_document_steps(syntax: &str, d: usize, l: usize) -> Option<(usize, usize, Token)> {
+        let reg = Registry::embedded();
+        let syntax = reg.get(syntax)?;
+        let word = "D".repeat(d);
+        let text = format!("x <<{word}\n{}{word}\n", "a\n".repeat(l));
+        let mut tk = Tokenizer::new(reg, syntax, &text, 128).ok()?;
+        let lines = tk.run(&text).ok()?;
+        let last = lines.last()?.first()?.clone();
+        Some((tk.steps, text.len(), last))
+    }
+
+    /// The frame of a here document substitutes its delimiter once. The
+    /// work then grows with the input, not with the product of the
+    /// delimiter length and the number of body lines.
+    #[test]
+    fn here_document_delimiters_are_linear() {
+        for (syntax, end) in [("Bash", TokenType::Operator), ("Ruby", TokenType::Constant)] {
+            let small = here_document_steps(syntax, 2_000, 2_000);
+            let large = here_document_steps(syntax, 4_000, 4_000);
+            let linear = match (&small, &large) {
+                (Some((a, _, s)), Some((b, bytes, t))) => {
+                    *b <= a * 21 / 10 && *b <= 40 * bytes && s.0 == end && t.0 == end
+                }
+                _ => false,
+            };
+            let short = |r: Option<(usize, usize, Token)>| r.map(|(s, b, t)| (s, b, t.0));
+            assert!(linear, "{syntax}: {:?} {:?}", short(small), short(large));
+        }
+    }
+
+    /// The best of three wall times of the tokenizer on `text`.
+    fn best_time(syntax: &Syntax, text: &str) -> std::time::Duration {
+        let reg = Registry::embedded();
+        (0..3)
+            .map(|_| {
+                let start = std::time::Instant::now();
+                let _ = tokenize(reg, syntax, text, 128);
+                start.elapsed()
+            })
+            .min()
+            .unwrap_or_default()
+    }
+
+    /// A delimiter of 20,000 characters and 10,000 body lines take about
+    /// the time of a control text of the same size, where the long text is
+    /// a body line. One substitution per line took about a minute. The
+    /// comparison under the same machine load replaces a fixed time limit.
+    #[test]
+    fn long_here_documents_are_fast() {
+        let (d, l) = (20_000, 10_000);
+        let word = "D".repeat(d);
+        let text = format!("x <<{word}\n{}{word}\n", "a\n".repeat(l));
+        let control = format!("x <<D\n{}\n{}D\n", "a".repeat(2 * d), "a\n".repeat(l));
+        let reg = Registry::embedded();
+        let syntaxes: Vec<&Syntax> = ["Bash", "Ruby"]
+            .iter()
+            .filter_map(|name| reg.get(name))
+            .collect();
+        assert_eq!(syntaxes.len(), 2);
+        for syntax in syntaxes {
+            let (time, base) = (best_time(syntax, &text), best_time(syntax, &control));
+            let limit = base * 4 + std::time::Duration::from_millis(50);
+            assert!(time <= limit, "{}: {time:?}, control {base:?}", syntax.name);
+        }
     }
 
     /// Runs `f` on a thread with the default 2 MiB stack.

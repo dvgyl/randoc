@@ -45,10 +45,28 @@ pub(crate) fn syntax() -> Syntax {
                     Push("Raw F-String Triple"),
                 )
                 .rule(M::Re(RAW_F), VerbatimString, Push("Raw F-String"))
+                .rule(
+                    M::Re(UPPER_RAW_F_TRIPLE),
+                    VerbatimString,
+                    Push("Upper Raw F-String Triple"),
+                )
+                .rule(
+                    M::Re(UPPER_RAW_F),
+                    VerbatimString,
+                    Push("Upper Raw F-String"),
+                )
                 .rule(M::Re(F_TRIPLE), SpecialString, Push("F-String Triple"))
                 .rule(M::Re(F), SpecialString, Push("F-String"))
                 .rule(M::Re(RAW_TRIPLE), VerbatimString, Push("Raw String Triple"))
                 .rule(M::Re(RAW), VerbatimString, Push("Raw String"))
+                .rule(
+                    M::Re(UPPER_RAW_TRIPLE),
+                    VerbatimString,
+                    Push("Upper Raw String Triple"),
+                )
+                .rule(M::Re(UPPER_RAW), VerbatimString, Push("Upper Raw String"))
+                .rule(M::Re(BYTES_TRIPLE), String, Push("Bytes Triple"))
+                .rule(M::Re(BYTES), String, Push("Bytes"))
                 .rule(M::Re(PLAIN_TRIPLE), String, Push("String Triple"))
                 .rule(M::Re(PLAIN), String, Push("String"))
                 .rule_with(
@@ -93,9 +111,13 @@ pub(crate) fn syntax() -> Syntax {
                 .rule(M::Ident, Comment, Stay)
                 .line_end(Pop(1))
         })
-        .context("Docstring", Comment, |c| close(c.dynamic(), Comment))
+        // A docstring processes escapes as a string does, also with the
+        // prefix `r`.
+        .context("Docstring", Comment, |c| {
+            close(c.dynamic().include("Escape"), Comment)
+        })
         .context("Docstring Line", Comment, |c| {
-            single(close(c.dynamic(), Comment))
+            single(close(c.dynamic().include("Escape"), Comment))
         })
         .context("String", String, |c| {
             single(close(c.dynamic(), String).include("String Body"))
@@ -109,6 +131,18 @@ pub(crate) fn syntax() -> Syntax {
         .context("Raw String Triple", VerbatimString, |c| {
             close(c.dynamic(), VerbatimString).include("Raw Body")
         })
+        .context("Upper Raw String", VerbatimString, |c| {
+            single(close(c.dynamic(), VerbatimString).include("Upper Raw Body"))
+        })
+        .context("Upper Raw String Triple", VerbatimString, |c| {
+            close(c.dynamic(), VerbatimString).include("Upper Raw Body")
+        })
+        .context("Bytes", String, |c| {
+            single(close(c.dynamic().include("Byte Escape"), String))
+        })
+        .context("Bytes Triple", String, |c| {
+            close(c.dynamic().include("Byte Escape"), String)
+        })
         .context("F-String", SpecialString, |c| {
             single(close(c.dynamic(), SpecialString).include("F Body"))
         })
@@ -121,18 +155,30 @@ pub(crate) fn syntax() -> Syntax {
         .context("Raw F-String Triple", VerbatimString, |c| {
             close(c.dynamic(), VerbatimString).include("Raw F Body")
         })
+        .context("Upper Raw F-String", VerbatimString, |c| {
+            single(close(c.dynamic(), VerbatimString).include("Upper Raw F Body"))
+        })
+        .context("Upper Raw F-String Triple", VerbatimString, |c| {
+            close(c.dynamic(), VerbatimString).include("Upper Raw F Body")
+        })
         // The line after a string without its closing quote is an error.
         .context("Unfinished String", Error, |c| {
             c.rule(M::Re(".+"), Error, Pop(1))
         })
+        // A backslash that starts no escape is an error; the character
+        // after it stays text.
         .context("Escape", Normal, |c| {
             c.rule(M::Re(r"\\N\{[^}]*\}"), Char, Stay)
-                .rule(M::Re(r"\\x[0-9a-fA-F]{2}"), Char, Stay)
                 .rule(M::Re(r"\\u[0-9a-fA-F]{4}"), Char, Stay)
                 .rule(M::Re(r"\\U[0-9a-fA-F]{8}"), Char, Stay)
+                .include("Byte Escape")
+        })
+        .context("Byte Escape", Normal, |c| {
+            c.rule(M::Re(r"\\x[0-9a-fA-F]{2}"), Char, Stay)
                 .rule(M::Re(r"\\[0-7]{1,3}"), Char, Stay)
-                .rule(M::LineContinue('\\'), Char, Stay)
-                .rule(M::Re(r"\\."), Char, Stay)
+                .rule(M::LineContinue('\\'), Operator, Stay)
+                .rule(M::Re(r#"\\[abfnrtv'"\\]"#), Char, Stay)
+                .rule(M::Char('\\'), Error, Stay)
         })
         .context("String Body", Normal, |c| {
             c.include("Escape")
@@ -143,9 +189,18 @@ pub(crate) fn syntax() -> Syntax {
         })
         // Raw strings show the syntax of a regular expression.
         .context("Raw Body", Normal, |c| {
-            c.rule(M::Re(r"\\[ABDSWZbdsw]"), DecVal, Stay)
+            c.rule(M::Re(r"\\[ABDGKMSWXZbdmswz]"), DecVal, Stay)
+                .rule(M::Re(r"\\N\{[^}]*\}"), Char, Stay)
+                .rule(M::Re(r"\\x[0-9a-fA-F]{2}"), Char, Stay)
+                .rule(M::Re(r"\\u[0-9a-fA-F]{4}"), Char, Stay)
+                .rule(M::Re(r"\\U[0-9a-fA-F]{8}"), Char, Stay)
+                .rule(M::Re(r"\\[0-7]{1,3}"), Char, Stay)
+                .rule(M::Re(r"\\[0-9]{1,2}"), Variable, Stay)
                 .rule(M::LineContinue('\\'), Char, Stay)
+                .rule(M::Re(r"\\[afnrtv]"), Char, Stay)
+                .rule(M::Re(r"\\(?=[A-Za-z])"), Error, Stay)
                 .rule(M::Re(r"\\."), Char, Stay)
+                .rule(M::Char('.'), DecVal, Stay)
                 .rule(M::Re(r"\[\^?\]?(?:\\.|[^\]\\])*\]"), Preprocessor, Stay)
                 .rule(M::Str("(?:"), Normal, Stay)
                 .rule(M::Re(r"\?P<\w*>"), Function, Stay)
@@ -153,6 +208,20 @@ pub(crate) fn syntax() -> Syntax {
                 .rule(M::Char('|'), ControlFlow, Stay)
                 .rule(M::Re(r"[*+?]|\{[0-9]*(?:,[0-9]*)?\}"), Operator, Stay)
                 .rule(M::AnyOf("^$"), DecVal, Stay)
+        })
+        // A raw string with an upper-case `R` shows no regular expression.
+        .context("Upper Raw Body", Normal, |c| {
+            c.rule(M::LineContinue('\\'), VerbatimString, Stay).rule(
+                M::Re(r"\\."),
+                VerbatimString,
+                Stay,
+            )
+        })
+        .context("Upper Raw F Body", Normal, |c| {
+            c.rule(M::Str("{{"), Char, Stay)
+                .rule(M::Str("}}"), Char, Stay)
+                .rule(M::Char('{'), SpecialChar, Push("F Field"))
+                .include("Upper Raw Body")
         })
         .context("F Body", Normal, |c| {
             c.include("Escape")
@@ -190,16 +259,23 @@ fn single(c: Ctx) -> Ctx {
     c.line_end(PopPush(1, "Unfinished String"))
 }
 
-const TRIPLE: &str = r#"("""|''')"#;
-const SINGLE: &str = r#"("|')"#;
-const RAW_F_TRIPLE: &str = r#"(?:[fF][rR]|[rR][fF])("""|''')"#;
-const RAW_F: &str = r#"(?:[fF][rR]|[rR][fF])("|')"#;
+const TRIPLE: &str = r#"[uUrR]?("""|''')"#;
+const SINGLE: &str = r#"[uUrR]?("|')"#;
+// A raw prefix in lower case shows the syntax of a regular expression.
+const RAW_F_TRIPLE: &str = r#"(?:fr|rf)("""|''')"#;
+const RAW_F: &str = r#"(?:fr|rf)("|')"#;
+const UPPER_RAW_F_TRIPLE: &str = r#"(?:[fF][rR]|[rR][fF])("""|''')"#;
+const UPPER_RAW_F: &str = r#"(?:[fF][rR]|[rR][fF])("|')"#;
 const F_TRIPLE: &str = r#"[fF]("""|''')"#;
 const F: &str = r#"[fF]("|')"#;
-const RAW_TRIPLE: &str = r#"(?:[rR][bB]?|[bB][rR])("""|''')"#;
-const RAW: &str = r#"(?:[rR][bB]?|[bB][rR])("|')"#;
-const PLAIN_TRIPLE: &str = r#"[bBuU]?("""|''')"#;
-const PLAIN: &str = r#"[bBuU]?("|')"#;
+const RAW_TRIPLE: &str = r#"(?:rb?|br)("""|''')"#;
+const RAW: &str = r#"(?:rb?|br)("|')"#;
+const UPPER_RAW_TRIPLE: &str = r#"(?:[rR][bB]?|[bB][rR])("""|''')"#;
+const UPPER_RAW: &str = r#"(?:[rR][bB]?|[bB][rR])("|')"#;
+const BYTES_TRIPLE: &str = r#"[bB]("""|''')"#;
+const BYTES: &str = r#"[bB]("|')"#;
+const PLAIN_TRIPLE: &str = r#"[uU]?("""|''')"#;
+const PLAIN: &str = r#"[uU]?("|')"#;
 
 /// `match` and `case` start a statement only before a subject.
 const SOFT_KEYWORD: &str = r"(?:match|case)(?=\s+[^\s=])";

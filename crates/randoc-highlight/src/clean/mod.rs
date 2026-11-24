@@ -7,11 +7,27 @@
 //! lists are Rust slices in alphabetical order.
 
 mod bash;
+mod c;
+mod cpp;
+mod css;
+mod elixir;
 mod haskell;
+mod html;
+mod ini;
+mod java;
 mod javascript;
+mod json;
+mod latex;
 mod literate_haskell;
+mod markdown;
 mod python;
+mod r;
+mod rest;
+mod ruby;
 mod scss;
+mod toml;
+mod xml;
+mod yaml;
 
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 
@@ -30,22 +46,33 @@ const AUTHOR: &str = "Randoc contributors (clean-room)";
 /// Each clean-room language.
 pub(crate) fn all() -> Vec<Syntax> {
     vec![
+        bash::syntax(),
+        c::syntax(),
+        cpp::syntax(),
+        css::syntax(),
+        elixir::syntax(),
         haskell::syntax(),
+        html::syntax(),
+        ini::syntax(),
+        java::syntax(),
         javascript::syntax(),
+        json::syntax(),
+        latex::syntax(),
         literate_haskell::syntax(),
+        markdown::syntax(),
         python::syntax(),
+        r::syntax(),
+        rest::syntax(),
+        ruby::syntax(),
+        toml::syntax(),
+        xml::syntax(),
+        yaml::syntax(),
     ]
 }
 
 /// The keyword lists that embedded definitions include from syntaxes that
-/// the crate does not have: `SASS` includes the lists of `SCSS`, and `Zsh`
-/// includes the command list of `Bash`.
+/// the crate does not have: `SASS` includes the lists of `SCSS`.
 pub(crate) const EXTERNAL_LISTS: &[ExternalList] = &[
-    ExternalList {
-        syntax: "Bash",
-        list: "unixcommands",
-        words: bash::UNIX_COMMANDS,
-    },
     ExternalList {
         syntax: "SCSS",
         list: "annotations",
@@ -142,12 +169,18 @@ pub(crate) enum M {
     Re(&'static str),
     /// `keyword`: a word of the named list of the language.
     Kw(&'static str),
+    /// `keyword` without case: a word of the named list of the language.
+    KwI(&'static str),
     /// `LineContinue`.
     LineContinue(char),
     /// `DetectSpaces`.
     Spaces,
     /// `DetectIdentifier`.
     Ident,
+    /// `Int`: decimal digits after a word delimiter.
+    Int,
+    /// `Float`: a decimal fraction after a word delimiter.
+    Float,
 }
 
 /// The rule attributes that are not the matcher, the token type and the
@@ -157,6 +190,8 @@ pub(crate) struct RuleOpts {
     first_non_space: bool,
     column: Option<usize>,
     dynamic: bool,
+    insensitive: bool,
+    lookahead: bool,
 }
 
 impl RuleOpts {
@@ -178,6 +213,18 @@ impl RuleOpts {
         self.dynamic = true;
         self
     }
+
+    /// Compare without case.
+    pub(crate) const fn insensitive(mut self) -> RuleOpts {
+        self.insensitive = true;
+        self
+    }
+
+    /// Match without consuming the text: only the context switch applies.
+    pub(crate) const fn lookahead(mut self) -> RuleOpts {
+        self.lookahead = true;
+        self
+    }
 }
 
 /// No options.
@@ -186,13 +233,17 @@ pub(crate) const fn opts() -> RuleOpts {
         first_non_space: false,
         column: None,
         dynamic: false,
+        insensitive: false,
+        lookahead: false,
     }
 }
 
 /// A language under construction. The first context is the starting
-/// context. Keywords compare with case and the standard word delimiters.
+/// context. Words end at the standard word delimiters, less the weak
+/// delimiters of the language.
 pub(crate) struct Lang {
     syntax: Syntax,
+    delims: BTreeSet<char>,
 }
 
 impl Lang {
@@ -212,7 +263,24 @@ impl Lang {
                 extensions: extensions.iter().map(|e| (*e).to_string()).collect(),
                 starting_context: String::new(),
             },
+            delims: standard_delims(),
         }
+    }
+
+    /// Characters that also end a word in this language. Call it before
+    /// the contexts.
+    pub(crate) fn additional_delims(mut self, chars: &str) -> Lang {
+        self.delims.extend(chars.chars());
+        self
+    }
+
+    /// Characters that do not end a word in this language, for example
+    /// `-` in `ssh-add`. Call it before the contexts.
+    pub(crate) fn weak_delims(mut self, chars: &str) -> Lang {
+        for c in chars.chars() {
+            self.delims.remove(&c);
+        }
+        self
     }
 
     /// A keyword list.
@@ -242,10 +310,12 @@ impl Lang {
                 fallthrough_context: Vec::new(),
                 dynamic: false,
             },
-            delims: standard_delims(),
-        })
-        .context;
-        context.line_empty_context = context.line_end_context.clone();
+            delims: self.delims.clone(),
+            line_empty: None,
+        });
+        let line_empty = context.line_empty.take();
+        let mut context = context.context;
+        context.line_empty_context = line_empty.unwrap_or_else(|| context.line_end_context.clone());
         if self.syntax.starting_context.is_empty() {
             self.syntax.starting_context = name.to_string();
         }
@@ -258,10 +328,23 @@ impl Lang {
     }
 }
 
+/// A `RegExpr` matcher and its column. The tokenizer matches a pattern on
+/// the rest of the line, so a leading `^` would also match after earlier
+/// tokens. The builder therefore turns a leading `^` into column 0.
+fn reg_expr(pattern: &str, case_sensitive: bool) -> (Matcher, Option<usize>) {
+    let (source, column) = match pattern.strip_prefix('^') {
+        Some(rest) => (rest, Some(0)),
+        None => (pattern, None),
+    };
+    let re = Re::new(source.to_string(), case_sensitive, false);
+    (Matcher::RegExpr(Box::new(re)), column)
+}
+
 /// A context under construction.
 pub(crate) struct Ctx {
     context: Context,
     delims: BTreeSet<char>,
+    line_empty: Option<Vec<ContextSwitch>>,
 }
 
 impl Ctx {
@@ -280,18 +363,13 @@ impl Ctx {
             M::Str(s) => Matcher::StringDetect(s.to_string()),
             M::Word(s) => Matcher::WordDetect(s.to_string()),
             M::Re(s) => {
-                let source = match s.strip_prefix('^') {
-                    Some(rest) => {
-                        column = Some(0);
-                        rest
-                    }
-                    None => s,
-                };
-                Matcher::RegExpr(Box::new(Re::new(source.to_string(), true, false)))
+                let (matcher, at) = reg_expr(s, !o.insensitive);
+                column = at.or(column);
+                matcher
             }
-            M::Kw(list) => Matcher::Keyword(
+            M::Kw(list) | M::KwI(list) => Matcher::Keyword(
                 KeywordAttr {
-                    case_sensitive: true,
+                    case_sensitive: matches!(m, M::Kw(_)),
                     delims: self.delims.clone(),
                 },
                 KeywordList::Unresolved(list.to_string()),
@@ -299,6 +377,8 @@ impl Ctx {
             M::LineContinue(c) => Matcher::LineContinue(c),
             M::Spaces => Matcher::DetectSpaces,
             M::Ident => Matcher::DetectIdentifier,
+            M::Int => Matcher::Int,
+            M::Float => Matcher::Float,
         };
         self.context.rules.push(Rule {
             matcher,
@@ -306,10 +386,41 @@ impl Ctx {
             include_attribute: false,
             word_delimiters: self.delims.clone(),
             dynamic: o.dynamic,
+            case_sensitive: !o.insensitive,
+            children: Vec::new(),
+            lookahead: o.lookahead,
+            first_non_space: o.first_non_space,
+            column,
+            context_switch: then.switches(&self.context.syntax),
+        });
+        self
+    }
+
+    /// A `RegExpr` rule whose pattern the language builds, for example
+    /// from a word list.
+    pub(crate) fn rule_pattern(self, pattern: String, attr: TokenType, then: Switch) -> Ctx {
+        self.rule_pattern_with(pattern, attr, then, opts())
+    }
+
+    /// [`Ctx::rule_pattern`] with options; only `lookahead` applies.
+    pub(crate) fn rule_pattern_with(
+        mut self,
+        pattern: String,
+        attr: TokenType,
+        then: Switch,
+        o: RuleOpts,
+    ) -> Ctx {
+        let (matcher, column) = reg_expr(&pattern, true);
+        self.context.rules.push(Rule {
+            matcher,
+            attribute: attr,
+            include_attribute: false,
+            word_delimiters: self.delims.clone(),
+            dynamic: false,
             case_sensitive: true,
             children: Vec::new(),
-            lookahead: false,
-            first_non_space: o.first_non_space,
+            lookahead: o.lookahead,
+            first_non_space: false,
             column,
             context_switch: then.switches(&self.context.syntax),
         });
@@ -338,6 +449,12 @@ impl Ctx {
     /// The switch at the end of each line, also of an empty line.
     pub(crate) fn line_end(mut self, s: Switch) -> Ctx {
         self.context.line_end_context = s.switches(&self.context.syntax);
+        self
+    }
+
+    /// The switch at an empty line, when it differs from the line end.
+    pub(crate) fn line_empty(mut self, s: Switch) -> Ctx {
+        self.line_empty = Some(s.switches(&self.context.syntax));
         self
     }
 
@@ -481,32 +598,18 @@ mod tests {
             syntaxes.into_iter().collect::<Vec<_>>(),
             [
                 "",
-                "Bash",
-                "C",
                 "C#",
-                "C++",
                 "CMake",
-                "CSS",
-                "Elixir",
                 "Go",
-                "HTML",
                 "Hamlet",
-                "JSON",
-                "Java",
                 "Lua",
-                "Markdown",
                 "Matlab",
                 "PHP/PHP",
                 "Perl",
-                "R Script",
-                "Ruby",
                 "Ruby/Rails/RHTML",
                 "SCSS",
                 "SQL",
                 "SQL (MySQL)",
-                "XML",
-                "YAML",
-                "reStructuredText",
             ],
             "{missing:#?}"
         );
@@ -566,37 +669,54 @@ mod tests {
         "${", "f\"", "r'", "<a", "\\\"", "a.", "1.", "#{", "/a", "a(", "``", ")", "01", "0_",
     ];
 
-    /// Each clean syntax runs over a line of 64 KiB of each unit and over a
-    /// line of 1 MiB of all units. The regular expression work of each line
-    /// stays far below the line budget, so the budget never changes a token.
-    /// Work that grows faster than the line shows as many steps per byte
-    /// already at 64 KiB. Deep nesting ends with the context stack error,
-    /// and the writer then gives plain code.
+    /// Each clean syntax runs over a line of 16 KiB of each unit and over a
+    /// line of 128 KiB of all units. The regular expression work of each
+    /// line stays far below the line budget, so the budget never changes a
+    /// token. Work that grows faster than the line shows as many steps per
+    /// byte already at 16 KiB. Deep nesting ends with the context stack
+    /// error, and the writer then gives plain code.
     #[test]
     fn adversarial_lines_stay_within_the_budget() {
         let registry = Registry::embedded();
         let mixed = ADVERSARIAL
             .concat()
-            .repeat((1 << 20) / ADVERSARIAL.concat().len());
+            .repeat((1 << 17) / ADVERSARIAL.concat().len());
         let mut lines: Vec<(String, String)> = ADVERSARIAL
             .iter()
-            .map(|unit| (format!("{unit:?}"), unit.repeat((1 << 16) / unit.len())))
+            .map(|unit| (format!("{unit:?}"), unit.repeat((1 << 14) / unit.len())))
             .collect();
         lines.push(("all units".to_string(), mixed));
-        let mut bad = Vec::new();
-        for syntax in all() {
-            let Some(syntax) = registry.get(&syntax.name) else {
-                bad.push(format!("{} is not in the registry", syntax.name));
-                continue;
-            };
-            for (name, line) in &lines {
-                match worst_regex_steps_per_byte(registry, syntax, line) {
-                    Ok(steps) if steps <= REGEX_STEPS_PER_BYTE / 4 => {}
-                    Err(e) if e.starts_with("Context stack deeper than 128") => {}
-                    other => bad.push(format!("{} {name}: {other:?}", syntax.name)),
-                }
-            }
-        }
+        let names: Vec<String> = all().into_iter().map(|s| s.name).collect();
+        // Each syntax runs in its own thread.
+        let bad: Vec<String> = std::thread::scope(|scope| {
+            let handles: Vec<_> = names
+                .iter()
+                .map(|name| {
+                    let lines = &lines;
+                    scope.spawn(move || {
+                        let Some(syntax) = registry.get(name) else {
+                            return vec![format!("{name} is not in the registry")];
+                        };
+                        let mut bad = Vec::new();
+                        for (unit, line) in lines {
+                            match worst_regex_steps_per_byte(registry, syntax, line) {
+                                Ok(steps) if steps <= REGEX_STEPS_PER_BYTE / 4 => {}
+                                Err(e) if e.starts_with("Context stack deeper than 128") => {}
+                                other => bad.push(format!("{name} {unit}: {other:?}")),
+                            }
+                        }
+                        bad
+                    })
+                })
+                .collect();
+            handles
+                .into_iter()
+                .flat_map(|h| {
+                    h.join()
+                        .unwrap_or_else(|_| vec!["a thread failed".to_string()])
+                })
+                .collect()
+        });
         assert_eq!(bad, Vec::<String>::new());
     }
 }

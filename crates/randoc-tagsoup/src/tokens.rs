@@ -651,7 +651,7 @@ impl Lexer<'_> {
             return String::from('&');
         }
         if head == '#' {
-            let restart = (self.index, self.line, self.column);
+            let restart = (self.index, self.line, self.column, self.byte);
             self.advance();
             let hex = matches!(self.head(), 'x' | 'X');
             if hex {
@@ -666,7 +666,7 @@ impl Lexer<'_> {
                 self.advance();
             }
             if digits == 0 {
-                (self.index, self.line, self.column) = restart;
+                (self.index, self.line, self.column, self.byte) = restart;
                 return String::from('&');
             }
             if self.head() == ';' && !self.eof() {
@@ -908,6 +908,24 @@ mod tests {
 
     fn close(name: &str) -> TokenKind {
         TokenKind::Close(name.to_owned())
+    }
+
+    #[test]
+    fn malformed_numeric_references_preserve_token_byte_ranges() {
+        for prefix in ["&#;", "&#x "] {
+            let input = format!("{prefix}<math><mi>é</mi></math>");
+            let tokens = tokenize(&input);
+            let markup: Vec<_> = tokens
+                .iter()
+                .filter(|token| !matches!(token.kind, TokenKind::Text(_)))
+                .map(|token| input.get(token.bytes.clone()))
+                .collect();
+            assert_eq!(
+                markup,
+                [Some("<math>"), Some("<mi>"), Some("</mi>"), Some("</math>")]
+            );
+            assert_eq!(tokens[0].kind, text(prefix));
+        }
     }
 
     #[test]

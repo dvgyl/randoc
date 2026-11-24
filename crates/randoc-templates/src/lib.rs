@@ -269,8 +269,30 @@ impl Template {
         work_bytes: usize,
         output_bytes: usize,
     ) -> Option<String> {
-        render::render_with_budget(&self.0.node, context, Some(work_bytes))?
-            .render_limited(output_bytes)
+        self.render_limited_width(context, None, work_bytes, output_bytes, None)
+    }
+
+    /// Renders with a line width, byte limits and an optional deadline.
+    pub fn render_limited_width(
+        &self,
+        context: &Context,
+        width: Option<usize>,
+        work_bytes: usize,
+        output_bytes: usize,
+        deadline: Option<std::time::Instant>,
+    ) -> Option<String> {
+        self.render_doc_limited(context, work_bytes, deadline)?
+            .render_limited_until(width, output_bytes, deadline)
+    }
+
+    /// Evaluates the template within a byte limit and an optional deadline.
+    pub fn render_doc_limited(
+        &self,
+        context: &Context,
+        work_bytes: usize,
+        deadline: Option<std::time::Instant>,
+    ) -> Option<Doc> {
+        render::render_with_budget(&self.0.node, context, Some(work_bytes), deadline)
     }
 
     /// Estimates retained bytes for this compiled template.

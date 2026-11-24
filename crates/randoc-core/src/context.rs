@@ -1,6 +1,7 @@
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeMap;
 use std::fmt;
 use std::io;
+use std::time::Instant;
 
 use randoc_ast::Text;
 
@@ -1055,6 +1056,8 @@ pub struct Limits {
     /// The largest size, in bytes, of one input that a reader accepts: a
     /// file, standard input, or an archive file before the reader opens it.
     pub max_input_size: u64,
+    /// The largest permitted output size in bytes.
+    pub max_output_size: u64,
 }
 
 impl Default for Limits {
@@ -1067,6 +1070,7 @@ impl Default for Limits {
             max_embedded_size: 4 << 30,
             max_table_cells: 200_000,
             max_input_size: 4 << 30,
+            max_output_size: 4 << 30,
         }
     }
 }
@@ -1082,6 +1086,7 @@ impl Limits {
             max_embedded_size: 256 << 20,
             max_table_cells: 20_000,
             max_input_size: 64 << 20,
+            max_output_size: 64 << 20,
         }
     }
 }
@@ -1277,9 +1282,16 @@ pub struct Context {
     pub media: MediaBag,
     /// The limits for hostile input.
     pub limits: Limits,
+    deadline: Option<Instant>,
     log: Vec<LogMessage>,
-    held: Vec<Vec<LogMessage>>,
-    missing_terms: BTreeSet<&'static str>,
+    held: Vec<MessageHold>,
+    missing_translation: Option<(Text, Text)>,
+}
+
+#[derive(Default)]
+struct MessageHold {
+    messages: Vec<LogMessage>,
+    reported_missing_translation: bool,
 }
 
 impl fmt::Debug for Context {
@@ -1294,9 +1306,48 @@ impl fmt::Debug for Context {
 }
 
 impl Context {
+    /// Sets or clears the conversion deadline.
+    pub fn set_deadline(&mut self, deadline: Option<Instant>) {
+        self.deadline = deadline;
+    }
+
+    /// Returns the conversion deadline, if set.
+    pub fn deadline(&self) -> Option<Instant> {
+        self.deadline
+    }
+
+    /// Returns an error if the conversion deadline passed.
+    pub fn check_deadline(&self) -> Result<()> {
+        Self::check_deadline_at(self.deadline)
+    }
+
+    /// Checks a saved conversion deadline without borrowing the context.
+    pub fn check_deadline_at(deadline: Option<Instant>) -> Result<()> {
+        if deadline.is_some_and(|deadline| Instant::now() >= deadline) {
+            return Err(Error::App("The conversion deadline passed.".into()));
+        }
+        Ok(())
+    }
+
+    /// Renders template fields within the conversion limits.
+    pub fn render_template(
+        &self,
+        template: &randoc_templates::Template,
+        fields: &randoc_templates::Context,
+        width: Option<usize>,
+    ) -> Result<String> {
+        let limit = usize::try_from(self.limits.max_output_size).unwrap_or(usize::MAX);
+        let work_limit = limit.saturating_mul(4);
+        let output = template.render_limited_width(fields, width, work_limit, limit, self.deadline);
+        self.check_deadline()?;
+        output.ok_or_else(|| Error::App("The template exceeds the output limit.".into()))
+    }
+
     /// Returns the translated label. Uses English when no table is set.
-    /// Reports each missing label in a configured table once and returns empty text.
+    /// Reports a warning each time a configured table has no entry for the label.
+    /// Returns empty text for a missing entry.
     pub fn term(&mut self, term: Term) -> Text {
+        self.report_missing_translation();
         let key = term.key();
         let Some(translations) = &self.state.translations else {
             return randoc_data::terms::term_table("en")
@@ -1307,10 +1358,39 @@ impl Context {
         if let Some(value) = translations.get(key) {
             return value.clone();
         }
-        if self.missing_terms.insert(key) {
-            self.report(LogMessage::NoTranslation(key.to_owned()));
-        }
+        self.report(LogMessage::NoTranslation(key.to_owned()));
         Text::new()
+    }
+
+    /// Sets the table for a new translation phase. Uses English if the table is absent.
+    pub fn set_translations(&mut self, translations: Option<BTreeMap<Text, Text>>) {
+        self.state.translations = translations;
+        self.missing_translation = None;
+    }
+
+    /// Records a missing table for a new translation phase.
+    /// The first term lookup reports the locale and path.
+    pub fn set_translation_missing(&mut self, locale: Text, path: Text) {
+        self.state.translations = Some(BTreeMap::new());
+        self.missing_translation = Some((locale, path));
+        for hold in &mut self.held {
+            hold.reported_missing_translation = false;
+        }
+    }
+
+    fn report_missing_translation(&mut self) {
+        let missing = if let Some(hold) = self.held.last_mut() {
+            if hold.reported_missing_translation {
+                return;
+            }
+            hold.reported_missing_translation = true;
+            self.missing_translation.clone()
+        } else {
+            self.missing_translation.take()
+        };
+        if let Some((locale, path)) = missing {
+            self.report(LogMessage::CouldNotLoadTranslations(locale, path));
+        }
     }
 
     /// Makes a context that uses `host` for system access.
@@ -1320,9 +1400,10 @@ impl Context {
             state: CommonState::default(),
             media: MediaBag::default(),
             limits: Limits::default(),
+            deadline: None,
             log: Vec::new(),
             held: Vec::new(),
-            missing_terms: BTreeSet::new(),
+            missing_translation: None,
         }
     }
 
@@ -1350,19 +1431,19 @@ impl Context {
 
     /// Starts a hold for new messages. Held messages stay out of the conversion log.
     pub fn hold_messages(&mut self) {
-        self.held.push(Vec::new());
+        self.held.push(MessageHold::default());
     }
 
     /// Ends the innermost hold and returns its messages in report order.
     pub fn release_messages(&mut self) -> Vec<LogMessage> {
-        self.held.pop().unwrap_or_default()
+        self.held.pop().map_or_else(Vec::new, |hold| hold.messages)
     }
 
     /// Records a message and shows it when the verbosity level permits.
     /// During a hold, adds the message to the innermost hold only.
     pub fn report(&mut self, message: LogMessage) {
         if let Some(hold) = self.held.last_mut() {
-            hold.push(message);
+            hold.messages.push(message);
             return;
         }
         if message.level() <= self.state.verbosity {
@@ -1431,14 +1512,65 @@ mod tests {
         assert_eq!(context.term(Term::See), "see");
         assert!(context.log().is_empty());
 
-        context.state.translations = Some([("Figure".into(), "Abbildung".into())].into());
+        context.set_translations(Some([("Figure".into(), "Abbildung".into())].into()));
         assert_eq!(context.term(Term::Figure), "Abbildung");
         assert!(context.term(Term::ListOfFigures).is_empty());
         assert!(context.term(Term::ListOfFigures).is_empty());
         assert_eq!(
             context.log(),
-            [LogMessage::NoTranslation("ListOfFigures".into())]
+            [
+                LogMessage::NoTranslation("ListOfFigures".into()),
+                LogMessage::NoTranslation("ListOfFigures".into()),
+            ]
         );
+    }
+
+    #[test]
+    fn missing_translation_is_lazy_and_restarts_with_each_phase() {
+        use super::{Context, LogMessage, Term};
+
+        let mut context = Context::pure();
+        let load =
+            LogMessage::CouldNotLoadTranslations("xx-ZZ".into(), "translations/xx.yaml".into());
+        let term = LogMessage::NoTranslation("Figure".into());
+        context.set_translation_missing("xx-ZZ".into(), "translations/xx.yaml".into());
+        assert!(context.log().is_empty());
+        assert!(context.term(Term::Figure).is_empty());
+        assert_eq!(context.log(), [load.clone(), term.clone()]);
+        assert!(context.term(Term::Figure).is_empty());
+        assert_eq!(context.log(), [load.clone(), term.clone(), term.clone()]);
+
+        context.set_translation_missing("xx-ZZ".into(), "translations/xx.yaml".into());
+        assert!(context.term(Term::Figure).is_empty());
+        assert_eq!(&context.log()[3..], [load, term]);
+
+        context.set_translation_missing("xx-ZZ".into(), "translations/xx.yaml".into());
+        context.set_translations(None);
+        assert_eq!(context.term(Term::Figure), "Figure");
+        assert_eq!(context.log().len(), 5);
+    }
+
+    #[test]
+    fn held_translation_warnings_do_not_consume_the_pending_warning() {
+        use super::{Context, LogMessage, Term};
+
+        let mut context = Context::pure();
+        context.set_translation_missing("xx".into(), "translations/xx.yaml".into());
+        let load = LogMessage::CouldNotLoadTranslations("xx".into(), "translations/xx.yaml".into());
+        let term = LogMessage::NoTranslation("Figure".into());
+        context.hold_messages();
+        context.term(Term::Figure);
+        context.term(Term::Figure);
+        assert!(context.log().is_empty());
+        assert_eq!(
+            context.release_messages(),
+            [load.clone(), term.clone(), term.clone()]
+        );
+        context.term(Term::Figure);
+        assert_eq!(context.log(), [load, term.clone()]);
+        context.hold_messages();
+        context.term(Term::Figure);
+        assert_eq!(context.release_messages(), [term]);
     }
 
     #[cfg(unix)]

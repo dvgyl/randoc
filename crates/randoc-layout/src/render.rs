@@ -3,6 +3,8 @@
 //! The layout engine: it flattens a [`Doc`] into a list of items and lays
 //! the items out into lines.
 
+use std::borrow::Cow;
+
 use crate::style::{Font, StyleReq};
 use crate::width::{char_width, chars_length, is_space, str_length};
 use crate::{Doc, Node};
@@ -145,7 +147,7 @@ enum Open<'a> {
     Flush,
 }
 
-fn flatten(doc: &Doc) -> Vec<Flat<'_>> {
+fn flatten(doc: &Doc, deadline: Option<std::time::Instant>) -> Option<Vec<Flat<'_>>> {
     enum Work<'a> {
         Doc(&'a Doc),
         Emit(Flat<'a>),
@@ -153,7 +155,14 @@ fn flatten(doc: &Doc) -> Vec<Flat<'_>> {
     }
     let mut levels: Vec<Vec<Flat<'_>>> = vec![Vec::new()];
     let mut work = vec![Work::Doc(doc)];
+    let mut steps = 0usize;
     while let Some(step) = work.pop() {
+        if expired(deadline, &mut steps) {
+            for level in levels {
+                dispose(level);
+            }
+            return None;
+        }
         crate::steps::count(1);
         match step {
             Work::Emit(item) => push_flat(&mut levels, item),
@@ -215,7 +224,7 @@ fn flatten(doc: &Doc) -> Vec<Flat<'_>> {
             },
         }
     }
-    levels.pop().unwrap_or_default()
+    Some(levels.pop().unwrap_or_default())
 }
 
 fn push_flat<'a>(levels: &mut [Vec<Flat<'a>>], item: Flat<'a>) {
@@ -295,21 +304,32 @@ fn normalize(items: Vec<Flat<'_>>) -> Vec<Flat<'_>> {
     out
 }
 
-#[derive(Clone)]
-struct Prefix {
-    text: String,
-    trimmed: String,
+struct Prefix<'a> {
+    text: Cow<'a, str>,
+    trimmed_len: usize,
     length: isize,
 }
 
-impl Prefix {
-    fn new(text: String) -> Prefix {
-        let trimmed = text.trim_end_matches(is_space).to_owned();
-        let length = str_length(&text);
-        Prefix {
+impl<'a> Prefix<'a> {
+    fn new(text: impl Into<Cow<'a, str>>) -> Self {
+        let text = text.into();
+        let length = if text.as_bytes().iter().all(|&byte| byte == b' ') {
+            to_isize(text.len())
+        } else {
+            str_length(&text)
+        };
+        let trimmed_len = text.trim_end_matches(is_space).len();
+        Self {
             text,
-            trimmed,
+            trimmed_len,
             length,
+        }
+    }
+
+    fn owned_bytes(&self) -> usize {
+        match &self.text {
+            Cow::Owned(text) => text.len(),
+            Cow::Borrowed(_) => 0,
         }
     }
 }
@@ -318,7 +338,8 @@ struct State<'a> {
     output: Vec<Attr>,
     remaining_bytes: Option<usize>,
     limit_exceeded: bool,
-    prefix: Prefix,
+    prefix: Prefix<'a>,
+    prefix_bytes: usize,
     use_prefix: bool,
     line_length: Option<isize>,
     column: isize,
@@ -332,6 +353,13 @@ impl<'a> State<'a> {
         self.fonts.last().copied().unwrap_or_default()
     }
 
+    fn fits(&mut self, bytes: usize) -> bool {
+        if self.remaining_bytes.is_some_and(|limit| bytes > limit) {
+            self.limit_exceeded = true;
+        }
+        !self.limit_exceeded
+    }
+
     fn push(&mut self, attr: Attr) {
         if let Some(remaining) = &mut self.remaining_bytes {
             let Some(left) = remaining.checked_sub(attr.text.len()) else {
@@ -340,15 +368,27 @@ impl<'a> State<'a> {
             };
             *remaining = left;
         }
-        if !attr.text.is_empty() {
+        if attr.text.is_empty() {
+            return;
+        }
+        if self.remaining_bytes.is_some()
+            && let Some(last) = self.output.last_mut()
+            && last.font == attr.font
+            && last.link == attr.link
+        {
+            last.text.push_str(&attr.text);
+        } else {
             self.output.push(attr);
         }
     }
 
     fn newline(&mut self) {
         if self.column == 0 && self.use_prefix && !self.prefix.text.is_empty() {
-            let trimmed = self.prefix.trimmed.clone();
-            self.push(Attr::plain(trimmed));
+            let len = self.prefix.trimmed_len;
+            if !self.fits(len.saturating_add(1)) {
+                return;
+            }
+            self.push(Attr::plain(self.prefix.text[..len].to_owned()));
         }
         self.push(Attr::plain("\n".to_owned()));
         self.column = 0;
@@ -365,14 +405,21 @@ impl<'a> State<'a> {
 
     fn out_text(&mut self, width: isize, text: &str) {
         let font = self.font();
-        let prefix = self.current_prefix().to_owned();
+        let prefix_len = if self.column == 0 {
+            self.current_prefix().len()
+        } else {
+            0
+        };
+        if !self.fits(prefix_len.saturating_add(text.len())) {
+            return;
+        }
         let attr = Attr {
             link: self.link.map(str::to_owned),
             font,
             text: text.to_owned(),
         };
-        if self.column == 0 && !(prefix.is_empty() && font == Font::default()) {
-            self.push(Attr::plain(prefix));
+        if self.column == 0 && !(prefix_len == 0 && font == Font::default()) {
+            self.push(Attr::plain(self.current_prefix().to_owned()));
             self.push(attr);
             self.column = self.prefix.length.wrapping_add(width);
         } else {
@@ -383,9 +430,11 @@ impl<'a> State<'a> {
     }
 
     fn out_cooked(&mut self, width: isize, line: Line) {
-        let prefix = self.current_prefix().to_owned();
-        if self.column == 0 && !prefix.is_empty() {
-            self.push(Attr::plain(prefix));
+        if self.column == 0 && !self.current_prefix().is_empty() {
+            if !self.fits(self.current_prefix().len()) {
+                return;
+            }
+            self.push(Attr::plain(self.current_prefix().to_owned()));
             self.column = self.prefix.length.wrapping_add(width);
         } else {
             self.column = self.column.wrapping_add(width);
@@ -398,21 +447,26 @@ impl<'a> State<'a> {
 
     /// Lays out the items. Each nested list is a frame on an explicit
     /// stack, so the nesting depth does not use the call stack.
-    fn render_list(&mut self, items: Vec<Flat<'a>>) {
+    fn render_list(&mut self, items: Vec<Flat<'a>>, deadline: Option<std::time::Instant>) {
+        let mut steps = 0usize;
         let mut frames = vec![Frame {
             items,
             next: 0,
             restore: Restore::Nothing,
         }];
         while let Some(frame) = frames.last_mut() {
-            if self.limit_exceeded {
+            if self.limit_exceeded || expired(deadline, &mut steps) {
+                self.limit_exceeded = true;
                 break;
             }
             if frame.next >= frame.items.len() {
                 if let Some(done) = frames.pop() {
                     match done.restore {
                         Restore::Nothing => {}
-                        Restore::Prefix(prefix) => self.prefix = prefix,
+                        Restore::Prefix(prefix) => {
+                            self.prefix_bytes -= self.prefix.owned_bytes();
+                            self.prefix = prefix;
+                        }
                         Restore::UsePrefix(use_prefix) => self.use_prefix = use_prefix,
                     }
                 }
@@ -421,6 +475,9 @@ impl<'a> State<'a> {
             if let Some(child) = self.step(frame) {
                 frames.push(child);
             }
+        }
+        for frame in frames {
+            dispose(frame.items);
         }
     }
 
@@ -462,10 +519,22 @@ impl<'a> State<'a> {
             }
             Flat::LinkClose => self.link = None,
             Flat::Prefixed(prefix, inner) => {
-                let inner = std::mem::take(inner);
-                let saved = self.prefix.clone();
-                self.prefix = Prefix::new(format!("{}{}", saved.text, prefix));
-                return Some(Frame::new(normalize(inner), Restore::Prefix(saved)));
+                let combined = if self.prefix.text.is_empty() {
+                    Cow::Borrowed(*prefix)
+                } else {
+                    let len = self.prefix.text.len().saturating_add(prefix.len());
+                    if !self.fits(self.prefix_bytes.saturating_add(len)) {
+                        return None;
+                    }
+                    Cow::Owned(format!("{}{prefix}", self.prefix.text))
+                };
+                let prefix = Prefix::new(combined);
+                self.prefix_bytes += prefix.owned_bytes();
+                let saved = std::mem::replace(&mut self.prefix, prefix);
+                return Some(Frame::new(
+                    normalize(std::mem::take(inner)),
+                    Restore::Prefix(saved),
+                ));
             }
             Flat::Flush(inner) => {
                 let inner = std::mem::take(inner);
@@ -486,6 +555,25 @@ impl<'a> State<'a> {
                 let newlines = to_isize(self.newlines);
                 if newlines <= num {
                     let count = 1isize.wrapping_add(num).wrapping_sub(newlines);
+                    if count > 0 && self.remaining_bytes.is_some() {
+                        let count = count.unsigned_abs();
+                        let trimmed = if self.use_prefix {
+                            self.prefix.trimmed_len
+                        } else {
+                            0
+                        };
+                        let prefixed_lines = count - usize::from(self.column != 0);
+                        if !self.fits(count.saturating_add(trimmed.saturating_mul(prefixed_lines)))
+                        {
+                            return None;
+                        }
+                        if trimmed == 0 {
+                            self.push(Attr::plain("\n".repeat(count)));
+                            self.column = 0;
+                            self.newlines += count;
+                            return None;
+                        }
+                    }
                     for _ in 0..count {
                         self.newline();
                         if self.limit_exceeded {
@@ -538,7 +626,7 @@ impl<'a> State<'a> {
                 }
                 let blocks: Vec<Flat<'a>> = items.drain(i..j).collect();
                 frame.next = i;
-                return Some(self.render_blocks(&blocks));
+                return self.render_blocks(&blocks);
             }
         }
         None
@@ -546,7 +634,7 @@ impl<'a> State<'a> {
 
     /// Joins adjacent blocks line by line. Returns the frame that lays out
     /// the joined lines with the current column as the prefix.
-    fn render_blocks(&mut self, blocks: &[Flat<'a>]) -> Frame<'a> {
+    fn render_blocks(&mut self, blocks: &[Flat<'a>]) -> Option<Frame<'a>> {
         let font = self.font();
         let height = blocks
             .iter()
@@ -556,6 +644,43 @@ impl<'a> State<'a> {
             })
             .max()
             .unwrap_or(0);
+        if self.remaining_bytes.is_some() {
+            let mut bytes = 0usize;
+            for (index, block) in blocks.iter().enumerate() {
+                let padding = index + 1 < blocks.len();
+                let cost = match block {
+                    Flat::Block(columns, lines) => {
+                        let missing = height.saturating_sub(lines.len());
+                        let width = usize::try_from(*columns).unwrap_or(0);
+                        let pad = |n| if padding { n } else { 0 };
+                        lines
+                            .iter()
+                            .fold(pad(width.saturating_mul(missing)), |total, line| {
+                                let spaces =
+                                    usize::try_from(columns.wrapping_sub(line_length(line)))
+                                        .unwrap_or(0);
+                                line.iter()
+                                    .fold(total.saturating_add(pad(spaces)), |total, attr| {
+                                        total.saturating_add(attr.text.len())
+                                    })
+                            })
+                    }
+                    Flat::VFill(width, text) => {
+                        let spaces = if padding {
+                            usize::try_from(width.wrapping_sub(str_length(text))).unwrap_or(0)
+                        } else {
+                            0
+                        };
+                        text.len().saturating_add(spaces).saturating_mul(height)
+                    }
+                    _ => 0,
+                };
+                bytes = bytes.saturating_add(cost);
+            }
+            if !self.fits(bytes) {
+                return None;
+            }
+        }
         let spec = |b: &Flat<'a>| -> BlockSpec {
             match b {
                 Flat::Block(width, lines) => (
@@ -576,13 +701,26 @@ impl<'a> State<'a> {
         let mut specs = blocks.iter();
         let first = specs.next().map(spec).unwrap_or_default();
         let (_, lines) = specs.fold(first, |acc, b| merge_blocks(height, acc, spec(b)));
-        let saved = self.prefix.clone();
-        let extra = self.column.wrapping_sub(saved.length);
-        if extra > 0 {
-            let spaces = " ".repeat(extra.unsigned_abs());
-            self.prefix.text.push_str(&spaces);
-            self.prefix.length = self.prefix.length.wrapping_add(extra);
-        }
+        let extra = self.column.wrapping_sub(self.prefix.length);
+        let restore = if extra > 0 {
+            let extra = extra.unsigned_abs();
+            let len = self.prefix.text.len().saturating_add(extra);
+            if !self.fits(self.prefix_bytes.saturating_add(len)) {
+                return None;
+            }
+            let mut text = String::with_capacity(len);
+            text.push_str(&self.prefix.text);
+            text.extend(std::iter::repeat_n(' ', extra));
+            let prefix = Prefix {
+                text: Cow::Owned(text),
+                trimmed_len: self.prefix.trimmed_len,
+                length: self.column,
+            };
+            self.prefix_bytes += len;
+            Restore::Prefix(std::mem::replace(&mut self.prefix, prefix))
+        } else {
+            Restore::Nothing
+        };
         let mut cooked = Vec::new();
         for (_, line) in lines {
             if line.iter().all(|attr| attr.text.is_empty()) {
@@ -593,14 +731,14 @@ impl<'a> State<'a> {
             }
             cooked.push(Flat::Cooked(line_length(&line), line));
         }
-        Frame::new(cooked, Restore::Prefix(saved))
+        Some(Frame::new(cooked, restore))
     }
 }
 
 /// What to reset when a frame ends.
-enum Restore {
+enum Restore<'a> {
     Nothing,
-    Prefix(Prefix),
+    Prefix(Prefix<'a>),
     UsePrefix(bool),
 }
 
@@ -608,11 +746,11 @@ enum Restore {
 struct Frame<'a> {
     items: Vec<Flat<'a>>,
     next: usize,
-    restore: Restore,
+    restore: Restore<'a>,
 }
 
 impl<'a> Frame<'a> {
-    fn new(items: Vec<Flat<'a>>, restore: Restore) -> Frame<'a> {
+    fn new(items: Vec<Flat<'a>>, restore: Restore<'a>) -> Frame<'a> {
         Frame {
             items,
             next: 0,
@@ -650,16 +788,29 @@ fn merge_blocks(height: usize, first: BlockSpec, second: BlockSpec) -> BlockSpec
 
 /// Lays out a document into attributed output text.
 pub(crate) fn prerender(doc: &Doc, line_length: Option<isize>) -> Vec<Attr> {
-    layout(doc, line_length, None).output
+    layout(doc, line_length, None, None).unwrap_or_default()
 }
 
-fn layout(doc: &Doc, line_length: Option<isize>, remaining_bytes: Option<usize>) -> State<'_> {
-    let items = flatten(doc);
+fn expired(deadline: Option<std::time::Instant>, steps: &mut usize) -> bool {
+    deadline.is_some_and(|deadline| {
+        *steps = steps.wrapping_add(1);
+        *steps % 256 == 1 && std::time::Instant::now() >= deadline
+    })
+}
+
+fn layout(
+    doc: &Doc,
+    line_length: Option<isize>,
+    remaining_bytes: Option<usize>,
+    deadline: Option<std::time::Instant>,
+) -> Option<Vec<Attr>> {
+    let items = flatten(doc, deadline)?;
     let mut state = State {
         output: Vec::new(),
         remaining_bytes,
         limit_exceeded: false,
-        prefix: Prefix::new(String::new()),
+        prefix: Prefix::new(""),
+        prefix_bytes: 0,
         use_prefix: true,
         line_length,
         column: 0,
@@ -667,17 +818,31 @@ fn layout(doc: &Doc, line_length: Option<isize>, remaining_bytes: Option<usize>)
         fonts: Vec::new(),
         link: None,
     };
-    state.render_list(normalize(items));
+    state.render_list(normalize(items), deadline);
     state.output.retain(|attr| !attr.text.is_empty());
-    state
+    (!state.limit_exceeded).then_some(state.output)
 }
 
-pub(crate) fn render_plain_limited(doc: &Doc, max_bytes: usize) -> Option<String> {
-    let state = layout(doc, None, Some(max_bytes));
-    if state.limit_exceeded {
-        return None;
+pub(crate) fn prerender_limited(
+    doc: &Doc,
+    line_length: Option<isize>,
+    max_bytes: usize,
+) -> Option<Vec<Attr>> {
+    layout(doc, line_length, Some(max_bytes), None)
+}
+
+pub(crate) fn render_plain_limited(
+    doc: &Doc,
+    line_length: Option<isize>,
+    max_bytes: usize,
+    deadline: Option<std::time::Instant>,
+) -> Option<String> {
+    let mut attrs = layout(doc, line_length, Some(max_bytes), deadline)?.into_iter();
+    let mut out = attrs.next().map_or_else(String::new, |attr| attr.text);
+    for attr in attrs {
+        out.push_str(&attr.text);
     }
-    Some(state.output.into_iter().map(|attr| attr.text).collect())
+    Some(out)
 }
 
 pub(crate) fn render_plain(doc: &Doc, line_length: Option<isize>) -> String {
@@ -688,13 +853,49 @@ pub(crate) fn render_plain(doc: &Doc, line_length: Option<isize>) -> String {
 }
 
 pub(crate) fn render_ansi(doc: &Doc, line_length: Option<isize>) -> String {
+    encode_ansi(prerender(doc, line_length), usize::MAX).unwrap_or_default()
+}
+
+pub(crate) fn render_ansi_limited(
+    doc: &Doc,
+    line_length: Option<isize>,
+    max_bytes: usize,
+    deadline: Option<std::time::Instant>,
+) -> Option<String> {
+    encode_ansi(
+        layout(doc, line_length, Some(max_bytes), deadline)?,
+        max_bytes,
+    )
+}
+
+fn encode_ansi(attrs: Vec<Attr>, max_bytes: usize) -> Option<String> {
+    const OSC8_BYTES: usize = "\x1b]8;;\x1b\\".len();
+    const RESET_BYTES: usize = "\x1b[0m".len() + OSC8_BYTES;
+    let budget = max_bytes.checked_sub(RESET_BYTES)?;
     let mut out = String::new();
+    let mut sgr = String::new();
     let mut link: Option<String> = None;
     let mut font = Font::default();
-    for attr in prerender(doc, line_length) {
+    for attr in attrs {
+        sgr.clear();
         if attr.font != font {
-            attr.font.write_sgr(&mut out);
+            attr.font.write_sgr(&mut sgr);
         }
+        let link_bytes = if attr.link != link {
+            OSC8_BYTES.saturating_add(attr.link.as_ref().map_or(0, String::len))
+        } else {
+            0
+        };
+        if attr
+            .text
+            .len()
+            .saturating_add(sgr.len())
+            .saturating_add(link_bytes)
+            > budget.saturating_sub(out.len())
+        {
+            return None;
+        }
+        out.push_str(&sgr);
         if attr.link != link {
             crate::style::write_osc8(attr.link.as_deref(), &mut out);
         }
@@ -704,16 +905,19 @@ pub(crate) fn render_ansi(doc: &Doc, line_length: Option<isize>) -> String {
     }
     Font::default().write_sgr(&mut out);
     crate::style::write_osc8(None, &mut out);
-    out
+    Some(out)
 }
 
 /// Splits attributed text into lines at each newline.
-fn split_lines(attrs: Vec<Attr>) -> Vec<Line> {
+fn split_lines(attrs: Vec<Attr>, max_lines: usize) -> Option<Vec<Line>> {
     let mut lines = Vec::new();
     let mut current = Vec::new();
     for attr in attrs {
         for (index, piece) in attr.text.split('\n').enumerate() {
             if index > 0 {
+                if lines.len() == max_lines {
+                    return None;
+                }
                 lines.push(std::mem::take(&mut current));
             }
             if !piece.is_empty() {
@@ -726,13 +930,13 @@ fn split_lines(attrs: Vec<Attr>) -> Vec<Line> {
         }
     }
     lines.push(current);
-    lines
+    Some(lines)
 }
 
 /// Splits each line that is wider than `width` into lines of at most
 /// `width` columns. A character of width 0 never starts a new line.
-pub(crate) fn chop(width: isize, attrs: Vec<Attr>) -> Vec<Line> {
-    let mut lines: Vec<(isize, Line)> = split_lines(attrs)
+pub(crate) fn chop(width: isize, attrs: Vec<Attr>, max_lines: usize) -> Option<Vec<Line>> {
+    let mut lines: Vec<(isize, Line)> = split_lines(attrs, max_lines)?
         .into_iter()
         .map(|line| (line_length(&line), line))
         .collect();
@@ -741,6 +945,9 @@ pub(crate) fn chop(width: isize, attrs: Vec<Attr>) -> Vec<Line> {
     }
     let mut out = Vec::new();
     for (len, line) in lines {
+        if out.len() == max_lines {
+            return None;
+        }
         if len <= width {
             out.push(line);
             continue;
@@ -760,6 +967,9 @@ pub(crate) fn chop(width: isize, attrs: Vec<Attr>) -> Vec<Line> {
                         });
                     }
                     out.push(std::mem::take(&mut current));
+                    if out.len() == max_lines {
+                        return None;
+                    }
                     used = cw;
                 } else {
                     used += cw;
@@ -776,5 +986,5 @@ pub(crate) fn chop(width: isize, attrs: Vec<Attr>) -> Vec<Line> {
         }
         out.push(current);
     }
-    out
+    Some(out)
 }

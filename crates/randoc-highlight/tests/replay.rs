@@ -17,33 +17,26 @@ const REPLAY: &str = include_str!("../data/replay.txt");
 const KNOWN_DIFFERENCES: &str = concat!(
     "cobol 1 3 4\n",
     "coffee 0 1 0\n",
-    "dockerfile 12 78 90\n",
-    "elixireex 17 124 141\n",
-    "elixirheex 18 132 150\n",
+    "dockerfile 0 2 0\n",
+    "elixireex 0 2 0\n",
+    "elixirheex 0 8 0\n",
     "javascriptreact 0 1 0\n",
-    "mermaid 1 4 5\n",
-    "mustache 1 7 8\n",
-    "orgmode 8 59 67\n",
+    "orgmode 5 36 28\n",
     "raku 1 14 15\n",
-    "rdoc 4 27 31\n",
+    "rdoc 0 3 0\n",
     "sas 2 15 17\n",
-    "total 530\n",
+    "total 94\n",
 );
 
 /// The same table for the default test, which replays each eighth mutation.
 const KNOWN_DIFFERENCES_SAMPLED: &str = concat!(
     "cobol 1 0 1\n",
     "coffee 0 1 0\n",
-    "dockerfile 12 8 20\n",
-    "elixireex 17 14 31\n",
-    "elixirheex 18 14 32\n",
-    "mermaid 1 0 1\n",
-    "mustache 1 1 2\n",
-    "orgmode 8 8 16\n",
+    "elixireex 0 1 0\n",
+    "orgmode 5 5 7\n",
     "raku 1 0 1\n",
-    "rdoc 4 3 7\n",
     "sas 2 4 6\n",
-    "total 118\n",
+    "total 20\n",
 );
 
 fn samples() -> Vec<(String, String)> {

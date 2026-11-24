@@ -61,6 +61,28 @@ mod tests {
     }
 
     #[test]
+    fn term_tables_cover_the_pandoc_tags_with_all_labels() {
+        let tags: std::collections::BTreeSet<_> = TERMS
+            .lines()
+            .skip(1)
+            .filter_map(|row| row.split('\t').next())
+            .collect();
+        assert_eq!(tags.len(), 107);
+        for tag in ["zh", "de-AT", "de-CH"] {
+            assert!(!tags.contains(tag), "{tag}");
+            assert!(term_table(tag).is_none(), "{tag}");
+        }
+        let keys: Vec<_> = term_table("en").unwrap().iter().map(|(k, _)| *k).collect();
+        assert_eq!(keys.len(), 26);
+        for tag in tags {
+            let table = term_table(tag).unwrap();
+            let names: Vec<_> = table.iter().map(|(k, _)| *k).collect();
+            assert_eq!(names, keys, "{tag}");
+            assert!(table.iter().all(|(_, value)| !value.is_empty()), "{tag}");
+        }
+    }
+
+    #[test]
     fn babel_aliases_match_exact_names_ignoring_ascii_case() {
         for (alias, tag) in [
             ("german", "de"),

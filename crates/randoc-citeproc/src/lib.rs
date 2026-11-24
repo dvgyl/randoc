@@ -27,6 +27,8 @@
 //! Errors have the texts of the oracle. A broken style gives
 //! `randoc_core::Error::App` (exit code 4), as in Pandoc.
 
+#![forbid(unsafe_code)]
+
 pub mod abbreviations;
 mod case_fold;
 pub mod case_transform;

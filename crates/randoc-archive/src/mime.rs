@@ -24,6 +24,52 @@ pub fn by_path(path: &str) -> Option<&'static str> {
     by_extension(std::path::Path::new(path).extension()?.to_str()?)
 }
 
+// Pandoc normally uses the last extension in the table. These exceptions
+// come from the file names that the oracle assigns to data URIs.
+pub(crate) fn preferred_extension(mime: &str) -> Option<&'static str> {
+    let mime = mime.split(';').next()?;
+    let extension = match mime {
+        "application/java-archive" => "war",
+        "application/octet-stream" => "so",
+        "application/ogg" => "ogg",
+        "application/vnd.ms-excel" => "xlb",
+        "application/vnd.stardivision.math" => "sdf",
+        "application/x-cbr" => "cbz",
+        "application/x-gtar" => "taz",
+        "application/x-httpd-php" => "phtml",
+        "application/x-lzh-compressed" => "lzh",
+        "application/x-maker" => "frm",
+        "application/x-msmediaview" => "mvb",
+        "application/x-msmetafile" => "wmz",
+        "application/x-perl" => "pm",
+        "application/x-pkcs7-certificates" => "spc",
+        "application/x-shockwave-flash" => "swfl",
+        "application/x-tcl" => "tk",
+        "application/x-x509-ca-cert" => "pem",
+        "application/xml" => "xml",
+        "audio/mpeg" => "mpega",
+        "chemical/x-csml" => "csm",
+        "chemical/x-gamess-input" => "inp",
+        "chemical/x-macromodel-input" => "mmod",
+        "chemical/x-mopac-input" => "zmt",
+        "chemical/x-ncbi-asn1-binary" => "val",
+        "image/svg+xml" => "svg",
+        "text/calendar" => "icz",
+        "text/css" => "less",
+        "text/x-c" => "hh",
+        "text/x-c++hdr" => "hxx",
+        "video/mpeg" => "mpeg",
+        "video/quicktime" => "mov",
+        _ => {
+            return MIME_TYPES
+                .iter()
+                .rfind(|(_, kind)| *kind == mime)
+                .map(|(ext, _)| *ext);
+        }
+    };
+    Some(extension)
+}
+
 const MIME_TYPES: &[(&str, &str)] = &[
     ("123", "application/vnd.lotus-1-2-3"),
     ("3dml", "text/vnd.in3d.3dml"),
@@ -188,6 +234,7 @@ const MIME_TYPES: &[(&str, &str)] = &[
     ("dae", "model/vnd.collada+xml"),
     ("daf", "application/vnd.mobius.daf"),
     ("dart", "application/vnd.dart"),
+    ("dat", "chemical/x-mopac-input"),
     ("dataless", "application/vnd.fdsn.seed"),
     ("davmount", "application/davmount+xml"),
     ("dbk", "application/docbook+xml"),
@@ -850,6 +897,7 @@ const MIME_TYPES: &[(&str, &str)] = &[
     ("sh", "application/x-sh"),
     ("shar", "application/x-shar"),
     ("shf", "application/shf+xml"),
+    ("shtml", "text/html"),
     ("sid", "audio/prs.sid"),
     ("sig", "application/pgp-signature"),
     ("sil", "audio/silk"),

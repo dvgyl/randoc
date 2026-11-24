@@ -34,8 +34,9 @@ pub struct PdfOptions<'a> {
 /// Resolve the plan before selecting the writer and template. Pass the
 /// standalone writer options and a callback such as
 /// `|doc, options, ctx| writer.write(doc, options, ctx)`. The callback receives
-/// a document with the staged image references. The PDF host loads resources
-/// outside the media bag, stages files, and runs child processes.
+/// a document with the staged image references. The PDF host loads images,
+/// stages files, and runs child processes. It also resolves resources in
+/// rendered HTML when the conversion context uses a sandboxed host.
 /// The driver checks stream sizes when the host returns the captured output.
 pub fn make_pdf(
     plan: &PdfPlan,
@@ -62,7 +63,8 @@ pub fn make_pdf(
         writer_options.dpi,
         &mut options,
     )?;
-    let input = render(&prepared, writer_options, context)?.into_bytes();
+    let output = render(&prepared, writer_options, context)?;
+    let input = driver::intermediate_bytes(plan.engine, output, context, staging.host)?;
     check_size(input.len(), limits.max_input_size, "Intermediate document")?;
     driver::run(plan, doc, &input, &mut staging, &mut options, limits)
 }

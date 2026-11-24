@@ -99,6 +99,32 @@ fn compile(source: &str) -> Result<Template, CompileError<String>> {
     compile_with("", source, &BTreeMap::new())
 }
 
+#[test]
+fn bounded_render_checks_work_wrapped_text_and_deadline() -> Result<(), CompileError<String>> {
+    let template = compile("$line$")?;
+    let mut fields = Context::new();
+    fields.insert("line", hsep(["aa", "bb"].map(literal)));
+    assert_eq!(
+        template
+            .render_limited_width(&fields, Some(2), 1024, 5, None)
+            .as_deref(),
+        Some("aa\nbb")
+    );
+    assert_eq!(
+        template.render_limited_width(&fields, Some(2), 1024, 4, None),
+        None
+    );
+    assert_eq!(
+        template.render_limited_width(&fields, Some(2), 1, 5, None),
+        None
+    );
+    assert_eq!(
+        template.render_limited_width(&fields, Some(2), 1024, 5, Some(std::time::Instant::now())),
+        None
+    );
+    Ok(())
+}
+
 fn error_text(result: Result<Template, CompileError<String>>) -> String {
     match result {
         Ok(_) => "compiled".to_owned(),

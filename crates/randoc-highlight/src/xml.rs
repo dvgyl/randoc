@@ -79,8 +79,12 @@ pub(crate) fn parse(text: &str) -> Result<Element, String> {
         pos: 0,
         entities: HashMap::new(),
         expanded: 0,
+        namespaces: Vec::new(),
     };
     p.prolog()?;
+    if p.peek().is_none() {
+        return Err("Missing root element\n".to_string());
+    }
     let root = p.element(0)?;
     p.misc()?;
     if p.pos < p.src.len() {
@@ -110,7 +114,13 @@ struct Parser<'a> {
     pos: usize,
     entities: HashMap<String, String>,
     expanded: usize,
+    /// The namespace declarations of the open elements, innermost last:
+    /// the prefix (`None` for the default namespace) and the URI.
+    namespaces: Vec<(Option<String>, String)>,
 }
+
+/// The namespace that the prefix `xml` always has.
+const XML_NAMESPACE: &str = "http://www.w3.org/XML/1998/namespace";
 
 fn is_name_start(c: char) -> bool {
     c.is_alphabetic() || c == '_' || c == ':' || (c as u32) > 0x7f
@@ -123,6 +133,38 @@ fn is_name_char(c: char) -> bool {
 impl<'a> Parser<'a> {
     fn error(&self, what: &str) -> String {
         format!("XML parse error at byte {}: {what}", self.pos)
+    }
+
+    /// An error in the form of the attoparsec `ParseError` of Pandoc 3.13,
+    /// with a final newline: Pandoc prints an empty line after it. The
+    /// position is `line:column (offset)` in characters.
+    fn parse_error(&self, contexts: &[&str], message: &str, pos: usize) -> String {
+        let before = self.src.get(..pos).unwrap_or(self.src);
+        let line = 1 + before.matches('\n').count();
+        let line_start = before.rfind('\n').map_or(0, |i| i + 1);
+        let column = 1 + before.get(line_start..).unwrap_or("").chars().count();
+        let offset = before.chars().count();
+        let contexts: Vec<String> = contexts.iter().map(|c| haskell_string(c)).collect();
+        format!(
+            "ParseError {{errorContexts = [{}], errorMessage = {}, errorPosition = {line}:{column} ({offset})}}\n",
+            contexts.join(","),
+            haskell_string(message)
+        )
+    }
+
+    /// The error of a start tag at `start`: the end of the input, or a
+    /// character that does not fit.
+    fn open_tag_error(&self, start: usize) -> String {
+        if self.peek().is_none() {
+            self.parse_error(&["open tag", "'>'"], "not enough input", self.src.len())
+        } else {
+            self.parse_error(&["open tag", "'>'"], "Failed reading: satisfy", start)
+        }
+    }
+
+    /// A comment without its end: Pandoc reports the `DOCTYPE` parser.
+    fn unterminated_comment(&self, start: usize) -> String {
+        self.parse_error(&["DOCTYPE"], "string", start + 2)
     }
 
     fn rest(&self) -> &'a str {
@@ -197,10 +239,12 @@ impl<'a> Parser<'a> {
         self.eat("\u{feff}");
         loop {
             self.skip_ws();
+            let start = self.pos;
             if self.eat("<?") {
                 self.until("?>")?;
             } else if self.eat("<!--") {
-                self.until("-->")?;
+                self.until("-->")
+                    .map_err(|_| self.unterminated_comment(start))?;
             } else if self.starts("<!DOCTYPE") {
                 self.pos += "<!DOCTYPE".len();
                 self.doctype()?;
@@ -329,40 +373,70 @@ impl<'a> Parser<'a> {
             return Err(self.error("elements are nested too deeply"));
         }
         self.expect("<")?;
-        let name = self.name()?;
+        let name = match self.name() {
+            Ok(name) => name,
+            Err(_) if self.peek().is_none() => {
+                return Err(self.parse_error(
+                    &["open tag", "name", "identifier"],
+                    "not enough input",
+                    self.src.len(),
+                ));
+            }
+            Err(_) => {
+                return Err(self.parse_error(
+                    &["open tag", "name", "identifier"],
+                    "Failed reading: satisfy",
+                    self.pos,
+                ));
+            }
+        };
         let mut el = Element {
             name,
             ..Element::default()
         };
+        let scope = self.namespaces.len();
         let mut keys = HashSet::new();
         loop {
             count(1);
             let before = self.pos;
             self.skip_ws();
             if self.eat("/>") {
+                self.namespaces.truncate(scope);
                 return Ok(el);
             }
             if self.eat(">") {
                 break;
             }
-            if self.pos == before {
-                return Err(self.error("expected white space before an attribute"));
+            let start = self.pos;
+            if start == before || self.peek().is_none() {
+                return Err(self.open_tag_error(start));
             }
-            let key = self.name()?;
+            let key = self.name().map_err(|_| self.open_tag_error(start))?;
             self.skip_ws();
-            self.expect("=")?;
+            self.expect("=").map_err(|_| self.open_tag_error(start))?;
             self.skip_ws();
             let quote = match self.peek() {
                 Some(q @ ('"' | '\'')) => q,
-                _ => return Err(self.error("expected a quoted attribute value")),
+                _ => return Err(self.open_tag_error(start)),
             };
             self.pos += 1;
-            let raw = self.until(if quote == '"' { "\"" } else { "'" })?;
+            let raw = self
+                .until(if quote == '"' { "\"" } else { "'" })
+                .map_err(|_| {
+                    self.parse_error(&["open tag", "'>'"], "not enough input", self.src.len())
+                })?;
             if raw.contains('<') {
                 return Err(self.error("'<' in an attribute value"));
             }
             let mut value = String::new();
             self.expand(raw, &mut value, 0, true)?;
+            if let Some(prefix) = declared_prefix(&key) {
+                // xml-conduit keeps the white space of a namespace and
+                // drops a literal carriage return.
+                let mut uri = String::new();
+                self.expand(&raw.replace('\r', ""), &mut uri, 0, false)?;
+                self.namespaces.push((prefix.map(str::to_string), uri));
+            }
             if !keys.insert(key.clone()) {
                 return Err(self.error("duplicate attribute"));
             }
@@ -379,6 +453,7 @@ impl<'a> Parser<'a> {
                     return Err(self.error("mismatched end tag"));
                 }
                 flush_text(&mut el, &mut text);
+                self.namespaces.truncate(scope);
                 return Ok(el);
             } else if self.eat("<!--") {
                 self.until("-->")?;
@@ -392,7 +467,7 @@ impl<'a> Parser<'a> {
                 let child = self.element(depth + 1)?;
                 el.children.push(Node::Element(child));
             } else if self.peek().is_none() {
-                return Err(self.error("unterminated element"));
+                return Err(self.end_element_error(&el.name));
             } else {
                 let rest = self.rest();
                 let end = rest.find('<').unwrap_or(rest.len());
@@ -402,6 +477,37 @@ impl<'a> Parser<'a> {
                 self.expand(raw, &mut text, 0, false)?;
             }
         }
+    }
+
+    /// The namespace of `prefix` (`None` for the default namespace) in the
+    /// open elements. An empty default namespace is no namespace.
+    fn namespace(&self, prefix: Option<&str>) -> Option<&str> {
+        if prefix == Some("xml") {
+            return Some(XML_NAMESPACE);
+        }
+        let (_, uri) = self
+            .namespaces
+            .iter()
+            .rev()
+            .find(|(p, _)| p.as_deref() == prefix)?;
+        match (prefix, uri.as_str()) {
+            (None, "") => None,
+            (_, uri) => Some(uri),
+        }
+    }
+
+    /// The error of `xml-conduit` for an element without its end tag.
+    fn end_element_error(&self, name: &str) -> String {
+        let (prefix, local) = match name.split_once(':') {
+            Some((prefix, local)) => (Some(prefix), local),
+            None => (None, name),
+        };
+        format!(
+            "Expected end element for: Name {{nameLocalName = {}, nameNamespace = {}, namePrefix = {}}}, but received: EventEndDocument\n",
+            haskell_string(local),
+            haskell_maybe(self.namespace(prefix)),
+            haskell_maybe(prefix)
+        )
     }
 
     /// Appends `raw` to `out` with each reference expanded. In an attribute
@@ -458,6 +564,64 @@ impl<'a> Parser<'a> {
         push_text(out, rest, attribute);
         Ok(())
     }
+}
+
+/// The prefix that a namespace attribute declares: `Some(None)` for
+/// `xmlns`, `Some(Some(p))` for `xmlns:p`.
+fn declared_prefix(key: &str) -> Option<Option<&str>> {
+    match key.strip_prefix("xmlns") {
+        Some("") => Some(None),
+        Some(rest) => rest.strip_prefix(':').map(Some),
+        None => None,
+    }
+}
+
+/// The names of the ASCII control characters that Haskell's `show` uses.
+const ASCII_NAMES: [&str; 32] = [
+    "NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "a", "b", "t", "n", "v", "f", "r", "SO", "SI",
+    "DLE", "DC1", "DC2", "DC3", "DC4", "NAK", "SYN", "ETB", "CAN", "EM", "SUB", "ESC", "FS", "GS",
+    "RS", "US",
+];
+
+/// A string as Haskell's `show` gives it. A character above U+007F
+/// becomes its decimal code, for example `\233` for `é`. The empty escape
+/// `\&` separates a numeric escape from a next digit, and `\SO` from a
+/// next `H`.
+fn haskell_string(s: &str) -> String {
+    let mut out = String::from("\"");
+    let mut chars = s.chars().peekable();
+    while let Some(c) = chars.next() {
+        let next = chars.peek().copied();
+        match c {
+            '"' => out.push_str("\\\""),
+            '\\' => out.push_str("\\\\"),
+            ' '..='~' => out.push(c),
+            '\u{7f}' => out.push_str("\\DEL"),
+            '\0'..='\u{1f}' => {
+                out.push('\\');
+                out.push_str(ASCII_NAMES.get(c as usize).copied().unwrap_or(""));
+                if c == '\u{e}' && next == Some('H') {
+                    out.push_str("\\&");
+                }
+            }
+            _ => {
+                out.push_str(&format!("\\{}", u32::from(c)));
+                if next.is_some_and(|d| d.is_ascii_digit()) {
+                    out.push_str("\\&");
+                }
+            }
+        }
+    }
+    out.push('"');
+    out
+}
+
+/// A `Maybe String` as Haskell's `show` gives it.
+fn haskell_maybe(s: Option<&str>) -> String {
+    s.map_or_else(
+        || "Nothing".to_string(),
+        |s| format!("Just {}", haskell_string(s)),
+    )
 }
 
 fn push_text(out: &mut String, s: &str, attribute: bool) {
@@ -551,6 +715,149 @@ mod tests {
             "<a>&amp</a>",
         ] {
             assert!(parse(bad).is_err(), "{bad:?}");
+        }
+    }
+
+    /// The messages of Pandoc 3.13 for bad definition files.
+    #[test]
+    fn errors_have_the_messages_of_pandoc() {
+        let cases = [
+            (
+                "<language",
+                r#"ParseError {errorContexts = ["open tag","'>'"], errorMessage = "not enough input", errorPosition = 1:10 (9)}"#,
+            ),
+            (
+                "<language name=\"X\" ",
+                r#"ParseError {errorContexts = ["open tag","'>'"], errorMessage = "not enough input", errorPosition = 1:20 (19)}"#,
+            ),
+            (
+                "<language x>",
+                r#"ParseError {errorContexts = ["open tag","'>'"], errorMessage = "Failed reading: satisfy", errorPosition = 1:11 (10)}"#,
+            ),
+            (
+                "<",
+                r#"ParseError {errorContexts = ["open tag","name","identifier"], errorMessage = "not enough input", errorPosition = 1:2 (1)}"#,
+            ),
+            (
+                "<!-- x",
+                r#"ParseError {errorContexts = ["DOCTYPE"], errorMessage = "string", errorPosition = 1:3 (2)}"#,
+            ),
+            (
+                "<language\nname=\"X\"",
+                r#"ParseError {errorContexts = ["open tag","'>'"], errorMessage = "not enough input", errorPosition = 2:9 (18)}"#,
+            ),
+            (
+                "<a>",
+                r#"Expected end element for: Name {nameLocalName = "a", nameNamespace = Nothing, namePrefix = Nothing}, but received: EventEndDocument"#,
+            ),
+            ("", "Missing root element"),
+        ];
+        for (input, message) in cases {
+            assert_eq!(parse(input), Err(format!("{message}\n")), "{input:?}");
+        }
+    }
+
+    /// The end-of-file error of Pandoc 3.13: the tag text as Haskell's
+    /// `show` gives it, with the namespace that is in scope.
+    #[test]
+    fn end_element_errors_escape_and_resolve_namespaces() {
+        let error = |local: &str, namespace: &str, prefix: &str| {
+            Err(format!(
+                "Expected end element for: Name {{nameLocalName = {local}, nameNamespace = {namespace}, namePrefix = {prefix}}}, but received: EventEndDocument\n"
+            ))
+        };
+        let xml = format!("Just {XML_NAMESPACE:?}");
+        let cases = [
+            ("<é>", r#""\233""#, "Nothing", "Nothing"),
+            ("<aé1>", r#""a\233\&1""#, "Nothing", "Nothing"),
+            ("<a\u{85}b>", r#""a\133b""#, "Nothing", "Nothing"),
+            (
+                r#"<a xmlns="urn:x">"#,
+                r#""a""#,
+                r#"Just "urn:x""#,
+                "Nothing",
+            ),
+            (
+                r#"<a xmlns="urn:é">"#,
+                r#""a""#,
+                r#"Just "urn:\233""#,
+                "Nothing",
+            ),
+            (
+                r#"<a xmlns="&quot;\">"#,
+                r#""a""#,
+                r#"Just "\"\\""#,
+                "Nothing",
+            ),
+            (
+                r#"<a xmlns="x&#127;1&#128512;x&#233;2">"#,
+                r#""a""#,
+                r#"Just "x\DEL1\128512x\233\&2""#,
+                "Nothing",
+            ),
+            ("<a xmlns=\"x\ty\">", r#""a""#, r#"Just "x\ty""#, "Nothing"),
+            (
+                "<a xmlns=\"x\r\ny\">",
+                r#""a""#,
+                r#"Just "x\ny""#,
+                "Nothing",
+            ),
+            (
+                r#"<p:a xmlns:p="urn:p">"#,
+                r#""a""#,
+                r#"Just "urn:p""#,
+                r#"Just "p""#,
+            ),
+            (r#"<p:a xmlns:p="">"#, r#""a""#, r#"Just """#, r#"Just "p""#),
+            ("<p:a>", r#""a""#, "Nothing", r#"Just "p""#),
+            (
+                r#"<a xmlns="urn:x"><b>"#,
+                r#""b""#,
+                r#"Just "urn:x""#,
+                "Nothing",
+            ),
+            (
+                r#"<a xmlns="urn:x"><b xmlns="">"#,
+                r#""b""#,
+                "Nothing",
+                "Nothing",
+            ),
+            (
+                r#"<a xmlns:p="u"><b xmlns:p="v"/><p:c>"#,
+                r#""c""#,
+                r#"Just "u""#,
+                r#"Just "p""#,
+            ),
+            (
+                r#"<a><b xmlns:p="v"></b><p:c>"#,
+                r#""c""#,
+                "Nothing",
+                r#"Just "p""#,
+            ),
+            (
+                r#"<a xmlns:p="u"><p:b xmlns:p="v">"#,
+                r#""b""#,
+                r#"Just "v""#,
+                r#"Just "p""#,
+            ),
+            (r#"<xml:a xmlns:xml="u">"#, r#""a""#, &xml, r#"Just "xml""#),
+            ("<xmlns:a>", r#""a""#, "Nothing", r#"Just "xmlns""#),
+        ];
+        for (input, local, namespace, prefix) in cases {
+            assert_eq!(parse(input), error(local, namespace, prefix), "{input:?}");
+        }
+    }
+
+    #[test]
+    fn haskell_show_escapes() {
+        let cases = [
+            ("a\u{7f}1", r#""a\DEL1""#),
+            ("\0\u{1}\u{e}H\u{1f}", r#""\NUL\SOH\SO\&H\US""#),
+            ("\u{7}\u{8}\t\n\u{b}\u{c}\r", r#""\a\b\t\n\v\f\r""#),
+            ("\u{1f600}x", r#""\128512x""#),
+        ];
+        for (input, shown) in cases {
+            assert_eq!(haskell_string(input), shown, "{input:?}");
         }
     }
 

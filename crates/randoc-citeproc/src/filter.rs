@@ -14,7 +14,7 @@ use randoc_core::shared::{stringify, stringify_meta};
 use randoc_core::{Context, Error, LogMessage, Result};
 
 use crate::abbreviations::Abbreviations;
-use crate::citeproc::{Citation, CitationItem, Input, citeproc};
+use crate::citeproc::{Citation, CitationItem, Input, citeproc_until};
 use crate::eval::EvalError;
 use crate::lang::{Lang, parse_lang};
 use crate::markup::Markup;
@@ -53,8 +53,13 @@ pub struct Hooks<'h> {
     pub bib_references: Option<BibReferences<'h>>,
 }
 
-fn too_deep(_: EvalError) -> Error {
-    Error::App("the citations are nested too deeply".into())
+fn evaluation_error(error: EvalError) -> Error {
+    let message = match error {
+        EvalError::TooDeep => "the citations are nested too deeply",
+        EvalError::WorkLimit => "The citations exceed the evaluation limit.",
+        EvalError::Deadline => "The conversion deadline passed.",
+    };
+    Error::App(message.into())
 }
 
 fn meta_text(doc: &Pandoc, key: &str) -> Option<String> {
@@ -135,27 +140,10 @@ pub fn process_citations(context: &mut Context, doc: &mut Pandoc, mut hooks: Hoo
     };
     let locale = crate::loader::style_locale(context, &style, lang.as_ref())?;
 
-    let mut references = Vec::new();
-    // The bibliography files share one budget of `max_resource_size` bytes.
-    let mut budget = context.limits.max_resource_size;
-    for file in &bibliography {
-        references.extend(read_bibliography(
-            context,
-            file,
-            &locale,
-            &mut hooks,
-            &mut budget,
-        )?);
-    }
-    if let Some(MetaValue::MetaList(items)) = doc.meta.get("references") {
-        for item in items {
-            if let MetaValue::MetaMap(map) = item
-                && let Some(reference) = crate::csljson::meta_to_reference(map, max_depth)?
-            {
-                references.push(to_inlines(reference, &locale, max_depth)?);
-            }
-        }
-    }
+    let references = collect_references(context, doc, &mut hooks)?
+        .into_iter()
+        .map(|reference| to_inlines(reference, &locale, max_depth))
+        .collect::<Result<Vec<_>>>()?;
     let abbreviations = match meta_text(doc, "citation-abbreviations") {
         Some(file) => Some(read_abbreviations(context, &file, &mut hooks)?),
         None => None,
@@ -211,7 +199,7 @@ pub fn process_citations(context: &mut Context, doc: &mut Pandoc, mut hooks: Hoo
         citations: &citations,
         max_depth,
     };
-    let result = citeproc(options, input).map_err(too_deep)?;
+    let result = citeproc_until(options, input, context.deadline()).map_err(evaluation_error)?;
     for warning in &result.warnings {
         context.report(LogMessage::CiteprocWarning(warning.clone()));
     }
@@ -271,6 +259,30 @@ pub fn process_citations(context: &mut Context, doc: &mut Pandoc, mut hooks: Hoo
         }
     }
     Ok(())
+}
+
+/// Reads bibliography files and inline reference metadata without a citation style.
+pub fn collect_references(
+    context: &mut Context,
+    doc: &Pandoc,
+    hooks: &mut Hooks<'_>,
+) -> Result<Vec<Reference<Vec<Markup>>>> {
+    let max_depth = context.limits.max_nesting_depth;
+    let mut references = Vec::new();
+    let mut budget = context.limits.max_resource_size;
+    for file in bibliography_files(doc) {
+        references.extend(read_bibliography(context, &file, hooks, &mut budget)?);
+    }
+    if let Some(MetaValue::MetaList(items)) = doc.meta.get("references") {
+        for item in items {
+            if let MetaValue::MetaMap(map) = item
+                && let Some(reference) = crate::csljson::meta_to_reference(map, max_depth)?
+            {
+                references.push(reference);
+            }
+        }
+    }
+    Ok(references)
 }
 
 /// The file of the style: a file of the resource path, the name with
@@ -360,10 +372,9 @@ fn read_resource(
 fn read_bibliography(
     context: &mut Context,
     file: &str,
-    locale: &Locale,
     hooks: &mut Hooks,
     budget: &mut u64,
-) -> Result<Vec<Reference<Vec<Inline>>>> {
+) -> Result<Vec<Reference<Vec<Markup>>>> {
     let max_depth = context.limits.max_nesting_depth;
     let text = read_resource(context, file, hooks, budget)?;
     let text = text.strip_prefix('\u{feff}').unwrap_or(&text);
@@ -379,9 +390,7 @@ fn read_bibliography(
                     other => other,
                 },
             )?;
-            for reference in references {
-                out.push(to_inlines(reference, locale, max_depth)?);
-            }
+            return Ok(references);
         }
         format => {
             let items = match format {
@@ -399,7 +408,7 @@ fn read_bibliography(
                 if let MetaValue::MetaMap(map) = item
                     && let Some(reference) = crate::csljson::meta_to_reference(&map, max_depth)?
                 {
-                    out.push(to_inlines(reference, locale, max_depth)?);
+                    out.push(reference);
                 }
             }
         }
@@ -1404,6 +1413,48 @@ fn insert_bibliography(doc: &mut Pandoc, style: &Style, entries: Vec<Block>) {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn collects_references_without_a_style() -> Result<()> {
+        let mut context = Context::pure();
+        let mut hooks = Hooks {
+            find_resource: &mut |_, _| None,
+            yaml_references: &mut |_, _, _| Ok(Vec::new()),
+            bib_references: None,
+        };
+        let mut doc = Pandoc::default();
+        doc.meta.insert(
+            "references",
+            MetaValue::MetaList(vec![
+                MetaValue::MetaMap(
+                    [
+                        ("id".into(), MetaValue::MetaString("doe".into())),
+                        ("title".into(), MetaValue::MetaString("A Title".into())),
+                    ]
+                    .into(),
+                ),
+                MetaValue::MetaMap(Default::default()),
+            ]),
+        );
+        let references = collect_references(&mut context, &doc, &mut hooks)?;
+        assert_eq!(references.len(), 1);
+        assert_eq!(references[0].id, "doe");
+        assert!(
+            references[0]
+                .variables
+                .keys()
+                .any(|key| key.as_str() == "title")
+        );
+        doc.meta
+            .insert("bibliography", MetaValue::MetaString("nope.bib".into()));
+        assert_eq!(
+            collect_references(&mut context, &doc, &mut hooks)
+                .err()
+                .map(|e| e.to_string()),
+            Some("File 'nope.bib' not found in resource path".into())
+        );
+        Ok(())
+    }
 
     #[test]
     fn citation_math_stays_in_the_suffix() {

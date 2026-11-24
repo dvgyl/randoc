@@ -7,6 +7,8 @@
 //! The coordinator of the project owns this crate. A reader or a writer must
 //! not change the types here. See `docs/ARCHITECTURE.md`.
 
+#![forbid(unsafe_code)]
+
 mod context;
 pub mod error;
 mod extensions;
@@ -36,3 +38,5 @@ pub use options::{
     WrapOption, WriterOptions,
 };
 pub use randoc_ast::Text;
+/// Template parser, compiler and renderer.
+pub use randoc_templates as templates;

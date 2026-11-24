@@ -475,7 +475,37 @@ impl Doc {
 
     /// Renders plain text without line wrapping, up to `max_bytes` bytes.
     pub fn render_limited(&self, max_bytes: usize) -> Option<String> {
-        render::render_plain_limited(self, max_bytes)
+        self.render_limited_width(None, max_bytes)
+    }
+
+    /// Renders plain text, up to `max_bytes` bytes, with optional line wrapping.
+    pub fn render_limited_width(&self, width: Option<usize>, max_bytes: usize) -> Option<String> {
+        self.render_limited_until(width, max_bytes, None)
+    }
+
+    /// Renders plain text within a byte limit and an optional deadline.
+    pub fn render_limited_until(
+        &self,
+        width: Option<usize>,
+        max_bytes: usize,
+        deadline: Option<std::time::Instant>,
+    ) -> Option<String> {
+        render::render_plain_limited(self, width.map(to_isize), max_bytes, deadline)
+    }
+
+    /// Renders text with ANSI styles and links, up to `max_bytes` bytes.
+    pub fn render_ansi_limited(&self, width: Option<usize>, max_bytes: usize) -> Option<String> {
+        self.render_ansi_limited_until(width, max_bytes, None)
+    }
+
+    /// Renders ANSI text within a byte limit and an optional deadline.
+    pub fn render_ansi_limited_until(
+        &self,
+        width: Option<usize>,
+        max_bytes: usize,
+        deadline: Option<std::time::Instant>,
+    ) -> Option<String> {
+        render::render_ansi_limited(self, width.map(to_isize), max_bytes, deadline)
     }
 
     /// Estimates the bytes needed to keep this document in memory.
@@ -849,7 +879,7 @@ pub fn nest(indent: usize, doc: Doc) -> Doc {
     if doc.is_empty() {
         return doc;
     }
-    prefixed(&" ".repeat(indent), doc)
+    Doc(Node::Prefixed(" ".repeat(indent), Box::new(doc)))
 }
 
 /// A hanging indent: `start`, then `doc` with an indent of `indent` spaces
@@ -1019,19 +1049,32 @@ pub fn double_quotes(doc: Doc) -> Doc {
 
 /// Wraps `doc` at `width`, or at width 1 when `width` is 0. The alignment
 /// uses the requested width, as in `doclayout`.
-fn block(width: usize, doc: &Doc, align: fn(isize, Line) -> Line) -> Doc {
+fn block(
+    width: usize,
+    doc: &Doc,
+    align: fn(isize, Line) -> Line,
+    max_bytes: Option<usize>,
+) -> Option<Doc> {
     let requested = to_isize(width);
     let wrap = if width < 1 && !doc.is_empty() {
         1
     } else {
         requested
     };
-    let output = render::prerender(doc, Some(wrap));
-    let lines = render::chop(wrap, output)
+    let (output, max_lines) = match max_bytes {
+        Some(limit) => {
+            let output = render::prerender_limited(doc, Some(wrap), limit)?;
+            let line_cost = width
+                .saturating_add(std::mem::size_of::<Line>() + std::mem::size_of::<render::Attr>());
+            (output, limit / line_cost)
+        }
+        None => (render::prerender(doc, Some(wrap)), usize::MAX),
+    };
+    let lines = render::chop(wrap, output, max_lines)?
         .into_iter()
         .map(|line| align(requested, line))
         .collect();
-    Doc(Node::Block(wrap, lines))
+    Some(Doc(Node::Block(wrap, lines)))
 }
 
 fn pad_left(count: isize, line: Line) -> Line {
@@ -1053,26 +1096,44 @@ fn pad_left(count: isize, line: Line) -> Line {
 /// width must be a real column width, because the block pads its lines
 /// with spaces to that width.
 pub fn lblock(width: usize, doc: Doc) -> Doc {
-    block(width, &doc, |_, line| line)
+    block(width, &doc, |_, line| line, None).unwrap_or_default()
 }
 
 /// A block like [`lblock`], with the content aligned to the right. The
 /// width must be a real column width.
 pub fn rblock(width: usize, doc: Doc) -> Doc {
-    block(width, &doc, |w, line| {
-        pad_left(w.wrapping_sub(render::line_length(&line)), line)
-    })
+    block(width, &doc, align_right, None).unwrap_or_default()
 }
 
-/// A block like [`lblock`], with the content centered. The width must be
-/// a real column width.
+/// A block like [`lblock`], with the content centered. The width must be a real column width.
 pub fn cblock(width: usize, doc: Doc) -> Doc {
-    block(width, &doc, |w, line| {
-        pad_left(
-            w.wrapping_sub(render::line_length(&line)).div_euclid(2),
-            line,
-        )
-    })
+    block(width, &doc, align_center, None).unwrap_or_default()
+}
+
+fn align_right(width: isize, line: Line) -> Line {
+    pad_left(width.wrapping_sub(render::line_length(&line)), line)
+}
+
+fn align_center(width: isize, line: Line) -> Line {
+    pad_left(
+        width.wrapping_sub(render::line_length(&line)).div_euclid(2),
+        line,
+    )
+}
+
+/// Builds a left-aligned block under a layout and padding byte limit.
+pub fn lblock_limited(width: usize, doc: &Doc, max_bytes: usize) -> Option<Doc> {
+    block(width, doc, |_, line| line, Some(max_bytes))
+}
+
+/// Builds a right-aligned block under a layout and padding byte limit.
+pub fn rblock_limited(width: usize, doc: &Doc, max_bytes: usize) -> Option<Doc> {
+    block(width, doc, align_right, Some(max_bytes))
+}
+
+/// Builds a centered block under a layout and padding byte limit.
+pub fn cblock_limited(width: usize, doc: &Doc, max_bytes: usize) -> Option<Doc> {
+    block(width, doc, align_center, Some(max_bytes))
 }
 
 /// A border that expands to the height of the adjacent blocks. Each line of
@@ -1733,6 +1794,19 @@ mod tests {
     }
 
     #[test]
+    fn render_stops_at_an_expired_deadline() {
+        let doc = literal("one") + space() + literal("two");
+        assert_eq!(
+            doc.render_limited_until(Some(4), 128, Some(std::time::Instant::now())),
+            None
+        );
+        assert_eq!(
+            doc.render_limited_until(Some(4), 128, None).as_deref(),
+            Some("one\ntwo")
+        );
+    }
+
+    #[test]
     fn render_limit_counts_the_prefix_of_each_line() {
         let doc = nest(8, literal("a\nb"));
         assert_eq!(
@@ -1740,6 +1814,48 @@ mod tests {
             Some("        a\n        b")
         );
         assert_eq!(doc.render_limited(18), None);
+    }
+
+    #[test]
+    fn limited_wrapping_counts_each_repeated_indent() {
+        let doc = nest(64, literal("a").spaced(literal("b")).spaced(literal("c")));
+        assert!(doc.render_limited(128).is_some());
+        assert_eq!(doc.render_limited_width(Some(1), 128), None);
+        assert_eq!(doc.render_ansi_limited(Some(1), 128), None);
+        for block in [lblock_limited, cblock_limited, rblock_limited] {
+            assert!(block(1, &doc, 128).is_none());
+        }
+        for width in [None, Some(1)] {
+            let plain = doc.render(width);
+            let ansi = doc.render_ansi(width);
+            assert_eq!(doc.render_limited_width(width, plain.len()), Some(plain));
+            assert_eq!(doc.render_ansi_limited(width, ansi.len()), Some(ansi));
+        }
+    }
+
+    #[test]
+    fn limited_block_counts_line_attributes() {
+        let doc = literal("ab");
+        let limit = 2 * (1 + std::mem::size_of::<Line>() + std::mem::size_of::<render::Attr>());
+        assert!(lblock_limited(1, &doc, limit - 1).is_none());
+        assert_eq!(lblock_limited(1, &doc, limit).unwrap().render(None), "a\nb");
+    }
+
+    #[test]
+    fn limited_ansi_counts_style_and_link_sequences() {
+        let doc = bold(literal("a")) + link("https://example.com", literal("b"));
+        let ansi = doc.render_ansi(None);
+        assert_eq!(doc.render_ansi_limited(None, ansi.len() - 1), None);
+        assert_eq!(doc.render_ansi_limited(None, ansi.len()), Some(ansi));
+    }
+
+    #[test]
+    fn limited_render_bounds_blank_lines_and_repeated_borders() {
+        let lines = literal("a") + blanklines(10_000) + literal("b");
+        assert_eq!(lines.render_limited(100), None);
+        let doc = lblock(1, literal("a\nb\nc")) + vfill("0123456789");
+        assert_eq!(doc.render_limited(30), None);
+        assert_eq!(doc.render_limited(35), Some(doc.render(None)));
     }
 
     #[test]

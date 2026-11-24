@@ -260,7 +260,7 @@ fn precheck_eocd_candidate(
 impl<'a> Archive<'a> {
     /// Opens a ZIP archive from `bytes`, validating input size, entry count,
     /// duplicate entry names, and UTF-8 addressability.
-    pub fn open(bytes: &'a [u8], limits: ArchiveLimits) -> Result<Self, ArchiveError> {
+    pub fn open(bytes: &'a [u8], mut limits: ArchiveLimits) -> Result<Self, ArchiveError> {
         let size = bytes.len() as u64;
         if size > limits.max_input {
             return Err(ArchiveError::InputTooLarge {
@@ -270,6 +270,11 @@ impl<'a> Archive<'a> {
         }
         if bytes.len() < 4 {
             return Err(ArchiveError::NotEnoughBytes);
+        }
+        if let Some(ratio) = limits.max_ratio {
+            limits.max_total = limits
+                .max_total
+                .min(size.saturating_mul(ratio).max(RATIO_CHECK_MIN_BYTES));
         }
         precheck_eocd_entry_count(bytes, limits.max_entries)?;
         let mut zip = ZipArchive::new(Cursor::new(bytes)).map_err(|err| match err {
@@ -366,6 +371,27 @@ impl<'a> Archive<'a> {
         self.names.iter().filter_map(|opt| opt.as_deref()).collect()
     }
 
+    /// Returns the DOS modification time of the entry as Unix seconds.
+    pub fn entry_modified(&self, idx: usize) -> Option<i64> {
+        let dt = self.zip.by_index_data(idx).ok()?.last_modified()?;
+        // Days since 1970-01-01, with March as the first month of the year.
+        let month = i64::from(dt.month());
+        let year = i64::from(dt.year()) - i64::from(month <= 2);
+        let era = year.div_euclid(400);
+        let year_of_era = year.rem_euclid(400);
+        let month_from_march = if month > 2 { month - 3 } else { month + 9 };
+        let day_of_year = (153 * month_from_march + 2) / 5 + i64::from(dt.day()) - 1;
+        let days = era * 146_097 + year_of_era * 365 + year_of_era / 4 - year_of_era / 100
+            + day_of_year
+            - 719_468;
+        Some(
+            days * 86_400
+                + i64::from(dt.hour()) * 3600
+                + i64::from(dt.minute()) * 60
+                + i64::from(dt.second()),
+        )
+    }
+
     /// Reads an entry by exact raw name. Returns `Ok(None)` if absent or not
     /// addressable. Enforces `max_entry`, `max_total`, and `max_ratio`.
     pub fn read(&mut self, name: &str) -> Result<Option<Vec<u8>>, ArchiveError> {
@@ -432,11 +458,6 @@ impl<'a> Archive<'a> {
                     limit: self.limits.max_entry,
                 });
             }
-            if self.used > self.limits.max_total {
-                return Err(ArchiveError::TotalTooLarge {
-                    limit: self.limits.max_total,
-                });
-            }
             if let Some(max_ratio) = self.limits.max_ratio
                 && actual > RATIO_CHECK_MIN_BYTES
             {
@@ -449,6 +470,11 @@ impl<'a> Archive<'a> {
                         limit: max_ratio,
                     });
                 }
+            }
+            if self.used > self.limits.max_total {
+                return Err(ArchiveError::TotalTooLarge {
+                    limit: self.limits.max_total,
+                });
             }
             buf.extend_from_slice(&chunk[..n]);
         }
@@ -540,6 +566,32 @@ impl ArchiveWriter {
         self.write_entry(name, bytes, CompressionMethod::Deflated, unix_seconds)
     }
 
+    /// Writes a deflated entry when compression reduces the size.
+    /// Otherwise, writes a stored entry.
+    pub fn write_smallest_with_time(
+        &mut self,
+        name: &str,
+        bytes: &[u8],
+        unix_seconds: Option<i64>,
+    ) -> Result<(), ArchiveError> {
+        // A temporary ZIP lets the same encoder produce and measure the
+        // deflated data before this writer adds the entry.
+        let mut trial = Self::with_input_limit(self.remaining_input);
+        trial.write_deflated_with_time(name, bytes, unix_seconds)?;
+        let remaining = trial.remaining_input;
+        let zip_error = |error: zip::result::ZipError| ArchiveError::Write {
+            detail: error.to_string(),
+        };
+        let mut trial = ZipArchive::new(Cursor::new(trial.finish()?)).map_err(zip_error)?;
+        let entry = trial.by_index_raw(0).map_err(zip_error)?;
+        if entry.compressed_size() >= bytes.len() as u64 {
+            return self.write_stored_with_time(name, bytes, unix_seconds);
+        }
+        self.zip.raw_copy_file(entry).map_err(zip_error)?;
+        self.remaining_input = remaining;
+        Ok(())
+    }
+
     fn write_entry(
         &mut self,
         name: &str,
@@ -627,6 +679,41 @@ mod tests {
             }
         }
         w.finish().unwrap_or_default()
+    }
+
+    #[test]
+    fn writes_the_smaller_zip_method_and_rounds_dos_times() {
+        let large = [b'a'; 1024];
+        let mut writer = ArchiveWriter::with_input_limit(1028);
+        writer
+            .write_smallest_with_time("tiny", b"x", Some(0))
+            .expect("stored");
+        writer
+            .write_smallest_with_time("big", &large, Some(1_700_000_001))
+            .expect("deflated");
+        writer
+            .write_smallest_with_time("max", b"max", Some(i64::MAX))
+            .expect("stored");
+        assert!(
+            writer
+                .write_smallest_with_time("excess", b"x", None)
+                .is_err()
+        );
+        let bytes = writer.finish().expect("ZIP bytes");
+        let mut archive = Archive::open(&bytes, ArchiveLimits::default()).expect("archive");
+        for (idx, method, time, contents) in [
+            (0, CompressionMethod::Stored, 315_532_800, &b"x"[..]),
+            (1, CompressionMethod::Deflated, 1_700_000_000, &large[..]),
+            (2, CompressionMethod::Stored, 4_354_819_198, &b"max"[..]),
+        ] {
+            assert_eq!(
+                archive.zip.by_index_data(idx).expect("entry").compression(),
+                method
+            );
+            assert_eq!(archive.entry_modified(idx), Some(time));
+            assert_eq!(archive.read_index(idx).expect("content"), contents);
+        }
+        assert_eq!(archive.entry_modified(3), None);
     }
 
     #[test]
@@ -909,6 +996,29 @@ mod tests {
             Err(ArchiveError::Corrupt { .. })
         ));
         assert_eq!(archive.used_bytes(), 3);
+    }
+
+    #[test]
+    fn repeated_entry_reads_use_the_archive_ratio_budget() {
+        let payload = vec![b'x'; 8 << 10];
+        let bytes = make_zip(&[("chapter.txt", &payload, true)]);
+        let limits = ArchiveLimits {
+            max_ratio: Some(1),
+            ..ArchiveLimits::default()
+        };
+        let mut archive = Archive::open(&bytes, limits).expect("open");
+        for _ in 0..RATIO_CHECK_MIN_BYTES / payload.len() as u64 {
+            assert_eq!(
+                archive.read("chapter.txt").expect("read"),
+                Some(payload.clone())
+            );
+        }
+        assert!(matches!(
+            archive.read("chapter.txt"),
+            Err(ArchiveError::TotalTooLarge {
+                limit: RATIO_CHECK_MIN_BYTES
+            })
+        ));
     }
 
     #[test]

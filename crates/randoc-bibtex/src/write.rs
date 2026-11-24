@@ -29,7 +29,7 @@ pub(crate) fn write(
         &mut |_| Ok(Doc::default()),
     )?;
     fields.insert("body", Val::text(body.strip_suffix('\n').unwrap_or(&body)));
-    Ok(template.render(&fields).render(None))
+    context.render_template(template, &fields, None)
 }
 
 fn entries(

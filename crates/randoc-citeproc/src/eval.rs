@@ -29,6 +29,45 @@ use crate::unicode_class::{is_letter, is_lower, is_upper};
 pub enum EvalError {
     /// The style or the output is nested deeper than the depth limit.
     TooDeep,
+    /// The evaluation used all available work units.
+    WorkLimit,
+    /// The conversion deadline passed.
+    Deadline,
+}
+
+const MAX_EVALUATION_STEPS: usize = 1_000_000;
+
+pub(crate) struct EvalBudget {
+    pub(crate) remaining: usize,
+    deadline: Option<std::time::Instant>,
+}
+
+impl EvalBudget {
+    pub(crate) fn new(deadline: Option<std::time::Instant>) -> Self {
+        Self {
+            remaining: MAX_EVALUATION_STEPS,
+            deadline,
+        }
+    }
+
+    pub(crate) fn check_deadline(&self) -> Result<(), EvalError> {
+        if self
+            .deadline
+            .is_some_and(|deadline| std::time::Instant::now() >= deadline)
+        {
+            return Err(EvalError::Deadline);
+        }
+        Ok(())
+    }
+
+    fn step(&mut self) -> Result<(), EvalError> {
+        step();
+        if (MAX_EVALUATION_STEPS - self.remaining).is_multiple_of(256) {
+            self.check_deadline()?;
+        }
+        self.remaining = self.remaining.checked_sub(1).ok_or(EvalError::WorkLimit)?;
+        Ok(())
+    }
 }
 
 #[cfg(test)]
@@ -585,8 +624,10 @@ pub(crate) fn eval_elements(
     elements: &[Element],
     warnings: &mut BTreeSet<String>,
     depth: usize,
+    budget: &mut EvalBudget,
 ) -> Result<(Vec<Output>, Used), EvalError> {
     let mut eval = Eval {
+        budget,
         style: context.style,
         locale: context.locale,
         reference: context.reference,
@@ -624,6 +665,7 @@ pub(crate) fn add_language(outputs: &mut [Output], lang: &Lang) {
 }
 
 struct Eval<'a, 'w> {
+    budget: &'w mut EvalBudget,
     style: &'a Style,
     locale: &'a Locale,
     reference: &'a Reference<Vec<Inline>>,
@@ -674,7 +716,7 @@ impl<'a> Eval<'a, '_> {
 
     /// `eElement`.
     fn element(&mut self, element: &Element, depth: usize) -> Result<Vec<Output>, EvalError> {
-        step();
+        self.budget.step()?;
         let depth = depth.checked_sub(1).ok_or(EvalError::TooDeep)?;
         let formatting = &element.formatting;
         Ok(match &element.kind {
@@ -1770,7 +1812,7 @@ impl<'a> Eval<'a, '_> {
         let mut shown = 0;
         let mut parts = Vec::with_capacity(formatted_names.len() + 1);
         for (index, name) in (1..).zip(formatted_names) {
-            step();
+            self.budget.step()?;
             let after_threshold = |by: i64| threshold.is_some_and(|t| index - 1 - by >= t);
             let part = if threshold == Some(0) {
                 Output::Null
@@ -2748,7 +2790,7 @@ pub fn format_page_range(format: Option<PageRangeFormat>, delimiter: &str, text:
 mod tests {
     use std::collections::BTreeMap;
 
-    use super::{Citation, CitationItem, STEPS, eval_citation};
+    use super::{Citation, CitationItem, EvalBudget, EvalError, STEPS, eval_citation};
     use crate::output::{fix_punct, from_text};
     use crate::reference::{Name, Reference, Val, Variable};
 
@@ -2785,6 +2827,23 @@ mod tests {
         };
         eval_citation(&style, &style.locales[0], &citation, 128).unwrap();
         STEPS.with(std::cell::Cell::get)
+    }
+
+    #[test]
+    fn evaluation_stops_when_the_work_budget_is_used() {
+        let mut budget = EvalBudget {
+            remaining: 2,
+            deadline: None,
+        };
+        assert_eq!(budget.step(), Ok(()));
+        assert_eq!(budget.step(), Ok(()));
+        assert_eq!(budget.step(), Err(EvalError::WorkLimit));
+    }
+
+    #[test]
+    fn evaluation_stops_at_an_expired_deadline() {
+        let mut budget = EvalBudget::new(Some(std::time::Instant::now()));
+        assert_eq!(budget.step(), Err(EvalError::Deadline));
     }
 
     #[test]

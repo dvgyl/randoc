@@ -1,11 +1,43 @@
 use std::io;
 
 use randoc_ast::{MetaValue, Pandoc};
-use randoc_core::{Error, Host, Limits, ProcessOutput, ProcessRequest, Result, Text};
+use randoc_core::{
+    Context, Error, Host, Limits, Output, ProcessOutput, ProcessRequest, Result, Text,
+};
 
 use crate::plan::Engine;
 use crate::staging::{Staging, join, read_optional};
 use crate::{PdfOptions, PdfPlan, check_size};
+
+pub(crate) fn intermediate_bytes(
+    engine: Engine,
+    output: Output,
+    context: &mut Context,
+    host: &mut dyn crate::PdfHost,
+) -> Result<Vec<u8>> {
+    match output {
+        Output::Text(html)
+            if !context.media.is_empty()
+                && matches!(
+                    engine,
+                    Engine::WeasyPrint | Engine::PagedJs | Engine::Prince
+                ) =>
+        {
+            check_size(
+                html.len(),
+                context.limits.max_input_size,
+                "Intermediate document",
+            )?;
+            let html = if context.host().is_sandboxed() {
+                randoc_embed::embed_resources_with_host(&html, context, host)?
+            } else {
+                randoc_embed::embed_resources(&html, context)?
+            };
+            Ok(html.into_bytes())
+        }
+        output => Ok(output.into_bytes()),
+    }
+}
 
 pub(crate) fn run(
     plan: &PdfPlan,

@@ -1,4 +1,82 @@
 tag	term	value
+af	Abstract	Opsomming
+af	Appendix	Bylae
+af	Bibliography	Bibliografie
+af	Caution	Versigtig
+af	Cc	Afskrif aan
+af	Chapter	Hoofstuk
+af	Contents	Inhoud
+af	Encl	Ingeslote
+af	Figure	Figuur
+af	Glossary	Woordelys
+af	Important	Belangrik
+af	Index	Indeks
+af	ListOfFigures	Lys van figure
+af	ListOfTables	Lys van tabelle
+af	Listing	Kodelys
+af	Note	Nota
+af	Page	Bladsy
+af	Part	Deel
+af	Preface	Voorwoord
+af	Proof	Bewys
+af	References	Verwysings
+af	See	sien
+af	Table	Tabel
+af	Tip	Wenk
+af	To	Aan
+af	Warning	Waarskuwing
+alt	Abstract	Аннотация
+alt	Appendix	Кожулта
+alt	Bibliography	Библиография
+alt	Caution	Сак болыгар
+alt	Cc	Копиязы
+alt	Chapter	Бöлÿк
+alt	Contents	Тургузылгазы
+alt	Encl	Кожулта
+alt	Figure	Јурук
+alt	Glossary	Сöстöр
+alt	Important	Учурлу
+alt	Index	Кöргÿзÿ
+alt	ListOfFigures	Јуруктардыҥ тизÿзи
+alt	ListOfTables	Таблицалардыҥ тизÿзи
+alt	Listing	Листинг
+alt	Note	Ајару
+alt	Page	Бет
+alt	Part	Ӱлÿ
+alt	Preface	Баштапкы сöс
+alt	Proof	Керелеш
+alt	References	Литература
+alt	See	кöр
+alt	Table	Таблица
+alt	Tip	Кеҥеш
+alt	To	Кемге
+alt	Warning	Эскертÿ
+am	Abstract	ማጠቃለያ
+am	Appendix	አባሪ
+am	Bibliography	የመጽሐፍ ዝርዝር
+am	Caution	ጥንቃቄ
+am	Cc	ግልባጭ
+am	Chapter	ምዕራፍ
+am	Contents	ማውጫ
+am	Encl	አባሪዎች
+am	Figure	ምስል
+am	Glossary	የቃላት መፍቻ
+am	Important	አስፈላጊ
+am	Index	ጠቋሚ
+am	ListOfFigures	የምስሎች ዝርዝር
+am	ListOfTables	የሰንጠረዦች ዝርዝር
+am	Listing	ዝርዝር
+am	Note	ማስታወሻ
+am	Page	ገጽ
+am	Part	ክፍል
+am	Preface	መቅድም
+am	Proof	ማረጋገጫ
+am	References	ዋቢዎች
+am	See	ይመልከቱ
+am	Table	ሰንጠረዥ
+am	Tip	ጠቃሚ ምክር
+am	To	ለ
+am	Warning	ማስጠንቀቂያ
 ar	Abstract	الملخص
 ar	Appendix	ملحق
 ar	Bibliography	الببليوغرافيا
@@ -25,6 +103,110 @@ ar	Table	جدول
 ar	Tip	نصيحة
 ar	To	إلى
 ar	Warning	تحذير
+as	Abstract	সাৰাংশ
+as	Appendix	পৰিশিষ্ট
+as	Bibliography	গ্ৰন্থপঞ্জী
+as	Caution	সাৱধান
+as	Cc	প্ৰতিলিপি
+as	Chapter	অধ্যায়
+as	Contents	সূচীপত্ৰ
+as	Encl	সংলগ্ন
+as	Figure	চিত্ৰ
+as	Glossary	শব্দকোষ
+as	Important	গুৰুত্বপূৰ্ণ
+as	Index	সূচী
+as	ListOfFigures	চিত্ৰৰ তালিকা
+as	ListOfTables	সাৰণীৰ তালিকা
+as	Listing	তালিকা
+as	Note	টোকা
+as	Page	পৃষ্ঠা
+as	Part	খণ্ড
+as	Preface	আমুখ
+as	Proof	প্ৰমাণ
+as	References	প্ৰসংগ সূত্ৰ
+as	See	চাওক
+as	Table	সাৰণী
+as	Tip	পৰামৰ্শ
+as	To	প্ৰতি
+as	Warning	সতৰ্কবাণী
+ast	Abstract	Resume
+ast	Appendix	Apéndiz
+ast	Bibliography	Bibliografía
+ast	Caution	Precaución
+ast	Cc	Copia a
+ast	Chapter	Capítulu
+ast	Contents	Índiz
+ast	Encl	Axuntu
+ast	Figure	Figura
+ast	Glossary	Glosariu
+ast	Important	Importante
+ast	Index	Índiz alfabéticu
+ast	ListOfFigures	Índiz de figures
+ast	ListOfTables	Índiz de tables
+ast	Listing	Llistáu
+ast	Note	Nota
+ast	Page	Páxina
+ast	Part	Parte
+ast	Preface	Prefaciu
+ast	Proof	Demostración
+ast	References	Referencies
+ast	See	ver
+ast	Table	Tabla
+ast	Tip	Conseyu
+ast	To	Pa
+ast	Warning	Avisu
+az	Abstract	Xülasə
+az	Appendix	Əlavə
+az	Bibliography	Biblioqrafiya
+az	Caution	Diqqət
+az	Cc	Surəti
+az	Chapter	Fəsil
+az	Contents	Mündəricat
+az	Encl	Əlavələr
+az	Figure	Şəkil
+az	Glossary	Lüğət
+az	Important	Vacib
+az	Index	Göstərici
+az	ListOfFigures	Şəkillərin siyahısı
+az	ListOfTables	Cədvəllərin siyahısı
+az	Listing	Listinq
+az	Note	Qeyd
+az	Page	Səhifə
+az	Part	Hissə
+az	Preface	Ön söz
+az	Proof	İsbat
+az	References	İstinadlar
+az	See	bax
+az	Table	Cədvəl
+az	Tip	Məsləhət
+az	To	Kimə
+az	Warning	Xəbərdarlıq
+be	Abstract	Анатацыя
+be	Appendix	Дадатак
+be	Bibliography	Бібліяграфія
+be	Caution	Асцярожна
+be	Cc	Копія
+be	Chapter	Раздзел
+be	Contents	Змест
+be	Encl	Дадатак
+be	Figure	Мал.
+be	Glossary	Слоўнік тэрмінаў
+be	Important	Важна
+be	Index	Паказальнік
+be	ListOfFigures	Спіс ілюстрацый
+be	ListOfTables	Спіс табліц
+be	Listing	Лістынг
+be	Note	Заўвага
+be	Page	Старонка
+be	Part	Частка
+be	Preface	Прадмова
+be	Proof	Доказ
+be	References	Літаратура
+be	See	гл.
+be	Table	Табліца
+be	Tip	Парада
+be	To	Каму
+be	Warning	Папярэджанне
 bg	Abstract	Резюме
 bg	Appendix	Приложение
 bg	Bibliography	Библиография
@@ -51,6 +233,136 @@ bg	Table	Таблица
 bg	Tip	Съвет
 bg	To	До
 bg	Warning	Предупреждение
+bn	Abstract	সারসংক্ষেপ
+bn	Appendix	পরিশিষ্ট
+bn	Bibliography	গ্রন্থপঞ্জি
+bn	Caution	সাবধান
+bn	Cc	প্রতিলিপি
+bn	Chapter	অধ্যায়
+bn	Contents	সূচিপত্র
+bn	Encl	সংযুক্তি
+bn	Figure	চিত্র
+bn	Glossary	শব্দকোষ
+bn	Important	গুরুত্বপূর্ণ
+bn	Index	নির্ঘণ্ট
+bn	ListOfFigures	চিত্রের তালিকা
+bn	ListOfTables	সারণির তালিকা
+bn	Listing	তালিকা
+bn	Note	টীকা
+bn	Page	পৃষ্ঠা
+bn	Part	খণ্ড
+bn	Preface	ভূমিকা
+bn	Proof	প্রমাণ
+bn	References	তথ্যসূত্র
+bn	See	দেখুন
+bn	Table	সারণি
+bn	Tip	পরামর্শ
+bn	To	প্রতি
+bn	Warning	সতর্কতা
+bo	Abstract	སྙིང་བསྡུས
+bo	Appendix	ཟུར་སྣོན
+bo	Bibliography	དཔྱད་གཞིའི་དཔེ་ཐོ
+bo	Caution	གཟབ་ནན
+bo	Cc	འདྲ་བཤུས
+bo	Chapter	ལེའུ
+bo	Contents	དཀར་ཆག
+bo	Encl	ཟུར་འཇུག
+bo	Figure	རི་མོ
+bo	Glossary	ཚིག་མཛོད
+bo	Important	གལ་ཆེན
+bo	Index	འཚོལ་བྱང
+bo	ListOfFigures	རི་མོའི་ཐོ
+bo	ListOfTables	རེའུ་མིག་གི་ཐོ
+bo	Listing	ཐོ་གཞུང
+bo	Note	མཆན
+bo	Page	ཤོག་ངོས
+bo	Part	ཆ
+bo	Preface	སྔོན་གླེང
+bo	Proof	ར་སྤྲོད
+bo	References	ལུང་འདྲེན
+bo	See	ལྟོས
+bo	Table	རེའུ་མིག
+bo	Tip	བསླབ་བྱ
+bo	To	ལ
+bo	Warning	ཉེན་བརྡ
+br	Abstract	Diverradenn
+br	Appendix	Stagadenn
+br	Bibliography	Levrlennadur
+br	Caution	Evezh
+br	Cc	Eilskrid da
+br	Chapter	Pennad
+br	Contents	Taolenn an danvez
+br	Encl	Stag
+br	Figure	Skeudenn
+br	Glossary	Geriaoueg
+br	Important	A-bouez
+br	Index	Meneger
+br	ListOfFigures	Roll ar skeudennoù
+br	ListOfTables	Roll an taolennoù
+br	Listing	Listenn
+br	Note	Notenn
+br	Page	Pajenn
+br	Part	Lodenn
+br	Preface	Rakskrid
+br	Proof	Prouenn
+br	References	Daveoù
+br	See	gwelout
+br	Table	Taolenn
+br	Tip	Kuzul
+br	To	Da
+br	Warning	Diwall
+bs	Abstract	Sažetak
+bs	Appendix	Dodatak
+bs	Bibliography	Bibliografija
+bs	Caution	Oprez
+bs	Cc	Kopija
+bs	Chapter	Poglavlje
+bs	Contents	Sadržaj
+bs	Encl	Prilog
+bs	Figure	Slika
+bs	Glossary	Pojmovnik
+bs	Important	Važno
+bs	Index	Indeks
+bs	ListOfFigures	Popis slika
+bs	ListOfTables	Popis tabela
+bs	Listing	Listing
+bs	Note	Napomena
+bs	Page	Stranica
+bs	Part	Dio
+bs	Preface	Predgovor
+bs	Proof	Dokaz
+bs	References	Literatura
+bs	See	vidi
+bs	Table	Tabela
+bs	Tip	Savjet
+bs	To	Za
+bs	Warning	Upozorenje
+bua	Abstract	Аннотаци
+bua	Appendix	Нэмэлтэ
+bua	Bibliography	Библиографи
+bua	Caution	Болгоомжо
+bua	Cc	Хуулбари
+bua	Chapter	Бүлэг
+bua	Contents	Агуулга
+bua	Encl	Нэмэлтэнүүд
+bua	Figure	Зураг
+bua	Glossary	Тайлбари толи
+bua	Important	Шухала
+bua	Index	Заагша
+bua	ListOfFigures	Зурагуудай жагсаалта
+bua	ListOfTables	Таблицануудай жагсаалта
+bua	Listing	Листинг
+bua	Note	Тэмдэглэл
+bua	Page	Хуудаһан
+bua	Part	Хэһэг
+bua	Preface	Үмэнэхи үгэ
+bua	Proof	Баталгаа
+bua	References	Литература
+bua	See	харагты
+bua	Table	Таблица
+bua	Tip	Зүблэл
+bua	To	Хэндэ
+bua	Warning	Һануулга
 ca	Abstract	Resum
 ca	Appendix	Apèndix
 ca	Bibliography	Bibliografia
@@ -77,6 +389,58 @@ ca	Table	Taula
 ca	Tip	Consell
 ca	To	A
 ca	Warning	Advertiment
+ckb-Arab	Abstract	پوختە
+ckb-Arab	Appendix	پاشکۆ
+ckb-Arab	Bibliography	سەرچاوەنامە
+ckb-Arab	Caution	ئاگاداربە
+ckb-Arab	Cc	کۆپی بۆ
+ckb-Arab	Chapter	بەش
+ckb-Arab	Contents	ناوەڕۆک
+ckb-Arab	Encl	هاوپێچ
+ckb-Arab	Figure	وێنە
+ckb-Arab	Glossary	فەرهەنگۆک
+ckb-Arab	Important	گرنگ
+ckb-Arab	Index	پێڕست
+ckb-Arab	ListOfFigures	لیستی وێنەکان
+ckb-Arab	ListOfTables	لیستی خشتەکان
+ckb-Arab	Listing	لیستکردن
+ckb-Arab	Note	تێبینی
+ckb-Arab	Page	لاپەڕە
+ckb-Arab	Part	پارچە
+ckb-Arab	Preface	پێشەکی
+ckb-Arab	Proof	سەلماندن
+ckb-Arab	References	سەرچاوەکان
+ckb-Arab	See	بڕوانە
+ckb-Arab	Table	خشتە
+ckb-Arab	Tip	ئامۆژگاری
+ckb-Arab	To	بۆ
+ckb-Arab	Warning	ئاگاداری
+ckb-Latn	Abstract	Puxte
+ckb-Latn	Appendix	Paşko
+ckb-Latn	Bibliography	Serçawename
+ckb-Latn	Caution	Agadarbe
+ckb-Latn	Cc	Kopî bo
+ckb-Latn	Chapter	Beş
+ckb-Latn	Contents	Nawerok
+ckb-Latn	Encl	Hawpêç
+ckb-Latn	Figure	Wêne
+ckb-Latn	Glossary	Ferhengok
+ckb-Latn	Important	Giring
+ckb-Latn	Index	Pêrist
+ckb-Latn	ListOfFigures	Lîstî wênekan
+ckb-Latn	ListOfTables	Lîstî xiştekan
+ckb-Latn	Listing	Lîstkirdin
+ckb-Latn	Note	Têbînî
+ckb-Latn	Page	Lapere
+ckb-Latn	Part	Parçe
+ckb-Latn	Preface	Pêşekî
+ckb-Latn	Proof	Selmandin
+ckb-Latn	References	Serçawekan
+ckb-Latn	See	birwane
+ckb-Latn	Table	Xište
+ckb-Latn	Tip	Amojgarî
+ckb-Latn	To	Bo
+ckb-Latn	Warning	Agadarî
 cs	Abstract	Abstrakt
 cs	Appendix	Dodatek
 cs	Bibliography	Bibliografie
@@ -103,6 +467,84 @@ cs	Table	Tabulka
 cs	Tip	Tip
 cs	To	Komu
 cs	Warning	Varování
+cu	Abstract	Сокращеніе
+cu	Appendix	Приложеніе
+cu	Bibliography	Книгописаніе
+cu	Caution	Внемли
+cu	Cc	Списокъ ко
+cu	Chapter	Глава
+cu	Contents	Оглавленіе
+cu	Encl	Приложеніе
+cu	Figure	Изображеніе
+cu	Glossary	Словарь
+cu	Important	Важно
+cu	Index	Указатель
+cu	ListOfFigures	Списокъ изображеній
+cu	ListOfTables	Списокъ таблицъ
+cu	Listing	Листингъ
+cu	Note	Примѣчаніе
+cu	Page	Страница
+cu	Part	Часть
+cu	Preface	Предисловіе
+cu	Proof	Доказательство
+cu	References	Литература
+cu	See	зри
+cu	Table	Таблица
+cu	Tip	Совѣтъ
+cu	To	Къ
+cu	Warning	Предостереженіе
+cy	Abstract	Crynodeb
+cy	Appendix	Atodiad
+cy	Bibliography	Llyfryddiaeth
+cy	Caution	Gofal
+cy	Cc	Copi at
+cy	Chapter	Pennod
+cy	Contents	Cynnwys
+cy	Encl	Amgaeëdig
+cy	Figure	Ffigur
+cy	Glossary	Geirfa
+cy	Important	Pwysig
+cy	Index	Mynegai
+cy	ListOfFigures	Rhestr Ffigurau
+cy	ListOfTables	Rhestr Tablau
+cy	Listing	Rhestriad
+cy	Note	Nodyn
+cy	Page	Tudalen
+cy	Part	Rhan
+cy	Preface	Rhagair
+cy	Proof	Prawf
+cy	References	Cyfeiriadau
+cy	See	gweler
+cy	Table	Tabl
+cy	Tip	Awgrym
+cy	To	At
+cy	Warning	Rhybudd
+cz	Abstract	Abstrakt
+cz	Appendix	Dodatek
+cz	Bibliography	Bibliografie
+cz	Caution	Pozor
+cz	Cc	Na vědomí
+cz	Chapter	Kapitola
+cz	Contents	Obsah
+cz	Encl	Příloha
+cz	Figure	Obrázek
+cz	Glossary	Slovník pojmů
+cz	Important	Důležité
+cz	Index	Rejstřík
+cz	ListOfFigures	Seznam obrázků
+cz	ListOfTables	Seznam tabulek
+cz	Listing	Výpis kódu
+cz	Note	Poznámka
+cz	Page	Strana
+cz	Part	Část
+cz	Preface	Předmluva
+cz	Proof	Důkaz
+cz	References	Literatura
+cz	See	viz
+cz	Table	Tabulka
+cz	Tip	Tip
+cz	To	Komu
+cz	Warning	Varování
 da	Abstract	Resumé
 da	Appendix	Bilag
 da	Bibliography	Bibliografi
@@ -155,58 +597,32 @@ de	Table	Tabelle
 de	Tip	Tipp
 de	To	An
 de	Warning	Warnung
-de-AT	Abstract	Zusammenfassung
-de-AT	Appendix	Anhang
-de-AT	Bibliography	Bibliografie
-de-AT	Caution	Vorsicht
-de-AT	Cc	Kopie an
-de-AT	Chapter	Kapitel
-de-AT	Contents	Inhaltsverzeichnis
-de-AT	Encl	Beilage
-de-AT	Figure	Abbildung
-de-AT	Glossary	Glossar
-de-AT	Important	Wichtig
-de-AT	Index	Register
-de-AT	ListOfFigures	Abbildungsverzeichnis
-de-AT	ListOfTables	Tabellenverzeichnis
-de-AT	Listing	Listing
-de-AT	Note	Hinweis
-de-AT	Page	Seite
-de-AT	Part	Teil
-de-AT	Preface	Vorwort
-de-AT	Proof	Beweis
-de-AT	References	Literatur
-de-AT	See	siehe
-de-AT	Table	Tabelle
-de-AT	Tip	Tipp
-de-AT	To	An
-de-AT	Warning	Warnung
-de-CH	Abstract	Zusammenfassung
-de-CH	Appendix	Anhang
-de-CH	Bibliography	Bibliografie
-de-CH	Caution	Vorsicht
-de-CH	Cc	Kopie an
-de-CH	Chapter	Kapitel
-de-CH	Contents	Inhaltsverzeichnis
-de-CH	Encl	Beilage
-de-CH	Figure	Abbildung
-de-CH	Glossary	Glossar
-de-CH	Important	Wichtig
-de-CH	Index	Register
-de-CH	ListOfFigures	Abbildungsverzeichnis
-de-CH	ListOfTables	Tabellenverzeichnis
-de-CH	Listing	Listing
-de-CH	Note	Hinweis
-de-CH	Page	Seite
-de-CH	Part	Teil
-de-CH	Preface	Vorwort
-de-CH	Proof	Beweis
-de-CH	References	Literatur
-de-CH	See	siehe
-de-CH	Table	Tabelle
-de-CH	Tip	Tipp
-de-CH	To	An
-de-CH	Warning	Warnung
+dsb	Abstract	Abstrakt
+dsb	Appendix	Pśidank
+dsb	Bibliography	Bibliografija
+dsb	Caution	Glědajśo
+dsb	Cc	Kopija na
+dsb	Chapter	Kapitl
+dsb	Contents	Wopśimjeśe
+dsb	Encl	Pśiłoga
+dsb	Figure	Wobraz
+dsb	Glossary	Słownik
+dsb	Important	Wažne
+dsb	Index	Register
+dsb	ListOfFigures	Lisćina wobrazow
+dsb	ListOfTables	Lisćina tabelow
+dsb	Listing	Listing
+dsb	Note	Pśispomnjeńka
+dsb	Page	Bok
+dsb	Part	Źěl
+dsb	Preface	Zawod
+dsb	Proof	Dopokaz
+dsb	References	Literatura
+dsb	See	glědaj
+dsb	Table	Tabela
+dsb	Tip	Pokazka
+dsb	To	Na
+dsb	Warning	Warnowanje
 el	Abstract	Περίληψη
 el	Appendix	Παράρτημα
 el	Bibliography	Βιβλιογραφία
@@ -259,6 +675,32 @@ en	Table	Table
 en	Tip	Tip
 en	To	To
 en	Warning	Warning
+eo	Abstract	Resumo
+eo	Appendix	Aldono
+eo	Bibliography	Bibliografio
+eo	Caution	Atentu
+eo	Cc	Kopie al
+eo	Chapter	Ĉapitro
+eo	Contents	Enhavo
+eo	Encl	Kunsendaĵo
+eo	Figure	Figuro
+eo	Glossary	Glosaro
+eo	Important	Grava
+eo	Index	Indekso
+eo	ListOfFigures	Listo de figuroj
+eo	ListOfTables	Listo de tabeloj
+eo	Listing	Listaĵo
+eo	Note	Noto
+eo	Page	Paĝo
+eo	Part	Parto
+eo	Preface	Antaŭparolo
+eo	Proof	Pruvo
+eo	References	Referencoj
+eo	See	vidu
+eo	Table	Tabelo
+eo	Tip	Konsilo
+eo	To	Al
+eo	Warning	Averto
 es	Abstract	Resumen
 es	Appendix	Apéndice
 es	Bibliography	Bibliografía
@@ -285,6 +727,84 @@ es	Table	Tabla
 es	Tip	Consejo
 es	To	Para
 es	Warning	Advertencia
+es-ES	Abstract	Resumen
+es-ES	Appendix	Apéndice
+es-ES	Bibliography	Bibliografía
+es-ES	Caution	Precaución
+es-ES	Cc	Copia a
+es-ES	Chapter	Capítulo
+es-ES	Contents	Índice general
+es-ES	Encl	Anexo
+es-ES	Figure	Figura
+es-ES	Glossary	Glosario
+es-ES	Important	Importante
+es-ES	Index	Índice alfabético
+es-ES	ListOfFigures	Índice de figuras
+es-ES	ListOfTables	Índice de tablas
+es-ES	Listing	Listado
+es-ES	Note	Nota
+es-ES	Page	Página
+es-ES	Part	Parte
+es-ES	Preface	Prefacio
+es-ES	Proof	Demostración
+es-ES	References	Referencias
+es-ES	See	véase
+es-ES	Table	Tabla
+es-ES	Tip	Consejo
+es-ES	To	Para
+es-ES	Warning	Advertencia
+es-MX	Abstract	Resumen
+es-MX	Appendix	Apéndice
+es-MX	Bibliography	Bibliografía
+es-MX	Caution	Precaución
+es-MX	Cc	Copia a
+es-MX	Chapter	Capítulo
+es-MX	Contents	Contenido
+es-MX	Encl	Anexo
+es-MX	Figure	Figura
+es-MX	Glossary	Glosario
+es-MX	Important	Importante
+es-MX	Index	Índice alfabético
+es-MX	ListOfFigures	Índice de figuras
+es-MX	ListOfTables	Índice de tablas
+es-MX	Listing	Listado
+es-MX	Note	Nota
+es-MX	Page	Página
+es-MX	Part	Parte
+es-MX	Preface	Prefacio
+es-MX	Proof	Demostración
+es-MX	References	Referencias
+es-MX	See	véase
+es-MX	Table	Tabla
+es-MX	Tip	Sugerencia
+es-MX	To	Para
+es-MX	Warning	Advertencia
+et	Abstract	Kokkuvõte
+et	Appendix	Lisa
+et	Bibliography	Bibliograafia
+et	Caution	Ettevaatust
+et	Cc	Koopia
+et	Chapter	Peatükk
+et	Contents	Sisukord
+et	Encl	Lisad
+et	Figure	Joonis
+et	Glossary	Sõnastik
+et	Important	Tähtis
+et	Index	Register
+et	ListOfFigures	Jooniste loetelu
+et	ListOfTables	Tabelite loetelu
+et	Listing	Koodilõik
+et	Note	Märkus
+et	Page	Lehekülg
+et	Part	Osa
+et	Preface	Eessõna
+et	Proof	Tõestus
+et	References	Viited
+et	See	vt
+et	Table	Tabel
+et	Tip	Nõuanne
+et	To	Saaja
+et	Warning	Hoiatus
 eu	Abstract	Laburpena
 eu	Appendix	Eranskina
 eu	Bibliography	Bibliografia
@@ -311,6 +831,32 @@ eu	Table	Taula
 eu	Tip	Aholkua
 eu	To	Hartzailea
 eu	Warning	Abisua
+fa	Abstract	چکیده
+fa	Appendix	پیوست
+fa	Bibliography	کتاب‌نامه
+fa	Caution	احتیاط
+fa	Cc	رونوشت
+fa	Chapter	فصل
+fa	Contents	فهرست مطالب
+fa	Encl	پیوست‌ها
+fa	Figure	شکل
+fa	Glossary	واژه‌نامه
+fa	Important	مهم
+fa	Index	نمایه
+fa	ListOfFigures	فهرست شکل‌ها
+fa	ListOfTables	فهرست جدول‌ها
+fa	Listing	فهرست برنامه
+fa	Note	یادداشت
+fa	Page	صفحه
+fa	Part	بخش
+fa	Preface	پیش‌گفتار
+fa	Proof	برهان
+fa	References	مراجع
+fa	See	ببینید
+fa	Table	جدول
+fa	Tip	نکته
+fa	To	به
+fa	Warning	هشدار
 fi	Abstract	Tiivistelmä
 fi	Appendix	Liite
 fi	Bibliography	Kirjallisuusluettelo
@@ -337,6 +883,32 @@ fi	Table	Taulukko
 fi	Tip	Vinkki
 fi	To	Vastaanottaja
 fi	Warning	Varoitus
+fil	Abstract	Buod
+fil	Appendix	Apendiks
+fil	Bibliography	Bibliograpiya
+fil	Caution	Mag-ingat
+fil	Cc	Kopya kay
+fil	Chapter	Kabanata
+fil	Contents	Nilalaman
+fil	Encl	Kalakip
+fil	Figure	Pigura
+fil	Glossary	Glosaryo
+fil	Important	Mahalaga
+fil	Index	Indeks
+fil	ListOfFigures	Listahan ng mga Pigura
+fil	ListOfTables	Listahan ng mga Talahanayan
+fil	Listing	Listahan ng Kodigo
+fil	Note	Tala
+fil	Page	Pahina
+fil	Part	Bahagi
+fil	Preface	Paunang Salita
+fil	Proof	Patunay
+fil	References	Mga Sanggunian
+fil	See	tingnan
+fil	Table	Talahanayan
+fil	Tip	Payo
+fil	To	Para kay
+fil	Warning	Babala
 fr	Abstract	Résumé
 fr	Appendix	Annexe
 fr	Bibliography	Bibliographie
@@ -363,6 +935,84 @@ fr	Table	Tableau
 fr	Tip	Conseil
 fr	To	À
 fr	Warning	Avertissement
+fur	Abstract	Sunt
+fur	Appendix	Apendiç
+fur	Bibliography	Bibliografie
+fur	Caution	Atenzion
+fur	Cc	Copie a
+fur	Chapter	Cjapitul
+fur	Contents	Indiç
+fur	Encl	Alegât
+fur	Figure	Figure
+fur	Glossary	Glossari
+fur	Important	Impuartant
+fur	Index	Indiç analitic
+fur	ListOfFigures	Liste des figuris
+fur	ListOfTables	Liste des tabelis
+fur	Listing	Listât
+fur	Note	Note
+fur	Page	Pagjine
+fur	Part	Part
+fur	Preface	Prefazion
+fur	Proof	Dimostrazion
+fur	References	Riferiments
+fur	See	viôt
+fur	Table	Tabele
+fur	Tip	Conseì
+fur	To	A
+fur	Warning	Avertiment
+ga	Abstract	Achoimre
+ga	Appendix	Aguisín
+ga	Bibliography	Leabharliosta
+ga	Caution	Aire
+ga	Cc	Cóip chuig
+ga	Chapter	Caibidil
+ga	Contents	Clár Ábhair
+ga	Encl	Iniata
+ga	Figure	Fíor
+ga	Glossary	Gluais
+ga	Important	Tábhachtach
+ga	Index	Innéacs
+ga	ListOfFigures	Liosta Fíoracha
+ga	ListOfTables	Liosta Táblaí
+ga	Listing	Liostú
+ga	Note	Nóta
+ga	Page	Leathanach
+ga	Part	Cuid
+ga	Preface	Réamhrá
+ga	Proof	Cruthúnas
+ga	References	Tagairtí
+ga	See	féach
+ga	Table	Tábla
+ga	Tip	Leid
+ga	To	Chuig
+ga	Warning	Rabhadh
+gd	Abstract	Geàrr-chunntas
+gd	Appendix	Eàrr-ràdh
+gd	Bibliography	Leabhar-chlàr
+gd	Caution	Thoir an aire
+gd	Cc	Lethbhreac gu
+gd	Chapter	Caibideil
+gd	Contents	Clàr-innse
+gd	Encl	Na chois
+gd	Figure	Dealbh
+gd	Glossary	Beag-fhaclair
+gd	Important	Cudromach
+gd	Index	Clàr-amais
+gd	ListOfFigures	Liosta dhealbhan
+gd	ListOfTables	Liosta chlàr
+gd	Listing	Liosta còd
+gd	Note	Nòta
+gd	Page	Duilleag
+gd	Part	Earrann
+gd	Preface	Ro-ràdh
+gd	Proof	Dearbhadh
+gd	References	Iomraidhean
+gd	See	faic
+gd	Table	Clàr
+gd	Tip	Moladh
+gd	To	Gu
+gd	Warning	Rabhadh
 gl	Abstract	Resumo
 gl	Appendix	Apéndice
 gl	Bibliography	Bibliografía
@@ -389,6 +1039,84 @@ gl	Table	Táboa
 gl	Tip	Consello
 gl	To	Para
 gl	Warning	Aviso
+grc	Abstract	Περίληψις
+grc	Appendix	Παράρτημα
+grc	Bibliography	Βιβλιογραφία
+grc	Caution	Φυλάττου
+grc	Cc	Ἀντίγραφον
+grc	Chapter	Κεφάλαιον
+grc	Contents	Περιεχόμενα
+grc	Encl	Συνημμένα
+grc	Figure	Εἰκών
+grc	Glossary	Γλωσσάριον
+grc	Important	Σπουδαῖον
+grc	Index	Εὑρετήριον
+grc	ListOfFigures	Κατάλογος εἰκόνων
+grc	ListOfTables	Κατάλογος πινάκων
+grc	Listing	Κατάλογος
+grc	Note	Σημείωσις
+grc	Page	Σελίς
+grc	Part	Μέρος
+grc	Preface	Προοίμιον
+grc	Proof	Ἀπόδειξις
+grc	References	Παραπομπαί
+grc	See	ὅρα
+grc	Table	Πίναξ
+grc	Tip	Συμβουλή
+grc	To	Πρός
+grc	Warning	Προειδοποίησις
+gu	Abstract	સારાંશ
+gu	Appendix	પરિશિષ્ટ
+gu	Bibliography	ગ્રંથસૂચિ
+gu	Caution	સાવધાન
+gu	Cc	નકલ
+gu	Chapter	પ્રકરણ
+gu	Contents	અનુક્રમણિકા
+gu	Encl	બિડાણ
+gu	Figure	આકૃતિ
+gu	Glossary	શબ્દકોશ
+gu	Important	મહત્વપૂર્ણ
+gu	Index	સૂચિ
+gu	ListOfFigures	આકૃતિઓની યાદી
+gu	ListOfTables	કોષ્ટકોની યાદી
+gu	Listing	યાદી
+gu	Note	નોંધ
+gu	Page	પાનું
+gu	Part	ભાગ
+gu	Preface	પ્રસ્તાવના
+gu	Proof	સાબિતી
+gu	References	સંદર્ભો
+gu	See	જુઓ
+gu	Table	કોષ્ટક
+gu	Tip	સલાહ
+gu	To	પ્રતિ
+gu	Warning	ચેતવણી
+ha	Abstract	Taƙaitawa
+ha	Appendix	Ƙari
+ha	Bibliography	Jerin littattafai
+ha	Caution	Hattara
+ha	Cc	Kwafi zuwa
+ha	Chapter	Babi
+ha	Contents	Abubuwan ciki
+ha	Encl	Abin da aka haɗa
+ha	Figure	Hoto
+ha	Glossary	Ƙamus
+ha	Important	Muhimmi
+ha	Index	Fihirisa
+ha	ListOfFigures	Jerin hotuna
+ha	ListOfTables	Jerin teburori
+ha	Listing	Jeri
+ha	Note	Lura
+ha	Page	Shafi
+ha	Part	Sashe
+ha	Preface	Gabatarwa
+ha	Proof	Hujja
+ha	References	Manazarta
+ha	See	duba
+ha	Table	Tebur
+ha	Tip	Shawara
+ha	To	Zuwa
+ha	Warning	Gargaɗi
 he	Abstract	תקציר
 he	Appendix	נספח
 he	Bibliography	ביבליוגרפיה
@@ -467,6 +1195,32 @@ hr	Table	Tablica
 hr	Tip	Savjet
 hr	To	Za
 hr	Warning	Upozorenje
+hsb	Abstract	Abstrakt
+hsb	Appendix	Přidawk
+hsb	Bibliography	Bibliografija
+hsb	Caution	Kedźbu
+hsb	Cc	Kopija na
+hsb	Chapter	Kapitl
+hsb	Contents	Wobsah
+hsb	Encl	Přiłoha
+hsb	Figure	Wobraz
+hsb	Glossary	Słownik
+hsb	Important	Wažne
+hsb	Index	Register
+hsb	ListOfFigures	Zapis wobrazow
+hsb	ListOfTables	Zapis tabelow
+hsb	Listing	Listing
+hsb	Note	Přispomnjenka
+hsb	Page	Strona
+hsb	Part	Dźěl
+hsb	Preface	Předsłowo
+hsb	Proof	Dopokaz
+hsb	References	Literatura
+hsb	See	hlej
+hsb	Table	Tabela
+hsb	Tip	Pokiw
+hsb	To	Na
+hsb	Warning	Warnowanje
 hu	Abstract	Összefoglalás
 hu	Appendix	Függelék
 hu	Bibliography	Bibliográfia
@@ -493,6 +1247,58 @@ hu	Table	Táblázat
 hu	Tip	Tipp
 hu	To	Címzett
 hu	Warning	Figyelmeztetés
+hy	Abstract	Ամփոփում
+hy	Appendix	Հավելված
+hy	Bibliography	Մատենագիտություն
+hy	Caution	Զգուշություն
+hy	Cc	Պատճեն
+hy	Chapter	Գլուխ
+hy	Contents	Բովանդակություն
+hy	Encl	Կցորդ
+hy	Figure	Նկար
+hy	Glossary	Բառարան
+hy	Important	Կարևոր
+hy	Index	Ցուցիչ
+hy	ListOfFigures	Նկարների ցանկ
+hy	ListOfTables	Աղյուսակների ցանկ
+hy	Listing	Ցանկ
+hy	Note	Նշում
+hy	Page	Էջ
+hy	Part	Մաս
+hy	Preface	Նախաբան
+hy	Proof	Ապացույց
+hy	References	Գրականություն
+hy	See	տես
+hy	Table	Աղյուսակ
+hy	Tip	Խորհուրդ
+hy	To	Ում
+hy	Warning	Զգուշացում
+ia	Abstract	Summario
+ia	Appendix	Appendice
+ia	Bibliography	Bibliographia
+ia	Caution	Attention
+ia	Cc	Copia a
+ia	Chapter	Capitulo
+ia	Contents	Contento
+ia	Encl	Annexo
+ia	Figure	Figura
+ia	Glossary	Glossario
+ia	Important	Importante
+ia	Index	Indice
+ia	ListOfFigures	Lista de figuras
+ia	ListOfTables	Lista de tabellas
+ia	Listing	Listage
+ia	Note	Nota
+ia	Page	Pagina
+ia	Part	Parte
+ia	Preface	Prefacio
+ia	Proof	Prova
+ia	References	Referentias
+ia	See	vide
+ia	Table	Tabella
+ia	Tip	Consilio
+ia	To	A
+ia	Warning	Advertimento
 id	Abstract	Abstrak
 id	Appendix	Lampiran
 id	Bibliography	Bibliografi
@@ -519,6 +1325,32 @@ id	Table	Tabel
 id	Tip	Kiat
 id	To	Kepada
 id	Warning	Peringatan
+is	Abstract	Útdráttur
+is	Appendix	Viðauki
+is	Bibliography	Heimildaskrá
+is	Caution	Varúð
+is	Cc	Afrit til
+is	Chapter	Kafli
+is	Contents	Efnisyfirlit
+is	Encl	Fylgiskjal
+is	Figure	Mynd
+is	Glossary	Orðasafn
+is	Important	Mikilvægt
+is	Index	Atriðisorðaskrá
+is	ListOfFigures	Myndaskrá
+is	ListOfTables	Töfluskrá
+is	Listing	Kóðalisti
+is	Note	Athugasemd
+is	Page	Blaðsíða
+is	Part	Hluti
+is	Preface	Formáli
+is	Proof	Sönnun
+is	References	Heimildir
+is	See	sjá
+is	Table	Tafla
+is	Tip	Ábending
+is	To	Til
+is	Warning	Viðvörun
 it	Abstract	Sommario
 it	Appendix	Appendice
 it	Bibliography	Bibliografia
@@ -571,6 +1403,136 @@ ja	Table	表
 ja	Tip	ヒント
 ja	To	宛先
 ja	Warning	警告
+ka	Abstract	ანოტაცია
+ka	Appendix	დანართი
+ka	Bibliography	ბიბლიოგრაფია
+ka	Caution	სიფრთხილე
+ka	Cc	ასლი
+ka	Chapter	თავი
+ka	Contents	სარჩევი
+ka	Encl	თანდართული
+ka	Figure	სურათი
+ka	Glossary	ტერმინთა ლექსიკონი
+ka	Important	მნიშვნელოვანი
+ka	Index	საძიებელი
+ka	ListOfFigures	სურათების სია
+ka	ListOfTables	ცხრილების სია
+ka	Listing	ჩამონათვალი
+ka	Note	შენიშვნა
+ka	Page	გვერდი
+ka	Part	ნაწილი
+ka	Preface	წინასიტყვაობა
+ka	Proof	დამტკიცება
+ka	References	ლიტერატურა
+ka	See	იხ.
+ka	Table	ცხრილი
+ka	Tip	რჩევა
+ka	To	ვის
+ka	Warning	გაფრთხილება
+km	Abstract	សេចក្ដីសង្ខេប
+km	Appendix	ឧបសម្ព័ន្ធ
+km	Bibliography	គន្ថនិទ្ទេស
+km	Caution	ប្រយ័ត្ន
+km	Cc	ចម្លងជូន
+km	Chapter	ជំពូក
+km	Contents	មាតិកា
+km	Encl	ឯកសារភ្ជាប់
+km	Figure	រូបភាព
+km	Glossary	សទ្ទានុក្រម
+km	Important	សំខាន់
+km	Index	លិបិក្រម
+km	ListOfFigures	បញ្ជីរូបភាព
+km	ListOfTables	បញ្ជីតារាង
+km	Listing	បញ្ជីកូដ
+km	Note	កំណត់សម្គាល់
+km	Page	ទំព័រ
+km	Part	ផ្នែក
+km	Preface	អារម្ភកថា
+km	Proof	សម្រាយបញ្ជាក់
+km	References	ឯកសារយោង
+km	See	មើល
+km	Table	តារាង
+km	Tip	គន្លឹះ
+km	To	ជូន
+km	Warning	ការព្រមាន
+kmr-Arab	Abstract	کورتە
+kmr-Arab	Appendix	پێڤەک
+kmr-Arab	Bibliography	بیبلیۆگرافی
+kmr-Arab	Caution	بالداری
+kmr-Arab	Cc	کۆپی بۆ
+kmr-Arab	Chapter	بەش
+kmr-Arab	Contents	ناڤەرۆک
+kmr-Arab	Encl	پێڤەکری
+kmr-Arab	Figure	وێنە
+kmr-Arab	Glossary	فەرهەنگ
+kmr-Arab	Important	گرینگ
+kmr-Arab	Index	پێرست
+kmr-Arab	ListOfFigures	لیستا وێنەیان
+kmr-Arab	ListOfTables	لیستا تابلۆیان
+kmr-Arab	Listing	لیستە
+kmr-Arab	Note	نۆت
+kmr-Arab	Page	ڕووپەل
+kmr-Arab	Part	پار
+kmr-Arab	Preface	پێشگۆتن
+kmr-Arab	Proof	دەلیل
+kmr-Arab	References	چاڤکانی
+kmr-Arab	See	بنێڕە
+kmr-Arab	Table	تابلۆ
+kmr-Arab	Tip	شیرەت
+kmr-Arab	To	ژ بۆ
+kmr-Arab	Warning	هشیاری
+kmr-Latn	Abstract	Kurte
+kmr-Latn	Appendix	Pêvek
+kmr-Latn	Bibliography	Bîbliyografî
+kmr-Latn	Caution	Baldarî
+kmr-Latn	Cc	Kopî ji bo
+kmr-Latn	Chapter	Beş
+kmr-Latn	Contents	Naverok
+kmr-Latn	Encl	Pêvekirî
+kmr-Latn	Figure	Wêne
+kmr-Latn	Glossary	Ferheng
+kmr-Latn	Important	Girîng
+kmr-Latn	Index	Pêrist
+kmr-Latn	ListOfFigures	Lîsteya wêneyan
+kmr-Latn	ListOfTables	Lîsteya tabloyan
+kmr-Latn	Listing	Lîste
+kmr-Latn	Note	Not
+kmr-Latn	Page	Rûpel
+kmr-Latn	Part	Par
+kmr-Latn	Preface	Pêşgotin
+kmr-Latn	Proof	Delîl
+kmr-Latn	References	Çavkanî
+kmr-Latn	See	binêre
+kmr-Latn	Table	Tablo
+kmr-Latn	Tip	Şîret
+kmr-Latn	To	Ji bo
+kmr-Latn	Warning	Hişyarî
+kn	Abstract	ಸಾರಾಂಶ
+kn	Appendix	ಅನುಬಂಧ
+kn	Bibliography	ಗ್ರಂಥಸೂಚಿ
+kn	Caution	ಎಚ್ಚರಿಕೆಯಿಂದಿರಿ
+kn	Cc	ಪ್ರತಿ
+kn	Chapter	ಅಧ್ಯಾಯ
+kn	Contents	ಪರಿವಿಡಿ
+kn	Encl	ಲಗತ್ತು
+kn	Figure	ಚಿತ್ರ
+kn	Glossary	ಪದಕೋಶ
+kn	Important	ಮುಖ್ಯ
+kn	Index	ಸೂಚಿ
+kn	ListOfFigures	ಚಿತ್ರಗಳ ಪಟ್ಟಿ
+kn	ListOfTables	ಕೋಷ್ಟಕಗಳ ಪಟ್ಟಿ
+kn	Listing	ಪಟ್ಟಿ
+kn	Note	ಟಿಪ್ಪಣಿ
+kn	Page	ಪುಟ
+kn	Part	ಭಾಗ
+kn	Preface	ಮುನ್ನುಡಿ
+kn	Proof	ಪುರಾವೆ
+kn	References	ಉಲ್ಲೇಖಗಳು
+kn	See	ನೋಡಿ
+kn	Table	ಕೋಷ್ಟಕ
+kn	Tip	ಸಲಹೆ
+kn	To	ಗೆ
+kn	Warning	ಎಚ್ಚರಿಕೆ
 ko	Abstract	초록
 ko	Appendix	부록
 ko	Bibliography	문헌 목록
@@ -623,6 +1585,240 @@ la	Table	Tabula
 la	Tip	Consilium
 la	To	Ad
 la	Warning	Monitum
+lb	Abstract	Resumé
+lb	Appendix	Annex
+lb	Bibliography	Bibliographie
+lb	Caution	Opgepasst
+lb	Cc	Kopie un
+lb	Chapter	Kapitel
+lb	Contents	Inhaltsverzeechnes
+lb	Encl	Bäilag
+lb	Figure	Illustratioun
+lb	Glossary	Glossar
+lb	Important	Wichteg
+lb	Index	Index
+lb	ListOfFigures	Lëscht vun den Illustratiounen
+lb	ListOfTables	Lëscht vun den Tabellen
+lb	Listing	Lëscht
+lb	Note	Notiz
+lb	Page	Säit
+lb	Part	Deel
+lb	Preface	Virwuert
+lb	Proof	Beweis
+lb	References	Referenzen
+lb	See	kuck
+lb	Table	Tabell
+lb	Tip	Tipp
+lb	To	Un
+lb	Warning	Warnung
+lo	Abstract	ບົດຄັດຫຍໍ້
+lo	Appendix	ພາກຜະໜວກ
+lo	Bibliography	ບັນນານຸກົມ
+lo	Caution	ລະວັງ
+lo	Cc	ສຳເນົາເຖິງ
+lo	Chapter	ບົດທີ
+lo	Contents	ສາລະບານ
+lo	Encl	ເອກະສານຄັດຕິດ
+lo	Figure	ຮູບ
+lo	Glossary	ປະມວນຄຳສັບ
+lo	Important	ສຳຄັນ
+lo	Index	ດັດຊະນີ
+lo	ListOfFigures	ລາຍການຮູບ
+lo	ListOfTables	ລາຍການຕາຕະລາງ
+lo	Listing	ລາຍການ
+lo	Note	ໝາຍເຫດ
+lo	Page	ໜ້າ
+lo	Part	ພາກ
+lo	Preface	ຄຳນຳ
+lo	Proof	ການພິສູດ
+lo	References	ເອກະສານອ້າງອີງ
+lo	See	ເບິ່ງ
+lo	Table	ຕາຕະລາງ
+lo	Tip	ຄຳແນະນຳ
+lo	To	ເຖິງ
+lo	Warning	ຄຳເຕືອນ
+lt	Abstract	Santrauka
+lt	Appendix	Priedas
+lt	Bibliography	Bibliografija
+lt	Caution	Atsargiai
+lt	Cc	Kopija
+lt	Chapter	Skyrius
+lt	Contents	Turinys
+lt	Encl	Priedai
+lt	Figure	Pav.
+lt	Glossary	Žodynėlis
+lt	Important	Svarbu
+lt	Index	Rodyklė
+lt	ListOfFigures	Iliustracijų sąrašas
+lt	ListOfTables	Lentelių sąrašas
+lt	Listing	Programos tekstas
+lt	Note	Pastaba
+lt	Page	Puslapis
+lt	Part	Dalis
+lt	Preface	Pratarmė
+lt	Proof	Įrodymas
+lt	References	Literatūra
+lt	See	žr.
+lt	Table	Lentelė
+lt	Tip	Patarimas
+lt	To	Kam
+lt	Warning	Įspėjimas
+lv	Abstract	Kopsavilkums
+lv	Appendix	Pielikums
+lv	Bibliography	Bibliogrāfija
+lv	Caution	Uzmanību
+lv	Cc	Kopija
+lv	Chapter	Nodaļa
+lv	Contents	Saturs
+lv	Encl	Pielikumā
+lv	Figure	Attēls
+lv	Glossary	Glosārijs
+lv	Important	Svarīgi
+lv	Index	Alfabētiskais rādītājs
+lv	ListOfFigures	Attēlu saraksts
+lv	ListOfTables	Tabulu saraksts
+lv	Listing	Programmas teksts
+lv	Note	Piezīme
+lv	Page	Lappuse
+lv	Part	Daļa
+lv	Preface	Priekšvārds
+lv	Proof	Pierādījums
+lv	References	Atsauces
+lv	See	sk.
+lv	Table	Tabula
+lv	Tip	Padoms
+lv	To	Kam
+lv	Warning	Brīdinājums
+mk	Abstract	Апстракт
+mk	Appendix	Додаток
+mk	Bibliography	Библиографија
+mk	Caution	Внимание
+mk	Cc	Копија
+mk	Chapter	Поглавје
+mk	Contents	Содржина
+mk	Encl	Прилог
+mk	Figure	Слика
+mk	Glossary	Речник
+mk	Important	Важно
+mk	Index	Индекс
+mk	ListOfFigures	Список на слики
+mk	ListOfTables	Список на табели
+mk	Listing	Листинг
+mk	Note	Забелешка
+mk	Page	Страница
+mk	Part	Дел
+mk	Preface	Предговор
+mk	Proof	Доказ
+mk	References	Литература
+mk	See	види
+mk	Table	Табела
+mk	Tip	Совет
+mk	To	До
+mk	Warning	Предупредување
+ml	Abstract	സംഗ്രഹം
+ml	Appendix	അനുബന്ധം
+ml	Bibliography	ഗ്രന്ഥസൂചി
+ml	Caution	ജാഗ്രത
+ml	Cc	പകർപ്പ്
+ml	Chapter	അദ്ധ്യായം
+ml	Contents	ഉള്ളടക്കം
+ml	Encl	അടക്കം ചെയ്തത്
+ml	Figure	ചിത്രം
+ml	Glossary	പദാവലി
+ml	Important	പ്രധാനം
+ml	Index	സൂചിക
+ml	ListOfFigures	ചിത്രങ്ങളുടെ പട്ടിക
+ml	ListOfTables	പട്ടികകളുടെ പട്ടിക
+ml	Listing	ലിസ്റ്റിങ്
+ml	Note	കുറിപ്പ്
+ml	Page	പേജ്
+ml	Part	ഭാഗം
+ml	Preface	ആമുഖം
+ml	Proof	തെളിവ്
+ml	References	അവലംബങ്ങൾ
+ml	See	കാണുക
+ml	Table	പട്ടിക
+ml	Tip	നുറുങ്ങ്
+ml	To	സ്വീകർത്താവ്
+ml	Warning	മുന്നറിയിപ്പ്
+mn	Abstract	Хураангуй
+mn	Appendix	Хавсралт
+mn	Bibliography	Ном зүй
+mn	Caution	Болгоомжил
+mn	Cc	Хуулбар
+mn	Chapter	Бүлэг
+mn	Contents	Гарчиг
+mn	Encl	Хавсаргасан
+mn	Figure	Зураг
+mn	Glossary	Нэр томьёоны тайлбар
+mn	Important	Чухал
+mn	Index	Индекс
+mn	ListOfFigures	Зургийн жагсаалт
+mn	ListOfTables	Хүснэгтийн жагсаалт
+mn	Listing	Жагсаалт
+mn	Note	Тэмдэглэл
+mn	Page	Хуудас
+mn	Part	Хэсэг
+mn	Preface	Өмнөх үг
+mn	Proof	Баталгаа
+mn	References	Ашигласан материал
+mn	See	үзнэ үү
+mn	Table	Хүснэгт
+mn	Tip	Зөвлөмж
+mn	To	Хэнд
+mn	Warning	Анхааруулга
+mr	Abstract	सारांश
+mr	Appendix	परिशिष्ट
+mr	Bibliography	संदर्भग्रंथसूची
+mr	Caution	सावधान
+mr	Cc	प्रत
+mr	Chapter	प्रकरण
+mr	Contents	अनुक्रमणिका
+mr	Encl	सोबत
+mr	Figure	आकृती
+mr	Glossary	शब्दसूची
+mr	Important	महत्त्वाचे
+mr	Index	सूची
+mr	ListOfFigures	आकृत्यांची यादी
+mr	ListOfTables	सारण्यांची यादी
+mr	Listing	यादी
+mr	Note	टीप
+mr	Page	पान
+mr	Part	भाग
+mr	Preface	प्रस्तावना
+mr	Proof	सिद्धता
+mr	References	संदर्भ
+mr	See	पहा
+mr	Table	सारणी
+mr	Tip	सूचना
+mr	To	प्रति
+mr	Warning	इशारा
+ms	Abstract	Abstrak
+ms	Appendix	Lampiran
+ms	Bibliography	Bibliografi
+ms	Caution	Awas
+ms	Cc	Salinan kepada
+ms	Chapter	Bab
+ms	Contents	Kandungan
+ms	Encl	Kepilan
+ms	Figure	Rajah
+ms	Glossary	Glosari
+ms	Important	Penting
+ms	Index	Indeks
+ms	ListOfFigures	Senarai Rajah
+ms	ListOfTables	Senarai Jadual
+ms	Listing	Penyenaraian
+ms	Note	Nota
+ms	Page	Halaman
+ms	Part	Bahagian
+ms	Preface	Prakata
+ms	Proof	Bukti
+ms	References	Rujukan
+ms	See	lihat
+ms	Table	Jadual
+ms	Tip	Petua
+ms	To	Kepada
+ms	Warning	Amaran
 nb	Abstract	Sammendrag
 nb	Appendix	Vedlegg
 nb	Bibliography	Bibliografi
@@ -649,6 +1845,32 @@ nb	Table	Tabell
 nb	Tip	Tips
 nb	To	Til
 nb	Warning	Advarsel
+nko	Abstract	Abstract
+nko	Appendix	Appendix
+nko	Bibliography	Bibliography
+nko	Caution	Caution
+nko	Cc	cc
+nko	Chapter	Chapter
+nko	Contents	Contents
+nko	Encl	Encl.
+nko	Figure	Figure
+nko	Glossary	Glossary
+nko	Important	Important
+nko	Index	Index
+nko	ListOfFigures	List of Figures
+nko	ListOfTables	List of Tables
+nko	Listing	Listing
+nko	Note	Note
+nko	Page	Page
+nko	Part	Part
+nko	Preface	Preface
+nko	Proof	Proof
+nko	References	References
+nko	See	see
+nko	Table	Table
+nko	Tip	Tip
+nko	To	To
+nko	Warning	Warning
 nl	Abstract	Samenvatting
 nl	Appendix	Bijlage
 nl	Bibliography	Bibliografie
@@ -727,6 +1949,84 @@ no	Table	Tabell
 no	Tip	Tips
 no	To	Til
 no	Warning	Advarsel
+oc	Abstract	Resumit
+oc	Appendix	Annèxa
+oc	Bibliography	Bibliografia
+oc	Caution	Atencion
+oc	Cc	Còpia a
+oc	Chapter	Capítol
+oc	Contents	Ensenhador
+oc	Encl	Pèça jonta
+oc	Figure	Figura
+oc	Glossary	Glossari
+oc	Important	Important
+oc	Index	Indèx
+oc	ListOfFigures	Taula de las figuras
+oc	ListOfTables	Taula dels tablèus
+oc	Listing	Listatge
+oc	Note	Nòta
+oc	Page	Pagina
+oc	Part	Partida
+oc	Preface	Prefaci
+oc	Proof	Demostracion
+oc	References	Referéncias
+oc	See	vejatz
+oc	Table	Tablèu
+oc	Tip	Conselh
+oc	To	A
+oc	Warning	Avertiment
+or	Abstract	ସାରାଂଶ
+or	Appendix	ପରିଶିଷ୍ଟ
+or	Bibliography	ଗ୍ରନ୍ଥସୂଚୀ
+or	Caution	ସାବଧାନ
+or	Cc	ପ୍ରତିଲିପି
+or	Chapter	ଅଧ୍ୟାୟ
+or	Contents	ସୂଚୀପତ୍ର
+or	Encl	ସଂଲଗ୍ନ
+or	Figure	ଚିତ୍ର
+or	Glossary	ଶବ୍ଦକୋଷ
+or	Important	ଗୁରୁତ୍ୱପୂର୍ଣ୍ଣ
+or	Index	ସୂଚୀ
+or	ListOfFigures	ଚିତ୍ର ତାଲିକା
+or	ListOfTables	ସାରଣୀ ତାଲିକା
+or	Listing	ତାଲିକା
+or	Note	ଟିପ୍ପଣୀ
+or	Page	ପୃଷ୍ଠା
+or	Part	ଭାଗ
+or	Preface	ମୁଖବନ୍ଧ
+or	Proof	ପ୍ରମାଣ
+or	References	ସନ୍ଦର୍ଭ
+or	See	ଦେଖନ୍ତୁ
+or	Table	ସାରଣୀ
+or	Tip	ପରାମର୍ଶ
+or	To	ପ୍ରତି
+or	Warning	ଚେତାବନୀ
+pa	Abstract	ਸਾਰ
+pa	Appendix	ਅੰਤਿਕਾ
+pa	Bibliography	ਪੁਸਤਕ-ਸੂਚੀ
+pa	Caution	ਸਾਵਧਾਨ
+pa	Cc	ਨਕਲ
+pa	Chapter	ਅਧਿਆਇ
+pa	Contents	ਤਤਕਰਾ
+pa	Encl	ਨੱਥੀ
+pa	Figure	ਚਿੱਤਰ
+pa	Glossary	ਸ਼ਬਦਾਵਲੀ
+pa	Important	ਮਹੱਤਵਪੂਰਨ
+pa	Index	ਅਨੁਕ੍ਰਮਣਿਕਾ
+pa	ListOfFigures	ਚਿੱਤਰਾਂ ਦੀ ਸੂਚੀ
+pa	ListOfTables	ਸਾਰਣੀਆਂ ਦੀ ਸੂਚੀ
+pa	Listing	ਸੂਚੀ
+pa	Note	ਟਿੱਪਣੀ
+pa	Page	ਪੰਨਾ
+pa	Part	ਭਾਗ
+pa	Preface	ਮੁੱਖਬੰਧ
+pa	Proof	ਸਬੂਤ
+pa	References	ਹਵਾਲੇ
+pa	See	ਵੇਖੋ
+pa	Table	ਸਾਰਣੀ
+pa	Tip	ਸੁਝਾਅ
+pa	To	ਵੱਲ
+pa	Warning	ਚੇਤਾਵਨੀ
 pl	Abstract	Streszczenie
 pl	Appendix	Dodatek
 pl	Bibliography	Bibliografia
@@ -753,6 +2053,32 @@ pl	Table	Tabela
 pl	Tip	Wskazówka
 pl	To	Do
 pl	Warning	Ostrzeżenie
+pms	Abstract	Riassunt
+pms	Appendix	Apendice
+pms	Bibliography	Bibliografìa
+pms	Caution	Atension
+pms	Cc	Còpia a
+pms	Chapter	Capìtol
+pms	Contents	Ìndes
+pms	Encl	Alegà
+pms	Figure	Figura
+pms	Glossary	Glossari
+pms	Important	Amportant
+pms	Index	Ìndes analìtich
+pms	ListOfFigures	Lista dle figure
+pms	ListOfTables	Lista dle tabele
+pms	Listing	Listà
+pms	Note	Nòta
+pms	Page	Pàgina
+pms	Part	Part
+pms	Preface	Prefassion
+pms	Proof	Dimostrassion
+pms	References	Arferiment
+pms	See	varda
+pms	Table	Tabela
+pms	Tip	Consèj
+pms	To	A
+pms	Warning	Avertiment
 pt	Abstract	Resumo
 pt	Appendix	Apêndice
 pt	Bibliography	Bibliografia
@@ -805,6 +2131,58 @@ pt-BR	Table	Tabela
 pt-BR	Tip	Dica
 pt-BR	To	Para
 pt-BR	Warning	Advertência
+pt-PT	Abstract	Resumo
+pt-PT	Appendix	Apêndice
+pt-PT	Bibliography	Bibliografia
+pt-PT	Caution	Cuidado
+pt-PT	Cc	Com cópia para
+pt-PT	Chapter	Capítulo
+pt-PT	Contents	Índice
+pt-PT	Encl	Anexo
+pt-PT	Figure	Figura
+pt-PT	Glossary	Glossário
+pt-PT	Important	Importante
+pt-PT	Index	Índice remissivo
+pt-PT	ListOfFigures	Lista de figuras
+pt-PT	ListOfTables	Lista de tabelas
+pt-PT	Listing	Listagem
+pt-PT	Note	Nota
+pt-PT	Page	Página
+pt-PT	Part	Parte
+pt-PT	Preface	Prefácio
+pt-PT	Proof	Demonstração
+pt-PT	References	Referências
+pt-PT	See	ver
+pt-PT	Table	Tabela
+pt-PT	Tip	Sugestão
+pt-PT	To	Para
+pt-PT	Warning	Aviso
+rm	Abstract	Resumaziun
+rm	Appendix	Appendix
+rm	Bibliography	Bibliografia
+rm	Caution	Attenziun
+rm	Cc	Copia a
+rm	Chapter	Chapitel
+rm	Contents	Cuntegn
+rm	Encl	Agiunta
+rm	Figure	Figura
+rm	Glossary	Glossari
+rm	Important	Impurtant
+rm	Index	Index
+rm	ListOfFigures	Glista da las figuras
+rm	ListOfTables	Glista da las tabellas
+rm	Listing	Glista
+rm	Note	Remartga
+rm	Page	Pagina
+rm	Part	Part
+rm	Preface	Prefaziun
+rm	Proof	Cumprova
+rm	References	Referenzas
+rm	See	guarda
+rm	Table	Tabella
+rm	Tip	Cussegl
+rm	To	A
+rm	Warning	Avertiment
 ro	Abstract	Rezumat
 ro	Appendix	Anexă
 ro	Bibliography	Bibliografie
@@ -857,6 +2235,58 @@ ru	Table	Таблица
 ru	Tip	Совет
 ru	To	Кому
 ru	Warning	Предупреждение
+se	Abstract	Čoahkkáigeassu
+se	Appendix	Mielddus
+se	Bibliography	Girjjálašvuohta
+se	Caution	Fuomáš
+se	Cc	Kopiija
+se	Chapter	Kapihtal
+se	Contents	Sisdoallu
+se	Encl	Mielddusat
+se	Figure	Govus
+se	Glossary	Sátnelistu
+se	Important	Dehálaš
+se	Index	Registtar
+se	ListOfFigures	Govvalistu
+se	ListOfTables	Tabeallalistu
+se	Listing	Listu
+se	Note	Mearkkašupmi
+se	Page	Siidu
+se	Part	Oassi
+se	Preface	Ovdasátni
+se	Proof	Duođaštus
+se	References	Gáldut
+se	See	geahča
+se	Table	Tabealla
+se	Tip	Ráva
+se	To	Vuostáiváldi
+se	Warning	Várrehus
+si	Abstract	සාරාංශය
+si	Appendix	උපග්‍රන්ථය
+si	Bibliography	ග්‍රන්ථ නාමාවලිය
+si	Caution	ප්‍රවේශම් වන්න
+si	Cc	පිටපත
+si	Chapter	පරිච්ඡේදය
+si	Contents	පටුන
+si	Encl	ඇමුණුම
+si	Figure	රූපය
+si	Glossary	පාරිභාෂික ශබ්දකෝෂය
+si	Important	වැදගත්
+si	Index	සූචිය
+si	ListOfFigures	රූප ලැයිස්තුව
+si	ListOfTables	වගු ලැයිස්තුව
+si	Listing	ලැයිස්තුගත කිරීම
+si	Note	සටහන
+si	Page	පිටුව
+si	Part	කොටස
+si	Preface	පෙරවදන
+si	Proof	සාධනය
+si	References	ආශ්‍රිත ග්‍රන්ථ
+si	See	බලන්න
+si	Table	වගුව
+si	Tip	ඉඟිය
+si	To	වෙත
+si	Warning	අනතුරු ඇඟවීම
 sk	Abstract	Abstrakt
 sk	Appendix	Dodatok
 sk	Bibliography	Bibliografia
@@ -909,6 +2339,32 @@ sl	Table	Tabela
 sl	Tip	Namig
 sl	To	Za
 sl	Warning	Opozorilo
+sq	Abstract	Përmbledhje
+sq	Appendix	Shtojcë
+sq	Bibliography	Bibliografi
+sq	Caution	Kujdes
+sq	Cc	Kopje për
+sq	Chapter	Kapitull
+sq	Contents	Përmbajtja
+sq	Encl	Bashkëngjitur
+sq	Figure	Figura
+sq	Glossary	Fjalorth
+sq	Important	E rëndësishme
+sq	Index	Tregues
+sq	ListOfFigures	Lista e figurave
+sq	ListOfTables	Lista e tabelave
+sq	Listing	Listim
+sq	Note	Shënim
+sq	Page	Faqe
+sq	Part	Pjesë
+sq	Preface	Parathënie
+sq	Proof	Vërtetim
+sq	References	Referenca
+sq	See	shih
+sq	Table	Tabela
+sq	Tip	Këshillë
+sq	To	Për
+sq	Warning	Paralajmërim
 sr	Abstract	Сажетак
 sr	Appendix	Додатак
 sr	Bibliography	Библиографија
@@ -1013,6 +2469,58 @@ sv	Table	Tabell
 sv	Tip	Tips
 sv	To	Till
 sv	Warning	Varning
+ta	Abstract	சுருக்கம்
+ta	Appendix	பின்னிணைப்பு
+ta	Bibliography	நூற்பட்டியல்
+ta	Caution	எச்சரிக்கையாக இருங்கள்
+ta	Cc	நகல்
+ta	Chapter	அத்தியாயம்
+ta	Contents	பொருளடக்கம்
+ta	Encl	இணைப்பு
+ta	Figure	படம்
+ta	Glossary	சொற்களஞ்சியம்
+ta	Important	முக்கியம்
+ta	Index	சுட்டி
+ta	ListOfFigures	படங்களின் பட்டியல்
+ta	ListOfTables	அட்டவணைகளின் பட்டியல்
+ta	Listing	நிரல் பட்டியல்
+ta	Note	குறிப்பு
+ta	Page	பக்கம்
+ta	Part	பகுதி
+ta	Preface	முன்னுரை
+ta	Proof	நிறுவல்
+ta	References	மேற்கோள்கள்
+ta	See	பார்க்க
+ta	Table	அட்டவணை
+ta	Tip	உதவிக்குறிப்பு
+ta	To	பெறுநர்
+ta	Warning	எச்சரிக்கை
+te	Abstract	సారాంశం
+te	Appendix	అనుబంధం
+te	Bibliography	గ్రంథసూచి
+te	Caution	జాగ్రత్త
+te	Cc	ప్రతి
+te	Chapter	అధ్యాయం
+te	Contents	విషయసూచిక
+te	Encl	జతపరచినవి
+te	Figure	చిత్రం
+te	Glossary	పదకోశం
+te	Important	ముఖ్యం
+te	Index	సూచిక
+te	ListOfFigures	చిత్రాల జాబితా
+te	ListOfTables	పట్టికల జాబితా
+te	Listing	జాబితా
+te	Note	గమనిక
+te	Page	పుట
+te	Part	భాగం
+te	Preface	ముందుమాట
+te	Proof	నిరూపణ
+te	References	మూలాలు
+te	See	చూడండి
+te	Table	పట్టిక
+te	Tip	చిట్కా
+te	To	కు
+te	Warning	హెచ్చరిక
 th	Abstract	บทคัดย่อ
 th	Appendix	ภาคผนวก
 th	Bibliography	บรรณานุกรม
@@ -1039,6 +2547,32 @@ th	Table	ตาราง
 th	Tip	คำแนะนำ
 th	To	ถึง
 th	Warning	คำเตือน
+tk	Abstract	Gysgaça mazmuny
+tk	Appendix	Goşundy
+tk	Bibliography	Bibliografiýa
+tk	Caution	Seresap boluň
+tk	Cc	Nusgasy
+tk	Chapter	Bap
+tk	Contents	Mazmuny
+tk	Encl	Goşmaça
+tk	Figure	Surat
+tk	Glossary	Sözlük
+tk	Important	Möhüm
+tk	Index	Görkeziji
+tk	ListOfFigures	Suratlaryň sanawy
+tk	ListOfTables	Tablisalaryň sanawy
+tk	Listing	Sanaw
+tk	Note	Bellik
+tk	Page	Sahypa
+tk	Part	Bölüm
+tk	Preface	Sözbaşy
+tk	Proof	Subut
+tk	References	Çeşmeler
+tk	See	seret
+tk	Table	Tablisa
+tk	Tip	Maslahat
+tk	To	Kime
+tk	Warning	Duýduryş
 tr	Abstract	Özet
 tr	Appendix	Ek
 tr	Bibliography	Bibliyografya
@@ -1065,6 +2599,58 @@ tr	Table	Tablo
 tr	Tip	İpucu
 tr	To	Alıcı
 tr	Warning	Uyarı
+ua	Abstract	Анотація
+ua	Appendix	Додаток
+ua	Bibliography	Бібліографія
+ua	Caution	Обережно
+ua	Cc	Копія
+ua	Chapter	Розділ
+ua	Contents	Зміст
+ua	Encl	Додаток
+ua	Figure	Рис.
+ua	Glossary	Глосарій
+ua	Important	Важливо
+ua	Index	Предметний покажчик
+ua	ListOfFigures	Список ілюстрацій
+ua	ListOfTables	Список таблиць
+ua	Listing	Лістинг
+ua	Note	Примітка
+ua	Page	Сторінка
+ua	Part	Частина
+ua	Preface	Передмова
+ua	Proof	Доведення
+ua	References	Список джерел
+ua	See	див.
+ua	Table	Таблиця
+ua	Tip	Порада
+ua	To	Кому
+ua	Warning	Попередження
+ug	Abstract	قىسقىچە مەزمۇنى
+ug	Appendix	قوشۇمچە
+ug	Bibliography	پايدىلىنىلغان كىتابلار
+ug	Caution	ئېھتىيات
+ug	Cc	كۆچۈرمىسى
+ug	Chapter	باب
+ug	Contents	مۇندەرىجە
+ug	Encl	قوشۇمچە ھۆججەت
+ug	Figure	رەسىم
+ug	Glossary	ئاتالغۇلار
+ug	Important	مۇھىم
+ug	Index	كۆرسەتكۈچ
+ug	ListOfFigures	رەسىملەر تىزىملىكى
+ug	ListOfTables	جەدۋەللەر تىزىملىكى
+ug	Listing	تىزىملىك
+ug	Note	ئىزاھات
+ug	Page	بەت
+ug	Part	قىسىم
+ug	Preface	كىرىش سۆز
+ug	Proof	ئىسپات
+ug	References	پايدىلانما
+ug	See	قاراڭ
+ug	Table	جەدۋەل
+ug	Tip	تەكلىپ
+ug	To	غا
+ug	Warning	ئاگاھلاندۇرۇش
 uk	Abstract	Анотація
 uk	Appendix	Додаток
 uk	Bibliography	Бібліографія
@@ -1091,6 +2677,32 @@ uk	Table	Таблиця
 uk	Tip	Порада
 uk	To	Кому
 uk	Warning	Попередження
+ur	Abstract	خلاصہ
+ur	Appendix	ضمیمہ
+ur	Bibliography	کتابیات
+ur	Caution	احتیاط
+ur	Cc	نقل بنام
+ur	Chapter	باب
+ur	Contents	فہرست مضامین
+ur	Encl	منسلکہ
+ur	Figure	شکل
+ur	Glossary	فرہنگ
+ur	Important	اہم
+ur	Index	اشاریہ
+ur	ListOfFigures	اشکال کی فہرست
+ur	ListOfTables	جدولوں کی فہرست
+ur	Listing	فہرست
+ur	Note	نوٹ
+ur	Page	صفحہ
+ur	Part	حصہ
+ur	Preface	دیباچہ
+ur	Proof	ثبوت
+ur	References	حوالہ جات
+ur	See	دیکھیے
+ur	Table	جدول
+ur	Tip	مشورہ
+ur	To	بنام
+ur	Warning	انتباہ
 vi	Abstract	Tóm tắt
 vi	Appendix	Phụ lục
 vi	Bibliography	Thư mục
@@ -1117,32 +2729,6 @@ vi	Table	Bảng
 vi	Tip	Mẹo
 vi	To	Người nhận
 vi	Warning	Cảnh báo
-zh	Abstract	摘要
-zh	Appendix	附录
-zh	Bibliography	书目
-zh	Caution	注意
-zh	Cc	抄送
-zh	Chapter	章
-zh	Contents	目录
-zh	Encl	附件
-zh	Figure	图
-zh	Glossary	术语表
-zh	Important	重要
-zh	Index	索引
-zh	ListOfFigures	插图目录
-zh	ListOfTables	表格目录
-zh	Listing	代码清单
-zh	Note	注
-zh	Page	页
-zh	Part	篇
-zh	Preface	前言
-zh	Proof	证明
-zh	References	参考文献
-zh	See	参见
-zh	Table	表
-zh	Tip	提示
-zh	To	收件人
-zh	Warning	警告
 zh-Hans	Abstract	摘要
 zh-Hans	Appendix	附录
 zh-Hans	Bibliography	书目

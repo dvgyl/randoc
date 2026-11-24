@@ -1354,3 +1354,113 @@ fn a_file_created_during_temporary_file_creation_is_preserved() {
         BTreeMap::from([(path, b"Concurrent file".to_vec())])
     );
 }
+
+#[test]
+fn html_embedding_matches_the_engine_route() -> Result<()> {
+    const HTML: &str = "<link href=\"styles/main.css\">\n<img src=\"pixel.png\">\n";
+    const EMBEDDED: &str = concat!(
+        "<style type=\"text/css\">a{background:url(data:image/png;base64,eA==)}</style>\n",
+        "<img src=\"data:image/png;base64,eA==\">\n",
+    );
+
+    for engine in ["weasyprint", "pagedjs-cli", "prince", "wkhtmltopdf"] {
+        for (image, extra_media, sandbox) in [
+            (None, false, false),
+            (Some("missing.gif"), false, false),
+            (Some("data:image/gif;base64,R0lGODlh"), false, false),
+            (None, true, false),
+            (Some("trigger.gif"), false, true),
+        ] {
+            let files = BTreeMap::from([
+                (
+                    "styles/main.css".into(),
+                    b"a{background:url(../pixel.png)}".to_vec(),
+                ),
+                ("styles/../pixel.png".into(), b"x".to_vec()),
+                ("pixel.png".into(), b"x".to_vec()),
+                ("./trigger.gif".into(), b"GIF89a".to_vec()),
+            ]);
+            let mut context = if sandbox {
+                Context::new(Box::new(Mock {
+                    sandbox: true,
+                    ..Mock::default()
+                }))
+            } else {
+                Context::new(Box::new(randoc_core::PureHost {
+                    files: files.clone(),
+                    ..randoc_core::PureHost::default()
+                }))
+            };
+            if extra_media {
+                context.media.insert(
+                    "unused.gif",
+                    MediaItem {
+                        contents: b"GIF89a".to_vec(),
+                        mime_type: "image/gif".into(),
+                    },
+                );
+            }
+            let doc = Pandoc {
+                blocks: image
+                    .map(|url| {
+                        Block::Para(vec![Inline::Image(
+                            Attr::default(),
+                            vec![],
+                            Target {
+                                url: url.into(),
+                                title: Text::new(),
+                            },
+                        )])
+                    })
+                    .into_iter()
+                    .collect(),
+                ..Pandoc::default()
+            };
+            let mut host = Mock {
+                files,
+                pdf_path: Some(format!("{CWD}/toPdfViaTempFilemedia-test-1.pdf")),
+                passes: VecDeque::from([Pass {
+                    pdf: Some(PDF.to_vec()),
+                    ..Pass::default()
+                }]),
+                ..Mock::default()
+            };
+            assert_eq!(
+                make_pdf(
+                    &resolve_pdf_plan(None, Some(engine))?,
+                    &doc,
+                    &WriterOptions::default(),
+                    &mut context,
+                    &mut host,
+                    PdfOptions::default(),
+                    |_, _, _| Ok(Output::Text(HTML.into())),
+                )?,
+                PDF
+            );
+            let call = &host.calls[0];
+            assert_eq!(call.program, engine);
+            let input_path = call
+                .argv
+                .iter()
+                .find(|arg| arg.ends_with(".html"))
+                .ok_or_else(|| {
+                    Error::App("The engine did not receive an HTML input path.".into())
+                })?;
+            let input_path = format!("{}/{}", call.cwd, input_path.trim_start_matches("./"));
+            let expected = if engine != "wkhtmltopdf"
+                && (extra_media || image.is_some_and(|url| url != "missing.gif"))
+            {
+                EMBEDDED
+            } else {
+                HTML
+            };
+            assert_eq!(
+                host.writes[&input_path],
+                expected.as_bytes(),
+                "{engine}, {image:?}, {extra_media}, {sandbox}"
+            );
+            assert_eq!(context.host().is_sandboxed(), sandbox);
+        }
+    }
+    Ok(())
+}
