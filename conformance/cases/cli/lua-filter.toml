@@ -116,7 +116,7 @@ input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Par
 covers = ["opt:lua-filter"]
 [case.files]
 "one.lua" = "function Str(s)\n  if s.text == 'a' then return pandoc.Str('a1') end\nend\n"
-"two.sh" = "#!/bin/sh\nwhile IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"${l//\\\"c\\\":\\\"a1\\\"/\\\"c\\\":\\\"a12\\\"}\"; done\n"
+"two.sh" = "#!/bin/sh\n{ cat; printf '\\n'; } | sed 's/\"c\":\"a1\"/\"c\":\"a12\"/g' | tr -d '\\n'\n"
 
 [[case]]
 id = "json-then-lua"
@@ -124,7 +124,7 @@ cmd = ["-f", "json", "-t", "native", "-F", "./one.sh", "-L", "two.lua"]
 input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"a\"}]}]}"
 covers = ["opt:lua-filter"]
 [case.files]
-"one.sh" = "#!/bin/sh\nwhile IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"${l//\\\"c\\\":\\\"a\\\"/\\\"c\\\":\\\"a1\\\"}\"; done\n"
+"one.sh" = "#!/bin/sh\n{ cat; printf '\\n'; } | sed 's/\"c\":\"a\"/\"c\":\"a1\"/g' | tr -d '\\n'\n"
 "two.lua" = "function Str(s)\n  if s.text == 'a1' then return pandoc.Str('a12') end\nend\n"
 
 [[case]]
@@ -145,7 +145,7 @@ covers = ["opt:lua-filter"]
 [case.files]
 "d.yaml" = "filters:\n- type: lua\n  path: one.flt\n- type: json\n  path: ./two.sh\n"
 "one.flt" = "function Str(s)\n  if s.text == 'a' then return pandoc.Str('a1') end\nend\n"
-"two.sh" = "#!/bin/sh\nwhile IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"${l//\\\"c\\\":\\\"a1\\\"/\\\"c\\\":\\\"a12\\\"}\"; done\n"
+"two.sh" = "#!/bin/sh\n{ cat; printf '\\n'; } | sed 's/\"c\":\"a1\"/\"c\":\"a12\"/g' | tr -d '\\n'\n"
 
 [[case]]
 id = "lua-defaults-map-without-type"
@@ -192,7 +192,7 @@ input = "{\"pandoc-api-version\":[1,23,1,2],\"meta\":{},\"blocks\":[{\"t\":\"Par
 covers = ["opt:lua-filter"]
 [case.files]
 "d.yaml" = "filters:\n- type: json\n  path: ./x.lua\n"
-"x.lua" = "#!/bin/sh\nwhile IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"${l//\\\"c\\\":\\\"a\\\"/\\\"c\\\":\\\"j\\\"}\"; done\n"
+"x.lua" = "#!/bin/sh\n{ cat; printf '\\n'; } | sed 's/\"c\":\"a\"/\"c\":\"j\"/g' | tr -d '\\n'\n"
 
 # The globals of a filter.
 

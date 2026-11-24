@@ -362,7 +362,7 @@ cmd = ["-f", "html", "-t", "native"]
 input = "<p>中\n中</p>\n<p>中\na</p>\n<p><em>中</em>\n中</p>\n<pre>中\n中</pre>\n"
 
 # JSON filters (`--filter`, `-F`, `filters:`). Each filter is a small script
-# of this file: a shell script without other processes, or a Python script.
+# of this file: a shell script or a Python script.
 
 [[case]]
 id = "filter-shell-changes-the-document"
@@ -372,9 +372,7 @@ covers = ["opt:filter"]
 [case.files]
 "up.sh" = '''
 #!/bin/sh
-while IFS= read -r l || [ -n "$l" ]; do
-  printf '%s' "${l//\"c\":\"a\"/\"c\":\"A\"}"
-done
+{ cat; printf '\n'; } | sed 's/"c":"a"/"c":"A"/g' | tr -d '\n'
 '''
 
 [[case]]
@@ -414,9 +412,7 @@ input = "a\n"
 [case.files]
 "arg.sh" = '''
 #!/bin/sh
-while IFS= read -r l || [ -n "$l" ]; do
-  printf '%s' "${l//\"c\":\"a\"/\"c\":\"$# $1\"}"
-done
+{ cat; printf '\n'; } | sed "s/\"c\":\"a\"/\"c\":\"$# $1\"/g" | tr -d '\n'
 '''
 
 [[case]]
@@ -426,9 +422,7 @@ input = "a\n"
 [case.files]
 "arg.sh" = '''
 #!/bin/sh
-while IFS= read -r l || [ -n "$l" ]; do
-  printf '%s' "${l//\"c\":\"a\"/\"c\":\"$# $1\"}"
-done
+{ cat; printf '\n'; } | sed "s/\"c\":\"a\"/\"c\":\"$# $1\"/g" | tr -d '\n'
 '''
 
 [[case]]
@@ -441,10 +435,8 @@ input = "a\n"
 r=${PANDOC_READER_OPTIONS%%,\"abbreviations\"*}
 t=${PANDOC_READER_OPTIONS#*\"default-image-extension\"}
 r="$PANDOC_VERSION $r $t"
-r=${r//\"/\'}
-while IFS= read -r l || [ -n "$l" ]; do
-  printf '%s' "${l//\"c\":\"a\"/\"c\":\"$r\"}"
-done
+r=$(printf '%s\n' "$r" | sed -e "s/\"/'/g" -e 's/[\\&|]/\\&/g')
+{ cat; printf '\n'; } | sed "s|\"c\":\"a\"|\"c\":\"$r\"|g" | tr -d '\n'
 '''
 
 [[case]]
@@ -525,7 +517,7 @@ id = "filter-in-the-data-folder"
 cmd = ["-f", "markdown", "-t", "native", "--data-dir=dd", "-F", "inner.sh"]
 input = "a\n"
 [case.files]
-"dd/filters/inner.sh" = "#!/bin/sh\nwhile IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"${l//\\\"c\\\":\\\"a\\\"/\\\"c\\\":\\\"data\\\"}\"; done\n"
+"dd/filters/inner.sh" = "#!/bin/sh\n{ cat; printf '\\n'; } | sed 's/\"c\":\"a\"/\"c\":\"data\"/g' | tr -d '\\n'\n"
 
 [[case]]
 id = "filter-in-the-data-folder-fails"
@@ -539,15 +531,15 @@ id = "filter-without-a-shebang-line"
 cmd = ["-f", "markdown", "-t", "native", "-F", "./plain.sh"]
 input = "a\n"
 [case.files]
-"plain.sh" = "while IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"${l//\\\"c\\\":\\\"a\\\"/\\\"c\\\":\\\"sh\\\"}\"; done\n"
+"plain.sh" = "{ cat; printf '\\n'; } | sed 's/\"c\":\"a\"/\"c\":\"sh\"/g' | tr -d '\\n'\n"
 
 [[case]]
 id = "filters-run-in-order"
 cmd = ["-f", "markdown", "-t", "native", "-F", "./one.sh", "--filter=./two.sh"]
 input = "a\n"
 [case.files]
-"one.sh" = "#!/bin/sh\nwhile IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"${l//\\\"c\\\":\\\"a\\\"/\\\"c\\\":\\\"a1\\\"}\"; done\n"
-"two.sh" = "#!/bin/sh\nwhile IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"${l//\\\"c\\\":\\\"a1\\\"/\\\"c\\\":\\\"a12\\\"}\"; done\n"
+"one.sh" = "#!/bin/sh\n{ cat; printf '\\n'; } | sed 's/\"c\":\"a\"/\"c\":\"a1\"/g' | tr -d '\\n'\n"
+"two.sh" = "#!/bin/sh\n{ cat; printf '\\n'; } | sed 's/\"c\":\"a1\"/\"c\":\"a12\"/g' | tr -d '\\n'\n"
 
 [[case]]
 id = "filter-sees-metadata-and-shifted-headings"
@@ -571,7 +563,7 @@ id = "filter-with-sandbox"
 cmd = ["-f", "markdown", "-t", "native", "--sandbox", "-F", "./up.sh"]
 input = "a\n"
 [case.files]
-"up.sh" = "#!/bin/sh\nwhile IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"${l//\\\"c\\\":\\\"a\\\"/\\\"c\\\":\\\"A\\\"}\"; done\n"
+"up.sh" = "#!/bin/sh\n{ cat; printf '\\n'; } | sed 's/\"c\":\"a\"/\"c\":\"A\"/g' | tr -d '\\n'\n"
 
 [[case]]
 id = "filter-before-a-missing-lua-filter"
@@ -593,8 +585,8 @@ cmd = ["-f", "markdown", "-t", "native", "-d", "d.yaml"]
 input = "a\n"
 [case.files]
 "d.yaml" = "filters:\n- ./up.sh\n- type: json\n  path: ./two.sh\n"
-"up.sh" = "#!/bin/sh\nwhile IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"${l//\\\"c\\\":\\\"a\\\"/\\\"c\\\":\\\"a1\\\"}\"; done\n"
-"two.sh" = "#!/bin/sh\nwhile IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"${l//\\\"c\\\":\\\"a1\\\"/\\\"c\\\":\\\"a12\\\"}\"; done\n"
+"up.sh" = "#!/bin/sh\n{ cat; printf '\\n'; } | sed 's/\"c\":\"a\"/\"c\":\"a1\"/g' | tr -d '\\n'\n"
+"two.sh" = "#!/bin/sh\n{ cat; printf '\\n'; } | sed 's/\"c\":\"a1\"/\"c\":\"a12\"/g' | tr -d '\\n'\n"
 
 [[case]]
 id = "filter-in-a-defaults-file-and-an-option"
@@ -602,8 +594,8 @@ cmd = ["-f", "markdown", "-t", "native", "-F", "./two.sh", "-d", "d.yaml"]
 input = "a\n"
 [case.files]
 "d.yaml" = "filters: [./up.sh]\n"
-"up.sh" = "#!/bin/sh\nwhile IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"${l//\\\"c\\\":\\\"a\\\"/\\\"c\\\":\\\"a1\\\"}\"; done\n"
-"two.sh" = "#!/bin/sh\nwhile IFS= read -r l || [ -n \"$l\" ]; do printf '%s' \"${l//\\\"c\\\":\\\"a1\\\"/\\\"c\\\":\\\"a12\\\"}\"; done\n"
+"up.sh" = "#!/bin/sh\n{ cat; printf '\\n'; } | sed 's/\"c\":\"a\"/\"c\":\"a1\"/g' | tr -d '\\n'\n"
+"two.sh" = "#!/bin/sh\n{ cat; printf '\\n'; } | sed 's/\"c\":\"a1\"/\"c\":\"a12\"/g' | tr -d '\\n'\n"
 
 # The standard output of a JSON filter that is not valid UTF-8 (cli-R9-07).
 

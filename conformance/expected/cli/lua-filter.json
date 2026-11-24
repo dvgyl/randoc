@@ -2,7 +2,7 @@
   "oracle": "pandoc 3.13",
   "units": {
     "json-then-lua#cmd": {
-      "key": "b34178dbdf84b750",
+      "key": "e55288c92cb99e57",
       "exit": 0,
       "stdout": "[ Para [ Str \"a12\" ] ]\n",
       "stderr": ""
@@ -44,13 +44,13 @@
       "stderr": ""
     },
     "lua-defaults-json-filter-named-lua#cmd": {
-      "key": "90dddedb27ee8c96",
+      "key": "b4efc0b26b799575",
       "exit": 0,
       "stdout": "[ Para [ Str \"j\" ] ]\n",
       "stderr": ""
     },
     "lua-defaults-map#cmd": {
-      "key": "e98a42dbbe9a5ddc",
+      "key": "f8e4a5c7b9cd3093",
       "exit": 0,
       "stdout": "[ Para [ Str \"a12\" ] ]\n",
       "stderr": ""
@@ -278,7 +278,7 @@
       "stderr": "Error running filter 'e.lua':\ne.lua:2: <name> or '...' expected near <eof>\n"
     },
     "lua-then-json#cmd": {
-      "key": "fb3e06691381fe9e",
+      "key": "26be8f4bf90c6475",
       "exit": 0,
       "stdout": "[ Para [ Str \"a12\" ] ]\n",
       "stderr": ""

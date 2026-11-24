@@ -140,13 +140,13 @@
       "stderr": "Error running filter 'nosuch.lua':\ncannot open nosuch.lua: No such file or directory\n"
     },
     "filter-argument-html5#cmd": {
-      "key": "a346f69d05421a9a",
+      "key": "8e67335011a83853",
       "exit": 0,
       "stdout": "<p>1 html5</p>\n",
       "stderr": ""
     },
     "filter-argument-without-extensions#cmd": {
-      "key": "2c6c2bc97653d135",
+      "key": "742be2a1e70b6e7c",
       "exit": 0,
       "stdout": "<p>1 html4</p>\n",
       "stderr": ""
@@ -170,7 +170,7 @@
       "stderr": ""
     },
     "filter-environment#cmd": {
-      "key": "a68eea6c9d6aa78d",
+      "key": "efb0c9dc5343386f",
       "exit": 0,
       "stdout": "[ Para\n    [ Str\n        \"3.13 {'extensions':['all_symbols_escapable','auto_identifiers','backtick_code_blocks','blank_before_blockquote','blank_before_header','bracketed_spans','citations','definition_lists','east_asian_line_breaks','escaped_line_breaks','example_lists','fancy_lists','fenced_code_attributes','fenced_code_blocks','fenced_divs','footnotes','grid_tables','header_attributes','table_attributes','implicit_figures','implicit_header_references','inline_code_attributes','inline_notes','intraword_underscores','latex_macros','line_blocks','link_attributes','markdown_in_html_blocks','multiline_tables','native_divs','native_spans','pandoc_title_block','pipe_tables','raw_attribute','raw_html','raw_tex','shortcut_reference_links','simple_tables','space_in_atx_header','startnum','strikeout','subscript','superscript','task_lists','table_captions','tex_math_dollars','yaml_metadata_block'],'standalone':false,'columns':50,'tab-stop':2,'indented-code-classes':['x'] :'png','track-changes':'all-changes','strip-comments':true,'typst-inputs':[]}\"\n    ]\n]\n",
       "stderr": ""
@@ -188,19 +188,19 @@
       "stderr": "a message\nError running filter './fail.sh':\nFilter returned error status 3\n"
     },
     "filter-in-a-defaults-file#cmd": {
-      "key": "88af6fdacd1db88c",
+      "key": "f5abe16f154349ca",
       "exit": 0,
       "stdout": "[ Para [ Str \"a12\" ] ]\n",
       "stderr": ""
     },
     "filter-in-a-defaults-file-and-an-option#cmd": {
-      "key": "be174996eff64ae0",
+      "key": "01102d06b7534bd6",
       "exit": 0,
       "stdout": "[ Para [ Str \"a1\" ] ]\n",
       "stderr": ""
     },
     "filter-in-the-data-folder#cmd": {
-      "key": "d099c7d83c5694ec",
+      "key": "47aab056aea647a7",
       "exit": 0,
       "stdout": "[ Para [ Str \"data\" ] ]\n",
       "stderr": ""
@@ -326,19 +326,19 @@
       "stderr": ""
     },
     "filter-shell-changes-the-document#cmd": {
-      "key": "fb06b9a9b60bb434",
+      "key": "b54460a2a5e7017b",
       "exit": 0,
       "stdout": "[ Para [ Str \"A\" , Space , Str \"b\" ] ]\n",
       "stderr": ""
     },
     "filter-with-sandbox#cmd": {
-      "key": "5ae597bfaa57d3b5",
+      "key": "e8c5848b0c43cad8",
       "exit": 0,
       "stdout": "[ Para [ Str \"A\" ] ]\n",
       "stderr": ""
     },
     "filter-without-a-shebang-line#cmd": {
-      "key": "b165b4ec2b12bff6",
+      "key": "288283cdeb60795d",
       "exit": 0,
       "stdout": "[ Para [ Str \"sh\" ] ]\n",
       "stderr": ""
@@ -374,7 +374,7 @@
       "stderr": "first\nsecond\n"
     },
     "filters-run-in-order#cmd": {
-      "key": "2da294defe24b872",
+      "key": "4f3a05f2e631e320",
       "exit": 0,
       "stdout": "[ Para [ Str \"a12\" ] ]\n",
       "stderr": ""

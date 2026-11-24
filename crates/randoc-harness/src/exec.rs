@@ -331,7 +331,7 @@ impl Program {
 fn stage_file(path: &Path, contents: &[u8]) -> std::io::Result<()> {
     fs::write(path, contents)?;
     #[cfg(unix)]
-    if contents.starts_with(b"#!") {
+    if contents.starts_with(b"#!") || path.extension().is_some_and(|ext| ext == "sh") {
         use std::os::unix::fs::PermissionsExt;
         fs::set_permissions(path, fs::Permissions::from_mode(0o755))?;
     }
@@ -375,6 +375,17 @@ mod tests {
         assert_eq!(outcome.exit, 0);
         assert_eq!(outcome.stdout_bytes(), b"ready");
         fs::remove_dir_all(&dir).unwrap();
+    }
+
+    #[test]
+    fn stages_shell_files_without_a_shebang_with_mode_755() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let dir = PrivateDir::new().unwrap();
+        let path = dir.0.join("plain.sh");
+        stage_file(&path, b"printf ready\n").unwrap();
+        let mode = fs::metadata(&path).unwrap().permissions().mode();
+        assert_eq!(mode & 0o7777, 0o755);
     }
 
     #[test]
