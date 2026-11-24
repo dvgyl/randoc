@@ -13,7 +13,7 @@ name = "randoc"
 path = "src/main.rs"
 
 [features]
-default = ["lua"]
+default = ["lua", "server"]
 lua = ["dep:randoc-lua"]
 server = ["dep:randoc-server"]
 

@@ -38,6 +38,10 @@ pub const CLI_MAX_NESTING_DEPTH: usize = 16_384;
 ///
 /// The first argument is the program name.
 pub fn main_with_args(args: Vec<String>) -> i32 {
+    #[cfg(feature = "server")]
+    if let Some(arguments) = server_arguments(&args) {
+        return run_server(&program_name(&args), arguments);
+    }
     let worker = std::thread::Builder::new()
         .stack_size(CONVERSION_STACK_BYTES)
         .spawn(move || run(&args));
@@ -45,6 +49,50 @@ pub fn main_with_args(args: Vec<String>) -> i32 {
         Ok(Ok(code)) => code,
         // The thread did not start or it panicked. Pandoc uses 62 for an internal error.
         _ => 62,
+    }
+}
+
+#[cfg(feature = "server")]
+fn server_arguments(args: &[String]) -> Option<&[String]> {
+    let arguments = args.get(1..).unwrap_or_default();
+    if matches!(
+        program_name(args).as_str(),
+        "randoc-server" | "pandoc-server"
+    ) {
+        Some(arguments)
+    } else {
+        let (command, rest) = arguments.split_first()?;
+        (command == "server").then_some(rest)
+    }
+}
+
+#[cfg(feature = "server")]
+fn run_server(program: &str, arguments: &[String]) -> i32 {
+    use randoc_server::ServerCliAction;
+
+    let result = match randoc_server::parse_server_args(arguments) {
+        Ok(ServerCliAction::Run(config)) => randoc_server::run_server(&config),
+        Ok(ServerCliAction::Help(text)) => write_stdout(text.as_bytes()),
+        // Pandoc prints the text of `pandoc --version`.
+        Ok(ServerCliAction::Version(_)) => {
+            let head = if matches!(program, "pandoc" | "pandoc-server") {
+                "pandoc"
+            } else {
+                "randoc"
+            };
+            write_stdout(info::version_text(head, &default_user_data_dir()).as_bytes())
+        }
+        Err(error) => {
+            let _ = write!(std::io::stderr(), "{error}");
+            return error.exit_code();
+        }
+    };
+    match result {
+        Ok(()) => 0,
+        Err(error) => {
+            let _ = writeln!(std::io::stderr(), "{error}");
+            error.exit_code()
+        }
     }
 }
 
@@ -66,10 +114,16 @@ fn run(args: &[String]) -> i32 {
     }
 }
 
-/// Returns the program name without the directory.
-fn program_name(args: &[String]) -> &str {
-    let name = args.first().map_or("randoc", String::as_str);
-    name.rsplit(['/', '\\']).next().unwrap_or(name)
+/// Returns the program name without the directory and without a `.exe`
+/// suffix, in ASCII lower case.
+fn program_name(args: &[String]) -> String {
+    let path = args.first().map_or("randoc", String::as_str);
+    let name = path.rsplit(['/', '\\']).next().unwrap_or(path);
+    let name = name.to_ascii_lowercase();
+    match name.strip_suffix(".exe") {
+        Some(stem) => stem.to_owned(),
+        None => name,
+    }
 }
 
 /// Returns the default user data directory: `$XDG_DATA_HOME/pandoc`, else
@@ -166,7 +220,7 @@ pub fn settings_from_args(
 }
 
 fn run_checked(args: &[String]) -> Result<()> {
-    let program = program_name(args);
+    let program = &program_name(args);
     let rest = args.get(1..).unwrap_or_default();
     // `pandoc lua ARGS` and a program called `pandoc-lua` run the Lua
     // interpreter.
@@ -239,6 +293,45 @@ mod tests {
         list.iter().map(|s| (*s).to_owned()).collect()
     }
 
+    #[cfg(feature = "server")]
+    #[test]
+    fn server_dispatch_uses_the_executable_name_first() {
+        for program in ["/bin/randoc-server", "/bin/pandoc-server"] {
+            let named = args(&[program, "server", "--help"]);
+            assert_eq!(server_arguments(&named), Some(&named[1..]));
+        }
+        let subcommand = args(&["randoc", "server", "--port=0"]);
+        assert_eq!(server_arguments(&subcommand), Some(&subcommand[2..]));
+        for ordinary in [
+            &["randoc", "--server"][..],
+            &["randoc", "--", "server"],
+            &[],
+        ] {
+            assert_eq!(server_arguments(&args(ordinary)), None);
+        }
+        for program in ["C:\\bin\\Pandoc-Server.EXE", "randoc-server.exe"] {
+            let named = args(&[program, "--help"]);
+            assert_eq!(server_arguments(&named), Some(&named[1..]));
+        }
+        for program in ["", "..", "/bin/.."] {
+            let subcommand = args(&[program, "server", "--help"]);
+            assert_eq!(server_arguments(&subcommand), Some(&subcommand[2..]));
+        }
+    }
+
+    #[test]
+    fn program_names_ignore_the_directory_the_suffix_and_the_case() {
+        for (path, name) in [
+            ("/usr/bin/pandoc", "pandoc"),
+            ("C:\\bin\\Pandoc-Lua.Exe", "pandoc-lua"),
+            ("pandoc.exe", "pandoc"),
+            ("", ""),
+        ] {
+            assert_eq!(program_name(&args(&[path])), name);
+        }
+        assert_eq!(program_name(&[]), "randoc");
+    }
+
     #[test]
     fn errors_come_before_unknown_options() {
         let error =
@@ -264,11 +357,5 @@ mod tests {
         .unwrap();
         assert_eq!(command, Some(cli::InfoCommand::ListInputFormats));
         assert!(settings_from_args(&args(&["--toc-depth=9", "-h"]), &mut NoEnvironment).is_err());
-    }
-
-    #[test]
-    fn program_names_lose_the_directory() {
-        assert_eq!(program_name(&args(&["/a/b/pandoc"])), "pandoc");
-        assert_eq!(program_name(&[]), "randoc");
     }
 }

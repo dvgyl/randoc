@@ -3,17 +3,19 @@
 
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
 use std::io::{IsTerminal, Read};
+use std::path::{Component, Path};
 
-use randoc::ast::{Block, Inline, Meta, MetaValue, Pandoc};
+use randoc::ast::walk::{VisitorMut, walk_mut};
+use randoc::ast::{Attr, Block, Inline, Meta, MetaValue, Pandoc};
 use randoc::error::io_error;
 use randoc::{
     Context, Error, Extension, FormatSpec, HighlightMethod, LogMessage, Output, Reader,
-    ReaderOptions, Result, Source, Sources, Verbosity, WrapOption, WriterOptions, formats,
+    ReaderOptions, Result, Source, Sources, Text, Verbosity, WrapOption, WriterOptions, formats,
 };
 
 use crate::cli::HIGHLIGHT_STYLES;
 use crate::lua::ScriptKind;
-use crate::settings::{Eol, Filter, Settings, VarValue};
+use crate::settings::{Eol, Filter, Settings};
 use crate::subsystem::{self, Subsystem};
 use crate::template::{Includes, TemplateFiles, TemplateText};
 use randoc_yaml::{Entrance, Kind, Limits, Node, Value};
@@ -362,14 +364,19 @@ fn read_metadata_file(
     options: &ReaderOptions,
     context: &mut Context,
 ) -> Result<Meta> {
-    let in_data_dir = data_metadata_file(path, data_dir);
-    let bytes = match context.host().read_file(path) {
-        Ok(bytes) => bytes,
-        Err(_) => context
-            .host()
-            .read_file(&in_data_dir)
-            .map_err(|_| Error::CouldNotFindMetadataFile(path.to_owned()))?,
-    };
+    let bytes = context
+        .host()
+        .read_file(path)
+        .or_else(|error| {
+            if stays_in_metadata_directory(path) {
+                context
+                    .host()
+                    .read_file(&data_metadata_file(path, data_dir))
+            } else {
+                Err(error)
+            }
+        })
+        .map_err(|_| Error::CouldNotFindMetadataFile(path.to_owned()))?;
     let entrance = Entrance::MetadataFile { name: path };
     let text =
         crate::node::decode_text(&bytes).map_err(|error| Error::Parse(error.report(entrance)))?;
@@ -397,6 +404,20 @@ fn read_metadata_file(
         }
     }
     Ok(meta)
+}
+
+/// Checks that the relative path stays inside the metadata folder.
+fn stays_in_metadata_directory(path: &str) -> bool {
+    let mut depth = 0;
+    for component in Path::new(path).components() {
+        match component {
+            Component::Normal(_) => depth += 1,
+            Component::ParentDir if depth > 0 => depth -= 1,
+            Component::CurDir => {}
+            _ => return false,
+        }
+    }
+    true
 }
 
 /// Reads the metadata files. A later file replaces a key of an earlier file.
@@ -484,23 +505,15 @@ fn shift_headings(doc: &mut Pandoc, by: i64) {
     if by == 0 {
         return;
     }
-    // A negative shift by N levels makes the first headings of level N the
-    // document title; the last of them stays.
-    let leading = doc
-        .blocks
-        .iter()
-        .take_while(
-            |block| matches!(block, Block::Header(level, ..) if level.wrapping_add(by) == 0),
-        )
-        .count();
-    if let Some(Block::Header(_, _, inlines)) =
-        leading.checked_sub(1).and_then(|i| doc.blocks.get(i))
-    {
-        let title = MetaValue::MetaInlines(inlines.clone());
+    if let Some(title) = take_leading_title(&mut doc.blocks, by) {
         doc.meta.insert("title", title);
     }
-    doc.blocks.drain(..leading);
-    crate::steps::count(leading);
+    if let Some(Block::Div(attr, blocks)) = doc.blocks.first_mut()
+        && attr.classes.first().is_some_and(|class| class == "section")
+        && let Some(title) = take_leading_title(blocks, by)
+    {
+        doc.meta.insert("title", title);
+    }
     randoc::ast::walk::walk_blocks_mut(doc, |block| {
         crate::steps::count(1);
         if let Block::Header(level, _, inlines) = block {
@@ -513,6 +526,21 @@ fn shift_headings(doc: &mut Pandoc, by: i64) {
             }
         }
     });
+}
+
+/// Removes the leading headings that shift to level zero. The last supplies the title.
+fn take_leading_title(blocks: &mut Vec<Block>, by: i64) -> Option<MetaValue> {
+    let leading = blocks
+        .iter()
+        .take_while(
+            |block| matches!(block, Block::Header(level, ..) if level.wrapping_add(by) == 0),
+        )
+        .count();
+    crate::steps::count(leading);
+    match blocks.drain(..leading).next_back() {
+        Some(Block::Header(_, _, inlines)) => Some(MetaValue::MetaInlines(inlines)),
+        _ => None,
+    }
 }
 
 /// Extracts media into `dir` and rewrites matching `Image` URLs in `doc` to
@@ -1141,6 +1169,7 @@ impl SandboxHost {
             settings
                 .metadata_files
                 .iter()
+                .filter(|path| stays_in_metadata_directory(path))
                 .map(|path| data_metadata_file(path, data_dir)),
         );
         permitted.insert(data_abbreviations(data_dir));
@@ -1371,62 +1400,131 @@ pub fn data_file(data_dir: &str, folder: &str, name: &str) -> String {
     }
 }
 
-/// Gets the language from a template variable or the document metadata.
-fn document_language(doc: &Pandoc, settings: &Settings) -> Option<String> {
-    settings
-        .variables
-        .iter()
-        .rev()
-        .find(|(name, _)| name == "lang")
-        .and_then(|(_, value)| match value {
-            VarValue::Text(lang) => Some(lang.clone()),
-            VarValue::Json(value) => value.as_str().map(str::to_owned),
-        })
-        .or_else(|| doc.meta.get("lang").map(randoc::shared::stringify_meta))
+fn metadata_language(value: &MetaValue) -> Option<Text> {
+    match value {
+        MetaValue::MetaString(_) | MetaValue::MetaInlines(_) | MetaValue::MetaBlocks(_) => {
+            Some(randoc::shared::stringify_meta(value))
+        }
+        MetaValue::MetaBool(value) => Some(value.to_string()),
+        _ => None,
+    }
 }
 
-// Restrict language tags to one path component.
-fn valid_language_tag(lang: &str) -> bool {
-    lang.split('-')
-        .all(|part| !part.is_empty() && part.bytes().all(|byte| byte.is_ascii_alphanumeric()))
-}
-
-/// Loads string labels for the full language tag or its base language.
-fn read_translations(
-    lang: &str,
-    data_dir: &str,
-    context: &mut Context,
-) -> Option<BTreeMap<String, String>> {
-    if !valid_language_tag(lang) {
+fn reader_language(settings: &Settings) -> Option<Text> {
+    let mut values = settings.metadata.iter().filter(|(key, _)| key == "lang");
+    let (_, value) = values.next()?;
+    if values.next().is_some() {
         return None;
     }
-    let base = lang.split_once('-').map(|(base, _)| base);
-    let max_bytes = usize::try_from(context.limits.max_resource_size).unwrap_or(usize::MAX);
-    [Some(lang), base].into_iter().flatten().find_map(|tag| {
-        let path = data_file(data_dir, "translations", &format!("{tag}.yaml"));
-        if !context.host().file_exists(&path) {
-            return None;
+    metadata_language(value)
+}
+
+fn document_language(doc: &Pandoc) -> Option<Text> {
+    doc.meta.get("lang").and_then(metadata_language)
+}
+
+/// The conversion phase that a translation table is for.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Phase {
+    Reader,
+    Writer,
+}
+
+/// Sets the translation table for the next phase.
+///
+/// The lookup tries the full tag, then the language and script when the tag
+/// also has a region, then the language alone. All the candidates in the user
+/// data folder come before the embedded tables.
+fn load_translations(lang: Option<&str>, phase: Phase, data_dir: &str, context: &mut Context) {
+    use randoc_citeproc::lang::{parse_lang, render_lang};
+
+    let text = lang.filter(|lang| !lang.is_empty()).unwrap_or("en");
+    let lang = match parse_lang(text).map_err(|_| text) {
+        Ok(lang) => lang,
+        Err(text) => {
+            // Pandoc reports the value at once in the reader phase. In the
+            // writer phase, it reports the value only at the first label
+            // lookup, and `Context` has no hook for that lookup.
+            if phase == Phase::Reader {
+                context.report(LogMessage::InvalidLang(text.into()));
+            }
+            context.set_translations(Some(BTreeMap::new()));
+            return;
         }
-        let bytes = context.host().read_file_limited(&path, max_bytes).ok()?;
-        let text = crate::node::decode_text(&bytes).ok()?;
-        let root = randoc_yaml::parse(&text, Limits::default()).ok()?;
-        let Kind::Mapping(entries) = root.kind else {
-            return None;
-        };
+    };
+    let full = render_lang(&lang);
+    let base = lang.language.as_str();
+    let script = lang
+        .script
+        .as_ref()
+        .filter(|_| lang.region.is_some())
+        .map(|script| format!("{base}-{script}"));
+    let mut tags = vec![full.as_str()];
+    for tag in [script.as_deref(), Some(base)].into_iter().flatten() {
+        if !tags.contains(&tag) {
+            tags.push(tag);
+        }
+    }
+    let directory = data_path(data_dir, "translations");
+    let mut names = None;
+    let table = tags.iter().find_map(|tag| {
+        let name = format!("{tag}.yaml");
+        read_translation_file(&data_path(&directory, &name), context).or_else(|| {
+            let files = names.get_or_insert_with(|| {
+                let mut files = context
+                    .host()
+                    .list_directory(&directory)
+                    .unwrap_or_default();
+                files.sort_unstable();
+                files
+            });
+            let file = files
+                .iter()
+                .find(|file| *file != &name && file.eq_ignore_ascii_case(&name))?;
+            read_translation_file(&data_path(&directory, file), context)
+        })
+    });
+    let table = table.or_else(|| {
+        let pairs = tags
+            .iter()
+            .find_map(|tag| randoc_data::terms::term_table(tag))?;
         Some(
-            entries
-                .into_iter()
-                .filter_map(
-                    |(key, value)| match (key.value().ok()?, value.value().ok()?) {
-                        (Value::String(key), Value::String(value)) => {
-                            Some((key.to_owned(), value.to_owned()))
-                        }
-                        _ => None,
-                    },
-                )
+            pairs
+                .iter()
+                .map(|&(key, value)| (key.into(), value.into()))
                 .collect(),
         )
-    })
+    });
+    match table {
+        Some(table) => context.set_translations(Some(table)),
+        None => context.set_translation_missing(full, format!("translations/{base}.yaml")),
+    }
+}
+
+fn read_translation_file(path: &str, context: &mut Context) -> Option<BTreeMap<Text, Text>> {
+    if !context.host().file_exists(path) {
+        return None;
+    }
+    let max_bytes = usize::try_from(context.limits.max_resource_size).unwrap_or(usize::MAX);
+    let bytes = context.host().read_file_limited(path, max_bytes).ok()?;
+    let text = crate::node::decode_text(&bytes).ok()?;
+    let root = randoc_yaml::parse(&text, Limits::default()).ok()?;
+    let Kind::Mapping(entries) = root.kind else {
+        return None;
+    };
+    Some(
+        entries
+            .into_iter()
+            .filter_map(
+                |(key, value)| match (key.value().ok()?, value.value().ok()?) {
+                    (Value::String(key), Value::String(value)) => {
+                        Some((key.to_owned(), value.to_owned()))
+                    }
+                    _ => None,
+                },
+            )
+            .collect(),
+    )
 }
 
 /// Joins a resource folder and a name as Pandoc does. A folder that is empty
@@ -1546,34 +1644,34 @@ fn run_citeproc(
     context: &mut Context,
 ) -> Result<()> {
     let options = metadata_options(reader_options, from);
-    process_citations(
-        doc,
+    with_citation_hooks(
         &settings.resource_path,
         &options,
         settings.sandbox,
         context,
+        |context, hooks| randoc_citeproc::filter::process_citations(context, doc, hooks),
     )
 }
 
 #[cfg(feature = "lua")]
-pub(crate) fn lua_citeproc(
+pub(crate) fn with_lua_citation_hooks<T>(
     context: &mut Context,
-    doc: &mut Pandoc,
     environment: &randoc_lua::FilterEnvironment,
-) -> Result<()> {
+    run: impl FnOnce(&mut Context, randoc_citeproc::filter::Hooks<'_>) -> Result<T>,
+) -> Result<T> {
     let options = metadata_options(&environment.reader_options, "");
     let resource_path = environment.resource_path.iter().cloned().collect();
     let bypass_sandbox = environment.sandbox && environment.mode == randoc_lua::Mode::Full;
-    process_citations(doc, &resource_path, &options, bypass_sandbox, context)
+    with_citation_hooks(&resource_path, &options, bypass_sandbox, context, run)
 }
 
-fn process_citations(
-    doc: &mut Pandoc,
+fn with_citation_hooks<T>(
     resource_path: &VecDeque<String>,
     options: &ReaderOptions,
     sandbox: bool,
     context: &mut Context,
-) -> Result<()> {
+    run: impl FnOnce(&mut Context, randoc_citeproc::filter::Hooks<'_>) -> Result<T>,
+) -> Result<T> {
     let mut find = |context: &mut Context, name: &str| {
         resource_candidates(name, resource_path)
             .into_iter()
@@ -1583,9 +1681,8 @@ fn process_citations(
         yaml_references(text, path, options, context)
     };
     let sandbox = sandbox.then(|| context.replace_host(Box::new(randoc::NativeHost)));
-    let result = randoc_citeproc::filter::process_citations(
+    let result = run(
         context,
-        doc,
         randoc_citeproc::filter::Hooks {
             find_resource: &mut find,
             yaml_references: &mut yaml,
@@ -1625,20 +1722,74 @@ fn yaml_references(
     Ok(Vec::new())
 }
 
-/// The output formats that `--embed-resources` changes.
-fn is_html_format(name: &str) -> bool {
+fn supports_embed_resources(name: &str) -> bool {
     matches!(
         name,
-        "html"
-            | "html4"
-            | "html5"
-            | "revealjs"
-            | "s5"
-            | "slidy"
-            | "slideous"
-            | "dzslides"
-            | "chunkedhtml"
+        "html" | "html4" | "html5" | "revealjs" | "s5" | "slidy" | "slideous" | "dzslides"
     )
+}
+
+/// The output formats that use the HTML template fields.
+fn is_html_format(name: &str) -> bool {
+    name == "chunkedhtml" || supports_embed_resources(name)
+}
+
+fn file_scope_prefix(path: &str) -> Text {
+    let name = Inline::Str(path.replace('/', "__"));
+    randoc::shared::auto_identifier(&[name], randoc::Extensions::default())
+}
+
+struct FileScope<'a> {
+    prefix: &'a str,
+    paths: &'a BTreeMap<Text, Text>,
+}
+
+impl FileScope<'_> {
+    fn prefix_id(&self, attr: &mut Attr) {
+        if !self.prefix.is_empty() && !attr.id.is_empty() {
+            attr.id = format!("{}__{}", self.prefix, attr.id);
+        }
+    }
+
+    fn rewrite_target(&self, url: &mut Text) {
+        let (path, id) = url.split_once('#').unwrap_or((url, ""));
+        let prefix = if path.is_empty() {
+            self.prefix
+        } else if let Some(prefix) = self.paths.get(&percent_decode(path)) {
+            prefix
+        } else {
+            return;
+        };
+        let id = percent_decode(id);
+        *url = match (prefix.is_empty(), id.is_empty()) {
+            (true, _) => format!("#{id}"),
+            (_, true) => format!("#{prefix}"),
+            _ => format!("#{prefix}__{id}"),
+        };
+    }
+}
+
+impl VisitorMut for FileScope<'_> {
+    fn block(&mut self, block: &mut Block) {
+        match block {
+            Block::Header(_, attr, _) | Block::Div(attr, _) | Block::CodeBlock(attr, _) => {
+                self.prefix_id(attr);
+            }
+            Block::Table(table) => self.prefix_id(&mut table.attr),
+            _ => {}
+        }
+    }
+
+    fn inline(&mut self, inline: &mut Inline) {
+        match inline {
+            Inline::Span(attr, _) | Inline::Code(attr, _) => self.prefix_id(attr),
+            Inline::Link(attr, _, target) | Inline::Image(attr, _, target) => {
+                self.prefix_id(attr);
+                self.rewrite_target(&mut target.url);
+            }
+            _ => {}
+        }
+    }
 }
 
 /// The output formats that are not text.
@@ -2010,6 +2161,12 @@ fn convert(
         reader,
         InputReader::Builtin(Reader::Text(_)) | InputReader::Script(_, ScriptKind::Text, _)
     );
+    load_translations(
+        reader_language(settings).as_deref(),
+        Phase::Reader,
+        data_dir,
+        context,
+    );
     let mut doc = if text_input {
         let tab_stop = if settings.preserve_tabs || keeps_tabs(&from_spec.name) {
             0
@@ -2042,9 +2199,24 @@ fn convert(
                 });
         }
         if settings.file_scope && sources.len() > 1 {
+            let paths: BTreeMap<_, _> = sources
+                .iter()
+                .map(|source| (source.name.clone(), file_scope_prefix(&source.name)))
+                .collect();
             let mut combined = Pandoc::default();
             for source in sources {
-                let part = reader.read_text(&Sources(vec![source]), &reader_options, context)?;
+                let prefix = &paths[&source.name];
+                let mut part =
+                    reader.read_text(&Sources(vec![source]), &reader_options, context)?;
+                if !matches!(from_spec.name.as_str(), "json" | "native") {
+                    walk_mut(
+                        &mut part,
+                        &mut FileScope {
+                            prefix,
+                            paths: &paths,
+                        },
+                    );
+                }
                 for (key, value) in part.meta.0 {
                     combined.meta.0.entry(key).or_insert(value);
                 }
@@ -2136,10 +2308,9 @@ fn convert(
             Filter::Json(path) => crate::filter::run(
                 path,
                 &doc,
-                &to_spec.name,
+                std::slice::from_ref(&to_spec.name),
                 data_dir,
                 &reader_options,
-                &reader_options.typst_inputs,
                 context,
             )?,
             Filter::Lua(path) => {
@@ -2170,17 +2341,17 @@ fn convert(
             }
         };
     }
-    context.state.translations = document_language(&doc, settings)
-        .and_then(|lang| read_translations(&lang, data_dir, context));
+    load_translations(
+        document_language(&doc).as_deref(),
+        Phase::Writer,
+        data_dir,
+        context,
+    );
     // Pandoc shifts the headings after the filters.
     shift_headings(&mut doc, settings.shift_heading_level_by);
     if let Some(dir) = &settings.extract_media {
         extract_media(dir, &mut doc, settings, context)?;
     }
-    if settings.embed_resources && !pdf_output && is_html_format(&to_spec.name) {
-        return Err(subsystem::missing(Subsystem::EmbedResources));
-    }
-
     if is_html_format(&to_spec.name) && writer_options.template.is_some() {
         crate::template::page_title_fallback(&mut writer_options.variables, &doc, context);
     }
@@ -2210,6 +2381,9 @@ fn convert(
     }
     let bytes = match writer.write(&doc, &writer_options, context)? {
         Output::Text(mut text) => {
+            if settings.embed_resources && supports_embed_resources(&to_spec.name) {
+                text = randoc_embed::embed_resources(&text, context)?;
+            }
             let empty_bibliography =
                 text.is_empty() && matches!(to_spec.name.as_str(), "bibtex" | "biblatex");
             if !standalone && !empty_bibliography && !text.ends_with('\n') {
@@ -2230,6 +2404,164 @@ mod tests {
     use randoc::PureHost;
 
     use super::*;
+
+    #[test]
+    fn embeds_html_before_setting_the_line_endings() {
+        for standalone in [false, true] {
+            for format in [
+                "html", "html4", "html5", "revealjs", "s5", "slidy", "slideous", "dzslides",
+            ] {
+                let (result, _) = convert_files(&[("in.md", "<BR/>\n")], &["in.md"], |s| {
+                    s.from = Some("markdown-smart".into());
+                    s.to = Some(format.into());
+                    s.standalone = standalone;
+                    s.embed_resources = true;
+                    s.eol = Eol::Crlf;
+                });
+                let text = result.unwrap();
+                assert!(text.contains("<BR />"), "{format}: {text}");
+                assert!(!text.replace("\r\n", "").contains('\n'), "{format}");
+                if !standalone {
+                    assert!(text.ends_with("\r\n"), "{format}: {text}");
+                }
+            }
+        }
+        assert!(!supports_embed_resources("chunkedhtml"));
+    }
+
+    #[test]
+    fn missing_translation_warns_on_use_in_each_phase() {
+        let files = [("in.tex", "\\figurename X\n\n\\figurename Y\n")];
+        let (result, context) = convert_files(&files, &["in.tex"], |s| {
+            s.from = Some("latex".into());
+            s.to = Some("html".into());
+            s.standalone = true;
+            s.metadata
+                .push(("lang".into(), MetaValue::MetaString("XX_latn_zz".into())));
+        });
+        let html = result.unwrap();
+        assert!(html.contains("<p>X</p>\n<p>Y</p>"));
+        let missing = || {
+            LogMessage::CouldNotLoadTranslations("xx-Latn-ZZ".into(), "translations/xx.yaml".into())
+        };
+        let warnings: Vec<_> = context
+            .log()
+            .iter()
+            .filter(|message| {
+                matches!(
+                    message,
+                    LogMessage::CouldNotLoadTranslations(..) | LogMessage::NoTranslation(_)
+                )
+            })
+            .cloned()
+            .collect();
+        assert_eq!(
+            warnings,
+            [
+                missing(),
+                LogMessage::NoTranslation("Figure".into()),
+                LogMessage::NoTranslation("Figure".into()),
+                missing(),
+                LogMessage::NoTranslation("Abstract".into()),
+            ]
+        );
+
+        let (plain, context) = convert_files(&[("in.md", "Sample\n")], &["in.md"], |s| {
+            s.from = Some("markdown".into());
+            s.to = Some("plain".into());
+            s.metadata
+                .push(("lang".into(), MetaValue::MetaString("xx-ZZ".into())));
+        });
+        assert_eq!(plain.unwrap(), "Sample\n");
+        assert!(context.log().is_empty());
+    }
+
+    #[test]
+    fn leading_section_supplies_the_title() {
+        let input =
+            "# Outer\n\n:::: {.section}\n\n# Inner\n\n::: {.section}\n# Nested\n:::\n\n::::\n";
+        let (result, _) = convert_files(&[("in.md", input)], &["in.md"], |s| {
+            s.from = Some("markdown".into());
+            s.shift_heading_level_by = -1;
+        });
+        let doc = randoc::ast::json::from_json(&result.unwrap()).unwrap();
+        assert_eq!(
+            doc.meta
+                .get("title")
+                .map(randoc::shared::stringify_meta)
+                .as_deref(),
+            Some("Inner")
+        );
+        let [Block::Div(_, blocks)] = &doc.blocks[..] else {
+            panic!("Expected a section");
+        };
+        let [Block::Div(_, nested)] = &blocks[..] else {
+            panic!("Expected a nested section");
+        };
+        assert!(matches!(&nested[..], [Block::Para(_)]));
+    }
+
+    #[test]
+    fn file_scope_rewrites_ids_and_targets_for_multiple_inputs() {
+        let files = [
+            (
+                "docs/First.md",
+                "# Start\n\n::: {#example}\n[x]{#span} `code`{#code} [here](#start){#link} [next](docs/Next%20file.md#end) [file](docs/Next%20file.md) [other](Else.md#end) ![]( #start){#image}\n:::\n",
+            ),
+            ("docs/Next file.md", "# End\n\n~~~ {#sample}\ncode\n~~~\n"),
+        ];
+        let (result, _) = convert_files(&files, &["docs/First.md", "docs/Next file.md"], |s| {
+            s.from = Some("markdown".into());
+            s.file_scope = true;
+        });
+        let json = result.unwrap();
+        for value in [
+            "docs__first.md__start",
+            "docs__first.md__example",
+            "docs__first.md__span",
+            "docs__first.md__code",
+            "docs__first.md__link",
+            "docs__first.md__image",
+            "#docs__first.md__start",
+            "#docs__next-file.md__end",
+            "#docs__next-file.md",
+            "Else.md#end",
+            "docs__next-file.md__sample",
+        ] {
+            assert!(json.contains(&format!("\"{value}\"")), "{value}: {json}");
+        }
+
+        let (result, _) = convert_files(&files, &["docs/First.md"], |s| {
+            s.from = Some("markdown".into());
+            s.file_scope = true;
+        });
+        assert!(!result.unwrap().contains("docs__"));
+    }
+
+    #[test]
+    fn metadata_fallback_cannot_go_above_the_metadata_folder() {
+        let mut host = PureHost::default();
+        for path in [
+            "/u/metadata/x/../y.yaml",
+            "/u/metadata/x/../../y.yaml",
+            "../direct.yaml",
+        ] {
+            host.files.insert(path.into(), b"title: Sample".to_vec());
+        }
+        let mut context = Context::new(Box::new(host));
+        let options = ReaderOptions::default();
+        for path in ["x/../y.yaml", "../direct.yaml"] {
+            assert!(read_metadata_file(path, "/u", &options, &mut context).is_ok());
+        }
+        for path in ["x/../../y.yaml", "/missing.yaml"] {
+            let error = read_metadata_file(path, "/u", &options, &mut context).unwrap_err();
+            assert_eq!(error.exit_code(), 98);
+            assert_eq!(
+                error.to_string(),
+                format!("Could not find metadata file '{path}'")
+            );
+        }
+    }
 
     #[test]
     fn templates_lose_the_byte_order_mark_and_carriage_returns() {
@@ -2474,7 +2806,7 @@ mod tests {
                 "Abstract: Sample abstract label\nTable: false\n",
             ),
             (
-                "/u/translations/zz-AB.yaml",
+                "/u/translations/ZZ-aB.yaml",
                 "Abstract: Regional abstract label\n",
             ),
         ];
@@ -2494,18 +2826,96 @@ mod tests {
                 .collect::<Vec<_>>(),
             [
                 &LogMessage::NoTranslation("Figure".into()),
+                &LogMessage::NoTranslation("Figure".into()),
                 &LogMessage::NoTranslation("Table".into())
             ],
         );
 
         let (result, mut context) = convert_files(&files, &["in.md"], |settings| {
             settings.from = Some("markdown".to_owned());
+            settings.variables.push((
+                "lang".to_owned(),
+                crate::settings::VarValue::Text("zz-AB".to_owned()),
+            ));
+        });
+        result.unwrap();
+        assert_eq!(context.term(Term::Abstract), "Sample abstract label");
+
+        let (result, mut context) = convert_files(&files, &["in.md"], |settings| {
+            settings.from = Some("markdown".into());
             settings
-                .variables
-                .push(("lang".to_owned(), VarValue::Text("zz-AB".to_owned())));
+                .metadata
+                .push(("lang".into(), MetaValue::MetaString("ZZ-ab".into())));
         });
         result.unwrap();
         assert_eq!(context.term(Term::Abstract), "Regional abstract label");
+    }
+
+    fn figure_label(files: &[(&str, &str)], lang: &str) -> (Text, Vec<LogMessage>) {
+        let mut host = PureHost::default();
+        for (name, text) in files {
+            host.files
+                .insert((*name).to_owned(), text.as_bytes().to_vec());
+        }
+        let mut context = Context::new(Box::new(host));
+        load_translations(Some(lang), Phase::Reader, "/u", &mut context);
+        let label = context.term(randoc::Term::Figure);
+        (label, context.log().to_vec())
+    }
+
+    #[test]
+    fn translation_lookup_tries_the_tag_then_the_script_then_the_language() {
+        assert_eq!(figure_label(&[], "zh-Hant-TW").0, "圖");
+        assert_eq!(figure_label(&[], "sr-Latn-RS").0, "Slika");
+        assert_eq!(figure_label(&[], "sr-RS").0, "Слика");
+
+        let full = "/u/translations/qq-Hant-TW.yaml";
+        let script = "/u/translations/qq-Hant.yaml";
+        let region = "/u/translations/qq-TW.yaml";
+        let both = [(full, "Figure: full\n"), (script, "Figure: script\n")];
+        assert_eq!(figure_label(&both, "qq-Hant-TW").0, "full");
+        let no_full = [(region, "Figure: region\n"), (script, "Figure: script\n")];
+        assert_eq!(figure_label(&no_full, "qq-Hant-TW").0, "script");
+
+        let user = [("/u/translations/sr.yaml", "Figure: user\n")];
+        assert_eq!(figure_label(&user, "sr-Latn-RS").0, "user");
+    }
+
+    #[test]
+    fn invalid_lang_reports_once_and_gives_empty_labels() {
+        let (label, log) = figure_label(&[], "@@");
+        assert_eq!(label, "");
+        assert_eq!(
+            log,
+            [
+                LogMessage::InvalidLang("@@".into()),
+                LogMessage::NoTranslation("Figure".into()),
+            ]
+        );
+        assert_eq!(figure_label(&[], ""), ("Figure".into(), Vec::new()));
+
+        let mut context = Context::new(Box::new(PureHost::default()));
+        load_translations(Some("@@"), Phase::Writer, "/u", &mut context);
+        assert!(context.log().is_empty());
+        assert_eq!(context.term(randoc::Term::Figure), "");
+    }
+
+    #[test]
+    fn boolean_lang_is_text() {
+        assert_eq!(
+            metadata_language(&MetaValue::MetaBool(true)).as_deref(),
+            Some("true")
+        );
+        assert_eq!(
+            metadata_language(&MetaValue::MetaBool(false)).as_deref(),
+            Some("false")
+        );
+        let (label, log) = figure_label(&[], "true");
+        assert_eq!(label, "");
+        assert_eq!(
+            log[0],
+            LogMessage::CouldNotLoadTranslations("true".into(), "translations/true.yaml".into())
+        );
     }
 
     #[test]

@@ -571,3 +571,30 @@ fn latex_writer_accepts_the_lhs_alias() {
     assert_eq!(status, 0, "{error}");
     assert!(!output.contains("\\begin{code}"), "{output}");
 }
+
+#[cfg(unix)]
+#[test]
+fn lua_runs_a_json_filter_and_collects_bibliography_references() {
+    let folder = Folder::new("filter-and-references");
+    let script = r#"function Pandoc(doc)
+  local args = {'-c', 'test "$1" = marker && cat', 'filter', 'marker'}
+  doc = pandoc.utils.run_json_filter(doc, '/bin/sh', args)
+  local refs = pandoc.utils.references(doc)
+  doc.blocks:insert(pandoc.Para{pandoc.Str(refs[1].id .. ': ' .. pandoc.utils.stringify(refs[1].title))})
+  return doc
+end"#;
+    std::fs::write(folder.0.join("hooks.lua"), script).expect("the filter is written");
+    std::fs::write(
+        folder.0.join("refs.json"),
+        r#"[{"id":"sample","type":"book","title":"Sample title"}]"#,
+    )
+    .expect("the bibliography is written");
+    let args = ["-L", "hooks.lua", "--bibliography=refs.json", "-t", "plain"];
+    for extra in [&[][..], &["--sandbox"][..]] {
+        let args: Vec<_> = extra.iter().chain(&args).copied().collect();
+        assert_eq!(
+            folder.run(&args, "[@sample]\n"),
+            ok("[@sample]\n\nsample: Sample title\n")
+        );
+    }
+}

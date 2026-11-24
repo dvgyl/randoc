@@ -18,8 +18,6 @@ pub enum Subsystem {
     Citeproc,
     /// `--extract-media`.
     ExtractMedia,
-    /// `--embed-resources` and `--self-contained`.
-    EmbedResources,
 }
 
 /// Returns the error for a feature that needs a missing subsystem.
@@ -29,7 +27,6 @@ pub fn missing(subsystem: Subsystem) -> Error {
         Subsystem::Templates => "templates and standalone output".to_owned(),
         Subsystem::Citeproc => "citation processing".to_owned(),
         Subsystem::ExtractMedia => "--extract-media".to_owned(),
-        Subsystem::EmbedResources => "--embed-resources".to_owned(),
     };
     Error::App(format!("Randoc does not support {feature} yet."))
 }

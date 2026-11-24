@@ -86,8 +86,8 @@ const EXTENSION_ORDER: [&str; 90] = [
     "yaml_metadata_block",
 ];
 
-const COPYRIGHT: &str = "Copyright (C) 2006-2025 John MacFarlane. Web:  https://pandoc.org\n\
-This is free software; see the source for copying conditions. There is no\n\
+const COPYRIGHT: &str = "Copyright (C) 2026 The Randoc contributors.\n\
+This is free software; licensed under MIT OR Apache-2.0. There is no\n\
 warranty, not even for merchantability or fitness for a particular purpose.\n";
 
 /// Returns the first two lines of `--version`.
@@ -108,14 +108,18 @@ fn version_head(program: &str) -> String {
 }
 
 /// Returns the text of `--version` or `-v` as a separate argument.
-///
-/// Randoc has no server mode. It has Lua with the Cargo feature `lua`.
 pub fn version_text(program: &str, user_data_dir: &str) -> String {
     format!(
-        "{}Features: -server {LUA_FEATURE}\nUser data directory: {user_data_dir}\n{COPYRIGHT}",
+        "{}Features: {SERVER_FEATURE} {LUA_FEATURE}\nUser data directory: {user_data_dir}\n{COPYRIGHT}",
         version_head(program)
     )
 }
+
+const SERVER_FEATURE: &str = if cfg!(feature = "server") {
+    "+server"
+} else {
+    "-server"
+};
 
 const LUA_FEATURE: &str = if cfg!(feature = "lua") {
     "+lua"
@@ -291,10 +295,27 @@ mod tests {
         let mut lines = text.lines();
         assert_eq!(lines.next(), Some("pandoc 3.13"));
         assert!(lines.next().is_some_and(|l| l.starts_with("Randoc ")));
-        assert_eq!(lines.next(), Some("Features: -server +lua"));
+        assert_eq!(
+            lines.next().unwrap(),
+            format!("Features: {SERVER_FEATURE} {LUA_FEATURE}")
+        );
         assert_eq!(lines.next(), Some("User data directory: /h"));
         assert!(version_text("randoc", "/h").starts_with("randoc "));
         assert!(!short_version_text("pandoc", "/h").contains("Features"));
+    }
+
+    #[test]
+    fn version_names_the_randoc_copyright_holders() {
+        for program in ["pandoc", "randoc"] {
+            for text in [
+                version_text(program, "/h"),
+                short_version_text(program, "/h"),
+            ] {
+                assert!(!text.contains("MacFarlane"));
+                assert!(text.ends_with(COPYRIGHT));
+                assert!(COPYRIGHT.starts_with("Copyright (C) 2026 The Randoc contributors.\n"));
+            }
+        }
     }
 
     #[test]

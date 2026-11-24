@@ -3,6 +3,7 @@
 fn main() {
     // Pandoc decodes each argument with replacement characters, so an
     // argument that is not UTF-8 is not an error.
+    // Server dispatch also uses the executable name.
     let args: Vec<String> = std::env::args_os()
         .map(|arg| arg.to_string_lossy().into_owned())
         .collect();

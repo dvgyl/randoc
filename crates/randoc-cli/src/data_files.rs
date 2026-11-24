@@ -251,3 +251,18 @@ pub const DATA_FILES: [&str; 247] = [
     "translations/zh-Hans.yaml",
     "translations/zh-Hant.yaml",
 ];
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn every_translation_file_has_an_embedded_table() {
+        let tags: Vec<_> = super::DATA_FILES
+            .iter()
+            .filter_map(|name| name.strip_prefix("translations/")?.strip_suffix(".yaml"))
+            .collect();
+        assert_eq!(tags.len(), 107);
+        for tag in tags {
+            assert!(randoc_data::terms::term_table(tag).is_some(), "{tag}");
+        }
+    }
+}

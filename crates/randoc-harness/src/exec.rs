@@ -234,7 +234,7 @@ impl Program {
             if let Some(parent) = path.parent().filter(|parent| *parent != work_dir) {
                 fs::create_dir_all(parent).map_err(|e| format!("{}: {e}", parent.display()))?;
             }
-            fs::write(&path, contents).map_err(|e| format!("{}: {e}", path.display()))?;
+            stage_file(&path, contents).map_err(|e| format!("{}: {e}", path.display()))?;
         }
         let before = capture
             .map(|_| Snapshot::read(work_dir, None))
@@ -328,6 +328,16 @@ impl Program {
     }
 }
 
+fn stage_file(path: &Path, contents: &[u8]) -> std::io::Result<()> {
+    fs::write(path, contents)?;
+    #[cfg(unix)]
+    if contents.starts_with(b"#!") {
+        use std::os::unix::fs::PermissionsExt;
+        fs::set_permissions(path, fs::Permissions::from_mode(0o755))?;
+    }
+    Ok(())
+}
+
 #[cfg(all(test, unix))]
 mod tests {
     use super::*;
@@ -346,6 +356,25 @@ mod tests {
 
     fn sh(script: &str) -> Vec<String> {
         vec!["-c".to_owned(), script.to_owned()]
+    }
+
+    #[test]
+    fn stages_shebang_files_with_execute_permission() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let dir = work_dir("script-mode");
+        let files = BTreeMap::from([("filter".into(), b"#!/bin/sh\nprintf ready\n".to_vec())]);
+        let outcome = shell(20_000)
+            .run(&sh("./filter"), b"", &files, &dir)
+            .unwrap();
+        let mode = fs::metadata(dir.join("filter"))
+            .unwrap()
+            .permissions()
+            .mode();
+        assert_ne!(mode & 0o100, 0);
+        assert_eq!(outcome.exit, 0);
+        assert_eq!(outcome.stdout_bytes(), b"ready");
+        fs::remove_dir_all(&dir).unwrap();
     }
 
     #[test]

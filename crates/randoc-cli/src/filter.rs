@@ -4,7 +4,7 @@
 use std::io::Write;
 
 use randoc::ast::Pandoc;
-use randoc::{Context, Error, LogMessage, ReaderOptions, Result, TrackChanges, Verbosity};
+use randoc::{Context, Error, LogMessage, ReaderOptions, Result, Text, TrackChanges, Verbosity};
 
 use crate::convert::data_file;
 
@@ -99,15 +99,13 @@ fn on_path(name: &str, context: &mut Context) -> bool {
 /// cannot start, which `ENOEXEC` (8) marks for a file without a `#!` line.
 const NOT_EXECUTABLE_FORMAT: i32 = 8;
 
-/// Runs the JSON filter `path` on the document. `format` is the name of the
-/// output format without extensions, the only argument of the filter.
+/// Runs the JSON filter `path` on the document with the given arguments.
 pub fn run(
     path: &str,
     doc: &Pandoc,
-    format: &str,
+    args: &[Text],
     data_dir: &str,
     reader_options: &ReaderOptions,
-    typst_inputs: &[(String, String)],
     context: &mut Context,
 ) -> Result<Pandoc> {
     let Some(found) = find(path, data_dir, context) else {
@@ -124,7 +122,7 @@ pub fn run(
         ("PANDOC_VERSION", randoc::PANDOC_VERSION.to_owned()),
         (
             "PANDOC_READER_OPTIONS",
-            reader_options_json(reader_options, typst_inputs),
+            reader_options_json(reader_options, &reader_options.typst_inputs),
         ),
     ];
     let saved: Vec<(&str, Option<String>)> = variables
@@ -135,7 +133,7 @@ pub fn run(
         .iter()
         .try_for_each(|(name, value)| context.host().set_environment_variable(name, Some(value)))
         .map_err(|error| failure(label, error.to_string()))
-        .and_then(|()| start(&found, format, &input, context));
+        .and_then(|()| start(&found, args, &input, context));
     for (name, value) in saved {
         let _ = context
             .host()
@@ -171,27 +169,29 @@ pub fn run(
     Ok(doc)
 }
 
-/// Starts the filter program with the output format as its argument.
+/// Starts the filter program or its interpreter.
 fn start(
     found: &Found,
-    format: &str,
+    args: &[Text],
     input: &[u8],
     context: &mut Context,
 ) -> Result<randoc::ProcessOutput> {
     let label = found.label.as_str();
-    match context
-        .host()
-        .run_process(&found.program, &[format.into()], input)
-    {
+    let script_args = || {
+        std::iter::once(found.program.clone())
+            .chain(args.iter().cloned())
+            .collect::<Vec<_>>()
+    };
+    match context.host().run_process(&found.program, args, input) {
         // The system does not run a file that is not executable; Pandoc
         // then starts the interpreter of its extension.
         Err(error) if error.kind() == std::io::ErrorKind::PermissionDenied => {
             match interpreter(&found.program) {
-                Some(interpreter) if on_path(interpreter, context) => context.host().run_process(
-                    interpreter,
-                    &[found.program.as_str().into(), format.into()],
-                    input,
-                ),
+                Some(interpreter) if on_path(interpreter, context) => {
+                    context
+                        .host()
+                        .run_process(interpreter, &script_args(), input)
+                }
                 Some(interpreter) => {
                     return Err(failure(
                         label,
@@ -203,11 +203,7 @@ fn start(
         }
         // A file without a `#!` line runs in the shell, as `execvp` does.
         Err(error) if error.raw_os_error() == Some(NOT_EXECUTABLE_FORMAT) => {
-            context.host().run_process(
-                "/bin/sh",
-                &[found.program.as_str().into(), format.into()],
-                input,
-            )
+            context.host().run_process("/bin/sh", &script_args(), input)
         }
         other => other,
     }

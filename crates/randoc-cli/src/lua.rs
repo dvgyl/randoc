@@ -75,7 +75,33 @@ fn environment(
     let mut environment = randoc_lua::FilterEnvironment::new(format);
     environment.readers = randoc::formats::reader;
     environment.writers = randoc::formats::writer;
-    environment.citeproc = Some(crate::convert::lua_citeproc);
+    environment.citeproc = Some(|context, doc, environment| {
+        crate::convert::with_lua_citation_hooks(context, environment, |context, hooks| {
+            randoc_citeproc::filter::process_citations(context, doc, hooks)
+        })
+    });
+    environment.references = Some(|context, doc, environment| {
+        crate::convert::with_lua_citation_hooks(context, environment, |context, mut hooks| {
+            randoc_citeproc::filter::collect_references(context, doc, &mut hooks)
+        })
+    });
+    environment.json_filter = Some(|context, doc, path, args, environment| {
+        let data_dir = context.state.user_data_dir.clone().unwrap_or_default();
+        let saved = (environment.sandbox && environment.mode == randoc_lua::Mode::Full)
+            .then(|| context.replace_host(Box::new(NativeHost)));
+        let result = crate::filter::run(
+            path,
+            doc,
+            args,
+            &data_dir,
+            &environment.reader_options,
+            context,
+        );
+        if let Some(host) = saved {
+            context.replace_host(host);
+        }
+        result
+    });
     environment.sandbox = settings.sandbox;
     // Standard input is the input file `-`.
     environment.input_files = if context.state.input_files.is_empty() {
