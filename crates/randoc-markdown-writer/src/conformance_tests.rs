@@ -13,7 +13,11 @@ fn render(format: &str, doc: Pandoc, mut options: WriterOptions) -> String {
     let Output::Text(text) = writer.write(&doc, &options, &mut Context::pure()).unwrap() else {
         unreachable!("the Markdown writer gives text");
     };
-    text
+    if options.template.is_none() {
+        crate::without_final_line(text)
+    } else {
+        text
+    }
 }
 
 fn document(blocks: Vec<Block>) -> Pandoc {
@@ -1005,4 +1009,185 @@ fn plain_empty_note_paragraph_keeps_separator() {
         Inline::Note(vec![Block::Para(vec![])]),
     ])];
     assert_eq!(write("plain", blocks), "a[1]\n\n[1] ");
+}
+
+#[test]
+fn literate_code_and_quotes_use_distinct_prefixes() {
+    let output = write(
+        "markdown+lhs",
+        vec![
+            Block::CodeBlock(
+                Attr::new("", vec!["literate".into(), "haskell".into()], vec![]),
+                "a\n\nb\n\n".into(),
+            ),
+            Block::BlockQuote(vec![para("quote")]),
+        ],
+    );
+    assert_eq!(output.trim_end_matches('\n'), "> a\n>\n> b\n\n > quote");
+}
+
+#[test]
+fn plain_and_markua_end_a_nonempty_division_with_a_blank_line() {
+    for format in ["plain", "markua"] {
+        let output = write(
+            format,
+            vec![
+                Block::Div(Attr::default(), vec![Block::Plain(vec![text("A")])]),
+                Block::Div(Attr::default(), vec![]),
+                para("B"),
+            ],
+        );
+        assert_eq!(output.trim_end_matches('\n'), "A\n\nB");
+    }
+}
+
+#[test]
+fn markua_renders_block_attributes_and_inline_markup() {
+    use randoc_ast::{ListAttributes, ListNumberDelim, ListNumberStyle, MathType};
+    let blocks = vec![
+        Block::Header(1, Attr::new("h", vec![], vec![]), vec![text("H")]),
+        Block::HorizontalRule,
+        Block::BulletList(vec![vec![Block::Plain(vec![text("A")])]]),
+        Block::BulletList(vec![vec![Block::Plain(vec![text("B")])]]),
+        Block::OrderedList(
+            ListAttributes {
+                start: 4,
+                style: ListNumberStyle::LowerRoman,
+                delim: ListNumberDelim::TwoParens,
+            },
+            vec![vec![Block::Plain(vec![text("C")]), para("D")]],
+        ),
+        Block::DefinitionList(vec![(
+            vec![text("Term")],
+            vec![vec![Block::Plain(vec![text("E")]), para("F")]],
+        )]),
+        Block::CodeBlock(Attr::new("", vec!["rust".into()], vec![]), "x".into()),
+        Block::Para(vec![
+            Inline::Strikeout(vec![text("G")]),
+            Inline::LineBreak,
+            text("a*b [c] _ # ` <x> //"),
+        ]),
+        Block::Para(vec![
+            Inline::Math(MathType::InlineMath, " y ".into()),
+            Inline::Math(MathType::DisplayMath, "z".into()),
+            Inline::Image(
+                Attr::default(),
+                vec![text("alt")],
+                Target::new("pic", "title"),
+            ),
+            Inline::Space,
+            text("H"),
+            Inline::Note(vec![
+                para("note"),
+                Block::CodeBlock(Attr::default(), "q".into()),
+            ]),
+        ]),
+    ];
+    assert_eq!(
+        write("markua", blocks).trim_end_matches('\n'),
+        concat!(
+            "{id: h}\n# H\n\n* * *\n\n* A\n\n* B\n\niv) C\n    D\n\n",
+            "Term\n: E\n  F\n\n{class: rust}\n```\nx\n```\n\n",
+            "~~G~~\na*b [c] _ # ` <x> ~/~/\n\n` y `$\n\n{format: latex}\n```\nz\n```\n\n",
+            "{alt: \"alt\", title: \"title\"}\n![](pic)\nH[^1]\n\n[^1]: note\n\n    ```\n    q\n    ```",
+        )
+    );
+}
+
+#[test]
+fn fragments_keep_block_line_endings_and_leave_references_unpadded() {
+    let writer = crate::writer("markdown").unwrap();
+    let mut options = WriterOptions::default();
+    options.extensions = FormatSpec::parse("markdown").extensions().unwrap();
+    options.reference_links = true;
+    for (block, expected) in [
+        (para("word"), "word\n"),
+        (
+            Block::Para(vec![Inline::Link(
+                Attr::default(),
+                vec![text("name")],
+                Target::new("u", ""),
+            )]),
+            "[name]\n\n  [name]: u",
+        ),
+    ] {
+        let output = writer
+            .write(&document(vec![block]), &options, &mut Context::pure())
+            .unwrap();
+        assert!(
+            matches!(output, Output::Text(text) if text == expected),
+            "{expected:?}"
+        );
+    }
+}
+
+#[test]
+fn the_markdown_github_writer_does_not_report_alias_selection() {
+    let writer = crate::writer("markdown_github").unwrap();
+    let mut context = Context::pure();
+    writer
+        .write(
+            &document(vec![para("word")]),
+            &WriterOptions::default(),
+            &mut context,
+        )
+        .unwrap();
+    assert!(context.log().is_empty());
+}
+
+#[test]
+fn discarded_nodes_are_logged_in_document_order() {
+    use randoc_core::LogMessage;
+    let table = Block::Table(Box::default());
+    let inline = Inline::RawInline(Format::new("latex"), "x".into());
+    let blocks = vec![
+        Block::Para(vec![inline]),
+        table,
+        Block::RawBlock(Format::new("html"), "y".into()),
+    ];
+    let writer = crate::writer("plain").unwrap();
+    let mut context = Context::pure();
+    writer
+        .write(&document(blocks), &WriterOptions::default(), &mut context)
+        .unwrap();
+    assert!(matches!(context.log(), [
+        LogMessage::InlineNotRendered(inline),
+        LogMessage::BlockNotRendered(table),
+        LogMessage::BlockNotRendered(block),
+    ] if inline == r#"RawInline (Format "latex") "x""#
+        && table.starts_with("Table ")
+        && block == r#"RawBlock (Format "html") "y""#));
+}
+
+#[test]
+fn a_wide_markua_pipe_table_uses_fixed_separator_widths() {
+    let col_specs = [0.6, 0.4]
+        .map(|width| ColSpec {
+            width: ColWidth::ColWidth(width),
+            ..ColSpec::default()
+        })
+        .to_vec();
+    let cells = ["first wide", "second wide"]
+        .map(|word| Cell {
+            content: vec![Block::Plain(vec![text(word)])],
+            ..Cell::default()
+        })
+        .to_vec();
+    let blocks = vec![Block::Table(Box::new(Table {
+        col_specs,
+        head: TableHead {
+            rows: vec![Row {
+                cells,
+                ..Row::default()
+            }],
+            ..TableHead::default()
+        },
+        ..Table::default()
+    }))];
+    let mut options = WriterOptions::default();
+    options.columns = 12;
+    assert_eq!(
+        render("markua", document(blocks), options),
+        "| first wide | second wide |\n|----|----|"
+    );
 }

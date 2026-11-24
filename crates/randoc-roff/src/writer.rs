@@ -32,10 +32,7 @@ pub(crate) fn write(
     options: &WriterOptions,
     ctx: &mut Context,
 ) -> Result<String> {
-    let pdf = format == Format::Ms
-        && options.variables.get("pdf-engine").is_some_and(
-            |value| matches!(value, Val::Simple(text) if text.render(None) == "pdfroff"),
-        );
+    let pdf = format == Format::Ms && options.variables.get("pdf-engine").is_some();
     let mut renderer = Renderer {
         format,
         options,
@@ -70,7 +67,10 @@ pub(crate) fn write(
             .render_limited(&vars, max.saturating_mul(4), max)
             .ok_or_else(|| Error::App("The roff template exceeds the output limit.".into()))
     } else {
-        Ok(out.trim_end_matches('\n').into())
+        if format == Format::Man {
+            out.truncate(out.trim_end_matches('\n').len());
+        }
+        Ok(out)
     }
 }
 
@@ -511,10 +511,10 @@ impl<'a, 'doc> Renderer<'a, 'doc> {
 
 fn line(out: &mut String, text: &str) {
     if !text.is_empty() {
-        out.push_str(text);
-        if !text.ends_with('\n') {
+        if !out.is_empty() && !out.ends_with('\n') {
             out.push('\n');
         }
+        out.push_str(text);
     }
 }
 

@@ -1726,13 +1726,13 @@ fn restricted_mode_refuses_the_file_access_of_read_and_write() {
     let read = r"pandoc.write(pandoc.read('\\input{part}', 'latex'), 'plain')";
     let (calls, result) = convert_probe(Mode::Full, read);
     assert_eq!(calls, ["read_file part.tex"]);
-    assert_eq!(result, "inside");
+    assert_eq!(result, "inside\n");
     let (calls, result) = convert_probe(Mode::Restricted, read);
     assert!(
         calls.is_empty(),
         "restricted mode called the host: {calls:?}"
     );
-    assert_ne!(result, "inside");
+    assert_ne!(result, "inside\n");
     for code in [
         r"select(2, pcall(pandoc.read, '\\include{part}', 'latex'))",
         r"pandoc.write(pandoc.read('\\input{part}\n\n*a*', 'markdown'), 'latex')",

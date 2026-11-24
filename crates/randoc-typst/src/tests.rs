@@ -241,6 +241,43 @@ fn writer_uses_typst_math_and_highlight_options() -> Result<()> {
     Ok(())
 }
 
+#[test]
+fn writer_preserves_fragment_line_endings() -> Result<()> {
+    let paragraph = || Block::Para(vec![Inline::Str("x".into())]);
+    for (blocks, expected) in [
+        (vec![], ""),
+        (vec![paragraph()], "x\n"),
+        (vec![Block::Plain(vec![Inline::Str("x".into())])], "x"),
+        (vec![Block::RawBlock(Format::new("typst"), "x".into())], "x"),
+        (
+            vec![Block::Div(
+                Attr::new("id", vec![], vec![]),
+                vec![paragraph()],
+            )],
+            "#block[\nx\n\n] <id>",
+        ),
+        (
+            vec![
+                Block::Header(
+                    1,
+                    Attr::new("id", vec![], vec![]),
+                    vec![Inline::Str("x".into())],
+                ),
+                Block::RawBlock(Format::new("html"), "ignored".into()),
+            ],
+            "= x\n<id>",
+        ),
+    ] {
+        let doc = Pandoc {
+            blocks,
+            ..Pandoc::default()
+        };
+        let output = super::writer::write(&doc, &WriterOptions::default(), &mut Context::pure())?;
+        assert_eq!(output, expected);
+    }
+    Ok(())
+}
+
 fn read_text(input: &str) -> Result<String> {
     let doc = read(input, &options(), &mut Context::pure())?;
     Ok(randoc_core::shared::stringify_blocks(&doc.blocks))
@@ -331,6 +368,7 @@ fn reader_propagates_loop_control_and_return() -> Result<()> {
             "#let f() = { for i in range(4) { if i == 2 { return i } }; 0 }\n#f()",
             "2",
         ),
+        ("#let f() = [before #return [value]; after]\n#f()", "value"),
     ] {
         assert_eq!(read_text(input)?, expected, "{input}");
     }
@@ -576,7 +614,7 @@ fn div_typst_label_replaces_the_identifier() -> Result<()> {
     let body = Block::Para(vec![Inline::Str("Summary".into())]);
     assert_eq!(
         write_blocks(vec![Block::Div(attr, vec![body])])?,
-        "#block[\nSummary\n\n] <summary>\n"
+        "#block[\nSummary\n\n] <summary>"
     );
     Ok(())
 }
@@ -589,7 +627,7 @@ fn heading_typst_label_replaces_the_identifier() -> Result<()> {
         vec![("typst-label".into(), "details".into())],
     );
     let heading = Block::Header(1, attr, vec![Inline::Str("Details".into())]);
-    assert_eq!(write_blocks(vec![heading])?, "= Details\n<details>\n");
+    assert_eq!(write_blocks(vec![heading])?, "= Details\n<details>");
     Ok(())
 }
 
@@ -611,7 +649,7 @@ fn empty_bibliography_entry_has_one_blank_line() -> Result<()> {
         Attr::new("ref-patent", vec!["csl-entry".into()], Vec::new()),
         vec![Block::Para(Vec::new())],
     );
-    assert_eq!(write_blocks(vec![entry])?, "#block[\n\n] <ref-patent>\n");
+    assert_eq!(write_blocks(vec![entry])?, "#block[\n\n] <ref-patent>");
     Ok(())
 }
 

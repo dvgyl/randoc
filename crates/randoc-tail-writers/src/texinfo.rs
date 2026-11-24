@@ -83,7 +83,7 @@ pub(super) fn write(
         literal(format!("@node Top\n@top {}", escape(&title))),
         blankline(),
     ];
-    let preamble = render.blocks(&sections);
+    let (preamble, mut final_line) = render.document_blocks(&sections);
     if !preamble.is_empty() {
         parts.push(preamble);
         parts.push(blankline());
@@ -93,7 +93,9 @@ pub(super) fn write(
         let node = &nodes[index];
         if !(1..=4).contains(&node.level) {
             parts.push(node.title.clone() + cr());
-            parts.push(render.blocks(node.content));
+            let (body, line) = render.document_blocks(node.content);
+            final_line = line;
+            parts.push(body);
             continue;
         }
         let command = ["chapter", "section", "subsection", "subsubsection"]
@@ -101,14 +103,18 @@ pub(super) fn write(
         parts.push(blankline());
         parts.push(literal(format!("@node {}\n@{command} ", node.name)) + node.title.clone());
         parts.push(cr());
-        let body = render.blocks(node.content);
+        let (body, line) = render.document_blocks(node.content);
+        final_line = line;
         if !body.is_empty() {
             parts.push(body);
             parts.push(blankline());
         }
         parts.push(menu(&nodes, &node.children, node.level + 1));
     }
-    let body = chomp(hcat(parts));
+    let mut body = chomp(hcat(parts));
+    if options.template.is_none() && final_line {
+        body += cr();
+    }
     super::check_layout(&body, context.limits.max_input_size)?;
     let strikeout = render.strikeout;
     let render = RefCell::new(render);
@@ -235,17 +241,29 @@ struct Renderer<'a> {
 }
 
 impl Renderer<'_> {
-    fn blocks(&mut self, blocks: &[Block]) -> Doc {
-        hcat(
+    fn document_blocks(&mut self, blocks: &[Block]) -> (Doc, bool) {
+        let mut final_line = false;
+        let body = hcat(
             blocks
                 .iter()
                 .filter(|block| section(block).is_none())
-                .map(|block| self.block(block)),
-        )
+                .map(|block| {
+                    let (body, line) = self.block(block);
+                    if !body.is_empty() {
+                        final_line = line;
+                    }
+                    body
+                }),
+        );
+        (body, final_line)
     }
 
-    fn block(&mut self, block: &Block) -> Doc {
-        match block {
+    fn blocks(&mut self, blocks: &[Block]) -> Doc {
+        self.document_blocks(blocks).0
+    }
+
+    fn block(&mut self, block: &Block) -> (Doc, bool) {
+        let body = match block {
             Block::Plain(items) => self.inlines(items) + cr(),
             Block::Para(items) if is_example(items) => {
                 let lines = items.iter().filter_map(|inline| match inline {
@@ -268,7 +286,10 @@ impl Renderer<'_> {
             Block::Header(_, _, items) => self.inlines(items) + cr(),
             Block::CodeBlock(_, code) => {
                 let code = code.strip_suffix('\n').unwrap_or(code);
-                literal(format!("@verbatim\n{code}\n@end verbatim")) + blankline()
+                return (
+                    literal(format!("@verbatim\n{code}\n@end verbatim")) + blankline(),
+                    true,
+                );
             }
             Block::RawBlock(format, raw) if format == "texinfo" => literal(raw.clone()) + cr(),
             Block::RawBlock(format, raw) if format == "tex" || format == "latex" => tex(raw) + cr(),
@@ -281,13 +302,21 @@ impl Renderer<'_> {
                     + text("@end quotation")
                     + cr()
             }
-            Block::Div(_, blocks) => chomp(self.blocks(blocks)) + cr(),
-            Block::HorizontalRule => {
-                literal(
-                    "@iftex\n@bigskip@hrule@bigskip\n@end iftex\n@ifnottex\n------------------------------------------------------------------------\n@end ifnottex",
-                ) + blankline()
+            Block::Div(_, blocks) => {
+                let (body, line) = self.document_blocks(blocks);
+                return (chomp(body) + cr(), line);
             }
-            Block::BulletList(items) => self.list("@itemize", "@end itemize", items),
+            Block::HorizontalRule => {
+                return (
+                    literal(
+                        "@iftex\n@bigskip@hrule@bigskip\n@end iftex\n@ifnottex\n------------------------------------------------------------------------\n@end ifnottex",
+                    ) + blankline(),
+                    true,
+                );
+            }
+            Block::BulletList(items) => {
+                return (self.list("@itemize", "@end itemize", items), true);
+            }
             Block::OrderedList(attrs, items) => {
                 let start = match attrs.style {
                     ListNumberStyle::LowerAlpha => alpha(attrs.start, b'a'),
@@ -295,7 +324,10 @@ impl Renderer<'_> {
                     _ if attrs.start == 1 => String::new(),
                     _ => attrs.start.to_string(),
                 };
-                self.list(&format!("@enumerate {start}"), "@end enumerate", items)
+                return (
+                    self.list(&format!("@enumerate {start}"), "@end enumerate", items),
+                    true,
+                );
             }
             Block::DefinitionList(items) => {
                 let mut out = vec![text("@table @asis"), cr()];
@@ -306,13 +338,13 @@ impl Renderer<'_> {
                     }
                 }
                 out.extend([text("@end table"), blankline()]);
-                hcat(out)
+                return (hcat(out), true);
             }
-            Block::Table(table) => self.table(table),
+            Block::Table(table) => return (self.table(table), true),
             Block::Figure(_, caption, blocks) => {
                 let title = chomp(self.blocks(&caption.long));
                 if let [Block::Table(table)] = blocks.as_slice() {
-                    return self.table_with_caption(table, Some(title));
+                    return (self.table_with_caption(table, Some(title)), true);
                 }
                 let float = if !title.is_empty()
                     && matches!(blocks.as_slice(),
@@ -335,7 +367,8 @@ impl Renderer<'_> {
                     + text("@end float")
                     + cr()
             }
-        }
+        };
+        (body, false)
     }
 
     fn list(&mut self, open: &str, close: &str, items: &[Vec<Block>]) -> Doc {
@@ -459,7 +492,12 @@ impl Renderer<'_> {
             }
             Inline::Span(_, items) | Inline::Cite(_, items) => self.inlines(items),
             Inline::Code(attr, code) => {
-                let body = text(escape(code));
+                let code = escape(code);
+                let body = text(if self.link_label {
+                    argument(&code)
+                } else {
+                    code
+                });
                 command(
                     "code",
                     if attr.has_class("variable") {

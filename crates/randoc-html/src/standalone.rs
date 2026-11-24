@@ -83,16 +83,9 @@ impl Html<'_> {
         // A single value gives a name only when it is a string or inlines.
         let names: Vec<Val> = match meta.get("author") {
             Some(MetaValue::MetaList(items)) => {
-                let mut ranked: Vec<(u8, &MetaValue)> = items
-                    .iter()
-                    .filter_map(|item| author_rank(item).map(|rank| (rank, item)))
-                    .collect();
+                let mut ranked: Vec<(u8, String)> = items.iter().filter_map(author_text).collect();
                 ranked.sort_by_key(|(rank, _)| *rank);
-                ranked
-                    .into_iter()
-                    .filter_map(|(_, item)| inline_text(item))
-                    .map(text)
-                    .collect()
+                ranked.into_iter().map(|(_, name)| text(name)).collect()
             }
             Some(single @ (MetaValue::MetaString(_) | MetaValue::MetaInlines(_))) => {
                 vec![text(stringify_meta(single))]
@@ -457,15 +450,15 @@ fn check_variable_depth(variables: &TemplateContext, max_depth: usize) -> Result
 
 /// The place of an author list item in `author-meta`, or `None` for an item
 /// without a name.
-fn author_rank(item: &MetaValue) -> Option<u8> {
+fn author_text(item: &MetaValue) -> Option<(u8, String)> {
     match item {
-        MetaValue::MetaInlines(_) => Some(0),
+        MetaValue::MetaInlines(inlines) => Some((0, stringify(inlines))),
         MetaValue::MetaBlocks(blocks) => match blocks.as_slice() {
-            [Block::Plain(_)] => Some(1),
-            [Block::Para(_)] => Some(2),
+            [Block::Plain(inlines)] => Some((1, stringify(inlines))),
+            [Block::Para(inlines)] => Some((2, stringify(inlines))),
             _ => None,
         },
-        MetaValue::MetaString(_) => Some(3),
+        MetaValue::MetaString(name) => Some((3, name.to_string())),
         _ => None,
     }
 }

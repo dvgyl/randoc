@@ -38,7 +38,12 @@ fn main() {
         randoc_latex::write_latex(&doc, &options, &mut context)
     };
     match result {
-        Ok(text) => println!("{text}"),
+        Ok(mut text) => {
+            if !text.ends_with('\n') {
+                text.push('\n');
+            }
+            print!("{text}");
+        }
         Err(error) => {
             eprintln!("{error}");
             std::process::exit(1);

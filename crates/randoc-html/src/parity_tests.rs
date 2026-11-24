@@ -39,13 +39,31 @@ fn raw_tex_math_environments_are_display_math() {
         (HtmlMathMethod::PlainMath, "<p>a </p>\n<p>b</p>\n"),
         (HtmlMathMethod::GladTex, "<p>a </p>\n<p>b</p>\n"),
     ];
+    let skipped = [
+        LogMessage::InlineNotRendered(
+            r#"RawInline (Format "tex") "\\begin{equation}x=1\\end{equation}""#.into(),
+        ),
+        LogMessage::BlockNotRendered(
+            r#"RawBlock (Format "latex") "\\begin{align*}y\\end{align*}""#.into(),
+        ),
+        LogMessage::InlineNotRendered(
+            r#"RawInline (Format "tex") "\\begin{itemize}z\\end{itemize}""#.into(),
+        ),
+        LogMessage::InlineNotRendered(
+            r#"RawInline (Format "tex") " \\begin{gather}w\\end{gather}""#.into(),
+        ),
+    ];
     for (method, expected) in cases {
         let mut options = WriterOptions::default();
         options.html_math_method = method.clone();
         let mut context = Context::pure();
         let output = render(MATH_DOC, &options, Version::Html5, &mut context);
         assert_eq!(output, expected.trim_end(), "{method:?}");
-        assert!(context.log().is_empty(), "{method:?}");
+        let expected_log = match method {
+            HtmlMathMethod::PlainMath | HtmlMathMethod::GladTex => &skipped[..],
+            _ => &skipped[2..],
+        };
+        assert_eq!(context.log(), expected_log, "{method:?}");
     }
 }
 

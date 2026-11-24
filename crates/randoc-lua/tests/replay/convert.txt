@@ -2,23 +2,9 @@
 # `tools/convert-matrix.py` writes this file. Do not edit it.
 # readers: asciidoc biblatex bibtex bits commonmark commonmark_x creole csljson csv djot docbook docx dokuwiki endnotexml epub fb2 fodt gfm haddock html ipynb jats jira json latex man markdown markdown_github markdown_mmd markdown_phpextra markdown_strict mdoc mediawiki muse native odt opml org pod pptx ris rst rtf t2t textile tikiwiki tsv twiki typst vimwiki xlsx xml
 # writers: ansi asciidoc asciidoc_legacy asciidoctor bbcode bbcode_fluxbb bbcode_hubzilla bbcode_phpbb bbcode_steam bbcode_xenforo beamer biblatex bibtex chunkedhtml commonmark commonmark_x context csljson djot docbook docbook4 docbook5 docx dokuwiki dzslides epub epub2 epub3 fb2 fodt gfm haddock html html4 html5 icml ipynb jats jats_archiving jats_articleauthoring jats_publishing jira json latex man markdown markdown_github markdown_mmd markdown_phpextra markdown_strict markua mediawiki ms muse native odt opendocument opml org plain pptx revealjs rst rtf s5 slideous slidy t2t tei texinfo textile typst vimdoc xml xwiki zimwiki
-# known I-LUA-30 convert-final-newline end of commonmark
-# known I-LUA-30 convert-final-newline end of commonmark_x
-# known I-LUA-30 convert-final-newline end of gfm
-# known I-LUA-30 convert-final-newline end of markdown
-# known I-LUA-30 convert-final-newline end of markdown_github
-# known I-LUA-30 convert-final-newline end of markdown_mmd
-# known I-LUA-30 convert-final-newline end of markdown_phpextra
-# known I-LUA-30 convert-final-newline end of markdown_strict
-# known I-LUA-30 convert-final-newline end of markua
-# known I-LUA-30 convert-final-newline end of plain
 # known I-LUA-30 convert-final-newline end of asciidoc
 # known I-LUA-30 convert-final-newline end of asciidoctor
 # known I-LUA-30 convert-final-newline end of asciidoc_legacy
-# known I-LUA-30 convert-final-newline end of dzslides
-# known I-LUA-30 convert-final-newline end of s5
-# known I-LUA-30 convert-final-newline end of slideous
-# known I-LUA-30 convert-final-newline end of slidy
 # known I-LUA-30 convert-final-newline end of context
 # known I-LUA-30 convert-final-newline end of haddock
 # known I-LUA-30 convert-final-newline end of muse
@@ -26,8 +12,6 @@
 # known I-LUA-30 convert-final-newline end of textile
 # known I-LUA-30 convert-final-newline end of vimdoc
 # known I-DJOT-01 convert-read-djot read djot+sourcepos
-# known I-LUA-30 convert-arguments write default format
-# known I-LUA-30 convert-arguments write spec table markdown list
 # known I-LUA-31 convert-read-markdown read markdown {tab_stop = 2}
 # known I-LUA-31 convert-read-markdown read markdown {tab_stop = 8}
 # known I-LUA-31 convert-read-markdown read markdown {default_image_extension = 'png'}
@@ -49,30 +33,8 @@
 # known I-LUA-31 convert-write-markdown write markdown+hard_line_breaks
 # known I-LUA-31 convert-write-markdown_strict write markdown_strict {reference_location = 'end-of-section'}
 # known I-LUA-31 convert-write-plain write plain+gutenberg
-# known I-LUA-31 convert-write-markua write markua
-# known I-LUA-31 convert-write-markua write markua {columns = 30}
-# known I-LUA-31 convert-write-markua write markua {wrap_text = 'wrap-none'}
-# known I-LUA-31 convert-write-markua write markua {wrap_text = 'wrap-preserve'}
-# known I-LUA-31 convert-write-markua write markua {reference_links = true}
-# known I-LUA-31 convert-write-markua write markua {reference_location = 'end-of-section'}
 # known I-LUA-31 convert-write-markua write markua {setext_headers = true}
-# known I-LUA-31 convert-write-markua write markua {number_sections = true}
-# known I-LUA-31 convert-write-markua write markua {section_divs = true}
-# known I-LUA-31 convert-write-markua write markua {identifier_prefix = 'p-'}
-# known I-LUA-31 convert-write-markua write markua {html_q_tags = true}
-# known I-LUA-31 convert-write-markua write markua {email_obfuscation = 'references'}
-# known I-LUA-31 convert-write-markua write markua {top_level_division = 'top-level-chapter'}
-# known I-LUA-31 convert-write-markua write markua {tab_stop = 2}
-# known I-LUA-31 convert-write-markua write markua {prefer_ascii = true}
-# known I-LUA-31 convert-write-markua write markua {slide_level = 1}
-# known I-LUA-31 convert-write-markua write markua {incremental = true}
-# known I-LUA-31 convert-write-markua write markua {list_tables = true}
-# known I-LUA-31 convert-write-markua write markua {table_of_contents = true}
-# known I-LUA-31 convert-write-markua write markua {number_offset = {3, 1}}
-# known I-LUA-31 convert-write-markua write markua {dpi = 300}
-# known I-LUA-31 convert-write-markua write markua PANDOC_WRITER_OPTIONS
 # known I-ORG-01 convert-final-newline end of org
-# known I-WIKI-05 convert-final-newline end of mediawiki
 # known I-LUA-32 convert-arguments read spec table bad list
 # known I-LUA-32 convert-arguments read list heading
 @@@ doc empty

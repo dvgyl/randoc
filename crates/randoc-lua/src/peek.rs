@@ -266,6 +266,25 @@ impl Drop for ActiveObject<'_> {
     }
 }
 
+struct ConversionCache<'a>(&'a Lua);
+
+impl<'a> ConversionCache<'a> {
+    fn install(lua: &'a Lua) -> Self {
+        if let Some(active) = lua.app_data_ref::<ActiveObjects>() {
+            *active.converted.borrow_mut() = Some(HashMap::new());
+        }
+        Self(lua)
+    }
+}
+
+impl Drop for ConversionCache<'_> {
+    fn drop(&mut self) {
+        if let Some(active) = self.0.app_data_ref::<ActiveObjects>() {
+            active.converted.borrow_mut().take();
+        }
+    }
+}
+
 /// The state that each conversion needs.
 #[derive(Clone, Copy)]
 pub(crate) struct Cx<'a> {
@@ -472,16 +491,14 @@ impl Cx<'_> {
                 // call, so each occurrence converts again, in order.
                 return self.apply_cache(node, address, &cache);
             };
-            self.set_converted(Some(HashMap::new()));
+            let _conversion = ConversionCache::install(self.lua);
             for value in &order {
                 if let Some(type_name) = with_node(value, Node::type_name) {
                     // The error, if any, comes again from the outer conversion.
                     let _ = self.object(type_name, value);
                 }
             }
-            let result = self.apply_cache(node, address, &cache);
-            self.set_converted(None);
-            return result;
+            return self.apply_cache(node, address, &cache);
         }
         let node = self.apply_cache(node, address, &cache)?;
         if let Some(active) = self.lua.app_data_ref::<ActiveObjects>()
@@ -490,12 +507,6 @@ impl Cx<'_> {
             map.insert(address, node.clone());
         }
         Ok(node)
-    }
-
-    fn set_converted(&self, value: Option<HashMap<usize, Node>>) {
-        if let Some(active) = self.lua.app_data_ref::<ActiveObjects>() {
-            *active.converted.borrow_mut() = value;
-        }
     }
 
     /// Applies each cached property to the base of an object.

@@ -5,7 +5,7 @@ use std::collections::HashSet;
 use randoc_ast::{
     Attr, Block, Citation, CitationMode, Format, Inline, MathType, QuoteType, Target,
 };
-use randoc_core::{CiteMethod, Result, WrapOption};
+use randoc_core::{CiteMethod, LogMessage, Result, WrapOption};
 use randoc_layout::{Doc, cr, empty, literal, nest, space};
 
 use crate::LatexWriter;
@@ -288,6 +288,11 @@ impl LatexWriter<'_> {
                 if self.is_raw_tex(format) {
                     literal(text.clone())
                 } else {
+                    self.warnings
+                        .push(LogMessage::InlineNotRendered(randoc_native::show_inline(
+                            inline,
+                            self.max_depth,
+                        )));
                     empty()
                 }
             }

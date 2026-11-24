@@ -215,8 +215,14 @@ impl LatexWriter<'_> {
                 "*"
             };
             self.usage.multirow = true;
-            contents =
-                literal(format!("\\multirow{{{row_span}}}{{{width}}}{{")) + contents + literal("}");
+            let alignment = match align {
+                Alignment::AlignCenter => "\\centering\\arraybackslash ",
+                Alignment::AlignRight => "\\raggedright\\arraybackslash ",
+                _ => "",
+            };
+            contents = literal(format!("\\multirow{{{row_span}}}{{{width}}}{{{alignment}"))
+                + contents
+                + literal("}");
         }
         if span > 1 {
             let width: Option<f64> = spanned

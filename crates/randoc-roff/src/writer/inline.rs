@@ -324,7 +324,8 @@ impl<'doc> Renderer<'_, 'doc> {
                         }
                         let mut note = String::new();
                         self.blocks(blocks, &mut note, Lead::Bare, level + 1)?;
-                        out.extend([cr(), literal(format!(".FS\n{note}.FE")), cr()]);
+                        super::line(&mut note, ".FE");
+                        out.extend([cr(), literal(format!(".FS\n{note}")), cr()]);
                         if iter
                             .peek()
                             .is_some_and(|item| matches!(item, Inline::SoftBreak | Inline::Space))

@@ -45,7 +45,11 @@ fn write(
     let mut options = WriterOptions::default();
     options.template = template;
     let output = writer.write(doc, &options, context)?;
-    Ok(String::from_utf8(output.into_bytes()).expect("Decode wiki output"))
+    let mut text = String::from_utf8(output.into_bytes()).expect("Decode wiki output");
+    if !standalone && !text.ends_with('\n') {
+        text.push('\n');
+    }
+    Ok(text)
 }
 
 fn load(path: impl AsRef<Path>) -> String {

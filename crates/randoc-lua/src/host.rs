@@ -54,7 +54,6 @@ impl<'a, 'context> Host<'a, 'context> {
     }
 
     /// Returns an error if an operation requires full mode.
-    #[allow(dead_code)]
     pub(crate) fn require_full(&self, name: &str) -> Peek<()> {
         if self.environment.mode == Mode::Full {
             Ok(())

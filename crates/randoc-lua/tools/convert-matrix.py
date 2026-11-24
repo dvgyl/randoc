@@ -700,15 +700,9 @@ _MARKDOWN_READERS = ["markdown", "markdown_github", "markdown_mmd", "markdown_ph
                      "markdown_strict"]
 KNOWN = (
     [("I-LUA-30", "convert-final-newline", f"end of {name}")
-     for name in ["commonmark", "commonmark_x", "gfm", "markdown", "markdown_github",
-                  "markdown_mmd", "markdown_phpextra", "markdown_strict", "markua", "plain"]]
-    + [("I-LUA-30", "convert-final-newline", f"end of {name}")
-       for name in ["asciidoc", "asciidoctor", "asciidoc_legacy", "dzslides", "s5",
-                    "slideous", "slidy", "context", "haddock", "muse", "t2t",
-                    "textile", "vimdoc"]]
+     for name in ["asciidoc", "asciidoctor", "asciidoc_legacy", "context", "haddock",
+                  "muse", "t2t", "textile", "vimdoc"]]
     + [("I-DJOT-01", "convert-read-djot", "read djot+sourcepos")]
-    + [("I-LUA-30", "convert-arguments", label)
-       for label in ["write default format", "write spec table markdown list"]]
     + [("I-LUA-31", f"convert-read-{name}", f"read {name} {options}")
        for name in _MARKDOWN_READERS
        for options in ["{tab_stop = 2}", "{tab_stop = 8}", "{default_image_extension = 'png'}"]]
@@ -719,10 +713,8 @@ KNOWN = (
        ("I-LUA-31", "convert-write-markdown_strict",
         "write markdown_strict {reference_location = 'end-of-section'}"),
        ("I-LUA-31", "convert-write-plain", "write plain+gutenberg")]
-    + [("I-LUA-31", "convert-write-markua", label)
-       for label, _ in [("write markua", None)] + write_option_probes("markua")]
-    + [("I-ORG-01", "convert-final-newline", "end of org"),
-       ("I-WIKI-05", "convert-final-newline", "end of mediawiki")]
+    + [("I-LUA-31", "convert-write-markua", "write markua {setext_headers = true}"),
+       ("I-ORG-01", "convert-final-newline", "end of org")]
     + [("I-LUA-32", "convert-arguments", "read spec table bad list"),
        ("I-LUA-32", "convert-arguments", "read list heading")]
 )

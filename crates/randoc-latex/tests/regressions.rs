@@ -20,7 +20,11 @@ fn render(input: &str, format: &str, set: impl FnOnce(&mut WriterOptions)) -> St
     } else {
         randoc_latex::write_latex(&doc, &options, &mut context)
     };
-    text.unwrap()
+    let mut text = text.unwrap();
+    if text.ends_with('\n') {
+        text.pop();
+    }
+    text
 }
 
 #[test]

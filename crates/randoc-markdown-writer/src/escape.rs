@@ -71,13 +71,15 @@ impl W<'_> {
             };
             return ascii_text(text, self.opts.prefer_ascii);
         }
+        if self.variant == Variant::Markua {
+            return text.replace("//", "~/~/");
+        }
         let commonmark = self.variant == Variant::Commonmark;
         let escapable = commonmark || self.has(Extension::AllSymbolsEscapable);
         // Pandoc escapes each backslash only where a backslash can start raw TeX.
         let raw_tex = self.variant == Variant::Markdown && self.has(Extension::RawTex);
         // A run of three colons could open or close a fenced div.
         let fenced_divs = self.has(Extension::FencedDivs);
-        let markua = self.variant == Variant::Markua;
         let chars: Vec<char> = text.chars().collect();
         let offsets: Vec<usize> = text.char_indices().map(|(offset, _)| offset).collect();
         let mut out = Text::with_capacity(text.len() + 8);
@@ -158,11 +160,6 @@ impl W<'_> {
                 '#' if i == 0 && (commonmark || chars.iter().all(|&h| h == '#')) => {
                     out.push_str("\\#");
                 }
-                // Two slashes start italic text in Markua.
-                '/' if markua && next == Some('/') => {
-                    out.push_str("~/~/");
-                    i += 1;
-                }
                 ':' if fenced_divs && next == Some(':') && chars.get(i + 2) == Some(&':') => {
                     out.push_str("\\:::");
                     i += 2;
@@ -174,11 +171,7 @@ impl W<'_> {
             }
             i += 1;
         }
-        // Markua ignores `--ascii`.
-        ascii_text(
-            out,
-            self.opts.prefer_ascii && self.variant != Variant::Markua,
-        )
+        ascii_text(out, self.opts.prefer_ascii)
     }
 
     /// Escapes a list marker at the start of a line.
@@ -186,7 +179,7 @@ impl W<'_> {
     /// `text` is the escaped text of the first `Str` of a line. `alone` is
     /// `true` when a space or the end of the line follows it.
     pub(crate) fn escape_line_start(&self, raw: &str, escaped: Text, alone: bool) -> Text {
-        if self.plain() {
+        if matches!(self.variant, Variant::Plain | Variant::Markua) {
             return escaped;
         }
         if raw.starts_with(":::") && self.has(Extension::FencedDivs) {

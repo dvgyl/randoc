@@ -500,6 +500,11 @@ impl LatexWriter<'_> {
                 if self.is_raw_tex(format) {
                     literal(text.clone())
                 } else {
+                    self.warnings
+                        .push(LogMessage::BlockNotRendered(randoc_native::show_block(
+                            block,
+                            self.max_depth,
+                        )));
                     empty()
                 }
             }
@@ -1376,7 +1381,7 @@ mod tests {
             latex(vec![block], &options),
             "\\begin{Shaded}\n\\begin{Highlighting}[numbers=left,,firstnumber=3,]\n\
              \\KeywordTok{fn}\\NormalTok{ x()}\\OperatorTok{\\{\\}}\n\
-             \\end{Highlighting}\n\\end{Shaded}"
+             \\end{Highlighting}\n\\end{Shaded}\n"
         );
         let inline = Block::Para(vec![Inline::Code(
             Attr::new("", vec!["rust".into()], Vec::new()),
@@ -1386,7 +1391,7 @@ mod tests {
         // An unknown class gives one `\NormalTok` per line.
         assert_eq!(
             latex(vec![code(&["foo"], &[], "x")], &options),
-            "\\begin{Shaded}\n\\begin{Highlighting}[]\n\\NormalTok{x}\n\\end{Highlighting}\n\\end{Shaded}"
+            "\\begin{Shaded}\n\\begin{Highlighting}[]\n\\NormalTok{x}\n\\end{Highlighting}\n\\end{Shaded}\n"
         );
     }
 
@@ -1398,12 +1403,12 @@ mod tests {
         let block = || code(&["rust"], &[], "fn x");
         assert_eq!(
             latex(vec![block()], &options),
-            "\\begin{verbatim}\nfn x\n\\end{verbatim}"
+            "\\begin{verbatim}\nfn x\n\\end{verbatim}\n"
         );
         options.listings = true;
         assert_eq!(
             latex(vec![block()], &options),
-            "\\begin{lstlisting}\nfn x\n\\end{lstlisting}"
+            "\\begin{lstlisting}\nfn x\n\\end{lstlisting}\n"
         );
     }
 

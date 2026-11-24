@@ -13,6 +13,7 @@ randoc-ast = { workspace = true }
 randoc-core = { workspace = true }
 randoc-html = { workspace = true }
 randoc-math = { workspace = true }
+randoc-native = { workspace = true }
 randoc-layout = { workspace = true }
 randoc-templates = { workspace = true }
 

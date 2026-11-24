@@ -45,18 +45,8 @@ pub(crate) enum Variant {
 /// Returns the writer for a format name of this crate.
 pub fn writer(format: &str) -> Option<Writer> {
     let variant = match format {
-        "markdown" | "markdown_strict" | "markdown_phpextra" | "markdown_mmd" => Variant::Markdown,
-        "markdown_github" => {
-            return Some(Writer::Text(Arc::new(randoc_core::TemplateWriter(
-                |doc: &Pandoc, options: &WriterOptions, context: &mut Context| {
-                    context.report(LogMessage::Deprecated(
-                        Text::from("markdown_github"),
-                        Text::from("Use gfm instead."),
-                    ));
-                    write(doc, options, context, Variant::Markdown)
-                },
-            ))));
-        }
+        "markdown" | "markdown_strict" | "markdown_phpextra" | "markdown_mmd"
+        | "markdown_github" => Variant::Markdown,
         "gfm" | "commonmark" | "commonmark_x" => Variant::Commonmark,
         "plain" => Variant::Plain,
         "markua" => Variant::Markua,
@@ -96,13 +86,15 @@ fn write(
     for message in std::mem::take(&mut w.messages) {
         context.report(message);
     }
-    let mut text = output;
-    // Remove the layout's final line break. A final blank line can
-    // be part of a raw block and must stay.
-    if options.template.is_none() && text.ends_with('\n') && !text.ends_with("\n\n") {
+    Ok(output)
+}
+
+#[cfg(test)]
+fn without_final_line(mut text: Text) -> Text {
+    if text.ends_with('\n') && !text.ends_with("\n\n") {
         text.pop();
     }
-    Ok(text)
+    text
 }
 
 /// The line width of the output, or `None` for lines without a limit.
@@ -350,7 +342,10 @@ impl<'a> W<'a> {
             refs_doc = refs_doc.above(self.reference_line(&reference));
         }
         if !refs_doc.is_empty() {
-            refs_doc = nest(2, refs_doc) + blankline();
+            refs_doc = nest(2, refs_doc);
+            if self.opts.template.is_some() {
+                refs_doc += blankline();
+            }
         }
         Ok(notes_doc.above_blank(refs_doc))
     }
@@ -425,25 +420,33 @@ impl<'a> W<'a> {
         let rendered = rendered?;
         let number = note.number;
         let starts_inline = matches!(blocks.first(), Some(Block::Para(_) | Block::Plain(_)));
-        Ok(if self.has(Extension::Footnotes) && !self.plain() {
-            let marker = format!("[^{}{number}]:", self.opts.identifier_prefix);
-            if rendered.is_empty() {
-                literal(marker)
-            } else if starts_inline {
-                hang(4, literal(marker) + literal(" "), rendered)
+        Ok(
+            if (self.has(Extension::Footnotes) || self.variant == Variant::Markua) && !self.plain()
+            {
+                let marker = format!("[^{}{number}]:", self.opts.identifier_prefix);
+                if rendered.is_empty() {
+                    literal(marker)
+                } else if starts_inline {
+                    hang(4, literal(marker) + literal(" "), rendered)
+                } else {
+                    let gap = if self.variant == Variant::Markua {
+                        blankline()
+                    } else {
+                        cr()
+                    };
+                    literal(marker) + gap + nest(4, rendered)
+                }
             } else {
-                literal(marker) + cr() + nest(4, rendered)
-            }
-        } else {
-            let marker = literal(format!("[{}{number}]", self.opts.identifier_prefix));
-            if starts_inline && self.plain() {
-                marker + literal(" ") + rendered
-            } else if starts_inline {
-                marker.spaced(rendered)
-            } else {
-                marker + cr() + rendered
-            }
-        })
+                let marker = literal(format!("[{}{number}]", self.opts.identifier_prefix));
+                if starts_inline && self.plain() {
+                    marker + literal(" ") + rendered
+                } else if starts_inline {
+                    marker.spaced(rendered)
+                } else {
+                    marker + cr() + rendered
+                }
+            },
+        )
     }
 
     fn reference_line(&self, reference: &LinkRef) -> Doc {

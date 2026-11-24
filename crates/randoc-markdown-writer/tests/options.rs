@@ -158,6 +158,7 @@ fn run_file(name: &str) -> BTreeMap<String, bool> {
                 let stderr: String = context
                     .log()
                     .iter()
+                    .filter(|message| message.level() <= context.state.verbosity)
                     .map(|message| message.render())
                     .collect();
                 let expected_stderr = want["stderr"].as_str().unwrap();

@@ -75,7 +75,15 @@ fn check_writer(category: &str, suite: &str, format: &str) {
         }
         let expected_output = recorded["stdout"].as_str().unwrap();
         assert_eq!(recorded["exit"], 0, "{id}");
-        assert_eq!(recorded["stderr"], warnings(&context), "{id}");
+        let diagnostics = recorded["stderr"].as_str().unwrap();
+        let writer_diagnostics = if format == "asciidoctor" {
+            diagnostics
+                .strip_prefix("[WARNING] Deprecated: asciidoctor. use asciidoc instead\n")
+                .unwrap()
+        } else {
+            diagnostics
+        };
+        assert_eq!(writer_diagnostics, warnings(&context), "{id}");
         let end_to_end = &units[&format!("{case}#e2e:{target}")];
         assert_eq!(recorded["stdout"], end_to_end["stdout"], "{id}");
         assert_eq!(recorded["exit"], end_to_end["exit"], "{id}");

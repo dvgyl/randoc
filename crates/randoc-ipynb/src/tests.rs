@@ -382,6 +382,23 @@ fn attachment_names_without_ids_use_the_last_payload() {
 }
 
 #[test]
+fn markdown_cells_keep_internal_line_breaks_and_trim_the_end() {
+    let doc = Pandoc {
+        blocks: vec![Block::RawBlock(
+            Format("markdown".into()),
+            "  x\n  y\u{85}\u{a0}\t\n\n".into(),
+        )],
+        ..Pandoc::default()
+    };
+    let notebook: Value =
+        serde_json::from_str(&write(&doc, &mut Context::pure()).unwrap()).unwrap();
+    assert_eq!(
+        notebook["cells"][0]["source"],
+        serde_json::json!(["  x\n", "  y\u{85}"])
+    );
+}
+
+#[test]
 fn writer_keeps_base64_images_and_traceback_lines() {
     let source = r#"{"nbformat":4,"cells":[{"cell_type":"code","metadata":{},"source":"","outputs":[
        {"output_type":"display_data","metadata":{},"data":{"image/png":"YQ==","image/svg+xml":"<svg/>"}},

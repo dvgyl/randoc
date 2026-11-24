@@ -274,7 +274,7 @@ fn deep_figure_alternative_text_does_not_overflow_a_small_stack() {
             for (format, text) in expected {
                 assert_eq!(
                     write_text(&doc, format, None, false).unwrap(),
-                    text,
+                    format!("{text}\n"),
                     "{format} {n}"
                 );
             }

@@ -232,10 +232,7 @@ fn writer_dialects() -> randoc_core::Result<()> {
         )?,
         modern
     );
-    assert_eq!(
-        context.log()[0].text(),
-        "Deprecated: asciidoctor. use asciidoc instead"
-    );
+    assert!(context.log().is_empty());
     assert_eq!(
         writer::write(&document, &options, &mut context, writer::Dialect::Legacy)?,
         "\x60\x60q'' latexmath:[$x$]"

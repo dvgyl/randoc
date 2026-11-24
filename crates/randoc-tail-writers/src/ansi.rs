@@ -325,12 +325,20 @@ impl Renderer<'_> {
             .unwrap_or(0);
         let indent = width + 1;
         hcat(items.iter().zip(markers).map(|(item, marker)| {
-            let marker = rblock(width, text(marker)) + space();
+            let marker = rblock(width, text(marker));
             let body = chomp(self.blocks(item));
             if matches!(item.first(), Some(Block::Plain(_) | Block::Para(_))) {
-                hang(indent, marker, body) + blankline()
+                hang(indent, marker + space(), body) + blankline()
             } else {
-                marker + cr() + nest(indent, body) + blankline()
+                marker
+                    + if attrs.is_some() {
+                        literal(" ")
+                    } else {
+                        space()
+                    }
+                    + cr()
+                    + nest(indent, body)
+                    + blankline()
             }
         }))
     }

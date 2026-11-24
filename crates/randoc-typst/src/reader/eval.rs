@@ -13,6 +13,7 @@ type EvalResult<'a, T> = std::result::Result<T, Interrupt<'a>>;
 enum Interrupt<'a> {
     Error(Error),
     Control(Control, Value<'a>, usize),
+    ReturnValue(Value<'a>, usize),
 }
 
 impl From<Error> for Interrupt<'_> {
@@ -26,7 +27,6 @@ enum Control {
     Break,
     Continue,
     Return,
-    ReturnValue,
 }
 
 #[derive(Clone, Default)]
@@ -192,6 +192,21 @@ pub(super) struct Evaluator<'a, 'c> {
     max_depth: usize,
 }
 
+struct EvaluationScope<'e, 'a, 'c> {
+    evaluator: &'e mut Evaluator<'a, 'c>,
+    settings: Rc<BTreeMap<Rc<str>, Rc<Scope<'a>>>>,
+    rule_count: usize,
+    scope_count: usize,
+}
+
+impl Drop for EvaluationScope<'_, '_, '_> {
+    fn drop(&mut self) {
+        std::mem::swap(&mut self.evaluator.settings, &mut self.settings);
+        self.evaluator.rules.truncate(self.rule_count);
+        self.evaluator.scopes.truncate(self.scope_count);
+    }
+}
+
 pub(super) fn evaluate<'a>(
     source: &'a str,
     path: &'a str,
@@ -237,7 +252,9 @@ fn evaluate_file<'a>(
         .markup(marks, depth)
         .map_err(|interrupt| match interrupt {
             Interrupt::Error(error) => error,
-            Interrupt::Control(_, _, pos) => eval.fail(pos, "Unexpected Typst control statement."),
+            Interrupt::Control(_, _, pos) | Interrupt::ReturnValue(_, pos) => {
+                eval.fail(pos, "Unexpected Typst control statement.")
+            }
         })?;
     if flow.depth() > depth {
         return Err(limit_error(0, source));
@@ -414,9 +431,7 @@ impl<'a> Evaluator<'a, '_> {
             };
             match result {
                 Ok(next) => index = next,
-                Err(Interrupt::Control(control, value, pos))
-                    if !matches!(control, Control::ReturnValue) =>
-                {
+                Err(Interrupt::Control(control, value, pos)) => {
                     out.append(self.content(value, depth, pos)?);
                     let value = self.new_content(out, pos)?;
                     return Err(Interrupt::Control(control, value, pos));
@@ -818,12 +833,11 @@ impl<'a> Evaluator<'a, '_> {
             Kind::Break => return Err(Interrupt::Control(Control::Break, Value::None, pos)),
             Kind::Continue => return Err(Interrupt::Control(Control::Continue, Value::None, pos)),
             Kind::Return(expr) => {
-                let (control, value) = if let Some(expr) = expr {
-                    (Control::ReturnValue, self.eval(expr, depth)?)
+                return Err(if let Some(expr) = expr {
+                    Interrupt::ReturnValue(self.eval(expr, depth)?, pos)
                 } else {
-                    (Control::Return, Value::None)
-                };
-                return Err(Interrupt::Control(control, value, pos));
+                    Interrupt::Control(Control::Return, Value::None, pos)
+                });
             }
             Kind::Set(rule, condition) => self.eval_set(rule, condition.as_deref(), depth, pos)?,
             Kind::Show(Some(selector), transform) => {
@@ -965,20 +979,24 @@ impl<'a> Evaluator<'a, '_> {
         result
     }
 
+    fn scoped<T>(&mut self, evaluate: impl FnOnce(&mut Self) -> T) -> T {
+        let scope = EvaluationScope {
+            settings: self.settings.clone(),
+            rule_count: self.rules.len(),
+            scope_count: self.scopes.len(),
+            evaluator: self,
+        };
+        scope.evaluator.scopes.push(Bindings::default());
+        evaluate(scope.evaluator)
+    }
+
     fn eval_block(
         &mut self,
         exprs: &'a [Expr<'a>],
         depth: usize,
         pos: usize,
     ) -> EvalResult<'a, Value<'a>> {
-        self.scopes.push(Bindings::default());
-        let settings = self.settings.clone();
-        let rules = self.rules.len();
-        let result = self.sequence(exprs, depth, pos);
-        self.scopes.pop();
-        self.settings = settings;
-        self.rules.truncate(rules);
-        result
+        self.scoped(|eval| eval.sequence(exprs, depth, pos))
     }
 
     fn eval_let(
@@ -1037,14 +1055,8 @@ impl<'a> Evaluator<'a, '_> {
         depth: usize,
         pos: usize,
     ) -> EvalResult<'a, Value<'a>> {
-        let settings = self.settings.clone();
-        let rules = self.rules.len();
-        self.scopes.push(Bindings::default());
-        let flow = self.markup(marks, depth - 1);
-        self.scopes.pop();
-        self.settings = settings;
-        self.rules.truncate(rules);
-        self.new_content(flow?, pos).map_err(Interrupt::from)
+        let flow = self.scoped(|eval| eval.markup(marks, depth - 1))?;
+        self.new_content(flow, pos).map_err(Interrupt::from)
     }
 
     fn literal(&mut self, text: &'a str, pos: usize) -> EvalResult<'a, Value<'a>> {
@@ -1207,9 +1219,7 @@ impl<'a> Evaluator<'a, '_> {
         for expr in exprs {
             match self.eval(expr, depth) {
                 Ok(next) => result = self.join(result, next, depth, pos)?,
-                Err(Interrupt::Control(control, value, at))
-                    if !matches!(control, Control::ReturnValue) =>
-                {
+                Err(Interrupt::Control(control, value, at)) => {
                     let value = self.join(result, value, depth, pos)?;
                     return Err(Interrupt::Control(control, value, at));
                 }
@@ -1436,9 +1446,10 @@ impl<'a> Evaluator<'a, '_> {
                 })();
                 self.scopes = saved;
                 match result {
-                    Err(Interrupt::Control(Control::Return | Control::ReturnValue, value, _)) => {
-                        Ok(value)
-                    }
+                    Err(
+                        Interrupt::Control(Control::Return, value, _)
+                        | Interrupt::ReturnValue(value, _),
+                    ) => Ok(value),
                     Err(Interrupt::Control(_, _, pos)) => Err(self
                         .fail(pos, "Unexpected Typst loop control statement.")
                         .into()),

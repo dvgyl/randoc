@@ -26,13 +26,13 @@ pub(super) fn write(
         highlight: None,
         csl: Attr::default(),
     });
-    let body = writer.borrow_mut().blocks(&doc.blocks, depth)?;
+    let (body, last) = writer.borrow_mut().block_layout(&doc.blocks, depth)?;
     let width = (options.wrap_text == WrapOption::WrapAuto)
         .then(|| usize::try_from(options.columns).ok())
         .flatten();
     let Some(template) = &options.template else {
         let mut text = body.render(width);
-        if !text.is_empty() && !text.ends_with('\n') {
+        if last.is_some_and(fragment_has_line) && !text.is_empty() && !text.ends_with('\n') {
             text.push('\n');
         }
         return Ok(text);
@@ -139,6 +139,14 @@ struct Renderer<'a> {
 
 impl Renderer<'_> {
     fn blocks(&mut self, blocks: &[Block], depth: usize) -> Result<Doc> {
+        self.block_layout(blocks, depth).map(|(body, _)| body)
+    }
+
+    fn block_layout<'a>(
+        &mut self,
+        blocks: &'a [Block],
+        depth: usize,
+    ) -> Result<(Doc, Option<&'a Block>)> {
         check_depth(depth)?;
         let mut docs = Vec::new();
         let mut previous: Option<&Block> = None;
@@ -163,7 +171,7 @@ impl Renderer<'_> {
             docs.push(rendered);
             previous = Some(block);
         }
-        Ok(hcat(docs))
+        Ok((hcat(docs), previous))
     }
 
     fn block(&mut self, block: &Block, depth: usize) -> Result<Doc> {
@@ -307,7 +315,9 @@ impl Renderer<'_> {
                 };
                 let tail = block_label(attr);
                 let body = self.blocks(blocks, depth)?;
-                let separator = if !body.is_empty()
+                let separator = if blocks.is_empty() {
+                    ""
+                } else if !body.is_empty()
                     && matches!(
                         blocks.last(),
                         Some(
@@ -318,7 +328,8 @@ impl Renderer<'_> {
                                 | Block::Table(_)
                                 | Block::CodeBlock(..)
                         )
-                    ) {
+                    )
+                {
                     "\n\n"
                 } else {
                     "\n"
@@ -426,34 +437,22 @@ impl Renderer<'_> {
         attached: bool,
         depth: usize,
     ) -> Result<Doc> {
-        if let Some((name, body)) = match inline {
-            Inline::Emph(xs) => Some(("emph", xs)),
-            Inline::Strong(xs) => Some(("strong", xs)),
-            Inline::Underline(xs) => Some(("underline", xs)),
-            Inline::Strikeout(xs) => Some(("strike", xs)),
-            Inline::Superscript(xs) => Some(("super", xs)),
-            Inline::Subscript(xs) => Some(("sub", xs)),
-            Inline::SmallCaps(xs) => Some(("smallcaps", xs)),
-            _ => None,
-        } {
-            return Ok(surround(
+        let smart = self.options.extensions.contains(Extension::Smart);
+        let mut mark = |name, body: &[Inline]| -> Result<Doc> {
+            Ok(surround(
                 format!("#{name}["),
                 self.inlines(body, depth)?,
                 "]",
-            ));
-        }
-        self.inline_other(inline, line_start, attached, depth)
-    }
-
-    fn inline_other(
-        &mut self,
-        inline: &Inline,
-        line_start: bool,
-        attached: bool,
-        depth: usize,
-    ) -> Result<Doc> {
-        let smart = self.options.extensions.contains(Extension::Smart);
+            ))
+        };
         Ok(match inline {
+            Inline::Emph(xs) => mark("emph", xs)?,
+            Inline::Strong(xs) => mark("strong", xs)?,
+            Inline::Underline(xs) => mark("underline", xs)?,
+            Inline::Strikeout(xs) => mark("strike", xs)?,
+            Inline::Superscript(xs) => mark("super", xs)?,
+            Inline::Subscript(xs) => mark("sub", xs)?,
+            Inline::SmallCaps(xs) => mark("smallcaps", xs)?,
             Inline::Str(text) => {
                 let doc = markup(text, smart, line_start);
                 if attached && text.starts_with('(') {
@@ -497,100 +496,107 @@ impl Renderer<'_> {
                     markup(&format!("{marker}{tex}{marker}"), smart, line_start)
                 }
             },
-            Inline::Link(_, inlines, target) => {
-                let url = &target.url;
-                if let Some(id) = url.strip_prefix('#') {
-                    let id = decode_percent(id, false).unwrap_or_default();
-                    surround(
-                        format!("#link({})[", label(&String::from_utf8_lossy(&id), false)),
-                        randoc_layout::nowrap(self.inlines(inlines, depth)?),
-                        "]",
-                    )
-                } else if url.split_once(':').is_some()
-                    && matches!(inlines.as_slice(), [Inline::Str(text)] if text == url)
-                {
-                    literal(format!("#link({})", quoted(url)))
-                } else {
-                    surround(
-                        format!("#link({})[", quoted(url)),
-                        randoc_layout::nowrap(self.inlines(inlines, depth)?),
-                        "]",
-                    )
-                }
-            }
+            Inline::Link(_, inlines, target) => self.link(inlines, target, depth)?,
             Inline::Image(attr, alt, target) => {
                 literal(format!("#box({})", self.image(attr, alt, target)))
             }
             Inline::Note(blocks) => surround("#footnote[", self.blocks(blocks, depth)?, "]"),
-            Inline::Span(attr, inlines) => {
-                let mut body = self.inlines(inlines, depth)?;
-                if attr.has_class("mark") {
-                    body = surround("#highlight[", body, "]");
-                }
-                let (params, rules) = properties(attr, attr.get("lang"));
-                let text_params = rules
-                    .strip_prefix("#set text(")
-                    .and_then(|s| s.strip_suffix(");"))
-                    .unwrap_or("");
-                let args = params
-                    .iter()
-                    .map(String::as_str)
-                    .chain([text_params])
-                    .filter(|s| !s.is_empty())
-                    .collect::<Vec<_>>()
-                    .join(", ");
-                if !args.is_empty() {
-                    body = surround(format!("#text({args})["), body, "]");
-                }
-                if attr.id.is_empty() {
-                    body
-                } else {
-                    surround("\u{200b}", body, label(&attr.id, true))
-                }
-            }
+            Inline::Span(attr, inlines) => self.span(attr, inlines, depth)?,
             Inline::Cite(citations, _)
                 if self.options.extensions.contains(Extension::Citations) =>
             {
-                let mut docs = Vec::new();
-                for cite in citations {
-                    let id = &cite.id;
-                    let suffix = match cite.suffix.as_slice() {
-                        [Inline::Str(comma), Inline::Space, tail @ ..] if comma == "," => tail,
-                        [Inline::Str(comma), tail @ ..] if comma == "," => tail,
-                        rest => rest,
-                    };
-                    let body = self.inlines(suffix, depth)?;
-                    let mode = match cite.mode {
-                        CitationMode::NormalCitation => "",
-                        CitationMode::AuthorInText => ", form: \"prose\"",
-                        CitationMode::SuppressAuthor => ", form: \"year\"",
-                    };
-                    let doc = if mode.is_empty() && valid_label(id) {
-                        if body.is_empty() {
-                            literal(format!("@{id}"))
-                        } else {
-                            surround(format!("@{id}["), body, "]")
-                        }
-                    } else {
-                        let head = format!("#cite({}{mode}", label(id, false));
-                        let doc = if body.is_empty() {
-                            literal(format!("{head})"))
-                        } else {
-                            surround(format!("{head}, supplement: ["), body, "])")
-                        };
-                        if cite.mode == CitationMode::SuppressAuthor {
-                            surround("(", doc, ")")
-                        } else {
-                            doc
-                        }
-                    };
-                    docs.push(doc);
-                }
-                hcat(docs)
+                self.citations(citations, depth)?
             }
             Inline::Cite(_, inlines) => self.inlines(inlines, depth)?,
-            _ => empty(),
         })
+    }
+
+    fn link(&mut self, inlines: &[Inline], target: &Target, depth: usize) -> Result<Doc> {
+        let url = &target.url;
+        Ok(if let Some(id) = url.strip_prefix('#') {
+            let id = decode_percent(id, false).unwrap_or_default();
+            surround(
+                format!("#link({})[", label(&String::from_utf8_lossy(&id), false)),
+                randoc_layout::nowrap(self.inlines(inlines, depth)?),
+                "]",
+            )
+        } else if url.split_once(':').is_some()
+            && matches!(inlines, [Inline::Str(text)] if text == url)
+        {
+            literal(format!("#link({})", quoted(url)))
+        } else {
+            surround(
+                format!("#link({})[", quoted(url)),
+                randoc_layout::nowrap(self.inlines(inlines, depth)?),
+                "]",
+            )
+        })
+    }
+
+    fn span(&mut self, attr: &Attr, inlines: &[Inline], depth: usize) -> Result<Doc> {
+        let mut body = self.inlines(inlines, depth)?;
+        if attr.has_class("mark") {
+            body = surround("#highlight[", body, "]");
+        }
+        let (params, rules) = properties(attr, attr.get("lang"));
+        let text_params = rules
+            .strip_prefix("#set text(")
+            .and_then(|s| s.strip_suffix(");"))
+            .unwrap_or("");
+        let args = params
+            .iter()
+            .map(String::as_str)
+            .chain([text_params])
+            .filter(|s| !s.is_empty())
+            .collect::<Vec<_>>()
+            .join(", ");
+        if !args.is_empty() {
+            body = surround(format!("#text({args})["), body, "]");
+        }
+        Ok(if attr.id.is_empty() {
+            body
+        } else {
+            surround("\u{200b}", body, label(&attr.id, true))
+        })
+    }
+
+    fn citations(&mut self, citations: &[Citation], depth: usize) -> Result<Doc> {
+        let mut docs = Vec::new();
+        for cite in citations {
+            let id = &cite.id;
+            let suffix = match cite.suffix.as_slice() {
+                [Inline::Str(comma), Inline::Space, tail @ ..] if comma == "," => tail,
+                [Inline::Str(comma), tail @ ..] if comma == "," => tail,
+                rest => rest,
+            };
+            let body = self.inlines(suffix, depth)?;
+            let mode = match cite.mode {
+                CitationMode::NormalCitation => "",
+                CitationMode::AuthorInText => ", form: \"prose\"",
+                CitationMode::SuppressAuthor => ", form: \"year\"",
+            };
+            let doc = if mode.is_empty() && valid_label(id) {
+                if body.is_empty() {
+                    literal(format!("@{id}"))
+                } else {
+                    surround(format!("@{id}["), body, "]")
+                }
+            } else {
+                let head = format!("#cite({}{mode}", label(id, false));
+                let doc = if body.is_empty() {
+                    literal(format!("{head})"))
+                } else {
+                    surround(format!("{head}, supplement: ["), body, "])")
+                };
+                if cite.mode == CitationMode::SuppressAuthor {
+                    surround("(", doc, ")")
+                } else {
+                    doc
+                }
+            };
+            docs.push(doc);
+        }
+        Ok(hcat(docs))
     }
 
     fn image(&self, attr: &Attr, alt: &[Inline], target: &Target) -> String {
@@ -608,6 +614,18 @@ impl Renderer<'_> {
             args.push(format!("alt: {}", quoted(&alt)));
         }
         format!("image({})", args.join(", "))
+    }
+}
+
+fn fragment_has_line(block: &Block) -> bool {
+    match block {
+        Block::Plain(_) | Block::RawBlock(..) => false,
+        Block::Div(attr, _) | Block::Header(_, attr, _) => {
+            attr.get("typst-label").unwrap_or(&attr.id).is_empty()
+        }
+        Block::Figure(attr, ..) => attr.id.is_empty(),
+        Block::Table(table) => table.attr.id.is_empty(),
+        _ => true,
     }
 }
 

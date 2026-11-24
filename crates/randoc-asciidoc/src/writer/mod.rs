@@ -23,12 +23,6 @@ pub(super) fn write(
     dialect: Dialect,
 ) -> Result<String> {
     let math = inspect(doc, context.limits.max_nesting_depth)?;
-    if dialect == Dialect::Asciidoctor {
-        context.report(LogMessage::Deprecated(
-            "asciidoctor".into(),
-            "use asciidoc instead".into(),
-        ));
-    }
     let mut renderer = Renderer {
         options,
         dialect,

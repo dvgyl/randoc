@@ -3,7 +3,9 @@ use std::collections::HashSet;
 use std::fmt::Write as _;
 use std::sync::OnceLock;
 
-use randoc_ast::{Alignment, Attr, Block, Inline, MathType, Pandoc, QuoteType, Row, Table, Target};
+use randoc_ast::{
+    Alignment, Attr, Block, Inline, ListAttributes, MathType, Pandoc, QuoteType, Row, Table, Target,
+};
 use randoc_core::Extension;
 use randoc_core::shared::{meta_context::meta_to_context, stringify};
 use randoc_core::{Context, Error, LogMessage, Result, WrapOption, WriterOptions};
@@ -45,12 +47,12 @@ pub(crate) fn write(
     } else {
         None
     };
-    let mut body = writer.blocks(&doc.blocks, 0)?;
+    let (mut body, ending) = writer.block_run(&doc.blocks, 0, JiraAnchor::None)?;
     for message in writer.messages.drain(..) {
         context.report(message);
     }
     if writer.media_notes {
-        body = format!("{}\n\n<references />\n", body.trim_end_matches('\n'));
+        body = format!("{}\n\n<references />", body.trim_end_matches('\n'));
     }
     if !writer.notes.is_empty() {
         for (index, note) in writer.notes.iter().enumerate() {
@@ -68,29 +70,102 @@ pub(crate) fn write(
         if options.table_of_contents {
             fields.insert("toc", Val::Bool(true));
         }
-        context.render_template(template, fields, None)
-    } else if writer.notes.is_empty() {
-        if wiki == Wiki::Doku && matches!(doc.blocks.last(), Some(Block::Div(..))) {
-            body.pop();
-            Ok(body)
-        } else if body.trim_end_matches('\n').is_empty() {
-            Ok(String::new())
-        } else {
-            body.truncate(body.trim_end_matches('\n').len());
+        return context.render_template(template, fields, None);
+    }
+    if writer.media_notes || !writer.notes.is_empty() {
+        return Ok(body);
+    }
+    let last = doc.blocks.last();
+    if ending == BlockEnd::Raw || wiki == Wiki::Doku && matches!(last, Some(Block::Div(..))) {
+        body.pop();
+    } else {
+        body.truncate(body.trim_end_matches('\n').len());
+        if !body.is_empty() && ending != BlockEnd::NoLine {
             body.push('\n');
-            if wiki == Wiki::Doku
-                && (matches!(doc.blocks.last(), Some(Block::Figure(_, caption, _)) if !caption.long.is_empty())
-                    || matches!(doc.blocks.last(), Some(Block::BulletList(_) | Block::OrderedList(..) | Block::DefinitionList(_)) if body.ends_with("</code>\n")))
+            if ending == BlockEnd::TwoLines
+                || wiki == Wiki::Doku
+                    && (matches!(last, Some(Block::Figure(_, caption, _)) if !caption.long.is_empty())
+                        || matches!(last, Some(Block::BulletList(_) | Block::OrderedList(..) | Block::DefinitionList(_)) if body.ends_with("</code>\n")))
             {
                 body.push('\n');
             }
-            if wiki == Wiki::Jira && doc.blocks.last().is_some_and(ends_with_display_math) {
-                body.push('\n');
-            }
-            Ok(body)
         }
-    } else {
-        Ok(body)
+    }
+    Ok(body)
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum JiraAnchor {
+    None,
+    Pending,
+}
+
+impl JiraAnchor {
+    fn take_separator(&mut self, block: &Block) -> &'static str {
+        let pending = std::mem::replace(self, Self::None) == Self::Pending;
+        if pending
+            && !matches!(
+                block,
+                Block::Plain(_)
+                    | Block::Para(_)
+                    | Block::LineBlock(_)
+                    | Block::RawBlock(..)
+                    | Block::Div(..)
+            )
+        {
+            "\n\n"
+        } else {
+            ""
+        }
+    }
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum BlockEnd {
+    Line,
+    NoLine,
+    Raw,
+    TwoLines,
+}
+
+#[derive(Clone, Copy)]
+struct WikiList<'a> {
+    ordered: Option<&'a ListAttributes>,
+    items: &'a [Vec<Block>],
+}
+
+impl<'a> WikiList<'a> {
+    fn from_block(block: &'a Block) -> Option<Self> {
+        match block {
+            Block::BulletList(items) => Some(Self {
+                ordered: None,
+                items,
+            }),
+            Block::OrderedList(attr, items) => Some(Self {
+                ordered: Some(attr),
+                items,
+            }),
+            _ => None,
+        }
+    }
+
+    fn needs_html(self) -> bool {
+        self.ordered.is_some_and(|attr| {
+            attr.start != 1
+                || attr.style != randoc_ast::ListNumberStyle::DefaultStyle
+                    && attr.style != randoc_ast::ListNumberStyle::Decimal
+                || list_has_table_or_code(self.items)
+        }) || self.items.iter().any(|item| {
+            item.iter()
+                .filter(|block| Self::from_block(block).is_some())
+                .count()
+                > 1
+                || item
+                    .iter()
+                    .filter(|block| matches!(block, Block::Para(_)))
+                    .count()
+                    > 1
+        })
     }
 }
 
@@ -125,38 +200,32 @@ impl Writer<'_> {
     }
 
     fn blocks(&mut self, blocks: &[Block], depth: usize) -> Result<String> {
-        self.blocks_after_anchor(blocks, depth, false)
+        self.block_run(blocks, depth, JiraAnchor::None)
+            .map(|(text, _)| text)
     }
 
-    fn blocks_after_anchor(
+    fn block_run(
         &mut self,
         blocks: &[Block],
         depth: usize,
-        mut after_anchor: bool,
-    ) -> Result<String> {
+        mut anchor: JiraAnchor,
+    ) -> Result<(String, BlockEnd)> {
         self.depth(depth)?;
         let mut out = String::new();
+        let mut ending = BlockEnd::Line;
         let mut skipped_raw = false;
         for block in blocks {
-            let text = if after_anchor && let Block::Div(attr, children) = block {
-                self.jira_div(attr, children, depth + 1, true)?
+            let (text, block_end) = if self.wiki == Wiki::Jira
+                && let Block::Div(attr, children) = block
+            {
+                self.jira_div(attr, children, depth + 1, anchor)?
             } else {
-                let text = self.block(block, depth)?;
-                if after_anchor
-                    && !text.is_empty()
-                    && !matches!(
-                        block,
-                        Block::Plain(_)
-                            | Block::Para(_)
-                            | Block::LineBlock(_)
-                            | Block::RawBlock(..)
-                    )
-                {
-                    out.push_str("\n\n");
-                }
-                text
+                (self.block(block, depth)?, self.block_end(block))
             };
-            after_anchor &= text.is_empty();
+            if !text.is_empty() {
+                out.push_str(anchor.take_separator(block));
+                ending = block_end;
+            }
             if self.wiki == Wiki::Doku && text.is_empty() && matches!(block, Block::RawBlock(..)) {
                 if !skipped_raw {
                     out.push('\n');
@@ -173,18 +242,24 @@ impl Writer<'_> {
             }
             out.push_str(&text);
         }
-        Ok(out)
+        Ok((out, ending))
     }
 
-    fn block(&mut self, block: &Block, depth: usize) -> Result<String> {
-        match block {
-            Block::Table(table) => self.table(table, depth + 1),
-            Block::BlockQuote(blocks) => self.quote(blocks, depth + 1),
-            _ => self.ordinary_block(block, depth),
+    fn block_end(&self, block: &Block) -> BlockEnd {
+        match (self.wiki, block) {
+            (Wiki::Jira, Block::RawBlock(..)) => BlockEnd::Raw,
+            (Wiki::Jira, Block::Header(..) | Block::HorizontalRule)
+            | (Wiki::Media, Block::Plain(_))
+            | (Wiki::Jira | Wiki::Media, Block::CodeBlock(..) | Block::BlockQuote(_)) => {
+                BlockEnd::NoLine
+            }
+            (Wiki::Media, Block::RawBlock(..)) => BlockEnd::Raw,
+            (Wiki::Jira, _) if ends_with_display_math(block) => BlockEnd::TwoLines,
+            _ => BlockEnd::Line,
         }
     }
 
-    fn ordinary_block(&mut self, block: &Block, depth: usize) -> Result<String> {
+    fn block(&mut self, block: &Block, depth: usize) -> Result<String> {
         Ok(match block {
             Block::Plain(items) | Block::Para(items) => {
                 let mut body = self.inlines(items, depth)?;
@@ -239,9 +314,11 @@ impl Writer<'_> {
                 }
             }
             Block::RawBlock(format, text)
-                if format.0 == self.wiki.name()
-                    || self.wiki == Wiki::Media && format.0 == "html" =>
+                if self.wiki == Wiki::Media && matches!(format.as_str(), "mediawiki" | "html") =>
             {
+                format!("{}\n", text.strip_suffix('\n').unwrap_or(text))
+            }
+            Block::RawBlock(format, text) if format.0 == self.wiki.name() => {
                 format!("{}\n", text.trim_end_matches('\n'))
             }
             Block::RawBlock(format, text)
@@ -252,22 +329,23 @@ impl Writer<'_> {
                 format!("<HTML>{text}</HTML>\n\n")
             }
             Block::RawBlock(_, _) => String::new(),
-            Block::BulletList(_) | Block::OrderedList(_, _) => {
-                let previous = self.in_list;
-                self.in_list = true;
-                let mut output = if self.wiki == Wiki::Media && needs_html_list(block) {
-                    self.html_list(block, depth + 1)?
-                } else {
-                    self.list(block, "", depth + 1)?
-                };
-                self.in_list = previous;
-                if !output.is_empty() && !output.ends_with("\n\n") {
-                    output.push('\n');
-                }
-                output
-            }
+            Block::BulletList(items) => self.list_block(
+                WikiList {
+                    ordered: None,
+                    items,
+                },
+                depth + 1,
+            )?,
+            Block::OrderedList(attr, items) => self.list_block(
+                WikiList {
+                    ordered: Some(attr),
+                    items,
+                },
+                depth + 1,
+            )?,
             Block::DefinitionList(terms) => self.definitions(terms, depth + 1)?,
-            Block::Table(_) | Block::BlockQuote(_) => String::new(),
+            Block::Table(table) => self.table(table, depth + 1)?,
+            Block::BlockQuote(blocks) => self.quote(blocks, depth + 1)?,
             Block::Figure(attr, caption, blocks) => {
                 let previous = std::mem::replace(&mut self.in_figure, true);
                 let result = self.figure(attr, &caption.long, blocks, depth + 1);
@@ -275,7 +353,7 @@ impl Writer<'_> {
                 result?
             }
             Block::Div(attr, blocks) if self.wiki == Wiki::Jira => {
-                self.jira_div(attr, blocks, depth + 1, false)?
+                self.jira_div(attr, blocks, depth + 1, JiraAnchor::None)?.0
             }
             Block::Div(attr, blocks) => {
                 let content = self.blocks(blocks, depth + 1)?;
@@ -305,12 +383,16 @@ impl Writer<'_> {
         attr: &Attr,
         blocks: &[Block],
         depth: usize,
-        after_anchor: bool,
-    ) -> Result<String> {
+        anchor: JiraAnchor,
+    ) -> Result<(String, BlockEnd)> {
         let panel = attr.has_class("panel") || !attr.attributes.is_empty();
         let has_anchor = !attr.id.is_empty();
-        let content =
-            self.blocks_after_anchor(blocks, depth, has_anchor || after_anchor && !panel)?;
+        let inner_anchor = if has_anchor || anchor == JiraAnchor::Pending && !panel {
+            JiraAnchor::Pending
+        } else {
+            JiraAnchor::None
+        };
+        let (content, ending) = self.block_run(blocks, depth, inner_anchor)?;
         let content = if has_anchor {
             let content = if content.is_empty() { "\n\n" } else { &content };
             format!("{{anchor:{}}}{content}", attr.id)
@@ -318,14 +400,21 @@ impl Writer<'_> {
             content
         };
         if panel {
-            let separator = if after_anchor { "\n\n" } else { "" };
+            let separator = if anchor == JiraAnchor::Pending {
+                "\n\n"
+            } else {
+                ""
+            };
             let content = content.strip_suffix('\n').unwrap_or(&content);
-            Ok(format!(
-                "{separator}{{panel{}}}\n{content}{{panel}}\n",
-                jira_args(attr)
+            Ok((
+                format!(
+                    "{separator}{{panel{}}}\n{content}{{panel}}\n",
+                    jira_args(attr)
+                ),
+                BlockEnd::NoLine,
             ))
         } else {
-            Ok(content)
+            Ok((content, ending))
         }
     }
 
@@ -338,13 +427,10 @@ impl Writer<'_> {
         let html = self.wiki == Wiki::Media
             && terms.iter().any(|(_, definitions)| {
                 definitions.iter().any(|body| {
-                    body.len() > 1
-                        && body.iter().any(|block| list_items(block).is_none())
-                        && body
-                            .iter()
-                            .filter(|block| list_items(block).is_none())
-                            .count()
-                            > 1
+                    body.iter()
+                        .filter(|block| WikiList::from_block(block).is_none())
+                        .nth(1)
+                        .is_some()
                 })
             });
         let mut out = if html {
@@ -366,8 +452,8 @@ impl Writer<'_> {
             if self.wiki == Wiki::Doku && definitions.iter().any(|body| doku_wrap_item(body)) {
                 let _ = writeln!(out, "  * **{term}** <WRAP>");
                 for block in definitions.iter().flatten() {
-                    if list_items(block).is_some() {
-                        out.push_str(&self.list(block, "  ", depth + 1)?);
+                    if let Some(list) = WikiList::from_block(block) {
+                        out.push_str(&self.list(list, "  ", depth + 1)?);
                     } else {
                         let text = self.block(block, depth)?;
                         out.push_str(&doku_item_block(block, text));
@@ -408,8 +494,8 @@ impl Writer<'_> {
         if self.wiki == Wiki::Media {
             let mut text = String::new();
             for block in blocks {
-                if list_items(block).is_some() {
-                    text.push_str(&self.list(block, ";", depth + 1)?);
+                if let Some(list) = WikiList::from_block(block) {
+                    text.push_str(&self.list(list, ";", depth + 1)?);
                 } else {
                     text.push_str(&ensure_newline(
                         self.block(block, depth)?.trim_end_matches('\n').into(),
@@ -420,9 +506,9 @@ impl Writer<'_> {
         }
         let mut text = String::new();
         for block in blocks {
-            if list_items(block).is_some() {
+            if let Some(list) = WikiList::from_block(block) {
                 text.push_str(&self.list(
-                    block,
+                    list,
                     if self.wiki == Wiki::Doku { "  " } else { "*" },
                     depth + 1,
                 )?);
@@ -547,11 +633,25 @@ impl Writer<'_> {
         })
     }
 
-    fn list(&mut self, block: &Block, prefix: &str, depth: usize) -> Result<String> {
-        self.depth(depth)?;
-        let Some((ordered, items)) = list_items(block) else {
-            return Ok(String::new());
+    fn list_block(&mut self, list: WikiList<'_>, depth: usize) -> Result<String> {
+        let previous = std::mem::replace(&mut self.in_list, true);
+        let result = if self.wiki == Wiki::Media && list.needs_html() {
+            self.html_list(list, depth)
+        } else {
+            self.list(list, "", depth)
         };
+        self.in_list = previous;
+        let mut output = result?;
+        if !output.is_empty() && !output.ends_with("\n\n") {
+            output.push('\n');
+        }
+        Ok(output)
+    }
+
+    fn list(&mut self, list: WikiList<'_>, prefix: &str, depth: usize) -> Result<String> {
+        self.depth(depth)?;
+        let ordered = list.ordered.is_some();
+        let items = list.items;
         let marker = match (self.wiki, ordered) {
             (Wiki::Doku, true) => "-",
             (_, true) => "#",
@@ -570,8 +670,8 @@ impl Writer<'_> {
             if self.wiki == Wiki::Doku && doku_wrap_item(item) {
                 out.push_str("<WRAP>\n");
                 for child in item {
-                    if list_items(child).is_some() {
-                        out.push_str(&self.list(child, &nested_prefix, depth + 1)?);
+                    if let Some(list) = WikiList::from_block(child) {
+                        out.push_str(&self.list(list, &nested_prefix, depth + 1)?);
                     } else {
                         if matches!(child, Block::HorizontalRule) {
                             out.push('\n');
@@ -584,11 +684,11 @@ impl Writer<'_> {
                 continue;
             }
             for child in item {
-                if list_items(child).is_some() {
+                if let Some(list) = WikiList::from_block(child) {
                     if !out.ends_with('\n') {
                         out.push('\n');
                     }
-                    out.push_str(&self.list(child, &nested_prefix, depth + 1)?);
+                    out.push_str(&self.list(list, &nested_prefix, depth + 1)?);
                 } else {
                     let text = self.block(child, depth)?;
                     if !first && self.wiki != Wiki::Doku && !out.ends_with('\n') {
@@ -620,14 +720,12 @@ impl Writer<'_> {
         Ok(out)
     }
 
-    fn html_list(&mut self, block: &Block, depth: usize) -> Result<String> {
+    fn html_list(&mut self, list: WikiList<'_>, depth: usize) -> Result<String> {
         self.depth(depth)?;
-        let Some((ordered, items)) = list_items(block) else {
-            return Ok(String::new());
-        };
-        let tag = if ordered { "ol" } else { "ul" };
+        let items = list.items;
+        let tag = if list.ordered.is_some() { "ol" } else { "ul" };
         let mut out = format!("<{tag}");
-        if let Block::OrderedList(attr, _) = block {
+        if let Some(attr) = list.ordered {
             if attr.start != 1 {
                 let _ = write!(out, " start=\"{}\"", attr.start);
             }
@@ -673,8 +771,23 @@ impl Writer<'_> {
                         self.html_blocks(children, depth + 1)?
                     );
                 }
-                Block::BulletList(_) | Block::OrderedList(_, _) => {
-                    out.push_str(&self.html_list(block, depth + 1)?);
+                Block::BulletList(items) => {
+                    out.push_str(&self.html_list(
+                        WikiList {
+                            ordered: None,
+                            items,
+                        },
+                        depth + 1,
+                    )?);
+                }
+                Block::OrderedList(attr, items) => {
+                    out.push_str(&self.html_list(
+                        WikiList {
+                            ordered: Some(attr),
+                            items,
+                        },
+                        depth + 1,
+                    )?);
                 }
                 _ => out.push_str(&ensure_newline(
                     self.block(block, depth)?.trim_end_matches('\n').into(),
@@ -822,7 +935,7 @@ impl Writer<'_> {
             Inline::Code(_, text) => match self.wiki {
                 Wiki::Media => format!("<code>{}</code>", escape_html(text)),
                 Wiki::Doku => format!("''%%{text}%%''"),
-                Wiki::Jira => format!("{{{{{}}}}}", text.replace('\\', "&bsol;")),
+                Wiki::Jira => format!("{{{{{}}}}}", escape_jira(text, false)),
                 Wiki::Creole => text.clone(),
             },
             Inline::Math(kind, text) => match self.wiki {
@@ -1395,9 +1508,9 @@ fn image_pixels(value: &str, dpi: i64) -> Option<String> {
 fn doku_wrap_item(blocks: &[Block]) -> bool {
     match blocks {
         [] | [Block::Plain(_) | Block::Para(_), Block::CodeBlock(..)] => false,
-        [Block::Plain(_) | Block::Para(_), rest @ ..] => {
-            rest.iter().any(|block| list_items(block).is_none())
-        }
+        [Block::Plain(_) | Block::Para(_), rest @ ..] => rest
+            .iter()
+            .any(|block| WikiList::from_block(block).is_none()),
         _ => true,
     }
 }
@@ -1414,7 +1527,7 @@ fn doku_item_block(block: &Block, text: String) -> String {
 }
 
 fn ends_with_display_math(mut block: &Block) -> bool {
-    while let Some((_, items)) = list_items(block) {
+    while let Some(WikiList { items, .. }) = WikiList::from_block(block) {
         let Some(last) = items.last().and_then(|item| item.last()) else {
             return false;
         };
@@ -1422,38 +1535,6 @@ fn ends_with_display_math(mut block: &Block) -> bool {
     }
     matches!(block, Block::Plain(items) | Block::Para(items)
         if matches!(items.last(), Some(Inline::Math(MathType::DisplayMath, _))))
-}
-
-fn list_items(block: &Block) -> Option<(bool, &[Vec<Block>])> {
-    match block {
-        Block::BulletList(items) => Some((false, items)),
-        Block::OrderedList(_, items) => Some((true, items)),
-        _ => None,
-    }
-}
-
-fn needs_html_list(block: &Block) -> bool {
-    if matches!(block, Block::OrderedList(attr, items)
-        if attr.start != 1
-            || attr.style != randoc_ast::ListNumberStyle::DefaultStyle
-                && attr.style != randoc_ast::ListNumberStyle::Decimal
-            || list_has_table_or_code(items))
-    {
-        return true;
-    }
-    list_items(block).is_some_and(|(_, items)| {
-        items.iter().any(|item| {
-            item.iter()
-                .filter(|block| list_items(block).is_some())
-                .count()
-                > 1
-                || item
-                    .iter()
-                    .filter(|block| matches!(block, Block::Para(_)))
-                    .count()
-                    > 1
-        })
-    })
 }
 
 fn list_has_table_or_code(items: &[Vec<Block>]) -> bool {
@@ -1580,29 +1661,41 @@ fn escape_jira_math(tex: &str) -> String {
     out
 }
 
+fn jira_word_neighbor(ch: char) -> bool {
+    !ch.is_whitespace() && !"_+-^*~!&|[]{}\\(?;:".contains(ch)
+}
+
 fn escape_jira(text: &str, isolated: bool) -> String {
+    const FACES: [&str; 10] = [
+        ":P", ":D", ":)", ":(", ";)", "(/)", "(x)", "(y)", "(n)", "(i)",
+    ];
     let mut out = String::new();
-    if [":P", ":D", ":)", ":(", ";)", "(/)", "(x)"]
-        .iter()
-        .any(|face| {
-            text.strip_prefix(face)
-                .is_some_and(|rest| !rest.starts_with(char::is_alphanumeric))
-        })
-    {
-        out.push('\\');
-    }
     let mut previous = None;
-    let mut chars = text.chars().peekable();
-    while let Some(ch) = chars.next() {
-        let in_word = previous.is_some_and(char::is_alphanumeric)
-            && chars.peek().is_some_and(|ch| ch.is_alphanumeric());
+    let mut chars = text.char_indices().peekable();
+    while let Some((at, ch)) = chars.next() {
+        if matches!(ch, ':' | ';' | '(')
+            && let Some(face) = FACES.iter().find(|face| {
+                text[at..]
+                    .strip_prefix(**face)
+                    .is_some_and(|rest| !rest.starts_with(char::is_alphanumeric))
+            })
+        {
+            out.push('\\');
+            out.push_str(face);
+            for _ in 1..face.len() {
+                previous = chars.next().map(|(_, ch)| ch);
+            }
+            continue;
+        }
+        let next = chars.peek().map(|&(_, ch)| ch);
+        let in_word =
+            previous.is_some_and(jira_word_neighbor) && next.is_some_and(jira_word_neighbor);
         let separated = (isolated && text.len() == 1)
-            || previous.is_some_and(char::is_whitespace)
-                && chars.peek().is_some_and(|ch| ch.is_whitespace());
+            || previous.is_some_and(char::is_whitespace) && next.is_some_and(char::is_whitespace);
         if ch == '\\' && !in_word && !separated {
             out.push_str("&bsol;");
         } else {
-            let mark = "_+-^*~!&|[]".contains(ch);
+            let mark = "_+-^*~!&|[](".contains(ch);
             if matches!(ch, '{' | '}') || mark && !in_word && !separated {
                 out.push('\\');
             }

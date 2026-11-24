@@ -117,14 +117,7 @@ fn write(
             writer.add_writer_fields(fields, doc, body, context)?;
             context.render_template(template, fields, width)?
         }
-        _ => {
-            let mut text = body.render(width);
-            // A fragment has no final newline. The program adds one.
-            if text.ends_with('\n') {
-                text.pop();
-            }
-            text
-        }
+        _ => body.render(width),
     };
     for warning in writer.warnings {
         context.report(warning);

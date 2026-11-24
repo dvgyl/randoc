@@ -10,7 +10,10 @@ use randoc_archive::media::{
 use randoc_ast::{
     Attr, Block, Inline, Meta, MetaValue, Pandoc, json::parse_value, walk::walk_inlines_mut,
 };
-use randoc_core::{Context, Error, Result, WriterOptions, shared::stringify_meta};
+use randoc_core::{
+    Context, Error, Result, WriterOptions,
+    shared::{is_haskell_space, stringify_meta},
+};
 use serde::Serialize;
 use serde_json::{
     ser::{Formatter, PrettyFormatter},
@@ -464,7 +467,7 @@ impl NotebookWriter<'_> {
         let source = String::from_utf8(bytes).map_err(|_| budget_error())?;
         Ok(Cell::Markdown {
             metadata: self.attrs(attr, false)?,
-            source: lines(&source),
+            source: lines(source.trim_end_matches(is_haskell_space)),
             attachments,
             id: self.id(&attr.id),
         })

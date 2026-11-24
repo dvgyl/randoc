@@ -798,6 +798,51 @@ fn grid_cells_keep_paragraphs_if_any_cell_has_a_list() {
 }
 
 #[test]
+fn citation_role_names_and_key_spaces_follow_pandoc() {
+    let doc = read(
+        ":citation:`a` :citex:`a` :cite:p:`a, b`",
+        &mut Context::pure(),
+    )
+    .expect("RST document");
+    let [Block::Para(inlines)] = doc.blocks.as_slice() else {
+        panic!("Expected one paragraph");
+    };
+    assert!(matches!(inlines.as_slice(),
+        [Inline::Code(attr, text), Inline::Space, Inline::Cite(other, _),
+            Inline::Space, Inline::Cite(citations, _)]
+        if attr.get("role").is_some_and(|role| role == "citation") && text == "a"
+            && other.len() == 1 && other[0].id == "a"
+            && citations.len() == 2 && citations[0].id == "a" && citations[1].id == " b"));
+}
+
+#[test]
+fn ascii_quotes_delimit_code_without_escaped_spaces() {
+    let code = Inline::Code(Attr::default(), "x".into());
+    let output = write(
+        [
+            ("\"", "\""),
+            ("'", "'"),
+            ("a", "b"),
+            ("\"", "b"),
+            ("a", "'"),
+        ]
+        .map(|(left, right)| {
+            Block::Para(vec![
+                Inline::Str(left.into()),
+                code.clone(),
+                Inline::Str(right.into()),
+            ])
+        })
+        .to_vec(),
+        &WriterOptions::default(),
+    );
+    assert_eq!(
+        output.trim_end(),
+        "\"``x``\"\n\n'``x``'\n\na\\ ``x``\\ b\n\n\"``x``\\ b\n\na\\ ``x``'"
+    );
+}
+
+#[test]
 fn sphinx_citation_roles() {
     use randoc_ast::CitationMode;
     let doc = read(

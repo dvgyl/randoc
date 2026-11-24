@@ -17,6 +17,7 @@ randoc-data = { workspace = true }
 randoc-highlight = { workspace = true }
 randoc-layout = { workspace = true }
 randoc-math = { workspace = true }
+randoc-native = { workspace = true }
 randoc-templates = { workspace = true }
 
 [dev-dependencies]

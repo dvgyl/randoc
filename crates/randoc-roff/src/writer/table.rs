@@ -117,6 +117,9 @@ impl<'doc> Renderer<'_, 'doc> {
             &mut self.cells,
         )?;
         let is_ms = self.format == Format::Ms;
+        if !out.ends_with('\n') {
+            out.push('\n');
+        }
         let mut cells = row.cells.iter();
         for (index, width) in widths.iter().enumerate() {
             if index > 0 {
@@ -135,7 +138,7 @@ impl<'doc> Renderer<'_, 'doc> {
                 occupancy[index..end].fill(row_index.saturating_add(cell.row_span.max(1) as usize));
                 self.blocks(&cell.content, out, Lead::Normal, level)?;
             }
-            out.push_str("T}");
+            line(out, "T}");
         }
         out.push('\n');
         Ok(())

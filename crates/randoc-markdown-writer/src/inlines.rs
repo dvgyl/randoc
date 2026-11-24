@@ -2,7 +2,7 @@
 
 use randoc_ast::{Attr, Citation, CitationMode, Inline, MathType, QuoteType, Target, Text};
 use randoc_core::{Extension, LogMessage, Result, WrapOption};
-use randoc_layout::{Doc, cr, empty, literal, space};
+use randoc_layout::{Doc, blankline, cr, empty, literal, space};
 
 use crate::escape::is_interrupting_marker;
 use crate::html::{escape_html, html_attr_parts};
@@ -292,7 +292,7 @@ impl W<'_> {
         if self.in_heading {
             return literal(if self.in_script { "\\ " } else { " " });
         }
-        if self.plain() || self.has(Extension::HardLineBreaks) {
+        if self.plain() || self.variant == Variant::Markua || self.has(Extension::HardLineBreaks) {
             return cr();
         }
         if self.variant == Variant::Commonmark || self.has(Extension::EscapedLineBreaks) {
@@ -340,7 +340,7 @@ impl W<'_> {
                 self.delimited(content, mark, mark)?
             }
             Inline::Strikeout(content) => {
-                if self.has(Extension::Strikeout) {
+                if self.variant == Variant::Markua || self.has(Extension::Strikeout) {
                     self.delimited(content, "~~", "~~")?
                 } else if self.has(Extension::RawHtml) && !plain {
                     self.delimited(content, "<s>", "</s>")?
@@ -371,7 +371,14 @@ impl W<'_> {
             Inline::Math(kind, text) => self.math(*kind, text)?,
             Inline::RawInline(format, text) => {
                 let name = format.as_str().to_lowercase();
-                self.raw_inline(&name, text)
+                self.raw_inline(&name, text).unwrap_or_else(|| {
+                    self.messages
+                        .push(LogMessage::InlineNotRendered(randoc_native::show_inline(
+                            inline,
+                            self.max_depth,
+                        )));
+                    empty()
+                })
             }
             Inline::Link(attr, content, target) => {
                 let collapsed = !self.shortcut_references() || continues_reference(rest);
@@ -405,7 +412,7 @@ impl W<'_> {
                         breaks_as_spaces: self.in_heading || self.breaks_as_spaces,
                     },
                 });
-                if self.has(Extension::Footnotes) && !plain {
+                if (self.has(Extension::Footnotes) || self.variant == Variant::Markua) && !plain {
                     literal(format!("[^{}{number}]", self.opts.identifier_prefix))
                 } else {
                     literal(format!("[{}{number}]", self.opts.identifier_prefix))
@@ -716,6 +723,16 @@ impl W<'_> {
 
     fn math(&mut self, kind: MathType, text: &str) -> Result<Doc> {
         let display = kind == MathType::DisplayMath;
+        if self.variant == Variant::Markua {
+            return Ok(if display {
+                blankline()
+                    + literal("{format: latex}")
+                    + cr()
+                    + self.code_block(&Attr::default(), text)
+            } else {
+                literal(format!("`{text}`$"))
+            });
+        }
         let text = if display { text } else { text.trim() };
         let syntax = if self.plain() {
             None
@@ -765,32 +782,28 @@ impl W<'_> {
         Ok(if display { cr() + body + cr() } else { body })
     }
 
-    pub(crate) fn raw_inline(&self, format: &str, text: &str) -> Doc {
+    pub(crate) fn raw_inline(&self, format: &str, text: &str) -> Option<Doc> {
         if self.plain() {
-            return if format == "plain" {
-                literal(text)
-            } else {
-                empty()
-            };
+            return (format == "plain").then(|| literal(text));
         }
-        let own = if self.variant == Variant::Commonmark {
-            matches!(format, "markdown" | "commonmark" | "gfm" | "commonmark_x")
-        } else {
-            format.starts_with("markdown")
+        let own = match self.variant {
+            Variant::Commonmark => {
+                matches!(format, "markdown" | "commonmark" | "gfm" | "commonmark_x")
+            }
+            Variant::Markdown => format.starts_with("markdown"),
+            _ => false,
         };
         if own {
-            return literal(text);
+            return Some(literal(text));
         }
         if self.has(Extension::RawAttribute) {
             let ticks = "`".repeat(longest_run(text, '`') + 1);
-            return literal(format!("{ticks}{text}{ticks}{{={format}}}"));
+            return Some(literal(format!("{ticks}{text}{ticks}{{={format}}}")));
         }
         let html = matches!(format, "html" | "html4" | "html5");
         let tex = matches!(format, "latex" | "tex");
-        if html && self.has(Extension::RawHtml) || tex && self.has(Extension::RawTex) {
-            return literal(text);
-        }
-        empty()
+        (html && self.has(Extension::RawHtml) || tex && self.has(Extension::RawTex))
+            .then(|| literal(text))
     }
 
     fn cite(&mut self, citations: &[Citation], fallback: &[Inline]) -> Result<Doc> {
@@ -932,9 +945,7 @@ impl W<'_> {
         Ok(self.link_with_inner(attr, inner, has_image, target, collapsed))
     }
 
-    /// Writes a Markua link: always the inline form, with the attributes and
-    /// the title in braces after the destination.
-    fn markua_link(&self, attr: &Attr, inner: Doc, target: &Target) -> Doc {
+    pub(crate) fn markua_attrs(&self, attr: &Attr, alt: &str, title: &str) -> Option<Text> {
         let attr = self.prefixed(attr);
         let mut parts = Vec::new();
         if !attr.id.is_empty() {
@@ -943,17 +954,22 @@ impl W<'_> {
         for class in &attr.classes {
             parts.push(format!("class: {class}"));
         }
-        if !target.title.is_empty() {
-            parts.push(format!("title: \"{}\"", target.title));
+        if !alt.is_empty() {
+            parts.push(format!("alt: \"{alt}\""));
+        }
+        if !title.is_empty() {
+            parts.push(format!("title: \"{title}\""));
         }
         for (key, value) in &attr.attributes {
             parts.push(format!("{key}: {value}"));
         }
-        let attrs = if parts.is_empty() {
-            Text::new()
-        } else {
-            format!("{{{}}}", parts.join(", "))
-        };
+        (!parts.is_empty()).then(|| format!("{{{}}}", parts.join(", ")))
+    }
+
+    fn markua_link(&self, attr: &Attr, inner: Doc, target: &Target) -> Doc {
+        let attrs = self
+            .markua_attrs(attr, "", &target.title)
+            .unwrap_or_default();
         literal("[") + inner + literal(format!("]({}){attrs}", target.url))
     }
 
@@ -1136,6 +1152,15 @@ impl W<'_> {
 
     fn image(&mut self, attr: &Attr, content: &[Inline], target: &Target) -> Result<Doc> {
         self.images += 1;
+        if self.variant == Variant::Markua {
+            let alt = self
+                .image_label(|w| w.inline_list(content, false))?
+                .render(None);
+            let attributes = self
+                .markua_attrs(attr, &alt, &target.title)
+                .map_or_else(empty, |attrs| literal(attrs) + cr());
+            return Ok(cr() + attributes + literal(format!("![]({})", target.url)) + cr());
+        }
         if self.plain() {
             let inner = self.image_label(|w| w.inline_list(content, false))?;
             if self.opts.reference_links {
@@ -1175,7 +1200,17 @@ impl W<'_> {
                 self.image_label_repeats += 1;
                 // Keep the markers from the first render. The second render
                 // reserves note numbers for the repeated definitions.
-                render(self)?;
+                let messages = self.messages.len();
+                let repeated = render(self);
+                let repeated_messages = self.messages.split_off(messages);
+                self.messages
+                    .extend(repeated_messages.into_iter().filter(|message| {
+                        !matches!(
+                            message,
+                            LogMessage::BlockNotRendered(_) | LogMessage::InlineNotRendered(_)
+                        )
+                    }));
+                repeated?;
             }
             Ok(label)
         })();

@@ -391,7 +391,8 @@ fn listings_preserve_inline_and_block_options_in_order() {
 
 \begin{lstlisting}[language={C++}, numbers=left, style=compact, firstnumber=4, caption={First, second}, value={x=y}, label=counter]
 n++;
-\end{lstlisting}"
+\end{lstlisting}
+"
     );
 }
 
@@ -590,4 +591,65 @@ fn highlights_in_figure_and_table_captions_get_protect() {
             .count(),
         2
     );
+}
+
+#[test]
+fn discarded_raw_nodes_are_reported_in_render_order() {
+    use randoc_ast::Format;
+    use randoc_core::LogMessage;
+    let blocks = vec![
+        Block::Header(
+            1,
+            Attr::default(),
+            vec![
+                text("topic"),
+                Inline::RawInline(Format::new("html"), "<x>".into()),
+                Inline::Note(vec![paragraph("note")]),
+            ],
+        ),
+        Block::RawBlock(Format::new("markdown"), "x".into()),
+    ];
+    let mut context = Context::pure();
+    write_latex(&document(blocks), &options(), &mut context).unwrap();
+    assert_eq!(
+        context.log(),
+        [
+            LogMessage::InlineNotRendered(r#"RawInline (Format "html") "<x>""#.into()),
+            LogMessage::InlineNotRendered(r#"RawInline (Format "html") "<x>""#.into()),
+            LogMessage::BlockNotRendered(r#"RawBlock (Format "markdown") "x""#.into()),
+        ]
+    );
+}
+
+#[test]
+fn a_fragment_keeps_the_final_line_of_a_verbatim_environment() {
+    assert_eq!(
+        latex(
+            vec![Block::CodeBlock(Attr::default(), "v".into())],
+            &options()
+        ),
+        "\\begin{verbatim}\nv\n\\end{verbatim}\n"
+    );
+    assert_eq!(latex(vec![paragraph("v")], &options()), "v");
+}
+
+#[test]
+fn multirow_content_uses_the_column_alignment() {
+    use randoc_ast::Alignment;
+    for (align, prefix) in [
+        (Alignment::AlignCenter, "\\centering\\arraybackslash "),
+        (Alignment::AlignRight, "\\raggedright\\arraybackslash "),
+        (Alignment::AlignLeft, ""),
+        (Alignment::AlignDefault, ""),
+    ] {
+        let mut table = sample_table(Attr::default(), vec![]);
+        table.col_specs[0].align = align;
+        table.bodies[0].body[0].cells[0].row_span = 2;
+        table.bodies[0].body.push(row(vec![]));
+        let output = latex(vec![Block::Table(Box::new(table))], &options());
+        assert!(
+            output.contains(&format!("\\multirow{{2}}{{*}}{{{prefix}24}}")),
+            "{output}"
+        );
+    }
 }

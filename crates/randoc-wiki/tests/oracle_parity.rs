@@ -86,7 +86,11 @@ fn write(format: &str, doc: &Pandoc, standalone: bool, wrap: WrapOption) -> Stri
         .write(doc, &options, &mut Context::pure())
         .expect("render wiki text")
         .into_bytes();
-    String::from_utf8(bytes).expect("UTF-8 wiki text")
+    let mut text = String::from_utf8(bytes).expect("UTF-8 wiki text");
+    if !standalone && !text.ends_with('\n') {
+        text.push('\n');
+    }
+    text
 }
 
 fn from_file(path: &Path) -> String {
@@ -103,11 +107,9 @@ fn record(
     actual: &str,
     expected: &str,
 ) {
-    let known = matches!((format, group, id), ("jira", "old", "writer/basic"));
     let (passed, total) = report.entry((format.into(), group)).or_default();
     *total += 1;
     if actual == expected {
-        assert!(!known, "Remove the resolved difference for {id}");
         *passed += 1;
     } else {
         let offset = actual
@@ -127,7 +129,7 @@ fn record(
             snippet(expected),
             snippet(actual)
         );
-        assert!(known, "Unexpected wiki difference in {group}/{id}");
+        panic!("Unexpected wiki difference in {group}/{id}");
     }
 }
 
@@ -280,16 +282,6 @@ fn old(oracle: &Oracle, report: &mut Report) {
         let doc = oracle.ast("native", &from_file(&oracle.fixtures.join(input)));
         let actual = write(format, &doc, standalone, WrapOption::WrapAuto);
         let expected = from_file(&oracle.fixtures.join(expected));
-        if format == "jira" && id == "writer/basic" {
-            // The Jira fixture has other differences. Compare its math section on its own.
-            let math_section = |text: &str| {
-                text.split_once("h1. {anchor:latex}LaTeX")
-                    .and_then(|(_, body)| body.split_once("These shouldn’t be math:"))
-                    .map(|(math, _)| math.to_owned())
-                    .expect("Jira math section")
-            };
-            assert_eq!(math_section(&actual), math_section(&expected));
-        }
         record(report, format, "old", id, &actual, &expected);
     }
     for (id, file) in [
@@ -418,7 +410,10 @@ fn oracle_parity() {
         }
     }
     assert_eq!(report.values().map(|(_, total)| total).sum::<usize>(), 100);
-    assert_eq!(report.values().map(|(passed, _)| passed).sum::<usize>(), 99);
+    assert_eq!(
+        report.values().map(|(passed, _)| passed).sum::<usize>(),
+        100
+    );
 }
 
 #[test]

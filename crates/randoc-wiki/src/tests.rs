@@ -334,7 +334,89 @@ fn jira_writes_code_and_note_boundaries() {
     let output = writer
         .write(&document, &WriterOptions::default(), &mut Context::pure())
         .unwrap();
-    assert_eq!(output.into_bytes(), b"{code:python}\nx\n\n{code}\n");
+    assert_eq!(output.into_bytes(), b"{code:python}\nx\n\n{code}");
+}
+
+#[test]
+fn jira_escapes_text_and_code_with_the_same_boundaries() {
+    let text = "(word a(b abc( a] a]. a]? .(b /(b x(x) a(x)b x:( :D";
+    let doc = Pandoc {
+        blocks: vec![Block::Para(vec![
+            Inline::Str(text.into()),
+            Inline::Space,
+            Inline::Code(Attr::default(), "]".into()),
+            Inline::Space,
+            Inline::Code(Attr::default(), "(x)[a]".into()),
+        ])],
+        ..Pandoc::default()
+    };
+    let output = super::writer("jira")
+        .unwrap()
+        .write(&doc, &WriterOptions::default(), &mut Context::pure())
+        .unwrap();
+    assert_eq!(
+        output.into_bytes(),
+        b"\\(word a(b abc\\( a\\] a]. a\\]? .(b /(b x\\(x) a(x)b x\\:( \\:D {{\\]}} {{\\(x)[a\\]}}\n"
+    );
+}
+
+#[test]
+fn fragment_preserves_the_final_block_terminator() {
+    let paragraph = || Block::Para(vec![Inline::Str("x".into())]);
+    let code = || Block::CodeBlock(Attr::default(), "x".into());
+    let cases = [
+        ("jira", vec![paragraph()], "x\n"),
+        (
+            "jira",
+            vec![Block::Div(Attr::new("id", vec![], vec![]), vec![code()])],
+            "{anchor:id}\n\n{noformat}\nx{noformat}",
+        ),
+        (
+            "jira",
+            vec![Block::Div(
+                Attr::new("", vec!["panel".into()], vec![]),
+                vec![paragraph()],
+            )],
+            "{panel}\nx\n{panel}",
+        ),
+        (
+            "jira",
+            vec![Block::RawBlock(Format::new("jira"), "x\n\n".into())],
+            "x\n\n\n",
+        ),
+        ("mediawiki", vec![code()], "<pre>x</pre>"),
+        (
+            "mediawiki",
+            vec![Block::Para(vec![Inline::Note(vec![paragraph()])])],
+            "<ref>x</ref>\n\n<references />",
+        ),
+        (
+            "zimwiki",
+            vec![Block::DefinitionList(vec![(
+                vec![Inline::Str("term".into())],
+                vec![vec![Block::Plain(vec![Inline::Str("x".into())])]],
+            )])],
+            "* **term** x",
+        ),
+        ("zimwiki", vec![paragraph()], "x\n"),
+        ("zimwiki", vec![], ""),
+        (
+            "zimwiki",
+            vec![Block::RawBlock(Format::new("zimwiki"), "x\n\n".into())],
+            "x\n\n",
+        ),
+    ];
+    for (format, blocks, expected) in cases {
+        let doc = Pandoc {
+            blocks,
+            ..Pandoc::default()
+        };
+        let output = super::writer(format)
+            .unwrap()
+            .write(&doc, &WriterOptions::default(), &mut Context::pure())
+            .unwrap();
+        assert_eq!(output.into_bytes(), expected.as_bytes(), "{format}");
+    }
 }
 
 #[test]

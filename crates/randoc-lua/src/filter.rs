@@ -230,39 +230,34 @@ pub(crate) fn in_scope<T>(
             Ok(())
         })?;
         native.get::<Function>("install_warn")?.call::<()>(report)?;
-        let read = scope.create_function(|lua, arguments: Variadic<Value>| {
-            let cx = Cx { lua, max_depth };
-            let call = Call {
-                cx: &cx,
-                name: "read",
-                arguments: &arguments,
+        let convert =
+            |name, operation: fn(&Call, &FilterEnvironment, &mut Context) -> Peek<Value>| {
+                let context = &context;
+                scope.create_function(move |lua, arguments: Variadic<Value>| {
+                    let cx = Cx { lua, max_depth };
+                    let call = Call {
+                        cx: &cx,
+                        name,
+                        arguments: &arguments,
+                    };
+                    let result = context
+                        .try_borrow_mut()
+                        .map_err(|_| PeekError::Thrown(BUSY.into()))
+                        .and_then(|mut context| {
+                            convert::without_system_access(
+                                environment.mode,
+                                &mut context,
+                                |context| operation(&call, environment, context),
+                            )
+                        });
+                    system_result(lua, result.map(|value| vec![value]))
+                })
             };
-            let result = match context.try_borrow_mut() {
-                Ok(mut context) => {
-                    convert::without_system_access(environment.mode, &mut context, |context| {
-                        convert::read(&call, environment.readers, context)
-                    })
-                }
-                Err(_) => Err(PeekError::Thrown(BUSY.into())),
-            };
-            system_result(lua, result.map(|value| vec![value]))
+        let read = convert("read", |call, environment, context| {
+            convert::read(call, environment.readers, context)
         })?;
-        let write = scope.create_function(|lua, arguments: Variadic<Value>| {
-            let cx = Cx { lua, max_depth };
-            let call = Call {
-                cx: &cx,
-                name: "write",
-                arguments: &arguments,
-            };
-            let result = match context.try_borrow_mut() {
-                Ok(mut context) => {
-                    convert::without_system_access(environment.mode, &mut context, |context| {
-                        convert::write(&call, environment.writers, context)
-                    })
-                }
-                Err(_) => Err(PeekError::Thrown(BUSY.into())),
-            };
-            system_result(lua, result.map(|value| vec![value]))
+        let write = convert("write", |call, environment, context| {
+            convert::write(call, environment.writers, context)
         })?;
         native.get::<Function>("convert_functions")?.call::<()>((
             read,

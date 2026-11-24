@@ -9,7 +9,7 @@ use randoc_core::{
     ReferenceLocation, Result, Text, WrapOption, WriterOptions,
 };
 
-use std::borrow::Borrow;
+use std::borrow::{Borrow, Cow};
 use std::cell::RefCell;
 use std::collections::{HashMap, HashSet};
 
@@ -109,8 +109,9 @@ pub(crate) fn write_with_slides(
         }
         _ => {
             let mut out = body.render(width);
-            // Pandoc leaves out the line ends at the end of a fragment.
-            out.truncate(out.trim_end_matches('\n').len());
+            if slides.is_none() {
+                out.truncate(out.trim_end_matches('\n').len());
+            }
             out
         }
     };
@@ -557,6 +558,31 @@ impl Html<'_> {
         level
     }
 
+    /// Returns the level of a block that starts a section: a heading, or a div
+    /// whose first block is a heading and that has no other heading of that level
+    /// or a lower level.
+    fn section_level(&self, block: &Block) -> Option<i64> {
+        match block {
+            Block::Header(level, ..) => Some(*level),
+            Block::Div(_, content) => match content.split_first() {
+                Some((Block::Header(level, ..), rest))
+                    if !self.holds_a_second_section(*level, rest) =>
+                {
+                    Some(*level)
+                }
+                _ => None,
+            },
+            _ => None,
+        }
+    }
+
+    /// Returns `true` when a block after the first heading of a div starts a
+    /// section of the same level or a lower level.
+    fn holds_a_second_section(&self, level: i64, rest: &[Block]) -> bool {
+        rest.iter()
+            .any(|b| self.leading_heading_level(b).is_some_and(|l| l <= level))
+    }
+
     /// Returns, for each block that starts a section, the number of blocks of
     /// its section: up to the next block with a heading at its start of the
     /// same level or a lower level, or to the end of the list. A span does
@@ -639,16 +665,8 @@ impl Html<'_> {
         let mut first = true;
         let mut index = 0;
         while let Some(block) = blocks.get(index).map(Borrow::borrow) {
-            if !self.block_present(block) {
-                index += 1;
-                continue;
-            }
-            if !first {
-                doc += lit(separator);
-            }
-            first = false;
             let mut next = index + 1;
-            let section = match block {
+            let (unit, section) = match block {
                 Block::Header(level, attr, inlines) => {
                     let span = spans.get(index).copied().unwrap_or_default();
                     next = (index + span).clamp(index + 1, blocks.len());
@@ -659,37 +677,29 @@ impl Html<'_> {
                         rest: blocks.get(index + 1..next).unwrap_or_default(),
                         rest_spans: spans.get(index + 1..next),
                     };
-                    doc += self.header_section(&section, depth, extra)?;
-                    true
+                    (self.header_section(&section, depth, extra)?, true)
                 }
                 Block::Div(attr, content) => {
-                    match div_part(attr, content, self.options.number_sections) {
-                        DivPart::Block => {
-                            doc += self.div(attr, content, depth, true, extra.to_vec())?;
-                            attr.has_class("section")
-                        }
-                        DivPart::Heading(heading) => {
-                            let section = LooseSection {
-                                level: heading.level,
-                                heading: &heading.attr,
-                                inlines: heading.inlines,
-                                rest: heading.rest,
-                                rest_spans: None,
-                            };
-                            doc += self.header_section(&section, depth, extra)?;
-                            true
-                        }
-                        DivPart::Section(own, heading) => {
-                            doc += self.div_section(&own, &heading, depth, extra)?;
-                            true
-                        }
-                    }
+                    let Some(unit) = self.div_unit(attr, content, depth, extra)? else {
+                        index = next;
+                        continue;
+                    };
+                    unit
+                }
+                other if self.block_present(other) => {
+                    (self.block_with(other, depth, extra.to_vec())?, false)
                 }
                 other => {
-                    doc += self.block_with(other, depth, extra.to_vec())?;
-                    false
+                    self.report_skipped_block(other);
+                    index = next;
+                    continue;
                 }
             };
+            if !first {
+                doc += lit(separator);
+            }
+            first = false;
+            doc += unit;
             // Pandoc writes the pending block notes after each block at level 0
             // and after a section at level 1.
             if self.block_level == 0 || (self.block_level == 1 && section) {
@@ -698,6 +708,36 @@ impl Html<'_> {
             index = next;
         }
         Ok(doc)
+    }
+
+    fn div_unit(
+        &mut self,
+        attr: &Attr,
+        content: &[Block],
+        depth: usize,
+        extra: &[(String, String)],
+    ) -> Result<Option<(Doc, bool)>> {
+        let unit = match div_part(self, attr, content) {
+            DivPart::Block if self.hide_slide_notes(attr) => return Ok(None),
+            DivPart::Block => (
+                self.div(attr, content, depth, true, extra.to_vec())?,
+                attr.has_class("section"),
+            ),
+            DivPart::Heading(heading) => {
+                let section = LooseSection {
+                    level: heading.level,
+                    heading: &heading.attr,
+                    inlines: heading.inlines,
+                    rest: heading.rest,
+                    rest_spans: None,
+                };
+                (self.header_section(&section, depth, extra)?, true)
+            }
+            DivPart::Section(own, heading) => {
+                (self.div_section(&own, &heading, depth, extra)?, true)
+            }
+        };
+        Ok(Some(unit))
     }
 
     /// Renders a heading and the blocks of its section. Without a section
@@ -1126,6 +1166,7 @@ impl Html<'_> {
         let mut first = true;
         for block in blocks {
             if !self.block_present(block) {
+                self.report_skipped_block(block);
                 continue;
             }
             if !first {
@@ -1155,15 +1196,97 @@ impl Html<'_> {
             Block::RawBlock(format, text) => {
                 self.raw_accepted(format) || self.raw_math(format, text)
             }
-            Block::Div(attr, content) if self.slides.is_some() && attr.has_class("notes") => {
-                self.html5()
-                    || matches!(
-                        div_part(attr, content, self.options.number_sections),
-                        DivPart::Heading(_) | DivPart::Section(..)
-                    )
+            Block::Div(attr, content) if self.hide_slide_notes(attr) => {
+                !matches!(div_part(self, attr, content), DivPart::Block)
             }
             _ => true,
         }
+    }
+
+    #[inline(never)]
+    fn code_block(&mut self, attr: &Attr, code: &str, extra: Attrs) -> Doc {
+        let literate = self.options.extensions.contains(Extension::LiterateHaskell)
+            && attr.has_class("haskell")
+            && attr.has_class("literate");
+        let code = if literate {
+            let mut prefixed = String::new();
+            for line in code.split_terminator('\n') {
+                prefixed.push_str("> ");
+                prefixed.push_str(line);
+                prefixed.push('\n');
+            }
+            Cow::Owned(prefixed)
+        } else {
+            Cow::Borrowed(code)
+        };
+        if self.revealjs() && self.options.highlight_method == HighlightMethod::Idiomatic {
+            return self.revealjs_code_block(attr, &code, &extra);
+        }
+        let id = if attr.id.is_empty() {
+            self.code_blocks += 1;
+            format!("cb{}", self.code_blocks)
+        } else {
+            attr.id.clone()
+        };
+        let highlight_attr = if literate && self.options.highlight_style.is_some() {
+            let mut attr = attr.clone();
+            for class in &mut attr.classes {
+                if class == "haskell" {
+                    *class = "literatehaskell".into();
+                }
+            }
+            Cow::Owned(attr)
+        } else {
+            Cow::Borrowed(attr)
+        };
+        if let Some(doc) = self.highlighted_block(&highlight_attr, &code, &id, &extra) {
+            return doc;
+        }
+        let mut attrs = self.attrs(attr);
+        attrs.extend(extra);
+        let mut doc = self.open("pre", &attrs);
+        doc += lit("<code>");
+        // Pandoc does not count the code text when it decides a line
+        // break in the start tag: the text is a nested part of the layout.
+        doc += flush(lit(&format!(
+            "{}</code></pre>",
+            escape_attribute(&code, false)
+        )));
+        doc
+    }
+
+    fn hide_slide_notes(&self, attr: &Attr) -> bool {
+        self.slides.is_some() && !self.html5() && attr.has_class("notes")
+    }
+
+    fn report_skipped_block(&self, block: &Block) {
+        match block {
+            Block::RawBlock(..) => {
+                self.warnings
+                    .borrow_mut()
+                    .push(LogMessage::BlockNotRendered(randoc_native::show_block(
+                        block,
+                        self.max_depth,
+                    )));
+            }
+            Block::Plain(inlines) | Block::Para(inlines) => {
+                for inline in inlines {
+                    if matches!(inline, Inline::RawInline(..)) {
+                        self.report_skipped_inline(inline);
+                    }
+                }
+            }
+            _ => {}
+        }
+    }
+
+    fn report_skipped_inline(&self, inline: &Inline) {
+        self.warnings
+            .borrow_mut()
+            .push(LogMessage::InlineNotRendered(randoc_native::show_inline(
+                inline,
+                self.max_depth,
+            )));
     }
 
     /// Returns `true` when an inline of the list gives HTML.
@@ -1212,32 +1335,11 @@ impl Html<'_> {
                 attrs.extend(extra);
                 self.inline_element("div", &attrs, body)
             }
-            Block::CodeBlock(attr, code) => {
-                if self.revealjs() && self.options.highlight_method == HighlightMethod::Idiomatic {
-                    return Ok(self.revealjs_code_block(attr, code, &extra));
-                }
-                let id = if attr.id.is_empty() {
-                    self.code_blocks += 1;
-                    format!("cb{}", self.code_blocks)
-                } else {
-                    attr.id.clone()
-                };
-                if let Some(doc) = self.highlighted_block(attr, code, &id, &extra) {
-                    return Ok(doc);
-                }
-                let mut attrs = self.attrs(attr);
-                attrs.extend(extra);
-                let mut doc = self.open("pre", &attrs);
-                doc += lit("<code>");
-                // Pandoc does not count the code text when it decides a line
-                // break in the start tag: the text is a nested part of the layout.
-                doc += flush(lit(&format!(
-                    "{}</code></pre>",
-                    escape_attribute(code, false)
-                )));
-                doc
-            }
-            Block::RawBlock(format, text) => self.raw(format, text, depth)?,
+            Block::CodeBlock(attr, code) => self.code_block(attr, code, extra),
+            Block::RawBlock(format, text) => self.raw(format, text, depth)?.unwrap_or_else(|| {
+                self.report_skipped_block(block);
+                empty()
+            }),
             Block::BlockQuote(blocks) => {
                 if self.slides.is_some()
                     && let [list @ (Block::OrderedList(..) | Block::BulletList(_))] =
@@ -1338,6 +1440,10 @@ impl Html<'_> {
             }
             return match content {
                 [child] if self.block_present(child) => self.block_with(child, depth, attrs),
+                [child] => {
+                    self.report_skipped_block(child);
+                    Ok(empty())
+                }
                 _ => Ok(empty()),
             };
         }
@@ -1530,14 +1636,14 @@ impl Html<'_> {
             && starts_math_environment(text)
     }
 
-    fn raw(&mut self, format: &Format, text: &str, depth: usize) -> Result<Doc> {
-        Ok(if self.raw_accepted(format) {
-            lit(text)
+    fn raw(&mut self, format: &Format, text: &str, depth: usize) -> Result<Option<Doc>> {
+        if self.raw_accepted(format) {
+            Ok(Some(lit(text)))
         } else if self.raw_math(format, text) {
-            self.math(MathType::DisplayMath, text, depth)?
+            self.math(MathType::DisplayMath, text, depth).map(Some)
         } else {
-            empty()
-        })
+            Ok(None)
+        }
     }
 
     fn list_items(&mut self, items: &[Vec<Block>], depth: usize) -> Result<Doc> {
@@ -1812,28 +1918,31 @@ impl Html<'_> {
         doc: &mut Doc,
         children: &[B],
     ) -> Result<()> {
-        if self.reference_location() != ReferenceLocation::EndOfSection {
-            return Ok(());
-        }
-        // A section with subsections or without any block does not write its
-        // notes. A block that gives no HTML still counts, as in Pandoc.
-        if !self.has_section_blocks(children)
-            || children.iter().any(|b| section_level(b.borrow()).is_some())
-        {
-            self.drop_pending_notes();
-            return Ok(());
-        }
-        self.flush_notes(doc, ReferenceLocation::EndOfSection, "")
+        self.flush_section_notes(doc, children, |writer| {
+            children
+                .iter()
+                .any(|b| writer.section_level(b.borrow()).is_some())
+        })
     }
 
     /// As `flush_leaf_section_notes`, for a section outside the section path:
     /// there, only a div with the class `section` first, or a div that holds
     /// one, is a subsection.
     fn flush_loose_section_notes(&mut self, doc: &mut Doc, children: &[Block]) -> Result<()> {
+        self.flush_section_notes(doc, children, |_| holds_a_section_div(children))
+    }
+
+    fn flush_section_notes<B: Borrow<Block>>(
+        &mut self,
+        doc: &mut Doc,
+        children: &[B],
+        has_subsection: impl FnOnce(&Self) -> bool,
+    ) -> Result<()> {
         if self.reference_location() != ReferenceLocation::EndOfSection {
             return Ok(());
         }
-        if !self.has_section_blocks(children) || holds_a_section_div(children) {
+        // A block that gives no HTML still counts.
+        if !self.has_section_blocks(children) || has_subsection(self) {
             self.drop_pending_notes();
             return Ok(());
         }
@@ -2086,7 +2195,12 @@ impl Html<'_> {
                 doc
             }
             Inline::Math(kind, tex) => self.math(*kind, tex, depth)?,
-            Inline::RawInline(format, text) => self.raw(format, text, depth)?,
+            Inline::RawInline(format, text) => {
+                self.raw(format, text, depth)?.unwrap_or_else(|| {
+                    self.report_skipped_inline(inline);
+                    empty()
+                })
+            }
             Inline::Link(attr, content, target) => self.link(attr, content, target, depth)?,
             Inline::Image(attr, content, target) => self.image(attr, content, target),
             Inline::Note(blocks) => self.note(blocks, depth)?,
@@ -2477,29 +2591,6 @@ impl Html<'_> {
     }
 }
 
-/// Returns the level of a block that starts a section: a heading, or a div
-/// whose first block is a heading and that has no other heading of that level
-/// or a lower level.
-fn section_level(block: &Block) -> Option<i64> {
-    match block {
-        Block::Header(level, ..) => Some(*level),
-        Block::Div(_, content) => match content.split_first() {
-            Some((Block::Header(level, ..), rest)) if !holds_a_second_section(*level, rest) => {
-                Some(*level)
-            }
-            _ => None,
-        },
-        _ => None,
-    }
-}
-
-/// Returns `true` when a block after the first heading of a div starts a
-/// section of the same level or a lower level.
-fn holds_a_second_section(level: i64, rest: &[Block]) -> bool {
-    rest.iter()
-        .any(|b| leading_heading_level(b).is_some_and(|l| l <= level))
-}
-
 /// Returns `true` when a block is a div with the class `section` first, or a
 /// div that holds one at any depth. The walk uses a stack, so it does not recurse.
 fn holds_a_section_div(blocks: &[Block]) -> bool {
@@ -2533,19 +2624,6 @@ fn list_difference<T: Clone + Eq + std::hash::Hash>(items: &[T], remove: &[T]) -
         })
         .cloned()
         .collect()
-}
-
-/// Returns the level of the heading at the start of a block, as
-/// `Html::leading_heading_level` does, with no memory of earlier walks. A
-/// caller that walks each level of one chain uses the method.
-fn leading_heading_level(mut block: &Block) -> Option<i64> {
-    loop {
-        match block {
-            Block::Header(level, ..) => return Some(*level),
-            Block::Div(_, content) => block = content.first()?,
-            _ => return None,
-        }
-    }
 }
 
 /// Returns `true` for a heading attribute that Pandoc moves to the section.
@@ -2749,14 +2827,15 @@ enum DivPart<'a> {
 /// records the oracle matrix of this decision in `sections.jsonl`, and the
 /// test `the_section_matrix_replays_with_no_difference` replays it.
 /// With numbered sections, the generated number replaces the `number` pairs of the div.
-fn div_part<'a>(div: &Attr, content: &'a [Block], numbered: bool) -> DivPart<'a> {
+fn div_part<'a>(writer: &Html<'_>, div: &Attr, content: &'a [Block]) -> DivPart<'a> {
+    let numbered = writer.options.number_sections;
     if never_a_section(div) {
         return DivPart::Block;
     }
     let Some((Block::Header(level, header, inlines), rest)) = content.split_first() else {
         return DivPart::Block;
     };
-    if holds_a_second_section(*level, rest) {
+    if writer.holds_a_second_section(*level, rest) {
         return DivPart::Block;
     }
     let level = *level;
@@ -3148,6 +3227,95 @@ mod tests {
     }
 
     #[test]
+    fn literate_haskell_blocks_keep_bird_tracks_with_or_without_highlighting() {
+        let code = |classes: [&str; 2], text: &str| {
+            Block::CodeBlock(
+                Attr::new("", classes.map(String::from).to_vec(), Vec::new()),
+                text.into(),
+            )
+        };
+        let source = || vec![code(["haskell", "literate"], "a\n\nb")];
+        let tracks = || vec![code(["literatehaskell", "literate"], "> a\n> \n> b\n")];
+        let mut options = WriterOptions::default();
+        options.extensions.enable(Extension::LiterateHaskell);
+        let highlighted = render(source(), &options).unwrap();
+        assert_eq!(highlighted, render(tracks(), &options).unwrap());
+        assert!(highlighted.contains("sourceCode literatehaskell"));
+        options.highlight_style = None;
+        assert_eq!(
+            render(source(), &options).unwrap(),
+            "<pre class=\"haskell literate\"><code>&gt; a\n&gt; \n&gt; b\n</code></pre>"
+        );
+    }
+
+    #[test]
+    fn title_slides_keep_the_final_break() {
+        let mut options = WriterOptions::default();
+        options.slide_level = Some(2);
+        for (level, expected) in [
+            (
+                1,
+                "<section class=\"title-slide slide level1\">\n<h1>A</h1>\n<p>B</p>\n</section>\n",
+            ),
+            (
+                2,
+                "<section class=\"slide level2\">\n<h2>A</h2>\n<p>B</p>\n</section>",
+            ),
+        ] {
+            let doc = Pandoc {
+                blocks: vec![
+                    Block::Header(level, Attr::default(), vec![Inline::Str("A".into())]),
+                    Block::Para(vec![Inline::Str("B".into())]),
+                ],
+                ..Pandoc::default()
+            };
+            let output = write_with_slides(
+                &doc,
+                &options,
+                &mut Context::pure(),
+                Version::Html5,
+                Some(SlideFormat::RevealJs),
+            )
+            .unwrap();
+            assert_eq!(output, expected);
+        }
+    }
+
+    #[test]
+    fn dropped_raw_nodes_are_reported_in_order() {
+        let raw = |text: &str| Inline::RawInline(Format::new("tex"), text.into());
+        let doc = Pandoc {
+            blocks: vec![
+                Block::RawBlock(Format::new("latex"), "ä\n".into()),
+                Block::Plain(vec![raw("x")]),
+                Block::BlockQuote(vec![
+                    Block::Para(vec![raw("y")]),
+                    Block::Para(vec![Inline::Str("Z".into()), raw("z")]),
+                ]),
+            ],
+            ..Pandoc::default()
+        };
+        let mut context = Context::pure();
+        let output = write(
+            &doc,
+            &WriterOptions::default(),
+            &mut context,
+            Version::Html5,
+        )
+        .unwrap();
+        assert_eq!(output, "<blockquote>\n<p>Z</p>\n</blockquote>");
+        assert_eq!(
+            context.log(),
+            [
+                LogMessage::BlockNotRendered(r#"RawBlock (Format "latex") "\228\n""#.into()),
+                LogMessage::InlineNotRendered(r#"RawInline (Format "tex") "x""#.into()),
+                LogMessage::InlineNotRendered(r#"RawInline (Format "tex") "y""#.into()),
+                LogMessage::InlineNotRendered(r#"RawInline (Format "tex") "z""#.into()),
+            ]
+        );
+    }
+
+    #[test]
     fn abbreviation_preserves_attributes_and_nests_special_classes() {
         let mut options = WriterOptions::default();
         options.wrap_text = WrapOption::WrapNone;
@@ -3289,7 +3457,11 @@ mod tests {
             let output = write(&doc, &options, &mut context, version).unwrap();
             let expected = expected.as_str().unwrap();
             if output != expected.strip_suffix('\n').unwrap_or(expected)
-                || (quiet && !context.log().is_empty())
+                || (quiet
+                    && context
+                        .log()
+                        .iter()
+                        .any(|message| message.level() <= context.state.verbosity))
             {
                 failures.push(format!("{name} {format} {opts}"));
             }

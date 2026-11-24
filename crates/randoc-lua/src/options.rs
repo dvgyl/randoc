@@ -124,7 +124,7 @@ fn writer_fields(options: &WriterOptions) -> Vec<(&'static str, Field<'_>)> {
             text(name_of(&OBFUSCATION_METHODS, &options.email_obfuscation)),
         ),
         // Pandoc 3.13 keeps one value for both names.
-        ("epub_chapter_level", Integer(options.split_level)),
+        (EPUB_CHAPTER_LEVEL, Integer(options.split_level)),
         ("epub_fonts", Texts(&options.epub_fonts)),
         ("epub_metadata", optional_text(&options.epub_metadata)),
         ("epub_subdirectory", text(&options.epub_subdirectory)),
@@ -158,7 +158,7 @@ fn writer_fields(options: &WriterOptions) -> Vec<(&'static str, Field<'_>)> {
             "slide_level",
             options.slide_level.map_or(Field::Nil, Integer),
         ),
-        ("split_level", Integer(options.split_level)),
+        (SPLIT_LEVEL, Integer(options.split_level)),
         ("tab_stop", Integer(options.tab_stop)),
         (
             "table_caption_position",
@@ -523,6 +523,9 @@ pub(crate) fn writer_options(cx: &Cx, value: &Value) -> Peek<WriterOptions> {
     Ok(options)
 }
 
+const EPUB_CHAPTER_LEVEL: &str = "epub_chapter_level";
+const SPLIT_LEVEL: &str = "split_level";
+
 fn set_writer(cx: &Cx, o: &mut WriterOptions, key: &str, value: &Value) -> Peek<()> {
     match key {
         "chunk_template" => o.chunk_template = json_text(value)?,
@@ -532,7 +535,7 @@ fn set_writer(cx: &Cx, o: &mut WriterOptions, key: &str, value: &Value) -> Peek<
         "email_obfuscation" => {
             o.email_obfuscation = named(&OBFUSCATION_METHODS, "obfuscation method", value)?;
         }
-        "epub_chapter_level" | "split_level" => o.split_level = integral(cx, value)?,
+        EPUB_CHAPTER_LEVEL | SPLIT_LEVEL => o.split_level = integral(cx, value)?,
         "epub_fonts" => o.epub_fonts = text_list(cx, value)?,
         "epub_metadata" => o.epub_metadata = cx.text(value).ok(),
         "epub_subdirectory" => o.epub_subdirectory = json_text(value)?,
@@ -705,19 +708,24 @@ pub(crate) fn call(call: &Call) -> Peek<Value> {
         } else {
             None
         };
-        if let Ok(mut reader) = data.borrow_mut::<LuaReaderOptions>() {
+        let update_extensions = |known: &mut Extensions, supplied: &mut Option<Vec<Text>>| {
             if let Some((set, names)) = extensions {
-                reader.0.extensions = set;
-                reader.1 = Some(names);
+                *known = set;
+                *supplied = Some(names);
+                true
             } else {
-                set_reader(cx, &mut reader.0, &key, &value)?;
+                false
+            }
+        };
+        if let Ok(mut reader) = data.borrow_mut::<LuaReaderOptions>() {
+            let LuaReaderOptions(options, supplied) = &mut *reader;
+            if !update_extensions(&mut options.extensions, supplied) {
+                set_reader(cx, options, &key, &value)?;
             }
         } else if let Ok(mut writer) = data.borrow_mut::<LuaWriterOptions>() {
-            if let Some((set, names)) = extensions {
-                writer.0.extensions = set;
-                writer.1 = Some(names);
-            } else {
-                set_writer(cx, &mut writer.0, &key, &value)?;
+            let LuaWriterOptions(options, supplied) = &mut *writer;
+            if !update_extensions(&mut options.extensions, supplied) {
+                set_writer(cx, options, &key, &value)?;
             }
         } else {
             return Err(PeekError::Thrown(
@@ -725,9 +733,10 @@ pub(crate) fn call(call: &Call) -> Peek<Value> {
             ));
         }
         let cache = ensure_cache(cx.lua, &data)?;
-        if matches!(key.as_str(), "epub_chapter_level" | "split_level") {
-            cache.raw_set("epub_chapter_level", Value::Nil)?;
-            cache.raw_set("split_level", Value::Nil)?;
+        if matches!(key.as_str(), EPUB_CHAPTER_LEVEL | SPLIT_LEVEL) {
+            for alias in [EPUB_CHAPTER_LEVEL, SPLIT_LEVEL] {
+                cache.raw_set(alias, Value::Nil)?;
+            }
         }
         cache.raw_set(key, value)?;
         return Ok(Value::Nil);

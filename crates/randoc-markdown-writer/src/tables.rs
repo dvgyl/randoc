@@ -1,7 +1,7 @@
 //! Tables: simple, pipe, multiline and grid tables, and the HTML form.
 
 use randoc_ast::{Alignment, Attr, Block, Cell, ColWidth, Inline, Row, Table, Text};
-use randoc_core::{Extension, Result};
+use randoc_core::{Extension, LogMessage, Result};
 use randoc_layout::{Doc, blankline, cr, literal, nest, real_length};
 
 use crate::W;
@@ -615,6 +615,13 @@ impl W<'_> {
             } else if spans_ok && all_simple && pipe {
                 self.pipe_lines(&placed.positions(&g, &blank))?
             } else {
+                let depth = self.max_depth.saturating_sub(self.depth);
+                let message = if crate::deeper_than(std::slice::from_ref(block), depth) {
+                    "...".into()
+                } else {
+                    randoc_native::show_block(block, depth)
+                };
+                self.messages.push(LogMessage::BlockNotRendered(message));
                 return Ok(literal("[TABLE]") + self.caption_doc(table)?);
             };
             return Ok(literal(lines.join("\n")) + cr() + self.caption_doc(table)?);
@@ -871,11 +878,15 @@ impl W<'_> {
             .map(|w| (*w).max(3))
             .collect();
         // A table that is wider than the line gets no padding. Its separator
-        // then shows the relative column widths, which only Pandoc Markdown keeps.
+        // can show the relative column widths.
         let padded = natural.iter().sum::<usize>() <= crate::run_length(self.opts.columns);
         let widths: Vec<usize> = if padded {
             natural
-        } else if self.variant != crate::Variant::Commonmark && g.widths.iter().any(|w| *w > 0.0) {
+        } else if !matches!(
+            self.variant,
+            crate::Variant::Commonmark | crate::Variant::Markua
+        ) && g.widths.iter().any(|w| *w > 0.0)
+        {
             let room = self
                 .opts
                 .columns

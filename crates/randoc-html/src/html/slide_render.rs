@@ -60,7 +60,7 @@ impl Html<'_> {
             section
                 .rest
                 .iter()
-                .position(|block| section_level(block.borrow()).is_some())
+                .position(|block| self.section_level(block.borrow()).is_some())
                 .unwrap_or(section.rest.len())
         } else {
             section.rest.len()

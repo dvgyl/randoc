@@ -69,8 +69,13 @@ pub(super) fn write(
         output.ok_or_else(output_error)
     } else {
         let mut text = body.text;
-        writer.output_size(text.len().saturating_add(body.final_break.max(1)))?;
-        text.push_str(&"\n".repeat(body.final_break.max(1)));
+        let final_break = if dialect == Dialect::XWiki {
+            body.final_break.unwrap_or(1).max(1)
+        } else {
+            body.final_break.unwrap_or(usize::from(!text.is_empty()))
+        };
+        writer.output_size(text.len().saturating_add(final_break))?;
+        text.push_str(&"\n".repeat(final_break));
         Ok(text)
     }
 }
@@ -89,7 +94,7 @@ struct Piece {
     text: String,
     before: usize,
     after: usize,
-    final_break: usize,
+    final_break: Option<usize>,
 }
 
 impl Piece {
@@ -207,8 +212,9 @@ impl Renderer<'_> {
                 Task::Container(add_break) => {
                     let mut piece: Piece = values.pop().unwrap_or_default();
                     if add_break {
-                        piece.final_break = piece.after.max(1);
-                        piece.after = piece.final_break + 1;
+                        let final_break = piece.after.max(1);
+                        piece.final_break = Some(final_break);
+                        piece.after = final_break + 1;
                     }
                     values.push(piece);
                 }
@@ -224,6 +230,9 @@ impl Renderer<'_> {
                     piece.text.insert_str(0, &prefix);
                     piece.text.push_str(&suffix);
                     piece.after = after;
+                    if self.dialect == Dialect::Zim && after == 1 {
+                        piece.final_break = Some(0);
+                    }
                     values.push(piece);
                 }
                 Task::Quote => {
@@ -284,8 +293,8 @@ impl Renderer<'_> {
                     }
                     body.text.insert_str(0, &marker);
                     body.before = 0;
+                    body.final_break = Some(if complex_end { 2 } else { 1 });
                     body.after = if complex_end {
-                        body.final_break = 2;
                         2
                     } else {
                         usize::from(first_para && self.dialect == Dialect::XWiki)
@@ -306,6 +315,7 @@ impl Renderer<'_> {
                         result.after += 1;
                     } else {
                         result.after = result.after.max(if loose { 2 } else { 1 });
+                        result.final_break = Some(usize::from(loose));
                     }
                     values.push(result);
                 }
@@ -495,9 +505,15 @@ impl Renderer<'_> {
             }
             Block::RawBlock(format, text) => {
                 if format.as_str() == if x { "xwiki" } else { "zimwiki" } {
-                    Piece::block(text, 2)
+                    Piece {
+                        final_break: (!x).then_some(0),
+                        ..Piece::block(text, 2)
+                    }
                 } else {
-                    Piece::block("", 1)
+                    Piece {
+                        final_break: (!x).then_some(0),
+                        ..Piece::block("", 1)
+                    }
                 }
             }
         };
@@ -818,14 +834,14 @@ impl Renderer<'_> {
             Piece::block(format!("(((\n{}{text})))", anchor(attr)), 1)
         } else if caption.text.is_empty() {
             Piece {
-                final_break: body.after,
+                final_break: Some(body.after),
                 ..Piece::block(body.text, body.after + 1)
             }
         } else {
             let gap = "\n".repeat(body.after.max(1));
             let text = format!("{}{gap}{}", body.text, caption.text);
             Piece {
-                final_break: caption.after + 1,
+                final_break: Some(caption.after + 1),
                 ..Piece::block(text, caption.after + 2)
             }
         }

@@ -136,6 +136,12 @@ fn convert(dir: &Path, args: &[&str], source: Source) -> TestResult<Outcome> {
         });
     }
     if let Some(writer) = randoc_asciidoc::writer(base(to)) {
+        if base(to) == "asciidoctor" {
+            context.report(randoc_core::LogMessage::Deprecated(
+                "asciidoctor".into(),
+                "use asciidoc instead".into(),
+            ));
+        }
         let mut options = WriterOptions::default();
         options.extensions = FormatSpec::parse(to).extensions()?;
         options.columns = option(args, "-c", "--columns")

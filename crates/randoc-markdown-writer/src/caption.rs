@@ -3,8 +3,8 @@
 //! lines that the blocks give.
 
 use randoc_ast::{Block, Inline, Row};
-use randoc_core::Result;
 use randoc_core::shared::stringify;
+use randoc_core::{LogMessage, Result};
 use randoc_layout::{Doc, empty, literal};
 
 use crate::W;
@@ -137,6 +137,12 @@ impl W<'_> {
                 Block::RawBlock(format, text) => {
                     let doc = if mode.render {
                         self.raw_inline(&format.as_str().to_lowercase(), text)
+                            .unwrap_or_else(|| {
+                                self.messages.push(LogMessage::BlockNotRendered(
+                                    randoc_native::show_block(block, self.max_depth),
+                                ));
+                                empty()
+                            })
                     } else {
                         empty()
                     };

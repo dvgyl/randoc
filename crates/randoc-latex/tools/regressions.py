@@ -287,7 +287,9 @@ def main():
     out.write("    } else {\n")
     out.write("        randoc_latex::write_latex(&doc, &options, &mut context)\n")
     out.write("    };\n")
-    out.write("    text.unwrap()\n}\n")
+    out.write("    let mut text = text.unwrap();\n")
+    out.write("    if text.ends_with('\\n') {\n        text.pop();\n    }\n")
+    out.write("    text\n}\n")
     for name, blocks, fmt, flags in CASES:
         if blocks is None:
             blocks = nested_lists()

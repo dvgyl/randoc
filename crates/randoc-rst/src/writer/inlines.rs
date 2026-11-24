@@ -118,10 +118,10 @@ impl Writer<'_> {
                 let left = markup(inline)
                     && (markup(before)
                         || ends(before)
-                            .is_none_or(|c| !(c.is_whitespace() || "-:/<([{".contains(c))));
+                            .is_none_or(|c| !(c.is_whitespace() || "-:/<([{\"'".contains(c))));
                 let right = markup(before)
                     && starts(inline)
-                        .is_none_or(|c| !(c.is_whitespace() || "-:/>)]}.,;!?".contains(c)));
+                        .is_none_or(|c| !(c.is_whitespace() || "-:/>)]}.,;!?\"'".contains(c)));
                 let note = markup(before) && matches!(inline, Inline::Note(_));
                 if left || right || note {
                     docs.push(literal("\\ "));

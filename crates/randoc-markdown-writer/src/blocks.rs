@@ -308,6 +308,19 @@ fn is_language(class: &str) -> bool {
 }
 
 /// The text of a raw block, by the way that the writer joins it to the next block.
+enum CodeForm {
+    Indented,
+    BirdTrack,
+    Fence(char),
+}
+
+enum BlockSpacing {
+    Default,
+    ListSeparator,
+    BlankAfterPlain,
+    TightRaw,
+}
+
 enum RawBody {
     /// The text with its own newlines.
     Verbatim(Doc),
@@ -429,34 +442,17 @@ impl W<'_> {
         self.enter()?;
         let mut out = empty();
         for (index, block) in blocks.iter().enumerate() {
-            if index > 0 && !self.plain() {
-                let prev = &blocks[index - 1];
-                let adjacent_lists =
-                    list_kind(prev).is_some() && list_kind(prev) == list_kind(block);
-                let code_after_list = list_kind(prev).is_some()
-                    && matches!(block, Block::CodeBlock(attr, _) if self.is_indented_code(attr));
-                if adjacent_lists || code_after_list {
-                    out += literal("<!-- -->") + blankline();
+            let previous = index.checked_sub(1).and_then(|i| blocks.get(i));
+            let next = blocks.get(index + 1);
+            out += match (block, self.block_spacing(previous, block, next)) {
+                (_, BlockSpacing::ListSeparator) => {
+                    literal("<!-- -->") + blankline() + self.block(block)?
                 }
-            }
-            let before_definitions =
-                matches!(blocks.get(index + 1), Some(Block::DefinitionList(_)));
-            let before_fence = matches!(blocks.get(index + 1), Some(Block::Div(..)))
-                && self.has(Extension::FencedDivs);
-            let promote = (self.list_level == 0 || before_definitions || before_fence)
-                && matches!(block, Block::Plain(_))
-                && blocks
-                    .get(index + 1)
-                    .is_some_and(|next| !matches!(next, Block::RawBlock(..)));
-            let raw_pair = self.variant != Variant::Commonmark
-                && matches!(
-                    blocks.get(index + 1),
-                    Some(Block::RawBlock(..) | Block::Plain(_))
-                );
-            out += match block {
-                Block::Plain(inlines) if promote => self.plain_block(inlines)? + blankline(),
-                Block::RawBlock(format, text) if raw_pair => {
-                    self.raw_block_before_raw(&format.as_str().to_lowercase(), text)
+                (Block::Plain(inlines), BlockSpacing::BlankAfterPlain) => {
+                    self.inlines(inlines)? + blankline()
+                }
+                (Block::RawBlock(format, text), BlockSpacing::TightRaw) => {
+                    self.raw_block(block, &format.as_str().to_lowercase(), text, true)
                 }
                 _ => self.block(block)?,
             };
@@ -465,14 +461,59 @@ impl W<'_> {
         Ok(out)
     }
 
-    fn is_indented_code(&self, attr: &Attr) -> bool {
-        attr.is_empty() || !self.fences_allowed()
+    fn block_spacing(
+        &self,
+        previous: Option<&Block>,
+        block: &Block,
+        next: Option<&Block>,
+    ) -> BlockSpacing {
+        match block {
+            Block::Plain(_)
+                if next.is_some_and(|next| {
+                    !matches!(next, Block::RawBlock(..))
+                        && (self.list_level == 0
+                            || matches!(next, Block::DefinitionList(_))
+                            || matches!(next, Block::Div(..)) && self.has(Extension::FencedDivs))
+                }) =>
+            {
+                BlockSpacing::BlankAfterPlain
+            }
+            Block::RawBlock(..)
+                if self.variant != Variant::Commonmark
+                    && matches!(next, Some(Block::RawBlock(..) | Block::Plain(_))) =>
+            {
+                BlockSpacing::TightRaw
+            }
+            _ if !matches!(self.variant, Variant::Plain | Variant::Markua)
+                && let Some(previous) = previous.and_then(list_kind)
+                && (list_kind(block) == Some(previous)
+                    || matches!(block, Block::CodeBlock(attr, _) if matches!(self.code_form(attr), CodeForm::Indented))) =>
+            {
+                BlockSpacing::ListSeparator
+            }
+            _ => BlockSpacing::Default,
+        }
     }
 
-    fn fences_allowed(&self) -> bool {
-        self.variant == Variant::Commonmark
-            || self.has(Extension::BacktickCodeBlocks)
-            || self.has(Extension::FencedCodeBlocks)
+    fn code_form(&self, attr: &Attr) -> CodeForm {
+        if self.variant == Variant::Markua {
+            return CodeForm::Fence('`');
+        }
+        if self.has(Extension::LiterateHaskell)
+            && attr.classes.iter().any(|class| class == "haskell")
+            && attr.classes.iter().any(|class| class == "literate")
+        {
+            return CodeForm::BirdTrack;
+        }
+        if self.plain() || attr.is_empty() {
+            CodeForm::Indented
+        } else if self.variant == Variant::Commonmark || self.has(Extension::BacktickCodeBlocks) {
+            CodeForm::Fence('`')
+        } else if self.has(Extension::FencedCodeBlocks) {
+            CodeForm::Fence('~')
+        } else {
+            CodeForm::Indented
+        }
     }
 
     fn block(&mut self, block: &Block) -> Result<Doc> {
@@ -487,14 +528,18 @@ impl W<'_> {
 
     fn block_node(&mut self, block: &Block) -> Result<Doc> {
         Ok(match block {
-            Block::Plain(inlines) => self.plain_block(inlines)? + cr(),
-            Block::Para(inlines) => self.plain_block(inlines)? + blankline(),
+            Block::Plain(inlines) => self.inlines(inlines)? + cr(),
+            Block::Para(inlines) => self.inlines(inlines)? + blankline(),
             Block::LineBlock(lines) => self.line_block(lines)?,
             Block::CodeBlock(attr, text) => self.code_block(attr, text),
-            Block::RawBlock(format, text) => self.raw_block(&format.as_str().to_lowercase(), text),
+            Block::RawBlock(format, text) => {
+                self.raw_block(block, &format.as_str().to_lowercase(), text, false)
+            }
             Block::BlockQuote(blocks) => {
                 let inner = self.block_list(blocks)?;
-                if self.plain() {
+                if self.has(Extension::LiterateHaskell) {
+                    literal(" > ") + prefixed(" > ", inner) + blankline()
+                } else if self.plain() {
                     literal("  ") + nest(2, inner) + blankline()
                 } else {
                     literal("> ") + prefixed("> ", inner) + blankline()
@@ -504,6 +549,9 @@ impl W<'_> {
             Block::BulletList(items) => self.bullet_list(items)?,
             Block::DefinitionList(items) => self.definition_list(items)?,
             Block::Header(level, attr, inlines) => self.header(*level, attr, inlines)?,
+            Block::HorizontalRule if self.variant == Variant::Markua => {
+                blankline() + literal("* * *") + blankline()
+            }
             Block::HorizontalRule => {
                 let width = crate::run_length(self.opts.columns);
                 blankline() + literal("-".repeat(width)) + blankline()
@@ -512,10 +560,6 @@ impl W<'_> {
             Block::Figure(attr, caption, blocks) => self.figure(block, attr, caption, blocks)?,
             Block::Div(attr, blocks) => self.div(attr, blocks, None)?,
         })
-    }
-
-    fn plain_block(&mut self, inlines: &[Inline]) -> Result<Doc> {
-        self.inlines(inlines)
     }
 
     fn line_block(&mut self, lines: &[Vec<Inline>]) -> Result<Doc> {
@@ -545,29 +589,38 @@ impl W<'_> {
         Ok(self.inline_lines(&parts)? + blankline())
     }
 
-    fn code_block(&self, attr: &Attr, text: &str) -> Doc {
+    pub(crate) fn code_block(&self, attr: &Attr, text: &str) -> Doc {
         let text = text.strip_suffix('\n').unwrap_or(text);
-        if self.plain() || self.is_indented_code(attr) {
-            let width = crate::run_length(self.opts.tab_stop);
-            let pad = " ".repeat(width);
-            let lines: Vec<Text> = text
-                .split('\n')
-                .map(|line| {
-                    if line.is_empty() {
-                        Text::new()
-                    } else {
-                        format!("{pad}{line}")
-                    }
-                })
-                .collect();
-            return literal(lines.join("\n")) + blankline();
-        }
-        let fence_char =
-            if self.variant == Variant::Commonmark || self.has(Extension::BacktickCodeBlocks) {
-                '`'
-            } else {
-                '~'
-            };
+        let fence_char = match self.code_form(attr) {
+            CodeForm::Indented => {
+                let pad = " ".repeat(crate::run_length(self.opts.tab_stop));
+                let lines: Vec<Text> = text
+                    .split('\n')
+                    .map(|line| {
+                        if line.is_empty() {
+                            Text::new()
+                        } else {
+                            format!("{pad}{line}")
+                        }
+                    })
+                    .collect();
+                return literal(lines.join("\n")) + blankline();
+            }
+            CodeForm::BirdTrack => {
+                let lines: Vec<Text> = text
+                    .split_terminator('\n')
+                    .map(|line| {
+                        if line.is_empty() {
+                            Text::from(">")
+                        } else {
+                            format!("> {line}")
+                        }
+                    })
+                    .collect();
+                return literal(lines.join("\n")) + blankline();
+            }
+            CodeForm::Fence(delimiter) => delimiter,
+        };
         // Only a line of fence characters alone could close the fence.
         let run = text
             .split('\n')
@@ -579,7 +632,9 @@ impl W<'_> {
         let length = (run + 1).max(3);
         let fence: Text = std::iter::repeat_n(fence_char, length).collect();
         let attr_ext = self.has(Extension::FencedCodeAttributes) || self.has(Extension::Attributes);
-        let info = if attr_ext {
+        let info = if self.variant == Variant::Markua {
+            Text::new()
+        } else if attr_ext {
             if attr.id.is_empty() && attr.attributes.is_empty() && attr.classes.len() == 1 {
                 format!(" {}", attr.classes[0])
             } else {
@@ -593,7 +648,14 @@ impl W<'_> {
                 None => attr.classes.first().cloned().unwrap_or_default(),
             }
         };
-        literal(format!("{fence}{info}"))
+        let attributes = if self.variant == Variant::Markua {
+            self.markua_attrs(attr, "", "")
+                .map_or_else(empty, |attrs| literal(attrs) + cr())
+        } else {
+            empty()
+        };
+        attributes
+            + literal(format!("{fence}{info}"))
             + cr()
             + literal(text)
             + cr()
@@ -601,25 +663,25 @@ impl W<'_> {
             + blankline()
     }
 
-    fn raw_block(&self, format: &str, text: &str) -> Doc {
+    fn raw_block(&mut self, block: &Block, format: &str, text: &str, tight: bool) -> Doc {
         match self.raw_body(format, text) {
-            Some(RawBody::Fence(fence)) => fence + cr(),
+            Some(RawBody::Fence(body)) => body + cr(),
+            Some(RawBody::Trimmed(body)) if tight => body + cr(),
+            Some(RawBody::Verbatim(body)) if tight => body + literal("\n"),
             Some(RawBody::Verbatim(body)) if text.ends_with('\n') => {
                 let newlines = text.len() - text.trim_end_matches('\n').len();
                 // Keep the literal breaks separate from the block separator.
                 body + prefixed("", cr()) + blanklines(newlines)
             }
             Some(RawBody::Verbatim(body) | RawBody::Trimmed(body)) => body + blankline(),
-            None => empty(),
-        }
-    }
-
-    /// A raw block before a raw block or a plain block: no blank line between.
-    fn raw_block_before_raw(&self, format: &str, text: &str) -> Doc {
-        match self.raw_body(format, text) {
-            Some(RawBody::Verbatim(body)) => body + literal("\n"),
-            Some(RawBody::Fence(body) | RawBody::Trimmed(body)) => body + cr(),
-            None => empty(),
+            None => {
+                self.messages
+                    .push(LogMessage::BlockNotRendered(randoc_native::show_block(
+                        block,
+                        self.max_depth,
+                    )));
+                empty()
+            }
         }
     }
 
@@ -640,7 +702,7 @@ impl W<'_> {
             return (format == "plain")
                 .then(|| RawBody::Trimmed(literal(text.trim_end_matches('\n'))));
         }
-        let own = format == "markdown"
+        let own = self.variant != Variant::Markua && format == "markdown"
             || self.variant == Variant::Markdown && format.starts_with("markdown")
             || self.variant == Variant::Commonmark
                 && matches!(format, "commonmark" | "gfm" | "commonmark_x");
@@ -701,6 +763,13 @@ impl W<'_> {
         if self.plain() {
             return Ok(literal(contents) + blankline());
         }
+        if self.variant == Variant::Markua {
+            let attributes = self
+                .markua_attrs(attr, "", "")
+                .map_or_else(empty, |attrs| literal(attrs) + cr());
+            let hashes = "#".repeat(crate::run_length(level).max(1));
+            return Ok(attributes + literal(format!("{hashes} {contents}")) + blankline());
+        }
         let gfm_ids = self.has(Extension::GfmAutoIdentifiers);
         let auto = (self.has(Extension::AutoIdentifiers) || gfm_ids).then(|| {
             let base = randoc_core::shared::auto_identifier(inlines, self.ext);
@@ -740,8 +809,6 @@ impl W<'_> {
         Ok(literal(format!("{hashes} {contents}{suffix}")) + blankline())
     }
 
-    /// Returns the task box and the inlines after it, when the item starts
-    /// with a task box.
     fn task_marker<'b>(&self, item: &'b [Block]) -> Option<(&'static str, &'b [Inline], bool)> {
         if !self.has(Extension::TaskLists) || self.plain() {
             return None;
@@ -794,12 +861,17 @@ impl W<'_> {
     fn bullet_list(&mut self, items: &[Vec<Block>]) -> Result<Doc> {
         let tight = items.iter().all(|item| starts_plain(item));
         let mut docs = Vec::new();
-        let width = if self.has(Extension::FourSpaceRule) {
+        let width = if self.variant != Variant::Markua && self.has(Extension::FourSpaceRule) {
             crate::run_length(self.opts.tab_stop).max(2)
         } else {
             2
         };
-        let marker = format!("-{}", " ".repeat(width - 1));
+        let bullet = if self.variant == Variant::Markua {
+            '*'
+        } else {
+            '-'
+        };
+        let marker = format!("{bullet}{}", " ".repeat(width - 1));
         for item in items {
             docs.push(self.list_item(&marker, width, item)?);
         }
@@ -808,12 +880,14 @@ impl W<'_> {
 
     fn ordered_list(&mut self, attrs: &ListAttributes, items: &[Vec<Block>]) -> Result<Doc> {
         let tight = items.iter().all(|item| starts_plain(item));
-        let fancy = self.has(Extension::FancyLists);
-        let start = if self.has(Extension::Startnum) || self.variant == Variant::Commonmark {
-            attrs.start
-        } else {
-            1
-        };
+        let markua = self.variant == Variant::Markua;
+        let fancy = markua || self.has(Extension::FancyLists);
+        let start =
+            if markua || self.has(Extension::Startnum) || self.variant == Variant::Commonmark {
+                attrs.start
+            } else {
+                1
+            };
         let mut docs = Vec::new();
         for (index, item) in items.iter().enumerate() {
             let number = start.saturating_add(i64::try_from(index).unwrap_or(0));
@@ -822,7 +896,7 @@ impl W<'_> {
             let length = marker.chars().count();
             // A code block at the start of an item comes one space after the marker.
             let fence_first = matches!(item.first(), Some(Block::CodeBlock(..)));
-            let pad = if fence_first {
+            let pad = if markua || fence_first {
                 1
             } else {
                 tab.max(length + 1) - length
@@ -859,6 +933,7 @@ impl W<'_> {
         };
         match attrs.delim {
             ListNumberDelim::OneParen => format!("{body})"),
+            ListNumberDelim::TwoParens if self.variant == Variant::Markua => format!("{body})"),
             ListNumberDelim::TwoParens => format!("({body})"),
             ListNumberDelim::Period | ListNumberDelim::DefaultDelim => format!("{body}."),
         }
@@ -890,7 +965,7 @@ impl W<'_> {
                 out += term_doc + cr() + nest(2, defs) + blankline();
                 continue;
             }
-            if !self.has(Extension::DefinitionLists) {
+            if self.variant != Variant::Markua && !self.has(Extension::DefinitionLists) {
                 let mut defs = empty();
                 for (index, definition) in definitions.iter().enumerate() {
                     if index > 0 {
@@ -902,7 +977,7 @@ impl W<'_> {
                 out += term_doc + literal(brk) + cr() + defs + blankline();
                 continue;
             }
-            let width = if self.has(Extension::FourSpaceRule) {
+            let width = if self.variant != Variant::Markua && self.has(Extension::FourSpaceRule) {
                 crate::run_length(self.opts.tab_stop).max(2)
             } else {
                 2
@@ -1012,6 +1087,8 @@ impl W<'_> {
         if let Some(caption) = caption {
             let attr = Attr::new("", vec!["caption".into()], Vec::new());
             Ok(body.above_blank(self.div(&attr, caption, None)?))
+        } else if matches!(self.variant, Variant::Plain | Variant::Markua) && !body.is_empty() {
+            Ok(body + blankline())
         } else {
             Ok(body)
         }
@@ -1137,7 +1214,7 @@ mod tests {
         let Some(Ok(Output::Text(text))) = output else {
             unreachable!("the markdown writer gives text")
         };
-        assert_eq!(text, "a\n: b\n\n<!-- -->\n\nc\n: d");
+        assert_eq!(text, "a\n: b\n\n<!-- -->\n\nc\n: d\n");
     }
 
     fn write_with(format: &str, input: &str, reference_links: bool) -> String {
@@ -1155,7 +1232,7 @@ mod tests {
         let Some(Ok(Output::Text(text))) = result else {
             unreachable!("the writer gives text for {format}")
         };
-        text
+        crate::without_final_line(text)
     }
 
     #[test]
@@ -1242,7 +1319,7 @@ mod tests {
         let Some(Ok(Output::Text(text))) = result else {
             unreachable!("the markdown writer gives text")
         };
-        assert_eq!(text, "a[^1]\n\nb\n\n[^1]: n\n\n# H\n\nc");
+        assert_eq!(text, "a[^1]\n\nb\n\n[^1]: n\n\n# H\n\nc\n");
     }
 
     /// Writes a JSON document in a format with its default extensions.
@@ -1255,7 +1332,7 @@ mod tests {
         let Some(Ok(Output::Text(text))) = result else {
             unreachable!("the writer gives text for {format}")
         };
-        text
+        crate::without_final_line(text)
     }
 
     // The expected texts in the tests below come from
@@ -1342,7 +1419,7 @@ mod tests {
         let Some(Ok(Output::Text(text))) = result else {
             unreachable!("the writer gives text for {format}")
         };
-        text
+        crate::without_final_line(text)
     }
 
     /// The paragraphs of a link case: each one a list of (text, URL).
@@ -1442,7 +1519,7 @@ mod tests {
         let Some(Ok(Output::Text(text))) = result else {
             panic!("no text: {result:?}");
         };
-        assert_eq!(text, "<img src=\"p\" id=\"i\" alt=\"x\" /> y");
+        assert_eq!(text, "<img src=\"p\" id=\"i\" alt=\"x\" /> y\n");
     }
 
     /// The cases below give `pandoc -f json -t FORMAT ARGS` (Pandoc 3.13).
